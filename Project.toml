@@ -1,0 +1,9 @@
+name = "GaPSE"
+uuid = "d1bf0294-456c-4ffb-813c-36d532d2da2e"
+authors = ["Matteo Foglieni <matteo.foglieni16@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+HCubature = "19dc6840-f33b-545b-b366-655c7e3ffd49"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
