@@ -13,7 +13,7 @@ begin
 end
 
 # ╔═╡ 029788a3-f563-4fb3-b588-c05843231ca3
-m = readdlm("src/F_map_stable_2.txt", comments=true)
+m = readdlm("data/F_map_stable_2.txt", comments=true)
 
 # ╔═╡ c1d9157b-85ae-488e-a0e6-7bf667415090
 ?Spline2D
