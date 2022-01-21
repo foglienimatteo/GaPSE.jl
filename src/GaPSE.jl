@@ -1,10 +1,18 @@
 module GaPSE
 
 using TwoFAST, Dierckx
-using HCubature, QuadGK
+using HCubature, QuadGK, LegendrePolynomials
+using GridInterpolations
 using ProgressMeter, Printf, DelimitedFiles
 
 h_0 = 0.70
+z_MIN = 0.05
+z_MAX = 0.2
+θ_MAX = π/2
+ 
+
+FILE_F_MAP = "data/F_map_stable_2.txt"
+NAMES_F_MAP = ["x", "mu", "F", "F_error"]
 FILE_PS = "data/WideA_ZA_pk.dat"
 NAMES_PS = ["k (h/Mpc)", "P (Mpc/h)^3"]
 FILE_BACKGROUND = "data/WideA_ZA_background.dat"

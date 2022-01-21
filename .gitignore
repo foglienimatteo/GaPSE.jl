@@ -39,3 +39,4 @@ Manifest.toml
 *.tiff
 *.json
 *.jlprof
+.ipynb_checkpoints/

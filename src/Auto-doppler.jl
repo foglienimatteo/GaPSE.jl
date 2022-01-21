@@ -49,7 +49,12 @@ function ξ_doppler(s1, s2, y)
 end
 
 
-function PS_doppler(k; L=0)
-     A = 2*π
-     (2*L+1)/A * (- im)^L 
+function PS_doppler(k; L = 0)
+     A = 2 * π * V(s_min, s_max, theta_MAX)
+
+     first_integrand(s1, s, μ) = ξ_doppler(s1, s2(s1, s, μ), y(s1, s, μ)) * Pl(μ, L) * F(s / s1, μ)
+     first_int(s1, s) = quadgk(μ -> first_integrand(s1, s, μ), -1, 1; rtol = 1e-3, atol = 1e-4)
+
+
+     #(2*L+1)/A * (- im)^L 
 end
