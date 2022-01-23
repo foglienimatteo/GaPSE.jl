@@ -10,6 +10,7 @@ FILE_NAME = split(PROGRAM_FILE, "/")[end]
 #main(x::Union{String, Float64, Int64}...) = main([string(var) for var in [x...]])
 function main()
      data = GaPSE.PS_doppler()
+     run(`rm my_first_P_doppler.txt`)
      open("my_first_P_doppler.txt", "w") do io
           [println(io, k, " \t ", pk) for (k, pk) in zip(data[1], data[2])]
      end

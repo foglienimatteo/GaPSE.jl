@@ -1,24 +1,40 @@
 
 
+#FILE_F_MAP = "data/F_map_stable_2.txt"
+#NAMES_F_MAP = ["x", "mu", "F", "F_error"]
+FILE_F_MAP = "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE-free-ipynb/PANTIRI_F_x_mu.txt"
+NAMES_F_MAP = ["x", "mu", "F"]
+
 F_map_data = readdlm(FILE_F_MAP, comments = true)
 F_map_data_dict = Dict([name => F_map_data[2:end, i] for (i, name) in enumerate(NAMES_F_MAP)]...)
 
 _xs = unique(F_map_data_dict["x"])
 _μs = unique(F_map_data_dict["mu"])
 #_Fs = reshape(F_map_data_dict["F"], (length(_μs), length(_xs)))' # FOR SciPy DOES NOT WORK
-_Fs = unique(F_map_data_dict["F"])
+_Fs = F_map_data_dict["F"]
+
+for (x, μ, F) in zip(_xs, _μs, _Fs)
+     println(x, "  \t ", μ, " \t ", F)
+end
+
 
 # for my F map with GridInterpolations
 #my_F_grid = GridInterpolations.RectangleGrid(_μs, _xs)
-#spline_F(x, μ) = GridInterpolations.interpolate(my_F_grid, my_Fs, [μ, x])
+#spline_F(x, μ) = GridInterpolations.interpolate(my_F_grid, _Fs, [μ, x])
 
 # for mattia F map with GridInterpolations
 mattia_F_grid = GridInterpolations.RectangleGrid(_xs, _μs)
 spline_F(x, μ) = GridInterpolations.interpolate(mattia_F_grid, _Fs, [x, μ])
 
-# for RectBivariateSpline DOES NOT WORK
-#sci_spline_F = SciPy.interpolate.RectBivariateSpline(_xs, _μs, _Fs)
-#spline_F(x, μ) = (x = sci_spline_F(x, μ)[1]; println(x); x > 0 ? x : 0.0)
+# for my F with RectBivariateSpline
+#my_scipy_grid_Fs = reshape(_Fs, (length(_μs), length(_xs)))
+#not_my_spline = SciPy.interpolate.RectBivariateSpline(_μs, _xs, my_scipy_grid_Fs)
+#spline_F(x, μ) = not_my_spline(μ, x)[1]
+
+# for mattia F with RectBivariateSpline
+#mattia_scipy_grid_Fs = reshape(_Fs, (length(_xs), length(_μs)))
+#not_mattia_spline = SciPy.interpolate.RectBivariateSpline(_xs, _μs, mattia_scipy_grid_Fs)
+#spline_F(x, μ) = not_mattia_spline(x, μ)[1]
 
 
 ##########################################################################################92
@@ -114,7 +130,7 @@ println("s_min = ", s_min)
 
 ##########################################################################################92
 
-
+#=
 function integral_on_μ(ξ::Function, s1, s; sp_F = spline_F, L::Integer = 0, kwargs...)
      function first_integrand(s1, s, μ)
           if ϕ(s2(s1, s, μ)) > 0
@@ -126,3 +142,4 @@ function integral_on_μ(ξ::Function, s1, s; sp_F = spline_F, L::Integer = 0, kw
 
      return quadgk(μ -> first_integrand(s1, s, μ), -1, 1; kwargs...)
 end
+=#
