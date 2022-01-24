@@ -13,10 +13,6 @@ _μs = unique(F_map_data_dict["mu"])
 #_Fs = reshape(F_map_data_dict["F"], (length(_μs), length(_xs)))' # FOR SciPy DOES NOT WORK
 _Fs = F_map_data_dict["F"]
 
-for (x, μ, F) in zip(_xs, _μs, _Fs)
-     println(x, "  \t ", μ, " \t ", F)
-end
-
 
 # for my F map with GridInterpolations
 #my_F_grid = GridInterpolations.RectangleGrid(_μs, _xs)
@@ -45,17 +41,21 @@ N_Z_MIN_10 = findfirst(z -> z < 10, data[:, 1])
 println("N_Z_MIN_10 = ", N_Z_MIN_10)
 data_dict = Dict([name => reverse(data[:, i][N_Z_MIN_10:end]) for (i, name) in enumerate(NAMES_BACKGROUND)]...)
 
-D = Spline1D(data_dict["comov. dist."] .* h_0, data_dict["gr.fac. D"])
-f = Spline1D(data_dict["comov. dist."] .* h_0, data_dict["gr.fac. f"])
-#ℋ = Spline1D(data_dict["comov. dist."] .* h_0, data_dict["gr.fac. f"] .* data_dict["gr.fac. D"])
-#ℋ_p(s) = Dierckx.derivative(ℋ, s)
-s_b = Spline1D(data_dict["comov. dist."] .* h_0, [1.0 / 5.0 for i in 1:length(data_dict["comov. dist."])])
-s_of_z = Spline1D(data_dict["z"], data_dict["comov. dist."] .* h_0)
-z_of_s = Spline1D(data_dict["comov. dist."] .* h_0, data_dict["z"])
+
+comdist_array = data_dict["comov. dist."] .* h_0
+#angdist_array = angdist_array*h_0
+#lumdist_array = lumdist_array*h_0
+D = Spline1D(comdist_array, data_dict["gr.fac. D"])
+f = Spline1D(comdist_array, data_dict["gr.fac. f"])
+ℋ = Spline1D(comdist_array, data_dict["gr.fac. f"] ./ ( 1.0 .+ data_dict["z"]) )
+ℋ_p(s) = Dierckx.derivative(ℋ, s)
+s_b = Spline1D(comdist_array, [1.0 / 5.0 for i in 1:length(data_dict["comov. dist."])])
+s_of_z = Spline1D(data_dict["z"], comdist_array)
+z_of_s = Spline1D(comdist_array, data_dict["z"])
 f_evo = 0
 
-ℋ = Spline1D(data_dict["comov. dist."] .* h_0, [1.0 for i in 1:length(data_dict["comov. dist."])])
-ℋ_p(s) = Spline1D(data_dict["comov. dist."] .* h_0, [0 for i in 1:length(data_dict["comov. dist."])])
+#ℋ = Spline1D(data_dict["comov. dist."] .* h_0, [1.0 for i in 1:length(data_dict["comov. dist."])])
+#ℋ_p = Spline1D(data_dict["comov. dist."] .* h_0, [0 for i in 1:length(data_dict["comov. dist."])])
 
 
 ##########################################################################################92
@@ -108,7 +108,7 @@ function V(s_min = s_min, s_max = s_max, θ_max = θ_MAX)
      tronco_cono = π / 3 * (r1^2 + r1 * r2 + r2^2) * (s_max - s_min) * cos(θ_max)
      return calotta_up + tronco_cono - calotta_down
 end
-A(s_min = s_min, s_max = s_max, θ_max = θ_MAX) = 2 * π * V(s_min, s_max, θ_max)
+A(s_min = s_min, s_max = s_max, θ_max = θ_MAX) = V(s_min, s_max, θ_max)
 
 function z_eff(s_min = s_min, s_max = s_max, θ_max = θ_MAX)
      int_w2 = 2 * π * (1 - cos(θ_max))
