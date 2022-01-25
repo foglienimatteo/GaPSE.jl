@@ -6,8 +6,8 @@ using GridInterpolations, PyCall, SciPy
 using ProgressMeter, Printf, DelimitedFiles
 using ProfileView
 
-Ω_b=0.0489
-Ω_cdm=0.251020
+Ω_b = 0.0489
+Ω_cdm = 0.251020
 Ω_M0 = Ω_b + Ω_cdm
 
 h_0 = 0.70
@@ -23,9 +23,9 @@ NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mpc]",
      "(.)rho_g", "(.)rho_b", "(.)rho_cdm", "(.)rho_lambda", "(.)rho_ur",
      "(.)rho_crit", "gr.fac. D", "gr.fac. f"]
 
-include("F-evaluation.jl")
+include("F_evaluation.jl")
 include("Background_functions.jl")
-include("Auto-doppler.jl")
-include("Auto-lensing.jl")
+include("Auto_doppler.jl")
+include("Auto_lensing.jl")
 
 end # module

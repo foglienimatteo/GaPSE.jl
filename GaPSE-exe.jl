@@ -15,6 +15,12 @@ function main()
           [println(io, s, " \t ", xi) for (s, xi) in zip(data[1], data[2])]
      end
 
+     new_data = GaPSE.PS_lensing()
+     #run(`rm P_lensing.txt`)
+     open("P_lensing.txt", "w") do io
+          [println(io, k, " \t ", pk) for (k, pk) in zip(new_data[1], new_data[2])]
+     end
+
      #=
      data = GaPSE.map_integral_on_mu()
      run(`rm my_first_xi_doppler.txt`)

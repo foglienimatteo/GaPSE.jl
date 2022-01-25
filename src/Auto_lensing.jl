@@ -47,7 +47,7 @@ function int_on_mu_lensing(s1, s, μ)
 end
 
 function integral_on_mu_lensing(s1, s; kwargs...)
-     return quadgk(μ -> int_on_mu_lensing(s1, s, μ), -1, 1; atol=1e-2, rtol=1e-3, kwargs...)[1]
+     return quadgk(μ -> int_on_mu_lensing(s1, s, μ), -1, 1; atol=1e-3, rtol=1e-3, kwargs...)[1]
 end
 
 
@@ -57,4 +57,18 @@ function map_integral_on_mu_lensing(s1 = s_eff; kwargs...)
      return (ss, xis)
 end
 
-
+function PS_lensing(L::Integer = 0; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128, kwargs...)
+     if ϕ(s_eff) > 0
+          println("im in")
+          ks, pks = xicalc(s -> 2 * π^2 * integral_on_mu_lensing(s_eff, s; kwargs...), L, 0;
+               N = N, kmin = int_s_min, kmax = int_s_max, r0 = 1 / int_s_max)
+          println("im out")
+          if iseven(L)
+               return ks, ((2 * L + 1) / A(s_min, s_max, θ_MAX) * ϕ(s_eff) * (-1)^(L / 2)) .* pks
+          else
+               return ks, ((2 * L + 1) / A(s_min, s_max, θ_MAX) * ϕ(s_eff) * (-im)^L) .* pks
+          end
+     else
+          return 0
+     end
+end
