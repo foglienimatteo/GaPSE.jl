@@ -47,15 +47,17 @@ comdist_array = data_dict["comov. dist."] .* h_0
 #lumdist_array = lumdist_array*h_0
 D = Spline1D(comdist_array, data_dict["gr.fac. D"])
 f = Spline1D(comdist_array, data_dict["gr.fac. f"])
-ℋ = Spline1D(comdist_array, data_dict["gr.fac. f"] ./ ( 1.0 .+ data_dict["z"]) )
+ℋ = Spline1D(comdist_array, data_dict["H [1/Mpc]"] ./ h_0 ./ (1.0 .+ data_dict["z"]))
 ℋ_p(s) = Dierckx.derivative(ℋ, s)
 s_b = Spline1D(comdist_array, [1.0 / 5.0 for i in 1:length(data_dict["comov. dist."])])
 s_of_z = Spline1D(data_dict["z"], comdist_array)
 z_of_s = Spline1D(comdist_array, data_dict["z"])
+ℛ(s) = 5 * s_b(s) + (2 - 5 * s_b(s)) / (ℋ(s) * s) + ℋ_p(s) / (ℋ(s)^2) - f_evo
 f_evo = 0
 
-#ℋ = Spline1D(data_dict["comov. dist."] .* h_0, [1.0 for i in 1:length(data_dict["comov. dist."])])
-#ℋ_p = Spline1D(data_dict["comov. dist."] .* h_0, [0 for i in 1:length(data_dict["comov. dist."])])
+#ℋ = Spline1D(comdist_array, [1.0 for i in 1:length(comdist_array)])
+#ℋ_p = Spline1D(comdist_array, [0 for i in 1:length(comdist_array)])
+#ℛ(s) = 1.0
 
 
 ##########################################################################################92
@@ -85,9 +87,6 @@ I11 = Spline1D(xicalc(PK, 1, 1; N = N, kmin = k_min, kmax = k_max, r0 = s0)...)
 σ_2 = quadgk(q -> PK(q) / (2 * π^2), k_min, k_max)[1]
 σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), k_min, k_max)[1]
 
-#ℛ(s) = 5 * s_b(s) + (2 - 5 * s_b(s)) / (ℋ(s) * s) + ℋ_p(s) / (ℋ(s)^2) - f_evo
-ℛ(s) = 1.0
-
 
 ##########################################################################################92
 
@@ -108,7 +107,7 @@ function V(s_min = s_min, s_max = s_max, θ_max = θ_MAX)
      tronco_cono = π / 3 * (r1^2 + r1 * r2 + r2^2) * (s_max - s_min) * cos(θ_max)
      return calotta_up + tronco_cono - calotta_down
 end
-A(s_min = s_min, s_max = s_max, θ_max = θ_MAX) = V(s_min, s_max, θ_max)
+A(s_min = s_min, s_max = s_max, θ_max = θ_MAX) = 2 * π#*V(s_min, s_max, θ_max)
 
 function z_eff(s_min = s_min, s_max = s_max, θ_max = θ_MAX)
      int_w2 = 2 * π * (1 - cos(θ_max))
@@ -120,12 +119,14 @@ end
 s_eff = s_of_z(z_eff())
 
 
+println("h_0 = ", h_0)
 println("z_eff = ", z_eff())
 println("s_eff = ", s_eff)
 println("k_max = ", k_max)
 println("k_min = ", k_min)
 println("s_max = ", s_max)
 println("s_min = ", s_min)
+println("V = ", V())
 
 
 ##########################################################################################92

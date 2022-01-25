@@ -4,6 +4,11 @@ using TwoFAST, Dierckx
 using HCubature, QuadGK, LegendrePolynomials
 using GridInterpolations, PyCall, SciPy
 using ProgressMeter, Printf, DelimitedFiles
+using ProfileView
+
+Ω_b=0.0489
+Ω_cdm=0.251020
+Ω_M0 = Ω_b + Ω_cdm
 
 h_0 = 0.70
 z_MIN = 0.05
@@ -21,5 +26,6 @@ NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mpc]",
 include("F-evaluation.jl")
 include("Background_functions.jl")
 include("Auto-doppler.jl")
+include("Auto-lensing.jl")
 
 end # module
