@@ -37,9 +37,11 @@ spline_F(x, μ) = GridInterpolations.interpolate(mattia_F_grid, _Fs, [x, μ])
 
 
 data = readdlm(FILE_BACKGROUND, comments = true)
-N_Z_MIN_10 = findfirst(z -> z < 10, data[:, 1])
-println("N_Z_MIN_10 = ", N_Z_MIN_10)
-data_dict = Dict([name => reverse(data[:, i][N_Z_MIN_10:end]) for (i, name) in enumerate(NAMES_BACKGROUND)]...)
+N_z_MAX = findfirst(z -> z <= z_MAX, data[:, 1]) - 1
+N_z_MIN = findfirst(z -> z <= z_MIN, data[:, 1]) + 1
+println("N_z_MAX = ", N_z_MAX, ", \t\t z[N_z_MAX] = ", data[:, 1][N_z_MAX])
+println("N_z_MIN = ", N_z_MIN, ", \t\t z[N_z_MIN] = ", data[:, 1][N_z_MIN])
+data_dict = Dict([name => reverse(data[:, i][N_z_MAX:N_z_MIN]) for (i, name) in enumerate(NAMES_BACKGROUND)]...)
 
 
 comdist_array = data_dict["comov. dist."] .* h_0
@@ -52,12 +54,17 @@ f = Spline1D(comdist_array, data_dict["gr.fac. f"])
 s_b = Spline1D(comdist_array, [1.0 / 5.0 for i in 1:length(data_dict["comov. dist."])])
 s_of_z = Spline1D(data_dict["z"], comdist_array)
 z_of_s = Spline1D(comdist_array, data_dict["z"])
-ℛ(s) = 5 * s_b(s) + (2 - 5 * s_b(s)) / (ℋ(s) * s) + ℋ_p(s) / (ℋ(s)^2) - f_evo
 f_evo = 0
 
-#ℋ = Spline1D(comdist_array, [1.0 for i in 1:length(comdist_array)])
-#ℋ_p = Spline1D(comdist_array, [0 for i in 1:length(comdist_array)])
-#ℛ(s) = 1.0
+ℛ(s) = 5 * s_b(s) + (2 - 5 * s_b(s)) / (ℋ(s) * s) + ℋ_p(s) / (ℋ(s)^2) - f_evo
+function ℛ(s, ℋ, ℋ_p, s_b, f_evo = f_evo)
+     5 * s_b + (2 - 5 * s_b) / (ℋ * s) + ℋ_p / (ℋ^2) - f_evo
+end
+
+f0 = data_dict["gr.fac. f"][end]
+ℋ0 = data_dict["H [1/Mpc]"][end] / h_0 
+ℋ0_p = 0.0
+s_b0 = 1.0/5.0
 
 
 ##########################################################################################92
