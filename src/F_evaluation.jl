@@ -39,7 +39,7 @@ function integrand_F(θ, θ_1, x, μ, θ_max; tolerance = 1e-8)
           elseif -den < tolerance
                return 0
           else
-               throw(Error("negative denominator, greater than $(tolerance): $(den)"))
+               throw(ErrorException("negative denominator, greater than $(tolerance): $(den)"))
           end
      else
           return 0

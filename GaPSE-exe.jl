@@ -27,22 +27,9 @@ function main()
      xi_doppler = "xi_doppler.txt"
      P_doppler = "P_doppler.txt"
 
-     rtol = sqrt(eps())
-     data = GaPSE.map_integral_on_mu_doppler()
-     isfile(xi_doppler) && run(`rm $xi_doppler`)
-     open(xi_doppler, "w") do io
-          [println(io, s, " \t ", xi) for (s, xi) in zip(data[1], data[2])]
-     end
+     GaPSE.print_map_int_on_mu_doppler(xi_doppler)
+     GaPSE.print_PS_doppler(P_doppler)
 
-     time1 = time()
-     new_data = GaPSE.PS_doppler()
-     time2 = time()
-     diff = time2-time1
-     println("\ntime needed [in s] = $diff\n")
-     isfile(P_doppler) && run(`rm $P_doppler`)
-     open(P_doppler, "w") do io
-          [println(io, k, " \t ", pk) for (k, pk) in zip(new_data[1], new_data[2])]
-     end
 end
 
 if (ARGS == String[])

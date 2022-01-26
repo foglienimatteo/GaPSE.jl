@@ -1,6 +1,4 @@
 
-##########################################################################################92
-
 
 function ξ_doppler(s1, s2, y)
 
@@ -45,39 +43,124 @@ function ξ_doppler(s1, s2, y)
 end
 
 
-function int_on_mu_doppler(s1, s, μ)
+function int_on_mu_doppler(s1, s, μ; L::Integer=0)
      if ϕ(s2(s1, s, μ)) > 0
-          return ξ_doppler(s1, s2(s1, s, μ), y(s1, s, μ)) * spline_F(s / s1, μ)
+          return ξ_doppler(s1, s2(s1, s, μ), y(s1, s, μ)) * spline_F(s / s1, μ) * Pl(μ,L)
      else
           return 0.0
      end
 end
 
 
-function integral_on_mu_doppler(s1, s; kwargs...)
-     return quadgk(μ -> int_on_mu_doppler(s1, s, μ), -1, 1; kwargs...)[1]
+function integral_on_mu_doppler(s1, s; L::Integer = 0, kwargs...)
+     return quadgk(μ -> int_on_mu_doppler(s1, s, μ; L=L), -1, 1; kwargs...)
 end
 
-function map_integral_on_mu_doppler(s1 = s_eff; kwargs...)
+function map_integral_on_mu_doppler(s1 = s_eff; 
+               L::Integer = 0, pr::Bool=true, kwargs...)
+
+     t1 = time()
      ss = 10 .^ range(-1, 3, length = 100)
-     xis = [integral_on_mu_doppler(s1, s; kwargs...) for s in ss]
-     return (ss, xis)
+     vec = [integral_on_mu_doppler(s1, s; L=L, kwargs...) for s in ss]
+     xis, xis_err = [x[1] for x in vec], [x[2] for x in vec]
+     t2 = time()
+     pr && println("\ntime needed for map_integral_on_mu_doppler [in s] = $(t2-t1)\n")
+     return (ss, xis, xis_err)
 end
 
 
 # mean time of evaluation: 141 seconds
-function PS_doppler(L::Integer = 0; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128, kwargs...)
+function PS_doppler(; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
+     L::Integer = 0, pr::Bool=true, kwargs...)
+
      if ϕ(s_eff) > 0
-          println("im in")
-          ks, pks = xicalc(s -> 2*π^2*integral_on_mu_doppler(s_eff, s; kwargs...), L, 0;
+          t1 = time()
+          ks, pks = xicalc(s -> 2 * π^2 * integral_on_mu_doppler(s_eff, s; L=L, kwargs...)[1], L, 0;
                N = N, kmin = int_s_min, kmax = int_s_max, r0 = 1 / int_s_max)
-          println("im out")
+          t2 = time()
+          pr && println("\ntime needed for PS_doppler [in s] = $(t2-t1)\n")
+
           if iseven(L)
                return ks, ((2 * L + 1) / A(s_min, s_max, θ_MAX) * ϕ(s_eff) * (-1)^(L / 2)) .* pks
           else
-               return ks, ((2 * L + 1) / A(s_min, s_max, θ_MAX) * ϕ(s_eff) * (-im)^L ) .* pks
+               return ks, ((2 * L + 1) / A(s_min, s_max, θ_MAX) * ϕ(s_eff) * (-im)^L) .* pks
           end
      else
-          return 0
+          throw(ErrorException(
+               "ϕ(s_eff) should be >0, but in s_eff=$s_eff " *
+               "is ϕ(s_eff) = $(ϕ(s_eff))! \n"
+          ))
+     end
+end
+
+
+
+##########################################################################################92
+
+
+
+function print_map_int_on_mu_doppler(out::String; L::Integer=0, 
+     s1 = s_eff, pr::Bool = true, kwargs...)
+
+     t1 = time()
+     vec = map_integral_on_mu_doppler(s1; L=L, pr=pr, kwargs...)
+     t2 = time()
+
+     isfile(out) && run(`rm $out`)
+     open(out, "w") do io
+          println(io, "# This is an integration map on mu of xi_doppler.")
+          parameters_used(io)
+          println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
+          print(io, "# kwards passed: ")
+
+          if isempty(kwargs)
+               println(io, "none")
+          else
+               print(io, "\n")
+               for (i, key) in enumerate(keys(kwargs))
+                    println(io, "# \t\t$(key) = $(kwargs[key])")
+               end
+          end
+
+          println(io, "\ns \t xi \t xi_error")
+          for (s, xi, xi_err) in zip(vec[1], vec[2], vec[3])
+               println(io, "$s \t $xi \t $(xi_err)")
+          end
+     end
+end
+
+
+function print_PS_doppler(out::String; int_s_min = 1e-2, int_s_max = 2 * s_max,
+     N = 128, L::Integer = 0, pr::Bool = true, kwargs...)
+
+     t1 = time()
+     vec = PS_doppler(int_s_min = int_s_min, int_s_max = int_s_max,
+          N = N, L = L, pr = pr, kwargs...)
+     t2 = time()
+
+     isfile(out) && run(`rm $out`)
+     open(out, "w") do io
+          println(io, "# This is an integration map on s of the Doppler Power Spectrum")
+          parameters_used(io)
+          println(io, "#\n# For this PS computation we set: ")
+          println(io, "# \t int_s_min = $int_s_min \t int_s_max = $int_s_max ")
+          println(io, "# \t #points used in Fourier transform N = $N")
+          println(io, "# \t multipole degree in consideration L = $L")
+          println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
+          print(io, "# kwards passed: ")
+
+          if isempty(kwargs)
+               println(io, "none")
+          else
+               print(io, "\n")
+               for (i, key) in enumerate(keys(kwargs))
+                    println(io, "# \t\t$(key) = $(kwargs[key])")
+               end
+          end
+
+          println(io, "\nk \t P")
+          for (k, pk) in zip(vec[1], vec[2])
+               println(io, "$k \t $pk")
+          end
      end
 end

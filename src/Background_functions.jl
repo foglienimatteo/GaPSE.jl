@@ -138,6 +138,18 @@ println("V = ", V())
 
 ##########################################################################################92
 
+function parameters_used(io::IOStream)
+     println(io, "# The following parameters were used for this computation: ")
+     println(io, "# \t h_0 = $h_0 \t \t EVERYTHING IS MEASURED WITHOUT h_0!")
+     println(io, "# \t z_min = $z_MIN \t z_max = $z_MAX \t " *
+                 "z_eff = $(@sprintf("%.5f", z_eff()))")
+     println(io, "# \t s_min = $(@sprintf("%.3f", s_min)) \t" *
+                 "s_max = $(@sprintf("%.3f", s_max)) \t " *
+                 "s_eff = $(@sprintf("%.3f", s_eff))")
+     println(io, "# \t Ω_b = $Ω_b \t Ω_cdm = $Ω_cdm \t Ω_M0 = $Ω_M0")
+     println(io, "# The comoving distances s are measured in Mpc/h_0.")
+end
+
 #=
 function integral_on_μ(ξ::Function, s1, s; sp_F = spline_F, L::Integer = 0, kwargs...)
      function first_integrand(s1, s, μ)
