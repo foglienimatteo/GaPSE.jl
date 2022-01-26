@@ -5,7 +5,7 @@
 # 	 s_min = 148.192 	s_max = 571.702 	 s_eff = 435.375
 # 	 Ω_b = 0.0489 	 Ω_cdm = 0.25102 	 Ω_M0 = 0.29992
 # The comoving distances s are measured in Mpc/h_0.
-# computational time needed (in s) : 1.2742
+# computational time needed (in s) : 1.3094
 # kwards passed: none
 
 s 	 xi 	 xi_error

@@ -69,8 +69,38 @@ function map_integral_on_mu_doppler(s1 = s_eff;
 end
 
 
+function PS_doppler(f_in::Union{Function,Dierckx.Spline1D};
+     int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
+     L::Integer = 0, pr::Bool = true)
+
+     t1 = time()
+     ks, pks = xicalc(x -> 2 * π^2 * f_in(x), L, 0; N = N, kmin = int_s_min, kmax = int_s_max, r0 = 1 / int_s_max)
+     t2 = time()
+     pr && println("\ntime needed for PS_doppler [in s] = $(t2-t1)\n")
+
+     if iseven(L)
+          return ks, ((2 * L + 1) / A(s_min, s_max, θ_MAX) * ϕ(s_eff) * (-1)^(L / 2)) .* pks
+     else
+          return ks, ((2 * L + 1) / A(s_min, s_max, θ_MAX) * ϕ(s_eff) * (-im)^L) .* pks
+     end
+end
+
+ 
+# mean time of evaluation: 2 seconds!!!
+function PS_doppler(in::String; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
+     L::Integer = 0, pr::Bool = true)
+
+     xi_table = readdlm(in, comments = true)
+     ss = convert(Vector{Float64}, xi_table[2:end, 1])
+     fs = convert(Vector{Float64}, xi_table[2:end, 2])
+     f_in = Spline1D(ss, fs)
+
+     return PS_doppler(f_in; int_s_min = int_s_min, int_s_max = int_s_max, N = N, L=L, pr=pr)
+end
+
+
 # mean time of evaluation: 141 seconds
-function PS_doppler(; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
+function PS_doppler_exact(; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
      L::Integer = 0, pr::Bool=true, kwargs...)
 
      if ϕ(s_eff) > 0
@@ -130,12 +160,14 @@ function print_map_int_on_mu_doppler(out::String; L::Integer=0,
 end
 
 
-function print_PS_doppler(out::String; int_s_min = 1e-2, int_s_max = 2 * s_max,
+function print_PS_doppler(out::String, in::String; 
+     int_s_min = 1e-2, int_s_max = 2 * s_max,
      N = 128, L::Integer = 0, pr::Bool = true, kwargs...)
 
      t1 = time()
-     vec = PS_doppler(int_s_min = int_s_min, int_s_max = int_s_max,
-          N = N, L = L, pr = pr, kwargs...)
+     vec = PS_doppler(in, int_s_min = int_s_min, int_s_max = int_s_max,
+                    N = N, L = L, pr = pr, kwargs...)    
+
      t2 = time()
 
      isfile(out) && run(`rm $out`)

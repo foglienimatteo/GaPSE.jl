@@ -61,10 +61,10 @@ function ℛ(s, ℋ, ℋ_p, s_b, f_evo = f_evo)
      5 * s_b + (2 - 5 * s_b) / (ℋ * s) + ℋ_p / (ℋ^2) - f_evo
 end
 
-f0 = data_dict["gr.fac. f"][end]
-ℋ0 = data_dict["H [1/Mpc]"][end] / h_0 
-ℋ0_p = 0.0
-s_b0 = 1.0/5.0
+const f0 = data_dict["gr.fac. f"][end]
+const ℋ0 = data_dict["H [1/Mpc]"][end] / h_0 
+const ℋ0_p = 0.0
+const s_b0 = 1.0/5.0
 
 
 ##########################################################################################92
@@ -102,8 +102,8 @@ s2(s1, s, μ) = √(s1^2 + s^2 + 2 * s1 * s * μ)
 y(s1, s, μ) = (μ * s + s1) / s2(s, s1, μ)
 
 
-s_min = s_of_z(z_MIN)
-s_max = s_of_z(z_MAX)
+const s_min = s_of_z(z_MIN)
+const s_max = s_of_z(z_MAX)
 ϕ(s; s_min = s_min, s_max = s_max) = s_min < s < s_max ? 1.0 : 0.0
 W(θ; θ_max = θ_MAX) = 0 < θ < θ_max ? 1.0 : 0.0
 function V(s_min = s_min, s_max = s_max, θ_max = θ_MAX)
@@ -123,7 +123,8 @@ function z_eff(s_min = s_min, s_max = s_max, θ_max = θ_MAX)
 
      return int_z_ϕ2 / int_ϕ2
 end
-s_eff = s_of_z(z_eff())
+
+const s_eff = s_of_z(z_eff())
 
 
 println("h_0 = ", h_0)
