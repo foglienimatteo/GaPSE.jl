@@ -51,7 +51,7 @@ D = Spline1D(comdist_array, data_dict["gr.fac. D"])
 f = Spline1D(comdist_array, data_dict["gr.fac. f"])
 ℋ = Spline1D(comdist_array, data_dict["H [1/Mpc]"] ./ h_0 ./ (1.0 .+ data_dict["z"]))
 ℋ_p(s) = Dierckx.derivative(ℋ, s)
-s_b = Spline1D(comdist_array, [1.0 / 5.0 for i in 1:length(data_dict["comov. dist."])])
+s_b = Spline1D(comdist_array, [0.0 for i in 1:length(data_dict["comov. dist."])])
 s_of_z = Spline1D(data_dict["z"], comdist_array)
 z_of_s = Spline1D(comdist_array, data_dict["z"])
 f_evo = 0
@@ -64,7 +64,7 @@ end
 const f0 = data_dict["gr.fac. f"][end]
 const ℋ0 = data_dict["H [1/Mpc]"][end] / h_0 
 const ℋ0_p = 0.0
-const s_b0 = 1.0/5.0
+const s_b0 = 0.0
 
 
 ##########################################################################################92
