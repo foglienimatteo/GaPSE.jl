@@ -99,7 +99,6 @@ I11 = Spline1D(xicalc(PK, 1, 1; N = N, kmin = k_min, kmax = k_max, r0 = s0)...)
 
 
 s(s1, s2, y) = √(s1^2 + s2^2 - 2 * s1 * s2 * y)
-
 s2(s1, s, μ) = √(s1^2 + s^2 + 2 * s1 * s * μ)
 y(s1, s, μ) = (μ * s + s1) / s2(s, s1, μ)
 

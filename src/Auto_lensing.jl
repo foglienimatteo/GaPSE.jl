@@ -1,8 +1,8 @@
 
 
-function integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol=1e-2)
+function integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 1, enhancer = 1)
 
-     (s(s1,s2,y)>tol*s1) || (return 0.0)
+     (s(s1, s2, y) > tol) || (return 0.0)
 
      Δχ = √(χ1^2 + χ2^2 - 2 * χ1 * χ2 * y)
 
@@ -29,36 +29,25 @@ function integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol=1e-2)
                )
 
 
-     return s1^2 * factor / denomin * (
+     return enhancer * factor / denomin * (
           new_J00 * I00(Δχ) + new_J02 * I20(Δχ) +
           new_J31 * I13(Δχ) + new_J22 * I22(Δχ)
      )
 end
 
 
-function ξ_lensing(s1, s2, y; kwargs...)
-     #=
-     μs = -1:μ_step:1
-     xs = x1:x_step:x2
-     xs_grid = [x for x = xs for μ = μs]
-     μs_grid = [μ for x = xs for μ = μs]
-
-     time_1 = time()
-     new_F(x, μ) = F(x, μ; kwargs...)
-     Fs_grid = @showprogress map(new_F, xs_grid, μs_grid)
-     time_2 = time()
-     =#
-     
-     my_int(var) = integrand_ξ_lensing(var[1], var[2], s1, s2, y)
+function ξ_lensing(s1, s2, y; tol=1, enhancer=1, kwargs...)
+     my_int(var) = integrand_ξ_lensing(var[1], var[2], s1, s2, y; tol=tol, enhancer=enhancer)
      a = [0.0, 0.0]
      b = [s1, s2]
      return hcubature(my_int, a, b; kwargs...)
 end
 
-function int_on_mu_lensing(s1, s, μ; L::Integer=0)
+function int_on_mu_lensing(s1, s, μ; L::Integer=0, enhancer=1, tol=1, χ_atol=1e-3, χ_rtol=1e-3)
      if ϕ(s2(s1, s, μ)) > 0
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_lensing(s1, s2(s1, s, μ), y(s1, s, μ); rtol=1e-2, atol=1e-4)
+          int = ξ_lensing(s1, s2(s1, s, μ), y(s1, s, μ); 
+               tol = tol, rtol = χ_rtol, atol = χ_atol, enhancer=enhancer)
           #println("int = $int")
           return int .* (spline_F(s / s1, μ) * Pl(μ, L))
      else
@@ -66,19 +55,28 @@ function int_on_mu_lensing(s1, s, μ; L::Integer=0)
      end
 end
 
-function integral_on_mu_lensing(s1, s; L::Integer = 0, kwargs...)
-     int = quadgk(μ -> int_on_mu_lensing(s1, s, μ; L=L)[1], -1, 1; kwargs...)
-     println("int = $int")
+function integral_on_mu_lensing(s1, s; pr::Bool=true, L::Integer = 0, 
+     enhancer=1, tol=1, χ_atol = 1e-3, χ_rtol = 1e-3, kwargs...)
+
+     f = μ -> int_on_mu_lensing(s1, s, μ; enhancer=enhancer, tol=tol,
+           L = L, χ_atol = χ_atol, χ_rtol = χ_rtol)[1]
+     int = quadgk(f, -1, 1; kwargs...)
+     #pr && println("s1 = $s1 \t s2 = $s \t int = $int")
      return int
 end
 
 
-function map_integral_on_mu_lensing(s1 = s_eff; 
-               L::Integer = 0, pr::Bool=true, kwargs...)
+function map_integral_on_mu_lensing(s1 = s_eff;
+     L::Integer = 0, pr::Bool = true,
+     χ_atol = 1e-3, χ_rtol = 1e-3,
+     enhancer = 1e6, tol = 1,
+     kwargs...)
 
      t1 = time()
-     ss = 10 .^ range(-1, 3, length = 100)
-     vec = [integral_on_mu_lensing(s1, s; L=L, kwargs...) for s in ss]
+     ss = 10 .^ range(log10(tol), 3, length = 100)
+     f(s) = integral_on_mu_lensing(s1, s; pr = pr, L = L, enhancer = enhancer,
+          χ_atol = χ_atol, χ_rtol = χ_rtol, tol = tol, kwargs...)
+     vec = @showprogress [f(s) ./ enhancer for s in ss]
      xis, xis_err = [x[1] for x in vec], [x[2] for x in vec]
      t2 = time()
      pr && println("\ntime needed for map_integral_on_mu_lensing [in s] = $(t2-t1)\n")
@@ -91,7 +89,7 @@ function PS_lensing(; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
 
      if ϕ(s_eff) > 0
           t1 = time()
-          ks, pks = xicalc(s -> 2 * π^2 * integral_on_mu_lensing(s_eff, s; L = L, kwargs...)[1], L, 0;
+          ks, pks = xicalc(s -> 2 * π^2 * integral_on_mu_lensing(s_eff, s; pr=pr, L = L, kwargs...)[1], L, 0;
                N = N, kmin = int_s_min, kmax = int_s_max, r0 = 1 / int_s_max)
           t2 = time()
           pr && println("\ntime needed for PS_lensing [in s] = $(t2-t1)\n")
