@@ -4,7 +4,7 @@ using TwoFAST, Dierckx
 using HCubature, QuadGK, LegendrePolynomials
 using GridInterpolations, PyCall, SciPy
 using ProgressMeter, Printf, DelimitedFiles
-using ProfileView
+using ProfileView, Documenter, Test
 
 Ω_b = 0.0489
 Ω_cdm = 0.251020
