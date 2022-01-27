@@ -15,6 +15,7 @@ z_MIN = 0.05
 z_MAX = 0.2
 θ_MAX = π / 2
 
+
 FILE_PS = "data/WideA_ZA_pk.dat"
 NAMES_PS = ["k (h/Mpc)", "P (Mpc/h)^3"]
 FILE_BACKGROUND = "data/WideA_ZA_background.dat"
@@ -27,5 +28,6 @@ include("F_evaluation.jl")
 include("Background_functions.jl")
 include("Auto_doppler.jl")
 include("Auto_lensing.jl")
+include("Power_Spectrum.jl")
 
 end # module

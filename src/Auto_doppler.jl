@@ -69,37 +69,10 @@ function map_integral_on_mu_doppler(s1 = s_eff;
 end
 
 
-function PS_doppler(f_in::Union{Function,Dierckx.Spline1D};
-     int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
-     L::Integer = 0, pr::Bool = true)
-
-     t1 = time()
-     ks, pks = xicalc(x -> 2 * π^2 * f_in(x), L, 0; N = N, kmin = int_s_min, kmax = int_s_max, r0 = 1 / int_s_max)
-     t2 = time()
-     pr && println("\ntime needed for PS_doppler [in s] = $(t2-t1)\n")
-
-     if iseven(L)
-          return ks, ((2 * L + 1) / A(s_min, s_max, θ_MAX) * ϕ(s_eff) * (-1)^(L / 2)) .* pks
-     else
-          return ks, ((2 * L + 1) / A(s_min, s_max, θ_MAX) * ϕ(s_eff) * (-im)^L) .* pks
-     end
-end
-
- 
-# mean time of evaluation: 2 seconds!!!
-function PS_doppler(in::String; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
-     L::Integer = 0, pr::Bool = true)
-
-     xi_table = readdlm(in, comments = true)
-     ss = convert(Vector{Float64}, xi_table[2:end, 1])
-     fs = convert(Vector{Float64}, xi_table[2:end, 2])
-     f_in = Spline1D(ss, fs)
-
-     return PS_doppler(f_in; int_s_min = int_s_min, int_s_max = int_s_max, N = N, L=L, pr=pr)
-end
 
 
-# mean time of evaluation: 141 seconds
+# mean time of evaluation: 141 seconds!
+# too long to be used
 function PS_doppler_exact(; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
      L::Integer = 0, pr::Bool=true, kwargs...)
 
@@ -159,40 +132,3 @@ function print_map_int_on_mu_doppler(out::String; L::Integer=0,
      end
 end
 
-
-function print_PS_doppler(out::String, in::String; 
-     int_s_min = 1e-2, int_s_max = 2 * s_max,
-     N = 128, L::Integer = 0, pr::Bool = true, kwargs...)
-
-     t1 = time()
-     vec = PS_doppler(in, int_s_min = int_s_min, int_s_max = int_s_max,
-                    N = N, L = L, pr = pr, kwargs...)    
-
-     t2 = time()
-
-     isfile(out) && run(`rm $out`)
-     open(out, "w") do io
-          println(io, "# This is an integration map on s of the Doppler Power Spectrum")
-          parameters_used(io)
-          println(io, "#\n# For this PS computation we set: ")
-          println(io, "# \t int_s_min = $int_s_min \t int_s_max = $int_s_max ")
-          println(io, "# \t #points used in Fourier transform N = $N")
-          println(io, "# \t multipole degree in consideration L = $L")
-          println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
-          print(io, "# kwards passed: ")
-
-          if isempty(kwargs)
-               println(io, "none")
-          else
-               print(io, "\n")
-               for (i, key) in enumerate(keys(kwargs))
-                    println(io, "# \t\t$(key) = $(kwargs[key])")
-               end
-          end
-
-          println(io, "\nk \t P")
-          for (k, pk) in zip(vec[1], vec[2])
-               println(io, "$k \t $pk")
-          end
-     end
-end

@@ -1,6 +1,9 @@
 
 
-function integrand_ξ_lensing(χ1, χ2, s1, s2, y)
+function integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol=1e-2)
+
+     (s(s1,s2,y)>tol*s1) || (return 0.0)
+
      Δχ = √(χ1^2 + χ2^2 - 2 * χ1 * χ2 * y)
 
      D1, D2 = D(χ1), D(χ2)
@@ -26,7 +29,7 @@ function integrand_ξ_lensing(χ1, χ2, s1, s2, y)
                )
 
 
-     return factor / denomin * (
+     return s1^2 * factor / denomin * (
           new_J00 * I00(Δχ) + new_J02 * I20(Δχ) +
           new_J31 * I13(Δχ) + new_J22 * I22(Δχ)
      )
@@ -34,6 +37,18 @@ end
 
 
 function ξ_lensing(s1, s2, y; kwargs...)
+     #=
+     μs = -1:μ_step:1
+     xs = x1:x_step:x2
+     xs_grid = [x for x = xs for μ = μs]
+     μs_grid = [μ for x = xs for μ = μs]
+
+     time_1 = time()
+     new_F(x, μ) = F(x, μ; kwargs...)
+     Fs_grid = @showprogress map(new_F, xs_grid, μs_grid)
+     time_2 = time()
+     =#
+     
      my_int(var) = integrand_ξ_lensing(var[1], var[2], s1, s2, y)
      a = [0.0, 0.0]
      b = [s1, s2]
@@ -42,7 +57,9 @@ end
 
 function int_on_mu_lensing(s1, s, μ; L::Integer=0)
      if ϕ(s2(s1, s, μ)) > 0
-          int = ξ_lensing(s1, s2(s1, s, μ), y(s1, s, μ); rtol=1e-2, atol=1e-2)
+          #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
+          int = ξ_lensing(s1, s2(s1, s, μ), y(s1, s, μ); rtol=1e-2, atol=1e-4)
+          #println("int = $int")
           return int .* (spline_F(s / s1, μ) * Pl(μ, L))
      else
           return 0.0
@@ -50,7 +67,9 @@ function int_on_mu_lensing(s1, s, μ; L::Integer=0)
 end
 
 function integral_on_mu_lensing(s1, s; L::Integer = 0, kwargs...)
-     return quadgk(μ -> int_on_mu_lensing(s1, s, μ; L=L)[1], -1, 1; kwargs...)
+     int = quadgk(μ -> int_on_mu_lensing(s1, s, μ; L=L)[1], -1, 1; kwargs...)
+     println("int = $int")
+     return int
 end
 
 

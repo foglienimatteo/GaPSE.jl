@@ -10,12 +10,12 @@ FILE_NAME = split(PROGRAM_FILE, "/")[end]
 #main(x::Union{String, Float64, Int64}...) = main([string(var) for var in [x...]])
 function main()
 
-     #GaPSE.print_map_int_on_mu_lensing("xi_lensing.txt")
-     #GaPSE.print_PS_lensing("P_lensing.txt")
+     #GaPSE.print_map_int_on_mu_lensing("xi_lensing.txt"; atol=1e-5, rtol=1e-4)
+     #GaPSE.print_PS("P_lensing.txt", "xi_lensing.txt")
 
-
-     GaPSE.print_map_int_on_mu_doppler("xi_doppler.txt")
-     GaPSE.print_PS_doppler("P_doppler.txt", "xi_doppler.txt")
+     #GaPSE.print_map_int_on_mu_doppler("xi_doppler.txt")
+     #GaPSE.print_PS("P_doppler.txt", "xi_doppler.txt")
+     GaPSE.print_PS("P_doppler.txt", "auto_dopplerdtyj")
 
 end
 

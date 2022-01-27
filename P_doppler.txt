@@ -1,4 +1,4 @@
-# This is an integration map on s of the Doppler Power Spectrum
+# This is the Power Spectrum computation of 
 # The following parameters were used for this computation: 
 # 	 h_0 = 0.7 	 	 EVERYTHING IS MEASURED WITHOUT h_0!
 # 	 z_min = 0.05 	 z_max = 0.2 	 z_eff = 0.15046
@@ -10,7 +10,7 @@
 # 	 int_s_min = 0.01 	 int_s_max = 1143.4044841823932 
 # 	 #points used in Fourier transform N = 128
 # 	 multipole degree in consideration L = 0
-# computational time needed (in s) : 2.6325
+# computational time needed (in s) : 4.3523
 # kwards passed: none
 
 k 	 P
