@@ -11,3 +11,6 @@ GaPSE (Galaxy Power Spectrum Estimator) is a software for cosmological computati
 
 It's currently under construction! 
 
+## Licence
+
+This software is under the [GNU 3.0 General Public Licence](https://www.gnu.org/licenses/gpl-3.0.en.html). See the file [LICENCE.md](./LICENCE.md).
