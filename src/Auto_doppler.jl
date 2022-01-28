@@ -24,8 +24,8 @@ function ξ_doppler(s1, s2, y; enhancer = 1, tol = 1)
 
      D1, D2 = D(s1), D(s2)
 
-     f1, ℋ1 = f(s1), ℋ(s1)#, ℋ0
-     f2, ℋ2 = f(s2), ℋ(s2)#, ℋ0
+     f1, ℋ1 = f(s1), ℋ(s1)
+     f2, ℋ2 = f(s2), ℋ(s2)
      #f1, ℋ1, ℋ1_p, s_b1 = f(s1), ℋ(s1), ℋ_p(s1), s_b(s1)
      #f2, ℋ2, ℋ2_p, s_b2 = f(s2), ℋ(s2), ℋ_p(s2), s_b(s2)
      #ℛ1, ℛ2 = ℛ(s1, ℋ1, ℋ1_p, s_b1), ℛ(s2, ℋ2, ℋ2_p, s_b2)
@@ -38,31 +38,11 @@ function ξ_doppler(s1, s2, y; enhancer = 1, tol = 1)
 
      first = prefac * (c1 * parenth + I02(delta_s) * y * delta_s^2 / 3.0)
 
-     return enhancer * first
-
-     #=
-     s = √(s1^2 + s2^2 - 2 * s1 * s2 * y)
-     c1 = 3 * s1 * s2 - 2 * y * (s1^2 + s2^2) + s1 * s2 * y^2
-     c2 = (1.0 / 3.0) * y * s^2 
-
-     D1 = D(s1)
-     D2 = D(s2)
-     f1 = f(s1)
-     f2 = f(s2)
-     H1 = ℋ(s1)
-     H2 = ℋ(s2)
-     R1 = 1 - 1.0 / (H1 * s1)
-     R2 = 1 - 1.0 / (H2 * s2)
-     prefac = D1 * D2 * f1 * f2 * R1 * R2 * H1 * H2
-
-     parenth = (1.0 / 45.0) * I00(s) + (2.0 / 63.0) * I20(s) + (1.0 / 105.0) * I40(s)
-
-     return prefac * (c1 * parenth + c2 * I02(s))
-     =#
+     return 0.5 * enhancer * first
 end
 
 
-function int_on_mu_doppler(s1, s, μ; L::Integer = 0, enhancer = 1, tol = 1)
+function integrand_on_mu_doppler(s1, s, μ; L::Integer = 0, enhancer = 1, tol = 1)
      (ϕ(s2(s1, s, μ)) > 0) || (return 0.0)
      val = ξ_doppler(s1, s2(s1, s, μ), y(s1, s, μ), enhancer = enhancer, tol = tol)
      return val * spline_F(s / s1, μ) * Pl(μ, L)
@@ -70,7 +50,7 @@ end
 
 
 function integral_on_mu_doppler(s1, s; L::Integer = 0, enhancer = 1, tol = 1, kwargs...)
-     f(μ) = int_on_mu_doppler(s1, s, μ; L = L, enhancer = enhancer, tol = tol)
+     f(μ) = integrand_on_mu_doppler(s1, s, μ; L = L, enhancer = enhancer, tol = tol)
      return quadgk(f, -1, 1; kwargs...)
 end
 

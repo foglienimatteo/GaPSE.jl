@@ -45,6 +45,7 @@ NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mpc]",
      "comov. dist.", "ang.diam.dist.", "lum. dist.", "comov.snd.hrz.",
      "(.)rho_g", "(.)rho_b", "(.)rho_cdm", "(.)rho_lambda", "(.)rho_ur",
      "(.)rho_crit", "gr.fac. D", "gr.fac. f"]
+column_NAMES_BACKGROUND = Dict([x=>i for (i,x) in enumerate(NAMES_BACKGROUND)])
 
 include("F_evaluation.jl")
 include("Background_functions.jl")
