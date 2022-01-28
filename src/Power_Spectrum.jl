@@ -1,3 +1,21 @@
+# -*- encoding: utf-8 -*-
+#
+# This file is part of GaPSE
+# Copyright (C) 2022 Matteo Foglieni
+#
+# GaPSE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# GaPSE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
+#
 
 
 IMPLEMENTED_GR_EFFECTS = ["auto_doppler", "auto_lensing"]
@@ -36,14 +54,14 @@ end
 
 
 function print_PS(out::String, in::String;
-     int_s_min = 1e-2, int_s_max = 2 * s_max, s1=s_eff,
+     int_s_min = 1e-2, int_s_max = 2 * s_max, s1 = s_eff,
      N = 128, L::Integer = 0, pr::Bool = true, kwargs...)
 
      time_1 = time()
 
      vec = if isfile(in)
-               pr && println("\nI'm computiong the PS from the file $in")
-               PS(in, int_s_min = int_s_min, int_s_max = int_s_max,
+          pr && println("\nI'm computiong the PS from the file $in")
+          PS(in, int_s_min = int_s_min, int_s_max = int_s_max,
                N = N, L = L, pr = pr, kwargs...)
      else
           if in ∈ IMPLEMENTED_GR_EFFECTS
@@ -60,7 +78,7 @@ function print_PS(out::String, in::String;
           else
                throw(ErrorException(
                     "$in is neither a GR impemented effect or a file.\n" *
-                    "\t The implemented GR effects are currently: \n"*
+                    "\t The implemented GR effects are currently: \n" *
                     "\t $(IMPLEMENTED_GR_EFFECTS)"
                ))
           end
