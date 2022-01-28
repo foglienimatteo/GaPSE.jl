@@ -76,7 +76,7 @@ function integrand_on_mu_lensing(s1, s, μ; L::Integer = 0, enhancer = 1,
           int = ξ_lensing(s1, s2(s1, s, μ), y(s1, s, μ); Δχ_min = Δχ_min,
                tol = tol, rtol = χ_rtol, atol = χ_atol, enhancer = enhancer)
           #println("int = $int")
-          return int #.* (spline_F(s / s1, μ) * Pl(μ, L))
+          return int .* (spline_F(s / s1, μ) * Pl(μ, L))
      else
           return (0.0, 0.0)
      end
@@ -108,7 +108,7 @@ function map_integral_on_mu_lensing(s1 = s_eff;
      vec = @showprogress [f(s) ./ enhancer for s in ss]
      xis, xis_err = [x[1] for x in vec], [x[2] for x in vec]
      t2 = time()
-     pr && println("\ntime needed for map_integral_on_mu_lensing [in s] = $(t2-t1)\n")
+     pr && println("\ntime needed for map_integral_on_mu_lensing [in s] = $(t2-t1)")
      return (ss[ss.>tol], xis[ss.>tol], xis_err[ss.>tol])
 end
 

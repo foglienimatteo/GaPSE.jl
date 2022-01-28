@@ -24,7 +24,7 @@ module GaPSE
 using TwoFAST # Licence: MIT "Expat" (o GPL ?)
 using Dierckx # Licence: BSD
 using HCubature, QuadGK, LegendrePolynomials  # Licence: MIT "Expat"
-using GridInterpolations, PyCall, SciPy  # Licence: MIT "Expat"
+using GridInterpolations  # Licence: MIT "Expat"
 using ProgressMeter, ProfileView, Documenter  # Licence: MIT "Expat"
 using Test, Printf, DelimitedFiles  # Licence: MIT "Expat"
 

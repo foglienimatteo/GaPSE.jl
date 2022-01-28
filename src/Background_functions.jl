@@ -57,8 +57,8 @@ spline_F(x, μ) = GridInterpolations.interpolate(mattia_F_grid, _Fs, [x, μ])
 data = readdlm(FILE_BACKGROUND, comments = true)
 N_z_MAX = findfirst(z -> z <= z_MAX, data[:, 1]) - 1
 N_z_MIN = findfirst(z -> z <= z_MIN, data[:, 1]) + 1
-println("\nN_z_MAX = ", N_z_MAX, ", \t\t z[N_z_MAX] = ", data[:, 1][N_z_MAX])
-println("N_z_MIN = ", N_z_MIN, ", \t\t z[N_z_MIN] = ", data[:, 1][N_z_MIN])
+#println("\nN_z_MAX = ", N_z_MAX, ", \t\t z[N_z_MAX] = ", data[:, 1][N_z_MAX])
+#println("N_z_MIN = ", N_z_MIN, ", \t\t z[N_z_MIN] = ", data[:, 1][N_z_MIN])
 data_dict = Dict([name => reverse(data[:, i][N_z_MAX:N_z_MIN]) for (i, name) in enumerate(NAMES_BACKGROUND)]...)
 
 
@@ -161,17 +161,18 @@ function parameters_used(io::IO)
      println(io, "# F window function input file : \"$(FILE_F_MAP)\"")
      println(io, "# CLASS Background input file: \"$(FILE_BACKGROUND)\"")
      println(io, "# \t h_0 = $h_0 \t \t EVERYTHING IS MEASURED WITHOUT h_0!")
-     println(io, "# \t comoving H_0 = $ℋ0 h_0/Mpc")
-     println(io, "# \t growth factor D_0 = $f0")
-     println(io, "# \t growth rate f_0 = $f0")
-     println(io, "# \t z_min = $z_MIN \t\tcomoving s_min " *
+     println(io, "# \t comoving H_0 = $(@sprintf("%.6e", ℋ0)) h_0/Mpc")
+     println(io, "# \t growth factor D_0 = $D0")
+     println(io, "# \t growth rate f_0 = $(@sprintf("%.6f", f0))")
+     println(io, "# \t z_min = $z_MIN \t\tcomoving s_min = " *
                  "$(@sprintf("%.5f", s_min)) Mpc/h_0")
-     println(io, "# \t z_max = $z_MAX \t\tcomoving s_max " *
+     println(io, "# \t z_max = $z_MAX \t\tcomoving s_max = " *
                  "$(@sprintf("%.5f", s_max)) Mpc/h_0")
-     println(io, "# \t z_eff = $(@sprintf("%.5f", z_eff())) \tcomoving s_min " *
+     println(io, "# \t z_eff = $(@sprintf("%.5f", z_eff())) \tcomoving s_eff = " *
                  "$(@sprintf("%.5f", s_eff)) Mpc/h_0")
      println(io, "# \t Ω_b = $Ω_b \t Ω_cdm = $Ω_cdm \t Ω_M0 = $Ω_M0")
-     println(io, "# \t Volume of the survey V = $(V())")
+     println(io, "# \t Volume of the survey V = $(@sprintf("%.6e", V()))")
+     println(io, "# ")
 end
 
 
