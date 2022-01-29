@@ -37,10 +37,9 @@ const z_MIN = 0.05
 const z_MAX = 0.2
 const θ_MAX = π / 2
 
-#FILE_F_MAP = "data/F_map_stable_2.txt"
-#NAMES_F_MAP = ["x", "mu", "F", "F_error"]
-FILE_F_MAP = "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE-free-ipynb/PANTIRI_F_x_mu.txt"
-NAMES_F_MAP = ["x", "mu", "F"]
+FILE_F_MAP = "data/F_REFERENCE.txt"
+NAMES_F_MAP = ["x", "mu", "F", "F_error"]
+
 FILE_PS = "data/WideA_ZA_pk.dat"
 NAMES_PS = ["k (h/Mpc)", "P (Mpc/h)^3"]
 FILE_BACKGROUND = "data/WideA_ZA_background.dat"
@@ -52,8 +51,32 @@ column_NAMES_BACKGROUND = Dict([x => i for (i, x) in enumerate(NAMES_BACKGROUND)
 
 include("F_evaluation.jl")
 include("Background_functions.jl")
+include("Tool_functions.jl")
 include("Auto_doppler.jl")
 include("Auto_lensing.jl")
 include("Power_Spectrum.jl")
+
+function parameters_used(io::IO)
+     println(io, "# The following parameters were used for this computation: ")
+     println(io, "# CLASS Power Spectrum input file : \"$(FILE_PS)\"")
+     println(io, "# k_min = $k_min \t k_max = $k_max")
+     println(io, "# F window function input file : \"$(FILE_F_MAP)\"")
+     println(io, "# CLASS Background input file: \"$(FILE_BACKGROUND)\"")
+     println(io, "# \t h_0 = $h_0 \t \t EVERYTHING IS MEASURED WITHOUT h_0!")
+     println(io, "# \t comoving H_0 = $(@sprintf("%.6e", ℋ0)) h_0/Mpc")
+     println(io, "# \t growth factor D_0 = $D0")
+     println(io, "# \t growth rate f_0 = $(@sprintf("%.6f", f0))")
+     println(io, "# \t z_min = $z_MIN \t\tcomoving s_min = " *
+                 "$(@sprintf("%.5f", s_min)) Mpc/h_0")
+     println(io, "# \t z_max = $z_MAX \t\tcomoving s_max = " *
+                 "$(@sprintf("%.5f", s_max)) Mpc/h_0")
+     println(io, "# \t z_eff = $(@sprintf("%.5f", z_eff())) \tcomoving s_eff = " *
+                 "$(@sprintf("%.5f", s_eff)) Mpc/h_0")
+     println(io, "# \t Ω_b = $Ω_b \t Ω_cdm = $Ω_cdm \t Ω_M0 = $Ω_M0")
+     println(io, "# \t Volume of the survey V_survey = $(@sprintf("%.6e", V_survey()))")
+     println(io, "# ")
+end
+
+parameters_used(stdout)
 
 end # module

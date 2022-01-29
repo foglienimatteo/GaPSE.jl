@@ -114,7 +114,7 @@ can easily become overwhelming!
 
 See also: [`F_map`](@ref), [`integrand_F`](@ref)
 """
-function F(x, μ; θ_max = π / 2.0, tolerance = 1e-8, rtol = 1e-3, atol = 1e-5, kwargs...)
+function F(x, μ; θ_max = π / 2.0, tolerance = 1e-8, rtol = 1e-2, atol = 1e-3, kwargs...)
      @assert 0 < tolerance < 1 "tolerance must be inside (0,1), not $(tolerance)  "
      my_int(var) = integrand_F(var[1], var[2], x, μ, θ_max; tolerance = tolerance)
      a = [0.0, 0.0]
@@ -127,17 +127,7 @@ end
 ##########################################################################################92
 
 
-@doc raw"""
-     F_map(x_step = 0.01, μ_step = 0.01; out = "data/F_map.txt", 
-          x1 = 0, x2 = 3, μ1 = -1, μ2 = 1, kwargs...) 
-
-Evaluate the window function ``F(x,\mu; \theta_\mathrm{max})`` in a grid of ``\mu``
-and ``x`` values.
-
-
-See also: [`F_map`](@ref), [`integrand_F`](@ref)
-"""
-function F_map(x_step = 0.01, μ_step = 0.01;
+function F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
      out = "data/F_map.txt", x1 = 0, x2 = 3, μ1 = -1, μ2 = 1, kwargs...)
 
      @assert x1 >= 0.0 "The lower limit of x must be >0, not $(x1)!"
@@ -181,4 +171,61 @@ function F_map(x_step = 0.01, μ_step = 0.01;
           end
      end
 end
+
+
+
+function F_map(xs::Vector{Float64}, μs::Vector{Float64};
+     out = "data/F_map.txt", kwargs...)
+
+     @assert all(xs .>= 0.0) "All xs must be >=0.0!"
+     @assert all([xs[i+1] > xs[i] for i in 1:(length(xs)-1)]) "xs must be a float vector of increasing values!"
+     @assert all(xs .<= 10.0) "All xs must be <=10.0!"
+     @assert all(μs .>= -1.0) "All μs must be >=-1.0!"
+     @assert all([μs[i+1] > μs[i] for i in 1:(length(μs)-1)]) "μs must be a float vector of increasing values!"
+     @assert all(μs .<= 1.0) "All μs must be <=1.0!"
+
+     xs_grid = [x for x = xs for μ = μs]
+     μs_grid = [μ for x = xs for μ = μs]
+
+     time_1 = time()
+     new_F(x, μ) = F(x, μ; kwargs...)
+     Fs_grid = @showprogress map(new_F, xs_grid, μs_grid)
+     time_2 = time()
+
+     #run(`rm $(out)`)
+     open(out, "w") do io
+          println(io, "# Parameters used in this integration map:")
+          println(io, "# computational time (in s) : $(@sprintf("%.3f", time_2-time_1))")
+          print(io, "# kwards passed: ")
+
+          if isempty(kwargs)
+               println(io, "none")
+          else
+               print(io, "\n")
+               for key in keys(kwargs)
+                    println(io, "# \t\t$(key) = $(kwargs[key])")
+               end
+          end
+
+          println(io, "\nx \t mu \t F \t F_error")
+          for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
+               println(io, "$x\t $μ \t $(F[1]) \t $(F[2])")
+          end
+     end
+end
+
+
+
+
+@doc raw"""
+     F_map(x_step = 0.01, μ_step = 0.01; out = "data/F_map.txt", 
+          x1 = 0, x2 = 3, μ1 = -1, μ2 = 1, kwargs...) 
+
+Evaluate the window function ``F(x,\mu; \theta_\mathrm{max})`` in a grid of ``\mu``
+and ``x`` values.
+
+
+See also: [`F_map`](@ref), [`integrand_F`](@ref)
+"""
+F_map
 
