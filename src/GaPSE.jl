@@ -25,17 +25,17 @@ using TwoFAST # Licence: MIT "Expat" (o GPL ?)
 using Dierckx # Licence: BSD
 using HCubature, QuadGK, LegendrePolynomials  # Licence: MIT "Expat"
 using GridInterpolations  # Licence: MIT "Expat"
-using ProgressMeter, ProfileView, Documenter  # Licence: MIT "Expat"
+using ProgressMeter, Documenter  # Licence: MIT "Expat"
 using Test, Printf, DelimitedFiles  # Licence: MIT "Expat"
 
-Ω_b = 0.0489
-Ω_cdm = 0.251020
-Ω_M0 = Ω_b + Ω_cdm
+const Ω_b = 0.0489
+const Ω_cdm = 0.251020
+const Ω_M0 = Ω_b + Ω_cdm
 
-h_0 = 0.70
-z_MIN = 0.05
-z_MAX = 0.2
-θ_MAX = π / 2
+const h_0 = 0.70
+const z_MIN = 0.05
+const z_MAX = 0.2
+const θ_MAX = π / 2
 
 #FILE_F_MAP = "data/F_map_stable_2.txt"
 #NAMES_F_MAP = ["x", "mu", "F", "F_error"]

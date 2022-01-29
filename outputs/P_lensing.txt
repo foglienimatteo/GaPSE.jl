@@ -12,14 +12,14 @@
 # 	 z_max = 0.2 		comoving s_max = 571.70224 Mpc/h_0
 # 	 z_eff = 0.15046 	comoving s_eff = 435.37471 Mpc/h_0
 # 	 Ω_b = 0.0489 	 Ω_cdm = 0.25102 	 Ω_M0 = 0.29992
-# 	 Volume of the survey V = 3.845366e+08
+# 	 Volume of the survey V_survey = 3.845366e+08
 # 
 #
 # For this PS_multipole computation we set: 
 # 	 int_s_min = 0.01 	 int_s_max = 1143.4044841823932 
 # 	 #points used in Fourier transform N = 128
 # 	 multipole degree in consideration L = 0
-# computational time needed (in s) : 3.2390
+# computational time needed (in s) : 2.8479
 # kwards passed: none
 
 k 	 P
