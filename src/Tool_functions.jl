@@ -39,6 +39,10 @@ spline_F(x, μ) = GridInterpolations.interpolate(my_F_grid, _Fs, [μ, x])
 @doc raw"""
      spline_F(x, μ) :: Float64
 
+Return the 2-dim spline value of F in the given `(x,μ)` input.
+The spline is obtained through the `interpolate` function of the 
+[`GridInterpolations`](https://github.com/sisl/GridInterpolations.jl) Julia
+package applied to the input `FILE_F_MAP`.
 """
 spline_F
 

@@ -10,6 +10,8 @@ Documenter.makedocs(
      pages = [
           "Introduction" => "index.md",
           "The F window function" => "F_evaluation.md",
+          "Tool functions" => "Tool_functions.md",
+          "Power Spectrum Multipoles" => "Power_Spectrum.md",
      ],
 )
 

@@ -218,12 +218,17 @@ end
 
 
 @doc raw"""
-     F_map(x_step = 0.01, μ_step = 0.01; out = "data/F_map.txt", 
-          x1 = 0, x2 = 3, μ1 = -1, μ2 = 1, kwargs...) 
+     F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
+          out = "data/F_map.txt", x1 = 0, x2 = 3, μ1 = -1, μ2 = 1, kwargs...)
+     F_map(xs::Vector{Float64}, μs::Vector{Float64};
+          out = "data/F_map.txt", kwargs...)
 
-Evaluate the window function ``F(x,\mu; \theta_\mathrm{max})`` in a grid of ``\mu``
-and ``x`` values.
+Evaluate the window function ``F(x,\mu; \theta_\mathrm{max})`` in a rectangual grid 
+of ``\mu`` and ``x`` values.
 
+In the first method you specify start, stop and step for `x` and `μ` manually, while
+with thr second one you pass the values (through a vector )you want to calculate 
+the function in.
 
 See also: [`F_map`](@ref), [`integrand_F`](@ref)
 """

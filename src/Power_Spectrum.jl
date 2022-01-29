@@ -22,8 +22,40 @@ IMPLEMENTED_GR_EFFECTS = ["auto_doppler", "auto_lensing"]
 IMPLEMENTED_XI_FUNCS = [integral_on_mu_doppler, integral_on_mu_lensing]
 dict_gr_xi = Dict([a => b for (a, b) in zip(IMPLEMENTED_GR_EFFECTS, IMPLEMENTED_XI_FUNCS)]...)
 
+function PS_multipole(f_in::Union{Function,Dierckx.Spline1D};
+     L::Integer = 0, N = 128,
+     int_s_min = 1e-2, int_s_max = 2 * s_max,
+     pr::Bool = true)
+
+     t1 = time()
+     ks, pks = xicalc(x -> 2 * π^2 * f_in(x), L, 0; N = N, kmin = int_s_min, kmax = int_s_max, r0 = 1 / int_s_max)
+     t2 = time()
+     pr && println("\ntime needed for Power Spectrum  computation [in s] = $(t2-t1)\n")
+
+     if iseven(L)
+          return ks, ((2 * L + 1) / A_prime * ϕ(s_eff) * (-1)^(L / 2)) .* pks
+     else
+          return ks, ((2 * L + 1) / A_prime * ϕ(s_eff) * (-im)^L) .* pks
+     end
+end
+
+
+function PS_multipole(in::String; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
+     L::Integer = 0, pr::Bool = true)
+
+     xi_table = readdlm(in, comments = true)
+     ss = convert(Vector{Float64}, xi_table[2:end, 1])
+     fs = convert(Vector{Float64}, xi_table[2:end, 2])
+     f_in = Spline1D(ss, fs)
+
+     return PS_multipole(f_in; int_s_min = int_s_min, int_s_max = int_s_max, N = N, L = L, pr = pr)
+end
+
+
 
 @doc raw"""
+     PS_multipole(in::String; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
+          L::Integer = 0, pr::Bool = true)
      PS_multipole(f_in::Union{Function,Dierckx.Spline1D};
           L::Integer = 0,  N = 128, 
           int_s_min = 1e-2, int_s_max = 2 * s_max,
@@ -63,34 +95,12 @@ and the application of the effective redshift approximation.
 
 See also: [`V`](@ref), [`A`](@ref), [`A_prime`](@ref)
 """
-function PS_multipole(f_in::Union{Function,Dierckx.Spline1D};
-     L::Integer = 0, N = 128,
-     int_s_min = 1e-2, int_s_max = 2 * s_max,
-     pr::Bool = true)
-
-     t1 = time()
-     ks, pks = xicalc(x -> 2 * π^2 * f_in(x), L, 0; N = N, kmin = int_s_min, kmax = int_s_max, r0 = 1 / int_s_max)
-     t2 = time()
-     pr && println("\ntime needed for Power Spectrum  computation [in s] = $(t2-t1)\n")
-
-     if iseven(L)
-          return ks, ((2 * L + 1) / A_prime * ϕ(s_eff) * (-1)^(L / 2)) .* pks
-     else
-          return ks, ((2 * L + 1) / A_prime * ϕ(s_eff) * (-im)^L) .* pks
-     end
-end
+PS_multipole
 
 
-function PS_multipole(in::String; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
-     L::Integer = 0, pr::Bool = true)
 
-     xi_table = readdlm(in, comments = true)
-     ss = convert(Vector{Float64}, xi_table[2:end, 1])
-     fs = convert(Vector{Float64}, xi_table[2:end, 2])
-     f_in = Spline1D(ss, fs)
+##########################################################################################92
 
-     return PS_multipole(f_in; int_s_min = int_s_min, int_s_max = int_s_max, N = N, L = L, pr = pr)
-end
 
 
 function print_PS_multipole(out::String, in::String;

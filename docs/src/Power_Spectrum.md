@@ -4,10 +4,8 @@ DocTestSetup = quote
 end
 ```
 
-# The F window function
+# The Power Spectrum multipole computation
 
 ```@docs
-GaPSE.F
-GaPSE.integrand_F
-GaPSE.F_map
+GaPSE.PS_multipole
 ```
