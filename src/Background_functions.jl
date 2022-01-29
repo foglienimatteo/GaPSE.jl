@@ -17,12 +17,6 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-
-#FILE_F_MAP = "data/F_map_stable_2.txt"
-#NAMES_F_MAP = ["x", "mu", "F", "F_error"]
-FILE_F_MAP = "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE-free-ipynb/PANTIRI_F_x_mu.txt"
-NAMES_F_MAP = ["x", "mu", "F"]
-
 F_map_data = readdlm(FILE_F_MAP, comments = true)
 F_map_data_dict = Dict([name => F_map_data[2:end, i] for (i, name) in enumerate(NAMES_F_MAP)]...)
 
@@ -115,6 +109,41 @@ I11 = Spline1D(xicalc(PK, 1, 1; N = N, kmin = k_min, kmax = k_max, r0 = s0)...)
 σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), k_min, k_max)[1]
 
 
+
+@doc raw"""
+     I00, I20, I40, I02, I22, I31, I13, I11 ::Float64
+
+Return the value of the integral:
+
+```math
+I_\ell^n(s)=\int_0^\infty \frac{\mathrm{d} q}{2 \pi^2} q^2 \, P(q) 
+    \, \frac{j_\ell(qs)}{(qs)^n}
+```
+
+where, for a generic Iab name, ``\ell`` is the FIRST number (`a`) and 
+``n`` the second (`b`).
+
+These function are obtained through a `Spline1D`` (from the 
+[Dierckx](https://github.com/kbarbary/Dierckx.jl) Julia package) of the Spherical
+Bessel Transform function `xicalc` (from the 
+[`TwoFAST`](https://github.com/hsgg/TwoFAST.jl) Julia package) applied to the 
+input Power Spectrum `P(q)`.
+"""
+I00, I20, I40, I02, I22, I31, I13, I11
+
+
+@doc raw"""
+     σ_0, σ_1, σ_2, σ_3
+
+These are the results of the following integral:
+```math
+     \sigma_i = \int_0^\infty \frac{\mathrm{d} q}{2 \pi^2} q^{2-i} \, P(q) 
+```
+where  `P(q)` is the input Power Spectrum.
+"""
+σ_0, σ_1, σ_2, σ_3
+
+
 ##########################################################################################92
 
 
@@ -127,18 +156,71 @@ const s_min = s_of_z(z_MIN)
 const s_max = s_of_z(z_MAX)
 ϕ(s; s_min = s_min, s_max = s_max) = s_min < s < s_max ? 1.0 : 0.0
 W(θ; θ_max = θ_MAX) = 0 < θ < θ_max ? 1.0 : 0.0
-function V(s_min = s_min, s_max = s_max, θ_max = θ_MAX)
-     r1, r2 = s_min * sin(θ_max), s_max * sin(θ_max)
-     d1, d2 = s_min * cos(θ_max), s_max * cos(θ_max)
-     calotta_up = π / 3 * (s_max - d2)^2 * (2 * s_max + d2)
-     calotta_down = π / 3 * (s_min - d1)^2 * (2 * s_min + d1)
-     tronco_cono = π / 3 * (r1^2 + r1 * r2 + r2^2) * (s_max - s_min) * cos(θ_max)
-     return calotta_up + tronco_cono - calotta_down
+
+
+@doc raw"""
+     V_survey(s_min = s_min, s_max = s_max, θ_max = θ_MAX) :: Float64
+
+Return the volume of a survey with azimutal simmetry, i.e.:
+
+```math
+\begin{split}
+    V(s_\mathrm{max}, s_\mathrm{min}, \theta_\mathrm{max}) &= \; C_\mathrm{up} - C_\mathrm{down} + TC \\
+    &C_\mathrm{up} = \frac{\pi}{3} s_\mathrm{max}^3 \, 
+        (1 - \cos\theta_\mathrm{max})^2 \, (2 + \cos\theta_\mathrm{max}) \\
+    &C_\mathrm{down} = \frac{\pi}{3} s_\mathrm{min}^3 \, 
+        (1 - \cos\theta_\mathrm{max})^2 \, (2 + \cos\theta_\mathrm{max}) \\
+    &TC = \frac{\pi}{3} (s_\mathrm{max}^2 + s_\mathrm{min}^2 + 
+        s_\mathrm{max} \,s_\mathrm{min}) \,  (s_\mathrm{max} - s_\mathrm{min})\, 
+        \cos\theta_\mathrm{max}\, \sin^2\theta_\mathrm{max}
+\end{split}
+```
+"""
+function V_survey(s_min = s_min, s_max = s_max, θ_max = θ_MAX)
+     sin_θ, cos_θ = sin(θ_max), cos(θ_max)
+     diff_up_down = (s_max^3 - s_min^3) * (1 - cos_θ)^2 * (2 + cos_θ)
+     tr = (s_max^2 + s_min^2 + s_max * s_min) * (s_max - s_min) * cos_θ * sin_θ^2
+     #r1, r2 = s_min * sin(θ_max), s_max * sin(θ_max)
+     #d1, d2 = s_min * cos(θ_max), s_max * cos(θ_max)
+     #calotta_up = π / 3 * (s_max - d2)^2 * (2 * s_max + d2)
+     #calotta_down = π / 3 * (s_min - d1)^2 * (2 * s_min + d1)
+     #tronco_cono = π / 3 * (r1^2 + r1 * r2 + r2^2) * (s_max - s_min) * cos(θ_max)
+     return π / 3.0 * (diff_up_down + tr)
 end
 
+
+@doc raw"""
+     A(s_min = s_min, s_max = s_max, θ_max = θ_MAX) :: Float64
+
+Return the Power Spectrum multipole normalization coefficient `A`, i.e.:
+```math
+     A(s_\mathrm{max}, s_\mathrm{min}, \theta_\mathrm{max})= 2 \, \pi \, 
+     V(s_\mathrm{max}, s_\mathrm{min}, \theta_\mathrm{max})
+```
+where ``V(s_\mathrm{max}, s_\mathrm{min}, \theta_\mathrm{max})`` is the 
+survey volume.
+
+Pay attention: this is NOT used for the normalization of [`PS`](@ref), see
+instead [`A_prime`](@ref)
+
+See also: [`V_survey`](@ref)
+"""
 function A(s_min = s_min, s_max = s_max, θ_max = θ_MAX)
-     2.0 * π * V(s_min, s_max, θ_max)
+     2.0 * π * V_survey(s_min, s_max, θ_max)
 end
+
+
+@doc raw"""
+     A_prime :: Float64
+
+It's the Power Spectrum multipole normalization coefficient ``A^{'}``, i.e.:
+```math
+     A^{'} = \frac{3 \, A}{ (s_\mathrm{max}^3 - s_\mathrm{min}^3)} = 4 \pi^2
+```
+
+See also: [`A`](@ref), [`V_survey`](@ref)
+"""
+const A_prime = 4.0 * π^2
 
 function z_eff(s_min = s_min, s_max = s_max, θ_max = θ_MAX)
      int_w2 = 2 * π * (1 - cos(θ_max))
@@ -171,7 +253,7 @@ function parameters_used(io::IO)
      println(io, "# \t z_eff = $(@sprintf("%.5f", z_eff())) \tcomoving s_eff = " *
                  "$(@sprintf("%.5f", s_eff)) Mpc/h_0")
      println(io, "# \t Ω_b = $Ω_b \t Ω_cdm = $Ω_cdm \t Ω_M0 = $Ω_M0")
-     println(io, "# \t Volume of the survey V = $(@sprintf("%.6e", V()))")
+     println(io, "# \t Volume of the survey V_survey = $(@sprintf("%.6e", V_survey()))")
      println(io, "# ")
 end
 

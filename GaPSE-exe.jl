@@ -11,9 +11,9 @@ FILE_NAME = split(PROGRAM_FILE, "/")[end]
 function main()
 
 
-     GaPSE.print_map_int_on_mu_lensing("outputs/xi_lensing.txt"; 
-          χ_atol = 5e-3, χ_rtol=1e-3, atol = 1e-3, rtol = 1e-3, tol=1)
-     GaPSE.print_PS("outputs/P_lensing.txt", "outputs/xi_lensing.txt")
+     #GaPSE.print_map_int_on_mu_lensing("outputs/xi_lensing.txt"; 
+     #     χ_atol = 5e-3, χ_rtol=1e-3, atol = 1e-3, rtol = 1e-3, tol=1)
+     GaPSE.print_PS_multipole("outputs/P_lensing.txt", "outputs/xi_lensing.txt")
 
      #GaPSE.print_map_int_on_mu_doppler("xi_doppler.txt",
      #     atol = 1e-3, rtol = 1e-2, tol = 0.1, enhancer=1)

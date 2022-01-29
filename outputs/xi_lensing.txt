@@ -5,15 +5,16 @@
 # F window function input file : "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE-free-ipynb/PANTIRI_F_x_mu.txt"
 # CLASS Background input file: "data/WideA_ZA_background.dat"
 # 	 h_0 = 0.7 	 	 EVERYTHING IS MEASURED WITHOUT h_0!
-# 	 comoving H_0 = 3.3356e-04 h_0/Mpc
+# 	 comoving H_0 = 3.335641e-04 h_0/Mpc
 # 	 growth factor D_0 = 1.0
-# 	 growth rate f_0 = 0.5127
+# 	 growth rate f_0 = 0.512700
 # 	 z_min = 0.05 		comoving s_min = 148.19200 Mpc/h_0
 # 	 z_max = 0.2 		comoving s_max = 571.70224 Mpc/h_0
 # 	 z_eff = 0.15046 	comoving s_eff = 435.37471 Mpc/h_0
 # 	 Ω_b = 0.0489 	 Ω_cdm = 0.25102 	 Ω_M0 = 0.29992
-# 	 Volume of the survey V = 3.8454e+08
-# computational time needed (in s) : 178.6715
+# 	 Volume of the survey V = 3.845366e+08
+# 
+# computational time needed (in s) : 180.5927
 # kwards passed: 
 # 		χ_atol = 0.005
 # 		χ_rtol = 0.001

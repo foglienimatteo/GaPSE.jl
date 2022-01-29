@@ -17,18 +17,3 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-
-using GaPSE, Test
-
-
-##########################################################################################92
-
-@testset "test_Power_Spectrum" begin
-     include("test_Power_Spectrum.jl")
-end
-
-@testset "test_auto_doppler" begin
-     include("test_auto_doppler.jl")
-end
-
-
