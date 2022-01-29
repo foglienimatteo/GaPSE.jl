@@ -15,4 +15,4 @@ Documenter.makedocs(
      ],
 )
 
-deploydocs(repo = "github.com/cosmofico97/GaPSE.git")
+deploydocs(repo = "github.com/cosmofico97/GaPSE.jl.git")

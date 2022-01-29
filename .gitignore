@@ -40,3 +40,4 @@ Manifest.toml
 *.json
 *.jlprof
 .ipynb_checkpoints/
+docs/build/
