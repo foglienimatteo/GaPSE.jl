@@ -20,8 +20,9 @@
 
 
 @doc raw"""
+     ξ_doppler(s1, s2, y; enhancer = 1, tol = 1)
 
-
+Return the Doppler auto-correlation function, defined as follows:
 ```math
 begin{equation}
     \xi^{v_{\parallel}v_{\parallel}} (s_1, s_2, \cos{\theta}) 
@@ -38,6 +39,21 @@ the J coefficients are given by (with ``y = \cos{\theta}``):
     J_{04} (s_1, s_2, y) & = \frac{1}{105} (y^2 s_1 s_2 - 2y(s_1^2 + s_2^2) + 3s_1 s_2) \\
     J_{20} (s_1, s_2, y) & = \frac{1}{3} y s^2
 \end{align}
+```
+
+`enhancer` is just a float number used in order to deal better with small numbers; the returned
+value is actually `enhancer * xi_doppler`, where `xi_doppler` is the true value calculated
+as shown before.
+
+`tol` is a flaot number that set the minimum distance of interest between the two galaxies
+placed at ``\mathbf{s_1}`` and ``\mathbf{s_2}``; the output is set to `0.0` if it is true
+that:
+```math
+begin{split}
+     s = s(s_1, s_2, y) &= \sqrt{s_1^2 + s_2^2 - 2 \, s_1 \, s_2 \, y } \ge \mathrm{tol} \\
+
+     &\;\mathbf{where} \; \, y=\cos\theta = \hat{\mathbf{s}_1}\dot\hat{\mathbf{s}_2}
+\end{split}
 ```
 """
 function ξ_doppler(s1, s2, y; enhancer = 1, tol = 1)
