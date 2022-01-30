@@ -50,9 +50,9 @@ and the ``J`` coefficients are given by (with ``y = \cos{\theta}``)
                (4 y (\chi_1^2 + \chi_2^2) - 3 \chi_1 \chi_2 y^2 - 5 \chi_1 \chi_2) \\
     J_{31} & = 9 y \chi^2 \\
     J_{22} & = \frac{9 \chi_1 \chi_2}{4 \chi^4}
-               [2 \chi_1^4 (7 y^2 - 3) - 16\chi_1^3\chi_2y(y^2+1) 
-               + \chi_1^2 \chi_2^2 (11 y^4 + 14 y^2 + 23) - 16 \chi_1 \chi_2^3 y (y^2 + 1) 
-               + 2\chi_2^4(7y^2-3)]
+               [ 2 (\chi_1^4 + \chi_2^4) (7 y^2 - 3) 
+                 - 16 y \chi_1 \chi_2 (\chi_1^2 + \chi_2^2) (y^2+1) 
+               + \chi_1^2 \chi_2^2 (11 y^4 + 14 y^2 + 23)]
 \end{align*}
 ```
 
@@ -135,17 +135,15 @@ Return the Lensing Auto-correlation function
 ``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})`` , defined as follows:
     
 ```math
-\begin{equation}
-    \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) = 
-    \int_0^{s_1} \mathrm{d} \chi_1 \int_0^{s_2} \mathrm{d} \chi_2 
-     \frac{1}{2}
-     \frac{
-          \mathcal{H}_0^4 \Omega_{ \mathrm{M0}}^2 D_1 D_2 (\chi_1 - s_1)(\chi_2 - s_2)
-     }{
-          s_1 s_2 a(\chi_1) a(\chi_2) }
-     (J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
-          J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi))
-\end{equation}
+\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) = 
+\int_0^{s_1} \mathrm{d} \chi_1 \int_0^{s_2} \mathrm{d} \chi_2 
+\frac{1}{2}
+\frac{
+     \mathcal{H}_0^4 \Omega_{ \mathrm{M0}}^2 D_1 D_2 (\chi_1 - s_1)(\chi_2 - s_2)
+}{
+     s_1 s_2 a(\chi_1) a(\chi_2) }
+(J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
+     J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi))
 ```
 
 where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
@@ -153,17 +151,17 @@ where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``,
 and the ``J`` coefficients are given by (with ``y = \cos{\theta}``)
 
 ```math
-\begin{align}
+\begin{align*}
     J_{00} & = - \frac{3 \chi_1^2 \chi_2^2}{4 \chi^4} (y^2 - 1) 
                (8 y (\chi_1^2 + \chi_2^2) - 9 \chi_1 \chi_2 y^2 - 7 \chi_1 \chi_2) \\
     J_{02} & = - \frac{3 \chi_1^2 \chi_2^2}{2 \chi^4} (y^2 - 1)
                (4 y (\chi_1^2 + \chi_2^2) - 3 \chi_1 \chi_2 y^2 - 5 \chi_1 \chi_2) \\
     J_{31} & = 9 y \chi^2 \\
     J_{22} & = \frac{9 \chi_1 \chi_2}{4 \chi^4}
-               [2 \chi_1^4 (7 y^2 - 3) - 16\chi_1^3\chi_2y(y^2+1) 
-               + \chi_1^2 \chi_2^2 (11 y^4 + 14 y^2 + 23) - 16 \chi_1 \chi_2^3 y (y^2 + 1) 
-               + 2\chi_2^4(7y^2-3)]
-\end{align}
+               [ 2 (\chi_1^4 + \chi_2^4) (7 y^2 - 3) 
+                 - 16 y \chi_1 \chi_2 (\chi_1^2 + \chi_2^2) (y^2+1) 
+               + \chi_1^2 \chi_2^2 (11 y^4 + 14 y^2 + 23)]
+\end{align*}
 ```
 
 The computation is made applying [`hcubature`](@ref) (see the 
@@ -200,9 +198,9 @@ the integrand function `integrand_ξ_lensing`.
   of the fast increase for the evaluation time needed for this integral.
 
 
-## Returns
+## Return
 
-A `Tuple{Float64, Float64}` : the former is the integral ressult, the latter its error.
+A `Tuple{Float64, Float64}` : the former is the integral result, the latter its error.
 
 See also: [`integrand_ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
 [`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref)
@@ -286,7 +284,7 @@ end
 
 
 @doc raw"""
-     integral_on_mu_lensing(s1, s;  L::Integer = 0, enhancer = 1, 
+     integral_on_mu_lensing(s1, s;  L::Integer = 0, enhancer = 1e6, 
           Δχ_min = 1e-6, tol = 0.5, χ_atol = 1e-3, χ_rtol = 1e-3, 
           kwargs...) :: Tuple{Float64, Float64}
 
@@ -315,9 +313,9 @@ the integrand function `integrand_on_mu_lensing`.
   close points which are insignificants (cosnidering that `tol` is a distance, so it
   is measured in ``h_0^{-1}\,\mathrm{Mpc}``).
 
-- `enhancer = 1` : multiply the resulting ``f(s_1, s_2, y, \chi_1, \chi_2)`` value; it
-  is very useful for interal computations in other functions (for instance 
-  `map_integral_on_mu_lensing`), in order to deal better with small float numbers.
+- `enhancer = 1e6` : inside the integration, multiply the results in order to deal with
+  values not too close to zero; at the end, the result is also divided for this number, 
+  restoring the correct value.
 
 - ` Δχ_min = 1e-6` : a Float64 parameter used inside `integrand_ξ_lensing` in order to
   avoid computatinal divergences; it should be `0<Δχ_min<<1`, see the `integrand_ξ_lensing`
@@ -336,15 +334,15 @@ the integrand function `integrand_on_mu_lensing`.
   of the fast increase for the evaluation time needed for this integral.
 
 
-## Returns
+## Return
 
-A `Tuple{Float64, Float64}` : the former is the integral ressult, the latter its error.
+A `Tuple{Float64, Float64}` : the former is the integral result, the latter its error.
 
 See also: [`integrand_ξ_lensing`](@ref), [`ξ_lensing`](@ref)
 [`integrand_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref)
 """
-function integral_on_mu_lensing(s1, s; L::Integer = 0, enhancer = 1,
+function integral_on_mu_lensing(s1, s; L::Integer = 0, enhancer = 1e6,
      Δχ_min = 1e-6, tol = 0.5, χ_atol = 1e-3, χ_rtol = 1e-3,
      kwargs...)
 
@@ -352,10 +350,75 @@ function integral_on_mu_lensing(s1, s; L::Integer = 0, enhancer = 1,
           L = L, Δχ_min = Δχ_min, χ_atol = χ_atol, χ_rtol = χ_rtol)[1]
      int = quadgk(μ -> f(μ), -1.0, 1.0; kwargs...)
      #println("s1 = $s1 \t s2 = $s \t int = $int")
-     return int
+     return int ./ enhancer
 end
 
 
+
+@doc raw"""
+     map_integral_on_mu_lensing(s1 = s_eff; L::Integer = 0, pr::Bool = true, 
+          Δχ_min = 1e-6, χ_atol = 1e-3, χ_rtol = 1e-3, enhancer = 1e6, 
+          tol = 0.5, kwargs...
+          ) :: Tuple{Vector{Float64}, Vector{Float64}, Vector{Float64}}
+
+Evaluate `integral_on_mu_lensing` in a range of distance values, returning value
+and error for each integral.
+
+## Arguments
+
+- `s1 = s_eff` : as already mentioned, in this program we use the effective redshift
+  approximation, so the integral on ``s_1`` is replaced with an evaluation of the integrand
+  in ``s1 = s_eff``.
+
+## Optional arguments 
+
+- `L::Integer = 0` : Lagrange polynomial degree to be used in the computation.
+
+- `pr::Bool = true` : tells if the println messages should be printed or not.
+
+- `tol = 0.5` : if during the evaluation of the integral inside 
+  `integral_on_mu_lensing` happens that 
+  ``s =  \sqrt{s_1^2 + s_2^2 - 2 \, s_1 s_2 y} \leq \mathrm{tol}``, 
+  then the integrand value is `0.0`; 
+  it prevents computational problems conserning too
+  close points which are insignificants (cosnidering that `tol` is a distance, so it
+  is measured in ``h_0^{-1}\,\mathrm{Mpc}``).
+
+- `enhancer = 1e6` : inside the integration, multiply the results in order to deal with
+  values not too close to zero; at the end, the result is also divided for this number, 
+  restoring the correct value.
+
+- ` Δχ_min = 1e-6` : a Float64 parameter used inside `integrand_ξ_lensing` in order to
+  avoid computatinal divergences; it should be `0<Δχ_min<<1`, see the `integrand_ξ_lensing`
+  docstring for more informations.
+
+- `χ_atol = 1e-3` : absolute tolerance to be used in the computation of the 2-dims integral
+  on ``\chi_1`` and ``\chi_2``, made inside `ξ_lensing`; for computational time reasons,
+  it's better to use `χ_atol ≥ 1e-5`
+
+- `χ_rtol = 1e-3` : relative tolerance to be used in the computation of the 2-dims integral
+  on ``\chi_1`` and ``\chi_2``, made inside `ξ_lensing`; for computational time reasons,
+  it's better to use `χ_rtol ≥ 1e-4`.
+
+- `kwargs...` : keyword arguments which should be passed to `quadgk` when performing
+  the 1-dim integral in `integral_on_mu_lensing`; we shall recomend to set `atol≥1e-4` 
+  and `rtol≥-3`, as a consequence of the fast increase for the evaluation time needed for this integral.
+
+
+
+## Return
+
+A `Tuple{Vector{Float64}, Vector{Float64}, Vector{Float64}}`: 
+- the first `Vector{Float64}` contains the distance `s` where the 
+  integarl is evaluated;
+- the second one the integral results at the corresponding distance; 
+- the third and last one contains the error in the integral estimation,
+  as returned by `integral_on_mu_lensing`
+
+See also: [`z_eff`](@ref), [`z_eff`](@ref), [`integrand_ξ_lensing`](@ref), 
+[`ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref), 
+[`integral_on_mu_lensing`](@ref), [`print_map_integral_on_mu_lensing`](@ref)
+"""
 function map_integral_on_mu_lensing(s1 = s_eff;
      L::Integer = 0, pr::Bool = true, Δχ_min = 1e-6,
      χ_atol = 1e-3, χ_rtol = 1e-3,
@@ -367,7 +430,7 @@ function map_integral_on_mu_lensing(s1 = s_eff;
      #ss = range(tol, 1000, length = 1000)
      f(s) = integral_on_mu_lensing(s1, s; pr = pr, L = L, enhancer = enhancer,
           Δχ_min = Δχ_min, χ_atol = χ_atol, χ_rtol = χ_rtol, tol = tol, kwargs...)
-     vec = @showprogress [f(s) ./ enhancer for s in ss]
+     vec = @showprogress [f(s) for s in ss]
      xis, xis_err = [x[1] for x in vec], [x[2] for x in vec]
      t2 = time()
      pr && println("\ntime needed for map_integral_on_mu_lensing [in s] = $(t2-t1)")
@@ -406,11 +469,34 @@ end
 
 
 
-function print_map_int_on_mu_lensing(out::String; L::Integer = 0,
-     s1 = s_eff, pr::Bool = true, kwargs...)
+@doc raw"""
+     print_map_int_on_mu_lensing(out::String; L::Integer = 0,
+          s1 = s_eff, pr::Bool = true, kwargs...)
+
+Print the output of `map_integral_on_mu_lensing` to the given input
+filename `out`, with some meta-data at the beginning of it.
+If that file already exists, it will be destroyed an re-created.
+
+## Arguments
+
+- `s1 = s_eff` : as already mentioned, in this program we use the effective redshift
+  approximation, so the integral on ``s_1`` is replaced with an evaluation of the integrand
+  in ``s1 = s_eff``.
+
+## Optional arguments
+
+- `kwargs...` : all the keyword arguments supported by `map_integral_on_mu_lensing`;
+  see its docstring for more details.
+
+
+See also: [`z_eff`](@ref), [`z_eff`](@ref), [`integrand_ξ_lensing`](@ref), 
+[`ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref), 
+[`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref)
+"""
+function print_map_int_on_mu_lensing(out::String; s1 = s_eff, kwargs...)
 
      t1 = time()
-     vec = map_integral_on_mu_lensing(s1; L = L, pr = pr, kwargs...)
+     vec = map_integral_on_mu_lensing(s1; kwargs...)
      t2 = time()
 
      isfile(out) && run(`rm $out`)
