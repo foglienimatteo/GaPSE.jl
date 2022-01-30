@@ -13,6 +13,9 @@ Documenter.makedocs(
           "Background functions" => "Background_functions.md",
           "Tool functions" => "Tool_functions.md",
           "Power Spectrum Multipoles" => "Power_Spectrum.md",
+          "Auto Correlations" => [
+               "Auto Doppler" => "Auto_doppler.md",
+               "Auto Lensing" => "Auto_Lensing.md"]
      ],
 )
 
