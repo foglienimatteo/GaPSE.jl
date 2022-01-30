@@ -143,7 +143,7 @@ end
 ##########################################################################################92
 
 
-
+#=
 # mean time of evaluation: 141 seconds!
 # too long to be used
 function PS_doppler_exact(; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
@@ -168,5 +168,5 @@ function PS_doppler_exact(; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
           ))
      end
 end
-
+=#
 

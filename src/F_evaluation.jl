@@ -37,7 +37,8 @@ f(x,\mu, \theta, \theta_1; \theta_\mathrm{max}) =
     \frac{4\pi \sin\theta\sin\theta_1}
         {\sqrt{(\sin\theta\sin\theta_1)^2-(\cos\theta\cos\theta_1-\mu)^2}}
 \end{split}
-
+```
+```math
 \begin{equation}
 F(x,\mu; \theta_\mathrm{max}) = \int_0^{\theta_\mathrm{max}} 
         \mathrm{d}\theta_1 \int_0^\pi \mathrm{d} \theta 

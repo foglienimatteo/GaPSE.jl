@@ -17,7 +17,12 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-function integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 0.5, enhancer = 1, Δχ_min=1e-6)
+
+@doc raw"""
+     integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 0.5, enhancer = 1, Δχ_min = 1e-6)
+
+"""
+function integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 0.5, enhancer = 1, Δχ_min = 1e-6)
      (s(s1, s2, y) >= tol) || (return 0.0)
 
      Δχ = √(χ1^2 + χ2^2 - 2 * χ1 * χ2 * y)
@@ -34,7 +39,7 @@ function integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 0.5, enhancer = 1, Δχ
 
      if Δχ > Δχ_min
           χ1χ2 = χ1 * χ2
-     
+
           new_J00 = -0.75 * χ1χ2^2 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
           new_J02 = -1.5 * χ1χ2^2 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
           new_J31 = 9 * y * Δχ^6
@@ -45,23 +50,72 @@ function integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 0.5, enhancer = 1, Δχ
                          +
                          χ1χ2^2 * (11y^4 + 14y^2 + 23)
                     )
-     
-     
+
+
           return 0.5 * enhancer * factor / denomin * (
                new_J00 * I00(Δχ) + new_J02 * I20(Δχ) +
                new_J31 * I13(Δχ) + new_J22 * I22(Δχ)
           )
      else
           lim = 4.0 / 15.0 * (5.0 * σ_2 + 2.0 / 3.0 * σ_0 * s1^2 * χ2^2)
-     
+
           return 0.5 * 9.0 / 4.0 * enhancer * factor / denomin * lim
      end
 end
 
 
+
+@doc raw"""
+     ξ_lensing(s1, s2, y; tol = 0.5, enhancer = 1, Δχ_min = 1e-6, kwargs...)
+
+Return the Lensing Auto-correlation function, defined as follows:
+
+``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``     
+```math
+\begin{equation}
+    \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) = 
+    \int_0^{s_1} \mathrm{d} \chi_1 \int_0^{s_2} \mathrm{d} \chi_2 
+     \frac{
+          \mathcal{H}_0^4 \Omega_{ \mathrm{M0}}^2 D_1 D_2 (\chi_1 - s_1)(\chi_2 - s_2)
+     }{
+          s_1 s_2 a(\chi_1) a(\chi_2) }
+     (J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
+          J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi))
+\end{equation}
+```
+
+where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
+``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2\chi_1\chi_2\cos{\theta}}`` 
+and the ``J`` coefficients are given by (with ``y = \cos{\theta}``)
+
+```math
+\begin{align}
+    J_{00} & = - \frac{3 \chi_1^2 \chi_2^2}{4 \chi^4} (y^2 - 1) 
+               (8 y (\chi_1^2 + \chi_2^2) - 9 \chi_1 \chi_2 y^2 - 7 \chi_1 \chi_2) \\
+    J_{02} & = - \frac{3 \chi_1^2 \chi_2^2}{2 \chi^4} (y^2 - 1)
+               (4 y (\chi_1^2 + \chi_2^2) - 3 \chi_1 \chi_2 y^2 - 5 \chi_1 \chi_2) \\
+    J_{31} & = 9 y \chi^2 \\
+    J_{22} & = \frac{9 \chi_1 \chi_2}{4 \chi^4}
+               [2 \chi_1^4 (7 y^2 - 3) - 16\chi_1^3\chi_2y(y^2+1) 
+               + \chi_1^2 \chi_2^2 (11 y^4 + 14 y^2 + 23) - 16 \chi_1 \chi_2^3 y (y^2 + 1) 
+               + 2\chi_2^4(7y^2-3)]
+\end{align}
+```
+
+The computation is made applying [`hcubature`](@ref) (see the 
+[Hcubature](https://github.com/JuliaMath/HCubature.jl) Julia package) to
+the integrand function `integrand_ξ_lensing`.
+
+## Optional arguments
+
+-  `tol = 0.5` : 
+
+
+See also: [`integrand_ξ_lensing`](@ref)
+"""
 function ξ_lensing(s1, s2, y; tol = 0.5, enhancer = 1, Δχ_min = 1e-6, kwargs...)
-     my_int(var) = integrand_ξ_lensing(var[1], var[2], s1, s2, y; 
-               tol = tol, Δχ_min = Δχ_min, enhancer = enhancer)
+     my_int(var) = integrand_ξ_lensing(var[1], var[2], s1, s2, y;
+          tol = tol, Δχ_min = Δχ_min, enhancer = enhancer)
      a = [0.0, 0.0]
      b = [s1, s2]
      int = hcubature(my_int, a, b; kwargs...)
@@ -113,6 +167,7 @@ function map_integral_on_mu_lensing(s1 = s_eff;
 end
 
 
+#=
 function PS_lensing(; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
      L::Integer = 0, pr::Bool = true, kwargs...)
 
@@ -135,6 +190,7 @@ function PS_lensing(; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
           ))
      end
 end
+=#
 
 
 

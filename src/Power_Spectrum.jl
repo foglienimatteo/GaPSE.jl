@@ -93,7 +93,7 @@ f_\mathrm{in}(s_1, s) =  \int_{-1}^{+1} \mathrm{d} \mu \;
 ```
 and the application of the effective redshift approximation.
 
-See also: [`V`](@ref), [`A`](@ref), [`A_prime`](@ref)
+See also: [`V_survey`](@ref), [`A`](@ref), [`A_prime`](@ref)
 """
 PS_multipole
 
