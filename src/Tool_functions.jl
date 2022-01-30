@@ -83,10 +83,10 @@ I_\ell^n(s)=\int_0^\infty \frac{\mathrm{d} q}{2 \pi^2} q^2 \, P(q)
 where, for a generic Iab name, ``\ell`` is the FIRST number (`a`) and 
 ``n`` the second (`b`).
 
-These function are obtained through a `Spline1D`` (from the 
+These function are obtained through a `Spline1D` (from the 
 [Dierckx](https://github.com/kbarbary/Dierckx.jl) Julia package) of the Spherical
 Bessel Transform function `xicalc` (from the 
-[`TwoFAST`](https://github.com/hsgg/TwoFAST.jl) Julia package) applied to the 
+[TwoFAST](https://github.com/hsgg/TwoFAST.jl) Julia package) applied to the 
 input Power Spectrum `P(q)`.
 """
 I00, I20, I40, I02, I22, I31, I13, I11
