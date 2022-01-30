@@ -24,21 +24,19 @@
 
 Return the Doppler auto-correlation function, defined as follows:
 ```math
-begin{equation}
-    \xi^{v_{\parallel}v_{\parallel}} (s_1, s_2, \cos{\theta}) 
-    = D_1 D_2 f_1 f_2 \mathcal{H}_1 \mathcal{H}_2 \mathcal{R}_1 \mathcal{R}_2 
-    (J_{00}\, I^0_0(s) + J_{02}\,I^0_2(s) + J_{04}\,I^0_4(s) + J_{20}\,I^2_0(s))
-\end{equation}
+\xi^{v_{\parallel}v_{\parallel}} (s_1, s_2, \cos{\theta}) 
+= D_1 D_2 f_1 f_2 \mathcal{H}_1 \mathcal{H}_2 \mathcal{R}_1 \mathcal{R}_2 
+(J_{00}\, I^0_0(s) + J_{02}\,I^0_2(s) + J_{04}\,I^0_4(s) + J_{20}\,I^2_0(s))
 ```
 where ``D_1 = D(s_1)``, ``D_2 = D(s_2)`` and so on, ``\mathcal{H} = a H`` and 
 the J coefficients are given by (with ``y = \cos{\theta}``):
 ```math
-\begin{align}
+\begin{align*}
     J_{00} (s_1, s_2, y) & = \frac{1}{45} (y^2 s_1 s_2 - 2y(s_1^2 + s_2^2) + 3s_1 s_2) \\
     J_{02} (s_1, s_2, y) & = \frac{2}{63} (y^2 s_1 s_2 - 2y(s_1^2 + s_2^2) + 3s_1 s_2) \\
     J_{04} (s_1, s_2, y) & = \frac{1}{105} (y^2 s_1 s_2 - 2y(s_1^2 + s_2^2) + 3s_1 s_2) \\
     J_{20} (s_1, s_2, y) & = \frac{1}{3} y s^2
-\end{align}
+\end{align*}
 ```
 
 `enhancer` is just a float number used in order to deal better with small numbers; the returned

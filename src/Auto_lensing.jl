@@ -27,16 +27,14 @@ Return the integarnd of the Lensing Auto-correlation function
 
     
 ```math
-\begin{equation}
-    f(s_1, s_2, y, \chi_1, \chi_2) = 
-    \frac{1}{2}
-     \frac{
-          \mathcal{H}_0^4 \Omega_{ \mathrm{M0}}^2 D_1 D_2 (\chi_1 - s_1)(\chi_2 - s_2)
-     }{
-          s_1 s_2 a(\chi_1) a(\chi_2) }
-     (J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
-          J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi))
-\end{equation}
+f(s_1, s_2, y, \chi_1, \chi_2) = 
+\frac{1}{2}
+\frac{
+     \mathcal{H}_0^4 \Omega_{ \mathrm{M0}}^2 D_1 D_2 (\chi_1 - s_1)(\chi_2 - s_2)
+}{
+     s_1 s_2 a(\chi_1) a(\chi_2) }
+(J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
+     J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi))
 ```
 
 where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
@@ -44,7 +42,7 @@ where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``,
 and the ``J`` coefficients are given by (with ``y = \cos{\theta}``)
 
 ```math
-\begin{align}
+\begin{align*}
     J_{00} & = - \frac{3 \chi_1^2 \chi_2^2}{4 \chi^4} (y^2 - 1) 
                (8 y (\chi_1^2 + \chi_2^2) - 9 \chi_1 \chi_2 y^2 - 7 \chi_1 \chi_2) \\
     J_{02} & = - \frac{3 \chi_1^2 \chi_2^2}{2 \chi^4} (y^2 - 1)
@@ -54,7 +52,7 @@ and the ``J`` coefficients are given by (with ``y = \cos{\theta}``)
                [2 \chi_1^4 (7 y^2 - 3) - 16\chi_1^3\chi_2y(y^2+1) 
                + \chi_1^2 \chi_2^2 (11 y^4 + 14 y^2 + 23) - 16 \chi_1 \chi_2^3 y (y^2 + 1) 
                + 2\chi_2^4(7y^2-3)]
-\end{align}
+\end{align*}
 ```
 
 ## Optional arguments 
@@ -186,6 +184,16 @@ function ξ_lensing(s1, s2, y; tol = 0.5, enhancer = 1, Δχ_min = 1e-6, kwargs.
      return int
 end
 
+
+
+##########################################################################################92
+
+
+
+
+@doc raw"""
+
+"""
 function integrand_on_mu_lensing(s1, s, μ; L::Integer = 0, enhancer = 1,
      Δχ_min = 1e-6, tol = 0.5, χ_atol = 1e-3, χ_rtol = 1e-3)
      if ϕ(s2(s1, s, μ)) > 0
