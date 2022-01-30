@@ -21,6 +21,68 @@
 @doc raw"""
      integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 0.5, enhancer = 1, Δχ_min = 1e-6)
 
+Return the integarnd of the Lensing Auto-correlation function 
+``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, i.e. the function 
+``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
+
+    
+```math
+\begin{equation}
+    f(s_1, s_2, y, \chi_1, \chi_2) = 
+    \frac{1}{2}
+     \frac{
+          \mathcal{H}_0^4 \Omega_{ \mathrm{M0}}^2 D_1 D_2 (\chi_1 - s_1)(\chi_2 - s_2)
+     }{
+          s_1 s_2 a(\chi_1) a(\chi_2) }
+     (J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
+          J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi))
+\end{equation}
+```
+
+where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
+``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2\chi_1\chi_2\cos{\theta}}`` 
+and the ``J`` coefficients are given by (with ``y = \cos{\theta}``)
+
+```math
+\begin{align}
+    J_{00} & = - \frac{3 \chi_1^2 \chi_2^2}{4 \chi^4} (y^2 - 1) 
+               (8 y (\chi_1^2 + \chi_2^2) - 9 \chi_1 \chi_2 y^2 - 7 \chi_1 \chi_2) \\
+    J_{02} & = - \frac{3 \chi_1^2 \chi_2^2}{2 \chi^4} (y^2 - 1)
+               (4 y (\chi_1^2 + \chi_2^2) - 3 \chi_1 \chi_2 y^2 - 5 \chi_1 \chi_2) \\
+    J_{31} & = 9 y \chi^2 \\
+    J_{22} & = \frac{9 \chi_1 \chi_2}{4 \chi^4}
+               [2 \chi_1^4 (7 y^2 - 3) - 16\chi_1^3\chi_2y(y^2+1) 
+               + \chi_1^2 \chi_2^2 (11 y^4 + 14 y^2 + 23) - 16 \chi_1 \chi_2^3 y (y^2 + 1) 
+               + 2\chi_2^4(7y^2-3)]
+\end{align}
+```
+
+## Optional arguments 
+
+- `tol = 0.5` : if ``s = \sqrt{s_1^2 + s_2^2 - 2 \, s_1 s_2 y} \leq \mathrm{tol}``,
+  then the returned value is `0.0`; it prevents computational problems conserning too
+  close points which are insignificants (cosnidering that `tol` is a distance, so it
+  is measured in ``h_0^{-1}\,\mathrm{Mpc}``).
+
+- `enhancer = 1` : multiply the resulting ``f(s_1, s_2, y, \chi_1, \chi_2)`` value; it
+  is very useful for interal computations in other functions (for instance 
+  `map_integral_on_mu_lensing`), in order to deal better with small float numbers.
+
+- ` Δχ_min = 1e-6` : when ``\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}``,
+  some ``I_\ell^n`` term diverge, but the overall parenthesis has a known limit:
+
+  ```math
+     \lim_{\chi\to0^{+}} (J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
+          J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi)) = 
+          \frac{4}{15} \, (5 \, \sigma_2 + \frac{2}{3} \, σ_0 \,s_1^2 \, \chi_2^2)
+  ```
+
+  So, when it happens that ``\chi < \Delta\chi_\mathrm{min}``, the function considers this limit
+  as the result of the parenthesis instead of calculating it in the normal way; it prevents
+  computational divergences.
+
+
+See also: [`ξ_lensing`](@ref)
 """
 function integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 0.5, enhancer = 1, Δχ_min = 1e-6)
      (s(s1, s2, y) >= tol) || (return 0.0)
@@ -68,13 +130,14 @@ end
 @doc raw"""
      ξ_lensing(s1, s2, y; tol = 0.5, enhancer = 1, Δχ_min = 1e-6, kwargs...)
 
-Return the Lensing Auto-correlation function, defined as follows:
-
-``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``     
+Return the Lensing Auto-correlation function 
+``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})`` , defined as follows:
+    
 ```math
 \begin{equation}
     \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) = 
     \int_0^{s_1} \mathrm{d} \chi_1 \int_0^{s_2} \mathrm{d} \chi_2 
+     \frac{1}{2}
      \frac{
           \mathcal{H}_0^4 \Omega_{ \mathrm{M0}}^2 D_1 D_2 (\chi_1 - s_1)(\chi_2 - s_2)
      }{
@@ -106,7 +169,7 @@ The computation is made applying [`hcubature`](@ref) (see the
 [Hcubature](https://github.com/JuliaMath/HCubature.jl) Julia package) to
 the integrand function `integrand_ξ_lensing`.
 
-## Optional arguments
+## Optional arguments 
 
 -  `tol = 0.5` : 
 
