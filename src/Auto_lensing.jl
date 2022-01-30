@@ -19,9 +19,10 @@
 
 
 @doc raw"""
-     integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 0.5, enhancer = 1, Δχ_min = 1e-6)
+     integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 0.5, 
+          enhancer = 1, Δχ_min = 1e-6) :: Float64
 
-Return the integarnd of the Lensing Auto-correlation function 
+Return the integarnd of the lensing auto-correlation function 
 ``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, i.e. the function 
 ``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
 
@@ -67,7 +68,7 @@ and the ``J`` coefficients are given by (with ``y = \cos{\theta}``)
   `map_integral_on_mu_lensing`), in order to deal better with small float numbers.
 
 - ` Δχ_min = 1e-6` : when ``\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}``,
-  some ``I_\ell^n`` term diverge, but the overall parenthesis has a known limit:
+  some ``I_\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
      \lim_{\chi\to0^{+}} (J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
@@ -80,7 +81,8 @@ and the ``J`` coefficients are given by (with ``y = \cos{\theta}``)
   computational divergences.
 
 
-See also: [`ξ_lensing`](@ref)
+See also: [`ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
+[`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref)
 """
 function integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 0.5, enhancer = 1, Δχ_min = 1e-6)
      (s(s1, s2, y) >= tol) || (return 0.0)
@@ -126,7 +128,8 @@ end
 
 
 @doc raw"""
-     ξ_lensing(s1, s2, y; tol = 0.5, enhancer = 1, Δχ_min = 1e-6, kwargs...)
+     ξ_lensing(s1, s2, y; tol = 0.5, 
+          enhancer = 1, Δχ_min = 1e-6, kwargs...) :: Tuple{Float64, Float64}
 
 Return the Lensing Auto-correlation function 
 ``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})`` , defined as follows:
@@ -167,12 +170,42 @@ The computation is made applying [`hcubature`](@ref) (see the
 [Hcubature](https://github.com/JuliaMath/HCubature.jl) Julia package) to
 the integrand function `integrand_ξ_lensing`.
 
+
 ## Optional arguments 
 
--  `tol = 0.5` : 
+- `tol = 0.5` : if ``s = \sqrt{s_1^2 + s_2^2 - 2 \, s_1 s_2 y} \leq \mathrm{tol}``,
+  then the returned value is `0.0`; it prevents computational problems conserning too
+  close points which are insignificants (cosnidering that `tol` is a distance, so it
+  is measured in ``h_0^{-1}\,\mathrm{Mpc}``).
+
+- `enhancer = 1` : multiply the resulting value; it
+  is very useful for interal computations in other functions (for instance 
+  `map_integral_on_mu_lensing`), in order to deal better with small float numbers.
+
+- ` Δχ_min = 1e-6` : when ``\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}``,
+  some ``I_\ell^n`` term diverges, but the overall parenthesis has a known limit:
+
+  ```math
+     \lim_{\chi\to0^{+}} (J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
+          J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi)) = 
+          \frac{4}{15} \, (5 \, \sigma_2 + \frac{2}{3} \, σ_0 \,s_1^2 \, \chi_2^2)
+  ```
+
+  So, when it happens that ``\chi < \Delta\chi_\mathrm{min}``, the function considers this limit
+  as the result of the parenthesis instead of calculating it in the normal way; it prevents
+  computational divergences.
+
+- `kwargs...` : keyword arguments which should be passed to `hcubature` when performing
+  the 2-dims integral; we shall recomend to set `atol≥1e-4` and `rtol≥-3`, as a consequence
+  of the fast increase for the evaluation time needed for this integral.
 
 
-See also: [`integrand_ξ_lensing`](@ref)
+## Returns
+
+A `Tuple{Float64, Float64}` : the former is the integral ressult, the latter its error.
+
+See also: [`integrand_ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
+[`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref)
 """
 function ξ_lensing(s1, s2, y; tol = 0.5, enhancer = 1, Δχ_min = 1e-6, kwargs...)
      my_int(var) = integrand_ξ_lensing(var[1], var[2], s1, s2, y;
@@ -190,9 +223,52 @@ end
 
 
 
-
 @doc raw"""
+     integrand_on_mu_lensing(s1, s, μ; L::Integer = 0, enhancer = 1,
+          Δχ_min = 1e-6, tol = 0.5, 
+          χ_atol = 1e-3, χ_rtol = 1e-3) :: Tuple{Float64, Float64}
 
+Evaluate the following function ``f^{\kappa\kappa}(s_1, s, \mu)``:
+
+```math
+f^{\kappa\kappa}(s_1, s, \mu) = \xi^{\kappa\kappa}(s_1, s, \mu) \, \phi(s_2) \,
+        \mathcal{L}_L(\mu) \, F\left(\frac{s}{s_1}, \mu \right)
+```
+
+The evaluation of ``\xi^{\kappa\kappa}(s_1, s, \mu)`` is made through `ξ_lensing`.
+
+## Optional arguments 
+
+- `tol = 0.5` : if ``s \leq \mathrm{tol}``, then the integrand value is `0.0`; 
+  it prevents computational problems conserning too
+  close points which are insignificants (cosnidering that `tol` is a distance, so it
+  is measured in ``h_0^{-1}\,\mathrm{Mpc}``).
+
+- `enhancer = 1` : multiply the resulting ``f(s_1, s_2, y, \chi_1, \chi_2)`` value; it
+  is very useful for interal computations in other functions (for instance 
+  `map_integral_on_mu_lensing`), in order to deal better with small float numbers.
+
+- ` Δχ_min = 1e-6` : a Float64 parameter used inside `integrand_ξ_lensing` in order to
+  avoid computatinal divergences; it should be `0<Δχ_min<<1`, see the `integrand_ξ_lensing`
+  docstring for more informations.
+
+- `χ_atol = 1e-3` : absolute tolerance to be used in the computation of the 2-dims integral
+  on ``\chi_1`` and ``\chi_2``, made inside `ξ_lensing`; for computational time reasons,
+  it's better to use `χ_atol ≥ 1e-5`
+
+- `χ_rtol = 1e-3` : relative tolerance to be used in the computation of the 2-dims integral
+  on ``\chi_1`` and ``\chi_2``, made inside `ξ_lensing`; for computational time reasons,
+  it's better to use `χ_rtol ≥ 1e-4`.
+
+
+## Returns
+
+A `Tuple{Float64, Float64}` : the former is the integral ressult, the latter its error.
+
+
+See also: [`integrand_ξ_lensing`](@ref), [`ξ_lensing`](@ref)
+[`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref),
+[`spline_F`](@ref), [`ϕ`](@ref)
 """
 function integrand_on_mu_lensing(s1, s, μ; L::Integer = 0, enhancer = 1,
      Δχ_min = 1e-6, tol = 0.5, χ_atol = 1e-3, χ_rtol = 1e-3)
@@ -208,8 +284,69 @@ function integrand_on_mu_lensing(s1, s, μ; L::Integer = 0, enhancer = 1,
 end
 
 
-function integral_on_mu_lensing(s1, s; pr::Bool = true, L::Integer = 0,
-     enhancer = 1, Δχ_min = 1e-6, tol = 0.5, χ_atol = 1e-3, χ_rtol = 1e-3, kwargs...)
+
+@doc raw"""
+     integral_on_mu_lensing(s1, s;  L::Integer = 0, enhancer = 1, 
+          Δχ_min = 1e-6, tol = 0.5, χ_atol = 1e-3, χ_rtol = 1e-3, 
+          kwargs...) :: Tuple{Float64, Float64}
+
+Evaluate the integral on ``\mu`` of the lensing auto-correlation function 
+``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, weighted with the window functions
+``F(x, \mu)`` and `` \phi(s_2)`` and the Legendre polynomial ``\mathcal{L}(\mu)``, 
+i.e. the following function ``f_\mathrm{in}(s_1, s)``:
+
+```math
+f^{\kappa\kappa}(s_1, s) =  \int_{-1}^{+1} \mathrm{d} \mu \;
+        \xi^{\kappa\kappa}(s_1, s, \mu) \, \phi(s_2) \,
+        \mathcal{L}_L(\mu) \, F\left(\frac{s}{s_1}, \mu \right)
+```
+
+The computation is made applying [`quadgk`](@ref) (see the 
+[QuadGK](https://github.com/JuliaMath/QuadGK.jl) Julia package) to
+the integrand function `integrand_on_mu_lensing`.
+
+
+## Optional arguments 
+
+- `L::Integer = 0` : Lagrange polynomial degree to be used in the computation.
+
+- `tol = 0.5` : if ``s \leq \mathrm{tol}``, then the integrand value is `0.0`; 
+  it prevents computational problems conserning too
+  close points which are insignificants (cosnidering that `tol` is a distance, so it
+  is measured in ``h_0^{-1}\,\mathrm{Mpc}``).
+
+- `enhancer = 1` : multiply the resulting ``f(s_1, s_2, y, \chi_1, \chi_2)`` value; it
+  is very useful for interal computations in other functions (for instance 
+  `map_integral_on_mu_lensing`), in order to deal better with small float numbers.
+
+- ` Δχ_min = 1e-6` : a Float64 parameter used inside `integrand_ξ_lensing` in order to
+  avoid computatinal divergences; it should be `0<Δχ_min<<1`, see the `integrand_ξ_lensing`
+  docstring for more informations.
+
+- `χ_atol = 1e-3` : absolute tolerance to be used in the computation of the 2-dims integral
+  on ``\chi_1`` and ``\chi_2``, made inside `ξ_lensing`; for computational time reasons,
+  it's better to use `χ_atol ≥ 1e-5`
+
+- `χ_rtol = 1e-3` : relative tolerance to be used in the computation of the 2-dims integral
+  on ``\chi_1`` and ``\chi_2``, made inside `ξ_lensing`; for computational time reasons,
+  it's better to use `χ_rtol ≥ 1e-4`.
+
+- `kwargs...` : keyword arguments which should be passed to `quadgk` when performing
+  the 1-dim integral; we shall recomend to set `atol≥1e-4` and `rtol≥-3`, as a consequence
+  of the fast increase for the evaluation time needed for this integral.
+
+
+## Returns
+
+A `Tuple{Float64, Float64}` : the former is the integral ressult, the latter its error.
+
+See also: [`integrand_ξ_lensing`](@ref), [`ξ_lensing`](@ref)
+[`integrand_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref),
+[`spline_F`](@ref), [`ϕ`](@ref)
+"""
+function integral_on_mu_lensing(s1, s; L::Integer = 0, enhancer = 1,
+     Δχ_min = 1e-6, tol = 0.5, χ_atol = 1e-3, χ_rtol = 1e-3,
+     kwargs...)
 
      f(μ) = integrand_on_mu_lensing(s1, s, μ; enhancer = enhancer, tol = tol,
           L = L, Δχ_min = Δχ_min, χ_atol = χ_atol, χ_rtol = χ_rtol)[1]
