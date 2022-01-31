@@ -84,10 +84,14 @@ and the ``J`` coefficients are given by (with ``y = \cos{\theta}``)
 See also: [`ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
 [`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref)
 """
-function integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 0.5, enhancer = 1, Δχ_min = 1e-6)
+function integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 0.5,
+     enhancer = 1, Δχ_min = 1)
      (s(s1, s2, y) >= tol) || (return 0.0)
 
      Δχ = √(χ1^2 + χ2^2 - 2 * χ1 * χ2 * y)
+     #println("Δχ = ", Δχ)
+     #println("χ1 = ", χ1)
+     #println("χ2 = ", χ2)
 
      D1, D2 = D(χ1), D(χ2)
      a_χ1, a_χ2 = 1 / (1 + z_of_s(χ1)), 1 / (1 + z_of_s(χ2))
@@ -95,13 +99,16 @@ function integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 0.5, enhancer = 1, Δχ
      #s_b1, s_b2 = s_b(s1), s_b(s2)
      #psb1, psb2 = 5 * s_b1 - 2, 5 * s_b2 - 2
 
-     denomin = s1 * s2 * Δχ^4 * a_χ1 * a_χ2
+     denomin = s1 * s2 * a_χ1 * a_χ2
      factor = ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (χ2 - s2)
+     #println("factor = $factor")
+     #println("denomin = $denomin")
      #factor = ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (χ2 - s2) * psb1 * psb2
 
-     if Δχ > Δχ_min
+     res = if Δχ > Δχ_min #if abs(y^2 - 1) > y_min #if Δχ > Δχ_min
           χ1χ2 = χ1 * χ2
-
+     
+          #abs(y^2 - 1) < y_min ? 0.0 :
           new_J00 = -0.75 * χ1χ2^2 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
           new_J02 = -1.5 * χ1χ2^2 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
           new_J31 = 9 * y * Δχ^6
@@ -112,17 +119,24 @@ function integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 0.5, enhancer = 1, Δχ
                          +
                          χ1χ2^2 * (11y^4 + 14y^2 + 23)
                     )
-
-
-          return 0.5 * enhancer * factor / denomin * (
+     
+          #println("J00 = $new_J00, \t I00(Δχ) = $(I00(Δχ))")
+          #println("J02 = $new_J02, \t I20(Δχ) = $(I20(Δχ))")
+          #println("J31 = $new_J31, \t I13(Δχ) = $(I13(Δχ))")
+          #println("J22 = $new_J22, \t I22(Δχ) = $(I22(Δχ))")
+     
+          0.5 * enhancer * factor / denomin / Δχ^4 * (
                new_J00 * I00(Δχ) + new_J02 * I20(Δχ) +
                new_J31 * I13(Δχ) + new_J22 * I22(Δχ)
           )
      else
-          lim = 4.0 / 15.0 * (5.0 * σ_2 + 2.0 / 3.0 * σ_0 * s1^2 * χ2^2)
-
-          return 0.5 * 9.0 / 4.0 * enhancer * factor / denomin * lim
+          lim = 4.0 / 15.0 * (5.0 * σ_2 + 2.0 / 3.0 * σ_0 * χ2^2)
+          #println("lim = $lim")
+          0.5 * 9.0 / 4.0 * enhancer * factor / denomin * lim
      end
+
+     #println("res = ", res, "\n")
+     return res
 end
 
 
@@ -205,7 +219,8 @@ A `Tuple{Float64, Float64}` : the former is the integral result, the latter its 
 See also: [`integrand_ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
 [`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref)
 """
-function ξ_lensing(s1, s2, y; tol = 0.5, enhancer = 1, Δχ_min = 1e-6, kwargs...)
+function ξ_lensing(s1, s2, y; tol = 0.5, enhancer = 1, Δχ_min = 1, kwargs...)
+      
      my_int(var) = integrand_ξ_lensing(var[1], var[2], s1, s2, y;
           tol = tol, Δχ_min = Δχ_min, enhancer = enhancer)
      a = [0.0, 0.0]
@@ -348,11 +363,30 @@ function integral_on_mu_lensing(s1, s; L::Integer = 0, enhancer = 1e6,
 
      f(μ) = integrand_on_mu_lensing(s1, s, μ; enhancer = enhancer, tol = tol,
           L = L, Δχ_min = Δχ_min, χ_atol = χ_atol, χ_rtol = χ_rtol)[1]
+     #println("s1 = $s1 \t s = $s")
      int = quadgk(μ -> f(μ), -1.0, 1.0; kwargs...)
      #println("s1 = $s1 \t s2 = $s \t int = $int")
      return int ./ enhancer
 end
 
+
+function map_integral_on_mu_lensing(
+     s1::Float64 = s_eff, v_ss::Union{Vector{Float64}, Nothing}=nothing;
+     L::Integer = 0, pr::Bool = true, Δχ_min = 1e-6,
+     χ_atol = 1e-3, χ_rtol = 1e-3,
+     enhancer = 1e6, tol = 0.5,
+     kwargs...)
+
+     t1 = time()
+     ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length = 100) : v_ss
+     f(s) = integral_on_mu_lensing(s1, s; L = L, enhancer = enhancer,
+          Δχ_min = Δχ_min, χ_atol = χ_atol, χ_rtol = χ_rtol, tol = tol, kwargs...)
+     vec = @showprogress [f(s) for s in ss]
+     xis, xis_err = [x[1] for x in vec], [x[2] for x in vec]
+     t2 = time()
+     pr && println("\ntime needed for map_integral_on_mu_lensing [in s] = $(t2-t1)")
+     return (ss[ss.>tol], xis[ss.>tol], xis_err[ss.>tol])
+end
 
 
 @doc raw"""
@@ -419,23 +453,8 @@ See also: [`z_eff`](@ref), [`z_eff`](@ref), [`integrand_ξ_lensing`](@ref),
 [`ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref), 
 [`integral_on_mu_lensing`](@ref), [`print_map_integral_on_mu_lensing`](@ref)
 """
-function map_integral_on_mu_lensing(s1 = s_eff;
-     L::Integer = 0, pr::Bool = true, Δχ_min = 1e-6,
-     χ_atol = 1e-3, χ_rtol = 1e-3,
-     enhancer = 1e6, tol = 0.5,
-     kwargs...)
+map_integral_on_mu_lensing
 
-     t1 = time()
-     ss = 10 .^ range(-1, 3, length = 100)
-     #ss = range(tol, 1000, length = 1000)
-     f(s) = integral_on_mu_lensing(s1, s; pr = pr, L = L, enhancer = enhancer,
-          Δχ_min = Δχ_min, χ_atol = χ_atol, χ_rtol = χ_rtol, tol = tol, kwargs...)
-     vec = @showprogress [f(s) for s in ss]
-     xis, xis_err = [x[1] for x in vec], [x[2] for x in vec]
-     t2 = time()
-     pr && println("\ntime needed for map_integral_on_mu_lensing [in s] = $(t2-t1)")
-     return (ss[ss.>tol], xis[ss.>tol], xis_err[ss.>tol])
-end
 
 
 #=
@@ -493,10 +512,12 @@ See also: [`z_eff`](@ref), [`z_eff`](@ref), [`integrand_ξ_lensing`](@ref),
 [`ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref), 
 [`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref)
 """
-function print_map_int_on_mu_lensing(out::String; s1 = s_eff, kwargs...)
+function print_map_int_on_mu_lensing(out::String,
+     v_ss::Union{Vector{Float64},Nothing} = nothing, s1::Float64 = s_eff;
+     kwargs...)
 
      t1 = time()
-     vec = map_integral_on_mu_lensing(s1; kwargs...)
+     vec = map_integral_on_mu_lensing(s1, v_ss; kwargs...)
      t2 = time()
 
      isfile(out) && run(`rm $out`)

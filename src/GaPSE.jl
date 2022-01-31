@@ -74,6 +74,8 @@ function parameters_used(io::IO)
                  "$(@sprintf("%.5f", s_eff)) Mpc/h_0")
      println(io, "# \t Ω_b = $Ω_b \t Ω_cdm = $Ω_cdm \t Ω_M0 = $Ω_M0")
      println(io, "# \t Volume of the survey V_survey = $(@sprintf("%.6e", V_survey()))")
+     println(io, "# \t σ_0 = $(@sprintf("%.3e", σ_0)) \t σ_1 = $(@sprintf("%.3e", σ_1)) \t ")
+     println(io, "# \t σ_2 = $(@sprintf("%.3e", σ_2)) \t σ_3 = $(@sprintf("%.3e", σ_3)) \t ")
      println(io, "# ")
 end
 
