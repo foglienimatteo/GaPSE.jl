@@ -70,7 +70,7 @@ function parameters_used(io::IO)
                  "$(@sprintf("%.5f", s_min)) Mpc/h_0")
      println(io, "# \t z_max = $z_MAX \t\tcomoving s_max = " *
                  "$(@sprintf("%.5f", s_max)) Mpc/h_0")
-     println(io, "# \t z_eff = $(@sprintf("%.5f", z_eff())) \tcomoving s_eff = " *
+     println(io, "# \t z_eff = $(@sprintf("%.5f", z_eff)) \tcomoving s_eff = " *
                  "$(@sprintf("%.5f", s_eff)) Mpc/h_0")
      println(io, "# \t Ω_b = $Ω_b \t Ω_cdm = $Ω_cdm \t Ω_M0 = $Ω_M0")
      println(io, "# \t Volume of the survey V_survey = $(@sprintf("%.6e", V_survey()))")

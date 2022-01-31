@@ -36,9 +36,10 @@ function main()
      #GaPSE.print_PS_multipole("outputs/P_lensing.txt", "outputs/xi_lensing.txt")
 
      casto_tab = readdlm("data/tab_kappa_terms.dat", comments = true)
-     casto_ss = convert(Vector{Float64}, casto_tab[3:end, 1])
+     casto_ss = convert(Vector{Float64}, casto_tab[380:end, 1])
      GaPSE.print_map_int_on_mu_lensing("outputs/xi_lensing.txt", casto_ss;
-          χ_atol = 1e-3, χ_rtol = 1e-3, atol = 1e-3, rtol = 1e-3, tol = 1, Δχ_min = 1)
+          χ_atol = 1e-4, χ_rtol = 1e-3, atol = 1e-4, rtol = 1e-3, tol = 1.0, Δχ_min = 1.0,
+          use_F = false)
      GaPSE.print_PS_multipole("outputs/P_lensing.txt", "outputs/xi_lensing.txt")
 
      #GaPSE.integral_on_mu_lensing(GaPSE.s_eff, 1.0)

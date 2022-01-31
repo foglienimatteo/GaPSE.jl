@@ -25,4 +25,8 @@ GaPSE.W
 GaPSE.V_survey
 GaPSE.A
 GaPSE.A_prime
+GaPSE.s
+GaPSE.μ
+GaPSE.s2
+GaPSE.y
 ```

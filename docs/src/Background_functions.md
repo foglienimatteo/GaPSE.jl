@@ -7,5 +7,6 @@ end
 # Background functions
 
 ```@docs
-
+GaSPE.ℋ0 
+GaPSE.z_eff
 ```

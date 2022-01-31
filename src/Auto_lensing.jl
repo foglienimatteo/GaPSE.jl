@@ -283,14 +283,26 @@ See also: [`integrand_ξ_lensing`](@ref), [`ξ_lensing`](@ref)
 [`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref)
 """
-function integrand_on_mu_lensing(s1, s, μ; L::Integer = 0, enhancer = 1,
-     Δχ_min = 1e-6, tol = 0.5, χ_atol = 1e-3, χ_rtol = 1e-3)
-     if ϕ(s2(s1, s, μ)) > 0
+function integrand_on_mu_lensing(s1, s, μ; 
+               L::Integer = 0, 
+               enhancer::Float64 = 1.0,
+               tol::Float64 = 0.5,
+               Δχ_min::Float64 = 1e-6, 
+               χ_atol::Float64 = 1e-3, 
+               χ_rtol::Float64 = 1e-3, 
+               use_F::Bool=true
+          )
+
+     if ϕ(s2(s1, s, μ)) > 0.0
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
           int = ξ_lensing(s1, s2(s1, s, μ), y(s1, s, μ); Δχ_min = Δχ_min,
                tol = tol, rtol = χ_rtol, atol = χ_atol, enhancer = enhancer)
           #println("int = $int")
-          return int .* (spline_F(s / s1, μ) * Pl(μ, L))
+          if use_F == true
+               return int .* (spline_F(s / s1, μ) * Pl(μ, L))
+          else
+               return int .* Pl(μ, L)
+          end
      else
           return (0.0, 0.0)
      end
@@ -357,12 +369,19 @@ See also: [`integrand_ξ_lensing`](@ref), [`ξ_lensing`](@ref)
 [`integrand_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref)
 """
-function integral_on_mu_lensing(s1, s; L::Integer = 0, enhancer = 1e6,
-     Δχ_min = 1e-6, tol = 0.5, χ_atol = 1e-3, χ_rtol = 1e-3,
-     kwargs...)
+function integral_on_mu_lensing(s1, s; 
+          L::Integer = 0, 
+          enhancer::Float64 = 1e6,
+          tol::Float64 = 0.5,
+          Δχ_min::Float64 = 1e-6, 
+          χ_atol::Float64 = 1e-3, 
+          χ_rtol::Float64 = 1e-3, 
+          use_F::Bool = true,     
+          kwargs...
+     )
 
      f(μ) = integrand_on_mu_lensing(s1, s, μ; enhancer = enhancer, tol = tol,
-          L = L, Δχ_min = Δχ_min, χ_atol = χ_atol, χ_rtol = χ_rtol)[1]
+          L = L, Δχ_min = Δχ_min, χ_atol = χ_atol, χ_rtol = χ_rtol, use_F = use_F)[1]
      #println("s1 = $s1 \t s = $s")
      int = quadgk(μ -> f(μ), -1.0, 1.0; kwargs...)
      #println("s1 = $s1 \t s2 = $s \t int = $int")
