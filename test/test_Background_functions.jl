@@ -17,3 +17,5 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
+@test isapprox(ℋ0, 3.3356409519815205e-4; rtol=1e-5)
+@test isapprox(z_eff, 0.15046; rtol=1e-4)

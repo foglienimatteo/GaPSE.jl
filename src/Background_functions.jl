@@ -46,6 +46,14 @@ end
 
 
 
+const f0 = data[:, column_NAMES_BACKGROUND["gr.fac. f"]][end]
+const D0 = data[:, column_NAMES_BACKGROUND["gr.fac. D"]][end]
+const ℋ0 = data[:, column_NAMES_BACKGROUND["H [1/Mpc]"]][end] / h_0
+const ℋ0_p = 0.0
+const s_b0 = 0.0
+const s_min = s_of_z(z_MIN)
+const s_max = s_of_z(z_MAX)
+
 @doc raw"""
      const z_eff :: Float64
 
@@ -84,17 +92,7 @@ See also: [`ϕ`](@ref), [`W`](@ref)
 """
 const z_eff = 3.0 / (s_max^3 - s_min^3) * quadgk(s -> s^2 * z_of_s(s), s_min, s_max)[1]
 
-
-const f0 = data[:, column_NAMES_BACKGROUND["gr.fac. f"]][end]
-const D0 = data[:, column_NAMES_BACKGROUND["gr.fac. D"]][end]
-const ℋ0 = data[:, column_NAMES_BACKGROUND["H [1/Mpc]"]][end] / h_0
-const ℋ0_p = 0.0
-const s_b0 = 0.0
-const s_min = s_of_z(z_MIN)
-const s_max = s_of_z(z_MAX)
 const s_eff = s_of_z(z_eff)
-
-
 
 @doc raw"""
      const ℋ0 :: Float64
