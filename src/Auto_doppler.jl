@@ -78,10 +78,17 @@ function ξ_doppler(s1, s2, y; enhancer = 1, tol = 1)
 end
 
 
-function integrand_on_mu_doppler(s1, s, μ; L::Integer = 0, enhancer = 1, tol = 1)
-     (ϕ(s2(s1, s, μ)) > 0) || (return 0.0)
-     val = ξ_doppler(s1, s2(s1, s, μ), y(s1, s, μ), enhancer = enhancer, tol = tol)
-     return val * spline_F(s / s1, μ) * Pl(μ, L)
+function integrand_on_mu_doppler(s1, s, μ; L::Integer = 0, enhancer = 1, 
+     tol = 1, use_windows::Bool = true)
+     if use_windows == true
+          ϕ_s2 = ϕ(s2(s1, s, μ))
+          (ϕ_s2 > 0.0) || (return 0.0)
+          val = ξ_doppler(s1, s2(s1, s, μ), y(s1, s, μ), enhancer = enhancer, tol = tol)
+          return val * ϕ_s2 * spline_F(s / s1, μ) * Pl(μ, L)
+     else
+          val = ξ_doppler(s1, s2(s1, s, μ), y(s1, s, μ), enhancer = enhancer, tol = tol)
+          return val * Pl(μ, L)
+     end
 end
 
 
