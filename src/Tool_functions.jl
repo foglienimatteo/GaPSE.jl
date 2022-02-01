@@ -56,7 +56,8 @@ ps_dict = Dict([name => ps[:, i] for (i, name) in enumerate(NAMES_PS)]...)
 PK = Spline1D(ps_dict["k (h/Mpc)"], ps_dict["P (Mpc/h)^3"])
 
 N = 1024                                # number of points to use in the Fourier transform
-k_max = ps_dict["k (h/Mpc)"][end]       # maximum k-value
+#k_max = ps_dict["k (h/Mpc)"][end]      # maximum k-value
+k_max = k_MAX                           # maximum k-value
 k_min = ps_dict["k (h/Mpc)"][begin]     # minimum k-value
 s0 = 1 / k_max;                         # minimum r-value (should be ~1/k_max)
 

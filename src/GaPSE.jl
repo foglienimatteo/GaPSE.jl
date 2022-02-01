@@ -35,7 +35,8 @@ const Ω_M0 = Ω_b + Ω_cdm
 const h_0 = 0.70
 const z_MIN = 0.05
 const z_MAX = 0.2
-const θ_MAX = π / 2
+const θ_MAX = π / 2.0
+const k_MAX = 10.0 # h_0 Mpc^{-1}
 
 FILE_F_MAP = "data/F_REFERENCE.txt"
 NAMES_F_MAP = ["x", "mu", "F", "F_error"]

@@ -74,7 +74,7 @@ function ξ_doppler(s1, s2, y; enhancer = 1, tol = 1)
 
      first = prefac * (c1 * parenth + I02(delta_s) * y * delta_s^2 / 3.0)
 
-     return 0.5 * enhancer * first
+     return enhancer * first
 end
 
 

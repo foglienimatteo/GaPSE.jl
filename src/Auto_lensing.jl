@@ -122,14 +122,14 @@ function integrand_ξ_lensing(χ1, χ2, s1, s2, y; enhancer = 1, Δχ_min = 1)
           #println("J31 = $new_J31, \t I13(Δχ) = $(I13(Δχ))")
           #println("J22 = $new_J22, \t I22(Δχ) = $(I22(Δχ))")
      
-          0.5 * enhancer * factor / denomin / Δχ^4 * (
+          enhancer * factor / denomin / Δχ^4 * (
                new_J00 * I00(Δχ) + new_J02 * I20(Δχ) +
                new_J31 * I13(Δχ) + new_J22 * I22(Δχ)
           )
      else
           lim = 4.0 / 15.0 * (5.0 * σ_2 + 2.0 / 3.0 * σ_0 * χ2^2)
           #println("lim = $lim")
-          0.5 * 9.0 / 4.0 * enhancer * factor / denomin * lim
+          9.0 / 4.0 * enhancer * factor / denomin * lim
      end
 
      #println("res = ", res, "\n")
