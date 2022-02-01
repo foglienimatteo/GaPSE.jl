@@ -40,11 +40,14 @@ function main()
      #GaPSE.print_map_int_on_mu_lensing("outputs/xi_lensing.txt", casto_ss;
      #     χ_atol = 1e-4, χ_rtol = 5e-3, atol = 1e-4, rtol = 1e-3, tol = 1.0, Δχ_min = 1.0,
      #     use_windows = false)
-     GaPSE.print_map_int_on_mu("outputs/xi_lensing.txt", "auto_lensing", casto_ss;
-          χ_atol = 1e-4, χ_rtol = 1e-2, μ_atol = 1e-4, μ_rtol = 1e-2, Δχ_min = 0.1,
-          use_windows = false
-     )
-     GaPSE.print_PS_multipole("outputs/P_lensing.txt", "outputs/xi_lensing.txt")
+     #GaPSE.print_map_int_on_mu("outputs/xi_lensing.txt", "auto_lensing", casto_ss;
+     #     χ_atol = 1e-4, χ_rtol = 1e-2, μ_atol = 1e-4, μ_rtol = 1e-2, Δχ_min = 0.3,
+     #     use_windows = false
+     #)
+     #GaPSE.print_PS_multipole("outputs/P_lensing.txt", "outputs/xi_lensing.txt")
+     GaPSE.print_map_int_on_mu("outputs/xi_doppler.txt", "auto_doppler", casto_ss;
+          μ_atol = 1e-4, μ_rtol = 1e-3, use_windows = true)
+     GaPSE.print_PS_multipole("outputs/P_doppler.txt", "outputs/xi_doppler.txt")
 
 
 

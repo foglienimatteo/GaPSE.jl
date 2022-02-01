@@ -54,10 +54,8 @@ begin{split}
 \end{split}
 ```
 """
-function ξ_doppler(s1, s2, y; enhancer = 1, tol = 1)
+function ξ_doppler(s1, s2, y; enhancer = 1.0)
      delta_s = s(s1, s2, y)
-     (delta_s > tol) || (return 0.0)
-
      D1, D2 = D(s1), D(s2)
 
      f1, ℋ1 = f(s1), ℋ(s1)
@@ -65,7 +63,7 @@ function ξ_doppler(s1, s2, y; enhancer = 1, tol = 1)
      #f1, ℋ1, ℋ1_p, s_b1 = f(s1), ℋ(s1), ℋ_p(s1), s_b(s1)
      #f2, ℋ2, ℋ2_p, s_b2 = f(s2), ℋ(s2), ℋ_p(s2), s_b(s2)
      #ℛ1, ℛ2 = ℛ(s1, ℋ1, ℋ1_p, s_b1), ℛ(s2, ℋ2, ℋ2_p, s_b2)
-     ℛ1, ℛ2 = 1 - 1 / (ℋ1 * s1), 1 - 1 / (ℋ2 * s2)
+     ℛ1, ℛ2 = ℛ(s1, ℋ1), ℛ(s2, ℋ2)
 
      prefac = D1 * D2 * f1 * f2 * ℛ1 * ℛ2 * ℋ1 * ℋ2
      c1 = 3 * s1 * s2 - 2 * y * (s1^2 + s2^2) + s1 * s2 * y^2
@@ -78,20 +76,20 @@ function ξ_doppler(s1, s2, y; enhancer = 1, tol = 1)
 end
 
 
-function integrand_on_mu_doppler(s1, s, μ; L::Integer = 0, enhancer = 1, 
-     tol = 1, use_windows::Bool = true)
+function integrand_on_mu_doppler(s1, s, μ; L::Integer = 0, enhancer = 1.0, 
+     use_windows::Bool = true)
      if use_windows == true
           ϕ_s2 = ϕ(s2(s1, s, μ))
           (ϕ_s2 > 0.0) || (return 0.0)
-          val = ξ_doppler(s1, s2(s1, s, μ), y(s1, s, μ), enhancer = enhancer, tol = tol)
+          val = ξ_doppler(s1, s2(s1, s, μ), y(s1, s, μ), enhancer = enhancer)
           return val * ϕ_s2 * spline_F(s / s1, μ) * Pl(μ, L)
      else
-          val = ξ_doppler(s1, s2(s1, s, μ), y(s1, s, μ), enhancer = enhancer, tol = tol)
+          val = ξ_doppler(s1, s2(s1, s, μ), y(s1, s, μ), enhancer = enhancer)
           return val * Pl(μ, L)
      end
 end
 
-
+#=
 function integral_on_mu_doppler(s1, s; L::Integer = 0, enhancer = 1, tol = 1, kwargs...)
      f(μ) = integrand_on_mu_doppler(s1, s, μ; L = L, enhancer = enhancer, tol = tol)
      return quadgk(f, -1, 1; kwargs...)
@@ -143,7 +141,7 @@ function print_map_int_on_mu_doppler(out::String; L::Integer = 0,
      end
 end
 
-
+=#
 
 ##########################################################################################92
 

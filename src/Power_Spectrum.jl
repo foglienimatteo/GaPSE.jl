@@ -18,9 +18,9 @@
 #
 
 
-IMPLEMENTED_GR_EFFECTS = ["auto_doppler", "auto_lensing"]
-IMPLEMENTED_XI_FUNCS = [integral_on_mu_doppler, integral_on_mu_lensing]
-dict_gr_xi = Dict([a => b for (a, b) in zip(IMPLEMENTED_GR_EFFECTS, IMPLEMENTED_XI_FUNCS)]...)
+#IMPLEMENTED_GR_EFFECTS = ["auto_doppler", "auto_lensing"]
+#IMPLEMENTED_XI_FUNCS = [integral_on_mu_doppler, integral_on_mu_lensing]
+#dict_gr_xi = Dict([a => b for (a, b) in zip(IMPLEMENTED_GR_EFFECTS, IMPLEMENTED_XI_FUNCS)]...)
 
 function PS_multipole(f_in::Union{Function,Dierckx.Spline1D};
      L::Integer = 0, N = 128,
@@ -114,11 +114,11 @@ function print_PS_multipole(out::String, in::String;
           PS_multipole(in, int_s_min = int_s_min, int_s_max = int_s_max,
                N = N, L = L, pr = pr, kwargs...)
      else
-          if in ∈ IMPLEMENTED_GR_EFFECTS
+          if in ∈ keys(dict_gr_mu) #IMPLEMENTED_GR_EFFECTS
                pr && println("\nI'm computiong the PS_multipole for the $in GR effect.")
                t1 = time()
                ss = 10 .^ range(-1, 3, length = 100)
-               v = [dict_gr_xi[in](s1, s; L = L, kwargs...) for s in ss]
+               v = [integral_on_mu(s1, s, dict_gr_mu[in]; L = L, kwargs...) for s in ss]
                xis, xis_err = [x[1] for x in v], [x[2] for x in v]
                t2 = time()
                pr && println("\ntime needed to create the xi map [in s] = $(t2-t1)\n")
@@ -127,9 +127,9 @@ function print_PS_multipole(out::String, in::String;
                     N = N, L = L, pr = pr, kwargs...)
           else
                throw(ErrorException(
-                    "$in is neither a GR impemented effect or a file.\n" *
+                    "$in is neither a GR implemented effect or a file.\n" *
                     "\t The implemented GR effects are currently: \n" *
-                    "\t $(IMPLEMENTED_GR_EFFECTS)"
+                    string(keys(dict_gr_mu) .* " , "...)
                ))
           end
      end
@@ -162,3 +162,4 @@ function print_PS_multipole(out::String, in::String;
           end
      end
 end
+

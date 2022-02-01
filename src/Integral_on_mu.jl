@@ -37,14 +37,40 @@ function integral_on_mu(s1, s, integrand::Function;
 end
 
 
-function integral_on_mu(s1, s, name::String; kwargs...)
-     error = "$name is not a valid GR effect name.\n" *
+function integral_on_mu(s1, s, effect::String; kwargs...)
+     error = "$effect is not a valid GR effect name.\n" *
              "Valid GR effect names are the following:\n" *
              string(keys(dict_gr_mu) .* " , "...)
 
-     @assert (name ∈ keys(dict_gr_mu)) error
-     integral_on_mu(s1, s, dict_gr_mu[name]; kwargs...)
+     @assert (effect ∈ keys(dict_gr_mu)) error
+     integral_on_mu(s1, s, dict_gr_mu[effect]; kwargs...)
 end
+
+
+##########################################################################################92
+
+
+function ξ_multipole(s, effect::Function; s1 = s_eff, L::Integer = 0, kwargs...)
+     error = "$(string(effect)) is not a valid GR effect function.\n" *
+             "Valid GR effect functions are the following:\n" *
+             string(values(dict_gr_mu) .* " , "...)
+     @assert (effect ∈ values(dict_gr_mu)) error
+
+     return (2.0*L+1.0)/2.0 .* integral_on_mu(s1, s, effect; L=L, kwargs...)
+end
+
+
+function ξ_multipole(s, effect::String; s1 = s_eff, L::Integer = 0, kwargs...)
+     error = "$effect is not a valid GR effect name.\n" *
+             "Valid GR effect names are the following:\n" *
+             string(keys(dict_gr_mu) .* " , "...)
+     @assert (effect ∈ keys(dict_gr_mu)) error
+
+     return (2.0*L+1.0)/2.0 .* integral_on_mu(s1, s, dict_gr_mu[effect]; L=L, kwargs...)
+end
+
+
+##########################################################################################92
 
 
 function map_integral_on_mu(

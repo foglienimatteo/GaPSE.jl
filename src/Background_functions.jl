@@ -39,10 +39,12 @@ s_of_z = Spline1D(data_dict["z"], comdist_array)
 z_of_s = Spline1D(comdist_array, data_dict["z"])
 f_evo = 0
 
-ℛ(s) = 5 * s_b(s) + (2 - 5 * s_b(s)) / (ℋ(s) * s) + ℋ_p(s) / (ℋ(s)^2) - f_evo
-function ℛ(s, ℋ, ℋ_p, s_b, f_evo = f_evo)
-     5 * s_b + (2 - 5 * s_b) / (ℋ * s) + ℋ_p / (ℋ^2) - f_evo
-end
+ℛ(s) = 1.0 - 1.0/(ℋ(s) * s)
+ℛ(s, ℋ) = 1.0 - 1.0 / (ℋ * s) 
+#ℛ(s) = 5 * s_b(s) + (2 - 5 * s_b(s)) / (ℋ(s) * s) + ℋ_p(s) / (ℋ(s)^2) - f_evo
+#function ℛ(s, ℋ, ℋ_p, s_b, f_evo = f_evo)
+#     5 * s_b + (2 - 5 * s_b) / (ℋ * s) + ℋ_p / (ℋ^2) - f_evo
+#end
 
 
 

@@ -56,14 +56,14 @@ include("Tool_functions.jl")
 include("Auto_doppler.jl")
 include("Auto_lensing.jl")
 
-
+IMPLEMENTED_GR_EFFECTS = ["auto_doppler", "auto_lensing"]
 dict_gr_mu = Dict(
      "auto_doppler" => integrand_on_mu_doppler,
      "auto_lensing" => integrand_on_mu_lensing,
 )
 
 include("Power_Spectrum.jl")
-include("Intergal_on_mu.jl")
+include("Integral_on_mu.jl")
 
 function parameters_used(io::IO)
      println(io, "# The following parameters were used for this computation: ")
