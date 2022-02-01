@@ -18,6 +18,44 @@
 #
 
 
+@doc raw"""
+    WindowF(
+        xs::AbstractVector{T1} where {T1}
+        μs::AbstractVector{T2} where {T2}
+        Fs::AbstractArray{T3, 2} where {T3}
+        )
+
+Struct containing xs, μs and Fs values of the window function ``F(x, μ)``.
+`xs` and `μs` are 1D vectors containing each value only once, while 
+Fs values are contained in a matrix of size `(length(xs), length(μs))`, so:
+- along a fixed column the changing value is `x`
+- along a fixed row the changing value is `μ`
+"""
+struct WindowF
+     xs::AbstractVector{T1} where {T1}
+     μs::AbstractVector{T2} where {T2}
+     Fs::AbstractArray{T3,2} where {T3}
+
+     function WindowF(file::String)
+          data = readdlm(file, comments = true)
+          xs, μs, Fs = data[:, 1], data[:, 2], data[:, 3]
+          @assert size(xs) == size(μs) == size(Fs) "xs, μs and Fs must have the same length!"
+
+          new_xs = unique(xs)
+          new_μs = unique(μs)
+          new_Fs =
+               if xs[2] == xs[1] && μs[2] ≠ μs[1]
+                    transpose(reshape(Fs, (length(new_μs), length(new_xs))))
+               elseif xs[2] ≠ xs[1] && μs[2] == μs[1]
+                    reshape(Fs, (length(new_xs), length(new_μs)))
+               else
+                    throw(ErrorException("What kind of convenction for the file $file" *
+                                         " are you using? I do not recognise it."))
+               end
+          new(new_xs, new_μs, new_Fs)
+     end
+end
+
 F_map_data = readdlm(FILE_F_MAP, comments = true)
 F_map_data_dict = Dict([name => F_map_data[2:end, i] for (i, name) in enumerate(NAMES_F_MAP)]...)
 
@@ -49,6 +87,22 @@ spline_F
 ##########################################################################################92
 
 
+struct InputPS
+     ks::AbstractVector{T1} where {T1}
+     pks::AbstractVector{T2} where {T2}
+
+     function InputPS(file::String)
+          data = readdlm(file, comments = true)
+          ks, pks = (data[:, 1], data[:, 2])
+          @assert size(ks) == size(pks) "ks and pks must have the same length!"
+          new(ks, pks)
+     end
+
+     function InputPS(ks::AbstractVector{T1}, pks::AbstractVector{T2}) where {T1,T2}
+          @assert size(ks) == size(pks) "ks and pks must have the same length!"
+          new(ks, pks)
+     end
+end
 
 ps = readdlm(FILE_PS, comments = true)
 ps_dict = Dict([name => ps[:, i] for (i, name) in enumerate(NAMES_PS)]...)

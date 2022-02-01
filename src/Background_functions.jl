@@ -18,6 +18,12 @@
 #
 
 
+
+struct BackgroundData
+
+
+end
+
 data = readdlm(FILE_BACKGROUND, comments = true)
 N_z_MAX = findfirst(z -> z <= z_MAX, data[:, 1]) - 1
 N_z_MIN = findfirst(z -> z <= z_MIN, data[:, 1]) + 1
