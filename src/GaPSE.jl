@@ -17,8 +17,6 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-
-
 module GaPSE
 
 using TwoFAST # Licence: MIT "Expat" (o GPL ?)
@@ -28,15 +26,15 @@ using GridInterpolations  # Licence: MIT "Expat"
 using ProgressMeter, Documenter  # Licence: MIT "Expat"
 using Test, Printf, DelimitedFiles  # Licence: MIT "Expat"
 
-const Ω_b = 0.0489
-const Ω_cdm = 0.251020
-const Ω_M0 = Ω_b + Ω_cdm
+const θ_MAX = π / 2.0
 
-const h_0 = 0.70
 const z_MIN = 0.05
 const z_MAX = 0.2
-const θ_MAX = π / 2.0
-const k_MAX = 10.0 # h_0 Mpc^{-1}
+const z_EFF = 0.15045636097417317
+
+const s_MIN = 148.1920001343431
+const s_MAX = 571.7022420911966
+const s_EFF = 435.37470960794167
 
 NAMES_F_MAP = ["x", "mu", "F", "F_error"]
 NAMES_PS = ["k (h/Mpc)", "P (Mpc/h)^3"]
@@ -44,6 +42,7 @@ NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mpc]",
      "comov. dist.", "ang.diam.dist.", "lum. dist.", "comov.snd.hrz.",
      "(.)rho_g", "(.)rho_b", "(.)rho_cdm", "(.)rho_lambda", "(.)rho_ur",
      "(.)rho_crit", "gr.fac. D", "gr.fac. f"]
+
 column_NAMES_BACKGROUND = Dict([x => i for (i, x) in enumerate(NAMES_BACKGROUND)])
 
 include("F_evaluation.jl")
@@ -63,29 +62,26 @@ dict_gr_mu = Dict(
 include("Power_Spectrum.jl")
 include("Integral_on_mu.jl")
 
-function parameters_used(io::IO)
+function parameters_used(io::IO, cosmo::Cosmology)
      println(io, "# The following parameters were used for this computation: ")
-     println(io, "# CLASS Power Spectrum input file : \"$(FILE_PS)\"")
-     println(io, "# k_min = $k_min \t k_max = $k_max")
-     println(io, "# F window function input file : \"$(FILE_F_MAP)\"")
-     println(io, "# CLASS Background input file: \"$(FILE_BACKGROUND)\"")
-     println(io, "# \t h_0 = $h_0 \t \t EVERYTHING IS MEASURED WITHOUT h_0!")
-     println(io, "# \t comoving H_0 = $(@sprintf("%.6e", ℋ0)) h_0/Mpc")
-     println(io, "# \t growth factor D_0 = $D0")
-     println(io, "# \t growth rate f_0 = $(@sprintf("%.6f", f0))")
-     println(io, "# \t z_min = $z_MIN \t\tcomoving s_min = " *
-                 "$(@sprintf("%.5f", s_min)) Mpc/h_0")
-     println(io, "# \t z_max = $z_MAX \t\tcomoving s_max = " *
-                 "$(@sprintf("%.5f", s_max)) Mpc/h_0")
-     println(io, "# \t z_eff = $(@sprintf("%.5f", z_eff)) \tcomoving s_eff = " *
-                 "$(@sprintf("%.5f", s_eff)) Mpc/h_0")
-     println(io, "# \t Ω_b = $Ω_b \t Ω_cdm = $Ω_cdm \t Ω_M0 = $Ω_M0")
-     println(io, "# \t Volume of the survey V_survey = $(@sprintf("%.6e", V_survey()))")
-     println(io, "# \t σ_0 = $(@sprintf("%.3e", σ_0)) \t σ_1 = $(@sprintf("%.3e", σ_1)) \t ")
-     println(io, "# \t σ_2 = $(@sprintf("%.3e", σ_2)) \t σ_3 = $(@sprintf("%.3e", σ_3)) \t ")
+     println(io, "# CLASS Power Spectrum input file : \"$(cosmo.file_ips)\"")
+     println(io, "# F window function input file : \"$(cosmo.file_windowF)\"")
+     println(io, "# CLASS Background input file: \"$(cosmo.file_data)\"")
+     println(io, "# \t z_min = $(cosmo.params.z_min) \t z_max = $(cosmo.params.z_max)")
+     println(io, "# \t k_min = $(cosmo.params.k_min) \t k_max = $(cosmo.params.k_max)")
+     println(io, "# \t h_0 = $(cosmo.params.h_0) \t Ω_b = $(cosmo.params.Ω_b) \t " *
+                 "Ω_cdm = $(cosmo.params.Ω_cdm) \t Ω_M0 = $(cosmo.params.Ω_M0)")
+     println(io, "# \t comoving s_min = $(cosmo.s_min) Mpc/h_0")
+     println(io, "# \t comoving s_max = $(cosmo.s_max) Mpc/h_0")
+     println(io, "# \t comoving s_eff = $(cosmo.s_eff) Mpc/h_0")
+     println(io, "# \t comoving z_eff = $(cosmo.z_eff) ")
+     println(io, "# \t Volume of the survey V_survey = $(cosmo.volume)")
+     println(io, "# \t σ_0 = $(cosmo.tools.σ_0)")
+     println(io, "# \t σ_1 = $(cosmo.tools.σ_1)")
+     println(io, "# \t σ_2 = $(cosmo.tools.σ_2)")
+     println(io, "# \t σ_3 = $(cosmo.tools.σ_0)")
      println(io, "# ")
 end
 
-parameters_used(stdout)
 
 end # module

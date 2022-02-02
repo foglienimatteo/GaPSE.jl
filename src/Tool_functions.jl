@@ -20,9 +20,9 @@
 
 @doc raw"""
     WindowF(
-        xs::AbstractVector{T1} where {T1}
-        μs::AbstractVector{T2} where {T2}
-        Fs::AbstractArray{T3, 2} where {T3}
+        xs::Vector{Float64}
+        μs::Vector{Float64}
+        Fs::Matrix{Float64}
         )
 
 Struct containing xs, μs and Fs values of the window function ``F(x, μ)``.
@@ -32,10 +32,10 @@ Fs values are contained in a matrix of size `(length(xs), length(μs))`, so:
 - along a fixed row the changing value is `μ`
 """
 struct WindowF
-     xs::AbstractVector{T1} where {T1}
-     μs::AbstractVector{T2} where {T2}
-     Fs::AbstractArray{T3,2} where {T3}
-     
+     xs::Vector{Float64}
+     μs::Vector{Float64}
+     Fs::Matrix{Float64}
+
 
      function WindowF(file::String)
           data = readdlm(file, comments = true)
@@ -59,8 +59,8 @@ end
 
 
 function spline_F(x, μ, str::WindowF)
-     grid = GridInterpolations.RectangleGrid(str.μs, str.xs)
-     GridInterpolations.interpolate(grid, str.Fs, [μ, x])
+     grid = GridInterpolations.RectangleGrid(str.xs, str.μs)
+     GridInterpolations.interpolate(grid, reshape(str.Fs, (:,1)), [x, μ])
 end
 #=
 F_map_data = readdlm(FILE_F_MAP, comments = true)
@@ -91,12 +91,16 @@ package applied to the input `FILE_F_MAP`.
 """
 spline_F
 
+
+
 ##########################################################################################92
 
 
+
+
 struct InputPS
-     ks::AbstractVector{T1} where {T1}
-     pks::AbstractVector{T2} where {T2}
+     ks::Vector{Float64}
+     pks::Vector{Float64}
 
      function InputPS(file::String)
           data = readdlm(file, comments = true)
@@ -111,27 +115,57 @@ struct InputPS
      end
 end
 
-ps = readdlm(FILE_PS, comments = true)
-ps_dict = Dict([name => ps[:, i] for (i, name) in enumerate(NAMES_PS)]...)
-
-PK = Spline1D(ps_dict["k (h/Mpc)"], ps_dict["P (Mpc/h)^3"])
-
-N = 1024                                # number of points to use in the Fourier transform
-#k_max = ps_dict["k (h/Mpc)"][end]      # maximum k-value
-k_max = k_MAX                           # maximum k-value
-k_min = ps_dict["k (h/Mpc)"][begin]     # minimum k-value
-s0 = 1 / k_max;                         # minimum r-value (should be ~1/k_max)
-
-I00 = Spline1D(xicalc(PK, 0, 0; N = N, kmin = k_min, kmax = k_max, r0 = s0)...)
-I20 = Spline1D(xicalc(PK, 2, 0; N = N, kmin = k_min, kmax = k_max, r0 = s0)...)
-I40 = Spline1D(xicalc(PK, 4, 0; N = N, kmin = k_min, kmax = k_max, r0 = s0)...)
-I02 = Spline1D(xicalc(PK, 0, 2; N = N, kmin = k_min, kmax = k_max, r0 = s0)...)
-I22 = Spline1D(xicalc(PK, 2, 2; N = N, kmin = k_min, kmax = k_max, r0 = s0)...)
-I31 = Spline1D(xicalc(PK, 3, 1; N = N, kmin = k_min, kmax = k_max, r0 = s0)...)
-I13 = Spline1D(xicalc(PK, 1, 3; N = N, kmin = k_min, kmax = k_max, r0 = s0)...)
-I11 = Spline1D(xicalc(PK, 1, 1; N = N, kmin = k_min, kmax = k_max, r0 = s0)...)
 
 
+struct IPSTools
+     I00::Dierckx.Spline1D
+     I20::Dierckx.Spline1D
+     I40::Dierckx.Spline1D
+     I02::Dierckx.Spline1D
+     I22::Dierckx.Spline1D
+     I31::Dierckx.Spline1D
+     I13::Dierckx.Spline1D
+     I11::Dierckx.Spline1D
+
+     σ_0::Float64
+     σ_1::Float64
+     σ_2::Float64
+     σ_3::Float64
+
+     function IPSTools(
+          ips::InputPS;
+          N = 1024,
+          k_min::Union{Float64,Nothing} = nothing,
+          k_max::Union{Float64,Nothing} = nothing,
+          s_0::Union{Float64,Nothing} = nothing
+     )
+
+          PK = Spline1D(ips.ks, ips.pks)
+
+          kmin = isnothing(k_min) ? min(ips.ks) : k_min
+          kmax = isnothing(k_max) ? max(ips.ks) : k_max
+          s0 = isnothing(s_0) ? 1.0 / kmax : s_0
+
+          I00 = Spline1D(xicalc(PK, 0, 0; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
+          I20 = Spline1D(xicalc(PK, 2, 0; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
+          I40 = Spline1D(xicalc(PK, 4, 0; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
+          I02 = Spline1D(xicalc(PK, 0, 2; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
+          I22 = Spline1D(xicalc(PK, 2, 2; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
+          I31 = Spline1D(xicalc(PK, 3, 1; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
+          I13 = Spline1D(xicalc(PK, 1, 3; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
+          I11 = Spline1D(xicalc(PK, 1, 1; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
+
+          σ_0 = quadgk(q -> PK(q) * q^2 / (2 * π^2), kmin, kmax)[1]
+          σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), kmin, kmax)[1]
+          σ_2 = quadgk(q -> PK(q) / (2 * π^2), kmin, kmax)[1]
+          σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), kmin, kmax)[1]
+
+          new(I00, I20, I40, I02, I22, I31, I13, I11, σ_0, σ_1, σ_2, σ_3)
+     end
+
+end
+
+#=
 @doc raw"""
      I00, I20, I40, I02, I22, I31, I13, I11 ::Float64
 
@@ -154,17 +188,6 @@ input Power Spectrum `P(q)`.
 I00, I20, I40, I02, I22, I31, I13, I11
 
 
-
-##########################################################################################92
-
-
-
-σ_0 = quadgk(q -> PK(q) * q^2 / (2 * π^2), k_min, k_max)[1]
-σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), k_min, k_max)[1]
-σ_2 = quadgk(q -> PK(q) / (2 * π^2), k_min, k_max)[1]
-σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), k_min, k_max)[1]
-
-
 @doc raw"""
      σ_0, σ_1, σ_2, σ_3
 
@@ -175,14 +198,15 @@ These are the results of the following integral:
 where  `P(q)` is the input Power Spectrum.
 """
 σ_0, σ_1, σ_2, σ_3
-
+=#
 
 
 ##########################################################################################92
 
 
+
 @doc raw"""
-     ϕ(s; s_min = s_min, s_max = s_max) :: Float64
+     ϕ(s; s_min = s_MIN, s_max = s_MAX) :: Float64
 
 Radial part of the survey window function. Return `1.0` if is true that
 ``s_\mathrm{min} \le s \le s_\mathrm{max}`` and `0.0` otherwise.
@@ -196,7 +220,7 @@ separated into a radial and angular part, i.e.:
 
 See also: [`W`](@ref)
 """
-ϕ(s; s_min = s_min, s_max = s_max) = s_min < s < s_max ? 1.0 : 0.0
+ϕ(s; s_min = s_MIN, s_max = s_MAX) = s_min < s < s_max ? 1.0 : 0.0
 
 
 
@@ -220,7 +244,7 @@ W(θ; θ_max = θ_MAX) = 0.0 ≤ θ < θ_max ? 1.0 : 0.0
 
 
 @doc raw"""
-     V_survey(s_min = s_min, s_max = s_max, θ_max = θ_MAX) :: Float64
+     V_survey(s_min = s_MIN, s_max = s_MAX, θ_max = θ_MAX) :: Float64
 
 Return the volume of a survey with azimutal simmetry, i.e.:
 
@@ -237,7 +261,7 @@ Return the volume of a survey with azimutal simmetry, i.e.:
 \end{split}
 ```
 """
-function V_survey(s_min = s_min, s_max = s_max, θ_max = θ_MAX)
+function V_survey(s_min = s_MIN, s_max = s_MAX, θ_max = θ_MAX)
      sin_θ, cos_θ = sin(θ_max), cos(θ_max)
      diff_up_down = (s_max^3 - s_min^3) * (1 - cos_θ)^2 * (2 + cos_θ)
      tr = (s_max^2 + s_min^2 + s_max * s_min) * (s_max - s_min) * cos_θ * sin_θ^2
@@ -251,7 +275,7 @@ end
 
 
 @doc raw"""
-     A(s_min = s_min, s_max = s_max, θ_max = θ_MAX) :: Float64
+     A(s_min = s_MIN, s_max = s_MAX, θ_max = θ_MAX) :: Float64
 
 Return the Power Spectrum multipole normalization coefficient `A`, i.e.:
 ```math
@@ -266,9 +290,10 @@ instead [`A_prime`](@ref)
 
 See also: [`V_survey`](@ref)
 """
-function A(s_min = s_min, s_max = s_max, θ_max = θ_MAX)
+function A(s_min = s_MIN, s_max = s_MAX, θ_max = θ_MAX)
      2.0 * π * V_survey(s_min, s_max, θ_max)
 end
+
 
 
 @doc raw"""

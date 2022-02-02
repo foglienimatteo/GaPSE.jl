@@ -20,18 +20,18 @@
 
 
 struct BackgroundData
-     z::AbstractVector{T} where {T}
-     conftime::AbstractVector{T} where {T}
-     comdist::AbstractVector{T} where {T}
-     angdist::AbstractVector{T} where {T}
-     lumdist::AbstractVector{T} where {T}
-     D::AbstractVector{T} where {T}
-     f::AbstractVector{T} where {T}
-     ℋ::AbstractVector{T} where {T}
-     ℋ_p::AbstractVector{T} where {T}
+     z::Vector{Float64}
+     conftime::Vector{Float64}
+     comdist::Vector{Float64}
+     angdist::Vector{Float64}
+     lumdist::Vector{Float64}
+     D::Vector{Float64}
+     f::Vector{Float64}
+     ℋ::Vector{Float64}
+     ℋ_p::Vector{Float64}
 
      function BackgroundData(file::String, z_min = 0.05, z_max = 0.2;
-          names = NAMES_BACKGROUND, h = h_0)
+          names = NAMES_BACKGROUND, h = 0.7)
 
           data = readdlm(file, comments = true)
           N_z_MAX = findfirst(z -> z <= z_max, data[:, 1]) - 1
@@ -59,63 +59,54 @@ struct BackgroundData
      end
 end
 
-struct BackgroundSplines
-     z_of_s
-     s_of_z
-     D_of_s
-     f_of_s
-     ℋ_of_s
-     ℛ_of_s
-
-     function BackgroundSplines(BD::BackgroundData)
-          ℛs = 1.0 .- 1.0 ./ (BD.ℋ .* BD.comdist)
-          new(
-               Spline1D(BD.comdist, BD.z),
-               Spline1D(BD.z, BD.comdist),
-               Spline1D(BD.comdist, BD.D),
-               Spline1D(BD.comdist, BD.f),
-               Spline1D(BD.comdist, BD.ℋ),
-               Spline1D(BD.comdist, ℛs)
-          )
-     end
-end
-
-
-
-struct Point
-     z::Float64
-     #conftime::Float64
-     comdist::Float64
-     #angdist::Float64
-     #lumdist::Float64
-     D::Float64
-     f::Float64
-     ℋ::Float64
-     #ℋ_p::Float64
-     ℛ::Float64
-
-     Point(z, comdist, D, f, ℋ, ℛ) = new(z, comdist, D, f, ℋ, ℛ)
-     function Point(s, BS::BackgroundSplines)
-          new(BS.z_of_s(s), s, BS.D_of_s(s), BS.f_of_s(s),
-               BS.ℋ_of_s(s), BS.ℛ_of_s(s))
-     end
-end
-
-
-
-const f0 = data[:, column_NAMES_BACKGROUND["gr.fac. f"]][end]
+const f0 = 5.126998572951e-01
 const D0 = 1.0
 const ℋ0 = 3.3356409519815204e-4 # h_0/Mpc
 const ℋ0_p = 0.0
 const s_b0 = 0.0
-const s_min = s_of_z(z_MIN)
-const s_max = s_of_z(z_MAX)
 
 
-function func_z_eff(s_min = s_min, s_max = s_max, z_of_s = z_of_s)
+function func_z_eff(s_min, s_max, z_of_s)
      3.0 / (s_max^3 - s_min^3) * quadgk(s -> s^2 * z_of_s(s), s_min, s_max)[1]
 end
 
+
+struct CosmoParams
+     z_min::Float64
+     z_max::Float64
+     θ_max::Float64
+
+     k_min::Float64
+     k_max::Float64
+
+     Ω_b::Float64
+     Ω_cdm::Float64
+     Ω_M0::Float64
+     h_0::Float64
+
+
+     function CosmoParams(z_min, z_max, θ_max;
+          k_min = 1e-8, k_max = 10.0,
+          Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70)
+     
+          @assert 0.0 ≤ θ_max ≤ π / 2.0 " 0.0 ≤ θ_max ≤ π/2.0 must hold!"
+          @assert 0.0 ≤ z_min < z_max " 0.0 ≤ z_min < z_max must hold!"
+          @assert 0.0 ≤ k_min < k_max " 0.0 ≤ k_min < k_max must hold!"
+          @assert Ω_b ≥ 0.0 " Ω_b ≥ 0.0 must hold!"
+          @assert Ω_cdm ≥ 0.0 " Ω_cdm ≥ 0.0 must hold!"
+          @assert 0.0 ≤ h_0 ≤ 1.0 " 0.0 ≤ h_0 ≤ 1.0 must hold!"
+     
+          new(z_min, z_max, θ_max, k_min, k_max, Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0)
+     end
+end
+
+
+
+
+
+
+
+#=
 @doc raw"""
      const z_eff :: Float64
 
@@ -156,6 +147,7 @@ const z_eff = func_z_eff()
 
 
 const s_eff = s_of_z(z_eff)
+=#
 
 @doc raw"""
      const ℋ0 :: Float64

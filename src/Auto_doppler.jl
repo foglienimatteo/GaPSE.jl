@@ -17,7 +17,7 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-function ξ_doppler(P1::Point, P2::Point, y; enhancer = 1.0)
+function ξ_doppler(P1::Point, P2::Point, y, tools::IPSTools; enhancer = 1.0)
      s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ
      s2, D2, f2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ
 
@@ -25,9 +25,9 @@ function ξ_doppler(P1::Point, P2::Point, y; enhancer = 1.0)
      prefac = D1 * D2 * f1 * f2 * ℛ1 * ℛ2 * ℋ1 * ℋ2
      c1 = 3 * s1 * s2 - 2 * y * (s1^2 + s2^2) + s1 * s2 * y^2
 
-     parenth = I00(delta_s) / 45.0 + I20(delta_s) / 31.5 + I40(delta_s) / 105.0
+     parenth = tools.I00(delta_s) / 45.0 + tools.I20(delta_s) / 31.5 + tools.I40(delta_s) / 105.0
 
-     first = prefac * (c1 * parenth + I02(delta_s) * y * delta_s^2 / 3.0)
+     first = prefac * (c1 * parenth + tools.I02(delta_s) * y * delta_s^2 / 3.0)
 
      return enhancer * first
 end
@@ -37,7 +37,7 @@ end
 
 
 function integrand_on_mu_doppler(s1, s, μ,
-     BS::BackgroundSplines; L::Integer = 0, enhancer = 1.0,
+     cosmo::Cosmology; L::Integer = 0, enhancer = 1.0,
      use_windows::Bool = true)
 
      s2_value = s2(s1, s, μ)
@@ -46,30 +46,17 @@ function integrand_on_mu_doppler(s1, s, μ,
      if use_windows == true
           ϕ_s2 = ϕ(s2_value)
           (ϕ_s2 > 0.0) || (return 0.0)
-          P1, P2 = Point(s1, BS), Point(s2_value, BS)
-          val = ξ_doppler(P1, P2, y_value, enhancer = enhancer)
-          return val * ϕ_s2 * spline_F(s / s1, μ) * Pl(μ, L)
+          P1, P2 = Point(s1, cosmo), Point(s2_value, cosmo)
+          val = ξ_doppler(P1, P2, y_value, cosmo.tools; enhancer = enhancer)
+          return val * ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L)
      else
-          P1, P2 = Point(s1, BS), Point(s2_value, BS)
-          val = ξ_doppler(P1, P2, y_value, enhancer = enhancer)
+          P1, P2 = Point(s1, cosmo), Point(s2_value, cosmo)
+          val = ξ_doppler(P1, P2, y_value, cosmo.tools; enhancer = enhancer)
           return val * Pl(μ, L)
      end
 end
 
 
-function integrand_on_mu_doppler(P1::Point, P2::Point, y;
-     L::Integer = 0, enhancer = 1.0, use_windows::Bool = true)
-
-     if use_windows == true
-          ϕ_s2 = ϕ(P2.comdist)
-          (ϕ_s2 > 0.0) || (return 0.0)
-          val = ξ_doppler(P1, P2, y, enhancer = enhancer)
-          return val * ϕ_s2 * spline_F(s / s1, μ) * Pl(μ, L)
-     else
-          val = ξ_doppler(P1, P2, y, enhancer = enhancer)
-          return val * Pl(μ, L)
-     end
-end
 
 #=
 @doc raw"""

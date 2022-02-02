@@ -166,7 +166,7 @@ function F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
                end
           end
 
-          println(io, "\nx \t mu \t F \t F_error")
+          println(io, "# \nx \t mu \t F \t F_error")
           for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
                println(io, "$x\t $μ $(F[1])\t $(F[2])")
           end

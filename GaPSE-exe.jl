@@ -31,10 +31,22 @@ function main()
      FILE_PS = "data/WideA_ZA_pk.dat"
      FILE_BACKGROUND = "data/WideA_ZA_background.dat"
 
+
      z_min = 0.05
      z_max = 0.20
-     BD = GaPSE.BackgroundData(FILE_BACKGROUND, z_min, z_max; h=0.7)
-     BS = GaPSE.BackgroundSplines(BD)
+     θ_max = π / 2.0
+     params = GaPSE.CosmoParams(z_min, z_max, θ_max;
+          k_min = 1e-8, k_max = 10.0,
+          Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70)
+     cosmo = GaPSE.Cosmology(params,
+          FILE_BACKGROUND,
+          FILE_PS,
+          FILE_F_MAP)
+
+     GaPSE.parameters_used(stdout, cosmo)
+
+     GaPSE.print_map_int_on_mu(cosmo, "outputs/new_xi_doppler.txt", "auto_doppler";
+          μ_atol = 1e-4, μ_rtol = 1e-3, use_windows = true)
 
      #xs = [x for x in 0:0.1:3]
      #μs = vcat([μ for μ in -1:0.01:-0.91], [μ for μ in -0.9:0.1:0.9], [μ for μ in 0.91:0.01:1.0])
@@ -44,16 +56,15 @@ function main()
      #     χ_atol = 5e-3, χ_rtol=1e-3, atol = 1e-3, rtol = 1e-3, tol=1)
      #GaPSE.print_PS_multipole("outputs/P_lensing.txt", "outputs/xi_lensing.txt")
 
-     casto_tab = readdlm("data/tab_kappa_terms.dat", comments = true)
-     casto_ss = convert(Vector{Float64}, casto_tab[5:end, 1])
+     #casto_tab = readdlm("data/tab_kappa_terms.dat", comments = true)
+     #casto_ss = convert(Vector{Float64}, casto_tab[5:end, 1])
      #GaPSE.print_map_int_on_mu_lensing("outputs/xi_lensing.txt", casto_ss;
      #     χ_atol = 1e-4, χ_rtol = 5e-3, atol = 1e-4, rtol = 1e-3, tol = 1.0, Δχ_min = 1.0,
      #     use_windows = false)
      #
-     GaPSE.print_map_int_on_mu("outputs/xi_lensing.txt", "auto_lensing", casto_ss;
-          χ_atol = 1e-4, χ_rtol = 1e-2, μ_atol = 1e-4, μ_rtol = 1e-2, Δχ_min = 1.0,
-          use_windows = false
-     )
+     #GaPSE.print_map_int_on_mu("outputs/xi_lensing.txt", "auto_lensing", casto_ss;
+     #     χ_atol = 1e-4, χ_rtol = 1e-2, μ_atol = 1e-4, μ_rtol = 1e-2, Δχ_min = 1.0,
+     #     use_windows = false)
      #GaPSE.print_PS_multipole("outputs/P_lensing.txt", "outputs/xi_lensing.txt")
      #GaPSE.print_map_int_on_mu("outputs/xi_doppler.txt", "auto_doppler", casto_ss;
      #     μ_atol = 1e-4, μ_rtol = 1e-3, use_windows = true)
