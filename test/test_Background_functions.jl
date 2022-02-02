@@ -27,23 +27,33 @@
      s_eff = 435.37470960794167
      z_eff = 0.15045636097417317
 
-     z_of_s = Spline1D(com_dist, zs)
+     z_of_s = Spline1D(COM_DIST, ZS)
 
      @test isapprox(GaPSE.func_z_eff(s_max, s_min, z_of_s), z_eff; rtol = 1e-6)
 end
 
-@testset "test struct Background_functions" begin
-     BF = GaPSE.BackgroundData(TEST_FILE, 0.05, 0.2)
+@testset "test struct BackgroundData" begin
+     BD = GaPSE.BackgroundData(TEST_FILE, 0.05, 0.2)
 
-     #println([isapprox(BF_z, z, rtol = 1e-8) for (BF_z, z) in zip(BF.zs, zs)])
+     @test all(isapprox(BD.z, ZS, rtol = 1e-8))
+     @test all(isapprox.(BD.conftime, CONF_TIME, rtol = 1e-8))
+     @test all(isapprox.(BD.comdist, COM_DIST, rtol = 1e-8))
+     @test all(isapprox.(BD.angdist, ANG_DIST, rtol = 1e-8))
+     @test all(isapprox.(BD.lumdist, LUM_DIST, rtol = 1e-8))
+     @test all(isapprox.(BD.D, GROWTH_FACTOR_D, rtol = 1e-8))
+     @test all(isapprox.(BD.f, GROWTH_FACTOR_F, rtol = 1e-8))
+     @test all(isapprox.(BD.ℋ, COM_H, rtol = 1e-8))
+     @test all(isapprox.(BD.ℋ_p, COM_H_P, rtol = 1e-8))
+end
 
-     @test all(isapprox(BF.z, zs, rtol = 1e-8))
-     @test all(isapprox.(BF.conftime, conf_time, rtol = 1e-8))
-     @test all(isapprox.(BF.comdist, com_dist, rtol = 1e-8))
-     @test all(isapprox.(BF.angdist, ang_dist, rtol = 1e-8))
-     @test all(isapprox.(BF.lumdist, lum_dist, rtol = 1e-8))
-     @test all(isapprox.(BF.D, growth_factor_D, rtol = 1e-8))
-     @test all(isapprox.(BF.f, growth_factor_f, rtol = 1e-8))
-     @test all(isapprox.(BF.ℋ, com_H, rtol = 1e-8))
-     @test all(isapprox.(BF.ℋ_p, com_H_p, rtol = 1e-8))
+
+@testset "test struct BackgroundSplines" begin
+     BD = GaPSE.BackgroundData(TEST_FILE, 0.05, 0.2)
+     BS = GaPSE.BackgroundSplines(BD)
+
+     @test all(isapprox(BS.z_of_s.(BD.comdist), ZS, rtol = 1e-8))
+     @test all(isapprox(BS.s_of_z.(BD.z), COM_DIST, rtol = 1e-8))
+     @test all(isapprox(BS.D_of_s.(BD.comdist), GROWTH_FACTOR_D, rtol = 1e-8))
+     @test all(isapprox(BS.f_of_s.(BD.comdist), GROWTH_FACTOR_F, rtol = 1e-8))
+     @test all(isapprox(BS.ℋ_of_s.(BD.comdist), COM_H, rtol = 1e-8))
 end

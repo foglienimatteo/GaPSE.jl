@@ -27,6 +27,15 @@ FILE_NAME = split(PROGRAM_FILE, "/")[end]
 #main(x::Union{String, Float64, Int64}...) = main([string(var) for var in [x...]])
 function main()
 
+     FILE_F_MAP = "data/F_REFERENCE.txt"
+     FILE_PS = "data/WideA_ZA_pk.dat"
+     FILE_BACKGROUND = "data/WideA_ZA_background.dat"
+
+     z_min = 0.05
+     z_max = 0.20
+     BD = GaPSE.BackgroundData(FILE_BACKGROUND, z_min, z_max; h=0.7)
+     BS = GaPSE.BackgroundSplines(BD)
+
      #xs = [x for x in 0:0.1:3]
      #μs = vcat([μ for μ in -1:0.01:-0.91], [μ for μ in -0.9:0.1:0.9], [μ for μ in 0.91:0.01:1.0])
      #GaPSE.F_map(xs, μs; out = "data/F_REFERENCE.txt", rtol=5e-3, atol=1e-2)
@@ -42,7 +51,7 @@ function main()
      #     use_windows = false)
      #
      GaPSE.print_map_int_on_mu("outputs/xi_lensing.txt", "auto_lensing", casto_ss;
-     χ_atol = 1e-4, χ_rtol = 1e-2, μ_atol = 1e-4, μ_rtol = 1e-2, Δχ_min = 1.0,
+          χ_atol = 1e-4, χ_rtol = 1e-2, μ_atol = 1e-4, μ_rtol = 1e-2, Δχ_min = 1.0,
           use_windows = false
      )
      #GaPSE.print_PS_multipole("outputs/P_lensing.txt", "outputs/xi_lensing.txt")

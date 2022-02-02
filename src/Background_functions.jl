@@ -59,39 +59,47 @@ struct BackgroundData
      end
 end
 
-data = readdlm(FILE_BACKGROUND, comments = true)
-N_z_MAX = findfirst(z -> z <= z_MAX, data[:, 1]) - 1
-N_z_MIN = findfirst(z -> z <= z_MIN, data[:, 1]) + 1
-#println("\nN_z_MAX = ", N_z_MAX, ", \t\t z[N_z_MAX] = ", data[:, 1][N_z_MAX])
-#println("N_z_MIN = ", N_z_MIN, ", \t\t z[N_z_MIN] = ", data[:, 1][N_z_MIN])
+struct BackgroundSplines
+     z_of_s
+     s_of_z
+     D_of_s
+     f_of_s
+     ℋ_of_s
+     ℛ_of_s
 
-data_dict = Dict([name => reverse(data[:, i][N_z_MAX:N_z_MIN]) for (i, name) in enumerate(NAMES_BACKGROUND)]...)
-
-
-comdist_array = data_dict["comov. dist."] .* h_0
-conf_time = data_dict["conf. time [Mpc]"] .* h_0
-D = Spline1D(comdist_array, data_dict["gr.fac. D"])
-f = Spline1D(comdist_array, data_dict["gr.fac. f"])
-ℋ = Spline1D(comdist_array, data_dict["H [1/Mpc]"] ./ h_0 ./ (1.0 .+ data_dict["z"]))
-ℋ_p(t) = Dierckx.derivative(
-     Spline1D(reverse(conf_time),
-          reverse(data_dict["H [1/Mpc]"] ./ h_0 ./ (1.0 .+ data_dict["z"]))), t)
-#s_b = Spline1D(comdist_array, [0.0 for i in 1:length(data_dict["comov. dist."])])
-s_b(s) = 0.0
-s_of_z = Spline1D(data_dict["z"], comdist_array)
-z_of_s = Spline1D(comdist_array, data_dict["z"])
-f_evo = 0
-
-println("const lum_dist  = ", data_dict["lum. dist."] .* h_0, "\n")
-println("const lum_dist  = ", data_dict["ang.diam.dist."] .* h_0, "\n")
+     function BackgroundSplines(BD::BackgroundData)
+          ℛs = 1.0 .- 1.0 ./ (BD.ℋ .* BD.comdist)
+          new(
+               Spline1D(BD.comdist, BD.z),
+               Spline1D(BD.z, BD.comdist),
+               Spline1D(BD.comdist, BD.D),
+               Spline1D(BD.comdist, BD.f),
+               Spline1D(BD.comdist, BD.ℋ),
+               Spline1D(BD.comdist, ℛs)
+          )
+     end
+end
 
 
-ℛ(s) = 1.0 - 1.0 / (ℋ(s) * s)
-ℛ(s, ℋ) = 1.0 - 1.0 / (ℋ * s)
-#ℛ(s) = 5 * s_b(s) + (2 - 5 * s_b(s)) / (ℋ(s) * s) + ℋ_p(s) / (ℋ(s)^2) - f_evo
-#function ℛ(s, ℋ, ℋ_p, s_b, f_evo = f_evo)
-#     5 * s_b + (2 - 5 * s_b) / (ℋ * s) + ℋ_p / (ℋ^2) - f_evo
-#end
+
+struct Point
+     z::Float64
+     #conftime::Float64
+     comdist::Float64
+     #angdist::Float64
+     #lumdist::Float64
+     D::Float64
+     f::Float64
+     ℋ::Float64
+     #ℋ_p::Float64
+     ℛ::Float64
+
+     Point(z, comdist, D, f, ℋ, ℛ) = new(z, comdist, D, f, ℋ, ℛ)
+     function Point(s, BS::BackgroundSplines)
+          new(BS.z_of_s(s), s, BS.D_of_s(s), BS.f_of_s(s),
+               BS.ℋ_of_s(s), BS.ℛ_of_s(s))
+     end
+end
 
 
 
@@ -157,6 +165,9 @@ Comoving Hubble constant at present time. Its value is, in natural system
 ``\mathcal{H}_0 \simeq 3.335641\times10^{-4} \; h_0^{-1}\mathrm{Mpc}``
 """
 ℋ0
+
+
+
 
 ##########################################################################################92
 

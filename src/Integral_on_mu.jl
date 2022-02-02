@@ -17,7 +17,25 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
+function integral_on_mu(s1, s, integrand::Function;
+     L::Integer = 0,
+     enhancer::Float64 = 1e6,
+     use_windows::Bool = true,
+     μ_atol::Float64 = 1e-3,
+     μ_rtol::Float64 = 1e-3,
+     kwargs...
+)
 
+     f(μ) = integrand(s1, s, μ; enhancer = enhancer, L = L,
+          use_windows = use_windows, kwargs...)[1]
+
+     #println("s1 = $s1 \t s = $s")
+     int = quadgk(μ -> f(μ), -1.0, 1.0; rtol = μ_rtol, atol = μ_atol)
+     #println("s1 = $s1 \t s2 = $s \t int = $int")
+     return int ./ enhancer
+end
+
+#=
 function integral_on_mu(s1, s, integrand::Function;
      L::Integer = 0,
      enhancer::Float64 = 1e6,
@@ -56,7 +74,7 @@ function ξ_multipole(s, effect::Function; s1 = s_eff, L::Integer = 0, kwargs...
              string(values(dict_gr_mu) .* " , "...)
      @assert (effect ∈ values(dict_gr_mu)) error
 
-     return (2.0*L+1.0)/2.0 .* integral_on_mu(s1, s, effect; L=L, kwargs...)
+     return (2.0 * L + 1.0) / 2.0 .* integral_on_mu(s1, s, effect; L = L, kwargs...)
 end
 
 
@@ -66,7 +84,7 @@ function ξ_multipole(s, effect::String; s1 = s_eff, L::Integer = 0, kwargs...)
              string(keys(dict_gr_mu) .* " , "...)
      @assert (effect ∈ keys(dict_gr_mu)) error
 
-     return (2.0*L+1.0)/2.0 .* integral_on_mu(s1, s, dict_gr_mu[effect]; L=L, kwargs...)
+     return (2.0 * L + 1.0) / 2.0 .* integral_on_mu(s1, s, dict_gr_mu[effect]; L = L, kwargs...)
 end
 
 
@@ -74,9 +92,9 @@ end
 
 
 function map_integral_on_mu(
-     effect::Union{String, Function},
+     effect::Union{String,Function},
      v_ss::Union{Vector{Float64},Nothing} = nothing,
-     s1::Float64 = s_eff; 
+     s1::Float64 = s_eff;
      pr::Bool = true, enhancer = 1e6, kwargs...)
 
      t1 = time()
@@ -91,7 +109,7 @@ end
 
 
 function print_map_int_on_mu(out::String,
-     effect::Union{String, Function},
+     effect::Union{String,Function},
      v_ss::Union{Vector{Float64},Nothing} = nothing,
      s1::Float64 = s_eff;
      kwargs...)
@@ -123,4 +141,4 @@ function print_map_int_on_mu(out::String,
      end
 end
 
-
+=#

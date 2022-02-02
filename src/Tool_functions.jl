@@ -35,6 +35,7 @@ struct WindowF
      xs::AbstractVector{T1} where {T1}
      μs::AbstractVector{T2} where {T2}
      Fs::AbstractArray{T3,2} where {T3}
+     
 
      function WindowF(file::String)
           data = readdlm(file, comments = true)
@@ -56,6 +57,12 @@ struct WindowF
      end
 end
 
+
+function spline_F(x, μ, str::WindowF)
+     grid = GridInterpolations.RectangleGrid(str.μs, str.xs)
+     GridInterpolations.interpolate(grid, str.Fs, [μ, x])
+end
+#=
 F_map_data = readdlm(FILE_F_MAP, comments = true)
 F_map_data_dict = Dict([name => F_map_data[2:end, i] for (i, name) in enumerate(NAMES_F_MAP)]...)
 
@@ -67,7 +74,7 @@ _Fs = F_map_data_dict["F"]
 # for my F map convenction
 my_F_grid = GridInterpolations.RectangleGrid(_μs, _xs)
 spline_F(x, μ) = GridInterpolations.interpolate(my_F_grid, _Fs, [μ, x])
-
+=#
 # for the opposite convenction for F map
 #other_F_grid = GridInterpolations.RectangleGrid(_xs, _μs)
 #spline_F(x, μ) = GridInterpolations.interpolate(other_F_grid, _Fs, [x, μ])

@@ -38,12 +38,8 @@ const z_MAX = 0.2
 const θ_MAX = π / 2.0
 const k_MAX = 10.0 # h_0 Mpc^{-1}
 
-FILE_F_MAP = "data/F_REFERENCE.txt"
 NAMES_F_MAP = ["x", "mu", "F", "F_error"]
-
-FILE_PS = "data/WideA_ZA_pk.dat"
 NAMES_PS = ["k (h/Mpc)", "P (Mpc/h)^3"]
-FILE_BACKGROUND = "data/WideA_ZA_background.dat"
 NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mpc]",
      "comov. dist.", "ang.diam.dist.", "lum. dist.", "comov.snd.hrz.",
      "(.)rho_g", "(.)rho_b", "(.)rho_cdm", "(.)rho_lambda", "(.)rho_ur",
@@ -53,6 +49,8 @@ column_NAMES_BACKGROUND = Dict([x => i for (i, x) in enumerate(NAMES_BACKGROUND)
 include("F_evaluation.jl")
 include("Background_functions.jl")
 include("Tool_functions.jl")
+include("Cosmology.jl")
+
 include("Auto_doppler.jl")
 include("Auto_lensing.jl")
 
