@@ -19,9 +19,18 @@
 
 
 using GaPSE, Test
+using Dierckx, DelimitedFiles
 
+
+const TEST_FILE = "TEST_DATA.txt"
+include("TEST_DATA.jl")
 
 ##########################################################################################92
+
+
+@testset "test_Tool_functions" begin
+     include("test_Tool_functions.jl")
+end
 
 @testset "test_Background_functions" begin
      include("test_Background_functions.jl")

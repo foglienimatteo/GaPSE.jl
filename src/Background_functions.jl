@@ -20,8 +20,43 @@
 
 
 struct BackgroundData
+     z::AbstractVector{T} where {T}
+     conftime::AbstractVector{T} where {T}
+     comdist::AbstractVector{T} where {T}
+     angdist::AbstractVector{T} where {T}
+     lumdist::AbstractVector{T} where {T}
+     D::AbstractVector{T} where {T}
+     f::AbstractVector{T} where {T}
+     ℋ::AbstractVector{T} where {T}
+     ℋ_p::AbstractVector{T} where {T}
 
+     function BackgroundData(file::String, z_min = 0.05, z_max = 0.2;
+          names = NAMES_BACKGROUND, h = h_0)
 
+          data = readdlm(file, comments = true)
+          N_z_MAX = findfirst(z -> z <= z_max, data[:, 1]) - 1
+          N_z_MIN = findfirst(z -> z <= z_min, data[:, 1]) + 1
+
+          data_dict = Dict([name => reverse(data[:, i][N_z_MAX:N_z_MIN])
+                            for (i, name) in enumerate(names)]...)
+
+          com_H = data_dict["H [1/Mpc]"] ./ h ./ (1.0 .+ data_dict["z"])
+          conf_time = data_dict["conf. time [Mpc]"] .* h
+          spline_com_H = Spline1D(reverse(conf_time), reverse(com_H))
+          com_H_p = [Dierckx.derivative(spline_com_H, t) for t in conf_time]
+
+          new(
+               data_dict["z"],
+               conf_time,
+               data_dict["comov. dist."] .* h,
+               data_dict["ang.diam.dist."] .* h,
+               data_dict["lum. dist."] .* h,
+               data_dict["gr.fac. D"],
+               data_dict["gr.fac. f"],
+               com_H,
+               com_H_p,
+          )
+     end
 end
 
 data = readdlm(FILE_BACKGROUND, comments = true)
@@ -29,24 +64,30 @@ N_z_MAX = findfirst(z -> z <= z_MAX, data[:, 1]) - 1
 N_z_MIN = findfirst(z -> z <= z_MIN, data[:, 1]) + 1
 #println("\nN_z_MAX = ", N_z_MAX, ", \t\t z[N_z_MAX] = ", data[:, 1][N_z_MAX])
 #println("N_z_MIN = ", N_z_MIN, ", \t\t z[N_z_MIN] = ", data[:, 1][N_z_MIN])
+
 data_dict = Dict([name => reverse(data[:, i][N_z_MAX:N_z_MIN]) for (i, name) in enumerate(NAMES_BACKGROUND)]...)
 
 
 comdist_array = data_dict["comov. dist."] .* h_0
-#angdist_array = angdist_array .* h_0
-#lumdist_array = lumdist_array .* h_0
+conf_time = data_dict["conf. time [Mpc]"] .* h_0
 D = Spline1D(comdist_array, data_dict["gr.fac. D"])
 f = Spline1D(comdist_array, data_dict["gr.fac. f"])
 ℋ = Spline1D(comdist_array, data_dict["H [1/Mpc]"] ./ h_0 ./ (1.0 .+ data_dict["z"]))
-ℋ_p(s) = Dierckx.derivative(ℋ, s)
+ℋ_p(t) = Dierckx.derivative(
+     Spline1D(reverse(conf_time),
+          reverse(data_dict["H [1/Mpc]"] ./ h_0 ./ (1.0 .+ data_dict["z"]))), t)
 #s_b = Spline1D(comdist_array, [0.0 for i in 1:length(data_dict["comov. dist."])])
 s_b(s) = 0.0
 s_of_z = Spline1D(data_dict["z"], comdist_array)
 z_of_s = Spline1D(comdist_array, data_dict["z"])
 f_evo = 0
 
-ℛ(s) = 1.0 - 1.0/(ℋ(s) * s)
-ℛ(s, ℋ) = 1.0 - 1.0 / (ℋ * s) 
+println("const lum_dist  = ", data_dict["lum. dist."] .* h_0, "\n")
+println("const lum_dist  = ", data_dict["ang.diam.dist."] .* h_0, "\n")
+
+
+ℛ(s) = 1.0 - 1.0 / (ℋ(s) * s)
+ℛ(s, ℋ) = 1.0 - 1.0 / (ℋ * s)
 #ℛ(s) = 5 * s_b(s) + (2 - 5 * s_b(s)) / (ℋ(s) * s) + ℋ_p(s) / (ℋ(s)^2) - f_evo
 #function ℛ(s, ℋ, ℋ_p, s_b, f_evo = f_evo)
 #     5 * s_b + (2 - 5 * s_b) / (ℋ * s) + ℋ_p / (ℋ^2) - f_evo
@@ -55,12 +96,17 @@ f_evo = 0
 
 
 const f0 = data[:, column_NAMES_BACKGROUND["gr.fac. f"]][end]
-const D0 = data[:, column_NAMES_BACKGROUND["gr.fac. D"]][end]
-const ℋ0 = data[:, column_NAMES_BACKGROUND["H [1/Mpc]"]][end] / h_0
+const D0 = 1.0
+const ℋ0 = 3.3356409519815204e-4 # h_0/Mpc
 const ℋ0_p = 0.0
 const s_b0 = 0.0
 const s_min = s_of_z(z_MIN)
 const s_max = s_of_z(z_MAX)
+
+
+function func_z_eff(s_min = s_min, s_max = s_max, z_of_s = z_of_s)
+     3.0 / (s_max^3 - s_min^3) * quadgk(s -> s^2 * z_of_s(s), s_min, s_max)[1]
+end
 
 @doc raw"""
      const z_eff :: Float64
@@ -98,7 +144,8 @@ and their definitions.
 
 See also: [`ϕ`](@ref), [`W`](@ref)
 """
-const z_eff = 3.0 / (s_max^3 - s_min^3) * quadgk(s -> s^2 * z_of_s(s), s_min, s_max)[1]
+const z_eff = func_z_eff()
+
 
 const s_eff = s_of_z(z_eff)
 
