@@ -21,7 +21,7 @@ module GaPSE
 
 using TwoFAST # Licence: MIT "Expat" (o GPL ?)
 using Dierckx # Licence: BSD
-using HCubature, QuadGK, LegendrePolynomials  # Licence: MIT "Expat"
+using HCubature, QuadGK, LegendrePolynomials, Trapz  # Licence: MIT "Expat"
 using GridInterpolations  # Licence: MIT "Expat"
 using ProgressMeter, Documenter  # Licence: MIT "Expat"
 using Test, Printf, DelimitedFiles  # Licence: MIT "Expat"
@@ -43,7 +43,6 @@ NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mpc]",
      "(.)rho_g", "(.)rho_b", "(.)rho_cdm", "(.)rho_lambda", "(.)rho_ur",
      "(.)rho_crit", "gr.fac. D", "gr.fac. f"]
 
-column_NAMES_BACKGROUND = Dict([x => i for (i, x) in enumerate(NAMES_BACKGROUND)])
 
 include("F_evaluation.jl")
 include("Background_functions.jl")
@@ -54,6 +53,7 @@ include("Auto_doppler.jl")
 include("Auto_lensing.jl")
 
 IMPLEMENTED_GR_EFFECTS = ["auto_doppler", "auto_lensing"]
+
 dict_gr_mu = Dict(
      "auto_doppler" => integrand_on_mu_doppler,
      "auto_lensing" => integrand_on_mu_lensing,
@@ -61,6 +61,7 @@ dict_gr_mu = Dict(
 
 include("Power_Spectrum.jl")
 include("Integral_on_mu.jl")
+
 
 function parameters_used(io::IO, cosmo::Cosmology)
      println(io, "# The following parameters were used for this computation: ")

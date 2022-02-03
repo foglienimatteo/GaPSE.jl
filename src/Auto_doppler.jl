@@ -17,7 +17,7 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 @doc raw"""
-     ξ_doppler(P1::Point, P2::Point, y, tools::IPSTools; enhancer = 1.0) :: Float64
+     ξ_doppler(P1::Point, P2::Point, y, cosmo::Cosmology; enhancer = 1.0) :: Float64
 
 Return the Doppler auto-correlation function, defined as follows:
 ```math
@@ -43,24 +43,28 @@ the J coefficients are given by (with ``y = \cos{\theta}``):
      
 - `y`: the cosine of the angle between the two points `P1` and `P2`
 
-- `tools::IPSTools`: math tools used in this computations, such as all the ``I_\ell^n`` and
-  all the ``\sigma_i``
+- `cosmo::Cosmology`: cosmology to be used in this computation
 
 - `enhancer`: just a float number used in order to deal better with small numbers; the returned
   value is actually `enhancer * xi_doppler`, where `xi_doppler` is the true value calculated
   as shown before.
 """
-function ξ_doppler(P1::Point, P2::Point, y, tools::IPSTools; enhancer = 1.0)
+function ξ_doppler(P1::Point, P2::Point, y, cosmo::Cosmology; enhancer = 1.0)
      s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ
      s2, D2, f2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ
 
-     delta_s = s(P1.comdist, P2.comdist, y)
+     Δs = s(P1.comdist, P2.comdist, y)
      prefac = D1 * D2 * f1 * f2 * ℛ1 * ℛ2 * ℋ1 * ℋ2
      c1 = 3 * s1 * s2 - 2 * y * (s1^2 + s2^2) + s1 * s2 * y^2
 
-     parenth = tools.I00(delta_s) / 45.0 + tools.I20(delta_s) / 31.5 + tools.I40(delta_s) / 105.0
+     I00 = cosmo.tools.I00(Δs)
+     I20 = cosmo.tools.I20(Δs)
+     I40 = cosmo.tools.I40(Δs)
+     I02 = cosmo.tools.I02(Δs)
 
-     first = prefac * (c1 * parenth + tools.I02(delta_s) * y * delta_s^2 / 3.0)
+     parenth = I00 / 45.0 + I20 / 31.5 + I40 / 105.0
+
+     first = prefac * (c1 * parenth + I02 * y * Δs^2 / 3.0)
 
      return enhancer * first
 end
@@ -80,11 +84,11 @@ function integrand_on_mu_doppler(s1, s, μ,
           ϕ_s2 = ϕ(s2_value)
           (ϕ_s2 > 0.0) || (return 0.0)
           P1, P2 = Point(s1, cosmo), Point(s2_value, cosmo)
-          val = ξ_doppler(P1, P2, y_value, cosmo.tools; enhancer = enhancer)
+          val = ξ_doppler(P1, P2, y_value, cosmo; enhancer = enhancer)
           return val * ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L)
      else
           P1, P2 = Point(s1, cosmo), Point(s2_value, cosmo)
-          val = ξ_doppler(P1, P2, y_value, cosmo.tools; enhancer = enhancer)
+          val = ξ_doppler(P1, P2, y_value, cosmo; enhancer = enhancer)
           return val * Pl(μ, L)
      end
 end
