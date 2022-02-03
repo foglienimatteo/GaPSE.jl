@@ -98,10 +98,12 @@ struct Point
      ℋ::Float64
      #ℋ_p::Float64
      ℛ::Float64
+     a::Float64
 
-     Point(z, comdist, D, f, ℋ, ℛ) = new(z, comdist, D, f, ℋ, ℛ)
+     Point(z, comdist, D, f, ℋ, ℛ) = new(z, comdist, D, f, ℋ, ℛ, 1.0/(1.0+z))
      function Point(s, cosmo::Cosmology)
-          new(cosmo.z_of_s(s), s, cosmo.D_of_s(s), cosmo.f_of_s(s),
-               cosmo.ℋ_of_s(s), cosmo.ℛ_of_s(s))
+          z = cosmo.z_of_s(s)
+          new(z, s, cosmo.D_of_s(s), cosmo.f_of_s(s),
+               cosmo.ℋ_of_s(s), cosmo.ℛ_of_s(s), 1.0/(1.0+z))
      end
 end

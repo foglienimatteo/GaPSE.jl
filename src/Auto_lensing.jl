@@ -18,6 +18,66 @@
 #
 
 
+
+function integrand_ξ_lensing(
+     IP1::Point, IP2::Point, P1::Point, P2::Point, y, cosmo::Cosmology; enhancer = 1, Δχ_min = 1)
+
+     s1 = P1.comdist
+     s2 = P2.comdist
+     χ1, D1, a_χ1 = IP1.comdist, IP1.D, IP1.a
+     χ2, D2, a_χ2 = IP2.comdist, IP2.D, IP2.a
+     Ω_M0 = cosmo.params.Ω_M0
+
+     Δχ = √(χ1^2 + χ2^2 - 2 * χ1 * χ2 * y)
+
+     denomin = s1 * s2 * a_χ1 * a_χ2
+     factor = ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (χ2 - s2) 
+     #println("factor = $factor")
+     #println("denomin = $denomin")
+     #factor = ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (χ2 - s2) * psb1 * psb2
+
+     res = if Δχ > Δχ_min
+          χ1χ2 = χ1 * χ2
+     
+          new_J00 = -0.75 * χ1χ2^2 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
+          new_J02 = -1.5 * χ1χ2^2 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
+          new_J31 = 9 * y * Δχ^6
+          new_J22 = 2.25 * χ1χ2 * (
+                         2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)
+                         -
+                         16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
+                         +
+                         χ1χ2^2 * (11y^4 + 14y^2 + 23)
+                    )
+     
+          I00 = cosmo.tools.I00(Δχ)
+          I20 = cosmo.tools.I20(Δχ)
+          I13 = cosmo.tools.I13(Δχ)
+          I22 = cosmo.tools.I22(Δχ)
+     
+          #println("J00 = $new_J00, \t I00(Δχ) = $(I00)")
+          #println("J02 = $new_J02, \t I20(Δχ) = $(I20)")
+          #println("J31 = $new_J31, \t I13(Δχ) = $(I13)")
+          #println("J22 = $new_J22, \t I22(Δχ) = $(I22)")
+     
+          enhancer * factor / denomin / Δχ^4 * (
+               new_J00 * I00 + new_J02 * I20 +
+               new_J31 * I13 + new_J22 * I22
+          )
+     else
+     
+          lim = 4.0 / 15.0 * (5.0 * cosmo.tools.σ_2 + 2.0 / 3.0 * cosmo.tools.σ_0 * χ2^2)
+          #println("lim = $lim")
+          9.0 / 4.0 * enhancer * factor / denomin * lim
+     end
+
+     #println("res = ", res, "\n")
+     return res
+end
+
+
+
+#=
 @doc raw"""
      integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 0.5, 
           enhancer = 1, Δχ_min = 1e-6) :: Float64
@@ -116,12 +176,12 @@ function integrand_ξ_lensing(χ1, χ2, s1, s2, y; enhancer = 1, Δχ_min = 1)
                          +
                          χ1χ2^2 * (11y^4 + 14y^2 + 23)
                     )
-     
+
           #println("J00 = $new_J00, \t I00(Δχ) = $(I00(Δχ))")
           #println("J02 = $new_J02, \t I20(Δχ) = $(I20(Δχ))")
           #println("J31 = $new_J31, \t I13(Δχ) = $(I13(Δχ))")
           #println("J22 = $new_J22, \t I22(Δχ) = $(I22(Δχ))")
-     
+
           enhancer * factor / denomin / Δχ^4 * (
                new_J00 * I00(Δχ) + new_J02 * I20(Δχ) +
                new_J31 * I13(Δχ) + new_J22 * I22(Δχ)
@@ -217,9 +277,9 @@ See also: [`integrand_ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
 [`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref)
 """
 function ξ_lensing(s1, s2, y; enhancer = 1, Δχ_min = 1, kwargs...)
-      
+
      my_int(var) = integrand_ξ_lensing(var[1], var[2], s1, s2, y;
-                    Δχ_min = Δχ_min, enhancer = enhancer)
+          Δχ_min = Δχ_min, enhancer = enhancer)
      a = [0.0, 0.0]
      b = [s1, s2]
      int = hcubature(my_int, a, b; kwargs...)
@@ -280,14 +340,14 @@ See also: [`integrand_ξ_lensing`](@ref), [`ξ_lensing`](@ref)
 [`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref)
 """
-function integrand_on_mu_lensing(s1, s, μ; 
-               L::Integer = 0, 
-               enhancer::Float64 = 1.0,
-               Δχ_min::Float64 = 1e-6, 
-               χ_atol::Float64 = 1e-3, 
-               χ_rtol::Float64 = 1e-3, 
-               use_windows::Bool=true
-          )
+function integrand_on_mu_lensing(s1, s, μ;
+     L::Integer = 0,
+     enhancer::Float64 = 1.0,
+     Δχ_min::Float64 = 1e-6,
+     χ_atol::Float64 = 1e-3,
+     χ_rtol::Float64 = 1e-3,
+     use_windows::Bool = true
+)
 
      if use_windows == true
           ϕ_s2 = ϕ(s2(s1, s, μ))
@@ -367,18 +427,18 @@ See also: [`integrand_ξ_lensing`](@ref), [`ξ_lensing`](@ref)
 [`integrand_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref)
 """
-function integral_on_mu_lensing(s1, s; 
-          L::Integer = 0, 
-          enhancer::Float64 = 1e6,
-          Δχ_min::Float64 = 1e-6, 
-          χ_atol::Float64 = 1e-3, 
-          χ_rtol::Float64 = 1e-3, 
-          use_windows::Bool = true,     
-          kwargs...
-     )
+function integral_on_mu_lensing(s1, s;
+     L::Integer = 0,
+     enhancer::Float64 = 1e6,
+     Δχ_min::Float64 = 1e-6,
+     χ_atol::Float64 = 1e-3,
+     χ_rtol::Float64 = 1e-3,
+     use_windows::Bool = true,
+     kwargs...
+)
 
-     f(μ) = integrand_on_mu_lensing(s1, s, μ; enhancer = enhancer, L = L, 
-     Δχ_min = Δχ_min, χ_atol = χ_atol, χ_rtol = χ_rtol, use_windows = use_windows)[1]
+     f(μ) = integrand_on_mu_lensing(s1, s, μ; enhancer = enhancer, L = L,
+          Δχ_min = Δχ_min, χ_atol = χ_atol, χ_rtol = χ_rtol, use_windows = use_windows)[1]
      #println("s1 = $s1 \t s = $s")
      int = quadgk(μ -> f(μ), -1.0, 1.0; kwargs...)
      #println("s1 = $s1 \t s2 = $s \t int = $int")
@@ -387,7 +447,7 @@ end
 
 
 function map_integral_on_mu_lensing(
-     s1::Float64 = s_eff, v_ss::Union{Vector{Float64}, Nothing}=nothing;
+     s1::Float64 = s_eff, v_ss::Union{Vector{Float64},Nothing} = nothing;
      L::Integer = 0, pr::Bool = true, Δχ_min = 1e-6,
      χ_atol = 1e-3, χ_rtol = 1e-3,
      enhancer = 1e6, kwargs...)
@@ -557,3 +617,5 @@ function print_map_int_on_mu_lensing(out::String,
           end
      end
 end
+
+=#
