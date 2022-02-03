@@ -29,9 +29,9 @@ function integral_on_mu(s1, s, integrand::Function, cosmo::Cosmology;
      f(μ) = integrand(s1, s, μ, cosmo; enhancer = enhancer, L = L,
           use_windows = use_windows, kwargs...)[1]
 
-     #println("s1 = $s1 \t s = $s")
+     println("s1 = $s1 \t s = $s")
      int = quadgk(μ -> f(μ), -1.0, 1.0; rtol = μ_rtol, atol = μ_atol)
-     #println("s1 = $s1 \t s2 = $s \t int = $int")
+     println("s1 = $s1 \t s2 = $s \t int = $int")
      return int ./ enhancer
 end
 
@@ -50,23 +50,67 @@ end
 ##########################################################################################92
 
 
+
+function my_integral_on_mu(s1, s, integrand, cosmo::GaPSE.Cosmology;
+                    L::Integer = 0,
+                    enhancer::Float64 = 1e6,
+                    use_windows::Bool = true,
+                    μ_steps = 30,
+                    kwargs...
+               )
+
+     μs1 = range(-1.0, -0.9, length = μ_steps)
+     μs2 = range(-0.9, 0.9, length = μ_steps)
+     μs3 = range(0.9, 1.0, length = μ_steps)
+     μs = unique(vcat(μs1, μs2, μs3))
+     fs = [integrand(s1, s, μ, cosmo; enhancer = enhancer, L = L,
+          use_windows = use_windows, kwargs...) for μ in μs]
+
+     #println("s1 = $s1 \t s = $s")
+     #int = quadgk(μ -> f(μ), -1.0, 1.0; rtol = μ_rtol, atol = μ_atol)
+     #println("s1 = $s1 \t s2 = $s \t int = $int")
+     return trapz(μs, fs) / enhancer
+end
+
+
+function my_integral_on_mu(s1, s, effect::String, cosmo::GaPSE.Cosmology; kwargs...)
+     error = "$effect is not a valid GR effect name.\n" *
+             "Valid GR effect names are the following:\n" *
+             string(keys(dict_gr_mu) .* " , "...)
+
+     @assert (effect ∈ keys(dict_gr_mu)) error
+     my_integral_on_mu(s1, s, dict_gr_mu[effect], cosmo; kwargs...)
+end
+
+##########################################################################################92
+
+
 function map_integral_on_mu(
      cosmo::Cosmology,
      effect::Union{String,Function},
      v_ss::Union{Vector{Float64},Nothing} = nothing;
      s_1::Union{Float64,Nothing} = nothing,
+     use_my::Bool = true,
      pr::Bool = true, enhancer = 1e6, kwargs...)
 
      s1 = isnothing(s_1) ? cosmo.s_eff : s_1
 
      t1 = time()
      ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length = 100) : v_ss
-     f(s) = integral_on_mu(s1, s, effect, cosmo; enhancer = enhancer, kwargs...)
-     vec = @showprogress [f(s) for s in ss]
-     xis, xis_err = [x[1] for x in vec], [x[2] for x in vec]
+     xis = if use_my == true
+          my_f(s) = my_integral_on_mu(s1, s, effect, cosmo; enhancer = enhancer, kwargs...)
+          omg = @showprogress [my_f(s) for s in ss]
+          omg
+     else
+          f(s) = integral_on_mu(s1, s, effect, cosmo; enhancer = enhancer, kwargs...)
+          vec = @showprogress [f(s) for s in ss]
+          omg, xis_err = [x[1] for x in vec], [x[2] for x in vec]
+          omg
+     end
+
      t2 = time()
      pr && println("\ntime needed for map_integral_on_mu for $effect [in s] = $(t2-t1)")
-     return (ss, xis, xis_err)
+     return (ss, xis)
 end
 
 
@@ -102,9 +146,9 @@ function print_map_int_on_mu(
                end
           end
           println(io, "# ")
-          println(io, "# s [Mpc/h_0] \t \t xi \t\t xi_error")
-          for (s, xi, xi_err) in zip(vec[1], vec[2], vec[3])
-               println(io, "$s \t $xi \t $(xi_err)")
+          println(io, "# s [Mpc/h_0] \t \t xi")
+          for (s, xi) in zip(vec[1], vec[2])
+               println(io, "$s \t $xi")
           end
      end
 end

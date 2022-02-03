@@ -145,7 +145,10 @@ function integrand_ξ_lensing(
 end
 
 
-
+function func_Δχ_min(s1, s2, y; frac = 1e-4)
+     Δs = s(s1, s2, y)
+     return frac * Δs
+end
 
 
 @doc raw"""
@@ -227,8 +230,10 @@ See also: [`integrand_ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
 [`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref)
 """
 function ξ_lensing(s1, s2, y, cosmo::GaPSE.Cosmology;
-     N_χs = 100, enhancer = 1, Δχ_min = 1)
+     N_χs = 100, enhancer = 1, frac_Δχ_min = 1e-4)
+
      adim_χs = range(0.0, 1.0, N_χs)
+     Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
      χ1s = adim_χs .* s1
@@ -243,7 +248,9 @@ function ξ_lensing(s1, s2, y, cosmo::GaPSE.Cosmology;
           for IP1 in IP1s, IP2 in IP2s
      ]
 
-     return trapz((χ1s, χ2s), int_ξ_lensings)
+     res = trapz((χ1s, χ2s), int_ξ_lensings)
+     #println("res = $res")
+     return res
 end
 
 
@@ -304,19 +311,22 @@ function integrand_on_mu_lensing(s1, s, μ, cosmo::Cosmology;
 
      s2_value = s2(s1, s, μ)
      y_value = y(s1, s, μ)
-     if use_windows == true
+     res = if use_windows == true
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
           int = ξ_lensing(s1, s2_value, y_value, cosmo; kwargs...)
           #println("int = $int")
-          return int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
+          int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
           int = ξ_lensing(s1, s2_value, y_value, cosmo; kwargs...)
           #println("int = $int")
-          return int .* Pl(μ, L)
+          int .* Pl(μ, L)
      end
+
+     #println("res = $res")
+     return res
 end
 
 
