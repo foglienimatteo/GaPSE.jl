@@ -227,8 +227,8 @@ See also: [`integrand_ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
 [`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref)
 """
 function ξ_lensing(s1, s2, y, cosmo::GaPSE.Cosmology;
-     NN = 10, enhancer = 1, Δχ_min = 1)
-     adim_χs = range(0.0, 1.0, NN)
+     N_χs = 100, enhancer = 1, Δχ_min = 1)
+     adim_χs = range(0.0, 1.0, N_χs)
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
      χ1s = adim_χs .* s1

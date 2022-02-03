@@ -19,7 +19,7 @@
 
 function PS_multipole(
      f_in::Union{Function,Dierckx.Spline1D},
-     int_s_min = 0.0, int_s_max = 1000.0;
+     int_s_min = 1e-8, int_s_max = 1000.0;
      L::Integer = 0, N::Integer = 128,
      pr::Bool = true)
 
@@ -37,16 +37,17 @@ end
 
 
 function PS_multipole(
-     in::String,
-     int_s_min = 0.0, int_s_max = 1000.0;
+     in::String;
      L::Integer = 0, N::Integer = 128,
      pr::Bool = true)
 
      xi_table = readdlm(in, comments = true)
-     ss = convert(Vector{Float64}, xi_table[2:end, 1])
-     fs = convert(Vector{Float64}, xi_table[2:end, 2])
+     ss = convert(Vector{Float64}, xi_table[:, 1])
+     fs = convert(Vector{Float64}, xi_table[:, 2])
      f_in = Spline1D(ss, fs)
 
+     int_s_min = min(ss...)
+     int_s_max = max(ss...)
      return PS_multipole(f_in, int_s_min, int_s_max; N = N, L = L, pr = pr)
 end
 
@@ -103,8 +104,7 @@ PS_multipole
 
 
 function print_PS_multipole(in::String, out::String,
-     int_s_min = 0.0, int_s_max = 1000.0,
-     cosmo::Union{Cosmology, Nothing} = nothing;
+     cosmo::Union{Cosmology,Nothing} = nothing;
      L::Integer = 0, N::Integer = 128,
      pr::Bool = true, kwargs...)
 
@@ -112,11 +112,11 @@ function print_PS_multipole(in::String, out::String,
 
      vec = if isfile(in)
           pr && println("\nI'm computiong the PS_multipole from the file $in")
-          PS_multipole(in, int_s_min, int_s_max;
-               N = N, L = L, pr = pr, kwargs...)
+          PS_multipole(in; N = N, L = L, pr = pr, kwargs...)
      else
-          if in ∈ keys(dict_gr_mu) && isnothing(cosmo) !
-                                      pr && println("\nI'm computiong the PS_multipole for the $in GR effect.")
+          if in ∈ keys(dict_gr_mu) && isnothing(cosmo)
+               !
+               pr && println("\nI'm computiong the PS_multipole for the $in GR effect.")
                t1 = time()
                ss = 10 .^ range(-1, 3, length = 100)
                v = [integral_on_mu(cosmo.s_eff, s, dict_gr_mu[in], cosmo; L = L, kwargs...) for s in ss]
@@ -124,7 +124,7 @@ function print_PS_multipole(in::String, out::String,
                t2 = time()
                pr && println("\ntime needed to create the xi map [in s] = $(t2-t1)\n")
                f_in = Spline1D(ss, xis)
-               PS_multipole(f_in, int_s_min, int_s_max; N = N, L = L, pr = pr)
+               PS_multipole(f_in, cosmo.s_min, cosmo.s_max; N = N, L = L, pr = pr)
           else
                if in ∉ keys(dict_gr_mu)
                     throw(ErrorException(
@@ -134,7 +134,7 @@ function print_PS_multipole(in::String, out::String,
                     ))
                else
                     throw(ErrorException(
-                         " you have to give an input cosmology to perform the "*
+                         " you have to give an input cosmology to perform the " *
                          " power spectrum multipole computation directly! "))
                end
           end
@@ -151,7 +151,6 @@ function print_PS_multipole(in::String, out::String,
                parameters_used(io, cosmo)
           end
           println(io, "#\n# For this PS_multipole computation we set: ")
-          println(io, "# \t int_s_min = $int_s_min \t int_s_max = $int_s_max ")
           println(io, "# \t #points used in Fourier transform N = $N")
           println(io, "# \t multipole degree in consideration L = $L")
           println(io, "# computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
@@ -165,8 +164,8 @@ function print_PS_multipole(in::String, out::String,
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
           end
-
-          println(io, "# \nk \t P")
+          println(io, "# ")
+          println(io, "# k [h_0/Mpc] \t \t  P [(Mpc/h_0)^3]")
           for (k, pk) in zip(vec[1], vec[2])
                println(io, "$k \t $pk")
           end

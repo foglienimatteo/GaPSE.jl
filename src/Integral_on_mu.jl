@@ -101,8 +101,8 @@ function print_map_int_on_mu(
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
           end
-
-          println(io, "\ns \t xi \t xi_error")
+          println(io, "# ")
+          println(io, "# s [Mpc/h_0] \t \t xi \t\t xi_error")
           for (s, xi, xi_err) in zip(vec[1], vec[2], vec[3])
                println(io, "$s \t $xi \t $(xi_err)")
           end
