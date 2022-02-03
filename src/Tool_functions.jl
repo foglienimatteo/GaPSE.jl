@@ -58,10 +58,20 @@ struct WindowF
 end
 
 
+@doc raw"""
+     spline_F(x, μ, str::WindowF)) :: Float64
+
+Return the 2-dim spline value of ``F`` in the given `(x,μ)`, where
+``F`` is defined in the input `WindowF`.
+The spline is obtained through the `interpolate` function of the 
+[`GridInterpolations`](https://github.com/sisl/GridInterpolations.jl) Julia
+package.
+"""
 function spline_F(x, μ, str::WindowF)
      grid = GridInterpolations.RectangleGrid(str.xs, str.μs)
      GridInterpolations.interpolate(grid, reshape(str.Fs, (:,1)), [x, μ])
 end
+
 #=
 F_map_data = readdlm(FILE_F_MAP, comments = true)
 F_map_data_dict = Dict([name => F_map_data[2:end, i] for (i, name) in enumerate(NAMES_F_MAP)]...)
@@ -74,22 +84,11 @@ _Fs = F_map_data_dict["F"]
 # for my F map convenction
 my_F_grid = GridInterpolations.RectangleGrid(_μs, _xs)
 spline_F(x, μ) = GridInterpolations.interpolate(my_F_grid, _Fs, [μ, x])
-=#
+
 # for the opposite convenction for F map
 #other_F_grid = GridInterpolations.RectangleGrid(_xs, _μs)
 #spline_F(x, μ) = GridInterpolations.interpolate(other_F_grid, _Fs, [x, μ])
-
-
-
-@doc raw"""
-     spline_F(x, μ) :: Float64
-
-Return the 2-dim spline value of F in the given `(x,μ)` input.
-The spline is obtained through the `interpolate` function of the 
-[`GridInterpolations`](https://github.com/sisl/GridInterpolations.jl) Julia
-package applied to the input `FILE_F_MAP`.
-"""
-spline_F
+=#
 
 
 

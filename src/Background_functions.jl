@@ -17,6 +17,41 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
+@doc raw"""
+     const f0 :: Float64
+
+Linear growth rate at present time. Its value is equal to:
+```math
+     f_0 \simeq 0.5126998572951
+```
+"""
+const f0 = 5.126998572951e-01
+
+
+@doc raw"""
+     const D0 :: Float64
+
+Linear growth factor at present time. Its value is equal to:
+```math
+     D_0 = 1.0
+```
+"""
+const D0 = 1.0
+
+
+@doc raw"""
+     const ℋ0 :: Float64
+
+Comoving Hubble constant at present time. Its value is, in natural system
+(where the speed of light c=1): 
+``\mathcal{H}_0 \simeq 3.335641\times10^{-4} \; h_0^{-1}\mathrm{Mpc}``
+"""
+const ℋ0 = 3.3356409519815204e-4 # h_0/Mpc
+
+
+
+##########################################################################################92
+
 
 
 struct BackgroundData
@@ -59,16 +94,6 @@ struct BackgroundData
      end
 end
 
-const f0 = 5.126998572951e-01
-const D0 = 1.0
-const ℋ0 = 3.3356409519815204e-4 # h_0/Mpc
-const ℋ0_p = 0.0
-const s_b0 = 0.0
-
-
-function func_z_eff(s_min, s_max, z_of_s)
-     3.0 / (s_max^3 - s_min^3) * quadgk(s -> s^2 * z_of_s(s), s_min, s_max)[1]
-end
 
 
 struct CosmoParams
@@ -88,29 +113,27 @@ struct CosmoParams
      function CosmoParams(z_min, z_max, θ_max;
           k_min = 1e-8, k_max = 10.0,
           Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70)
-     
+
           @assert 0.0 ≤ θ_max ≤ π / 2.0 " 0.0 ≤ θ_max ≤ π/2.0 must hold!"
           @assert 0.0 ≤ z_min < z_max " 0.0 ≤ z_min < z_max must hold!"
           @assert 0.0 ≤ k_min < k_max " 0.0 ≤ k_min < k_max must hold!"
           @assert Ω_b ≥ 0.0 " Ω_b ≥ 0.0 must hold!"
           @assert Ω_cdm ≥ 0.0 " Ω_cdm ≥ 0.0 must hold!"
           @assert 0.0 ≤ h_0 ≤ 1.0 " 0.0 ≤ h_0 ≤ 1.0 must hold!"
-     
+
           new(z_min, z_max, θ_max, k_min, k_max, Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0)
      end
 end
 
 
+##########################################################################################92
 
 
 
-
-
-#=
 @doc raw"""
-     const z_eff :: Float64
+     func_z_eff(s_min, s_max, z_of_s) :: Float64
 
-The effective redshift ``z_\mathrm{eff}`` is calcuated as follows:
+Return the effective redshift ``z_\mathrm{eff}``, calcuated as follows:
 ```math
 \begin{align*}
 z_\mathrm{eff} := 
@@ -143,26 +166,9 @@ and their definitions.
 
 See also: [`ϕ`](@ref), [`W`](@ref)
 """
-const z_eff = func_z_eff()
-
-
-const s_eff = s_of_z(z_eff)
-=#
-
-@doc raw"""
-     const ℋ0 :: Float64
-
-Comoving Hubble constant at present time. Its value is, in natural system
-(where the speed of light c=1): 
-``\mathcal{H}_0 \simeq 3.335641\times10^{-4} \; h_0^{-1}\mathrm{Mpc}``
-"""
-ℋ0
-
-
-
-
-##########################################################################################92
-
+function func_z_eff(s_min, s_max, z_of_s)
+     3.0 / (s_max^3 - s_min^3) * quadgk(s -> s^2 * z_of_s(s), s_min, s_max)[1]
+end
 
 
 @doc raw"""

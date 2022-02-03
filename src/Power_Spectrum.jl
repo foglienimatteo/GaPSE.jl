@@ -17,14 +17,10 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-
-#IMPLEMENTED_GR_EFFECTS = ["auto_doppler", "auto_lensing"]
-#IMPLEMENTED_XI_FUNCS = [integral_on_mu_doppler, integral_on_mu_lensing]
-#dict_gr_xi = Dict([a => b for (a, b) in zip(IMPLEMENTED_GR_EFFECTS, IMPLEMENTED_XI_FUNCS)]...)
-
-function PS_multipole(f_in::Union{Function,Dierckx.Spline1D};
-     L::Integer = 0, N = 128,
-     int_s_min = 1e-2, int_s_max = 2 * s_max,
+function PS_multipole(
+     f_in::Union{Function,Dierckx.Spline1D},
+     int_s_min = 0.0, int_s_max = 1000.0;
+     L::Integer = 0, N::Integer = 128,
      pr::Bool = true)
 
      t1 = time()
@@ -33,33 +29,36 @@ function PS_multipole(f_in::Union{Function,Dierckx.Spline1D};
      pr && println("\ntime needed for Power Spectrum  computation [in s] = $(t2-t1)\n")
 
      if iseven(L)
-          return ks, ((2 * L + 1) / A_prime * ϕ(s_eff) * (-1)^(L / 2)) .* pks
+          return ks, ((2 * L + 1) / A_prime * (-1)^(L / 2)) .* pks
      else
-          return ks, ((2 * L + 1) / A_prime * ϕ(s_eff) * (-im)^L) .* pks
+          return ks, ((2 * L + 1) / A_prime * (-im)^L) .* pks
      end
 end
 
 
-function PS_multipole(in::String; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
-     L::Integer = 0, pr::Bool = true)
+function PS_multipole(
+     in::String,
+     int_s_min = 0.0, int_s_max = 1000.0;
+     L::Integer = 0, N::Integer = 128,
+     pr::Bool = true)
 
      xi_table = readdlm(in, comments = true)
      ss = convert(Vector{Float64}, xi_table[2:end, 1])
      fs = convert(Vector{Float64}, xi_table[2:end, 2])
      f_in = Spline1D(ss, fs)
 
-     return PS_multipole(f_in; int_s_min = int_s_min, int_s_max = int_s_max, N = N, L = L, pr = pr)
+     return PS_multipole(f_in, int_s_min, int_s_max; N = N, L = L, pr = pr)
 end
 
 
 
 @doc raw"""
-     PS_multipole(in::String; int_s_min = 1e-2, int_s_max = 2 * s_max, N = 128,
-          L::Integer = 0, pr::Bool = true)
-     PS_multipole(f_in::Union{Function,Dierckx.Spline1D};
-          L::Integer = 0,  N = 128, 
-          int_s_min = 1e-2, int_s_max = 2 * s_max,
-          pr::Bool = true) :: Tuple{Vector{Float64}, Vector{Float64}}
+     PS_multipole(in::String, int_s_min = 0.0, int_s_max = 1000.0; 
+          L::Integer = 0, N::Integer = 128, pr::Bool = true)
+     PS_multipole(
+          f_in::Union{Function,Dierckx.Spline1D}, int_s_min = 0.0, int_s_max = 1000.0; 
+          L::Integer = 0, N::Integer = 128, pr::Bool = true
+          ) :: Tuple{Vector{Float64}, Vector{Float64}}
 
 Return the `L`-order multipole from the input function `f_in`, through the
 following Fast Fourier Transform and the effective redshift approximation:
@@ -103,34 +102,41 @@ PS_multipole
 
 
 
-function print_PS_multipole(out::String, in::String;
-     int_s_min = 1e-2, int_s_max = 2 * s_max, s1 = s_eff,
-     N = 128, L::Integer = 0, pr::Bool = true, kwargs...)
+function print_PS_multipole(in::String, out::String,
+     int_s_min = 0.0, int_s_max = 1000.0,
+     cosmo::Union{Cosmology, Nothing} = nothing;
+     L::Integer = 0, N::Integer = 128,
+     pr::Bool = true, kwargs...)
 
      time_1 = time()
 
      vec = if isfile(in)
           pr && println("\nI'm computiong the PS_multipole from the file $in")
-          PS_multipole(in, int_s_min = int_s_min, int_s_max = int_s_max,
+          PS_multipole(in, int_s_min, int_s_max;
                N = N, L = L, pr = pr, kwargs...)
      else
-          if in ∈ keys(dict_gr_mu) #IMPLEMENTED_GR_EFFECTS
-               pr && println("\nI'm computiong the PS_multipole for the $in GR effect.")
+          if in ∈ keys(dict_gr_mu) && isnothing(cosmo) !
+                                      pr && println("\nI'm computiong the PS_multipole for the $in GR effect.")
                t1 = time()
                ss = 10 .^ range(-1, 3, length = 100)
-               v = [integral_on_mu(s1, s, dict_gr_mu[in]; L = L, kwargs...) for s in ss]
+               v = [integral_on_mu(cosmo.s_eff, s, dict_gr_mu[in], cosmo; L = L, kwargs...) for s in ss]
                xis, xis_err = [x[1] for x in v], [x[2] for x in v]
                t2 = time()
                pr && println("\ntime needed to create the xi map [in s] = $(t2-t1)\n")
                f_in = Spline1D(ss, xis)
-               PS_multipole(f_in, int_s_min = int_s_min, int_s_max = int_s_max,
-                    N = N, L = L, pr = pr, kwargs...)
+               PS_multipole(f_in, int_s_min, int_s_max; N = N, L = L, pr = pr)
           else
-               throw(ErrorException(
-                    "$in is neither a GR implemented effect or a file.\n" *
-                    "\t The implemented GR effects are currently: \n" *
-                    string(keys(dict_gr_mu) .* " , "...)
-               ))
+               if in ∉ keys(dict_gr_mu)
+                    throw(ErrorException(
+                         "$in is neither a GR implemented effect or a file.\n" *
+                         "\t The implemented GR effects are currently: \n" *
+                         string(keys(dict_gr_mu) .* " , "...)
+                    ))
+               else
+                    throw(ErrorException(
+                         " you have to give an input cosmology to perform the "*
+                         " power spectrum multipole computation directly! "))
+               end
           end
      end
 
@@ -138,8 +144,12 @@ function print_PS_multipole(out::String, in::String;
 
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
-          println(io, "# This is the Power Spectrum computation of ")
-          parameters_used(io)
+          if isnothing(cosmo)
+               println(io, "# Power Spectrum Multipole computation of the file: $in")
+          else
+               println(io, "# Power Spectrum Multipole computation with an input cosmology")
+               parameters_used(io, cosmo)
+          end
           println(io, "#\n# For this PS_multipole computation we set: ")
           println(io, "# \t int_s_min = $int_s_min \t int_s_max = $int_s_max ")
           println(io, "# \t #points used in Fourier transform N = $N")
@@ -156,7 +166,7 @@ function print_PS_multipole(out::String, in::String;
                end
           end
 
-          println(io, "\nk \t P")
+          println(io, "# \nk \t P")
           for (k, pk) in zip(vec[1], vec[2])
                println(io, "$k \t $pk")
           end
