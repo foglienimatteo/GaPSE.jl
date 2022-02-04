@@ -162,6 +162,33 @@ struct IPSTools
           new(I00, I20, I40, I02, I22, I31, I13, I11, σ_0, σ_1, σ_2, σ_3)
      end
 
+     function IPSTools(ips::InputPS, iIs::String)
+          PK = Spline1D(ips.ks, ips.pks)
+
+          tab_Is = readdlm(iIs, comments = true)
+          ss = convert(Vector{Float64}, tab_Is[2:end, 1])
+
+          kmin = min(ips.ks...)
+          kmax = max(ips.ks...)
+          s0 = 1.0 / kmax
+
+          I00 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 2]))
+          I20 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 3]))
+          I40 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 4]))
+          I02 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 5]) ./ ss .^ 2)
+          I22 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 6]) ./ ss .^ 2)
+          I31 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 7]) ./ ss)
+          I11 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 8]) ./ ss)
+          I13 = Spline1D(xicalc(PK, 1, 3; N = 1024, kmin = kmin, kmax = kmax, r0 = s0)...)
+
+          σ_0 = quadgk(q -> PK(q) * q^2 / (2 * π^2), kmin, kmax)[1]
+          σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), kmin, kmax)[1]
+          σ_2 = quadgk(q -> PK(q) / (2 * π^2), kmin, kmax)[1]
+          σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), kmin, kmax)[1]
+
+          new(I00, I20, I40, I02, I22, I31, I13, I11, σ_0, σ_1, σ_2, σ_3)
+     end
+
 end
 
 #=

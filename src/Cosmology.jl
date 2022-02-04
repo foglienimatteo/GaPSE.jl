@@ -45,7 +45,8 @@ struct Cosmology
           params::CosmoParams,
           file_data::String,
           file_ips::String,
-          file_windowF::String;
+          file_windowF::String,
+          file_Is::Union{String, Nothing} = nothing;
           names_bg = NAMES_BACKGROUND
      )
      
@@ -53,7 +54,9 @@ struct Cosmology
                names = names_bg, h = params.h_0)
           IPS = InputPS(file_ips)
           windowF = WindowF(file_windowF)
-          tools = IPSTools(IPS; k_min = params.k_min, k_max = params.k_max)
+          tools = isnothing(file_Is) ?
+                  IPSTools(IPS; k_min = params.k_min, k_max = params.k_max) :
+                  IPSTools(IPS, file_Is) 
      
           ℛs = 1.0 .- 1.0 ./ (BD.ℋ .* BD.comdist)
      

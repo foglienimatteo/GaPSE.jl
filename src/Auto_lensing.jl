@@ -105,50 +105,52 @@ function integrand_ξ_lensing(
      #println("denomin = $denomin")
      #factor = ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (χ2 - s2) * psb1 * psb2
 
-     res = if Δχ > Δχ_min
+     first_res = if Δχ > Δχ_min
           χ1χ2 = χ1 * χ2
-
-          new_J00 = -0.75 * χ1χ2^2 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
-          new_J02 = -1.5 * χ1χ2^2 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
-          new_J31 = 9 * y * Δχ^6
-          new_J22 = 2.25 * χ1χ2 * (
+     
+          new_J00 = -0.75 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
+          new_J02 = -1.5 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
+          new_J31 = 9 * y * Δχ^2
+          new_J22 = 2.25 * χ1χ2 / Δχ^4 * (
                          2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)
                          -
                          16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
                          +
                          χ1χ2^2 * (11y^4 + 14y^2 + 23)
                     )
-
+     
           I00 = cosmo.tools.I00(Δχ)
           I20 = cosmo.tools.I20(Δχ)
           I13 = cosmo.tools.I13(Δχ)
           I22 = cosmo.tools.I22(Δχ)
-
+     
           #println("J00 = $new_J00, \t I00(Δχ) = $(I00)")
           #println("J02 = $new_J02, \t I20(Δχ) = $(I20)")
           #println("J31 = $new_J31, \t I13(Δχ) = $(I13)")
           #println("J22 = $new_J22, \t I22(Δχ) = $(I22)")
-
-          enhancer * factor / denomin / Δχ^4 * (
+     
+          (
                new_J00 * I00 + new_J02 * I20 +
                new_J31 * I13 + new_J22 * I22
           )
      else
-
-          lim = 4.0 / 15.0 * (5.0 * cosmo.tools.σ_2 + 2.0 / 3.0 * cosmo.tools.σ_0 * χ2^2)
+     
+          lim = 4.0 / 15.0 * (5.0 * cosmo.tools.σ_2 + 6.0 * cosmo.tools.σ_0 * χ2^2)
           #println("lim = $lim")
-          9.0 / 4.0 * enhancer * factor / denomin * lim
+          9.0 / 4.0 * lim
      end
 
+     res = enhancer * factor / denomin * first_res
      #println("res = ", res, "\n")
      return res
 end
 
-
+#=
 function func_Δχ_min(s1, s2, y; frac = 1e-4)
      Δs = s(s1, s2, y)
      return frac * Δs
 end
+=#
 
 
 @doc raw"""
@@ -230,10 +232,10 @@ See also: [`integrand_ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
 [`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref)
 """
 function ξ_lensing(s1, s2, y, cosmo::GaPSE.Cosmology;
-     N_χs = 100, enhancer = 1, frac_Δχ_min = 1e-3)
+     N_χs = 100, enhancer = 1, Δχ_min = 1e-3)
 
      adim_χs = range(1e-6, 1.0, N_χs)
-     Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
+     #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
      χ1s = adim_χs .* s1

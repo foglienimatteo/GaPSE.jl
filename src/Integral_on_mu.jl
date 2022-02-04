@@ -29,9 +29,9 @@ function integral_on_mu(s1, s, integrand::Function, cosmo::Cosmology;
      f(μ) = integrand(s1, s, μ, cosmo; enhancer = enhancer, L = L,
           use_windows = use_windows, kwargs...)[1]
 
-     println("s1 = $s1 \t s = $s")
+     #println("s1 = $s1 \t s = $s")
      int = quadgk(μ -> f(μ), -1.0, 1.0; rtol = μ_rtol, atol = μ_atol)
-     println("s1 = $s1 \t s2 = $s \t int = $int")
+     #println("s1 = $s1 \t s2 = $s \t int = $int")
      return int ./ enhancer
 end
 
@@ -59,9 +59,9 @@ function my_integral_on_mu(s1, s, integrand, cosmo::GaPSE.Cosmology;
                     kwargs...
                )
 
-     μs1 = range(-1.0, -0.9, length = μ_steps)
-     μs2 = range(-0.9, 0.9, length = μ_steps)
-     μs3 = range(0.9, 1.0, length = μ_steps)
+     μs1 = range(-1.0, -0.90, length = μ_steps)
+     μs2 = range(-0.90, 0.90, length = μ_steps)
+     μs3 = range(0.90, 1.0, length = μ_steps)
      μs = unique(vcat(μs1, μs2, μs3))
      fs = [integrand(s1, s, μ, cosmo; enhancer = enhancer, L = L,
           use_windows = use_windows, kwargs...) for μ in μs]
@@ -98,10 +98,12 @@ function map_integral_on_mu(
      t1 = time()
      ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length = 100) : v_ss
      xis = if use_my == true
+          println("I will use trapz.")
           my_f(s) = my_integral_on_mu(s1, s, effect, cosmo; enhancer = enhancer, kwargs...)
           omg = @showprogress [my_f(s) for s in ss]
           omg
      else
+          println("I will use quadgk.")
           f(s) = integral_on_mu(s1, s, effect, cosmo; enhancer = enhancer, kwargs...)
           vec = @showprogress [f(s) for s in ss]
           omg, xis_err = [x[1] for x in vec], [x[2] for x in vec]
