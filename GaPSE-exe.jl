@@ -54,8 +54,8 @@ function main()
      =#
 
      GaPSE.print_map_int_on_mu(cosmo, "outputs/new_xi_lensing.txt", "auto_lensing";
-          use_windows = false, N_χs = 200, frac_Δχ_min = 1e-3, enhancer=1e10,
-          μ_steps = 30) #μ_atol = 1e-4, μ_rtol = 1e-3)
+          use_windows = false, N_χs = 100, frac_Δχ_min = 1e-3, enhancer=1e10,
+          μ_steps = 10) #μ_atol = 1e-4, μ_rtol = 1e-3)
 
      GaPSE.print_PS_multipole("outputs/new_xi_lensing.txt", "outputs/new_P_lensing.txt", nothing)
 
