@@ -138,13 +138,13 @@ struct IPSTools
           k_max::Union{Float64,Nothing} = nothing,
           s_0::Union{Float64,Nothing} = nothing
      )
-
+     
           PK = Spline1D(ips.ks, ips.pks)
-
+     
           kmin = isnothing(k_min) ? min(ips.ks) : k_min
           kmax = isnothing(k_max) ? max(ips.ks) : k_max
           s0 = isnothing(s_0) ? 1.0 / kmax : s_0
-
+     
           I00 = Spline1D(xicalc(PK, 0, 0; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
           I20 = Spline1D(xicalc(PK, 2, 0; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
           I40 = Spline1D(xicalc(PK, 4, 0; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
@@ -153,12 +153,12 @@ struct IPSTools
           I31 = Spline1D(xicalc(PK, 3, 1; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
           I13 = Spline1D(xicalc(PK, 1, 3; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
           I11 = Spline1D(xicalc(PK, 1, 1; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
-
+     
           σ_0 = quadgk(q -> PK(q) * q^2 / (2 * π^2), kmin, kmax)[1]
           σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), kmin, kmax)[1]
           σ_2 = quadgk(q -> PK(q) / (2 * π^2), kmin, kmax)[1]
           σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), kmin, kmax)[1]
-
+     
           new(I00, I20, I40, I02, I22, I31, I13, I11, σ_0, σ_1, σ_2, σ_3)
      end
 
