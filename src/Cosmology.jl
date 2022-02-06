@@ -55,7 +55,9 @@ struct Cosmology
           IPS = InputPS(file_ips)
           windowF = WindowF(file_windowF)
           tools = isnothing(file_Is) ?
-                  IPSTools(IPS; k_min = params.k_min, k_max = params.k_max) :
+                  IPSTools(IPS; k_min = params.k_min, k_max = params.k_max,
+                    N = params.N, fit_min = params.fit_min,
+                    fit_max = params.fit_max, con = params.con) :
                   IPSTools(IPS, file_Is) 
      
           ℛs = 1.0 .- 1.0 ./ (BD.ℋ .* BD.comdist)

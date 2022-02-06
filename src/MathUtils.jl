@@ -80,8 +80,8 @@ function power_law_b_a(ixs, ys, si; con = false, logscale = false)
           fit = curve_fit(func_fitted, xs, ys, [0.5, 0.5])
           return coef(fit)
      else
-          func_fitted(x, p) = power_law(x, si, p[1], 0.0)
-          fit = curve_fit(func_fitted, xs, ys, [1.0])
+          func_fitted_2(x, p) = power_law(x, si, p[1], 0.0)
+          fit = curve_fit(func_fitted_2, xs, ys, [1.0])
           return vcat(coef(fit), 0.0)
      end
 end
@@ -164,7 +164,7 @@ end
 
 function expanded_IPS(ks, pks; con = false)
      k1, k2 = 1e-6, 1e-4
-     k3, k4 = 1e1, 3e1
+     k3, k4 = 1e1, 2e1
      k_in, k_end = 1e-10, 3e3
 
      N_k1 = findfirst(x -> x > k1, ks)
@@ -222,3 +222,29 @@ function expanded_IPS(ks, pks; con = false)
 
      return new_ks, new_pks
 end
+
+
+
+function expanded_Iln(PK, l, n; N = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
+     fit_min = 2.0, fit_max = 10.0, p0 = [-1.0, 1.0, 0.0], con = true)
+
+     r_in = 1e-4
+     rs, xis = xicalc(PK, l, n; N = N, kmin = kmin, kmax = kmax, r0 = s0)
+     index = findfirst(x -> x > fit_min, rs) - 1
+     fac = rs[begin] / rs[begin+1]
+
+     si, b, a = power_law_from_data(
+          rs[fit_min.<rs.<fit_max], xis[fit_min.<rs.<fit_max],
+          p0, fit_min, fit_max; con = con)
+
+     new_left_rs = (
+          new_left_temp = 10 .^ range(log10(r_in), log10(rs[index]), step = -log10(fac));
+          unique(new_left_temp[new_left_temp.>r_in]))
+     new_left_Is = [power_law(x, si, b, a) for x in new_left_rs]
+
+     new_rs = vcat(new_left_rs, rs[index+1:end])
+     new_Is = vcat(new_left_Is, xis[index+1:end])
+
+     return new_rs, new_Is
+end
+

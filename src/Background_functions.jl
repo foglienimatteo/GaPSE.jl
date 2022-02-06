@@ -109,19 +109,26 @@ struct CosmoParams
      Ω_M0::Float64
      h_0::Float64
 
+     N::Int
+     fit_min::Union{Float64,Nothing}
+     fit_max::Union{Float64,Nothing}
+     con::Bool
+
 
      function CosmoParams(z_min, z_max, θ_max;
           k_min = 1e-8, k_max = 10.0,
-          Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70)
-
+          Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70,
+          N = 1024, fit_min = 2.0, fit_max = 10.0, con=true)
+     
           @assert 0.0 ≤ θ_max ≤ π / 2.0 " 0.0 ≤ θ_max ≤ π/2.0 must hold!"
           @assert 0.0 ≤ z_min < z_max " 0.0 ≤ z_min < z_max must hold!"
           @assert 0.0 ≤ k_min < k_max " 0.0 ≤ k_min < k_max must hold!"
           @assert Ω_b ≥ 0.0 " Ω_b ≥ 0.0 must hold!"
           @assert Ω_cdm ≥ 0.0 " Ω_cdm ≥ 0.0 must hold!"
           @assert 0.0 ≤ h_0 ≤ 1.0 " 0.0 ≤ h_0 ≤ 1.0 must hold!"
-
-          new(z_min, z_max, θ_max, k_min, k_max, Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0)
+     
+          new(z_min, z_max, θ_max, k_min, k_max, Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0,
+               N, fit_min, fit_max, con)
      end
 end
 

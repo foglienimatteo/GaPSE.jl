@@ -69,7 +69,7 @@ package.
 """
 function spline_F(x, μ, str::WindowF)
      grid = GridInterpolations.RectangleGrid(str.xs, str.μs)
-     GridInterpolations.interpolate(grid, reshape(str.Fs, (:,1)), [x, μ])
+     GridInterpolations.interpolate(grid, reshape(str.Fs, (:, 1)), [x, μ])
 end
 
 #=
@@ -133,36 +133,54 @@ struct IPSTools
      σ_2::Float64
      σ_3::Float64
 
+     fit_min::Union{Float64,Nothing}
+     fit_max::Union{Float64,Nothing}
+     k_min::Float64
+     k_max::Float64
+     s_0::Float64
+
      function IPSTools(
           ips::InputPS;
           N = 1024,
+          fit_min::Float64 = 1.0,
+          fit_max::Float64 = 10.0,
+          con::Bool = true,
           k_min::Union{Float64,Nothing} = nothing,
           k_max::Union{Float64,Nothing} = nothing,
           s_0::Union{Float64,Nothing} = nothing
      )
-     
+
           PK = Spline1D(ips.ks, ips.pks)
-     
+
           kmin = isnothing(k_min) ? min(ips.ks) : k_min
           kmax = isnothing(k_max) ? max(ips.ks) : k_max
           s0 = isnothing(s_0) ? 1.0 / kmax : s_0
 
-     
-          I00 = Spline1D(xicalc(PK, 0, 0; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
-          I20 = Spline1D(xicalc(PK, 2, 0; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
-          I40 = Spline1D(xicalc(PK, 4, 0; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
-          I02 = Spline1D(xicalc(PK, 0, 2; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
-          I22 = Spline1D(xicalc(PK, 2, 2; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
-          I31 = Spline1D(xicalc(PK, 3, 1; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
-          I13 = Spline1D(xicalc(PK, 1, 3; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
-          I11 = Spline1D(xicalc(PK, 1, 1; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
-     
+          p0 = [-1.0, 1.0, 0.0]
+          I00 = Spline1D(expanded_Iln(PK, 0, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+               fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
+          I20 = Spline1D(expanded_Iln(PK, 2, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+               fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
+          I40 = Spline1D(expanded_Iln(PK, 4, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+               fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
+          I02 = Spline1D(expanded_Iln(PK, 0, 2; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+               fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
+          I22 = Spline1D(expanded_Iln(PK, 2, 2; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+               fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
+          I31 = Spline1D(expanded_Iln(PK, 3, 1; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+               fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
+          I13 = Spline1D(expanded_Iln(PK, 1, 3; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+               fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
+          I11 = Spline1D(expanded_Iln(PK, 1, 1; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+               fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
+
           σ_0 = quadgk(q -> PK(q) * q^2 / (2 * π^2), kmin, kmax)[1]
           σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), kmin, kmax)[1]
           σ_2 = quadgk(q -> PK(q) / (2 * π^2), kmin, kmax)[1]
           σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), kmin, kmax)[1]
-     
-          new(I00, I20, I40, I02, I22, I31, I13, I11, σ_0, σ_1, σ_2, σ_3)
+
+          new(I00, I20, I40, I02, I22, I31, I13, I11, σ_0, σ_1, σ_2, σ_3,
+               fit_min, fit_max, k_min, k_max, s0)
      end
 
      function IPSTools(ips::InputPS, iIs::String)
@@ -189,7 +207,8 @@ struct IPSTools
           σ_2 = quadgk(q -> PK(q) / (2 * π^2), kmin, kmax)[1]
           σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), kmin, kmax)[1]
 
-          new(I00, I20, I40, I02, I22, I31, I13, I11, σ_0, σ_1, σ_2, σ_3)
+          new(I00, I20, I40, I02, I22, I31, I13, I11, σ_0, σ_1, σ_2, σ_3,
+               nothing, nothing, k_min, k_max, s0)
      end
 
 end
