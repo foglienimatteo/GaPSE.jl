@@ -104,13 +104,15 @@ struct InputPS
      function InputPS(file::String)
           data = readdlm(file, comments = true)
           ks, pks = (data[:, 1], data[:, 2])
+          new_ks, new_pks = expanded_IPS(ks, pks; con = true)
           @assert size(ks) == size(pks) "ks and pks must have the same length!"
-          new(ks, pks)
+          new(new_ks, new_pks)
      end
 
      function InputPS(ks::AbstractVector{T1}, pks::AbstractVector{T2}) where {T1,T2}
           @assert size(ks) == size(pks) "ks and pks must have the same length!"
-          new(ks, pks)
+          new_ks, new_pks = expanded_IPS(ks, pks; con = true)
+          new(new_ks, new_pks)
      end
 end
 
@@ -144,6 +146,7 @@ struct IPSTools
           kmin = isnothing(k_min) ? min(ips.ks) : k_min
           kmax = isnothing(k_max) ? max(ips.ks) : k_max
           s0 = isnothing(s_0) ? 1.0 / kmax : s_0
+
      
           I00 = Spline1D(xicalc(PK, 0, 0; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)
           I20 = Spline1D(xicalc(PK, 2, 0; N = N, kmin = kmin, kmax = kmax, r0 = s0)...)

@@ -21,7 +21,7 @@ module GaPSE
 
 using TwoFAST # Licence: MIT "Expat" (o GPL ?)
 using Dierckx # Licence: BSD
-using HCubature, QuadGK, LegendrePolynomials, Trapz  # Licence: MIT "Expat"
+using HCubature, QuadGK, LegendrePolynomials, Trapz, LsqFit  # Licence: MIT "Expat"
 using GridInterpolations  # Licence: MIT "Expat"
 using ProgressMeter, Documenter  # Licence: MIT "Expat"
 using Test, Printf, DelimitedFiles  # Licence: MIT "Expat"
