@@ -208,7 +208,7 @@ struct IPSTools
           σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), kmin, kmax)[1]
 
           new(I00, I20, I40, I02, I22, I31, I13, I11, σ_0, σ_1, σ_2, σ_3,
-               nothing, nothing, k_min, k_max, s0)
+               nothing, nothing, kmin, kmax, s0)
      end
 
 end

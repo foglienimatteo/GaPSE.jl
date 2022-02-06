@@ -17,6 +17,14 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
+
+"""
+     derivate_point(xp, yp, x1, y1, x2, y2)
+
+Return the derivative in `(xp, yp)`, given the neighboor points
+`(x1,y1)` and `(x2,y2)`, with `x1 < xp < x2`.
+It is assumed that `x2 - xp = xp - x1`.
+"""
 function derivate_point(xp, yp, x1, y1, x2, y2)
      m2 = (y2 - yp) / (x2 - xp)
      m1 = (yp - y1) / (xp - x1)
@@ -110,32 +118,32 @@ end
 power_law(x, si, b, a=0.0) = a + b *(x^si)
 =#
 
-function power_law_from_data(xs, ys, p0, x1::Number, x2::Number; con=false)
-    @assert length(xs) == length(ys) "xs and ys must have same length"
-    #Num = length(xs)
-    new_xs = xs[x1 .< xs .< x2]
-    new_ys = ys[x1 .< xs .< x2]
-    
-    #si = mean_spectral_index(xs, ys; N=N, con=con)
-    si, b, a =
-        if con ==false
-            @assert length(p0) == 2 " si,b to be fitted, so length(p0) must be 2!"
-            vec = coef(curve_fit((x,p)-> p[2] .* x .^p[1], 
-                        new_xs, new_ys, p0 ))
-            vcat(vec, 0.0)
-        else
-            @assert length(p0) == 3 " si,b,a to be fitted, so length(p0) must be 3!"
-             coef(curve_fit((x,p) -> p[3] .+ p[2] .* x .^p[1], 
+function power_law_from_data(xs, ys, p0, x1::Number, x2::Number; con = false)
+     @assert length(xs) == length(ys) "xs and ys must have same length"
+     #Num = length(xs)
+     new_xs = xs[x1.<xs.<x2]
+     new_ys = ys[x1.<xs.<x2]
+
+     #si = mean_spectral_index(xs, ys; N=N, con=con)
+     si, b, a =
+          if con == false
+               @assert length(p0) == 2 " si,b to be fitted, so length(p0) must be 2!"
+               vec = coef(curve_fit((x, p) -> p[2] .* x .^ p[1],
                     new_xs, new_ys, p0))
-        end
- 
-    return si, b, a
+               vcat(vec, 0.0)
+          else
+               @assert length(p0) == 3 " si,b,a to be fitted, so length(p0) must be 3!"
+               coef(curve_fit((x, p) -> p[3] .+ p[2] .* x .^ p[1],
+                    new_xs, new_ys, p0))
+          end
+
+     return si, b, a
 end
 
 
 
-function power_law_from_data(xs, ys, p0; con=false)
-    power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con=con)
+function power_law_from_data(xs, ys, p0; con = false)
+     power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con = con)
 end
 
 #=
@@ -145,12 +153,12 @@ function power_law_from_data(xs, ys, x1::Number, x2::Number; N=3,
     Num = length(xs)
     new_xs = xs[x1 .< xs .< x2]
     new_ys = ys[x1 .< xs .< x2]
-    
+
     sis = spectral_index(new_xs, new_ys; N = N, con = con, logscale = logscale)
 
     bs = power_law_b(new_xs, new_ys, sis, logscale = logscale)
     println(bs)
-    
+
     as = con ? power_law_a(new_xs, new_ys, bs, sis; logscale = logscale) : 
         [0.0 for i in 1:length(new_xs)]
     r = 3*N
@@ -161,7 +169,13 @@ function power_law_from_data(xs, ys, x1::Number, x2::Number; N=3,
 end
 =#
 
+"""
+     expanded_IPS(ks, pks; con = false)
 
+Given the `ks` and `pks` of a chosen Power Spectrum, returns the same PS
+with "longer tails", i.e. it is prolonged for higher and lower `ks` than 
+the input ones.
+"""
 function expanded_IPS(ks, pks; con = false)
      k1, k2 = 1e-6, 1e-4
      k3, k4 = 1e1, 2e1
@@ -173,37 +187,40 @@ function expanded_IPS(ks, pks; con = false)
      p0_beg = con ? [1.0, 1.0, 1.0] : [1.0, 1.0]
      p0_end = con ? [-3.0, 1.0, 1.0] : [-3.0, 1.0]
 
-     si_beg, b_beg, a_beg, step_beg, fac_beg = ks[begin] > k_in ?
+     si_beg, b_beg, a_beg, step_beg, fac_beg =
+          ks[begin] > k_in ?
           (power_law_from_data(ks, pks, p0_beg, k1, k2; con = con)...,
-          ks[begin+1] - ks[begin], ks[begin] / ks[begin+1]) :
+               ks[begin+1] - ks[begin], ks[begin] / ks[begin+1]) :
           (nothing, nothing, nothing, nothing, nothing)
 
 
-     si_end, b_end, a_end, step_end, fac_end = ks[end] < k_end ?
+     si_end, b_end, a_end, step_end, fac_end =
+          ks[end] < k_end ?
           (power_law_from_data(ks, pks, p0_end, k3, k4; con = con)...,
-          ks[end] - ks[end-1], ks[end] / ks[end-1]) :
+               ks[end] - ks[end-1], ks[end] / ks[end-1]) :
           (nothing, nothing, nothing, nothing, nothing)
 
      #println("$si_beg , $b_beg , $a_beg , $step_beg , $fac_beg")
      #println("$si_end , $b_end , $a_end , $step_end , $fac_end")
 
-     new_left_ks = ks[begin] > k_in ?
+     new_left_ks =
+          ks[begin] > k_in ?
           #(new_left_temp = ks[N_k1]  .- step_beg .* cumsum([fac_beg^i for i in 1:1000])
           (new_left_temp = 10 .^ range(log10(k_in), log10(ks[N_k1]), step = -log10(fac_beg));
           unique(new_left_temp[new_left_temp.>k_in])) : nothing
 
-     new_left_pks = isnothing(new_left_ks) ? 
-          nothing :
-          [power_law(k, si_beg, b_beg, a_beg) for k in new_left_ks]
+     new_left_pks = isnothing(new_left_ks) ?
+                    nothing :
+                    [power_law(k, si_beg, b_beg, a_beg) for k in new_left_ks]
 
 
      new_right_ks = ks[end] < k_end ?
-          (new_right_temp = 10 .^ range(log10(ks[N_k4+1]), log10(k_end), step = log10(fac_end));
-          new_right_temp[new_right_temp.<k_end]) : nothing
+                    (new_right_temp = 10 .^ range(log10(ks[N_k4+1]), log10(k_end), step = log10(fac_end));
+     new_right_temp[new_right_temp.<k_end]) : nothing
 
 
      new_right_pks = isnothing(new_left_ks) ? nothing :
-                         [power_law(k, si_end, b_end, a_end) for k in new_right_ks]
+                     [power_law(k, si_end, b_end, a_end) for k in new_right_ks]
 
 
      new_ks, new_pks =
@@ -224,7 +241,12 @@ function expanded_IPS(ks, pks; con = false)
 end
 
 
+"""
+     expanded_Iln(PK, l, n; N = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
+          fit_min = 2.0, fit_max = 10.0, p0 = [-1.0, 1.0, 0.0], con = true)
 
+
+"""
 function expanded_Iln(PK, l, n; N = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
      fit_min = 2.0, fit_max = 10.0, p0 = [-1.0, 1.0, 0.0], con = true)
 
