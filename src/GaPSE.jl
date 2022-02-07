@@ -45,12 +45,12 @@ NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mpc]",
 
 include("MathUtils.jl")
 include("F_evaluation.jl")
-include("Background_functions.jl")
-include("Tool_functions.jl")
+include("BackgroundData.jl")
+include("IPSTools.jl")
 include("Cosmology.jl")
 
-include("Auto_doppler.jl")
-include("Auto_lensing.jl")
+include("AutoDoppler.jl")
+include("AutoLensing.jl")
 
 IMPLEMENTED_GR_EFFECTS = ["auto_doppler", "auto_lensing"]
 
@@ -59,8 +59,8 @@ dict_gr_mu = Dict(
      "auto_lensing" => integrand_on_mu_lensing,
 )
 
-include("Power_Spectrum.jl")
-include("Integral_on_mu.jl")
+include("PowerSpectrum.jl")
+include("XiMultipoles.jl")
 
 
 function parameters_used(io::IO, cosmo::Cosmology)

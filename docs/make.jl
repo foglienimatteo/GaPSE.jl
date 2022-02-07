@@ -10,12 +10,12 @@ Documenter.makedocs(
      pages = [
           "Introduction" => "index.md",
           "The F window function" => "F_evaluation.md",
-          "Background functions" => "Background_functions.md",
-          "Tool functions" => "Tool_functions.md",
-          "Power Spectrum Multipoles" => "Power_Spectrum.md",
+          "Background Data" => "BackgroundData.md",
+          "Input Power Spectrum Tools" => "IPSTools.md",
+          "Power Spectrum Multipoles" => "PowerSpectrum.md",
           "Auto Correlations" => [
-               "Auto Doppler" => "Auto_doppler.md",
-               "Auto Lensing" => "Auto_lensing.md"]
+               "Auto Doppler" => "AutoDoppler.md",
+               "Auto Lensing" => "AutoLensing.md"]
      ],
 )
 
