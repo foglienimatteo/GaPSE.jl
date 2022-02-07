@@ -18,18 +18,18 @@
 #
 
 @testset "derivate_point" begin
-     begin
+     @testset "first" begin
           f(x) = 1.35 + 2.54 * x
           xp, x1, x2 = 2.0, 1.0, 3.0
           yp, y1, y2 = f(xp), f(x1), f(x2)
 
-          @test derivate_point(xp, yp, x1, y1, x2, y2) ≈ 2.54
+          @test GaPSE.derivate_point(xp, yp, x1, y1, x2, y2) ≈ 2.54
      end
 
-     begin
+     @testset "second" begin
           f(x) = 2.634 + 4.65 * x^3.0
           xp, x1, x2 = 3.0, 3.0 - 1e-8, 3.0 + 1e-8
           yp, y1, y2 = f(xp), f(x1), f(x2)
-          @test isapprox(derivate_point(xp, yp, x1, y1, x2, y2), 125.55, atol=1e-4)
+          @test isapprox(GaPSE.derivate_point(xp, yp, x1, y1, x2, y2), 125.55, atol = 1e-4)
      end
 end

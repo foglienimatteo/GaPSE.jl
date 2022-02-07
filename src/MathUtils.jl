@@ -23,22 +23,17 @@
 
 Return the derivative in `(xp, yp)`, given the neighboor points
 `(x1,y1)` and `(x2,y2)`, with `x1 < xp < x2`.
-It is assumed that `x2 - xp = xp - x1`.
+It is not assumed that `x2 - xp = xp - x1`.
 """
 function derivate_point(xp, yp, x1, y1, x2, y2)
-     m2 = (y2 - yp) / (x2 - xp)
-     m1 = (yp - y1) / (xp - x1)
-     res = (m1 + m2) / 2.0
+     l2, l1 = (x2 - xp), (xp - x1)
+     m2, m1 = (y2 - yp) / l2, (yp - y1) / l1
+     res = (m1*l2 + m2*l1) / (l1+l2)
      #println(res)
      return res
 end
 
-function derivate_vector(ixs, ys; N::Integer = 1, logscale = false)
-     xs = !logscale ? ixs : begin
-          fac = ixs[begin+1] / ixs[begin]
-          [x / (fac^i) for (i, x) in enumerate(ixs)]
-     end
-
+function derivate_vector(xs, ys; N::Integer = 1)
      if N == 1
           real_vec = [derivate_point(xs[i], ys[i], xs[i-1], ys[i-1], xs[i+1], ys[i+1])
                       for i in (N+1):(length(xs)-N)]
@@ -55,12 +50,9 @@ function derivate_vector(ixs, ys; N::Integer = 1, logscale = false)
 end
 
 
-function spectral_index(ixs, ys; N::Integer = 1, con = false, logscale = false)
-     xs = !logscale ? ixs : begin
-          fac = ixs[begin+1] / ixs[begin]
-          [x / (fac^i) for (i, x) in enumerate(ixs)]
-     end
+function spectral_index(xs, ys; N::Integer = 1, con = false, )
      derivs = derivate_vector(xs, ys; N = N)
+
      if con == false
           return [x * d / y for (x, y, d) in zip(xs, ys, derivs)]
      else
@@ -71,25 +63,20 @@ function spectral_index(ixs, ys; N::Integer = 1, con = false, logscale = false)
 end
 
 
-function mean_spectral_index(ixs, ys; N::Integer = 1, con = false, logscale = false)
-     vec = spectral_index(ixs, ys; N = N, con = con, logscale = logscale)[begin+2*N:end-2*N]
+function mean_spectral_index(ixs, ys; N::Integer = 1, con = false)
+     vec = spectral_index(ixs, ys; N = N, con = con)[begin+2*N:end-2*N]
      return sum(vec) / length(vec)
 end
 
+
 power_law(x, si, b, a) = a .+ b .* (x .^ si)
 
-function power_law_b_a(ixs, ys, si; con = false, logscale = false)
-     xs = !logscale ? ixs : begin
-          fac = ixs[begin+1] / ixs[begin]
-          [x / (fac^i) for (i, x) in enumerate(ixs)]
-     end
+function power_law_b_a(ixs, ys, si; con = false)
      if con == true
-          func_fitted(x, p) = power_law(x, si, p[1], p[2])
-          fit = curve_fit(func_fitted, xs, ys, [0.5, 0.5])
+          fit = curve_fit((x, p) -> power_law(x, si, p[1], p[2]), xs, ys, [0.5, 0.5])
           return coef(fit)
      else
-          func_fitted_2(x, p) = power_law(x, si, p[1], 0.0)
-          fit = curve_fit(func_fitted_2, xs, ys, [1.0])
+          fit = curve_fit((x, p) -> power_law(x, si, p[1], 0.0), xs, ys, [1.0])
           return vcat(coef(fit), 0.0)
      end
 end
@@ -128,12 +115,12 @@ function power_law_from_data(xs, ys, p0, x1::Number, x2::Number; con = false)
      si, b, a =
           if con == false
                @assert length(p0) == 2 " si,b to be fitted, so length(p0) must be 2!"
-               vec = coef(curve_fit((x, p) -> p[2] .* x .^ p[1],
+               vec = coef(curve_fit((x, p) -> power_law(x, p[1], p[2], 0.0),
                     new_xs, new_ys, p0))
                vcat(vec, 0.0)
           else
                @assert length(p0) == 3 " si,b,a to be fitted, so length(p0) must be 3!"
-               coef(curve_fit((x, p) -> p[3] .+ p[2] .* x .^ p[1],
+               coef(curve_fit((x, p) -> power_law(x, p[1], p[2], p[3]),
                     new_xs, new_ys, p0))
           end
 
@@ -169,70 +156,94 @@ function power_law_from_data(xs, ys, x1::Number, x2::Number; N=3,
 end
 =#
 
+function expand_left_log(xs, ys; lim = 1e-8, fit_min = 2.0,
+     fit_max = 10.0, p0 = [-1.0, 1.0, 0.0], con = true)
+
+     si, b, a = power_law_from_data(
+          xs[fit_min.<xs.<fit_max], ys[fit_min.<xs.<fit_max],
+          p0, fit_min, fit_max; con = con)
+
+     i = findfirst(x -> x > fit_min, xs) - 1
+     f = xs[begin] / xs[begin+1]
+
+     new_left_xs = unique(10 .^ range(log10(lim), log10(xs[i]), step = -log10(f)))
+     new_left_ys = [power_law(x, si, b, a) for x in new_left_xs]
+
+     return new_left_xs, new_left_ys
+end
+
+function expand_right_log(xs, ys; lim = 3e3, fit_min = 5.0,
+     fit_max = 10.0, p0 = [-3.0, 1.0, 0.0], con = true)
+
+     si, b, a = power_law_from_data(
+          xs[fit_min.<xs.<fit_max], ys[fit_min.<xs.<fit_max],
+          p0, fit_min, fit_max; con = con)
+
+     i = findfirst(x -> x > fit_max, xs)
+     f = xs[end] / xs[end-1]
+
+     new_right_xs = unique(10 .^ range(log10(xs[i]), log10(lim), step = log10(f)))
+     new_right_ys = [power_law(x, si, b, a) for x in new_right_xs]
+
+     return new_right_xs, new_right_ys
+end
+
+
+
+##########################################################################################92
+
+
 """
-     expanded_IPS(ks, pks; con = false)
+     expanded_IPS(ks, pks; k_in = 1e-8, k_end = 3e3, con = false)
 
 Given the `ks` and `pks` of a chosen Power Spectrum, returns the same PS
 with "longer tails", i.e. it is prolonged for higher and lower `ks` than 
 the input ones.
 """
-function expanded_IPS(ks, pks; con = false)
+function expanded_IPS(ks, pks; k_in = 1e-8, k_end = 3e3, con = false)
      k1, k2 = 1e-6, 1e-4
      k3, k4 = 1e1, 2e1
-     k_in, k_end = 1e-10, 3e3
-
-     N_k1 = findfirst(x -> x > k1, ks)
-     N_k4 = findfirst(x -> x > k4, ks) - 1
 
      p0_beg = con ? [1.0, 1.0, 1.0] : [1.0, 1.0]
      p0_end = con ? [-3.0, 1.0, 1.0] : [-3.0, 1.0]
 
-     si_beg, b_beg, a_beg, step_beg, fac_beg =
+     #=
+     si_beg, b_beg, a_beg, step_beg, fac_beg =  ks[begin]>k_in ? 
+         (power_law_from_data(ks, pks, p0_beg, k1, k2; con=con)..., 
+         ks[begin+1] - ks[begin] ,  ks[begin] / ks[begin+1]) :
+         (nothing, nothing, nothing, nothing, nothing)
+
+
+     si_end, b_end, a_end, step_end, fac_end = ks[end]<k_end ?  
+         (power_law_from_data(ks, pks, p0_end, k3, k4; con=con)... ,
+         ks[end] - ks[end-1], ks[end] / ks[end-1]) :
+         (nothing, nothing, nothing, nothing, nothing)
+
+     println("$si_beg , $b_beg , $a_beg , $step_beg , $fac_beg")
+     println("$si_end , $b_end , $a_end , $step_end , $fac_end")
+     =#
+
+     new_left_ks, new_left_pks =
           ks[begin] > k_in ?
-          (power_law_from_data(ks, pks, p0_beg, k1, k2; con = con)...,
-               ks[begin+1] - ks[begin], ks[begin] / ks[begin+1]) :
-          (nothing, nothing, nothing, nothing, nothing)
+          expand_left_log(ks, pks; lim = k_in, fit_min = k1,
+               fit_max = k2, p0 = p0_beg, con = con) : (nothing, nothing)
 
-
-     si_end, b_end, a_end, step_end, fac_end =
+     new_right_ks, new_right_pks =
           ks[end] < k_end ?
-          (power_law_from_data(ks, pks, p0_end, k3, k4; con = con)...,
-               ks[end] - ks[end-1], ks[end] / ks[end-1]) :
-          (nothing, nothing, nothing, nothing, nothing)
-
-     #println("$si_beg , $b_beg , $a_beg , $step_beg , $fac_beg")
-     #println("$si_end , $b_end , $a_end , $step_end , $fac_end")
-
-     new_left_ks =
-          ks[begin] > k_in ?
-          #(new_left_temp = ks[N_k1]  .- step_beg .* cumsum([fac_beg^i for i in 1:1000])
-          (new_left_temp = 10 .^ range(log10(k_in), log10(ks[N_k1]), step = -log10(fac_beg));
-          unique(new_left_temp[new_left_temp.>k_in])) : nothing
-
-     new_left_pks = isnothing(new_left_ks) ?
-                    nothing :
-                    [power_law(k, si_beg, b_beg, a_beg) for k in new_left_ks]
-
-
-     new_right_ks = ks[end] < k_end ?
-                    (new_right_temp = 10 .^ range(log10(ks[N_k4+1]), log10(k_end), step = log10(fac_end));
-     new_right_temp[new_right_temp.<k_end]) : nothing
-
-
-     new_right_pks = isnothing(new_left_ks) ? nothing :
-                     [power_law(k, si_end, b_end, a_end) for k in new_right_ks]
+          expand_right_log(ks, pks; lim = k_end, fit_min = k3,
+               fit_max = k4, p0 = p0_end, con = con) : (nothing, nothing)
 
 
      new_ks, new_pks =
           if !isnothing(new_left_ks) && !isnothing(new_right_ks)
-               (vcat(new_left_ks, ks[N_k1:N_k4], new_right_ks),
-                    vcat(new_left_pks, pks[N_k1:N_k4], new_right_pks))
+               (vcat(new_left_ks, ks[k1.<ks.<k4], new_right_ks),
+                    vcat(new_left_pks, pks[k1.<ks.<k4], new_right_pks))
           elseif isnothing(new_left_ks) && !isnothing(new_right_ks)
-               (vcat(ks[begin:N_k4], new_right_ks),
-                    vcat(pks[begin:N_k4], new_right_pks))
+               (vcat(ks[ks.<k4], new_right_ks),
+                    vcat(pks[ks.<k4], new_right_pks))
           elseif !isnothing(new_left_ks) && isnothing(new_right_ks)
-               (vcat(new_left_ks, ks[N_k1:end]),
-                    vcat(new_left_pks, pks[N_k1:end]))
+               (vcat(new_left_ks, ks[k1.<ks]),
+                    vcat(new_left_pks, pks[k1.<ks]))
           else
                (ks, pks)
           end
@@ -247,26 +258,16 @@ end
 
 
 """
-function expanded_Iln(PK, l, n; N = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
+function expanded_Iln(PK, l, n; lim = 1e-4, N = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
      fit_min = 2.0, fit_max = 10.0, p0 = [-1.0, 1.0, 0.0], con = true)
 
-     r_in = 1e-4
      rs, xis = xicalc(PK, l, n; N = N, kmin = kmin, kmax = kmax, r0 = s0)
-     index = findfirst(x -> x > fit_min, rs) - 1
-     fac = rs[begin] / rs[begin+1]
 
-     si, b, a = power_law_from_data(
-          rs[fit_min.<rs.<fit_max], xis[fit_min.<rs.<fit_max],
-          p0, fit_min, fit_max; con = con)
+     new_left_rs, new_left_Is = expand_left_log(rs, xis; lim = lim, fit_min = fit_min,
+          fit_max = fit_max, p0 = p0, con = con)
 
-     new_left_rs = (
-          new_left_temp = 10 .^ range(log10(r_in), log10(rs[index]), step = -log10(fac));
-          unique(new_left_temp[new_left_temp.>r_in]))
-     new_left_Is = [power_law(x, si, b, a) for x in new_left_rs]
-
-     new_rs = vcat(new_left_rs, rs[index+1:end])
-     new_Is = vcat(new_left_Is, xis[index+1:end])
+     new_rs = vcat(new_left_rs, rs[rs.>fit_min])
+     new_Is = vcat(new_left_Is, xis[rs.>fit_min])
 
      return new_rs, new_Is
 end
-
