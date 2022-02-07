@@ -31,20 +31,20 @@ include("TEST_DATA.jl")
      include("test_MathUtils.jl")
 end
 
-@testset "test_Tool_functions" begin
-     include("test_Tool_functions.jl")
+@testset "test_IPSTools" begin
+     include("test_IPSTools.jl")
 end
 
-@testset "test_Background_functions" begin
-     include("test_Background_functions.jl")
+@testset "test_BackgroundData" begin
+     include("test_BackgroundData.jl")
 end
 
-@testset "test_Power_Spectrum" begin
-     include("test_Power_Spectrum.jl")
+@testset "test_PowerSpectrum" begin
+     include("test_PowerSpectrum.jl")
 end
 
-@testset "test_auto_doppler" begin
-     include("test_auto_doppler.jl")
+@testset "test_AutoDoppler" begin
+     include("test_AutoDoppler.jl")
 end
 
 
