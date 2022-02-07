@@ -49,14 +49,19 @@ include("BackgroundData.jl")
 include("IPSTools.jl")
 include("Cosmology.jl")
 
-include("AutoDoppler.jl")
-include("AutoLensing.jl")
+include("AutoCorrelations/AutoDoppler.jl")
+include("AutoCorrelations/AutoLensing.jl")
+include("AutoCorrelations/AutoLocalGP.jl")
+include("AutoCorrelations/AutoIntegratedGP.jl")
 
-IMPLEMENTED_GR_EFFECTS = ["auto_doppler", "auto_lensing"]
+IMPLEMENTED_GR_EFFECTS =
+     ["auto_doppler", "auto_lensing", "auto_localgp", "auto_integratedgp"]
 
 dict_gr_mu = Dict(
      "auto_doppler" => integrand_on_mu_doppler,
      "auto_lensing" => integrand_on_mu_lensing,
+     "auto_localgp" => integrand_on_mu_localGP,
+     "auto_integratedgp" => integrand_on_mu_integratedGP,
 )
 
 include("PowerSpectrum.jl")

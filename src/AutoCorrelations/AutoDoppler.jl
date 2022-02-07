@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
+
 @doc raw"""
      ξ_doppler(P1::Point, P2::Point, y, cosmo::Cosmology; enhancer = 1.0) :: Float64
 
@@ -70,9 +71,6 @@ function ξ_doppler(P1::Point, P2::Point, y, cosmo::Cosmology; enhancer = 1.0)
 end
 
 
-##########################################################################################92
-
-
 function integrand_on_mu_doppler(s1, s, μ,
      cosmo::Cosmology; L::Integer = 0, enhancer = 1.0,
      use_windows::Bool = true)
@@ -93,6 +91,8 @@ function integrand_on_mu_doppler(s1, s, μ,
      end
 end
 
+
+##########################################################################################92
 
 
 #=

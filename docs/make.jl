@@ -14,8 +14,8 @@ Documenter.makedocs(
           "Input Power Spectrum Tools" => "IPSTools.md",
           "Power Spectrum Multipoles" => "PowerSpectrum.md",
           "Auto Correlations" => [
-               "Auto Doppler" => "AutoDoppler.md",
-               "Auto Lensing" => "AutoLensing.md"]
+               "Auto Doppler" => "AutoCorrelations/AutoDoppler.md",
+               "Auto Lensing" => "AutoCorrelations/AutoLensing.md"]
      ],
 )
 
