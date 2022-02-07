@@ -47,13 +47,4 @@ end
 end
 
 
-@testset "test struct BackgroundSplines" begin
-     BD = GaPSE.BackgroundData(TEST_FILE, 0.05, 0.2)
-     BS = GaPSE.BackgroundSplines(BD)
 
-     @test all(isapprox(BS.z_of_s.(BD.comdist), ZS, rtol = 1e-8))
-     @test all(isapprox(BS.s_of_z.(BD.z), COM_DIST, rtol = 1e-8))
-     @test all(isapprox(BS.D_of_s.(BD.comdist), GROWTH_FACTOR_D, rtol = 1e-8))
-     @test all(isapprox(BS.f_of_s.(BD.comdist), GROWTH_FACTOR_F, rtol = 1e-8))
-     @test all(isapprox(BS.ℋ_of_s.(BD.comdist), COM_H, rtol = 1e-8))
-end

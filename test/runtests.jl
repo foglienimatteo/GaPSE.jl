@@ -22,7 +22,11 @@ using GaPSE, Test
 using Dierckx, DelimitedFiles
 
 
-const TEST_FILE = "TEST_DATA.txt"
+const TEST_FILE = "datatest/TEST_DATA.txt"
+const FILE_F_MAP = "datatest/F_REFERENCE.txt"
+const FILE_PS = "datatest/file_pk.txt"
+const FILE_BACKGROUND = "datatest/WideA_ZA_background.dat"
+
 include("TEST_DATA.jl")
 
 ##########################################################################################92
@@ -37,6 +41,10 @@ end
 
 @testset "test_BackgroundData" begin
      include("test_BackgroundData.jl")
+end
+
+@testset "test_Cosmology" begin
+     include("test_Cosmology.jl")
 end
 
 @testset "test_PowerSpectrum" begin

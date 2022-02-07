@@ -33,3 +33,23 @@
           @test isapprox(GaPSE.derivate_point(xp, yp, x1, y1, x2, y2), 125.55, atol = 1e-4)
      end
 end
+
+
+
+@testset "mean_spectral_index" begin
+     @testset "first" begin
+          xs = range(1.0, 10.0, 100)
+          ys = [3.54 * x^1.856 for x in xs]
+
+          @test isapprox(GaPSE.mean_spectral_index(xs, ys; con = true), 1.856; atol = 1e-4)
+          @test isapprox(GaPSE.mean_spectral_index(xs, ys; con = false), 1.856; atol = 1e-4)
+     end
+
+     @testset "second" begin
+          xs = range(1.0, 10.0, 100)
+          ys = [256.75 - 3.54 * x^1.856 for x in xs]
+
+          @test isapprox(GaPSE.mean_spectral_index(xs, ys; con = true), 1.856; atol = 1e-4)
+     end
+
+end

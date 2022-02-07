@@ -28,7 +28,7 @@ It is not assumed that `x2 - xp = xp - x1`.
 function derivate_point(xp, yp, x1, y1, x2, y2)
      l2, l1 = (x2 - xp), (xp - x1)
      m2, m1 = (y2 - yp) / l2, (yp - y1) / l1
-     res = (m1*l2 + m2*l1) / (l1+l2)
+     res = (m1 * l2 + m2 * l1) / (l1 + l2)
      #println(res)
      return res
 end
@@ -50,7 +50,7 @@ function derivate_vector(xs, ys; N::Integer = 1)
 end
 
 
-function spectral_index(xs, ys; N::Integer = 1, con = false, )
+function spectral_index(xs, ys; N::Integer = 1, con = false)
      derivs = derivate_vector(xs, ys; N = N)
 
      if con == false
@@ -63,8 +63,22 @@ function spectral_index(xs, ys; N::Integer = 1, con = false, )
 end
 
 
-function mean_spectral_index(ixs, ys; N::Integer = 1, con = false)
-     vec = spectral_index(ixs, ys; N = N, con = con)[begin+2*N:end-2*N]
+
+@doc raw"""
+     mean_spectral_index(xs, ys; N::Integer = 1, con = false)
+
+Assuming that the input `ys` follow a power law distribution, 
+return the mean spectral index ``\langle S \rangle`` of them.
+
+The spectral index ``S`` of a generic function ``f = f(x)`` is
+defined as:
+```math
+     S = \frac{\partial \log f(x)}{\partial \log x} 
+          = \frac{x}{f(x)} \frac{\partial f(x)}{\partial x} 
+```
+"""
+function mean_spectral_index(xs, ys; N::Integer = 1, con = false)
+     vec = spectral_index(xs, ys; N = N, con = con)[begin+2*N:end-2*N]
      return sum(vec) / length(vec)
 end
 
