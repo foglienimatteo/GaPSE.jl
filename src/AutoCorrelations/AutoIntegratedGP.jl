@@ -109,17 +109,16 @@ Return the integrated gravitational potential auto-correlation function
      J_{40}(s_1, s_2, y, \chi_1, \chi_2) \, \tilde{I}^4_0(\chi)
 ```
 where ``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \, \chi_2 \, y} ``,
-``y = \cos \theta = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2`` and:
+``y = \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2`` and:
 ```math
 \begin{align*}
-     &J_{40}(s_1, s_2, y, \chi_1, \chi_2) = 
+     J_{40}(s_1, s_2, y, \chi_1, \chi_2) &= 
           \frac{
                     9 \mathcal{H}_0^4 \Omega_{M0}^2 D(\chi_1) D(\chi_2) \chi^4
           }{    a(\chi_1) a(\chi_2) s_1 s_2} 
           (s_2 \mathcal{H}(\chi_2) \mathcal{R}(s_2) (f(\chi_2)-1) - 1) 
           (s_1 \mathcal{H}(\chi_1) \mathcal{R}(s_1) (f(\chi_1)-1) - 1) \\[5pt]
-
-     &\tilde{I}^4_0 (s) = \int_0^\infty \frac{\mathrm{d}q}{2\pi^2} 
+     \tilde{I}^4_0 (s) &= \int_0^\infty \frac{\mathrm{d}q}{2\pi^2} 
           q^2 \, P(q) \, \frac{j_0(q s) - 1}{(q s)^4}
 \end{aling*}
 ```
