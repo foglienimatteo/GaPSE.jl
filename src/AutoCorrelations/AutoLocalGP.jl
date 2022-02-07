@@ -17,6 +17,7 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
+
 function ξ_localGP(P1::Point, P2::Point, y, cosmo::Cosmology; enhancer = 1.0)
      s1, D1, f1, a1, ℛ1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℛ
      s2, D2, f2, a2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℛ
