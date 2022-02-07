@@ -167,11 +167,13 @@ end
 
 
 @doc raw"""
-     ξ_lensing(s1, s2, y; tol = 0.5, 
-          enhancer = 1, Δχ_min = 1e-6, kwargs...) :: Tuple{Float64, Float64}
+     ξ _lensing(s1, s2, y, cosmo::Cosmology;
+          enhancer::Float64 = 1.0,
+          Δχ_min::Float64 = 1e-3,
+          N_χs::Integer = 100) :: Float64
 
-Return the Lensing Auto-correlation function 
-``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})`` , defined as follows:
+Return the lensing auto-correlation function 
+``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, defined as follows:
     
 ```math
 \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) = 
@@ -186,8 +188,9 @@ Return the Lensing Auto-correlation function
 ```
 
 where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
-``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2\chi_1\chi_2\cos{\theta}}`` 
-and the ``J`` coefficients are given by (with ``y = \cos{\theta}``)
+``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2\chi_1\chi_2\cos{\theta}}``, 
+``y = \cos \theta = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``) 
+and the ``J`` coefficients are given by 
 
 ```math
 \begin{align*}
@@ -203,23 +206,28 @@ and the ``J`` coefficients are given by (with ``y = \cos{\theta}``)
 \end{align*}
 ```
 
-The computation is made applying [`hcubature`](@ref) (see the 
-[Hcubature](https://github.com/JuliaMath/HCubature.jl) Julia package) to
+The computation is made applying [`trapz`](@ref) (see the 
+[Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
 the integrand function `integrand_ξ_lensing`.
+
+
+
+## Inputs
+
+- `s1` and `s2`: comovign distances where the function must be evaluated
+
+- `y`: the cosine of the angle between the two points `P1` and `P2`
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
 
 
 ## Optional arguments 
 
-- `tol = 0.5` : if ``s = \sqrt{s_1^2 + s_2^2 - 2 \, s_1 s_2 y} \leq \mathrm{tol}``,
-  then the returned value is `0.0`; it prevents computational problems conserning too
-  close points which are insignificants (cosnidering that `tol` is a distance, so it
-  is measured in ``h_0^{-1}\,\mathrm{Mpc}``).
-
-- `enhancer = 1` : multiply the resulting value; it
+- `enhancer::Float64 = 1.0` : multiply the resulting value; it
   is very useful for interal computations in other functions (for instance 
-  `map_integral_on_mu_lensing`), in order to deal better with small float numbers.
+  `map_integral_on_mu`), in order to deal better with small float numbers.
 
-- ` Δχ_min = 1e-6` : when ``\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}``,
+- `Δχ_min::Float64 = 1e-6` : when ``\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}``,
   some ``I_\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
@@ -232,20 +240,16 @@ the integrand function `integrand_ξ_lensing`.
   as the result of the parenthesis instead of calculating it in the normal way; it prevents
   computational divergences.
 
-- `kwargs...` : keyword arguments which should be passed to `hcubature` when performing
-  the 2-dims integral; we shall recomend to set `atol≥1e-4` and `rtol≥-3`, as a consequence
-  of the fast increase for the evaluation time needed for this integral.
+- `N_χs::Integer = 100`: number of points to be used for sampling the integral
+  along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
+  with `N_χs ≥ 50` the result is stable.
 
-
-## Return
-
-A `Tuple{Float64, Float64}` : the former is the integral result, the latter its error.
 
 See also: [`integrand_ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
-[`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref)
+[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function ξ_lensing(s1, s2, y, cosmo::GaPSE.Cosmology;
-     N_χs = 100, enhancer = 1, Δχ_min = 1e-3)
+function ξ_lensing(s1, s2, y, cosmo::Cosmology;
+     enhancer::Float64 = 1.0, N_χs::Integer = 100, Δχ_min::Float64 = 1e-3)
 
      adim_χs = range(1e-6, 1.0, N_χs)
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
