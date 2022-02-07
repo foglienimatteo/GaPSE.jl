@@ -5,6 +5,7 @@
 ![CI-build](https://img.shields.io/github/workflow/status/cosmofico97/GaPSE/Unit%20tests)
 ![size](https://img.shields.io/github/repo-size/cosmofico97/GaPSE) 
 ![license]( https://img.shields.io/github/license/cosmofico97/GaPSE)
+[![codecov](https://codecov.io/gh/cosmofico97/GaPSE/branch/main/graph/badge.svg?token=67GIZ9RA8Y)](https://codecov.io/gh/cosmofico97/GaPSE)
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://cosmofico97.github.io/GaPSE/stable) 
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://cosmofico97.github.io/GaPSE/dev) 
 
