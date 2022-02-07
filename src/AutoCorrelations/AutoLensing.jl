@@ -20,14 +20,17 @@
 
 
 @doc raw"""
-     integrand_ξ_lensing(χ1, χ2, s1, s2, y; tol = 0.5, 
-          enhancer = 1, Δχ_min = 1e-6) :: Float64
+     integrand_ξ_lensing(
+          IP1::Point, IP2::Point,
+          P1::Point, P2::Point,
+          y, cosmo::Cosmology;
+          enhancer::Float64 = 1.0, 
+          Δχ_min::Float64 = 1.0) :: Float64
 
-Return the integarnd of the lensing auto-correlation function 
+Return the integrand of the lensing auto-correlation function 
 ``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, i.e. the function 
 ``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
 
-    
 ```math
 f(s_1, s_2, y, \chi_1, \chi_2) = 
 \frac{1}{2}
@@ -40,8 +43,9 @@ f(s_1, s_2, y, \chi_1, \chi_2) =
 ```
 
 where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
-``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2\chi_1\chi_2\cos{\theta}}`` 
-and the ``J`` coefficients are given by (with ``y = \cos{\theta}``)
+``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2\chi_1\chi_2\cos{\theta}}``, 
+``y = \cos \theta = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``) 
+and the ``J`` coefficients are given by 
 
 ```math
 \begin{align*}
@@ -57,18 +61,26 @@ and the ``J`` coefficients are given by (with ``y = \cos{\theta}``)
 \end{align*}
 ```
 
-## Optional arguments 
+## Inputs
 
-- `tol = 0.5` : if ``s = \sqrt{s_1^2 + s_2^2 - 2 \, s_1 s_2 y} \leq \mathrm{tol}``,
-  then the returned value is `0.0`; it prevents computational problems conserning too
-  close points which are insignificants (cosnidering that `tol` is a distance, so it
-  is measured in ``h_0^{-1}\,\mathrm{Mpc}``).
+- `IP1::Point` and `IP2::Point`: `Point` inside the integration limits, placed 
+  at comoving distance `χ1` and `χ2` respectively.
 
-- `enhancer = 1` : multiply the resulting ``f(s_1, s_2, y, \chi_1, \chi_2)`` value; it
+- `P1::Point` and `P2::Point`: extreme `Point` of the integration, placed 
+  at comoving distance `s1` and `s2` respectively.
+
+- `y`: the cosine of the angle between the two points `P1` and `P2`
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
+
+
+## Optional arguments
+
+- `enhancer::Float64 = 1.0` : multiply the resulting ``f(s_1, s_2, y, \chi_1, \chi_2)`` value; it
   is very useful for interal computations in other functions (for instance 
   `map_integral_on_mu_lensing`), in order to deal better with small float numbers.
 
-- ` Δχ_min = 1e-6` : when ``\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}``,
+- `Δχ_min::Float64 = 1e-6` : when ``\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}``,
   some ``I_\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
@@ -83,13 +95,14 @@ and the ``J`` coefficients are given by (with ``y = \cos{\theta}``)
 
 
 See also: [`ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
-[`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref)
+[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
 function integrand_ξ_lensing(
      IP1::Point, IP2::Point,
      P1::Point, P2::Point,
      y, cosmo::Cosmology;
-     enhancer = 1, Δχ_min = 1)
+     enhancer::Float64 = 1.0,
+     Δχ_min::Float64 = 1.0)
 
      s1 = P1.comdist
      s2 = P2.comdist
@@ -107,34 +120,34 @@ function integrand_ξ_lensing(
 
      first_res = if Δχ > Δχ_min
           χ1χ2 = χ1 * χ2
-     
+
           new_J00 = -0.75 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
           new_J02 = -1.5 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
           new_J31 = 9 * y * Δχ^2
           new_J22 = 2.25 * χ1χ2 / Δχ^4 * (
-                         2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)
-                         -
-                         16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
-                         +
-                         χ1χ2^2 * (11y^4 + 14y^2 + 23)
-                    )
-     
+               2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)
+               -
+               16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
+               +
+               χ1χ2^2 * (11y^4 + 14y^2 + 23)
+          )
+
           I00 = cosmo.tools.I00(Δχ)
           I20 = cosmo.tools.I20(Δχ)
           I13 = cosmo.tools.I13(Δχ)
           I22 = cosmo.tools.I22(Δχ)
-     
+
           #println("J00 = $new_J00, \t I00(Δχ) = $(I00)")
           #println("J02 = $new_J02, \t I20(Δχ) = $(I20)")
           #println("J31 = $new_J31, \t I13(Δχ) = $(I13)")
           #println("J22 = $new_J22, \t I22(Δχ) = $(I22)")
-     
+
           (
                new_J00 * I00 + new_J02 * I20 +
                new_J31 * I13 + new_J22 * I22
           )
      else
-     
+
           lim = 4.0 / 15.0 * (5.0 * cosmo.tools.σ_2 + 6.0 * cosmo.tools.σ_0 * χ2^2)
           #println("lim = $lim")
           9.0 / 4.0 * lim

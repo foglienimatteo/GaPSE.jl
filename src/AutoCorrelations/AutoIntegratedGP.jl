@@ -18,10 +18,63 @@
 #
 
 
+@doc raw"""
+     integrand_ξ_integratedGP(IP1::Point, IP2::Point,
+          P1::Point, P2::Point,
+          y, cosmo::Cosmology;
+          enhancer::Float64 = 1.0) :: Float64
+
+Return the integrand of the integrated gravitational potential 
+auto-correlation function ``\xi^{\int\phi\int\phi} (s_1, s_2, \cos{\theta})``, 
+i.e. the function ``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
+
+```math
+f(s_1, s_2, y, \chi_1, \chi_2) = J_{40}(s_1, s_2, y, \chi_1, \chi_2) \tilde{I}^4_0(\chi)
+```
+where ``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \, \chi_2 \, y} ``,
+``y = \cos \theta = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2`` and:
+```math
+\begin{align*}
+     &J_{40}(s_1, s_2, y, \chi_1, \chi_2)  = 
+          \frac{
+                    9 \mathcal{H}_0^4 \Omega_{M0}^2 D(\chi_1) D(\chi_2) \chi^4
+          }{    a(\chi_1) a(\chi_2) s_1 s_2} 
+          (s_2 \mathcal{H}(\chi_2) \mathcal{R}(s_2) (f(\chi_2)-1) - 1) 
+          (s_1 \mathcal{H}(\chi_1) \mathcal{R}(s_1) (f(\chi_1)-1) - 1) \\[5pt]
+
+     &\tilde{I}^4_0 (s) = \int_0^\infty \frac{\mathrm{d}q}{2\pi^2} 
+          q^2 \, P(q) \, \frac{j_0(q s) - 1}{(q s)^4}
+\end{aling*}
+```
+
+
+## Inputs
+
+- `IP1::Point` and `IP2::Point`: `Point` inside the integration limits, placed 
+  at comoving distance `χ1` and `χ2` respectively.
+
+- `P1::Point` and `P2::Point`: extreme `Point` of the integration, placed 
+  at comoving distance `s1` and `s2` respectively.
+
+- `y`: the cosine of the angle between the two points `P1` and `P2`
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
+
+
+## Optional arguments 
+
+- `enhancer::Float64 = 1.0` : multiply the resulting ``f(s_1, s_2, y, \chi_1, \chi_2)`` value; it
+  is very useful for interal computations in other functions (for instance 
+  `map_integral_on_mu_lensing`), in order to deal better with small float numbers.
+
+
+See also: [`ξ_integratedGP`](@ref), [`integrand_on_mu_integratedGP`](@ref)
+[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
+"""
 function integrand_ξ_integratedGP(IP1::Point, IP2::Point,
      P1::Point, P2::Point,
      y, cosmo::Cosmology;
-     enhancer::Float64 = 1.0, Δχ_min = 0.0)
+     enhancer::Float64 = 1.0)
 
      s1, ℛ_s1 = P1.comdist, P1.ℛ
      s2, ℛ_s2 = P2.comdist, P2.ℛ
@@ -37,51 +90,8 @@ function integrand_ξ_integratedGP(IP1::Point, IP2::Point,
      par_2 = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 1
      #println("factor = $factor")
      #println("denomin = $denomin")
-     
 
      return enhancer * factor / denomin * par_1 * par_2
-
-     #=
-     Δχ_min = 0.0
-     first_res = if Δχ > Δχ_min
-          χ1χ2 = χ1 * χ2
-
-          new_J00 = -0.75 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
-          new_J02 = -1.5 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
-          new_J31 = 9 * y * Δχ^2
-          new_J22 = 2.25 * χ1χ2 / Δχ^4 * (
-               2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)
-               -
-               16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
-               +
-               χ1χ2^2 * (11y^4 + 14y^2 + 23)
-          )
-
-          I00 = cosmo.tools.I00(Δχ)
-          I20 = cosmo.tools.I20(Δχ)
-          I13 = cosmo.tools.I13(Δχ)
-          I22 = cosmo.tools.I22(Δχ)
-
-          #println("J00 = $new_J00, \t I00(Δχ) = $(I00)")
-          #println("J02 = $new_J02, \t I20(Δχ) = $(I20)")
-          #println("J31 = $new_J31, \t I13(Δχ) = $(I13)")
-          #println("J22 = $new_J22, \t I22(Δχ) = $(I22)")
-
-          (
-               new_J00 * I00 + new_J02 * I20 +
-               new_J31 * I13 + new_J22 * I22
-          )
-     else
-
-          lim = 4.0 / 15.0 * (5.0 * cosmo.tools.σ_2 + 6.0 * cosmo.tools.σ_0 * χ2^2)
-          #println("lim = $lim")
-          9.0 / 4.0 * lim
-     end
-
-     res = enhancer * factor / denomin * first_res
-     #println("res = ", res, "\n")
-     return res
-     =#
 end
 
 
@@ -92,15 +102,21 @@ end
      \int_0^{s_1} \mathrm{d} \chi_1 \int_0^{s_2}\mathrm{d} \chi_2 
      J_{40} \tilde{I}^4_0(\chi)
 ```
-where
+where:
 ```math
-J_{40} = 
-    \frac{
-          9 \mathcal{H}_0^4 \Omega_{M0}^2 D(\chi_1) D(\chi_2) \chi^4
-    }{    a(\chi_1) a(\chi_2) s_1 s_2} 
-    (s_2 \mathcal{H}(\chi_2) \mathcal{R}(s_2) (f(\chi_2)-1) - 1) 
-    (s_1 \mathcal{H}(\chi_1) \mathcal{R}(s_1) (f(\chi_1)-1) - 1)
+\begin{align*}
+     &J_{40} = 
+          \frac{
+                    9 \mathcal{H}_0^4 \Omega_{M0}^2 D(\chi_1) D(\chi_2) \chi^4
+          }{    a(\chi_1) a(\chi_2) s_1 s_2} 
+          (s_2 \mathcal{H}(\chi_2) \mathcal{R}(s_2) (f(\chi_2)-1) - 1) 
+          (s_1 \mathcal{H}(\chi_1) \mathcal{R}(s_1) (f(\chi_1)-1) - 1) \\[5pt]
+
+     &\tilde{I}^4_0 (s) = \int_0^\infty \frac{\mathrm{d}q}{2\pi^2} 
+          q^2 \, P(q) \, \frac{j_0(q s) - 1}{(q s)^4}
+\end{aling*}
 ```
+and ``P(q)`` is the input power spectrum.
 
 """
 function ξ_integratedGP(P1::Point, P2::Point, y, cosmo::Cosmology; enhancer = 1.0)

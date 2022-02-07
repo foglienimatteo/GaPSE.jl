@@ -116,7 +116,16 @@ struct InputPS
      end
 end
 
+@doc raw"""
+     func_I04_tilde(PK, s, kmin, kmax; kwargs...)
 
+Return the following integral:
+```math
+\tilde{I}^4_0 (s) = \int_0^\infty \frac{\mathrm{d}q}{2\pi^2} 
+     q^2 \, P(q) \, \frac{j_0(q s) - 1}{(q s)^4}
+```
+
+"""
 function func_I04_tilde(PK, s, kmin, kmax; kwargs...)
      quadgk(q -> (sphericalbesselj(0, s * q) - 1.0) * PK(q) * q^2 / (2.0 * π^2 * (q * s)^4),
           kmin, kmax; kwargs...)
@@ -160,14 +169,14 @@ struct IPSTools
           k_max::Union{Float64,Nothing} = nothing,
           s_0::Union{Float64,Nothing} = nothing
      )
-     
+
           PK = Spline1D(ips.ks, ips.pks)
-     
+
           kmin = isnothing(k_min) ? min(ips.ks) : k_min
           kmax = isnothing(k_max) ? max(ips.ks) : k_max
           s0 = isnothing(s_0) ? 1.0 / kmax : s_0
           ss = 10 .^ range(log10(s0), log10(s0) - log10(kmin) - log10(kmax), length = N)
-     
+
           p0 = [-1.0, 1.0, 0.0]
           I00 = Spline1D(expanded_Iln(PK, 0, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
                fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
@@ -185,15 +194,15 @@ struct IPSTools
                fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
           I11 = Spline1D(expanded_Iln(PK, 1, 1; N = N, kmin = kmin, kmax = kmax, s0 = s0,
                fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
-     
+
           I04_tildes = [func_I04_tilde(PK, s, kmin, kmax; rtol = 1e-2, atol = 1e-6)[1] for s in ss]
           I04_tilde = Spline1D(ss, I04_tildes)
-     
+
           σ_0 = quadgk(q -> PK(q) * q^2 / (2 * π^2), kmin, kmax)[1]
           σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), kmin, kmax)[1]
           σ_2 = quadgk(q -> PK(q) / (2 * π^2), kmin, kmax)[1]
           σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), kmin, kmax)[1]
-     
+
           new(I00, I20, I40, I02, I22, I31, I13, I11, I04_tilde, σ_0, σ_1, σ_2, σ_3,
                fit_min, fit_max, k_min, k_max, s0)
      end

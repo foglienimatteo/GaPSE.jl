@@ -15,7 +15,9 @@ Documenter.makedocs(
           "Power Spectrum Multipoles" => "PowerSpectrum.md",
           "Auto Correlations" => [
                "Auto Doppler" => "AutoCorrelations/AutoDoppler.md",
-               "Auto Lensing" => "AutoCorrelations/AutoLensing.md"]
+               "Auto Lensing" => "AutoCorrelations/AutoLensing.md",
+               "Auto Local GP" => "AutoCorrelations/AutoLocalGP.md",
+               "Auto Integrated GP" => "AutoCorrelations/AutoIntegratedGP.md"]
      ],
 )
 
