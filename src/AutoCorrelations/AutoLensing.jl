@@ -279,54 +279,69 @@ end
 
 
 @doc raw"""
-     integrand_on_mu_lensing(s1, s, μ; L::Integer = 0, enhancer = 1,
-          Δχ_min = 1e-6, tol = 0.5, 
-          χ_atol = 1e-3, χ_rtol = 1e-3) :: Tuple{Float64, Float64}
+     integrand_on_mu_lensing(s1, s, μ, cosmo::Cosmology;
+          L::Integer = 0, 
+          use_windows::Bool = true, 
+          Δχ_min::Float64 = 1e-6) :: Float64
 
-Evaluate the following function ``f^{\kappa\kappa}(s_1, s, \mu)``:
+Return the integrand on ``\mu = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}`` 
+of the lensing auto-correlation function, i.e.
+the following function ``f(s_1, s, \mu)``:
 
 ```math
-f^{\kappa\kappa}(s_1, s, \mu) = \xi^{\kappa\kappa}(s_1, s, \mu) \, \phi(s_2) \,
-        \mathcal{L}_L(\mu) \, F\left(\frac{s}{s_1}, \mu \right)
+     f(s_1, s, \mu) = \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) 
+          \, \mathcal{L}_L(\mu) \,  \phi(s_2) \, F\left(\frac{s}{s_1}, \mu \right)
+```
+where ``y =  \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2`` and
+``s = \sqrt{s_1^2 + s_2^2 - 2 \, s_1 \, s_2 \, y}``.
+
+In case `use_windows` is set to `false`, the window functions ``\phi`` and ``F``
+are removed, i.e is returned the following function ``f^{'}(s_1, s, \mu)``:
+
+```math
+     f^{'}(s_1, s, \mu) = \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) 
+          \, \mathcal{L}_L(\mu) 
 ```
 
-The evaluation of ``\xi^{\kappa\kappa}(s_1, s, \mu)`` is made through `ξ_lensing`.
+The function ``\xi^{\kappa\kappa}(s_1, s_2, \cos{\theta})`` is calculated
+from `ξ_lensing`; note that these is an internal conversion of coordiate sistems
+from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
+
+## Inputs
+
+- `s1`: the comoving distance where must be evaluated the integral
+
+- `s`: the comoving distance from `s1` where must be evaluated the integral
+
+- `μ`: the cosine between `s1` and `s` where must be evaluated the integral
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
+
 
 ## Optional arguments 
 
-- `tol = 0.5` : if ``s \leq \mathrm{tol}``, then the integrand value is `0.0`; 
-  it prevents computational problems conserning too
-  close points which are insignificants (cosnidering that `tol` is a distance, so it
-  is measured in ``h_0^{-1}\,\mathrm{Mpc}``).
+- `L::Integer = 0`: order of the Legendre polynomial to be used
 
-- `enhancer = 1` : multiply the resulting ``f(s_1, s_2, y, \chi_1, \chi_2)`` value; it
-  is very useful for interal computations in other functions (for instance 
-  `map_integral_on_mu_lensing`), in order to deal better with small float numbers.
+- `enhancer::Float64 = 1.0`: just a float number used in order to deal better 
+  with small numbers; the returned value is actually `enhancer * f`, where `f` 
+  is the true value calculated as shown before.
 
-- ` Δχ_min = 1e-6` : a Float64 parameter used inside `integrand_ξ_lensing` in order to
+- `use_windows::Bool = false`: tells if the integrand must consider the two
+   window function ``\phi`` and ``F``
+
+- ` Δχ_min::Float64 = 1e-6` : parameter used inside `integrand_ξ_lensing` in order to
   avoid computatinal divergences; it should be `0<Δχ_min<<1`, see the `integrand_ξ_lensing`
   docstring for more informations.
 
-- `χ_atol = 1e-3` : absolute tolerance to be used in the computation of the 2-dims integral
-  on ``\chi_1`` and ``\chi_2``, made inside `ξ_lensing`; for computational time reasons,
-  it's better to use `χ_atol ≥ 1e-5`
 
-- `χ_rtol = 1e-3` : relative tolerance to be used in the computation of the 2-dims integral
-  on ``\chi_1`` and ``\chi_2``, made inside `ξ_lensing`; for computational time reasons,
-  it's better to use `χ_rtol ≥ 1e-4`.
-
-
-## Returns
-
-A `Tuple{Float64, Float64}` : the former is the integral ressult, the latter its error.
-
-
-See also: [`integrand_ξ_lensing`](@ref), [`ξ_lensing`](@ref)
-[`integral_on_mu_lensing`](@ref), [`map_integral_on_mu_lensing`](@ref),
-[`spline_F`](@ref), [`ϕ`](@ref)
+See also: [`integrand_ξ_lensing`](@ref), [`ξ_lensing`](@ref),
+[`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
+[`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
+[`y`](@ref), [`s2`](@ref)
 """
 function integrand_on_mu_lensing(s1, s, μ, cosmo::Cosmology;
-     L::Integer = 0, use_windows::Bool = true, kwargs...)
+     L::Integer = 0, enhancer::Float64 = 1.0,
+     use_windows::Bool = true, Δχ_min::Float64 = 1e-6)
 
      s2_value = s2(s1, s, μ)
      y_value = y(s1, s, μ)
@@ -334,12 +349,12 @@ function integrand_on_mu_lensing(s1, s, μ, cosmo::Cosmology;
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_lensing(s1, s2_value, y_value, cosmo; kwargs...)
+          int = ξ_lensing(s1, s2_value, y_value, cosmo; enhancer = enhancer, Δχ_min = Δχ_min)
           #println("int = $int")
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_lensing(s1, s2_value, y_value, cosmo; kwargs...)
+          int = ξ_lensing(s1, s2_value, y_value, cosmo; enhancer = enhancer, Δχ_min = Δχ_min)
           #println("int = $int")
           int .* Pl(μ, L)
      end

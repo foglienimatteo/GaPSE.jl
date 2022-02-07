@@ -96,7 +96,7 @@ end
 
 
 @doc raw"""
-     ξ_integratedGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
+     ξ_integratedGP(s1, s2, y, cosmo::Cosmology; 
           enhancer::Float64 = 1.0, 
           N_χs::Integer = 100) :: Float64
 
@@ -149,30 +149,97 @@ the integrand function `integrand_ξ_lensing`.
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
-
 See also: [`integrand_ξ_integratedGP`](@ref), [`integrand_on_mu_integratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function ξ_integratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
+function ξ_integratedGP(s1, s2, y, cosmo::Cosmology;
      enhancer::Float64 = 1.0, N_χs::Integer = 100)
-     s1, D1, f1, a1, ℛ1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℛ
-     s2, D2, f2, a2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℛ
 
-     Δs = s(s1, s2, y)
-     prefac = 2.25 * ℋ0^4 * cosmo.params.Ω_M0^2 * D1 * D2 * Δs^4 / (a1 * a2)
-     parenth = 1.0 + ℛ1 + ℛ2 + ℛ1 * ℛ2
+     adim_χs = range(1e-6, 1.0, N_χs)
+     #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
-     I04 = cosmo.tools.I04(Δs)
+     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
+     χ1s = adim_χs .* s1
+     χ2s = adim_χs .* s2
 
-     res = prefac * I04 * parenth
+     IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+     IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-     return enhancer * res
+     int_ξ_igp = [
+          GaPSE.integrand_ξ_integratedGP(IP1, IP2, P1, P2, y, cosmo;
+               enhancer = enhancer)
+          for IP1 in IP1s, IP2 in IP2s
+     ]
+
+     res = trapz((χ1s, χ2s), int_ξ_igp)
+     #println("res = $res")
+     return res
 end
 
 
 
-function integrand_on_mu_integratedGP(s1, s, μ,
-     cosmo::Cosmology; L::Integer = 0, enhancer = 1.0,
+##########################################################################################92
+
+
+
+@doc raw"""
+     integrand_on_mu_integratedGP(s1, s, μ, cosmo::Cosmology;
+          L::Integer = 0, 
+          use_windows::Bool = true) :: Float64
+
+Return the integrand on ``\mu = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}`` 
+of the integrated gravitational potential auto-correlation function, i.e.
+the following function ``f(s_1, s, \mu)``:
+
+```math
+     f(s_1, s, \mu) = \xi^{\int\phi\int\phi} (s_1, s_2, \cos{\theta}) 
+          \, \mathcal{L}_L(\mu) \,  \phi(s_2) \, F\left(\frac{s}{s_1}, \mu \right)
+```
+where ``y =  \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2`` and
+``s = \sqrt{s_1^2 + s_2^2 - 2 \, s_1 \, s_2 \, y}``.
+
+In case `use_windows` is set to `false`, the window functions ``\phi`` and ``F``
+are removed, i.e is returned the following function ``f^{'}(s_1, s, \mu)``:
+
+```math
+     f^{'}(s_1, s, \mu) = \xi^{\int\phi\int\phi} (s_1, s_2, \cos{\theta}) 
+          \, \mathcal{L}_L(\mu) 
+```
+
+The function ``\xi^{\int\phi\int\phi}(s_1, s_2, \cos{\theta})`` is calculated
+from `ξ_integratedGP`; note that these is an internal conversion of coordiate sistems
+from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
+
+## Inputs
+
+- `s1`: the comoving distance where must be evaluated the integral
+
+- `s`: the comoving distance from `s1` where must be evaluated the integral
+
+- `μ`: the cosine between `s1` and `s` where must be evaluated the integral
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
+
+
+## Optional arguments 
+
+- `L::Integer = 0`: order of the Legendre polynomial to be used
+
+- `enhancer::Float64 = 1.0`: just a float number used in order to deal better 
+  with small numbers; the returned value is actually `enhancer * f`, where `f` 
+  is the true value calculated as shown before.
+
+- `use_windows::Bool = false`: tells if the integrand must consider the two
+   window function ``\phi`` and ``F``.
+
+
+See also: [`integrand_ξ_integratedGP`](@ref), [`ξ_integratedGP`](@ref),
+[`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
+[`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
+[`y`](@ref), [`s2`](@ref)
+"""
+function integrand_on_mu_integratedGP(s1, s, μ, cosmo::Cosmology;
+     L::Integer = 0, enhancer::Float64 = 1.0,
      use_windows::Bool = true)
 
      s2_value = s2(s1, s, μ)
@@ -191,5 +258,3 @@ function integrand_on_mu_integratedGP(s1, s, μ,
      end
 end
 
-
-##########################################################################################92

@@ -50,9 +50,9 @@ the J coefficients are given by:
 
 ## Optional arguments
 
-- `enhancer::Float64 = 1.0`: just a float number used in order to deal better with small numbers; the returned
-  value is actually `enhancer * xi_doppler`, where `xi_doppler` is the true value calculated
-  as shown before.
+- `enhancer::Float64 = 1.0`: just a float number used in order to deal better 
+  with small numbers; the returned value is actually `enhancer * f`, where `f` 
+  is the true value calculated as shown before.
 
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
@@ -78,10 +78,14 @@ end
 
 
 
+##########################################################################################92
+
+
+
 @doc raw"""
      integrand_on_mu_doppler(s1, s, μ, cosmo::Cosmology; 
           L::Integer = 0, 
-          enhancer = 1.0,
+          enhancer::Float64 = 1.0,
           use_windows::Bool = true) ::Float64
 
 Return the integrand on ``\mu = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}`` 
@@ -92,7 +96,8 @@ the following function ``f(s_1, s, \mu)``:
      f(s_1, s, \mu) = \xi^{v_{\parallel}v_{\parallel}} (s_1, s_2, \cos{\theta}) 
           \, \mathcal{L}_L(\mu) \,  \phi(s_2) \, F\left(\frac{s}{s_1}, \mu \right)
 ```
-where ``y =  \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``
+where ``y =  \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2`` and
+``s = \sqrt{s_1^2 + s_2^2 - 2 \, s_1 \, s_2 \, y}``.
 
 In case `use_windows` is set to `false`, the window function ``\phi`` and ``F``
 are removed, i.e is returned the following function ``f^{'}(s_1, s, \mu)``:
@@ -129,8 +134,10 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 - `use_windows::Bool = false`: tells if the integrand must consider the two
    window function ``\phi`` and ``F``
 
-See also: [`ξ_doppler`](@ref), [`Cosmology`](@ref), [`y`](@ref)
-[`s2`](@ref)
+See also: [`ξ_doppler`](@ref), 
+[`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
+[`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
+[`y`](@ref), [`s2`](@ref)
 """
 function integrand_on_mu_doppler(s1, s, μ,
      cosmo::Cosmology; L::Integer = 0,
