@@ -117,7 +117,7 @@ struct InputPS
 end
 
 
-function I04_tilde(PK, s, kmin, kmax; kwargs...)
+function func_I04_tilde(PK, s, kmin, kmax; kwargs...)
      quadgk(q -> (sphericalbesselj(0, s * q) - 1.0) * PK(q) * q^2 / (2.0 * π^2 * (q * s)^4),
           kmin, kmax; kwargs...)
 end
@@ -186,8 +186,8 @@ struct IPSTools
           I11 = Spline1D(expanded_Iln(PK, 1, 1; N = N, kmin = kmin, kmax = kmax, s0 = s0,
                fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
      
-          I04_tildes = [I04_tilde(PK, s, kmin, kmax; rtol = 1e-2, atol = 1e-6) for s in ss]
-          I04_tilde = Spline(ss, I04_tildes)
+          I04_tildes = [func_I04_tilde(PK, s, kmin, kmax; rtol = 1e-2, atol = 1e-6)[1] for s in ss]
+          I04_tilde = Spline1D(ss, I04_tildes)
      
           σ_0 = quadgk(q -> PK(q) * q^2 / (2 * π^2), kmin, kmax)[1]
           σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), kmin, kmax)[1]
