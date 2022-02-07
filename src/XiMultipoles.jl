@@ -18,13 +18,13 @@
 #
 
 function integral_on_mu(s1, s, integrand::Function, cosmo::Cosmology;
-          L::Integer = 0,
-          enhancer::Float64 = 1e6,
-          use_windows::Bool = true,
-          μ_atol::Float64 = 1e-3,
-          μ_rtol::Float64 = 1e-3,
-          kwargs...
-          )
+     L::Integer = 0,
+     enhancer::Float64 = 1e6,
+     use_windows::Bool = true,
+     μ_atol::Float64 = 1e-4,
+     μ_rtol::Float64 = 1e-1,
+     kwargs...
+)
 
      f(μ) = integrand(s1, s, μ, cosmo; enhancer = enhancer, L = L,
           use_windows = use_windows, kwargs...)[1]
@@ -47,17 +47,86 @@ function integral_on_mu(s1, s, effect::String, cosmo::Cosmology; kwargs...)
 end
 
 
+
+@doc raw"""
+     integral_on_mu(s1, s, integrand::Function, cosmo::Cosmology;
+          L::Integer = 0,
+          enhancer::Float64 = 1e6,
+          use_windows::Bool = true,
+          μ_atol::Float64 = 1e-4,
+          μ_rtol::Float64 = 1e-1,
+          kwargs...
+          )
+
+     integral_on_mu(s1, s, effect::String, cosmo::Cosmology; kwargs...)
+
+Evaluate the integral on ``\mu`` of the chosen correlation function term, 
+through the `quadgk` function (see the [QuadGK](https://github.com/JuliaMath/QuadGK.jl) 
+Julia package).
+
+In the former method you have to pass as an input the `integrand` function you want 
+to integrate, while in the (recommended) latter one it's necessary to specify the
+name of the CF term among the following 
+`$(string(IMPLEMENTED_GR_EFFECTS .* " , "...))`
+to which correspond the following functions:
+`$(string(string.(IMPLEMENTED_INTEGRANDS) .* " , "...))`
+
+The integral evaluated is then the following:
+
+```math
+     f(s_1, s, \mu) = \int_{-1}^{+1} \mathrm{d}\mu \; \xi (s_1, s_2, \cos{\theta}) 
+          \, \mathcal{L}_L(\mu) \,  \phi(s_2) \, F\left(\frac{s}{s_1}, \mu \right)
+```
+for `use_windows==true` and 
+
+```math
+     f^{'}(s_1, s, \mu) = \int_{-1}^{+1} \mathrm{d}\mu \;  
+          \xi^{v_{\parallel}v_{\parallel}} (s_1, s_2, \cos{\theta}) 
+          \, \mathcal{L}_L(\mu) 
+```
+for `use_windows==false`, where ``y =  \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``
+and ``\xi`` is the chosen CF effect. 
+
+## Inputs
+
+- `s1`: the comoving distance where must be evaluated the integral
+
+- `s`: the comoving distance from `s1` where must be evaluated the integral
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
+
+
+## Optional arguments
+
+- `L::Integer = 0`: order of the Legendre polynomial to be used
+
+- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+  the returned value is NOT modified by this value, because after a multiplication
+  the internal result is divided by `enhancer`.
+
+- `use_windows::Bool = false`: tells if the integrand must consider the two
+   window function ``\phi`` and ``F``
+
+- `μ_atol::Float64 = 1e-3` and `μ_rtol::Float64 = 1e-3`: absolute and relative tolerance
+  to be passed to `quadgk`; it's recommended not to set `μ_rtol < 1e-2` because
+  of long time for evaluations
+
+"""
+integral_on_mu
+
+
+
 ##########################################################################################92
 
 
 
 function my_integral_on_mu(s1, s, integrand, cosmo::GaPSE.Cosmology;
-                    L::Integer = 0,
-                    enhancer::Float64 = 1e6,
-                    use_windows::Bool = true,
-                    μ_steps = 30,
-                    kwargs...
-               )
+     L::Integer = 0,
+     enhancer::Float64 = 1e6,
+     use_windows::Bool = true,
+     μ_steps = 30,
+     kwargs...
+)
 
      μs1 = range(-1.0, -0.90, length = μ_steps)
      μs2 = range(-0.90, 0.90, length = μ_steps)

@@ -46,11 +46,16 @@ the J coefficients are given by (with ``y = \cos{\theta}``):
 
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
-- `enhancer`: just a float number used in order to deal better with small numbers; the returned
+
+## Optional arguments
+
+- `enhancer::Float64 = 1.0`: just a float number used in order to deal better with small numbers; the returned
   value is actually `enhancer * xi_doppler`, where `xi_doppler` is the true value calculated
   as shown before.
+
+See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
-function ξ_doppler(P1::Point, P2::Point, y, cosmo::Cosmology; enhancer = 1.0)
+function ξ_doppler(P1::Point, P2::Point, y, cosmo::Cosmology; enhancer::Float64 = 1.0)
      s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ
      s2, D2, f2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ
 
@@ -71,8 +76,64 @@ function ξ_doppler(P1::Point, P2::Point, y, cosmo::Cosmology; enhancer = 1.0)
 end
 
 
+
+@doc raw"""
+     integrand_on_mu_doppler(s1, s, μ, cosmo::Cosmology; 
+          L::Integer = 0, 
+          enhancer = 1.0,
+          use_windows::Bool = true) ::Float64
+
+Return the integrand on ``\mu = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}`` 
+of the Doppler auto-correlation function, i.e.
+the following function ``f(s_1, s, \mu)``:
+
+```math
+     f(s_1, s, \mu) = \xi^{v_{\parallel}v_{\parallel}} (s_1, s_2, \cos{\theta}) 
+          \, \mathcal{L}_L(\mu) \,  \phi(s_2) \, F\left(\frac{s}{s_1}, \mu \right)
+```
+where ``y =  \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``
+
+In case `use_windows` is set to `false`, the window function ``\phi`` and ``F``
+are removed, i.e is returned the following function ``f^{'}(s_1, s, \mu)``:
+
+```math
+     f^{'}(s_1, s, \mu) = \xi^{v_{\parallel}v_{\parallel}} (s_1, s_2, \cos{\theta}) 
+          \, \mathcal{L}_L(\mu) 
+```
+
+The function ``\xi^{v_{\parallel}v_{\parallel}} (s_1, s_2, \cos{\theta})`` is calculated
+from `ξ_doppler`; note that these is an internal conversion of coordiate sistems
+from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
+
+
+## Inputs
+
+- `s1`: the comoving distance where must be evaluated the integral
+
+- `s`: the comoving distance from `s1` where must be evaluated the integral
+
+- `μ`: the cosine between `s1` and `s` where must be evaluated the integral
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
+
+
+## Optional arguments
+
+- `L::Integer = 0`: order of the Legendre polynomial to be used
+
+- `enhancer::Float64 = 1.0`: just a float number used in order to deal better with small numbers; the returned
+  value is actually `enhancer * f`, where `f` is the true value calculated
+  as shown before.
+
+- `use_windows::Bool = false`: tells if the integrand must consider the two
+   window function ``\phi`` and ``F``
+
+See also: [`ξ_doppler`](@ref), [`Cosmology`](@ref), [`y`](@ref)
+[`s2`](@ref)
+"""
 function integrand_on_mu_doppler(s1, s, μ,
-     cosmo::Cosmology; L::Integer = 0, enhancer = 1.0,
+     cosmo::Cosmology; L::Integer = 0,
+     enhancer::Float64 = 1.0,
      use_windows::Bool = true)
 
      s2_value = s2(s1, s, μ)

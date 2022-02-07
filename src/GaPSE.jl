@@ -56,13 +56,10 @@ include("AutoCorrelations/AutoIntegratedGP.jl")
 
 IMPLEMENTED_GR_EFFECTS =
      ["auto_doppler", "auto_lensing", "auto_localgp", "auto_integratedgp"]
-
-dict_gr_mu = Dict(
-     "auto_doppler" => integrand_on_mu_doppler,
-     "auto_lensing" => integrand_on_mu_lensing,
-     "auto_localgp" => integrand_on_mu_localGP,
-     "auto_integratedgp" => integrand_on_mu_integratedGP,
-)
+IMPLEMENTED_INTEGRANDS = [integrand_on_mu_doppler, integrand_on_mu_lensing,
+     integrand_on_mu_localGP, integrand_on_mu_integratedGP]
+     
+dict_gr_mu = Dict([k=>v for (k,v) in zip(IMPLEMENTED_GR_EFFECTS, IMPLEMENTED_INTEGRANDS)]...)
 
 include("PowerSpectrum.jl")
 include("XiMultipoles.jl")
