@@ -180,7 +180,8 @@ function map_integral_on_mu(
      end
 
      t2 = time()
-     pr && println("\ntime needed for map_integral_on_mu for $effect [in s] = $(t2-t1)")
+     pr && println("\ntime needed for map_integral_on_mu for $effect " *
+                   "[in s] = $(@sprintf("%.5f", t2-t1)) ")
      return (ss, xis)
 end
 

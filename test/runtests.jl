@@ -19,7 +19,7 @@
 
 
 using GaPSE, Test
-using Dierckx, DelimitedFiles
+using Dierckx, DelimitedFiles, QuadGK
 
 
 const TEST_FILE = "datatest/TEST_DATA.txt"

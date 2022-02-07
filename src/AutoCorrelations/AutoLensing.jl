@@ -282,7 +282,8 @@ end
      integrand_on_mu_lensing(s1, s, μ, cosmo::Cosmology;
           L::Integer = 0, 
           use_windows::Bool = true, 
-          Δχ_min::Float64 = 1e-6) :: Float64
+          Δχ_min::Float64 = 1e-6,
+          N_χs::Integer = 100) :: Float64
 
 Return the integrand on ``\mu = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}`` 
 of the lensing auto-correlation function, i.e.
@@ -333,6 +334,9 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
   avoid computatinal divergences; it should be `0<Δχ_min<<1`, see the `integrand_ξ_lensing`
   docstring for more informations.
 
+- `N_χs::Integer = 100`: number of points to be used for sampling the integral
+  along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
+  with `N_χs ≥ 50` the result is stable.
 
 See also: [`integrand_ξ_lensing`](@ref), [`ξ_lensing`](@ref),
 [`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
@@ -341,7 +345,8 @@ See also: [`integrand_ξ_lensing`](@ref), [`ξ_lensing`](@ref),
 """
 function integrand_on_mu_lensing(s1, s, μ, cosmo::Cosmology;
      L::Integer = 0, enhancer::Float64 = 1.0,
-     use_windows::Bool = true, Δχ_min::Float64 = 1e-6)
+     use_windows::Bool = true, Δχ_min::Float64 = 1e-6,
+     N_χs::Integer = 100)
 
      s2_value = s2(s1, s, μ)
      y_value = y(s1, s, μ)
@@ -349,12 +354,14 @@ function integrand_on_mu_lensing(s1, s, μ, cosmo::Cosmology;
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_lensing(s1, s2_value, y_value, cosmo; enhancer = enhancer, Δχ_min = Δχ_min)
+          int = ξ_lensing(s1, s2_value, y_value, cosmo; 
+               enhancer = enhancer, Δχ_min = Δχ_min, N_χs = N_χs)
           #println("int = $int")
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_lensing(s1, s2_value, y_value, cosmo; enhancer = enhancer, Δχ_min = Δχ_min)
+          int = ξ_lensing(s1, s2_value, y_value, cosmo; 
+               enhancer = enhancer, Δχ_min = Δχ_min, N_χs = N_χs)
           #println("int = $int")
           int .* Pl(μ, L)
      end

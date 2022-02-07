@@ -101,17 +101,18 @@ struct InputPS
      ks::Vector{Float64}
      pks::Vector{Float64}
 
-     function InputPS(file::String)
+     function InputPS(file::String; expand::Bool=true)
           data = readdlm(file, comments = true)
-          ks, pks = (data[:, 1], data[:, 2])
-          new_ks, new_pks = expanded_IPS(ks, pks; con = true)
+          ks, pks = expand ? expanded_IPS(data[:, 1], data[:, 2]; con = true) : (data[:, 1], data[:, 2])
           @assert size(ks) == size(pks) "ks and pks must have the same length!"
-          new(new_ks, new_pks)
+          new(ks, pks)
      end
 
-     function InputPS(ks::AbstractVector{T1}, pks::AbstractVector{T2}) where {T1,T2}
+     function InputPS(ks::AbstractVector{T1}, pks::AbstractVector{T2};
+          expand::Bool = true) where {T1,T2}
+     
           @assert size(ks) == size(pks) "ks and pks must have the same length!"
-          new_ks, new_pks = expanded_IPS(ks, pks; con = true)
+          new_ks, new_pks = expand ? expanded_IPS(ks, pks; con = true) : (ks, pks)
           new(new_ks, new_pks)
      end
 end
@@ -172,8 +173,8 @@ struct IPSTools
 
           PK = Spline1D(ips.ks, ips.pks)
 
-          kmin = isnothing(k_min) ? min(ips.ks) : k_min
-          kmax = isnothing(k_max) ? max(ips.ks) : k_max
+          kmin = isnothing(k_min) ? min(ips.ks...) : k_min
+          kmax = isnothing(k_max) ? max(ips.ks...) : k_max
           s0 = isnothing(s_0) ? 1.0 / kmax : s_0
           ss = 10 .^ range(log10(s0), log10(s0) - log10(kmin) - log10(kmax), length = N)
 
@@ -204,7 +205,7 @@ struct IPSTools
           σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), kmin, kmax)[1]
 
           new(I00, I20, I40, I02, I22, I31, I13, I11, I04_tilde, σ_0, σ_1, σ_2, σ_3,
-               fit_min, fit_max, k_min, k_max, s0)
+               fit_min, fit_max, kmin, kmax, s0)
      end
 
      function IPSTools(ips::InputPS, iIs::String)
