@@ -84,13 +84,15 @@ function integrand_ξ_integratedGP(IP1::Point, IP2::Point,
      Δχ = √(χ1^2 + χ2^2 - 2 * χ1 * χ2 * y)
 
      denomin = s1 * s2 * a_χ1 * a_χ2
-     factor = ℋ0^4 * Ω_M0^2 * D1 * D2 * Δχ^4
+     factor = 9 * ℋ0^4 * Ω_M0^2 * D1 * D2 * Δχ^4
      par_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 1
      par_2 = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 1
      #println("factor = $factor")
      #println("denomin = $denomin")
 
-     return enhancer * factor / denomin * par_1 * par_2
+     I04_t = cosmo.tools.I04_tilde(Δχ)
+
+     return enhancer * factor / denomin * par_1 * par_2 * I04_t
 end
 
 

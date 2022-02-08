@@ -55,6 +55,8 @@ include("AutoCorrelations/AutoLensing.jl")
 include("AutoCorrelations/AutoLocalGP.jl")
 include("AutoCorrelations/AutoIntegratedGP.jl")
 
+include("CrossCorrelations/LensingDoppler.jl")
+
 IMPLEMENTED_GR_EFFECTS =
      ["auto_doppler", "auto_lensing", "auto_localgp", "auto_integratedgp"]
 IMPLEMENTED_INTEGRANDS = [integrand_on_mu_doppler, integrand_on_mu_lensing,
