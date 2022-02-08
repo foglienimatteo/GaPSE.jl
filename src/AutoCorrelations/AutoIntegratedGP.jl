@@ -83,16 +83,15 @@ function integrand_ξ_integratedGP(IP1::Point, IP2::Point,
 
      Δχ = √(χ1^2 + χ2^2 - 2 * χ1 * χ2 * y)
 
-     denomin = s1 * s2 * a_χ1 * a_χ2
-     factor = 9 * ℋ0^4 * Ω_M0^2 * D1 * D2 * Δχ^4
+     factor = 9 * ℋ0^4 * Ω_M0^2 * D1 * D2 * Δχ^4 / (s1 * s2 * a_χ1 * a_χ2)
      par_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 1
      par_2 = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 1
      #println("factor = $factor")
      #println("denomin = $denomin")
-
+     
      I04_t = cosmo.tools.I04_tilde(Δχ)
 
-     return enhancer * factor / denomin * par_1 * par_2 * I04_t
+     return enhancer * factor * par_1 * par_2 * I04_t
 end
 
 
@@ -255,7 +254,7 @@ function integrand_on_mu_integratedGP(s1, s, μ, cosmo::Cosmology;
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = _integratedGP(s1, s2_value, y_value, cosmo;
+          int = ξ_integratedGP(s1, s2_value, y_value, cosmo;
                enhancer = enhancer, N_χs = N_χs)
           #println("int = $int")
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))

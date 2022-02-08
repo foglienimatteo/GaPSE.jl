@@ -115,8 +115,6 @@ function power_law_a(ixs, ys, bs, sis; logscale=false)
         end
     [y - b*(x^si) for (x,y,b,si) in zip(xs,ys,bs,sis)]
 end
-
-power_law(x, si, b, a=0.0) = a + b *(x^si)
 =#
 
 function power_law_from_data(xs, ys, p0, x1::Number, x2::Number; con = false)
@@ -284,4 +282,48 @@ function expanded_Iln(PK, l, n; lim = 1e-4, N = 1024, kmin = 1e-4, kmax = 1e3, s
      new_Is = vcat(new_left_Is, xis[rs.>fit_min])
 
      return new_rs, new_Is
+end
+
+
+
+##########################################################################################92
+
+
+
+@doc raw"""
+     func_I04_tilde(PK, s, kmin, kmax; kwargs...)
+
+Return the following integral:
+```math
+\tilde{I}^4_0 (s) = \int_0^\infty \frac{\mathrm{d}q}{2\pi^2} 
+     q^2 \, P(q) \, \frac{j_0(q s) - 1}{(q s)^4}
+```
+
+"""
+function func_I04_tilde(PK, s, kmin, kmax; kwargs...)
+     quadgk(q -> (sphericalbesselj(0, s * q) - 1.0) * PK(q) * q^2 / (2.0 * π^2 * (q * s)^4),
+          kmin, kmax; kwargs...)
+end
+
+
+function expanded_I04_tilde(PK, ss;
+     kmin = 1e-8, kmax = 1e3, rtol = 1e-2, kwargs...)
+
+     fit_1, fit_2 = 0.001, 0.1
+     fit_3, fit_4 = 50.0, 100.0
+     cutted_ss = ss[fit_1.<ss.<fit_4]
+     cutted_I04_tildes = [func_I04_tilde(PK, s, kmin, kmax; rtol = rtol, kwargs...)[1] for s in cutted_ss]
+
+     l_si, l_b, l_a = power_law_from_data(cutted_ss, cutted_I04_tildes,
+          [-2.0, 1.0, 0.0], fit_1, fit_2; con = true)
+     println("l_si, l_b, l_a = $l_si , $l_b , $l_a")
+     r_si, r_b, r_a = power_law_from_data(cutted_ss, cutted_I04_tildes,
+          [-2.0, 1.0, 0.0], fit_3, fit_4; con = true)
+     println("r_si, r_b, r_a = $r_si , $r_b , $r_a")
+     left_I04_tildes = [power_law(s, l_si, l_b, l_a) for s in ss[ss.<=fit_1]]
+     right_I04_tildes = [power_law(s, r_si, r_b, r_a) for s in ss[ss.>=fit_4]]
+
+     I04_tildes = vcat(left_I04_tildes, cutted_I04_tildes, right_I04_tildes)
+
+     return I04_tildes
 end

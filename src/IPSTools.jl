@@ -117,21 +117,6 @@ struct InputPS
      end
 end
 
-@doc raw"""
-     func_I04_tilde(PK, s, kmin, kmax; kwargs...)
-
-Return the following integral:
-```math
-\tilde{I}^4_0 (s) = \int_0^\infty \frac{\mathrm{d}q}{2\pi^2} 
-     q^2 \, P(q) \, \frac{j_0(q s) - 1}{(q s)^4}
-```
-
-"""
-function func_I04_tilde(PK, s, kmin, kmax; kwargs...)
-     quadgk(q -> (sphericalbesselj(0, s * q) - 1.0) * PK(q) * q^2 / (2.0 * π^2 * (q * s)^4),
-          kmin, kmax; kwargs...)
-end
-
 
 ##########################################################################################92
 
@@ -166,73 +151,77 @@ struct IPSTools
           fit_min::Float64 = 1.0,
           fit_max::Float64 = 10.0,
           con::Bool = true,
-          k_min::Union{Float64,Nothing} = nothing,
-          k_max::Union{Float64,Nothing} = nothing,
-          s_0::Union{Float64,Nothing} = nothing
+          k_min::Float64 = 1e-8,
+          k_max::Float64 = 10.0
      )
-
-          PK = Spline1D(ips.ks, ips.pks)
-
-          kmin = isnothing(k_min) ? min(ips.ks...) : k_min
-          kmax = isnothing(k_max) ? max(ips.ks...) : k_max
-          s0 = isnothing(s_0) ? 1.0 / kmax : s_0
-          ss = 10 .^ range(log10(s0), log10(s0) - log10(kmin) - log10(kmax), length = N)
-
+     
+          PK = Spline1D(ips.ks, ips.pks; bc = "error")
+     
+          kmin, kmax = min(ips.ks...), max(ips.ks...)
+          s0 = 1.0 / kmax
+     
           p0 = [-1.0, 1.0, 0.0]
           I00 = Spline1D(expanded_Iln(PK, 0, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-               fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
+                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
           I20 = Spline1D(expanded_Iln(PK, 2, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-               fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
+                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
           I40 = Spline1D(expanded_Iln(PK, 4, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-               fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
+                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
           I02 = Spline1D(expanded_Iln(PK, 0, 2; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-               fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
+                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
           I22 = Spline1D(expanded_Iln(PK, 2, 2; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-               fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
+                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
           I31 = Spline1D(expanded_Iln(PK, 3, 1; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-               fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
+                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
           I13 = Spline1D(expanded_Iln(PK, 1, 3; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-               fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
+                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
           I11 = Spline1D(expanded_Iln(PK, 1, 1; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-               fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...)
-
-          I04_tildes = [func_I04_tilde(PK, s, kmin, kmax; rtol = 1e-2, atol = 1e-6)[1] for s in ss]
-          I04_tilde = Spline1D(ss, I04_tildes)
-
-          σ_0 = quadgk(q -> PK(q) * q^2 / (2 * π^2), kmin, kmax)[1]
-          σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), kmin, kmax)[1]
-          σ_2 = quadgk(q -> PK(q) / (2 * π^2), kmin, kmax)[1]
-          σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), kmin, kmax)[1]
-
+                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
+     
+          #ss = 10 .^ range(log10(s0), log10(s0) - log10(kmin) - log10(kmax), length = N)
+          ss = 10 .^ range(log10(kmin), log10(kmax), length = 1000)
+          I04_tildes = expanded_I04_tilde(PK, ss; kmin = kmin, kmax = kmax)
+          I04_tilde = Spline1D(ss, I04_tildes; bc = "error")
+     
+          σ_0 = quadgk(q -> PK(q) * q^2 / (2 * π^2), k_min, k_max)[1]
+          σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), k_min, k_max)[1]
+          σ_2 = quadgk(q -> PK(q) / (2 * π^2), k_min, k_max)[1]
+          σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), k_min, k_max)[1]
+     
           new(I00, I20, I40, I02, I22, I31, I13, I11, I04_tilde, σ_0, σ_1, σ_2, σ_3,
-               fit_min, fit_max, kmin, kmax, s0)
+               fit_min, fit_max, k_min, k_max, s0)
      end
 
      function IPSTools(ips::InputPS, iIs::String)
           PK = Spline1D(ips.ks, ips.pks)
-
+     
           tab_Is = readdlm(iIs, comments = true)
           ss = convert(Vector{Float64}, tab_Is[2:end, 1])
-
+     
           kmin = min(ips.ks...)
           kmax = max(ips.ks...)
           s0 = 1.0 / kmax
-
-          I00 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 2]))
-          I20 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 3]))
-          I40 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 4]))
-          I02 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 5]) ./ ss .^ 2)
-          I22 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 6]) ./ ss .^ 2)
-          I31 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 7]) ./ ss)
-          I11 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 8]) ./ ss)
-          I13 = Spline1D(xicalc(PK, 1, 3; N = 1024, kmin = kmin, kmax = kmax, r0 = s0)...)
-
+     
+          I00 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 2]); bc = "error")
+          I20 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 3]); bc = "error")
+          I40 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 4]); bc = "error")
+          I02 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 5]) ./ ss .^ 2; bc = "error")
+          I22 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 6]) ./ ss .^ 2; bc = "error")
+          I31 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 7]) ./ ss; bc = "error")
+          I11 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 8]) ./ ss; bc = "error")
+          I13 = Spline1D(xicalc(PK, 1, 3; N = 1024, kmin = kmin, kmax = kmax, r0 = s0)...; bc = "error")
+     
+          #ss = 10 .^ range(log10(s0), log10(s0) - log10(kmin) - log10(kmax), length = N)
+          ss = 10 .^ range(-10, 4, length = 100)
+          I04_tildes = expanded_I04_tilde(PK, ss; kmin = kmin, kmax = kmax)
+          I04_tilde = Spline1D(ss, I04_tildes; bc = "error")
+     
           σ_0 = quadgk(q -> PK(q) * q^2 / (2 * π^2), kmin, kmax)[1]
           σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), kmin, kmax)[1]
           σ_2 = quadgk(q -> PK(q) / (2 * π^2), kmin, kmax)[1]
           σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), kmin, kmax)[1]
-
-          new(I00, I20, I40, I02, I22, I31, I13, I11, σ_0, σ_1, σ_2, σ_3,
+     
+          new(I00, I20, I40, I02, I22, I31, I13, I11, I04_tilde, σ_0, σ_1, σ_2, σ_3,
                nothing, nothing, kmin, kmax, s0)
      end
 

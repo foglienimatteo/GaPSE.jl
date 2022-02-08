@@ -19,6 +19,7 @@
 
 
 struct Cosmology
+     IPS::InputPS
      params::CosmoParams
      tools::IPSTools
      windowF::WindowF
@@ -47,12 +48,13 @@ struct Cosmology
           file_ips::String,
           file_windowF::String,
           file_Is::Union{String, Nothing} = nothing;
+          expand::Bool=true,
           names_bg = NAMES_BACKGROUND
      )
      
           BD = BackgroundData(file_data::String, params.z_min, params.z_max;
                names = names_bg, h = params.h_0)
-          IPS = InputPS(file_ips)
+          IPS = InputPS(file_ips; expand = expand)
           windowF = WindowF(file_windowF)
           tools = isnothing(file_Is) ?
                   IPSTools(IPS; k_min = params.k_min, k_max = params.k_max,
@@ -71,6 +73,7 @@ struct Cosmology
           s_eff = s_of_z(z_eff)
           vol = V_survey(s_min, s_max, params.θ_max)
           new(
+               IPS,
                params,
                tools,
                windowF,
