@@ -85,12 +85,14 @@ end
 
 power_law(x, si, b, a) = a .+ b .* (x .^ si)
 
-function power_law_b_a(ixs, ys, si; con = false)
+function power_law_b_a(xs, ys, si, p0; con = false)
      if con == true
-          fit = curve_fit((x, p) -> power_law(x, si, p[1], p[2]), xs, ys, [0.5, 0.5])
+          @assert length(p0) == 2 " b, a to be fitted, so length(p0) must be 2!"
+          fit = curve_fit((x, p) -> power_law(x, si, p[1], p[2]), xs, ys, p0)
           return coef(fit)
      else
-          fit = curve_fit((x, p) -> power_law(x, si, p[1], 0.0), xs, ys, [1.0])
+          @assert length(p0) == 1 " b to be fitted, so length(p0) must be 1!"
+          fit = curve_fit((x, p) -> power_law(x, si, p[1], 0.0), xs, ys, p0)
           return vcat(coef(fit), 0.0)
      end
 end
@@ -116,6 +118,30 @@ function power_law_a(ixs, ys, bs, sis; logscale=false)
     [y - b*(x^si) for (x,y,b,si) in zip(xs,ys,bs,sis)]
 end
 =#
+
+function my_power_law_from_data(xs, ys, p0, x1::Number, x2::Number; N = 3, con = false)
+     @assert length(xs) == length(ys) "xs and ys must have same length"
+     #Num = length(xs)
+     new_xs = xs[x1.<xs.<x2]
+     new_ys = ys[x1.<xs.<x2]
+
+     if con == false
+          @assert length(p0) == 2 " si,b to be fitted, so length(p0) must be 2!"
+          my_si = mean_spectral_index(new_xs, new_ys; N = N, con = con)
+          my_b, my_a = power_law_b_a(new_xs, new_ys, my_si, [p0[2]]; con = con)
+          return my_si, my_b, my_a
+     else
+          @assert length(p0) == 3 " si,b,a to be fitted, so length(p0) must be 3!"
+          my_si = mean_spectral_index(new_xs, new_ys; N = N, con = con)
+          my_b, my_a = power_law_b_a(new_xs, new_ys, my_si, [p0[2], p0[3]]; con = con)
+          return my_si, my_b, my_a
+     end
+end
+
+function my_power_law_from_data(xs, ys, p0; con = false)
+     my_power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con = con)
+end
+
 
 function power_law_from_data(xs, ys, p0, x1::Number, x2::Number; con = false)
      @assert length(xs) == length(ys) "xs and ys must have same length"
@@ -301,29 +327,57 @@ Return the following integral:
 
 """
 function func_I04_tilde(PK, s, kmin, kmax; kwargs...)
-     quadgk(lq -> (sphericalbesselj(0, s * exp(lq)) - 1.0) * PK(exp(lq)) * exp(lq)^(-1)/ (2.0 * π^2 * (s)^4),
-          log(kmin), log(kmax); kwargs...)
+     res = quadgk(lq -> (sphericalbesselj(0, s * exp(lq)) - 1.0) * PK(exp(lq)) / (2.0 * π^2 * exp(lq)),
+          log(kmin), log(kmax); kwargs...)[1]
+
+     return res / (s^4)
 end
 
 
 function expanded_I04_tilde(PK, ss;
-     kmin = 1e-8, kmax = 1e3, kwargs...)
+     kmin = 1e-6, kmax = 1e3, kwargs...)
 
      fit_1, fit_2 = 0.1, 1.0
-     #fit_3, fit_4 = 130.0, 150.0
-     cutted_ss = ss[fit_1 .< ss]
-     cutted_I04_tildes = [func_I04_tilde(PK, s, kmin, kmax; kwargs...)[1] for s in cutted_ss]
+     fit_3, fit_4 = 1e3, 1e4
 
-     l_si, l_b, l_a = power_law_from_data(cutted_ss, cutted_I04_tildes,
-          [-2.0, 1.0, 0.0], fit_1, fit_2; con = true)
-     #println("l_si, l_b, l_a = $l_si , $l_b , $l_a")
-     #r_si, r_b, r_a = power_law_from_data(cutted_ss, cutted_I04_tildes,
-     #    [-4.0, 1.0, 0.0], fit_3, fit_4; con = true)
-     #println("r_si, r_b, r_a = $r_si , $r_b , $r_a")
-     left_I04_tildes = [power_law(s, l_si, l_b, l_a) for s in ss[ss.<=fit_1]]
-     #right_I04_tildes = [power_law(s, r_si, r_b, r_a) for s in ss[ss.>=fit_4]]
+     if all(fit_1 .< ss .< fit_4)
+          return [func_I04_tilde(PK, s, kmin, kmax; kwargs...) for s in ss]
 
-     I04_tildes = vcat(left_I04_tildes, cutted_I04_tildes)#, right_I04_tildes)
+     elseif all(ss .> fit_1)
+          cutted_ss = ss[ss.<fit_4]
+          cutted_I04_tildes = [func_I04_tilde(PK, s, kmin, kmax; kwargs...) for s in cutted_ss]
+          r_si, r_b, r_a = GaPSE.power_law_from_data(cutted_ss, cutted_I04_tildes,
+               [-4.0, -1.0, 0.0], fit_3, fit_4; con = true)
+          println("r_si, r_b, r_a = $r_si , $r_b , $r_a")
+          right_I04_tildes = [GaPSE.power_law(s, r_si, r_b, r_a) for s in ss[ss.>=fit_4]]
 
-     return I04_tildes
+          return vcat(cutted_I04_tildes, right_I04_tildes)
+
+     elseif all(ss .< fit_4)
+          cutted_ss = ss[ss.>fit_1]
+          cutted_I04_tildes = [func_I04_tilde(PK, s, kmin, kmax; kwargs...) for s in cutted_ss]
+          l_si, l_b, l_a = GaPSE.power_law_from_data(cutted_ss, cutted_I04_tildes,
+               [-2.0, -1.0, 0.0], fit_1, fit_2; con = true)
+          println("l_si, l_b, l_a = $l_si , $l_b , $l_a")
+          left_I04_tildes = [GaPSE.power_law(s, l_si, l_b, l_a) for s in ss[ss.<=fit_1]]
+
+          return vcat(left_I04_tildes, cutted_I04_tildes)
+
+     else
+          cutted_ss = ss[fit_1.<ss.<fit_4]
+          cutted_I04_tildes = [func_I04_tilde(PK, s, kmin, kmax; kwargs...) for s in cutted_ss]
+
+          l_si, l_b, l_a = GaPSE.power_law_from_data(cutted_ss, cutted_I04_tildes,
+               [-2.0, -1.0, 0.0], fit_1, fit_2; con = true)
+          println("l_si, l_b, l_a = $l_si , $l_b , $l_a")
+          r_si, r_b, r_a = GaPSE.power_law_from_data(cutted_ss, cutted_I04_tildes,
+               [-4.0, -1.0, 0.0], fit_3, fit_4; con = true)
+          println("r_si, r_b, r_a = $r_si , $r_b , $r_a")
+          left_I04_tildes = [GaPSE.power_law(s, l_si, l_b, l_a) for s in ss[ss.<=fit_1]]
+          right_I04_tildes = [GaPSE.power_law(s, r_si, r_b, r_a) for s in ss[ss.>=fit_4]]
+
+          I04_tildes = vcat(left_I04_tildes, cutted_I04_tildes, right_I04_tildes)
+
+          return I04_tildes
+     end
 end

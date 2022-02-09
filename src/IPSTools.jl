@@ -193,7 +193,10 @@ struct IPSTools
                fit_min, fit_max, k_min, k_max, s0)
      end
 
-     function IPSTools(ips::InputPS, iIs::String)
+     function IPSTools(ips::InputPS, iIs::String; 
+               k_min::Float64 = 1e-8,
+               k_max::Float64 = 10.0
+               )
           PK = Spline1D(ips.ks, ips.pks)
      
           tab_Is = readdlm(iIs, comments = true)
@@ -217,13 +220,13 @@ struct IPSTools
           I04_tildes = expanded_I04_tilde(PK, ss; kmin = kmin, kmax = kmax)
           I04_tilde = Spline1D(ss, I04_tildes; bc = "error")
      
-          σ_0 = quadgk(q -> PK(q) * q^2 / (2 * π^2), kmin, kmax)[1]
-          σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), kmin, kmax)[1]
-          σ_2 = quadgk(q -> PK(q) / (2 * π^2), kmin, kmax)[1]
-          σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), kmin, kmax)[1]
+          σ_0 = quadgk(q -> PK(q) * q^2 / (2 * π^2), k_min, k_max)[1]
+          σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), k_min, k_max)[1]
+          σ_2 = quadgk(q -> PK(q) / (2 * π^2), k_min, k_max)[1]
+          σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), k_min, k_max)[1]
      
           new(I00, I20, I40, I02, I22, I31, I13, I11, I04_tilde, σ_0, σ_1, σ_2, σ_3,
-               nothing, nothing, kmin, kmax, s0)
+               nothing, nothing, k_min, k_max, s0)
      end
 
 end

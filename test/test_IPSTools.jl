@@ -81,14 +81,14 @@ end
 
 
 @testset "test InputPS" begin
-     tab_pk = readdlm("datatest/file_pk.txt", comments = true)
+     tab_pk = readdlm(FILE_PS, comments = true)
      ks = convert(Vector{Float64}, tab_pk[:, 1])
      k_min, k_max = ks[begin], ks[end]
      pks = convert(Vector{Float64}, tab_pk[:, 2])
      PK = Spline1D(ks, pks)
 
      @testset "first" begin
-          ips = GaPSE.InputPS("datatest/file_pk.txt"; expand = false)
+          ips = GaPSE.InputPS(FILE_PS; expand = false)
           @test all([k1 ≈ k2 for (k1, k2) in zip(ips.ks, ks)])
           @test all([pk1 ≈ pk2 for (pk1, pk2) in zip(ips.pks, pks)])
      end
@@ -102,16 +102,17 @@ end
 
 
 @testset "test IPSTools" begin
-     ips = GaPSE.InputPS("datatest/file_pk.txt"; expand = false)
-     tools = GaPSE.IPSTools(ips)
-     kmin, kmax = ips.ks[begin], ips.ks[end]
+     ips = GaPSE.InputPS(FILE_PS; expand = false)
+     k_min, k_max = 1e-6, 10.0
+
+     tools = GaPSE.IPSTools(ips; k_min = k_min, k_max = k_max)
      PK = Spline1D(ips.ks, ips.pks)
 
      @testset "test sigmas" begin
-          σ_0, _ = quadgk(q -> PK(q) * q^2 / (2 * π^2), kmin, kmax)
-          σ_1, _ = quadgk(q -> PK(q) * q / (2 * π^2), kmin, kmax)
-          σ_2, _ = quadgk(q -> PK(q) / (2 * π^2), kmin, kmax)
-          σ_3, _ = quadgk(q -> PK(q) / (2 * π^2 * q), kmin, kmax)
+          σ_0, _ = quadgk(q -> PK(q) * q^2 / (2 * π^2), k_min, k_max)
+          σ_1, _ = quadgk(q -> PK(q) * q / (2 * π^2), k_min, k_max)
+          σ_2, _ = quadgk(q -> PK(q) / (2 * π^2), k_min, k_max)
+          σ_3, _ = quadgk(q -> PK(q) / (2 * π^2 * q), k_min, k_max)
 
           @test isapprox(tools.σ_0, σ_0)
           @test isapprox(tools.σ_1, σ_1)

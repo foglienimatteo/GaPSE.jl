@@ -156,7 +156,8 @@ See also: [`integrand_ξ_integratedGP`](@ref), [`integrand_on_mu_integratedGP`](
 function ξ_integratedGP(s1, s2, y, cosmo::Cosmology;
      enhancer::Float64 = 1.0, N_χs::Integer = 100)
 
-     adim_χs = range(1e-12, 1.0, N_χs)
+     #adim_χs = range(1e-12, 1.0, N_χs)
+     adim_χs = range(0.0, 1.0, length = N_χs)[begin+1:end]
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
