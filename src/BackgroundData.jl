@@ -68,21 +68,22 @@ struct BackgroundData
      function BackgroundData(file::String, z_min = 0.05, z_max = 0.2;
           names = NAMES_BACKGROUND, h = 0.7)
      
+          I_redshift = findfirst(x -> x == "z", names)
+          I_comdist = findfirst(x -> x == "comov. dist.", names)
+     
           data = readdlm(file, comments = true)
+     
           N_z_MAX = findfirst(z -> z <= z_max, data[:, 1]) - 1
-          N_z_MIN = findfirst(z -> z <= z_min, data[:, 1]) + 1
+          #N_z_MIN = findfirst(z -> z <= z_min, data[:, 1]) + 1
+          com_dist_z_MAX = data[:, I_comdist][N_z_MAX]
+          N_2_com_dist_z_MAX = findfirst(s -> s <= 2.0 * com_dist_z_MAX, data[:, I_comdist]) - 1
      
-          base_data_dict = Dict([name => data[:, i] for (i, name) in enumerate(names)]...)
-     
-          com_dist_z_MAX = base_data_dict["comov. dist."][N_z_MAX]
-          N_2_z_MAX = findfirst(s -> s <= com_dist_z_MAX, base_data_dict["comov. dist."]) - 1
-     
-          data_dict = Dict([name => reverse(data[:, i][N_2_z_MAX:N_z_MIN])
+          data_dict = Dict([name => reverse(data[:, i][N_2_com_dist_z_MAX:end-1])
                             for (i, name) in enumerate(names)]...)
      
           com_H = data_dict["H [1/Mpc]"] ./ h ./ (1.0 .+ data_dict["z"])
           conf_time = data_dict["conf. time [Mpc]"] .* h
-          spline_com_H = Spline1D(reverse(conf_time), reverse(com_H); bc = "error")
+          spline_com_H = Spline1D(reverse(conf_time), reverse(com_H); bc = "nearest")
           com_H_p = [Dierckx.derivative(spline_com_H, t) for t in conf_time]
      
           new(

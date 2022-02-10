@@ -64,8 +64,8 @@ struct Cosmology
      
           ℛs = 1.0 .- 1.0 ./ (BD.ℋ .* BD.comdist)
      
-          z_of_s = Spline1D(BD.comdist, BD.z; bc = "error")
-          s_of_z = Spline1D(BD.z, BD.comdist; bc = "error")
+          z_of_s = Spline1D(BD.comdist, BD.z; bc = "nearest")
+          s_of_z = Spline1D(BD.z, BD.comdist; bc = "nearest")
      
           s_min = s_of_z(params.z_min)
           s_max = s_of_z(params.z_max)
@@ -79,10 +79,10 @@ struct Cosmology
                windowF,
                z_of_s,
                s_of_z,
-               Spline1D(BD.comdist, BD.D; bc = "error"),
-               Spline1D(BD.comdist, BD.f; bc = "error"),
-               Spline1D(BD.comdist, BD.ℋ; bc = "error"),
-               Spline1D(BD.comdist, ℛs; bc = "error"),
+               Spline1D(BD.comdist, BD.D; bc = "nearest"),
+               Spline1D(BD.comdist, BD.f; bc = "nearest"),
+               Spline1D(BD.comdist, BD.ℋ; bc = "nearest"),
+               Spline1D(BD.comdist, ℛs; bc = "nearest"),
                z_eff, s_min, s_max, s_eff,
                vol,
                file_data,
@@ -110,6 +110,7 @@ struct Point
 
      Point(z, comdist, D, f, ℋ, ℛ) = new(z, comdist, D, f, ℋ, ℛ, 1.0/(1.0+z))
      function Point(s, cosmo::Cosmology)
+          #println("s = $s")
           z = cosmo.z_of_s(s)
           new(z, s, cosmo.D_of_s(s), cosmo.f_of_s(s),
                cosmo.ℋ_of_s(s), cosmo.ℛ_of_s(s), 1.0/(1.0+z))
