@@ -247,8 +247,8 @@ function ξ_lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
      adim_χs = range(0.0, 1.0, length = N_χs)[begin+1:end]
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
-     χ1s = adim_χs .* s1
-     χ2s = adim_χs .* s2
+     χ1s = adim_χs .* P1.comdist
+     χ2s = adim_χs .* P2.comdist
 
      IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
@@ -340,7 +340,7 @@ See also: [`integrand_ξ_lensing`](@ref), [`ξ_lensing`](@ref),
 [`y`](@ref), [`s2`](@ref)
 """
 function integrand_on_mu_lensing(s1, s, μ, cosmo::Cosmology;
-     L::Integer = 0, enhancer::Float64 = 1.0,
+     L::Integer = 0, en::Float64 = 1e6,
      use_windows::Bool = true, Δχ_min::Float64 = 1e-4,
      N_χs::Integer = 100)
 
