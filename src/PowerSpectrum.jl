@@ -44,7 +44,7 @@ function PS_multipole(
      xi_table = readdlm(in, comments = true)
      ss = convert(Vector{Float64}, xi_table[:, 1])
      fs = convert(Vector{Float64}, xi_table[:, 2])
-     f_in = Spline1D(ss, fs)
+     f_in = Spline1D(ss, fs; bc = "error")
 
      int_s_min = min(ss...)
      int_s_max = max(ss...)
@@ -123,7 +123,7 @@ function print_PS_multipole(in::String, out::String,
                xis, xis_err = [x[1] for x in v], [x[2] for x in v]
                t2 = time()
                pr && println("\ntime needed to create the xi map [in s] = $(t2-t1)\n")
-               f_in = Spline1D(ss, xis)
+               f_in = Spline1D(ss, xis; bc = "error")
                PS_multipole(f_in, cosmo.s_min, cosmo.s_max; N = N, L = L, pr = pr)
           else
                if in ∉ keys(dict_gr_mu)

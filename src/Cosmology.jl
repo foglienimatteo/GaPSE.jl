@@ -47,8 +47,8 @@ struct Cosmology
           file_data::String,
           file_ips::String,
           file_windowF::String,
-          file_Is::Union{String, Nothing} = nothing;
-          expand::Bool=true,
+          file_Is::Union{String,Nothing} = nothing;
+          expand::Bool = true,
           names_bg = NAMES_BACKGROUND
      )
      
@@ -58,14 +58,14 @@ struct Cosmology
           windowF = WindowF(file_windowF)
           tools = isnothing(file_Is) ?
                   IPSTools(IPS; k_min = params.k_min, k_max = params.k_max,
-                    N = params.N, fit_min = params.fit_min,
-                    fit_max = params.fit_max, con = params.con) :
-                  IPSTools(IPS, file_Is) 
+               N = params.N, fit_min = params.fit_min,
+               fit_max = params.fit_max, con = params.con) :
+                  IPSTools(IPS, file_Is)
      
           ℛs = 1.0 .- 1.0 ./ (BD.ℋ .* BD.comdist)
      
-          z_of_s = Spline1D(BD.comdist, BD.z)
-          s_of_z = Spline1D(BD.z, BD.comdist)
+          z_of_s = Spline1D(BD.comdist, BD.z; bc = "error")
+          s_of_z = Spline1D(BD.z, BD.comdist; bc = "error")
      
           s_min = s_of_z(params.z_min)
           s_max = s_of_z(params.z_max)
@@ -79,10 +79,10 @@ struct Cosmology
                windowF,
                z_of_s,
                s_of_z,
-               Spline1D(BD.comdist, BD.D),
-               Spline1D(BD.comdist, BD.f),
-               Spline1D(BD.comdist, BD.ℋ),
-               Spline1D(BD.comdist, ℛs),
+               Spline1D(BD.comdist, BD.D; bc = "error"),
+               Spline1D(BD.comdist, BD.f; bc = "error"),
+               Spline1D(BD.comdist, BD.ℋ; bc = "error"),
+               Spline1D(BD.comdist, ℛs; bc = "error"),
                z_eff, s_min, s_max, s_eff,
                vol,
                file_data,

@@ -101,10 +101,18 @@ struct InputPS
      ks::Vector{Float64}
      pks::Vector{Float64}
 
-     function InputPS(file::String; expand::Bool=true)
+     function InputPS(file::String; expand::Bool = true)
           data = readdlm(file, comments = true)
-          ks, pks = expand ? expanded_IPS(data[:, 1], data[:, 2]; con = true) : (data[:, 1], data[:, 2])
-          @assert size(ks) == size(pks) "ks and pks must have the same length!"
+          @assert size(data[:, 1]) == size(data[:, 2]) "ks and pks must have the same length!"
+
+          ks, pks = expand ? begin
+               println("I expand the input power spectrum at its extremes.")
+               expanded_IPS(data[:, 1], data[:, 2]; con = true)
+          end : begin
+               println("I take the input power spectrum as it is,without expanding.")
+               (data[:, 1], data[:, 2])
+          end
+     
           new(ks, pks)
      end
 
@@ -112,7 +120,14 @@ struct InputPS
           expand::Bool = true) where {T1,T2}
      
           @assert size(ks) == size(pks) "ks and pks must have the same length!"
-          new_ks, new_pks = expand ? expanded_IPS(ks, pks; con = true) : (ks, pks)
+          new_ks, new_pks = expand ? begin
+               println("I expand the input power spectrum at its extremes.")
+               expanded_IPS(ks, pks; con = true)
+          end : begin
+               println("I take the input power spectrum as it is,without expanding.")
+               (ks, pks)
+          end
+
           new(new_ks, new_pks)
      end
 end
@@ -151,7 +166,7 @@ struct IPSTools
           fit_min::Float64 = 0.05,
           fit_max::Float64 = 0.5,
           con::Bool = true,
-          k_min::Float64 = 1e-8,
+          k_min::Float64 = 1e-6,
           k_max::Float64 = 10.0,
           lim::Float64 = 1e-6
      )
@@ -180,7 +195,7 @@ struct IPSTools
                     fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
      
           #ss = 10 .^ range(log10(s0), log10(s0) - log10(kmin) - log10(kmax), length = N)
-          ss = 10 .^ range(log10(kmin), 6, length = 1000)
+          ss = 10 .^ range(log10(lim), 6, length = 1024)
           I04_tildes = expanded_I04_tilde(PK, ss; kmin = kmin, kmax = kmax)
           #I04_tildes = [func_I04_tilde(PK, s, kmin, kmax) for s in ss]
           I04_tilde = Spline1D(ss, I04_tildes; bc = "error")
@@ -203,9 +218,8 @@ struct IPSTools
           tab_Is = readdlm(iIs, comments = true)
           ss = convert(Vector{Float64}, tab_Is[2:end, 1])
      
-          kmin = min(ips.ks...)
-          kmax = max(ips.ks...)
-          s0 = 1.0 / kmax
+          #kmin, kmax = min(ips.ks...), max(ips.ks...)
+          kmin, kmax, s0 = 1e-5, 1e3, 1e-3
      
           I00 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 2]); bc = "error")
           I20 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 3]); bc = "error")
@@ -217,7 +231,7 @@ struct IPSTools
           I13 = Spline1D(xicalc(PK, 1, 3; N = 1024, kmin = kmin, kmax = kmax, r0 = s0)...; bc = "error")
      
           #ss = 10 .^ range(log10(s0), log10(s0) - log10(kmin) - log10(kmax), length = N)
-          ss = 10 .^ range(-10, 4, length = 100)
+          ss = 10 .^ range(log10(lim), 6, length = 100)
           I04_tildes = expanded_I04_tilde(PK, ss; kmin = kmin, kmax = kmax)
           I04_tilde = Spline1D(ss, I04_tildes; bc = "error")
      

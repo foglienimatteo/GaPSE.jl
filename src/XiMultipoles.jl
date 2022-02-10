@@ -18,17 +18,14 @@
 #
 
 
-function integral_on_mu(s1, s, integrand::Function, cosmo::Cosmology;
-     L::Integer = 0,
-     enhancer::Float64 = 1e6,
-     use_windows::Bool = true,
+function integral_on_mu(
+     s1, s, integrand::Function, cosmo::Cosmology;
+     enhancer::Float64 = 1e10,
      μ_atol::Float64 = 1e-4,
-     μ_rtol::Float64 = 1e-1,
-     kwargs...
-)
+     μ_rtol::Float64 = 1e-2,
+     kwargs...)
 
-     f(μ) = integrand(s1, s, μ, cosmo; enhancer = enhancer, L = L,
-          use_windows = use_windows, kwargs...)[1]
+     f(μ) = integrand(s1, s, μ, cosmo; enhancer = enhancer, kwargs...)[1]
 
      #println("s1 = $s1 \t s = $s")
      int = quadgk(μ -> f(μ), -1.0, 1.0; rtol = μ_rtol, atol = μ_atol)

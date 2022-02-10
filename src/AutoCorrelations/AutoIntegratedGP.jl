@@ -247,7 +247,7 @@ See also: [`integrand_ξ_integratedGP`](@ref), [`ξ_integratedGP`](@ref),
 function integrand_on_mu_integratedGP(s1, s, μ, cosmo::Cosmology;
      L::Integer = 0, enhancer::Float64 = 1.0,
      use_windows::Bool = true,
-     N_χs::Integer = 100)
+     N_χs::Integer = 50)
 
      s2_value = s2(s1, s, μ)
      y_value = y(s1, s, μ)

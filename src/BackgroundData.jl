@@ -67,19 +67,24 @@ struct BackgroundData
 
      function BackgroundData(file::String, z_min = 0.05, z_max = 0.2;
           names = NAMES_BACKGROUND, h = 0.7)
-
+     
           data = readdlm(file, comments = true)
           N_z_MAX = findfirst(z -> z <= z_max, data[:, 1]) - 1
           N_z_MIN = findfirst(z -> z <= z_min, data[:, 1]) + 1
-
-          data_dict = Dict([name => reverse(data[:, i][N_z_MAX:N_z_MIN])
+     
+          base_data_dict = Dict([name => data[:, i] for (i, name) in enumerate(names)]...)
+     
+          com_dist_z_MAX = base_data_dict["comov. dist."][N_z_MAX]
+          N_2_z_MAX = findfirst(s -> s <= com_dist_z_MAX, base_data_dict["comov. dist."]) - 1
+     
+          data_dict = Dict([name => reverse(data[:, i][N_2_z_MAX:N_z_MIN])
                             for (i, name) in enumerate(names)]...)
-
+     
           com_H = data_dict["H [1/Mpc]"] ./ h ./ (1.0 .+ data_dict["z"])
           conf_time = data_dict["conf. time [Mpc]"] .* h
-          spline_com_H = Spline1D(reverse(conf_time), reverse(com_H))
+          spline_com_H = Spline1D(reverse(conf_time), reverse(com_H); bc = "error")
           com_H_p = [Dierckx.derivative(spline_com_H, t) for t in conf_time]
-
+     
           new(
                data_dict["z"],
                conf_time,
