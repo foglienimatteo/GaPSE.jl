@@ -21,8 +21,7 @@
 
 function integrand_ξ_lensingdoppler(
      IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology;
-     enhancer::Float64 = 1.0)
+     y, cosmo::Cosmology)
 
      s1 = P1.comdist, P1.D
      s2, D_s2, f_s2, ℋ_s2, ℛ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ
@@ -65,7 +64,7 @@ function integrand_ξ_lensingdoppler(
      )
 
 
-     res = enhancer * prefactor * factor * parenth
+     res =  prefactor * factor * parenth
      #println("res = ", res, "\n")
      return res
 end

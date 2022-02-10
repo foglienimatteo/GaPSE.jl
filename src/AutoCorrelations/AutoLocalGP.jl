@@ -18,7 +18,7 @@
 #
 
 @doc raw"""
-     ξ_localGP(P1::Point, P2::Point, y, cosmo::Cosmology; enhancer = 1.0) :: Float64
+     ξ_localGP(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
 
 Return the local gravitational potential auto-correlation function, 
 defined as follows:
@@ -48,17 +48,10 @@ the J coefficients are given by:
 
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
-
-## Optional arguments
-
-- `enhancer::Float64 = 1.0`: just a float number used in order to deal better 
-  with small numbers; the returned value is actually `enhancer * f`, where `f` 
-  is the true value calculated as shown before.
-
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
-function ξ_localGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-     enhancer::Float64 = 1.0)
+function ξ_localGP(P1::Point, P2::Point, y, cosmo::Cosmology)
+
      s1, D1, f1, a1, ℛ1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℛ
      s2, D2, f2, a2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℛ
 
@@ -70,7 +63,7 @@ function ξ_localGP(P1::Point, P2::Point, y, cosmo::Cosmology;
 
      res = prefac * I04 * parenth
 
-     return enhancer * res
+     return res
 end
 
 
@@ -122,10 +115,6 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 
 - `L::Integer = 0`: order of the Legendre polynomial to be used
 
-- `enhancer::Float64 = 1.0`: just a float number used in order to deal better with small numbers; 
-  the returned value is actually `enhancer * f`, where `f` is the true value calculated
-  as shown before.
-
 - `use_windows::Bool = false`: tells if the integrand must consider the two
    window function ``\phi`` and ``F``.
 
@@ -136,7 +125,7 @@ See also: [`ξ_localGP`](@ref),
 [`y`](@ref), [`s2`](@ref)
 """
 function integrand_on_mu_localGP(s1, s, μ,
-     cosmo::Cosmology; L::Integer = 0, enhancer = 1.0,
+     cosmo::Cosmology; L::Integer = 0,
      use_windows::Bool = true)
 
      s2_value = s2(s1, s, μ)
@@ -146,11 +135,11 @@ function integrand_on_mu_localGP(s1, s, μ,
           ϕ_s2 = ϕ(s2_value)
           (ϕ_s2 > 0.0) || (return 0.0)
           P1, P2 = Point(s1, cosmo), Point(s2_value, cosmo)
-          val = ξ_localGP(P1, P2, y_value, cosmo; enhancer = enhancer)
+          val = ξ_localGP(P1, P2, y_value, cosmo)
           return val * ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L)
      else
           P1, P2 = Point(s1, cosmo), Point(s2_value, cosmo)
-          val = ξ_localGP(P1, P2, y_value, cosmo; enhancer = enhancer)
+          val = ξ_localGP(P1, P2, y_value, cosmo)
           return val * Pl(μ, L)
      end
 end

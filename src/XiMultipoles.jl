@@ -20,12 +20,12 @@
 
 function integral_on_mu(
      s1, s, integrand::Function, cosmo::Cosmology;
-     enhancer::Float64 = 1e10,
+     enhancer::Float64 = 1e6,
      μ_atol::Float64 = 1e-4,
      μ_rtol::Float64 = 1e-2,
      kwargs...)
 
-     f(μ) = integrand(s1, s, μ, cosmo; enhancer = enhancer, kwargs...)[1]
+     f(μ) = enhancer * integrand(s1, s, μ, cosmo; kwargs...)[1]
 
      #println("s1 = $s1 \t s = $s")
      int = quadgk(μ -> f(μ), -1.0, 1.0; rtol = μ_rtol, atol = μ_atol)
@@ -130,7 +130,7 @@ function my_integral_on_mu(s1, s, integrand, cosmo::GaPSE.Cosmology;
      μs2 = range(-0.90, 0.90, length = μ_steps)
      μs3 = range(0.90, 1.0, length = μ_steps)
      μs = unique(vcat(μs1, μs2, μs3))
-     fs = [integrand(s1, s, μ, cosmo; enhancer = enhancer, L = L,
+     fs = [enhancer * integrand(s1, s, μ, cosmo; L = L,
           use_windows = use_windows, kwargs...) for μ in μs]
 
      #println("s1 = $s1 \t s = $s")

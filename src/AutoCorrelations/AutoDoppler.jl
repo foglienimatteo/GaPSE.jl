@@ -18,7 +18,7 @@
 #
 
 @doc raw"""
-     ξ_doppler(P1::Point, P2::Point, y, cosmo::Cosmology; enhancer = 1.0) :: Float64
+     ξ_doppler(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
 
 Return the Doppler auto-correlation function, defined as follows:
 ```math
@@ -48,15 +48,9 @@ the J coefficients are given by:
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-## Optional arguments
-
-- `enhancer::Float64 = 1.0`: just a float number used in order to deal better 
-  with small numbers; the returned value is actually `enhancer * f`, where `f` 
-  is the true value calculated as shown before.
-
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
-function ξ_doppler(P1::Point, P2::Point, y, cosmo::Cosmology; enhancer::Float64 = 1.0)
+function ξ_doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
      s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ
      s2, D2, f2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ
 
@@ -73,7 +67,7 @@ function ξ_doppler(P1::Point, P2::Point, y, cosmo::Cosmology; enhancer::Float64
 
      first = prefac * (c1 * parenth + I02 * y * Δs^2 / 3.0)
 
-     return enhancer * first
+     return first
 end
 
 
@@ -85,7 +79,6 @@ end
 @doc raw"""
      integrand_on_mu_doppler(s1, s, μ, cosmo::Cosmology; 
           L::Integer = 0, 
-          enhancer::Float64 = 1.0,
           use_windows::Bool = true) ::Float64
 
 Return the integrand on ``\mu = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}`` 
@@ -127,10 +120,6 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 
 - `L::Integer = 0`: order of the Legendre polynomial to be used
 
-- `enhancer::Float64 = 1.0`: just a float number used in order to deal better with small numbers; the returned
-  value is actually `enhancer * f`, where `f` is the true value calculated
-  as shown before.
-
 - `use_windows::Bool = false`: tells if the integrand must consider the two
    window function ``\phi`` and ``F``
 
@@ -141,7 +130,6 @@ See also: [`ξ_doppler`](@ref),
 """
 function integrand_on_mu_doppler(s1, s, μ,
      cosmo::Cosmology; L::Integer = 0,
-     enhancer::Float64 = 1.0,
      use_windows::Bool = true)
 
      s2_value = s2(s1, s, μ)
@@ -151,53 +139,12 @@ function integrand_on_mu_doppler(s1, s, μ,
           ϕ_s2 = ϕ(s2_value)
           (ϕ_s2 > 0.0) || (return 0.0)
           P1, P2 = Point(s1, cosmo), Point(s2_value, cosmo)
-          val = ξ_doppler(P1, P2, y_value, cosmo; enhancer = enhancer)
+          val = ξ_doppler(P1, P2, y_value, cosmo)
           return val * ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L)
      else
           P1, P2 = Point(s1, cosmo), Point(s2_value, cosmo)
-          val = ξ_doppler(P1, P2, y_value, cosmo; enhancer = enhancer)
+          val = ξ_doppler(P1, P2, y_value, cosmo)
           return val * Pl(μ, L)
      end
 end
 
-
-##########################################################################################92
-
-
-#=
-function ξ_doppler(s1, s2, y; enhancer = 1.0)
-     delta_s = s(s1, s2, y)
-     D1, D2 = D(s1), D(s2)
-
-     f1, ℋ1 = f(s1), ℋ(s1)
-     f2, ℋ2 = f(s2), ℋ(s2)
-     #f1, ℋ1, ℋ1_p, s_b1 = f(s1), ℋ(s1), ℋ_p(s1), s_b(s1)
-     #f2, ℋ2, ℋ2_p, s_b2 = f(s2), ℋ(s2), ℋ_p(s2), s_b(s2)
-     #ℛ1, ℛ2 = ℛ(s1, ℋ1, ℋ1_p, s_b1), ℛ(s2, ℋ2, ℋ2_p, s_b2)
-     ℛ1, ℛ2 = ℛ(s1, ℋ1), ℛ(s2, ℋ2)
-
-     prefac = D1 * D2 * f1 * f2 * ℛ1 * ℛ2 * ℋ1 * ℋ2
-     c1 = 3 * s1 * s2 - 2 * y * (s1^2 + s2^2) + s1 * s2 * y^2
-
-     parenth = I00(delta_s) / 45.0 + I20(delta_s) / 31.5 + I40(delta_s) / 105.0
-
-     first = prefac * (c1 * parenth + I02(delta_s) * y * delta_s^2 / 3.0)
-
-     return enhancer * first
-end
-=#
-
-#=
-function integrand_on_mu_doppler(s1, s, μ; L::Integer = 0, enhancer = 1.0,
-     use_windows::Bool = true)
-     if use_windows == true
-          ϕ_s2 = ϕ(s2(s1, s, μ))
-          (ϕ_s2 > 0.0) || (return 0.0)
-          val = ξ_doppler(s1, s2(s1, s, μ), y(s1, s, μ), enhancer = enhancer)
-          return val * ϕ_s2 * spline_F(s / s1, μ) * Pl(μ, L)
-     else
-          val = ξ_doppler(s1, s2(s1, s, μ), y(s1, s, μ), enhancer = enhancer)
-          return val * Pl(μ, L)
-     end
-end
-=#

@@ -21,8 +21,7 @@
 @doc raw"""
      integrand_ξ_integratedGP(IP1::Point, IP2::Point,
           P1::Point, P2::Point,
-          y, cosmo::Cosmology;
-          enhancer::Float64 = 1.0) :: Float64
+          y, cosmo::Cosmology) :: Float64
 
 Return the integrand of the integrated gravitational potential 
 auto-correlation function ``\xi^{\int\phi\int\phi} (s_1, s_2, \cos{\theta})``, 
@@ -60,20 +59,12 @@ where ``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \, \chi_2 \, y} ``,
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-## Optional arguments 
-
-- `enhancer::Float64 = 1.0` : multiply the resulting ``f(s_1, s_2, y, \chi_1, \chi_2)`` value; it
-  is very useful for interal computations in other functions (for instance 
-  `map_integral_on_mu_lensing`), in order to deal better with small float numbers.
-
-
 See also: [`ξ_integratedGP`](@ref), [`integrand_on_mu_integratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
 function integrand_ξ_integratedGP(IP1::Point, IP2::Point,
      P1::Point, P2::Point,
-     y, cosmo::Cosmology;
-     enhancer::Float64 = 1.0)
+     y, cosmo::Cosmology)
 
      s1, ℛ_s1 = P1.comdist, P1.ℛ
      s2, ℛ_s2 = P2.comdist, P2.ℛ
@@ -91,14 +82,14 @@ function integrand_ξ_integratedGP(IP1::Point, IP2::Point,
 
      I04_t = cosmo.tools.I04_tilde(Δχ)
 
-     return enhancer * factor * par_1 * par_2 * I04_t
+     return factor * par_1 * par_2 * I04_t
 end
 
 
 
 @doc raw"""
      ξ_integratedGP(s1, s2, y, cosmo::Cosmology; 
-          enhancer::Float64 = 1.0, 
+          en::Float64 = 1e10,
           N_χs::Integer = 100) :: Float64
 
 Return the integrated gravitational potential auto-correlation function 
@@ -142,9 +133,8 @@ the integrand function `integrand_ξ_lensing`.
 
 ## Optional arguments 
 
-- `enhancer::Float64 = 1.0` : multiply the resulting value; it
-  is very useful for interal computations in other functions (for instance 
-  `map_integral_on_mu`), in order to deal better with small float numbers.
+- `en::Float64 = 1e10`: just a float number used in order to deal better 
+  with small numbers.
 
 - `N_χs::Integer = 100`: number of points to be used for sampling the integral
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
@@ -154,7 +144,7 @@ See also: [`integrand_ξ_integratedGP`](@ref), [`integrand_on_mu_integratedGP`](
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
 function ξ_integratedGP(s1, s2, y, cosmo::Cosmology;
-     enhancer::Float64 = 1.0, N_χs::Integer = 100)
+     en::Float64 = 1e10, N_χs::Integer = 100)
 
      #adim_χs = range(1e-12, 1.0, N_χs)
      adim_χs = range(0.0, 1.0, length = N_χs)[begin+1:end]
@@ -168,14 +158,13 @@ function ξ_integratedGP(s1, s2, y, cosmo::Cosmology;
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξ_igp = [
-          GaPSE.integrand_ξ_integratedGP(IP1, IP2, P1, P2, y, cosmo;
-               enhancer = enhancer)
+          en * GaPSE.integrand_ξ_integratedGP(IP1, IP2, P1, P2, y, cosmo)
           for IP1 in IP1s, IP2 in IP2s
      ]
 
      res = trapz((χ1s, χ2s), int_ξ_igp)
      #println("res = $res")
-     return res
+     return res / en
 end
 
 
@@ -188,6 +177,7 @@ end
      integrand_on_mu_integratedGP(s1, s, μ, cosmo::Cosmology;
           L::Integer = 0, 
           use_windows::Bool = true,
+          en::Float64 = 1e10,
           N_χs::Integer = 100) :: Float64
 
 Return the integrand on ``\mu = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}`` 
@@ -228,9 +218,8 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 
 - `L::Integer = 0`: order of the Legendre polynomial to be used
 
-- `enhancer::Float64 = 1.0`: just a float number used in order to deal better 
-  with small numbers; the returned value is actually `enhancer * f`, where `f` 
-  is the true value calculated as shown before.
+- `en::Float64 = 1e10`: just a float number used in order to deal better 
+  with small numbers;
 
 - `use_windows::Bool = false`: tells if the integrand must consider the two
    window function ``\phi`` and ``F``.
@@ -245,7 +234,7 @@ See also: [`integrand_ξ_integratedGP`](@ref), [`ξ_integratedGP`](@ref),
 [`y`](@ref), [`s2`](@ref)
 """
 function integrand_on_mu_integratedGP(s1, s, μ, cosmo::Cosmology;
-     L::Integer = 0, enhancer::Float64 = 1.0,
+     L::Integer = 0, en::Float64 = 1e10,
      use_windows::Bool = true,
      N_χs::Integer = 50)
 
@@ -255,14 +244,12 @@ function integrand_on_mu_integratedGP(s1, s, μ, cosmo::Cosmology;
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_integratedGP(s1, s2_value, y_value, cosmo;
-               enhancer = enhancer, N_χs = N_χs)
+          int = ξ_integratedGP(s1, s2_value, y_value, cosmo; en = en, N_χs = N_χs)
           #println("int = $int")
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_integratedGP(s1, s2_value, y_value, cosmo;
-               enhancer = enhancer, N_χs = N_χs)
+          int = ξ_integratedGP(s1, s2_value, y_value, cosmo; en = en, N_χs = N_χs)
           #println("int = $int")
           int .* Pl(μ, L)
      end

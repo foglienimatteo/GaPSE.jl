@@ -24,7 +24,6 @@
           IP1::Point, IP2::Point,
           P1::Point, P2::Point,
           y, cosmo::Cosmology;
-          enhancer::Float64 = 1.0, 
           Δχ_min::Float64 = 1e-4) :: Float64
 
 Return the integrand of the lensing auto-correlation function 
@@ -76,10 +75,6 @@ and the ``J`` coefficients are given by
 
 ## Optional arguments
 
-- `enhancer::Float64 = 1.0` : multiply the resulting ``f(s_1, s_2, y, \chi_1, \chi_2)`` value; it
-  is very useful for interal computations in other functions (for instance 
-  `map_integral_on_mu_lensing`), in order to deal better with small float numbers.
-
 - `Δχ_min::Float64 = 1e-6` : when ``\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}``,
   some ``I_\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
@@ -101,7 +96,6 @@ function integrand_ξ_lensing(
      IP1::Point, IP2::Point,
      P1::Point, P2::Point,
      y, cosmo::Cosmology;
-     enhancer::Float64 = 1.0,
      Δχ_min::Float64 = 1e-4)
 
      s1 = P1.comdist
@@ -153,7 +147,7 @@ function integrand_ξ_lensing(
           9.0 / 4.0 * lim
      end
 
-     res = enhancer * factor / denomin * first_res
+     res = factor / denomin * first_res
      #println("res = ", res, "\n")
      return res
 end
@@ -167,8 +161,8 @@ end
 
 
 @doc raw"""
-     ξ _lensing(s1, s2, y, cosmo::Cosmology;
-          enhancer::Float64 = 1.0,
+     ξ_lensing(s1, s2, y, cosmo::Cosmology;
+          en::Float64 = 1e6,
           Δχ_min::Float64 = 1e-3,
           N_χs::Integer = 100) :: Float64
 
@@ -223,9 +217,8 @@ the integrand function `integrand_ξ_lensing`.
 
 ## Optional arguments 
 
-- `enhancer::Float64 = 1.0` : multiply the resulting value; it
-  is very useful for interal computations in other functions (for instance 
-  `map_integral_on_mu`), in order to deal better with small float numbers.
+- `en::Float64 = 1e6`: just a float number used in order to deal better 
+  with small numbers;
 
 - `Δχ_min::Float64 = 1e-6` : when ``\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}``,
   some ``I_\ell^n`` term diverges, but the overall parenthesis has a known limit:
@@ -249,7 +242,7 @@ See also: [`integrand_ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
 function ξ_lensing(s1, s2, y, cosmo::Cosmology;
-     enhancer::Float64 = 1.0, N_χs::Integer = 100, Δχ_min::Float64 = 1e-4)
+     en::Float64 = 1e6, N_χs::Integer = 100, Δχ_min::Float64 = 1e-4)
 
      adim_χs = range(0.0, 1.0, length = N_χs)[begin+1:end]
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
@@ -262,14 +255,13 @@ function ξ_lensing(s1, s2, y, cosmo::Cosmology;
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξ_lensings = [
-          GaPSE.integrand_ξ_lensing(IP1, IP2, P1, P2, y, cosmo;
-               enhancer = enhancer, Δχ_min = Δχ_min)
+          en * GaPSE.integrand_ξ_lensing(IP1, IP2, P1, P2, y, cosmo; Δχ_min = Δχ_min)
           for IP1 in IP1s, IP2 in IP2s
      ]
 
      res = trapz((χ1s, χ2s), int_ξ_lensings)
      #println("res = $res")
-     return res
+     return res / en
 end
 
 
@@ -282,6 +274,7 @@ end
      integrand_on_mu_lensing(s1, s, μ, cosmo::Cosmology;
           L::Integer = 0, 
           use_windows::Bool = true, 
+          en::Float64 = 1e6,
           Δχ_min::Float64 = 1e-4,
           N_χs::Integer = 100) :: Float64
 
@@ -323,9 +316,8 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 
 - `L::Integer = 0`: order of the Legendre polynomial to be used
 
-- `enhancer::Float64 = 1.0`: just a float number used in order to deal better 
-  with small numbers; the returned value is actually `enhancer * f`, where `f` 
-  is the true value calculated as shown before.
+- `en::Float64 = 1e6`: just a float number used in order to deal better 
+  with small numbers;
 
 - `use_windows::Bool = false`: tells if the integrand must consider the two
    window function ``\phi`` and ``F``
@@ -354,14 +346,14 @@ function integrand_on_mu_lensing(s1, s, μ, cosmo::Cosmology;
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_lensing(s1, s2_value, y_value, cosmo; 
-               enhancer = enhancer, Δχ_min = Δχ_min, N_χs = N_χs)
+          int = ξ_lensing(s1, s2_value, y_value, cosmo;
+               en = en, Δχ_min = Δχ_min, N_χs = N_χs)
           #println("int = $int")
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_lensing(s1, s2_value, y_value, cosmo; 
-               enhancer = enhancer, Δχ_min = Δχ_min, N_χs = N_χs)
+          int = ξ_lensing(s1, s2_value, y_value, cosmo;
+               en = en, Δχ_min = Δχ_min, N_χs = N_χs)
           #println("int = $int")
           int .* Pl(μ, L)
      end
