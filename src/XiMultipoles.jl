@@ -17,6 +17,7 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
+
 function integral_on_mu(s1, s, integrand::Function, cosmo::Cosmology;
      L::Integer = 0,
      enhancer::Float64 = 1e6,
@@ -151,6 +152,32 @@ function my_integral_on_mu(s1, s, effect::String, cosmo::GaPSE.Cosmology; kwargs
      my_integral_on_mu(s1, s, dict_gr_mu[effect], cosmo; kwargs...)
 end
 
+
+
+##########################################################################################92
+
+
+
+function ξ_multipole(s1, s, effect::Function, cosmo::Cosmology; L::Integer = 0, kwargs...)
+     error = "$(string(effect)) is not a valid GR effect function.\n" *
+             "Valid GR effect functions are the following:\n" *
+             string(values(dict_gr_mu) .* " , "...)
+     @assert (effect ∈ values(dict_gr_mu)) error
+
+     return (2.0 * L + 1.0) / 2.0 .* integral_on_mu(s1, s, effect, cosmo; L = L, kwargs...)
+end
+
+
+function ξ_multipole(s1, s, effect::String, cosmo::Cosmology; L::Integer = 0, kwargs...)
+     error = "$effect is not a valid GR effect name.\n" *
+             "Valid GR effect names are the following:\n" *
+             string(keys(dict_gr_mu) .* " , "...)
+     @assert (effect ∈ keys(dict_gr_mu)) error
+
+     return (2.0 * L + 1.0) / 2.0 .* integral_on_mu(s1, s, dict_gr_mu[effect], cosmo; L = L, kwargs...)
+end
+
+
 ##########################################################################################92
 
 
@@ -160,7 +187,7 @@ function map_integral_on_mu(
      v_ss::Union{Vector{Float64},Nothing} = nothing;
      s_1::Union{Float64,Nothing} = nothing,
      use_my::Bool = true,
-     pr::Bool = true, enhancer = 1e6, kwargs...)
+     pr::Bool = true, kwargs...)
 
      s1 = isnothing(s_1) ? cosmo.s_eff : s_1
 
@@ -168,12 +195,12 @@ function map_integral_on_mu(
      ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length = 100) : v_ss
      xis = if use_my == true
           println("I will use trapz.")
-          my_f(s) = my_integral_on_mu(s1, s, effect, cosmo; enhancer = enhancer, kwargs...)
+          my_f(s) = my_integral_on_mu(s1, s, effect, cosmo; kwargs...)
           omg = @showprogress [my_f(s) for s in ss]
           omg
      else
           println("I will use quadgk.")
-          f(s) = integral_on_mu(s1, s, effect, cosmo; enhancer = enhancer, kwargs...)
+          f(s) = integral_on_mu(s1, s, effect, cosmo; kwargs...)
           vec = @showprogress [f(s) for s in ss]
           omg, xis_err = [x[1] for x in vec], [x[2] for x in vec]
           omg
@@ -183,6 +210,18 @@ function map_integral_on_mu(
      pr && println("\ntime needed for map_integral_on_mu for $effect " *
                    "[in s] = $(@sprintf("%.5f", t2-t1)) ")
      return (ss, xis)
+end
+
+
+function map_ξ_multipole(
+     cosmo::Cosmology,
+     effect::Union{String,Function},
+     v_ss::Union{Vector{Float64},Nothing} = nothing;
+     L::Integer = 0, kwargs...)
+
+     ss, xis = map_integral_on_mu(cosmo, effect, v_ss; L = L, kwargs...)
+
+     return (ss, (2.0 * L + 1.0) / 2.0 .* xis)
 end
 
 
@@ -225,34 +264,44 @@ function print_map_int_on_mu(
      end
 end
 
+function print_map_ξ_multipole(
+     cosmo::Cosmology,
+     out::String,
+     effect::Union{String,Function},
+     v_ss::Union{Vector{Float64},Nothing} = nothing;
+     s_1::Union{Float64,Nothing} = nothing,
+     kwargs...)
 
-##########################################################################################92
+     s1 = isnothing(s_1) ? cosmo.s_eff : s_1
+     t1 = time()
+     vec = map_ξ_multipole(cosmo, effect, v_ss; s_1 = s1, kwargs...)
+     t2 = time()
 
+     isfile(out) && run(`rm $out`)
+     open(out, "w") do io
+          println(io, "# This is an integration map on mu of the ξ multipole $effect GR effect.")
+          parameters_used(io, cosmo)
+          println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
+          print(io, "# kwards passed: ")
 
-
-function ξ_multipole(s1, s, effect::Function, cosmo::Cosmology; L::Integer = 0, kwargs...)
-     error = "$(string(effect)) is not a valid GR effect function.\n" *
-             "Valid GR effect functions are the following:\n" *
-             string(values(dict_gr_mu) .* " , "...)
-     @assert (effect ∈ values(dict_gr_mu)) error
-
-     return (2.0 * L + 1.0) / 2.0 .* integral_on_mu(s1, s, effect, cosmo; L = L, kwargs...)
+          if isempty(kwargs)
+               println(io, "none")
+          else
+               print(io, "\n")
+               for (i, key) in enumerate(keys(kwargs))
+                    println(io, "# \t\t$(key) = $(kwargs[key])")
+               end
+          end
+          println(io, "# ")
+          println(io, "# s [Mpc/h_0] \t \t xi")
+          for (s, xi) in zip(vec[1], vec[2])
+               println(io, "$s \t $xi")
+          end
+     end
 end
 
 
-function ξ_multipole(s1, s, effect::String, cosmo::Cosmology; L::Integer = 0, kwargs...)
-     error = "$effect is not a valid GR effect name.\n" *
-             "Valid GR effect names are the following:\n" *
-             string(keys(dict_gr_mu) .* " , "...)
-     @assert (effect ∈ keys(dict_gr_mu)) error
-
-     return (2.0 * L + 1.0) / 2.0 .* integral_on_mu(s1, s, dict_gr_mu[effect], cosmo; L = L, kwargs...)
-end
-
-
-
 ##########################################################################################92
-
 
 #=
 function my_integral_on_mu(s1, s, integrand, cosmo::GaPSE.Cosmology;

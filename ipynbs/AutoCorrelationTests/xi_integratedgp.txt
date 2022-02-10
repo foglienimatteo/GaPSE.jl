@@ -16,7 +16,7 @@
 # 	 σ_2 = 100.85852368830221
 # 	 σ_3 = 15.593462966741178
 # 
-# computational time needed (in s) : 36.4361
+# computational time needed (in s) : 34.8924
 # kwards passed: 
 # 		use_windows = false
 # 		N_χs = 200

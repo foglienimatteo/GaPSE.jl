@@ -152,7 +152,8 @@ struct IPSTools
           fit_max::Float64 = 10.0,
           con::Bool = true,
           k_min::Float64 = 1e-8,
-          k_max::Float64 = 10.0
+          k_max::Float64 = 10.0,
+          lim::Float64 = 1e-6
      )
      
           PK = Spline1D(ips.ks, ips.pks; bc = "error")
@@ -161,21 +162,21 @@ struct IPSTools
           s0 = 1.0 / kmax
      
           p0 = [-1.0, 1.0, 0.0]
-          I00 = Spline1D(expanded_Iln(PK, 0, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+          I00 = Spline1D(expanded_Iln(PK, 0, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                     fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
-          I20 = Spline1D(expanded_Iln(PK, 2, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+          I20 = Spline1D(expanded_Iln(PK, 2, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                     fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
-          I40 = Spline1D(expanded_Iln(PK, 4, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+          I40 = Spline1D(expanded_Iln(PK, 4, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                     fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
-          I02 = Spline1D(expanded_Iln(PK, 0, 2; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+          I02 = Spline1D(expanded_Iln(PK, 0, 2; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                     fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
-          I22 = Spline1D(expanded_Iln(PK, 2, 2; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+          I22 = Spline1D(expanded_Iln(PK, 2, 2; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                     fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
-          I31 = Spline1D(expanded_Iln(PK, 3, 1; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+          I31 = Spline1D(expanded_Iln(PK, 3, 1; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                     fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
-          I13 = Spline1D(expanded_Iln(PK, 1, 3; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+          I13 = Spline1D(expanded_Iln(PK, 1, 3; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                     fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
-          I11 = Spline1D(expanded_Iln(PK, 1, 1; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+          I11 = Spline1D(expanded_Iln(PK, 1, 1; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                     fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
      
           #ss = 10 .^ range(log10(s0), log10(s0) - log10(kmin) - log10(kmax), length = N)

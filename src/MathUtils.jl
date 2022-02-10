@@ -119,6 +119,10 @@ function power_law_a(ixs, ys, bs, sis; logscale=false)
 end
 =#
 
+##########################################################################################92
+
+
+#=
 function my_power_law_from_data(xs, ys, p0, x1::Number, x2::Number; N = 3, con = false)
      @assert length(xs) == length(ys) "xs and ys must have same length"
      #Num = length(xs)
@@ -141,13 +145,15 @@ end
 function my_power_law_from_data(xs, ys, p0; con = false)
      my_power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con = con)
 end
+=#
 
 
 function power_law_from_data(xs, ys, p0, x1::Number, x2::Number; con = false)
      @assert length(xs) == length(ys) "xs and ys must have same length"
-     #Num = length(xs)
      new_xs = xs[x1.<xs.<x2]
-     new_ys = ys[x1.<xs.<x2]
+     mean_exp = sum([log10(abs(y)) for y in ys[x1.<xs.<x2]]) / length(ys[x1.<xs.<x2])
+     enhancer = 10.0^(-mean_exp)
+     new_ys = ys[x1.<xs.<x2] .* enhancer
 
      #si = mean_spectral_index(xs, ys; N=N, con=con)
      si, b, a =
@@ -162,7 +168,7 @@ function power_law_from_data(xs, ys, p0, x1::Number, x2::Number; con = false)
                     new_xs, new_ys, p0))
           end
 
-     return si, b, a
+     return si, b / enhancer, a / enhancer
 end
 
 

@@ -25,7 +25,7 @@
           P1::Point, P2::Point,
           y, cosmo::Cosmology;
           enhancer::Float64 = 1.0, 
-          Δχ_min::Float64 = 1.0) :: Float64
+          Δχ_min::Float64 = 1e-4) :: Float64
 
 Return the integrand of the lensing auto-correlation function 
 ``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, i.e. the function 
@@ -102,7 +102,7 @@ function integrand_ξ_lensing(
      P1::Point, P2::Point,
      y, cosmo::Cosmology;
      enhancer::Float64 = 1.0,
-     Δχ_min::Float64 = 1.0)
+     Δχ_min::Float64 = 1e-4)
 
      s1 = P1.comdist
      s2 = P2.comdist
@@ -249,9 +249,9 @@ See also: [`integrand_ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
 function ξ_lensing(s1, s2, y, cosmo::Cosmology;
-     enhancer::Float64 = 1.0, N_χs::Integer = 100, Δχ_min::Float64 = 1e-3)
+     enhancer::Float64 = 1.0, N_χs::Integer = 100, Δχ_min::Float64 = 1e-4)
 
-     adim_χs = range(1e-6, 1.0, N_χs)
+     adim_χs = range(0.0, 1.0, length = N_χs)[begin+1:end]
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
@@ -282,7 +282,7 @@ end
      integrand_on_mu_lensing(s1, s, μ, cosmo::Cosmology;
           L::Integer = 0, 
           use_windows::Bool = true, 
-          Δχ_min::Float64 = 1e-6,
+          Δχ_min::Float64 = 1e-4,
           N_χs::Integer = 100) :: Float64
 
 Return the integrand on ``\mu = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}`` 
@@ -330,7 +330,7 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 - `use_windows::Bool = false`: tells if the integrand must consider the two
    window function ``\phi`` and ``F``
 
-- ` Δχ_min::Float64 = 1e-6` : parameter used inside `integrand_ξ_lensing` in order to
+- ` Δχ_min::Float64 = 1e-4` : parameter used inside `integrand_ξ_lensing` in order to
   avoid computatinal divergences; it should be `0<Δχ_min<<1`, see the `integrand_ξ_lensing`
   docstring for more informations.
 
@@ -345,7 +345,7 @@ See also: [`integrand_ξ_lensing`](@ref), [`ξ_lensing`](@ref),
 """
 function integrand_on_mu_lensing(s1, s, μ, cosmo::Cosmology;
      L::Integer = 0, enhancer::Float64 = 1.0,
-     use_windows::Bool = true, Δχ_min::Float64 = 1e-6,
+     use_windows::Bool = true, Δχ_min::Float64 = 1e-4,
      N_χs::Integer = 100)
 
      s2_value = s2(s1, s, μ)
