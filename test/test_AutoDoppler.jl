@@ -17,4 +17,13 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
+@testset "test xi auto_doppler L=0" begin
+     table = readdlm("datatest/xi_doppler_L0.txt"; comments = true)
+     ss = convert(Vector{Float64}, table[:, 1])
+     xis = convert(Vector{Float64}, table[:, 2])
 
+     calc_xis = [GaPSE.ξ_multipole(COSMO.s_eff, s, "auto_doppler", COSMO;
+          L = 0, μ_rtol = 1e-3, μ_atol = 1e-8, use_windows=false) for s in ss]
+
+     @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+end

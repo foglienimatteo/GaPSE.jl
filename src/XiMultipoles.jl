@@ -25,12 +25,12 @@ function integral_on_mu(
      μ_rtol::Float64 = 1e-2,
      kwargs...)
 
-     f(μ) = enhancer * integrand(s1, s, μ, cosmo; kwargs...)[1]
+     f(μ) = enhancer * integrand(s1, s, μ, cosmo; kwargs...)
 
      #println("s1 = $s1 \t s = $s")
-     int = quadgk(μ -> f(μ), -1.0, 1.0; rtol = μ_rtol, atol = μ_atol)
+     int = quadgk(μ -> f(μ), -1.0, 1.0; rtol = μ_rtol, atol = μ_atol)[1]
      #println("s1 = $s1 \t s2 = $s \t int = $int")
-     return int ./ enhancer
+     return int / enhancer
 end
 
 
@@ -161,7 +161,7 @@ function ξ_multipole(s1, s, effect::Function, cosmo::Cosmology; L::Integer = 0,
              string(values(dict_gr_mu) .* " , "...)
      @assert (effect ∈ values(dict_gr_mu)) error
 
-     return (2.0 * L + 1.0) / 2.0 .* integral_on_mu(s1, s, effect, cosmo; L = L, kwargs...)
+     return (2.0 * L + 1.0) / 2.0 * integral_on_mu(s1, s, effect, cosmo; L = L, kwargs...)
 end
 
 
@@ -171,7 +171,7 @@ function ξ_multipole(s1, s, effect::String, cosmo::Cosmology; L::Integer = 0, k
              string(keys(dict_gr_mu) .* " , "...)
      @assert (effect ∈ keys(dict_gr_mu)) error
 
-     return (2.0 * L + 1.0) / 2.0 .* integral_on_mu(s1, s, dict_gr_mu[effect], cosmo; L = L, kwargs...)
+     return (2.0 * L + 1.0) / 2.0 * integral_on_mu(s1, s, dict_gr_mu[effect], cosmo; L = L, kwargs...)
 end
 
 
@@ -193,14 +193,13 @@ function map_integral_on_mu(
      xis = if use_my == true
           println("I will use trapz.")
           my_f(s) = my_integral_on_mu(s1, s, effect, cosmo; kwargs...)
-          omg = @showprogress [my_f(s) for s in ss]
-          omg
+          vec = @showprogress [my_f(s) for s in ss]
+          vec
      else
           println("I will use quadgk.")
           f(s) = integral_on_mu(s1, s, effect, cosmo; kwargs...)
           vec = @showprogress [f(s) for s in ss]
-          omg, xis_err = [x[1] for x in vec], [x[2] for x in vec]
-          omg
+          vec
      end
 
      t2 = time()
@@ -218,7 +217,7 @@ function map_ξ_multipole(
 
      ss, xis = map_integral_on_mu(cosmo, effect, v_ss; L = L, kwargs...)
 
-     return (ss, (2.0 * L + 1.0) / 2.0 .* xis)
+     return (ss, (2.0 * L + 1.0) / 2.0 * xis)
 end
 
 

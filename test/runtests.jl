@@ -27,6 +27,8 @@ const FILE_PS = "datatest/file_pk.txt"
 const FILE_ILN = "datatest/tab_xi.txt"
 const FILE_BACKGROUND = "datatest/WideA_ZA_background.dat"
 
+const Z_MIN = 0.05
+const Z_MAX = 0.20
 const S_MIN = 148.1920001343431
 const S_MAX = 571.7022420911966
 const S_EFF = 435.37470960794167
@@ -56,6 +58,16 @@ end
 @testset "test_PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
 end
+
+
+##########################################################################################92
+
+const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π/2.0;
+     k_min = 1e-8, k_max = 10.0,
+     Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70,
+     N = 1024, fit_min = 0.05, fit_max = 0.5, con = true)
+
+const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP; expand = false)
 
 @testset "test_AutoDoppler" begin
      include("test_AutoDoppler.jl")

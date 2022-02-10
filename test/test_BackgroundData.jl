@@ -37,7 +37,7 @@ end
      @test all(isapprox.(BD.D, GROWTH_FACTOR_D, rtol = 1e-8))
      @test all(isapprox.(BD.f, GROWTH_FACTOR_F, rtol = 1e-8))
      @test all(isapprox.(BD.ℋ, COM_H, rtol = 1e-8))
-     @test all(isapprox.(BD.ℋ_p, COM_H_P, rtol = 1e-8))
+     @test all(isapprox.(BD.ℋ_p[3:end], COM_H_P[3:end], rtol = 1e-4))
 end
 
 

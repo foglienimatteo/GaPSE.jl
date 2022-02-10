@@ -18,6 +18,15 @@
 #
 
 
+function func_ℛ(s, ℋ; s_lim=1e-1)
+     if s > s_lim
+          return 1.0 - 1.0/(s*ℋ)
+     else
+          return 1.0 - 1.0/(s_lim*ℋ)
+     end
+end
+
+
 struct Cosmology
      IPS::InputPS
      params::CosmoParams
@@ -62,7 +71,7 @@ struct Cosmology
                fit_max = params.fit_max, con = params.con) :
                   IPSTools(IPS, file_Is)
      
-          ℛs = 1.0 .- 1.0 ./ (BD.ℋ .* BD.comdist)
+          ℛs = [func_ℛ(s, ℋ) for (s, ℋ) in zip(BD.comdist, BD.ℋ)]
      
           z_of_s = Spline1D(BD.comdist, BD.z; bc = "nearest")
           s_of_z = Spline1D(BD.z, BD.comdist; bc = "nearest")

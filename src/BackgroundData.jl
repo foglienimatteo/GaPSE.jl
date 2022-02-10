@@ -77,7 +77,7 @@ struct BackgroundData
           com_dist_z_MAX = data[:, I_comdist][N_z_MAX]
           N_2_com_dist_z_MAX = findfirst(s -> s <= 2.0 * com_dist_z_MAX, data[:, I_comdist]) - 1
      
-          data_dict = Dict([name => reverse(data[:, i][N_2_com_dist_z_MAX:end])
+          data_dict = Dict([name => reverse(data[:, i][N_2_com_dist_z_MAX:end-1])
                             for (i, name) in enumerate(names)]...)
      
           com_H = data_dict["H [1/Mpc]"] ./ h ./ (1.0 .+ data_dict["z"])

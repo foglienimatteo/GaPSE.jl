@@ -354,7 +354,7 @@ function expanded_I04_tilde(PK, ss;
           cutted_I04_tildes = [func_I04_tilde(PK, s, kmin, kmax; kwargs...) for s in cutted_ss]
           r_si, r_b, r_a = GaPSE.power_law_from_data(cutted_ss, cutted_I04_tildes,
                [-4.0, -1.0, 0.0], fit_3, fit_4; con = true)
-          println("r_si, r_b, r_a = $r_si , $r_b , $r_a")
+          #println("r_si, r_b, r_a = $r_si , $r_b , $r_a")
           right_I04_tildes = [GaPSE.power_law(s, r_si, r_b, r_a) for s in ss[ss.>=fit_4]]
 
           return vcat(cutted_I04_tildes, right_I04_tildes)
@@ -364,7 +364,7 @@ function expanded_I04_tilde(PK, ss;
           cutted_I04_tildes = [func_I04_tilde(PK, s, kmin, kmax; kwargs...) for s in cutted_ss]
           l_si, l_b, l_a = GaPSE.power_law_from_data(cutted_ss, cutted_I04_tildes,
                [-2.0, -1.0, 0.0], fit_1, fit_2; con = true)
-          println("l_si, l_b, l_a = $l_si , $l_b , $l_a")
+          #println("l_si, l_b, l_a = $l_si , $l_b , $l_a")
           left_I04_tildes = [GaPSE.power_law(s, l_si, l_b, l_a) for s in ss[ss.<=fit_1]]
 
           return vcat(left_I04_tildes, cutted_I04_tildes)
@@ -375,10 +375,10 @@ function expanded_I04_tilde(PK, ss;
 
           l_si, l_b, l_a = GaPSE.power_law_from_data(cutted_ss, cutted_I04_tildes,
                [-2.0, -1.0, 0.0], fit_1, fit_2; con = true)
-          println("l_si, l_b, l_a = $l_si , $l_b , $l_a")
+          #println("l_si, l_b, l_a = $l_si , $l_b , $l_a")
           r_si, r_b, r_a = GaPSE.power_law_from_data(cutted_ss, cutted_I04_tildes,
                [-4.0, -1.0, 0.0], fit_3, fit_4; con = true)
-          println("r_si, r_b, r_a = $r_si , $r_b , $r_a")
+          #println("r_si, r_b, r_a = $r_si , $r_b , $r_a")
           left_I04_tildes = [GaPSE.power_law(s, l_si, l_b, l_a) for s in ss[ss.<=fit_1]]
           right_I04_tildes = [GaPSE.power_law(s, r_si, r_b, r_a) for s in ss[ss.>=fit_4]]
 
