@@ -148,8 +148,8 @@ struct IPSTools
      function IPSTools(
           ips::InputPS;
           N = 1024,
-          fit_min::Float64 = 1.0,
-          fit_max::Float64 = 10.0,
+          fit_min::Float64 = 0.05,
+          fit_max::Float64 = 0.5,
           con::Bool = true,
           k_min::Float64 = 1e-8,
           k_max::Float64 = 10.0,
@@ -158,8 +158,8 @@ struct IPSTools
      
           PK = Spline1D(ips.ks, ips.pks; bc = "error")
      
-          kmin, kmax = min(ips.ks...), max(ips.ks...)
-          s0 = 1.0 / kmax
+          #kmin, kmax = min(ips.ks...), max(ips.ks...)
+          kmin, kmax, s0 = 1e-5, 1e3, 1e-3
      
           p0 = [-1.0, 1.0, 0.0]
           I00 = Spline1D(expanded_Iln(PK, 0, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
@@ -194,11 +194,11 @@ struct IPSTools
                fit_min, fit_max, k_min, k_max, s0)
      end
 
-     function IPSTools(ips::InputPS, iIs::String; 
-               k_min::Float64 = 1e-8,
-               k_max::Float64 = 10.0
-               )
-          PK = Spline1D(ips.ks, ips.pks)
+     function IPSTools(ips::InputPS, iIs::String;
+          k_min::Float64 = 1e-8,
+          k_max::Float64 = 10.0
+     )
+          PK = Spline1D(ips.ks, ips.pks; bc = "error")
      
           tab_Is = readdlm(iIs, comments = true)
           ss = convert(Vector{Float64}, tab_Is[2:end, 1])

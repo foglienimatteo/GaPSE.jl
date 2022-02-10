@@ -25,6 +25,7 @@ using Dierckx, DelimitedFiles, QuadGK
 const TEST_FILE = "datatest/TEST_DATA.txt"
 const FILE_F_MAP = "datatest/F_REFERENCE.txt"
 const FILE_PS = "datatest/file_pk.txt"
+const FILE_ILN = "datatest/tab_xi.txt"
 const FILE_BACKGROUND = "datatest/WideA_ZA_background.dat"
 
 include("TEST_DATA.jl")

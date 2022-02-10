@@ -85,7 +85,7 @@ function parameters_used(io::IO, cosmo::Cosmology)
      println(io, "# \t σ_0 = $(cosmo.tools.σ_0)")
      println(io, "# \t σ_1 = $(cosmo.tools.σ_1)")
      println(io, "# \t σ_2 = $(cosmo.tools.σ_2)")
-     println(io, "# \t σ_3 = $(cosmo.tools.σ_0)")
+     println(io, "# \t σ_3 = $(cosmo.tools.σ_3)")
      println(io, "# ")
 end
 
