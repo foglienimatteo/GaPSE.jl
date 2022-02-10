@@ -52,7 +52,7 @@ struct Cosmology
           names_bg = NAMES_BACKGROUND
      )
      
-          BD = BackgroundData(file_data::String, params.z_min, params.z_max;
+          BD = BackgroundData(file_data::String, params.z_max;
                names = names_bg, h = params.h_0)
           IPS = InputPS(file_ips; expand = expand)
           windowF = WindowF(file_windowF)

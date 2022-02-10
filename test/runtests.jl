@@ -22,11 +22,16 @@ using GaPSE, Test
 using Dierckx, DelimitedFiles, QuadGK
 
 
-const TEST_FILE = "datatest/TEST_DATA.txt"
 const FILE_F_MAP = "datatest/F_REFERENCE.txt"
 const FILE_PS = "datatest/file_pk.txt"
 const FILE_ILN = "datatest/tab_xi.txt"
 const FILE_BACKGROUND = "datatest/WideA_ZA_background.dat"
+
+const S_MIN = 148.1920001343431
+const S_MAX = 571.7022420911966
+const S_EFF = 435.37470960794167
+const Z_EFF = 0.15045636097417317
+const HUBBLE_0 = 1e5 / 299792458.0
 
 include("TEST_DATA.jl")
 

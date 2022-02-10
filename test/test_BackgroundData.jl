@@ -20,20 +20,14 @@
 
 
 @testset "test constant values" begin
-     @test isapprox(GaPSE.ℋ0, 1e5 / 299792458.0; rtol = 1e-6)
-
-     s_min = 148.1920001343431
-     s_max = 571.7022420911966
-     s_eff = 435.37470960794167
-     z_eff = 0.15045636097417317
-
+     @test isapprox(GaPSE.ℋ0, HUBBLE_0; rtol = 1e-6)
      z_of_s = Spline1D(COM_DIST, ZS)
 
-     @test isapprox(GaPSE.func_z_eff(s_max, s_min, z_of_s), z_eff; rtol = 1e-6)
+     @test isapprox(GaPSE.func_z_eff(S_MAX, S_MIN, z_of_s), Z_EFF; rtol = 1e-6)
 end
 
 @testset "test struct BackgroundData" begin
-     BD = GaPSE.BackgroundData(TEST_FILE, 0.05, 0.2)
+     BD = GaPSE.BackgroundData(FILE_BACKGROUND, 0.2)
 
      @test all(isapprox(BD.z, ZS, rtol = 1e-8))
      @test all(isapprox.(BD.conftime, CONF_TIME, rtol = 1e-8))

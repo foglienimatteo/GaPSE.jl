@@ -65,7 +65,7 @@ struct BackgroundData
      ℋ::Vector{Float64}
      ℋ_p::Vector{Float64}
 
-     function BackgroundData(file::String, z_min = 0.05, z_max = 0.2;
+     function BackgroundData(file::String, z_max;
           names = NAMES_BACKGROUND, h = 0.7)
      
           I_redshift = findfirst(x -> x == "z", names)
@@ -73,12 +73,11 @@ struct BackgroundData
      
           data = readdlm(file, comments = true)
      
-          N_z_MAX = findfirst(z -> z <= z_max, data[:, 1]) - 1
-          #N_z_MIN = findfirst(z -> z <= z_min, data[:, 1]) + 1
+          N_z_MAX = findfirst(z -> z <= z_max, data[:, I_redshift]) - 1
           com_dist_z_MAX = data[:, I_comdist][N_z_MAX]
           N_2_com_dist_z_MAX = findfirst(s -> s <= 2.0 * com_dist_z_MAX, data[:, I_comdist]) - 1
      
-          data_dict = Dict([name => reverse(data[:, i][N_2_com_dist_z_MAX:end-1])
+          data_dict = Dict([name => reverse(data[:, i][N_2_com_dist_z_MAX:end])
                             for (i, name) in enumerate(names)]...)
      
           com_H = data_dict["H [1/Mpc]"] ./ h ./ (1.0 .+ data_dict["z"])
