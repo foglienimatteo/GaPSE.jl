@@ -71,6 +71,11 @@ function ξ_doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
 end
 
 
+function ξ_doppler(s1, s2, y, cosmo::Cosmology)
+     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+     return ξ_doppler(P1, P2, y, cosmo)
+end
+
 
 ##########################################################################################92
 
@@ -138,12 +143,10 @@ function integrand_on_mu_doppler(s1, s, μ,
      if use_windows == true
           ϕ_s2 = ϕ(s2_value)
           (ϕ_s2 > 0.0) || (return 0.0)
-          P1, P2 = Point(s1, cosmo), Point(s2_value, cosmo)
-          val = ξ_doppler(P1, P2, y_value, cosmo)
+          val = ξ_doppler(s1, s2_value, y_value, cosmo)
           return val * ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L)
      else
-          P1, P2 = Point(s1, cosmo), Point(s2_value, cosmo)
-          val = ξ_doppler(P1, P2, y_value, cosmo)
+          val = ξ_doppler(s1, s2_value, y_value, cosmo)
           return val * Pl(μ, L)
      end
 end

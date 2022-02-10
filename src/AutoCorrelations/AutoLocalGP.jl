@@ -51,7 +51,6 @@ the J coefficients are given by:
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
 function ξ_localGP(P1::Point, P2::Point, y, cosmo::Cosmology)
-
      s1, D1, f1, a1, ℛ1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℛ
      s2, D2, f2, a2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℛ
 
@@ -66,6 +65,11 @@ function ξ_localGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      return res
 end
 
+
+function ξ_localGP(s1, s2, y, cosmo::Cosmology)
+     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+     return ξ_localGP(P1, P2, y, cosmo)
+end
 
 
 ##########################################################################################92
@@ -134,12 +138,10 @@ function integrand_on_mu_localGP(s1, s, μ,
      if use_windows == true
           ϕ_s2 = ϕ(s2_value)
           (ϕ_s2 > 0.0) || (return 0.0)
-          P1, P2 = Point(s1, cosmo), Point(s2_value, cosmo)
-          val = ξ_localGP(P1, P2, y_value, cosmo)
+          val = ξ_localGP(s1, s2_value, y_value, cosmo)
           return val * ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L)
      else
-          P1, P2 = Point(s1, cosmo), Point(s2_value, cosmo)
-          val = ξ_localGP(P1, P2, y_value, cosmo)
+          val = ξ_localGP(s1, s2_value, y_value, cosmo)
           return val * Pl(μ, L)
      end
 end

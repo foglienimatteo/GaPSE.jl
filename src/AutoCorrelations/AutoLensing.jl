@@ -241,13 +241,12 @@ the integrand function `integrand_ξ_lensing`.
 See also: [`integrand_ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function ξ_lensing(s1, s2, y, cosmo::Cosmology;
+function ξ_lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100, Δχ_min::Float64 = 1e-4)
 
      adim_χs = range(0.0, 1.0, length = N_χs)[begin+1:end]
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
-     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
      χ1s = adim_χs .* s1
      χ2s = adim_χs .* s2
 
@@ -264,6 +263,11 @@ function ξ_lensing(s1, s2, y, cosmo::Cosmology;
      return res / en
 end
 
+
+function ξ_lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
+     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+     return ξ_lensing(P1, P2, y, cosmo; kwargs...)
+end
 
 
 ##########################################################################################92
