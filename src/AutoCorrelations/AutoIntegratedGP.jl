@@ -148,7 +148,7 @@ function ξ_integratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      en::Float64 = 1e10, N_χs::Integer = 100, focus::Float64 = 10.0)
 
      #adim_χs = range(1e-12, 1.0, N_χs)
-     adim_χs = range(0.0, 1.0, length = N_χs)[begin+1:end]
+     adim_χs = range(1e-8, 1.0, length = N_χs)
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
      χ1s = adim_χs .* P1.comdist

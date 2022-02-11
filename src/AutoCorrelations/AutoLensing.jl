@@ -266,7 +266,7 @@ See also: [`integrand_ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
 function ξ_lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100, Δχ_min::Float64 = 1e-4)
 
-     adim_χs = range(0.0, 1.0, length = N_χs)[begin+1:end]
+     adim_χs = range(1e-8, 1.0, length = N_χs)[begin:end]
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
      χ1s = P1.comdist .* adim_χs

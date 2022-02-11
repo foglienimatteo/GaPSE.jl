@@ -77,4 +77,8 @@ end
      include("test_AutoCorrelations/test_AutoIntegratedGP.jl")
 end
 
+@testset "test_AutoLensing" begin
+     include("test_AutoCorrelations/test_AutoLensing.jl")
+end
+
 

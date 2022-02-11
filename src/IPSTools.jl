@@ -168,7 +168,7 @@ struct IPSTools
           con::Bool = true,
           k_min::Float64 = 1e-6,
           k_max::Float64 = 10.0,
-          lim::Float64 = 1e-6
+          lim::Float64 = 1e-8
      )
      
           PK = Spline1D(ips.ks, ips.pks; bc = "error")
