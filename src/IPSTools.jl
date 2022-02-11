@@ -198,7 +198,7 @@ struct IPSTools
           ss = 10 .^ range(log10(lim), 6, length = 1024)
           I04_tildes = expanded_I04_tilde(PK, ss; kmin = kmin, kmax = kmax)
           #I04_tildes = [func_I04_tilde(PK, s, kmin, kmax) for s in ss]
-          I04_tilde = Spline1D(ss, I04_tildes; bc = "error")
+          I04_tilde = Spline1D(ss, I04_tildes; bc = "nearest")
      
           σ_0 = quadgk(q -> PK(q) * q^2 / (2 * π^2), k_min, k_max)[1]
           σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), k_min, k_max)[1]

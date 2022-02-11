@@ -70,7 +70,11 @@ const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π/2.0;
 const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP; expand = false)
 
 @testset "test_AutoDoppler" begin
-     include("test_AutoDoppler.jl")
+     include("test_AutoCorrelations/test_AutoDoppler.jl")
+end
+
+@testset "test_AutoIntegatedGP" begin
+     include("test_AutoCorrelations/test_AutoIntegratedGP.jl")
 end
 
 

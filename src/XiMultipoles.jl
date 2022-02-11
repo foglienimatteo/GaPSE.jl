@@ -21,15 +21,25 @@
 function integral_on_mu(
      s1, s, integrand::Function, cosmo::Cosmology;
      enhancer::Float64 = 1e6,
-     μ_atol::Float64 = 1e-4,
-     μ_rtol::Float64 = 1e-2,
+     N_μs::Integer = 50,
+     μ_atol::Float64 = 0.0,
+     μ_rtol::Float64 = 1e-2,     
      kwargs...)
 
-     f(μ) = enhancer * integrand(s1, s, μ, cosmo; kwargs...)
+     orig_f(μ) = enhancer * integrand(s1, s, μ, cosmo; kwargs...)
 
-     #println("s1 = $s1 \t s = $s")
-     int = quadgk(μ -> f(μ), -1.0, 1.0; rtol = μ_rtol, atol = μ_atol)[1]
-     #println("s1 = $s1 \t s2 = $s \t int = $int")
+     int = 
+          if s > 1.0
+               quadgk(μ -> orig_f(μ), -1.0, 1.0; atol = μ_atol , rtol = μ_rtol)[1]
+          else
+               μs = union(range(-1.0, -0.95, length=N_μs), 
+                    range(-0.95, +0.95, length=N_μs), 
+                    range(+0.95, +1.0, length=N_μs))
+               orig_fs = orig_f.(μs)
+
+               trapz(μs, orig_fs)
+          end
+
      return int / enhancer
 end
 
@@ -118,43 +128,6 @@ integral_on_mu
 
 
 
-function my_integral_on_mu(s1, s, integrand, cosmo::GaPSE.Cosmology;
-     L::Integer = 0,
-     enhancer::Float64 = 1e6,
-     use_windows::Bool = true,
-     μ_steps = 30,
-     kwargs...
-)
-
-     μs1 = range(-1.0, -0.90, length = μ_steps)
-     μs2 = range(-0.90, 0.90, length = μ_steps)
-     μs3 = range(0.90, 1.0, length = μ_steps)
-     μs = unique(vcat(μs1, μs2, μs3))
-     fs = [enhancer * integrand(s1, s, μ, cosmo; L = L,
-          use_windows = use_windows, kwargs...) for μ in μs]
-
-     #println("s1 = $s1 \t s = $s")
-     #int = quadgk(μ -> f(μ), -1.0, 1.0; rtol = μ_rtol, atol = μ_atol)
-     #println("s1 = $s1 \t s2 = $s \t int = $int")
-     return trapz(μs, fs) / enhancer
-end
-
-
-function my_integral_on_mu(s1, s, effect::String, cosmo::GaPSE.Cosmology; kwargs...)
-     error = "$effect is not a valid GR effect name.\n" *
-             "Valid GR effect names are the following:\n" *
-             string(keys(dict_gr_mu) .* " , "...)
-
-     @assert (effect ∈ keys(dict_gr_mu)) error
-     my_integral_on_mu(s1, s, dict_gr_mu[effect], cosmo; kwargs...)
-end
-
-
-
-##########################################################################################92
-
-
-
 function ξ_multipole(s1, s, effect::Function, cosmo::Cosmology; L::Integer = 0, kwargs...)
      error = "$(string(effect)) is not a valid GR effect function.\n" *
              "Valid GR effect functions are the following:\n" *
@@ -183,24 +156,14 @@ function map_integral_on_mu(
      effect::Union{String,Function},
      v_ss::Union{Vector{Float64},Nothing} = nothing;
      s_1::Union{Float64,Nothing} = nothing,
-     use_my::Bool = true,
      pr::Bool = true, kwargs...)
 
      s1 = isnothing(s_1) ? cosmo.s_eff : s_1
 
      t1 = time()
      ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length = 100) : v_ss
-     xis = if use_my == true
-          println("I will use trapz.")
-          my_f(s) = my_integral_on_mu(s1, s, effect, cosmo; kwargs...)
-          vec = @showprogress [my_f(s) for s in ss]
-          vec
-     else
-          println("I will use quadgk.")
-          f(s) = integral_on_mu(s1, s, effect, cosmo; kwargs...)
-          vec = @showprogress [f(s) for s in ss]
-          vec
-     end
+     xis = @showprogress [integral_on_mu(s1, s, effect, cosmo; kwargs...) for s in ss]
+   
 
      t2 = time()
      pr && println("\ntime needed for map_integral_on_mu for $effect " *
@@ -295,36 +258,4 @@ function print_map_ξ_multipole(
           end
      end
 end
-
-
-##########################################################################################92
-
-#=
-function my_integral_on_mu(s1, s, integrand, cosmo::GaPSE.Cosmology;
-        L::Integer = 0,
-        enhancer::Float64 = 1e6,
-        use_windows::Bool = true,
-        #μ_atol::Float64 = 1e-3,
-        #μ_rtol::Float64 = 1e-3,
-        Numb=10,
-        kwargs...
-        )
-    
-    
-
-    μs1 = range(-1.0,-0.9, length=Numb)
-    μs2 = range(-0.9, 0.9, length=Numb)
-    μs3 = range(0.9, 1.0, length=Numb)
-    μs = unique(vcat(μs1, μs2, μs3))
-    fs = [integrand(s1, s, μ, cosmo; enhancer = enhancer, L = L,
-        use_windows = use_windows, kwargs...) for μ in μs ]
-    
-    
-
-    #println("s1 = $s1 \t s = $s")
-    #int = quadgk(μ -> f(μ), -1.0, 1.0; rtol = μ_rtol, atol = μ_atol)
-    #println("s1 = $s1 \t s2 = $s \t int = $int")
-    return trapz(μs,fs) / enhancer
-end
-=#
 

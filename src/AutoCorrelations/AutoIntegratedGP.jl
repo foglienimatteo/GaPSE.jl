@@ -80,6 +80,7 @@ function integrand_ξ_integratedGP(IP1::Point, IP2::Point,
      #println("factor = $factor")
      #println("denomin = $denomin")
 
+     #println(Δχ)
      I04_t = cosmo.tools.I04_tilde(Δχ)
 
      return factor * par_1 * par_2 * I04_t
@@ -144,7 +145,7 @@ See also: [`integrand_ξ_integratedGP`](@ref), [`integrand_on_mu_integratedGP`](
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
 function ξ_integratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e10, N_χs::Integer = 100)
+     en::Float64 = 1e10, N_χs::Integer = 100, focus::Float64 = 10.0)
 
      #adim_χs = range(1e-12, 1.0, N_χs)
      adim_χs = range(0.0, 1.0, length = N_χs)[begin+1:end]
@@ -163,6 +164,26 @@ function ξ_integratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
 
      res = trapz((χ1s, χ2s), int_ξ_igp)
      #println("res = $res")
+
+     #=
+     χ1s = [x for x in range(0.0, P1.comdist, length = N_χs)[begin+1:end]]
+     l = Int(floor(N_χs/2))
+     matrix_χ2s = [begin
+          a = [x for x in range(0.0, P2.comdist, length=l)[begin+1:end]];
+          b = [x for x in range(x1-focus, x1+focus, length=l)];
+          vcat(a[a.<x1-focus], b, a[a.>x1+focus])
+          end for x1 in χ1s]
+
+     IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+     matrix_IP2s = [[GaPSE.Point(x, cosmo) for x in y] for y in matrix_χ2s]
+     matrix_int_ξs = [
+          [en * GaPSE.integrand_ξ_integratedGP(IP1, IP2, P1, P2, y, cosmo) 
+          for IP2 in matrix_IP2s[i]]
+          for (i,IP1) in enumerate(IP1s)]
+     
+     vec_trapz = [trapz(χ2s,int_ξs) for (χ2s,int_ξs) in zip(matrix_χ2s, matrix_int_ξs)]
+     res = trapz(χ1s, vec_trapz)
+     =#
      return res / en
 end
 

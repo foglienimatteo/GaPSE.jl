@@ -27,7 +27,8 @@ FILE_NAME = split(PROGRAM_FILE, "/")[end]
 #main(x::Union{String, Float64, Int64}...) = main([string(var) for var in [x...]])
 function main()
      FILE_F_MAP = "data/F_REFERENCE.txt"
-     FILE_PS = "data/WideA_ZA_pk.dat"
+     #FILE_PS = "data/WideA_ZA_pk.dat"
+     FILE_PS = "file_pk.txt"
      FILE_BACKGROUND = "data/WideA_ZA_background.dat"
 
      #casto_tab = readdlm("data/tab_kappa_terms.dat", comments = true)
@@ -47,25 +48,15 @@ function main()
      GaPSE.parameters_used(stdout, cosmo)
 
      #=
-     GaPSE.print_map_int_on_mu(cosmo, "outputs/xi_doppler.txt", "auto_doppler";
+     GaPSE.print_map_map_ξ_multipole(cosmo, "outputs/xi_doppler_L0.txt", "auto_doppler";
           μ_atol = 1e-4, μ_rtol = 1e-3, use_windows = true)
 
      GaPSE.print_PS_multipole("outputs/xi_doppler.txt", "outputs/P_doppler.txt", nothing)
      =#
 
-     GaPSE.print_map_int_on_mu(cosmo,
-          "outputs/xi_lensing_prova.txt",
-          "auto_lensing"; use_windows = false,
-          N_χs = 25, Δχ_min = 1e-4, enhancer = 1e10, use_my = false, μ_atol = 1e-5, μ_rtol = 1e-1)
-
-          #=
-     GaPSE.print_map_int_on_mu(cosmo, "outputs/new_xi_lensing.txt", "auto_lensing";
-          use_windows = false, N_χs = 100, Δχ_min = 1e-3, enhancer = 1e10,
-          μ_steps = 10) #μ_atol = 1e-4, μ_rtol = 1e-3)
-
-     GaPSE.print_PS_multipole("outputs/new_xi_lensing.txt", "outputs/new_P_lensing.txt", nothing)
-
-     =#
+     GaPSE.print_map_ξ_multipole(cosmo, 
+          "outputs/xi_lensing_L0.txt", "auto_lensing"; use_windows = false, 
+          N_χs = 50, Δχ_min = 1e-4, enhancer=1e10, μ_rtol=1e-2)
 
      #xs = [x for x in 0:0.1:3]
      #μs = vcat([μ for μ in -1:0.01:-0.91], [μ for μ in -0.9:0.1:0.9], [μ for μ in 0.91:0.01:1.0])

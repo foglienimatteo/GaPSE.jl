@@ -104,26 +104,23 @@ function integrand_ξ_lensing(
      χ2, D2, a_χ2 = IP2.comdist, IP2.D, IP2.a
      Ω_M0 = cosmo.params.Ω_M0
 
-     Δχ = √(χ1^2 + χ2^2 - 2 * χ1 * χ2 * y)
-
+     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
+     Δχ = Δχ_square > 0 ? √(Δχ_square) : 0.0
+     
      denomin = s1 * s2 * a_χ1 * a_χ2
-     factor = ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (χ2 - s2)
-     #println("factor = $factor")
-     #println("denomin = $denomin")
+     factor = ℋ0^4 * Ω_M0^2 * D1 * abs(s1 - χ1) * D2 * abs(s2 - χ2)
      #factor = ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (χ2 - s2) * psb1 * psb2
 
      first_res = if Δχ > Δχ_min
           χ1χ2 = χ1 * χ2
 
-          new_J00 = -0.75 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
-          new_J02 = -1.5 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
+          new_J00 = 0.75 * χ1χ2^2 / Δχ^4 * abs(1.0 - y^2) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
+          new_J02 = 1.5 * χ1χ2^2 / Δχ^4 * abs(1.0 - y^2) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
           new_J31 = 9 * y * Δχ^2
           new_J22 = 2.25 * χ1χ2 / Δχ^4 * (
                2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)
-               -
-               16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
-               +
-               χ1χ2^2 * (11y^4 + 14y^2 + 23)
+               - 16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
+               + χ1χ2^2 * (11y^4 + 14y^2 + 23)
           )
 
           I00 = cosmo.tools.I00(Δχ)
@@ -131,25 +128,50 @@ function integrand_ξ_lensing(
           I13 = cosmo.tools.I13(Δχ)
           I22 = cosmo.tools.I22(Δχ)
 
-          #println("J00 = $new_J00, \t I00(Δχ) = $(I00)")
-          #println("J02 = $new_J02, \t I20(Δχ) = $(I20)")
-          #println("J31 = $new_J31, \t I13(Δχ) = $(I13)")
-          #println("J22 = $new_J22, \t I22(Δχ) = $(I22)")
-
-          (
+          resss = (
                new_J00 * I00 + new_J02 * I20 +
                new_J31 * I13 + new_J22 * I22
           )
+
+          
+          resss >=0 || begin 
+               #println("resss = ", resss, "\n")
+               #println("χ1 = $χ1 \t χ2 = $χ2 \t y = $y")
+               #=
+               println("J00 = $new_J00, \t I00(Δχ) = $(I00)")
+               println("J02 = $new_J02, \t I20(Δχ) = $(I20)")
+               println("J31 = $new_J31, \t I13(Δχ) = $(I13)")
+               println("J22 = $new_J22, \t I22(Δχ) = $(I22)")
+               println("coef = $(2.25 * χ1χ2 / Δχ^4)")
+               println("a = $(2 * (χ1^4 + χ2^4) * (7 * y^2 - 3))")
+               println("b = $(- 16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2))")
+               println("c = $(χ1χ2^2 * (11y^4 + 14y^2 + 23))")
+               =#
+          end
+
+
+          resss
      else
 
           lim = 4.0 / 15.0 * (5.0 * cosmo.tools.σ_2 + 6.0 * cosmo.tools.σ_0 * χ2^2)
-          #println("lim = $lim")
+          lim > 0 || println("lim = $lim")
           9.0 / 4.0 * lim
      end
 
      res = factor / denomin * first_res
-     #println("res = ", res, "\n")
+
      return res
+end
+
+function integrand_ξ_lensing(
+     χ1::Float64, χ2::Float64,
+     s1::Float64, s2::Float64,
+     y, cosmo::Cosmology;
+     kwargs...)
+
+     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+     IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
+     return integrand_ξ_lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
 end
 
 #=
@@ -247,8 +269,8 @@ function ξ_lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
      adim_χs = range(0.0, 1.0, length = N_χs)[begin+1:end]
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
-     χ1s = adim_χs .* P1.comdist
-     χ2s = adim_χs .* P2.comdist
+     χ1s = P1.comdist .* adim_χs
+     χ2s = P2.comdist .* adim_χs
 
      IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
@@ -359,6 +381,7 @@ function integrand_on_mu_lensing(s1, s, μ, cosmo::Cosmology;
           int = ξ_lensing(s1, s2_value, y_value, cosmo;
                en = en, Δχ_min = Δχ_min, N_χs = N_χs)
           #println("int = $int")
+          #println( "Pl(μ, L) = $(Pl(μ, L))")
           int .* Pl(μ, L)
      end
 
