@@ -25,9 +25,6 @@
      calc_xis = [GaPSE.ξ_multipole(COSMO.s_eff, s, "auto_lensing", COSMO;
           L = 0, N_μs = 20, N_χs = 30, Δχ_min = 1e-4, enhancer = 1e10, use_windows=false) for s in ss]
 
-     println("\ncalc_xis = ", calc_xis, "\n ")
-     println("\nxis = ", xis, "\n ")
-
      @test all([isapprox(xi, calc_xi, rtol = 1e-3) for (xi, calc_xi) in 
           zip(xis[ss.>0.5], calc_xis[ss.>0.5])])
 end
