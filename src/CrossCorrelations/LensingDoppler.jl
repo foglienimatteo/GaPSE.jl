@@ -26,12 +26,16 @@
           Δχ_min::Float64 = 1e-4) :: Float64
 
 Return the integrand of the lensing auto-correlation function 
-``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, i.e. the function 
+``\xi^{v_{\parallel}\kappa} (s_1, s_2, \cos{\theta})``, i.e. the function 
 ``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
 
 ```math
 f(s_1, s_2, y, \chi_1, \chi_2) = 
-  \xi^{v_{\parallel}\kappa} (s_1, s_2, \cos{\theta}) = \mathcal{H}_0^2\Omega_{M0}D(s_2)f(s_2)\mathcal{H}(s_2)\mathcal{R}(s_2) \int_0^{s_1} d\chi_1 \frac{D(\chi_1) (\chi_1 - s_1)}{a(\chi_1)s_1} [J_{00} I^0_0(\chi) + J_{02}I^0_2(\chi) + J_{04}I^0_4(\chi) + J_{20}I^2_0(\chi)]
+     \mathcal{H}_0^2 \Omega_{M0} D(s_2) f(s_2) \mathcal{H}(s_2) \mathcal{R}(s_2) 
+     \frac{ D(\chi_1) (\chi_1 - s_1) }{a(\chi_1) s_1} 
+     \left(
+          J_{00} I^0_0(\chi) + J_{02} I^0_2(\chi) + J_{04} I^0_4(\chi) + J_{20} I^2_0(\chi)
+     \right)
 ```
 
 where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
@@ -41,15 +45,14 @@ and the ``J`` coefficients are given by
 
 ```math
 \begin{align*}
-    J_{00} & = - \frac{3 \chi_1^2 \chi_2^2}{4 \chi^4} (y^2 - 1) 
-               (8 y (\chi_1^2 + \chi_2^2) - 9 \chi_1 \chi_2 y^2 - 7 \chi_1 \chi_2) \\
-    J_{02} & = - \frac{3 \chi_1^2 \chi_2^2}{2 \chi^4} (y^2 - 1)
-               (4 y (\chi_1^2 + \chi_2^2) - 3 \chi_1 \chi_2 y^2 - 5 \chi_1 \chi_2) \\
-    J_{31} & = 9 y \chi^2 \\
-    J_{22} & = \frac{9 \chi_1 \chi_2}{4 \chi^4}
-               [ 2 (\chi_1^4 + \chi_2^4) (7 y^2 - 3) 
-                 - 16 y \chi_1 \chi_2 (\chi_1^2 + \chi_2^2) (y^2+1) 
-               + \chi_1^2 \chi_2^2 (11 y^4 + 14 y^2 + 23)]
+     J_{00} & = \frac{1}{15}(\chi_1^2 y + \chi_1(4 y^2 - 3) s_2 - 2 y s_2^2) \\
+     J_{02} & = \frac{1}{42 \chi^2} 
+          (4 \chi_1^4 y + 4 \chi_1^3 (2 y^2 - 3) s_2 + \chi_1^2 y (11 - 23 y^2) s_2^2 + 
+          \chi_1 (23 y^2 - 3) s_2^3 - 8 y s_2^4) \\
+     J_{04} & = \frac{1}{70 \chi^2}
+          (2 \chi_1^4 y + 2 \chi_1^3 (2y^2 - 3) s_2 - \chi_1^2 y (y^2 + 5) s_2^2 + 
+          \chi_1 (y^2 + 9) s_2^3 - 4 y s_2^4) \\
+     J_{20} & = y \chi^2
 \end{align*}
 ```
 

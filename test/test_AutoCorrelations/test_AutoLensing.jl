@@ -28,6 +28,7 @@
      println("\ncalc_xis = ", calc_xis, "\n ")
      println("\nxis = ", xis, "\n ")
 
-     @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+     @test all([isapprox(xi, calc_xi, rtol = 1e-3) for (xi, calc_xi) in 
+          zip(xis[ss.>0.5], calc_xis[ss.>0.5])])
 end
 
