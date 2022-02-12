@@ -41,3 +41,6 @@ Manifest.toml
 *.jlprof
 .ipynb_checkpoints/
 docs/build/
+*.txt
+*.dat
+*.pdf
