@@ -17,17 +17,14 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-@testset "test xi auto_lensing L = 0" begin
-     table = readdlm("datatest/xi_lensing_L0.txt"; comments = true)
+@testset "test xi auto_localgp L = 0" begin
+     table = readdlm("datatest/xi_localgp_L0.txt"; comments = true)
      ss = convert(Vector{Float64}, table[:, 1])
      xis = convert(Vector{Float64}, table[:, 2])
 
-     calc_xis = [GaPSE.ξ_multipole(COSMO.s_eff, s, "auto_lensing", COSMO;
-          L = 0, N_μs = 20, N_χs = 30, Δχ_min = 1e-4, enhancer = 1e10, use_windows=false) for s in ss]
+     calc_xis = [GaPSE.ξ_multipole(COSMO.s_eff, s, "auto_localgp", COSMO;
+          L = 0, N_μs = 30, enhancer = 1e10, use_windows=false) for s in ss]
 
-     println("\ncalc_xis = " calc_xis, "\n ")
-     println("\nxis = " xis, "\n ")
-
-     @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+     @test all([isapprox(xi, calc_xi, rtol = 1e-3) for (xi, calc_xi) in zip(xis, calc_xis)])
 end
 
