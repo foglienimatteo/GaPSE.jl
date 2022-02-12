@@ -58,9 +58,10 @@ include("AutoCorrelations/AutoIntegratedGP.jl")
 include("CrossCorrelations/LensingDoppler.jl")
 
 IMPLEMENTED_GR_EFFECTS =
-     ["auto_doppler", "auto_lensing", "auto_localgp", "auto_integratedgp"]
+     ["auto_doppler", "auto_lensing", "auto_localgp", "auto_integratedgp",
+     "lensing_doppler"]
 IMPLEMENTED_INTEGRANDS = [integrand_on_mu_doppler, integrand_on_mu_lensing,
-     integrand_on_mu_localGP, integrand_on_mu_integratedGP]
+     integrand_on_mu_localGP, integrand_on_mu_integratedGP, int_on_mu_lensingdoppler]
 
 dict_gr_mu = Dict([k => v for (k, v) in zip(IMPLEMENTED_GR_EFFECTS, IMPLEMENTED_INTEGRANDS)]...)
 

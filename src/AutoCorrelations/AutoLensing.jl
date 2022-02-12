@@ -109,7 +109,6 @@ function integrand_ξ_lensing(
      
      denomin = s1 * s2 * a_χ1 * a_χ2
      factor = ℋ0^4 * Ω_M0^2 * D1 * abs(s1 - χ1) * D2 * abs(s2 - χ2)
-     #factor = ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (χ2 - s2) * psb1 * psb2
 
      first_res = if Δχ > Δχ_min
           χ1χ2 = χ1 * χ2
@@ -154,7 +153,6 @@ function integrand_ξ_lensing(
      else
 
           lim = 4.0 / 15.0 * (5.0 * cosmo.tools.σ_2 + 6.0 * cosmo.tools.σ_0 * χ2^2)
-          lim > 0 || println("lim = $lim")
           9.0 / 4.0 * lim
      end
 
