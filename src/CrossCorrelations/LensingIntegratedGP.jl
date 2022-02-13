@@ -99,21 +99,29 @@ function integrand_ξ_lensingintegratedgp(
      Δχ_min::Float64 = 1e-4)
 
      s1 = P1.comdist
-     s2 = P2.comdist
-     χ1, D1, a_χ1 = IP1.comdist, IP1.D, IP1.a
-     χ2, D2, a_χ2 = IP2.comdist, IP2.D, IP2.a
+     s2, ℛ_s2 = P2.comdist, P2.ℛ
+     χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
+     χ2, D2, a2, f2, ℋ2 = IP2.comdist, IP2.D, IP2.a, IP2.f, IP2.ℋ
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
      Δχ = Δχ_square > 0 ? √(Δχ_square) : 0.0
-     
-     denomin = s1 * s2 * a_χ1 * a_χ2
-     factor = ℋ0^4 * Ω_M0^2 * D1 * abs(s1 - χ1) * D2 * abs(s2 - χ2)
 
-     res = factor / denomin * first_res
+     prefactor = 9 / 2 * ℋ0^4 * Ω_M0^2
+     factor = D1 * D2 * χ2 * (s1 - χ1) / (s1 * a1 * a2)
+     parenth = ℋ2 * ℛ_s2 * (f2 - 1) - 1 / s2
+
+     new_J31 = -2 * y * Δχ^2
+     new_J22 = χ1 * χ2 * (1 - y^2)
+
+     I13 = cosmo.tools.I13(Δχ)
+     I22 = cosmo.tools.I22(Δχ)
+
+     res = prefactor * factor * parenth * (new_J22 * I22 + new_J31 * I13)
 
      return res
 end
+
 
 function integrand_ξ_lensingintegratedgp(
      χ1::Float64, χ2::Float64,
