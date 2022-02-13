@@ -19,7 +19,7 @@
 
 
 @doc raw"""
-     integrand_ξ_dopplerintegratedgp(
+     integrand_ξ_lensinglocalgp(
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
@@ -29,20 +29,29 @@ Return the integrand of the lensing auto-correlation function
 
 ```math
 f(s_1, s_2, y, \chi_1, \chi_2) = 
-     3 \mathcal{H}(s_1) f(s_1) D(s_1) \mathcal{H_0}^2 \Omega_{M0} 
-     \mathcal{R}(s_1) J_{31} I^3_1(\chi)
+     \mathcal{H}_0^2 \Omega_{M0} D(s_2) f(s_2) \mathcal{H}(s_2) \mathcal{R}(s_2) 
+     \frac{ D(\chi_1) (\chi_1 - s_1) }{a(\chi_1) s_1} 
+     \left(
+          J_{00} I^0_0(\chi) + J_{02} I^0_2(\chi) + J_{04} I^0_4(\chi) + J_{20} I^2_0(\chi)
+     \right)
 ```
+
 where ``\mathcal{H} = a H``, 
-``\chi = \sqrt{s_1^2 + \chi_2^2 - 2 s_1 \chi_2 \cos{\theta}}``, 
+``\chi = \sqrt{\chi_1^2 + s_2^2 - 2\chi_1s_2\cos{\theta}}``, 
 ``y = \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``) 
-and:
+and the ``J`` coefficients are given by 
 
 ```math
-J_{31} = 
-     \frac{D(\chi_2) (s_1 - \chi_2 \cos{\theta})}{a(\chi_2)} \chi^2 
-     \left(
-          - \frac{1}{s_2} + \mathcal{R}(s_2) \mathcal{H}(\chi_2) (f(\chi_2) - 1)
-     \right)
+\begin{align*}
+     J_{00} & = \frac{1}{15}(\chi_1^2 y + \chi_1(4 y^2 - 3) s_2 - 2 y s_2^2) \\
+     J_{02} & = \frac{1}{42 \chi^2} 
+          (4 \chi_1^4 y + 4 \chi_1^3 (2 y^2 - 3) s_2 + \chi_1^2 y (11 - 23 y^2) s_2^2 + 
+          \chi_1 (23 y^2 - 3) s_2^3 - 8 y s_2^4) \\
+     J_{04} & = \frac{1}{70 \chi^2}
+          (2 \chi_1^4 y + 2 \chi_1^3 (2y^2 - 3) s_2 - \chi_1^2 y (y^2 + 5) s_2^2 + 
+          \chi_1 (y^2 + 9) s_2^3 - 4 y s_2^4) \\
+     J_{20} & = y \chi^2
+\end{align*}
 ```
 
 ## Inputs
@@ -58,86 +67,91 @@ J_{31} =
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_dopplerintegratedgp`](@ref), [`int_on_mu_dopplerintegratedgp`](@ref)
+See also: [`ξ_lensinglocalgp`](@ref), [`int_on_mu_lensinglocalgp`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function integrand_ξ_dopplerintegratedgp(
+function integrand_ξ_lensinglocalgp(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
-     s1, D_s1, f_s1, ℋ_s1, ℛ_s1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ
-     s2, ℛ_s2 = P2.comdist, P2.ℛ
-     χ2, D2, a2, f2, ℋ2 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
+     s1 = P1.comdist
+     s2, D_s2, a_s2, ℛ_s2 = P2.comdist, P2.D, P2.a, P2.ℋ, P2.ℛ
+     χ1, D1, a1 = IP.comdist, IP.D, IP.a
      Ω_M0 = cosmo.params.Ω_M0
 
-     Δχ2 = √(s1^2 + χ2^2 - 2 * s1 * χ2 * y)
+     Δχ1 = √(χ1^2 + s2^2 - 2 * χ1 * s2 * y)
 
-     common = 3 * ℋ_s1 * f_s1 * D_s1 * ℋ0^2 * Ω_M0 * ℛ_s1
-     #common = ℋ0^2 * Ω_M0 * D2 / (s2 * a2)
-     #factor = Δχ2^2 * (χ2 * y - s1) * (s2 * (f2 - 1) * ℋ2 * ℛ_s2 + 1)
+     common = 9/4 * ℋ0^4 * Ω_M0^2 * D_s2 * (1 + ℛ_s2) * s2 / (a_s2 * s1)
+     factor = D1 * (s1 - χ1) / a1
+     
+     new_J31 = - 2 * y * Δχ1^2
+     new_J22 = χ1 * s2 * (1 - y^2)
 
-     #I00 = cosmo.tools.I00(Δχ2)
-     #I20 = cosmo.tools.I20(Δχ2)
-     #I40 = cosmo.tools.I40(Δχ2)
-     #I02 = cosmo.tools.I02(Δχ2)
+     I13 = cosmo.tools.I13(Δχ1)
+     I22 = cosmo.tools.I22(Δχ1)
 
-     #first = common * factor * (1 / 15 * I00 + 2 / 21 * I20 + 1 / 35 * I40 + I02)
+     #println("J00 = $new_J00, \t I00(Δχ1) = $(I00)")
+     #println("J02 = $new_J02, \t I20(Δχ1) = $(I20)")
+     #println("J31 = $new_J31, \t I13(Δχ1) = $(I13)")
+     #println("J22 = $new_J22, \t I22(Δχ1) = $(I22)")
 
-     #new_J31 = -3 * χ2^3 * y * f0 * ℋ0 * (ℛ_s1 + 1) * (s2 * (f2 - 1) * ℋ2 * ℛ_s2 + 1)
-     new_J31 = Δχ2^2 * D2 * (s1 - χ2 * y) / a2 * (ℛ_s2 * ℋ2 * (f2 - 1) - 1 / s2)
-     I13 = cosmo.tools.I13(Δχ2)
+     parenth = ( new_J31 * I13  + new_J22 * I22 )
 
-     second = common * new_J31 * I13
+     first = common * factor * parenth
 
-     #println("J00 = $new_J00, \t I00(Δχ) = $(I00)")
-     #println("J02 = $new_J02, \t I20(Δχ) = $(I20)")
-     #println("J31 = $new_J31, \t I13(Δχ) = $(I13)")
-     #println("J22 = $new_J22, \t I22(Δχ) = $(I22)")
-
-     return second
+     return first
 end
 
 
-function integrand_ξ_dopplerintegratedgp(
-     χ2::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology;
-     kwargs...)
+function integrand_ξ_lensinglocalgp(
+     χ1::Float64, s1::Float64, s2::Float64,
+     y, cosmo::Cosmology)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP = Point(χ2, cosmo)
-     return integrand_ξ_dopplerintegratedgp(IP, P1, P2, y, cosmo; kwargs...)
+     IP = Point(χ1, cosmo)
+     return integrand_ξ_lensinglocalgp(IP, P1, P2, y, cosmo)
 end
 
 
 @doc raw"""
-     ξ_dopplerintegratedgp(s1, s2, y, cosmo::Cosmology;
+     ξ_lensinglocalgp(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the lensing auto-correlation function 
-``\xi^{v_{\parallel}\int \phi} (s_1, s_2, \cos{\theta})``, defined as follows:
+``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, defined as follows:
     
 ```math
-\xi^{v_{\parallel}\int \phi} (s_1, s_2, \cos{\theta}) = 
-     3 \mathcal{H}(s_1) f(s_1) D(s_1) \mathcal{H_0}^2 \Omega_{M0} \mathcal{R}(s_1) 
-     \int_0^{s_2} \mathrm{d}\chi_2 \,  J_{31} \,  I^3_1(\chi)
+\xi^{v_{\parallel}\kappa} (s_1, s_2, \cos{\theta}) = 
+     \mathcal{H}_0^2 \Omega_{M0} D(s_2) f(s_2) \mathcal{H}(s_2) \mathcal{R}(s_2) 
+     \int_0^{s_1} \mathrm{d} \chi_1 
+     \frac{ D(\chi_1) (\chi_1 - s_1) }{a(\chi_1) s_1} 
+     \left(
+          J_{00} I^0_0(\chi) + J_{02} I^0_2(\chi) + J_{04} I^0_4(\chi) + J_{20} I^2_0(\chi)
+     \right)
 ```
 
 where ``\mathcal{H} = a H``, 
-``\chi = \sqrt{s_1^2 + \chi_2^2 - 2 s_1 \chi_2 \cos{\theta}}``, 
+``\chi = \sqrt{\chi_1^2 + s_2^2 - 2 \chi_1 s_2 \cos{\theta}}``, 
 ``y = \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``) 
-and:
+and the ``J`` coefficients are given by:
 
 ```math
-J_{31} = 
-     \frac{D(\chi_2) (s_1 - \chi_2 \cos{\theta})}{a(\chi_2)} \chi^2 
-     \left(
-          - \frac{1}{s_2} + \mathcal{R}(s_2) \mathcal{H}(\chi_2) (f(\chi_2) - 1)
-     \right)
+\begin{align*}
+     J_{00} & = \frac{1}{15}(\chi_1^2 y + \chi_1(4 y^2 - 3) s_2 - 2 y s_2^2) \\
+     J_{02} & = \frac{1}{42 \chi^2} 
+          (4 \chi_1^4 y + 4 \chi_1^3 (2 y^2 - 3) s_2 + \chi_1^2 y (11 - 23 y^2) s_2^2 + 
+          \chi_1 (23 y^2 - 3) s_2^3 - 8 y s_2^4) \\
+     J_{04} & = \frac{1}{70 \chi^2}
+          (2 \chi_1^4 y + 2 \chi_1^3 (2y^2 - 3) s_2 - \chi_1^2 y (y^2 + 5) s_2^2 + 
+          \chi_1 (y^2 + 9) s_2^3 - 4 y s_2^4) \\
+     J_{20} & = y \chi^2
+\end{align*}
 ```
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_dopplerintegratedgp`.
+the integrand function `integrand_ξ_lensinglocalgp`.
+
 
 
 ## Inputs
@@ -154,35 +168,42 @@ the integrand function `integrand_ξ_dopplerintegratedgp`.
 - `en::Float64 = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
+- `Δχ_min::Float64 = 1e-6` : when ``\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}``,
+  some ``I_\ell^n`` term diverges, but the overall parenthesis has a known limit:
+
+  ```math
+     \lim_{\chi\to0^{+}} (J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
+          J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi)) = 
+          \frac{4}{15} \, (5 \, \sigma_2 + \frac{2}{3} \, σ_0 \,s_1^2 \, \chi_2^2)
+  ```
+
+  So, when it happens that ``\chi < \Delta\chi_\mathrm{min}``, the function considers this limit
+  as the result of the parenthesis instead of calculating it in the normal way; it prevents
+  computational divergences.
+
 - `N_χs::Integer = 100`: number of points to be used for sampling the integral
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_dopplerintegratedgp`](@ref), [`int_on_mu_dopplerintegratedgp`](@ref)
+See also: [`integrand_ξ_lensinglocalgp`](@ref), [`int_on_mu_lensinglocalgp`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function ξ_dopplerintegratedgp(s1, s2, y, cosmo::Cosmology;
+function ξ_lensinglocalgp(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
-     #=
-     f(χ2) = en * integrand_ξ_dopplerintegratedgp(χ2, s1, s2, y, cosmo)
-
-     return quadgk(f, 1e-6, s2; rtol=1e-3)[1] / en
-     =#
-
      adim_χs = range(1e-6, 1.0, N_χs)
-     χ2s = adim_χs .* s2
+     χ1s = adim_χs .* s1
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-     IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
+     IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_dopplerintegratedgp(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_lensinglocalgp(IP, P1, P2, y, cosmo)
           for IP in IPs
      ]
 
-     res = trapz(χ2s, int_ξs)
+     res = trapz(χ1s, int_ξs)
      #println("res = $res")
      return res / en
 end
@@ -194,7 +215,7 @@ end
 
 
 @doc raw"""
-     int_on_mu_dopplerintegratedgp(s1, s, μ, cosmo::Cosmology;
+     int_on_mu_lensinglocalgp(s1, s, μ, cosmo::Cosmology;
           L::Integer = 0, 
           use_windows::Bool = true, 
           en::Float64 = 1e6,
@@ -248,16 +269,16 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
-See also: [`integrand_ξ_dopplerintegratedgp`](@ref), [`ξ_dopplerintegratedgp`](@ref),
+See also: [`integrand_ξ_lensinglocalgp`](@ref), [`ξ_lensinglocalgp`](@ref),
 [`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
 [`y`](@ref), [`s2`](@ref)
 """
-function int_on_mu_dopplerintegratedgp(s1, s, μ, cosmo::Cosmology;
-     L::Integer = 0,
-     use_windows::Bool = true,
-     en::Float64 = 1e6,
-     N_χs::Integer = 100)
+function int_on_mu_lensinglocalgp(s1, s, μ, cosmo::Cosmology;
+          L::Integer = 0, 
+          use_windows::Bool = true, 
+          en::Float64 = 1e6,
+          N_χs::Integer = 100)
 
      s2_value = s2(s1, s, μ)
      y_value = y(s1, s, μ)
@@ -265,14 +286,14 @@ function int_on_mu_dopplerintegratedgp(s1, s, μ, cosmo::Cosmology;
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_dopplerintegratedgp(s1, s2_value, y_value, cosmo;
+          int = ξ_lensinglocalgp(s1, s2_value, y_value, cosmo;
                en = en, N_χs = N_χs)
           #println("int = $int")
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_dopplerintegratedgp(s1, s2_value, y_value, cosmo;
-               en = en, N_χs = N_χs)
+          int = ξ_lensinglocalgp(s1, s2_value, y_value, cosmo;
+               en = en,  N_χs = N_χs)
           #println("int = $int")
           #println( "Pl(μ, L) = $(Pl(μ, L))")
           int .* Pl(μ, L)
