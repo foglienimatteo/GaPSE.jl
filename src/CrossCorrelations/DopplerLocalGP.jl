@@ -155,8 +155,8 @@ end
 
 
 
-function ξ_localgpdoppler(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_dopplerlocalgp(s2, s1, y, cosmo; kwargs...)
+function ξ_localgpdoppler(s1, s2, y, cosmo::Cosmology)
+     ξ_dopplerlocalgp(s2, s1, y, cosmo)
 end
 
 
@@ -171,12 +171,10 @@ function int_on_mu_localgpdoppler(s1, s, μ, cosmo::Cosmology;
      res = if use_windows == true
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
-          int = ξ_localgpdoppler(s1, s2_value, y_value, cosmo;
-               en = en, N_χs = N_χs)
+          int = ξ_localgpdoppler(s1, s2_value, y_value, cosmo)
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
-          int = ξ_localgpdoppler(s1, s2_value, y_value, cosmo;
-               en = en, N_χs = N_χs)
+          int = ξ_localgpdoppler(s1, s2_value, y_value, cosmo)
           int .* Pl(μ, L)
      end
 

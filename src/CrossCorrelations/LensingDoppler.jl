@@ -336,8 +336,8 @@ end
 
 
 
-function ξ_lensingdoppler(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_dopplerlensing(s2, s1, y, cosmo; kwargs...)
+function ξ_dopplerlensing(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_lensingdoppler(s2, s1, y, cosmo; kwargs...)
 end
 
 
@@ -352,11 +352,11 @@ function int_on_mu_dopplerlensing(s1, s, μ, cosmo::Cosmology;
      res = if use_windows == true
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
-          int = ξ_lensingdoppler(s1, s2_value, y_value, cosmo;
+          int = ξ_dopplerlensing(s1, s2_value, y_value, cosmo;
                en = en, N_χs = N_χs)
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
-          int = ξ_lensingdoppler(s1, s2_value, y_value, cosmo;
+          int = ξ_dopplerlensing(s1, s2_value, y_value, cosmo;
                en = en, N_χs = N_χs)
           int .* Pl(μ, L)
      end
