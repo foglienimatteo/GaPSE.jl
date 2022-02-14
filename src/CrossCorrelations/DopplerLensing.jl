@@ -19,11 +19,11 @@
 
 
 @doc raw"""
-     integrand_ξ_lensingdoppler(
+     integrand_ξ_dopplerlensing(
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
-Return the integrand of the lensing auto-correlation function 
+Return the integrand of the Doppler-lensing cross-correlation function 
 ``\xi^{v_{\parallel}\kappa} (s_1, s_2, \cos{\theta})``, i.e. the function 
 ``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
 
@@ -32,25 +32,26 @@ f(s_1, s_2, y, \chi_1, \chi_2) =
      \mathcal{H}_0^2 \Omega_{M0} D(s_2) f(s_2) \mathcal{H}(s_2) \mathcal{R}(s_2) 
      \frac{ D(\chi_1) (\chi_1 - s_1) }{a(\chi_1) s_1} 
      \left(
-          J_{00} I^0_0(\chi) + J_{02} I^0_2(\chi) + J_{04} I^0_4(\chi) + J_{20} I^2_0(\chi)
+          J_{00} I^0_0(\Delta\chi_1) + J_{02} I^0_2(\Delta\chi_1) 
+          + J_{04} I^0_4(\Delta\chi_1) + J_{20} I^2_0(\Delta\chi_1)
      \right)
 ```
 
 where ``\mathcal{H} = a H``, 
-``\chi = \sqrt{\chi_1^2 + s_2^2 - 2\chi_1s_2\cos{\theta}}``, 
+``\Delta\chi_1 = \sqrt{\chi_1^2 + s_2^2 - 2\chi_1s_2\cos{\theta}}``, 
 ``y = \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``) 
 and the ``J`` coefficients are given by 
 
 ```math
 \begin{align*}
      J_{00} & = \frac{1}{15}(\chi_1^2 y + \chi_1(4 y^2 - 3) s_2 - 2 y s_2^2) \\
-     J_{02} & = \frac{1}{42 \chi^2} 
+     J_{02} & = \frac{1}{42 \Delta\chi_1^2} 
           (4 \chi_1^4 y + 4 \chi_1^3 (2 y^2 - 3) s_2 + \chi_1^2 y (11 - 23 y^2) s_2^2 + 
           \chi_1 (23 y^2 - 3) s_2^3 - 8 y s_2^4) \\
-     J_{04} & = \frac{1}{70 \chi^2}
+     J_{04} & = \frac{1}{70 \Delta\chi_1^2}
           (2 \chi_1^4 y + 2 \chi_1^3 (2y^2 - 3) s_2 - \chi_1^2 y (y^2 + 5) s_2^2 + 
           \chi_1 (y^2 + 9) s_2^3 - 4 y s_2^4) \\
-     J_{20} & = y \chi^2
+     J_{20} & = y \Delta\chi_1^2
 \end{align*}
 ```
 
@@ -67,10 +68,10 @@ and the ``J`` coefficients are given by
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_lensingdoppler`](@ref), [`int_on_mu_lensingdoppler`](@ref)
+See also: [`ξ_dopplerlensing`](@ref), [`int_on_mu_dopplerlensing`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function integrand_ξ_lensingdoppler(
+function integrand_ξ_dopplerlensing(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
@@ -122,22 +123,22 @@ function integrand_ξ_lensingdoppler(
 end
 
 
-function integrand_ξ_lensingdoppler(
+function integrand_ξ_dopplerlensing(
      χ1::Float64, s1::Float64, s2::Float64,
      y, cosmo::Cosmology)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ1, cosmo)
-     return integrand_ξ_lensingdoppler(IP, P1, P2, y, cosmo)
+     return integrand_ξ_dopplerlensing(IP, P1, P2, y, cosmo)
 end
 
 
 @doc raw"""
-     ξ_lensingdoppler(s1, s2, y, cosmo::Cosmology;
+     ξ_dopplerlensing(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
-Return the lensing auto-correlation function 
-``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, defined as follows:
+Return the Doppler-lensing cross-correlation function 
+``\xi^{v_{\parallel}\kappa} (s_1, s_2, \cos{\theta})``, defined as follows:
     
 ```math
 \xi^{v_{\parallel}\kappa} (s_1, s_2, \cos{\theta}) = 
@@ -145,32 +146,32 @@ Return the lensing auto-correlation function
      \int_0^{s_1} \mathrm{d} \chi_1 
      \frac{ D(\chi_1) (\chi_1 - s_1) }{a(\chi_1) s_1} 
      \left(
-          J_{00} I^0_0(\chi) + J_{02} I^0_2(\chi) + J_{04} I^0_4(\chi) + J_{20} I^2_0(\chi)
+          J_{00} I^0_0(\Delta\chi_1) + J_{02} I^0_2(\Delta\chi_1) 
+          + J_{04} I^0_4(\Delta\chi_1) + J_{20} I^2_0(\Delta\chi_1)
      \right)
 ```
 
 where ``\mathcal{H} = a H``, 
-``\chi = \sqrt{\chi_1^2 + s_2^2 - 2 \chi_1 s_2 \cos{\theta}}``, 
+``\Delta\chi_1= \sqrt{\chi_1^2 + s_2^2 - 2 \chi_1 s_2 \cos{\theta}}``, 
 ``y = \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``) 
 and the ``J`` coefficients are given by:
 
 ```math
 \begin{align*}
      J_{00} & = \frac{1}{15}(\chi_1^2 y + \chi_1(4 y^2 - 3) s_2 - 2 y s_2^2) \\
-     J_{02} & = \frac{1}{42 \chi^2} 
+     J_{02} & = \frac{1}{42 \Delta\chi_1^2} 
           (4 \chi_1^4 y + 4 \chi_1^3 (2 y^2 - 3) s_2 + \chi_1^2 y (11 - 23 y^2) s_2^2 + 
           \chi_1 (23 y^2 - 3) s_2^3 - 8 y s_2^4) \\
-     J_{04} & = \frac{1}{70 \chi^2}
+     J_{04} & = \frac{1}{70 \Delta\chi_1^2}
           (2 \chi_1^4 y + 2 \chi_1^3 (2y^2 - 3) s_2 - \chi_1^2 y (y^2 + 5) s_2^2 + 
           \chi_1 (y^2 + 9) s_2^3 - 4 y s_2^4) \\
-     J_{20} & = y \chi^2
+     J_{20} & = y \Delta\chi_1^2
 \end{align*}
 ```
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_lensingdoppler`.
-
+the integrand function `integrand_ξ_dopplerlensing`.
 
 
 ## Inputs
@@ -205,10 +206,10 @@ the integrand function `integrand_ξ_lensingdoppler`.
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_lensingdoppler`](@ref), [`int_on_mu_lensingdoppler`](@ref)
+See also: [`integrand_ξ_dopplerlensing`](@ref), [`int_on_mu_dopplerlensing`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function ξ_lensingdoppler(s1, s2, y, cosmo::Cosmology;
+function ξ_dopplerlensing(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
      adim_χs = range(1e-6, 1.0, N_χs)
@@ -218,7 +219,7 @@ function ξ_lensingdoppler(s1, s2, y, cosmo::Cosmology;
      IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_lensingdoppler(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_dopplerlensing(IP, P1, P2, y, cosmo)
           for IP in IPs
      ]
 
@@ -234,18 +235,18 @@ end
 
 
 @doc raw"""
-     int_on_mu_lensingdoppler(s1, s, μ, cosmo::Cosmology;
+     int_on_mu_dopplerlensing(s1, s, μ, cosmo::Cosmology;
           L::Integer = 0, 
           use_windows::Bool = true, 
           en::Float64 = 1e6,
           N_χs::Integer = 100) :: Float64
 
 Return the integrand on ``\mu = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}`` 
-of the lensing auto-correlation function, i.e.
+of the Doppler-lensing cross-correlation function, i.e.
 the following function ``f(s_1, s, \mu)``:
 
 ```math
-     f(s_1, s, \mu) = \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) 
+     f(s_1, s, \mu) = \xi^{v_{\parallel}\kappa} (s_1, s_2, \cos{\theta}) 
           \, \mathcal{L}_L(\mu) \,  \phi(s_2) \, F\left(\frac{s}{s_1}, \mu \right)
 ```
 where ``y =  \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2`` and
@@ -255,11 +256,11 @@ In case `use_windows` is set to `false`, the window functions ``\phi`` and ``F``
 are removed, i.e is returned the following function ``f^{'}(s_1, s, \mu)``:
 
 ```math
-     f^{'}(s_1, s, \mu) = \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) 
+     f^{'}(s_1, s, \mu) = \xi^{v_{\parallel}\kappa} (s_1, s_2, \cos{\theta}) 
           \, \mathcal{L}_L(\mu) 
 ```
 
-The function ``\xi^{\kappa\kappa}(s_1, s_2, \cos{\theta})`` is calculated
+The function ``\xi^{v_{\parallel}\kappa}(s_1, s_2, \cos{\theta})`` is calculated
 from `ξ_lensing`; note that these is an internal conversion of coordiate sistems
 from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 
@@ -288,16 +289,16 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
-See also: [`integrand_ξ_lensingdoppler`](@ref), [`ξ_lensingdoppler`](@ref),
+See also: [`integrand_ξ_dopplerlensing`](@ref), [`ξ_dopplerlensing`](@ref),
 [`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
 [`y`](@ref), [`s2`](@ref)
 """
-function int_on_mu_lensingdoppler(s1, s, μ, cosmo::Cosmology;
-          L::Integer = 0, 
-          use_windows::Bool = true, 
-          en::Float64 = 1e6,
-          N_χs::Integer = 100)
+function int_on_mu_dopplerlensing(s1, s, μ, cosmo::Cosmology;
+     L::Integer = 0,
+     use_windows::Bool = true,
+     en::Float64 = 1e6,
+     N_χs::Integer = 100)
 
      s2_value = s2(s1, s, μ)
      y_value = y(s1, s, μ)
@@ -305,14 +306,14 @@ function int_on_mu_lensingdoppler(s1, s, μ, cosmo::Cosmology;
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_lensingdoppler(s1, s2_value, y_value, cosmo;
+          int = ξ_dopplerlensing(s1, s2_value, y_value, cosmo;
                en = en, N_χs = N_χs)
           #println("int = $int")
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_lensingdoppler(s1, s2_value, y_value, cosmo;
-               en = en,  N_χs = N_χs)
+          int = ξ_dopplerlensing(s1, s2_value, y_value, cosmo;
+               en = en, N_χs = N_χs)
           #println("int = $int")
           #println( "Pl(μ, L) = $(Pl(μ, L))")
           int .* Pl(μ, L)

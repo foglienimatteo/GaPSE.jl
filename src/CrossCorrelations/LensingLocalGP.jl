@@ -23,34 +23,28 @@
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
-Return the integrand of the lensing auto-correlation function 
-``\xi^{v_{\parallel}\kappa} (s_1, s_2, \cos{\theta})``, i.e. the function 
+Return the integrand of the Lensing-LocalGP cross-correlation function 
+``\xi^{\kappa \phi} (s_1, s_2, \cos{\theta})``, i.e. the function 
 ``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
 
 ```math
 f(s_1, s_2, y, \chi_1, \chi_2) = 
-     \mathcal{H}_0^2 \Omega_{M0} D(s_2) f(s_2) \mathcal{H}(s_2) \mathcal{R}(s_2) 
-     \frac{ D(\chi_1) (\chi_1 - s_1) }{a(\chi_1) s_1} 
-     \left(
-          J_{00} I^0_0(\chi) + J_{02} I^0_2(\chi) + J_{04} I^0_4(\chi) + J_{20} I^2_0(\chi)
-     \right)
+     \frac{
+          9 \mathcal{H}_0^4 \Omega_{M0}^2 D(s_2) (1 + \mathcal{R}(s_2)) s_2
+     }{4 a(s_2) s_1} 
+     \frac{D(\chi_1)(s_1 - \chi_1) }{a(\chi_1)}
+     \left( J_{31} I^3_1(\Delta\chi_1) +  J_{22} I^2_2(\Delta\chi_1) \right)
 ```
 
 where ``\mathcal{H} = a H``, 
-``\chi = \sqrt{\chi_1^2 + s_2^2 - 2\chi_1s_2\cos{\theta}}``, 
+``\Delta\chi_1 = \sqrt{\chi_1^2 + s_2^2 - 2 \chi_1 s_2\cos{\theta}}``, 
 ``y = \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``) 
 and the ``J`` coefficients are given by 
 
 ```math
 \begin{align*}
-     J_{00} & = \frac{1}{15}(\chi_1^2 y + \chi_1(4 y^2 - 3) s_2 - 2 y s_2^2) \\
-     J_{02} & = \frac{1}{42 \chi^2} 
-          (4 \chi_1^4 y + 4 \chi_1^3 (2 y^2 - 3) s_2 + \chi_1^2 y (11 - 23 y^2) s_2^2 + 
-          \chi_1 (23 y^2 - 3) s_2^3 - 8 y s_2^4) \\
-     J_{04} & = \frac{1}{70 \chi^2}
-          (2 \chi_1^4 y + 2 \chi_1^3 (2y^2 - 3) s_2 - \chi_1^2 y (y^2 + 5) s_2^2 + 
-          \chi_1 (y^2 + 9) s_2^3 - 4 y s_2^4) \\
-     J_{20} & = y \chi^2
+     J_{31} & = -2 y \Delta\chi_1^2 \\
+     J_{22} & = \chi_1 s_2 (1 - y^2)
 \end{align*}
 ```
 
@@ -81,10 +75,10 @@ function integrand_ξ_lensinglocalgp(
 
      Δχ1 = √(χ1^2 + s2^2 - 2 * χ1 * s2 * y)
 
-     common = 9/4 * ℋ0^4 * Ω_M0^2 * D_s2 * (1 + ℛ_s2) * s2 / (a_s2 * s1)
+     common = 9 / 4 * ℋ0^4 * Ω_M0^2 * D_s2 * (1 + ℛ_s2) * s2 / (a_s2 * s1)
      factor = D1 * (s1 - χ1) / a1
-     
-     new_J31 = - 2 * y * Δχ1^2
+
+     new_J31 = -2 * y * Δχ1^2
      new_J22 = χ1 * s2 * (1 - y^2)
 
      I13 = cosmo.tools.I13(Δχ1)
@@ -95,7 +89,7 @@ function integrand_ξ_lensinglocalgp(
      #println("J31 = $new_J31, \t I13(Δχ1) = $(I13)")
      #println("J22 = $new_J22, \t I22(Δχ1) = $(I22)")
 
-     parenth = ( new_J31 * I13  + new_J22 * I22 )
+     parenth = (new_J31 * I13 + new_J22 * I22)
 
      first = common * factor * parenth
 
@@ -117,41 +111,33 @@ end
      ξ_lensinglocalgp(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
-Return the lensing auto-correlation function 
-``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, defined as follows:
+Return the Lensing-LocalGP cross-correlation function 
+``\xi^{\kappa \phi} (s_1, s_2, \cos{\theta})``, defined as follows:
     
 ```math
-\xi^{v_{\parallel}\kappa} (s_1, s_2, \cos{\theta}) = 
-     \mathcal{H}_0^2 \Omega_{M0} D(s_2) f(s_2) \mathcal{H}(s_2) \mathcal{R}(s_2) 
-     \int_0^{s_1} \mathrm{d} \chi_1 
-     \frac{ D(\chi_1) (\chi_1 - s_1) }{a(\chi_1) s_1} 
-     \left(
-          J_{00} I^0_0(\chi) + J_{02} I^0_2(\chi) + J_{04} I^0_4(\chi) + J_{20} I^2_0(\chi)
-     \right)
+\xi^{\kappa \phi} (s_1, s_2, \cos{\theta}) = 
+     \frac{
+          9 \mathcal{H}_0^4 \Omega_{M0}^2 D(s_2) (1 + \mathcal{R}(s_2)) s_2
+     }{4 a(s_2) s_1} 
+     \int_0^{s_1} \mathrm{d}\chi_1 \frac{D(\chi_1)(s_1 - \chi_1) }{a(\chi_1)}
+     \left( J_{31} I^3_1(\Delta\chi_1) +  J_{22} I^2_2(\Delta\chi_1) \right)
 ```
 
 where ``\mathcal{H} = a H``, 
-``\chi = \sqrt{\chi_1^2 + s_2^2 - 2 \chi_1 s_2 \cos{\theta}}``, 
+``\Delta\chi_1 = \sqrt{\chi_1^2 + s_2^2 - 2 \chi_1 s_2\cos{\theta}}``, 
 ``y = \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``) 
-and the ``J`` coefficients are given by:
+and the ``J`` coefficients are given by 
 
 ```math
 \begin{align*}
-     J_{00} & = \frac{1}{15}(\chi_1^2 y + \chi_1(4 y^2 - 3) s_2 - 2 y s_2^2) \\
-     J_{02} & = \frac{1}{42 \chi^2} 
-          (4 \chi_1^4 y + 4 \chi_1^3 (2 y^2 - 3) s_2 + \chi_1^2 y (11 - 23 y^2) s_2^2 + 
-          \chi_1 (23 y^2 - 3) s_2^3 - 8 y s_2^4) \\
-     J_{04} & = \frac{1}{70 \chi^2}
-          (2 \chi_1^4 y + 2 \chi_1^3 (2y^2 - 3) s_2 - \chi_1^2 y (y^2 + 5) s_2^2 + 
-          \chi_1 (y^2 + 9) s_2^3 - 4 y s_2^4) \\
-     J_{20} & = y \chi^2
+     J_{31} & = -2 y \Delta\chi_1^2 \\
+     J_{22} & = \chi_1 s_2 (1 - y^2)
 \end{align*}
 ```
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
 the integrand function `integrand_ξ_lensinglocalgp`.
-
 
 
 ## Inputs
@@ -167,19 +153,6 @@ the integrand function `integrand_ξ_lensinglocalgp`.
 
 - `en::Float64 = 1e6`: just a float number used in order to deal better 
   with small numbers;
-
-- `Δχ_min::Float64 = 1e-6` : when ``\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}``,
-  some ``I_\ell^n`` term diverges, but the overall parenthesis has a known limit:
-
-  ```math
-     \lim_{\chi\to0^{+}} (J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
-          J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi)) = 
-          \frac{4}{15} \, (5 \, \sigma_2 + \frac{2}{3} \, σ_0 \,s_1^2 \, \chi_2^2)
-  ```
-
-  So, when it happens that ``\chi < \Delta\chi_\mathrm{min}``, the function considers this limit
-  as the result of the parenthesis instead of calculating it in the normal way; it prevents
-  computational divergences.
 
 - `N_χs::Integer = 100`: number of points to be used for sampling the integral
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
@@ -222,11 +195,11 @@ end
           N_χs::Integer = 100) :: Float64
 
 Return the integrand on ``\mu = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}`` 
-of the lensing auto-correlation function, i.e.
+of the Lensing-LocalGP cross-correlation function, i.e.
 the following function ``f(s_1, s, \mu)``:
 
 ```math
-     f(s_1, s, \mu) = \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) 
+     f(s_1, s, \mu) = \xi^{\kappa \phi} (s_1, s_2, \cos{\theta}) 
           \, \mathcal{L}_L(\mu) \,  \phi(s_2) \, F\left(\frac{s}{s_1}, \mu \right)
 ```
 where ``y =  \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2`` and
@@ -236,11 +209,11 @@ In case `use_windows` is set to `false`, the window functions ``\phi`` and ``F``
 are removed, i.e is returned the following function ``f^{'}(s_1, s, \mu)``:
 
 ```math
-     f^{'}(s_1, s, \mu) = \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) 
+     f^{'}(s_1, s, \mu) = \xi^{\kappa \phi} (s_1, s_2, \cos{\theta}) 
           \, \mathcal{L}_L(\mu) 
 ```
 
-The function ``\xi^{\kappa\kappa}(s_1, s_2, \cos{\theta})`` is calculated
+The function ``\xi^{\kappa \phi}(s_1, s_2, \cos{\theta})`` is calculated
 from `ξ_lensing`; note that these is an internal conversion of coordiate sistems
 from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 
@@ -275,10 +248,10 @@ See also: [`integrand_ξ_lensinglocalgp`](@ref), [`ξ_lensinglocalgp`](@ref),
 [`y`](@ref), [`s2`](@ref)
 """
 function int_on_mu_lensinglocalgp(s1, s, μ, cosmo::Cosmology;
-          L::Integer = 0, 
-          use_windows::Bool = true, 
-          en::Float64 = 1e6,
-          N_χs::Integer = 100)
+     L::Integer = 0,
+     use_windows::Bool = true,
+     en::Float64 = 1e6,
+     N_χs::Integer = 100)
 
      s2_value = s2(s1, s, μ)
      y_value = y(s1, s, μ)
@@ -293,7 +266,7 @@ function int_on_mu_lensinglocalgp(s1, s, μ, cosmo::Cosmology;
      else
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
           int = ξ_lensinglocalgp(s1, s2_value, y_value, cosmo;
-               en = en,  N_χs = N_χs)
+               en = en, N_χs = N_χs)
           #println("int = $int")
           #println( "Pl(μ, L) = $(Pl(μ, L))")
           int .* Pl(μ, L)

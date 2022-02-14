@@ -23,22 +23,16 @@
      integrand_ξ_lensingintegratedgp(
           IP1::Point, IP2::Point,
           P1::Point, P2::Point,
-          y, cosmo::Cosmology;
-          Δχ_min::Float64 = 1e-4) :: Float64
+          y, cosmo::Cosmology) :: Float64
 
-Return the integrand of the lensingintegratedgp auto-correlation function 
-``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, i.e. the function 
+Return the integrand of theLensing-IntegratedGP cross-correlation function 
+``\xi^{\kappa\int\phi} (s_1, s_2, \cos{\theta})``, i.e. the function 
 ``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
 
 ```math
 f(s_1, s_2, y, \chi_1, \chi_2) = 
-\frac{1}{2}
-\frac{
-     \mathcal{H}_0^4 \Omega_{ \mathrm{M0}}^2 D_1 D_2 (\chi_1 - s_1)(\chi_2 - s_2)
-}{
-     s_1 s_2 a(\chi_1) a(\chi_2) }
-(J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
-     J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi))
+     \frac{9}{2} \mathcal{H}_0^4 \Omega_{M0}^2 \int_0^{s_1} 
+     \left( J_{31} I^3_1(\chi) + J_{22} I^2_2(\chi)\right)
 ```
 
 where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
@@ -48,15 +42,20 @@ and the ``J`` coefficients are given by
 
 ```math
 \begin{align*}
-    J_{00} & = - \frac{3 \chi_1^2 \chi_2^2}{4 \chi^4} (y^2 - 1) 
-               (8 y (\chi_1^2 + \chi_2^2) - 9 \chi_1 \chi_2 y^2 - 7 \chi_1 \chi_2) \\
-    J_{02} & = - \frac{3 \chi_1^2 \chi_2^2}{2 \chi^4} (y^2 - 1)
-               (4 y (\chi_1^2 + \chi_2^2) - 3 \chi_1 \chi_2 y^2 - 5 \chi_1 \chi_2) \\
-    J_{31} & = 9 y \chi^2 \\
-    J_{22} & = \frac{9 \chi_1 \chi_2}{4 \chi^4}
-               [ 2 (\chi_1^4 + \chi_2^4) (7 y^2 - 3) 
-                 - 16 y \chi_1 \chi_2 (\chi_1^2 + \chi_2^2) (y^2+1) 
-               + \chi_1^2 \chi_2^2 (11 y^4 + 14 y^2 + 23)]
+    J_{31} & = - \frac{
+                    2 y \chi^2 D(\chi_1) D(\chi_2) \chi_2(s_1 - \chi_1)
+               }{
+                    s_1 a(\chi_1) a(\chi_2) 
+               } \left( 
+                    - \frac{1}{s_2} + \mathcal{H}(\chi_2) (f(\chi_2) - 1) \mathcal{R}(s_2) 
+               \right) \\
+    J_{22} & = \frac{
+                    \chi_1 \chi_2 (1 - y^2) D(\chi_1) D(\chi_2) \chi_2 (s_1 - \chi_1)
+               }{
+                    s_1 a(\chi_1) a(\chi_2)
+               } \left(
+                    - \frac{1}{s_2} + \mathcal{H}(\chi_2) (f(\chi_2) - 1) \mathcal{R}(s_2)
+               \right)
 \end{align*}
 ```
 
@@ -73,30 +72,13 @@ and the ``J`` coefficients are given by
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-## Optional arguments
-
-- `Δχ_min::Float64 = 1e-6` : when ``\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}``,
-  some ``I_\ell^n`` term diverges, but the overall parenthesis has a known limit:
-
-  ```math
-     \lim_{\chi\to0^{+}} (J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
-          J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi)) = 
-          \frac{4}{15} \, (5 \, \sigma_2 + \frac{2}{3} \, σ_0 \,s_1^2 \, \chi_2^2)
-  ```
-
-  So, when it happens that ``\chi < \Delta\chi_\mathrm{min}``, the function considers this limit
-  as the result of the parenthesis instead of calculating it in the normal way; it prevents
-  computational divergences.
-
-
 See also: [`ξ_lensingintegratedgp`](@ref), [`integrand_on_mu_lensingintegratedgp`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
 function integrand_ξ_lensingintegratedgp(
      IP1::Point, IP2::Point,
      P1::Point, P2::Point,
-     y, cosmo::Cosmology;
-     Δχ_min::Float64 = 1e-4)
+     y, cosmo::Cosmology)
 
      s1 = P1.comdist
      s2, ℛ_s2 = P2.comdist, P2.ℛ
@@ -145,22 +127,16 @@ end
 @doc raw"""
      ξ_lensingintegratedgp(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6,
-          Δχ_min::Float64 = 1e-3,
           N_χs::Integer = 100) :: Float64
 
-Return the lensingintegratedgp auto-correlation function 
-``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, defined as follows:
+Return theLensing-IntegratedGP cross-correlation function 
+``\xi^{\kappa\int\phi} (s_1, s_2, \cos{\theta})``, defined as follows:
     
 ```math
-\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) = 
-\int_0^{s_1} \mathrm{d} \chi_1 \int_0^{s_2} \mathrm{d} \chi_2 
-\frac{1}{2}
-\frac{
-     \mathcal{H}_0^4 \Omega_{ \mathrm{M0}}^2 D_1 D_2 (\chi_1 - s_1)(\chi_2 - s_2)
-}{
-     s_1 s_2 a(\chi_1) a(\chi_2) }
-(J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
-     J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi))
+\xi^{\kappa\int\phi} (s_1, s_2, \cos{\theta}) = 
+     \frac{9}{2} \mathcal{H}_0^4 \Omega_{M0}^2 \int_0^{s_1} 
+     \mathrm{d}\chi_1 \int_0^{s_2} \mathrm{d}\chi_2 
+     \left( J_{31} I^3_1(\chi) + J_{22} I^2_2(\chi)\right)
 ```
 
 where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
@@ -170,15 +146,20 @@ and the ``J`` coefficients are given by
 
 ```math
 \begin{align*}
-    J_{00} & = - \frac{3 \chi_1^2 \chi_2^2}{4 \chi^4} (y^2 - 1) 
-               (8 y (\chi_1^2 + \chi_2^2) - 9 \chi_1 \chi_2 y^2 - 7 \chi_1 \chi_2) \\
-    J_{02} & = - \frac{3 \chi_1^2 \chi_2^2}{2 \chi^4} (y^2 - 1)
-               (4 y (\chi_1^2 + \chi_2^2) - 3 \chi_1 \chi_2 y^2 - 5 \chi_1 \chi_2) \\
-    J_{31} & = 9 y \chi^2 \\
-    J_{22} & = \frac{9 \chi_1 \chi_2}{4 \chi^4}
-               [ 2 (\chi_1^4 + \chi_2^4) (7 y^2 - 3) 
-                 - 16 y \chi_1 \chi_2 (\chi_1^2 + \chi_2^2) (y^2+1) 
-               + \chi_1^2 \chi_2^2 (11 y^4 + 14 y^2 + 23)]
+    J_{31} & = - \frac{
+                    2 y \chi^2 D(\chi_1) D(\chi_2) \chi_2(s_1 - \chi_1)
+               }{
+                    s_1 a(\chi_1) a(\chi_2) 
+               } \left( 
+                    - \frac{1}{s_2} + \mathcal{H}(\chi_2) (f(\chi_2) - 1) \mathcal{R}(s_2) 
+               \right) \\
+    J_{22} & = \frac{
+                    \chi_1 \chi_2 (1 - y^2) D(\chi_1) D(\chi_2) \chi_2 (s_1 - \chi_1)
+               }{
+                    s_1 a(\chi_1) a(\chi_2)
+               } \left(
+                    - \frac{1}{s_2} + \mathcal{H}(\chi_2) (f(\chi_2) - 1) \mathcal{R}(s_2)
+               \right)
 \end{align*}
 ```
 
@@ -202,19 +183,6 @@ the integrand function `integrand_ξ_lensingintegratedgp`.
 - `en::Float64 = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
-- `Δχ_min::Float64 = 1e-6` : when ``\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}``,
-  some ``I_\ell^n`` term diverges, but the overall parenthesis has a known limit:
-
-  ```math
-     \lim_{\chi\to0^{+}} (J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
-          J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi)) = 
-          \frac{4}{15} \, (5 \, \sigma_2 + \frac{2}{3} \, σ_0 \,s_1^2 \, \chi_2^2)
-  ```
-
-  So, when it happens that ``\chi < \Delta\chi_\mathrm{min}``, the function considers this limit
-  as the result of the parenthesis instead of calculating it in the normal way; it prevents
-  computational divergences.
-
 - `N_χs::Integer = 100`: number of points to be used for sampling the integral
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
@@ -224,7 +192,7 @@ See also: [`integrand_ξ_lensingintegratedgp`](@ref), [`integrand_on_mu_lensingi
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
 function ξ_lensingintegratedgp(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Integer = 100, Δχ_min::Float64 = 1e-4)
+     en::Float64 = 1e6, N_χs::Integer = 100)
 
      adim_χs = range(1e-8, 1.0, length = N_χs)[begin:end]
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
@@ -236,7 +204,7 @@ function ξ_lensingintegratedgp(P1::Point, P2::Point, y, cosmo::Cosmology;
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_lensingintegratedgp(IP1, IP2, P1, P2, y, cosmo; Δχ_min = Δχ_min)
+          en * GaPSE.integrand_ξ_lensingintegratedgp(IP1, IP2, P1, P2, y, cosmo)
           for IP1 in IP1s, IP2 in IP2s
      ]
 
@@ -261,15 +229,14 @@ end
           L::Integer = 0, 
           use_windows::Bool = true, 
           en::Float64 = 1e6,
-          Δχ_min::Float64 = 1e-4,
           N_χs::Integer = 100) :: Float64
 
 Return the integrand on ``\mu = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}`` 
-of the lensingintegratedgp auto-correlation function, i.e.
+of theLensing-IntegratedGP cross-correlation function, i.e.
 the following function ``f(s_1, s, \mu)``:
 
 ```math
-     f(s_1, s, \mu) = \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) 
+     f(s_1, s, \mu) = \xi^{\kappa\int\phi} (s_1, s_2, \cos{\theta}) 
           \, \mathcal{L}_L(\mu) \,  \phi(s_2) \, F\left(\frac{s}{s_1}, \mu \right)
 ```
 where ``y =  \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2`` and
@@ -279,11 +246,11 @@ In case `use_windows` is set to `false`, the window functions ``\phi`` and ``F``
 are removed, i.e is returned the following function ``f^{'}(s_1, s, \mu)``:
 
 ```math
-     f^{'}(s_1, s, \mu) = \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) 
+     f^{'}(s_1, s, \mu) = \xi^{\kappa\int\phi} (s_1, s_2, \cos{\theta}) 
           \, \mathcal{L}_L(\mu) 
 ```
 
-The function ``\xi^{\kappa\kappa}(s_1, s_2, \cos{\theta})`` is calculated
+The function ``\xi^{\kappa\int\phi}(s_1, s_2, \cos{\theta})`` is calculated
 from `ξ_lensingintegratedgp`; note that these is an internal conversion of coordiate sistems
 from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 
@@ -308,10 +275,6 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 - `use_windows::Bool = false`: tells if the integrand must consider the two
    window function ``\phi`` and ``F``
 
-- ` Δχ_min::Float64 = 1e-4` : parameter used inside `integrand_ξ_lensingintegratedgp` in order to
-  avoid computatinal divergences; it should be `0<Δχ_min<<1`, see the `integrand_ξ_lensingintegratedgp`
-  docstring for more informations.
-
 - `N_χs::Integer = 100`: number of points to be used for sampling the integral
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
@@ -323,7 +286,7 @@ See also: [`integrand_ξ_lensingintegratedgp`](@ref), [`ξ_lensingintegratedgp`]
 """
 function int_on_mu_lensingintegratedgp(s1, s, μ, cosmo::Cosmology;
      L::Integer = 0, en::Float64 = 1e6,
-     use_windows::Bool = true, Δχ_min::Float64 = 1e-4,
+     use_windows::Bool = true,
      N_χs::Integer = 100)
 
      s2_value = s2(s1, s, μ)
@@ -333,13 +296,13 @@ function int_on_mu_lensingintegratedgp(s1, s, μ, cosmo::Cosmology;
           (ϕ_s2 > 0.0) || (return 0.0)
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
           int = ξ_lensingintegratedgp(s1, s2_value, y_value, cosmo;
-               en = en, Δχ_min = Δχ_min, N_χs = N_χs)
+               en = en, N_χs = N_χs)
           #println("int = $int")
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
           int = ξ_lensingintegratedgp(s1, s2_value, y_value, cosmo;
-               en = en, Δχ_min = Δχ_min, N_χs = N_χs)
+               en = en, N_χs = N_χs)
           #println("int = $int")
           #println( "Pl(μ, L) = $(Pl(μ, L))")
           int .* Pl(μ, L)

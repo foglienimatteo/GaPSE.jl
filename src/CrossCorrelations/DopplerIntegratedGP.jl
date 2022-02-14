@@ -23,8 +23,8 @@
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
-Return the integrand of the lensing auto-correlation function 
-``\xi^{v_{\parallel}\kappa} (s_1, s_2, \cos{\theta})``, i.e. the function 
+Return the integrand of the Doppler-LocalGP cross-correlation function 
+``\xi^{v_{\parallel}\int\phi} (s_1, s_2, \cos{\theta})``, i.e. the function 
 ``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
 
 ```math
@@ -113,11 +113,11 @@ end
      ξ_dopplerintegratedgp(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
-Return the lensing auto-correlation function 
-``\xi^{v_{\parallel}\int \phi} (s_1, s_2, \cos{\theta})``, defined as follows:
+Return the Doppler-LocalGP cross-correlation function 
+``\xi^{v_{\parallel}\int\phi} (s_1, s_2, \cos{\theta})``, defined as follows:
     
 ```math
-\xi^{v_{\parallel}\int \phi} (s_1, s_2, \cos{\theta}) = 
+\xi^{v_{\parallel}\int\phi} (s_1, s_2, \cos{\theta}) = 
      3 \mathcal{H}(s_1) f(s_1) D(s_1) \mathcal{H_0}^2 \Omega_{M0} \mathcal{R}(s_1) 
      \int_0^{s_2} \mathrm{d}\chi_2 \,  J_{31} \,  I^3_1(\chi)
 ```
@@ -201,11 +201,11 @@ end
           N_χs::Integer = 100) :: Float64
 
 Return the integrand on ``\mu = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}`` 
-of the lensing auto-correlation function, i.e.
+of the Doppler-LocalGP cross-correlation function, i.e.
 the following function ``f(s_1, s, \mu)``:
 
 ```math
-     f(s_1, s, \mu) = \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) 
+     f(s_1, s, \mu) = \xi^{v_{\parallel}\int\phi} (s_1, s_2, \cos{\theta}) 
           \, \mathcal{L}_L(\mu) \,  \phi(s_2) \, F\left(\frac{s}{s_1}, \mu \right)
 ```
 where ``y =  \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2`` and
@@ -215,11 +215,11 @@ In case `use_windows` is set to `false`, the window functions ``\phi`` and ``F``
 are removed, i.e is returned the following function ``f^{'}(s_1, s, \mu)``:
 
 ```math
-     f^{'}(s_1, s, \mu) = \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) 
+     f^{'}(s_1, s, \mu) = \xi^{v_{\parallel}\int\phi} (s_1, s_2, \cos{\theta}) 
           \, \mathcal{L}_L(\mu) 
 ```
 
-The function ``\xi^{\kappa\kappa}(s_1, s_2, \cos{\theta})`` is calculated
+The function ``\xi^{v_{\parallel}\int\phi}(s_1, s_2, \cos{\theta})`` is calculated
 from `ξ_lensing`; note that these is an internal conversion of coordiate sistems
 from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 
