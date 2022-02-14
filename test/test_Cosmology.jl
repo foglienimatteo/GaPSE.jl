@@ -39,7 +39,7 @@
      @test isapprox(cosmo.volume, VOLUME, rtol = 1e-8)
 
      @test cosmo.file_data == FILE_BACKGROUND
-     @test cosmo.file_ips == FILE_IPS
+     @test cosmo.file_ips == FILE_PS
      @test cosmo.file_windowF == FILE_F_MAP
 
      @test all(isapprox(cosmo.z_of_s.(COM_DIST), ZS, rtol = 1e-8))

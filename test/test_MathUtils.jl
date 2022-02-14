@@ -63,23 +63,25 @@ end
 
      ss = [3.0387609674820664]
      res = [-1.7693316431457908]
-     my_res = [func_I04_tilde(PK, s, kmin, kmax) for s in ss]
+     my_res = [GaPSE.func_I04_tilde(PK, s, kmin, kmax) for s in ss]
 
      @test all([isapprox(my, tr, rtol = 1e-3) for (my, tr) in zip(my_res, res)])
 end
 
 
+#=
 @testset "test expanded_I04_tilde" begin
      tab_I04_tildes = readdlm("datatest/I40_tilde.txt")
-     ss = convert(Vector{Float64}, tab_Is[2:end, 1])
-     I04_tildes = convert(Vector{Float64}, tab_Is[2:end, 2])
+     ss = convert(Vector{Float64}, tab_I04_tildes[2:end, 1])
+     I04_tildes = convert(Vector{Float64}, tab_I04_tildes[2:end, 2])
 
      table_ips = readdlm(FILE_PS)
      ks = convert(Vector{Float64}, table_ips[:, 1])
      pks = convert(Vector{Float64}, table_ips[:, 2])
      PK = Spline1D(ks, pks)
      kmin, kmax = 1e-5, 1e3
-     calc_I04_tildes = expanded_I04_tilde(PK, ss; kmin = kmin, kmax = kmax)
+     calc_I04_tildes = GaPSE.expanded_I04_tilde(PK, ss; kmin = kmin, kmax = kmax)
 
      @test all([isapprox(my, tr, rtol = 1e-3) for (my, tr) in zip(calc_I04_tildes, I04_tildes)])
 end
+=#
