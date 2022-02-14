@@ -69,13 +69,14 @@ function integrand_ξ_lensinglocalgp(
      y, cosmo::Cosmology)
 
      s1 = P1.comdist
-     s2, D_s2, a_s2, ℛ_s2 = P2.comdist, P2.D, P2.a, P2.ℋ, P2.ℛ
+     s2, D_s2, a_s2, ℛ_s2 = P2.comdist, P2.D, P2.a, P2.ℛ
      χ1, D1, a1 = IP.comdist, IP.D, IP.a
      Ω_M0 = cosmo.params.Ω_M0
 
-     Δχ1 = √(χ1^2 + s2^2 - 2 * χ1 * s2 * y)
+     Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
+     Δχ1 = Δχ1_square > 0.0 ? √(Δχ1_square) : 0.0
 
-     common = 9 / 4 * ℋ0^4 * Ω_M0^2 * D_s2 * (1 + ℛ_s2) * s2 / (a_s2 * s1)
+     common = 9 * ℋ0^4 * Ω_M0^2 * D_s2 * (1 + ℛ_s2) * s2 / (4 * a_s2 * s1)
      factor = D1 * (s1 - χ1) / a1
 
      new_J31 = -2 * y * Δχ1^2

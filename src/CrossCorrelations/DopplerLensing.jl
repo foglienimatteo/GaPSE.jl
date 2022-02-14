@@ -19,11 +19,11 @@
 
 
 @doc raw"""
-     integrand_ξ_dopplerlensing(
+     integrand_ξ_lensingdoppler(
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
-Return the integrand of the Doppler-lensing cross-correlation function 
+Return the integrand of the lensing-Doppler cross-correlation function 
 ``\xi^{v_{\parallel}\kappa} (s_1, s_2, \cos{\theta})``, i.e. the function 
 ``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
 
@@ -68,10 +68,10 @@ and the ``J`` coefficients are given by
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_dopplerlensing`](@ref), [`int_on_mu_dopplerlensing`](@ref)
+See also: [`ξ_lensingdoppler`](@ref), [`int_on_mu_lensingdoppler`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function integrand_ξ_dopplerlensing(
+function integrand_ξ_lensingdoppler(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
@@ -80,7 +80,9 @@ function integrand_ξ_dopplerlensing(
      χ1, D1, a1 = IP.comdist, IP.D, IP.a
      Ω_M0 = cosmo.params.Ω_M0
 
-     Δχ1 = √(χ1^2 + s2^2 - 2 * χ1 * s2 * y)
+
+     Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
+     Δχ1 = Δχ1_square > 0.0 ? √(Δχ1_square) : 0.0
 
      common = ℋ0^2 * Ω_M0 * D1 * (χ1 - s1) / (s1 * a1)
      factor = D_s2 * f_s2 * ℋ_s2 * ℛ_s2
@@ -92,10 +94,8 @@ function integrand_ξ_dopplerlensing(
           + χ1 * (23 * y^2 - 3) * s2^3 - 8 * y * s2^4)
      new_J04 = 1.0 / (70 * Δχ1^2) * (
           2 * χ1^4 * y + 2 * χ1^3 * (2 * y^2 - 3) * s2
-          -
-          χ1^2 * y * (y^2 + 5) * s2^2
-          +
-          χ1 * (y^2 + 9) * s2^3 - 4 * y * s2^4)
+          - χ1^2 * y * (y^2 + 5) * s2^2
+          + χ1 * (y^2 + 9) * s2^3 - 4 * y * s2^4)
      new_J20 = y * Δχ1^2
 
      I00 = cosmo.tools.I00(Δχ1)
@@ -115,29 +115,29 @@ function integrand_ξ_dopplerlensing(
 
      first = common * factor * parenth
 
-     new_J31 = -3 * χ1^2 * y * f0 * ℋ0
-     I13 = cosmo.tools.I13(χ1)
-     second = new_J31 * I13 * common
+     #new_J31 = -3 * χ1^2 * y * f0 * ℋ0
+     #I13 = cosmo.tools.I13(χ1)
+     #second = new_J31 * I13 * common
 
      return first
 end
 
 
-function integrand_ξ_dopplerlensing(
+function integrand_ξ_lensingdoppler(
      χ1::Float64, s1::Float64, s2::Float64,
      y, cosmo::Cosmology)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ1, cosmo)
-     return integrand_ξ_dopplerlensing(IP, P1, P2, y, cosmo)
+     return integrand_ξ_lensingdoppler(IP, P1, P2, y, cosmo)
 end
 
 
 @doc raw"""
-     ξ_dopplerlensing(s1, s2, y, cosmo::Cosmology;
+     ξ_lensingdoppler(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
-Return the Doppler-lensing cross-correlation function 
+Return the lensing-Doppler cross-correlation function 
 ``\xi^{v_{\parallel}\kappa} (s_1, s_2, \cos{\theta})``, defined as follows:
     
 ```math
@@ -171,7 +171,7 @@ and the ``J`` coefficients are given by:
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_dopplerlensing`.
+the integrand function `integrand_ξ_lensingdoppler`.
 
 
 ## Inputs
@@ -206,10 +206,10 @@ the integrand function `integrand_ξ_dopplerlensing`.
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_dopplerlensing`](@ref), [`int_on_mu_dopplerlensing`](@ref)
+See also: [`integrand_ξ_lensingdoppler`](@ref), [`int_on_mu_lensingdoppler`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function ξ_dopplerlensing(s1, s2, y, cosmo::Cosmology;
+function ξ_lensingdoppler(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
      adim_χs = range(1e-6, 1.0, N_χs)
@@ -219,7 +219,7 @@ function ξ_dopplerlensing(s1, s2, y, cosmo::Cosmology;
      IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_dopplerlensing(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_lensingdoppler(IP, P1, P2, y, cosmo)
           for IP in IPs
      ]
 
@@ -235,14 +235,14 @@ end
 
 
 @doc raw"""
-     int_on_mu_dopplerlensing(s1, s, μ, cosmo::Cosmology;
+     int_on_mu_lensingdoppler(s1, s, μ, cosmo::Cosmology;
           L::Integer = 0, 
           use_windows::Bool = true, 
           en::Float64 = 1e6,
           N_χs::Integer = 100) :: Float64
 
 Return the integrand on ``\mu = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}`` 
-of the Doppler-lensing cross-correlation function, i.e.
+of the lensing-Doppler cross-correlation function, i.e.
 the following function ``f(s_1, s, \mu)``:
 
 ```math
@@ -289,12 +289,12 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
-See also: [`integrand_ξ_dopplerlensing`](@ref), [`ξ_dopplerlensing`](@ref),
+See also: [`integrand_ξ_lensingdoppler`](@ref), [`ξ_lensingdoppler`](@ref),
 [`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
 [`y`](@ref), [`s2`](@ref)
 """
-function int_on_mu_dopplerlensing(s1, s, μ, cosmo::Cosmology;
+function int_on_mu_lensingdoppler(s1, s, μ, cosmo::Cosmology;
      L::Integer = 0,
      use_windows::Bool = true,
      en::Float64 = 1e6,
@@ -306,13 +306,13 @@ function int_on_mu_dopplerlensing(s1, s, μ, cosmo::Cosmology;
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_dopplerlensing(s1, s2_value, y_value, cosmo;
+          int = ξ_lensingdoppler(s1, s2_value, y_value, cosmo;
                en = en, N_χs = N_χs)
           #println("int = $int")
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_dopplerlensing(s1, s2_value, y_value, cosmo;
+          int = ξ_lensingdoppler(s1, s2_value, y_value, cosmo;
                en = en, N_χs = N_χs)
           #println("int = $int")
           #println( "Pl(μ, L) = $(Pl(μ, L))")
