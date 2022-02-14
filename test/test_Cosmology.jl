@@ -30,9 +30,23 @@
           FILE_PS,
           FILE_F_MAP)
 
+
+     @test isapprox(cosmo.z_eff, Z_EFF, rtol = 1e-8)
+     @test isapprox(cosmo.s_min, S_MIN, rtol = 1e-8)
+     @test isapprox(cosmo.s_max, S_MAX, rtol = 1e-8)
+     @test isapprox(cosmo.s_eff, S_EFF, rtol = 1e-8)
+
+     @test isapprox(cosmo.volume, VOLUME, rtol = 1e-8)
+
+     @test cosmo.file_data == FILE_BACKGROUND
+     @test cosmo.file_ips == FILE_IPS
+     @test cosmo.file_windowF == FILE_F_MAP
+
      @test all(isapprox(cosmo.z_of_s.(COM_DIST), ZS, rtol = 1e-8))
      @test all(isapprox(cosmo.s_of_z.(ZS), COM_DIST, rtol = 1e-8))
      @test all(isapprox(cosmo.D_of_s.(COM_DIST), GROWTH_FACTOR_D, rtol = 1e-8))
      @test all(isapprox(cosmo.f_of_s.(COM_DIST), GROWTH_FACTOR_F, rtol = 1e-8))
      @test all(isapprox(cosmo.ℋ_of_s.(COM_DIST), COM_H, rtol = 1e-8))
 end
+
+

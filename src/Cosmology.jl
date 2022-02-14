@@ -50,7 +50,6 @@ struct Cosmology
      file_ips::String
      file_windowF::String
 
-
      function Cosmology(
           params::CosmoParams,
           file_data::String,
