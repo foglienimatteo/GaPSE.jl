@@ -94,8 +94,10 @@ function integrand_ξ_lensingdoppler(
           + χ1 * (23 * y^2 - 3) * s2^3 - 8 * y * s2^4)
      new_J04 = 1.0 / (70 * Δχ1^2) * (
           2 * χ1^4 * y + 2 * χ1^3 * (2 * y^2 - 3) * s2
-          - χ1^2 * y * (y^2 + 5) * s2^2
-          + χ1 * (y^2 + 9) * s2^3 - 4 * y * s2^4)
+          -
+          χ1^2 * y * (y^2 + 5) * s2^2
+          +
+          χ1 * (y^2 + 9) * s2^3 - 4 * y * s2^4)
      new_J20 = y * Δχ1^2
 
      I00 = cosmo.tools.I00(Δχ1)
@@ -322,4 +324,45 @@ function int_on_mu_lensingdoppler(s1, s, μ, cosmo::Cosmology;
      #println("res = $res")
      return res
 end
+
+
+
+
+##########################################################################################92
+
+##########################################################################################92
+
+##########################################################################################92
+
+
+
+function ξ_lensingdoppler(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_dopplerlensing(s2, s1, y, cosmo; kwargs...)
+end
+
+
+function int_on_mu_dopplerlensing(s1, s, μ, cosmo::Cosmology;
+     L::Integer = 0,
+     use_windows::Bool = true,
+     en::Float64 = 1e6,
+     N_χs::Integer = 100)
+
+     s2_value = s2(s1, s, μ)
+     y_value = y(s1, s, μ)
+     res = if use_windows == true
+          ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
+          (ϕ_s2 > 0.0) || (return 0.0)
+          int = ξ_lensingdoppler(s1, s2_value, y_value, cosmo;
+               en = en, N_χs = N_χs)
+          int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
+     else
+          int = ξ_lensingdoppler(s1, s2_value, y_value, cosmo;
+               en = en, N_χs = N_χs)
+          int .* Pl(μ, L)
+     end
+
+     return res
+end
+
+
 

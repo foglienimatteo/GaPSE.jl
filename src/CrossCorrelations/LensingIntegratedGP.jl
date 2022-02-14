@@ -296,4 +296,43 @@ end
 
 
 
+##########################################################################################92
+
+##########################################################################################92
+
+##########################################################################################92
+
+
+
+function ξ_integratedgplensing(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_lensingintegratedgp(s2, s1, y, cosmo; kwargs...)
+end
+
+
+function int_on_mu_integratedgplensing(s1, s, μ, cosmo::Cosmology;
+     L::Integer = 0,
+     use_windows::Bool = true,
+     en::Float64 = 1e6,
+     N_χs::Integer = 100)
+
+     s2_value = s2(s1, s, μ)
+     y_value = y(s1, s, μ)
+     res = if use_windows == true
+          ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
+          (ϕ_s2 > 0.0) || (return 0.0)
+          int = ξ_integratedgplensing(s1, s2_value, y_value, cosmo;
+               en = en, N_χs = N_χs)
+          int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
+     else
+          int = ξ_integratedgplensing(s1, s2_value, y_value, cosmo;
+               en = en, N_χs = N_χs)
+          int .* Pl(μ, L)
+     end
+
+     return res
+end
+
+
+
+
 
