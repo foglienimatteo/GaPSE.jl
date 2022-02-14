@@ -62,7 +62,7 @@ end
 
 ##########################################################################################92
 
-const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π/2.0;
+const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
      k_min = 1e-8, k_max = 10.0,
      Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70,
      N = 1024, fit_min = 0.05, fit_max = 0.5, con = true)
@@ -85,4 +85,14 @@ end
      include("test_AutoCorrelations/test_AutoLensing.jl")
 end
 
+
+######
+
+@testset "test_DopplerIntegratedGP" begin
+     include("test_CrossCorrelations/test_DopplerIntegratedGP.jl")
+end
+
+@testset "test_LocalGPIntegratedGP" begin
+     include("test_CrossCorrelations/test_LocalGPIntegratedGP.jl")
+end
 

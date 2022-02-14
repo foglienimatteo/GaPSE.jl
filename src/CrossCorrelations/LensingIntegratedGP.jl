@@ -31,8 +31,10 @@ Return the integrand of theLensing-IntegratedGP cross-correlation function
 
 ```math
 f(s_1, s_2, y, \chi_1, \chi_2) = 
-     \frac{9}{2} \mathcal{H}_0^4 \Omega_{M0}^2 \int_0^{s_1} 
-     \left( J_{31} I^3_1(\chi) + J_{22} I^2_2(\chi)\right)
+    \frac{9}{2}\mathcal{H}_0^4\Omega_{M0}^2 
+    \frac{D(\chi_1)D(\chi_2)\chi_2(s_1 - \chi_1)}{s_1a(\chi_1)a(\chi_2)}
+    \left(\mathcal{H}(\chi_2)(f(\chi_2) - 1)\mathcal{R}(s_2) -\frac{1}{s_2} \right)
+    \left( J_{31} I^3_1(\chi) + J_{22} I^2_2(\chi) \right)
 ```
 
 where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
@@ -42,20 +44,8 @@ and the ``J`` coefficients are given by
 
 ```math
 \begin{align*}
-    J_{31} & = - \frac{
-                    2 y \chi^2 D(\chi_1) D(\chi_2) \chi_2(s_1 - \chi_1)
-               }{
-                    s_1 a(\chi_1) a(\chi_2) 
-               } \left( 
-                    - \frac{1}{s_2} + \mathcal{H}(\chi_2) (f(\chi_2) - 1) \mathcal{R}(s_2) 
-               \right) \\
-    J_{22} & = \frac{
-                    \chi_1 \chi_2 (1 - y^2) D(\chi_1) D(\chi_2) \chi_2 (s_1 - \chi_1)
-               }{
-                    s_1 a(\chi_1) a(\chi_2)
-               } \left(
-                    - \frac{1}{s_2} + \mathcal{H}(\chi_2) (f(\chi_2) - 1) \mathcal{R}(s_2)
-               \right)
+     J_{31} & = -2y\chi^2 \\
+     J_{22} & = \chi_1\chi_2(1-y^2)
 \end{align*}
 ```
 
@@ -87,7 +77,7 @@ function integrand_ξ_lensingintegratedgp(
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-     Δχ = Δχ_square > 0 ? √(Δχ_square) : 0.0
+     Δχ = Δχ_square > 1e-16 ? √(Δχ_square) : 1e-8
 
      prefactor = 9 / 2 * ℋ0^4 * Ω_M0^2
      factor = D1 * D2 * χ2 * (s1 - χ1) / (s1 * a1 * a2)
@@ -134,9 +124,12 @@ Return theLensing-IntegratedGP cross-correlation function
     
 ```math
 \xi^{\kappa\int\phi} (s_1, s_2, \cos{\theta}) = 
-     \frac{9}{2} \mathcal{H}_0^4 \Omega_{M0}^2 \int_0^{s_1} 
-     \mathrm{d}\chi_1 \int_0^{s_2} \mathrm{d}\chi_2 
-     \left( J_{31} I^3_1(\chi) + J_{22} I^2_2(\chi)\right)
+     \frac{9}{2}\mathcal{H}_0^4\Omega_{M0}^2 
+     &\mathrm{d}\chi_1 \int_0^{s_2} \mathrm{d}\chi_2 
+     \frac{D(\chi_1)D(\chi_2)\chi_2(s_1 - \chi_1)}{s_1a(\chi_1)a(\chi_2)} \\
+     &\left(\mathcal{H}(\chi_2)(f(\chi_2) - 1)\mathcal{R}(s_2) -\frac{1}{s_2} \right)
+     \left( J_{31} I^3_1(\chi) + J_{22} I^2_2(\chi) \right)
+\end{split}
 ```
 
 where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
@@ -146,20 +139,8 @@ and the ``J`` coefficients are given by
 
 ```math
 \begin{align*}
-    J_{31} & = - \frac{
-                    2 y \chi^2 D(\chi_1) D(\chi_2) \chi_2(s_1 - \chi_1)
-               }{
-                    s_1 a(\chi_1) a(\chi_2) 
-               } \left( 
-                    - \frac{1}{s_2} + \mathcal{H}(\chi_2) (f(\chi_2) - 1) \mathcal{R}(s_2) 
-               \right) \\
-    J_{22} & = \frac{
-                    \chi_1 \chi_2 (1 - y^2) D(\chi_1) D(\chi_2) \chi_2 (s_1 - \chi_1)
-               }{
-                    s_1 a(\chi_1) a(\chi_2)
-               } \left(
-                    - \frac{1}{s_2} + \mathcal{H}(\chi_2) (f(\chi_2) - 1) \mathcal{R}(s_2)
-               \right)
+     J_{31} & = -2y\chi^2 \\
+     J_{22} & = \chi_1\chi_2(1-y^2)
 \end{align*}
 ```
 
@@ -194,7 +175,7 @@ See also: [`integrand_ξ_lensingintegratedgp`](@ref), [`integrand_on_mu_lensingi
 function ξ_lensingintegratedgp(P1::Point, P2::Point, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
-     adim_χs = range(1e-8, 1.0, length = N_χs)[begin:end]
+     adim_χs = range(1.1e-8, 1.0, length = N_χs)[begin:end]
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
      χ1s = P1.comdist .* adim_χs
