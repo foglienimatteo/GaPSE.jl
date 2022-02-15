@@ -109,13 +109,13 @@ function integrand_on_mu(s1, s, μ, integrand::Function, cosmo::Cosmology;
 end
 
 
-function integrand_on_mu(s1, s, μ, effect::String, cosmo::Cosmology; L::Integer = 0, kwargs...)
+function integrand_on_mu(s1, s, μ, effect::String, cosmo::Cosmology; kwargs...)
      error = "$effect is not a valid GR effect name.\n" *
              "Valid GR effect names are the following:\n" *
              string(IMPLEMENTED_GR_EFFECTS .* " , "...)
      @assert (effect ∈ IMPLEMENTED_GR_EFFECTS) error
 
-     return integrand_on_mu(s1, s, μ, DICT_GR_ξs[effect], cosmo; L = L, kwargs...)
+     return integrand_on_mu(s1, s, μ, DICT_GR_ξs[effect], cosmo; kwargs...)
 end
 
 
@@ -125,13 +125,16 @@ end
 
 function integral_on_mu(
      s1, s, integrand::Function, cosmo::Cosmology;
+     L::Integer = 0,
+     use_windows::Bool = true,
      enhancer::Float64 = 1e6,
      N_μs::Integer = 50,
      μ_atol::Float64 = 0.0,
      μ_rtol::Float64 = 1e-2,
      kwargs...)
 
-     orig_f(μ) = enhancer * integrand(s1, s, μ, cosmo; kwargs...)
+     orig_f(μ) = integrand_on_mu(s1, s, μ, integrand, cosmo;
+          L = L, use_windows = use_windows, kwargs...)
 
      int =
           if s > 1.0
@@ -153,10 +156,10 @@ end
 function integral_on_mu(s1, s, effect::String, cosmo::Cosmology; kwargs...)
      error = "$effect is not a valid GR effect name.\n" *
              "Valid GR effect names are the following:\n" *
-             string(keys(dict_gr_mu) .* " , "...)
+             string(IMPLEMENTED_GR_EFFECTS .* " , "...)
 
-     @assert (effect ∈ keys(dict_gr_mu)) error
-     integral_on_mu(s1, s, dict_gr_mu[effect], cosmo; kwargs...)
+     @assert (effect ∈ IMPLEMENTED_GR_EFFECTS) error
+     integral_on_mu(s1, s, DICT_GR_ξs[effect], cosmo; kwargs...)
 end
 
 
@@ -236,8 +239,8 @@ integral_on_mu
 function ξ_multipole(s1, s, effect::Function, cosmo::Cosmology; L::Integer = 0, kwargs...)
      error = "$(string(effect)) is not a valid GR effect function.\n" *
              "Valid GR effect functions are the following:\n" *
-             string(values(dict_gr_mu) .* " , "...)
-     @assert (effect ∈ values(dict_gr_mu)) error
+             string(string.(IMPLEMENTED_ξs) .* " , "...)
+     @assert (effect ∈ IMPLEMENTED_ξs) error
 
      return (2.0 * L + 1.0) / 2.0 * integral_on_mu(s1, s, effect, cosmo; L = L, kwargs...)
 end
@@ -246,10 +249,10 @@ end
 function ξ_multipole(s1, s, effect::String, cosmo::Cosmology; L::Integer = 0, kwargs...)
      error = "$effect is not a valid GR effect name.\n" *
              "Valid GR effect names are the following:\n" *
-             string(keys(dict_gr_mu) .* " , "...)
-     @assert (effect ∈ keys(dict_gr_mu)) error
+             string(IMPLEMENTED_GR_EFFECTS .* " , "...)
+     @assert (effect ∈ IMPLEMENTED_GR_EFFECTS) error
 
-     return (2.0 * L + 1.0) / 2.0 * integral_on_mu(s1, s, dict_gr_mu[effect], cosmo; L = L, kwargs...)
+     return (2L + 1) / 2 * integral_on_mu(s1, s, DICT_GR_ξs[effect], cosmo; L = L, kwargs...)
 end
 
 

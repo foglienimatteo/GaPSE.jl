@@ -84,26 +84,9 @@ IMPLEMENTED_ξs = [
      ξ_Lensing_LocalGP, ξ_LocalGP_Lensing,
      ξ_Lensing_IntegratedGP,  ξ_IntegratedGP_Lensing,
      ξ_LocalGP_IntegratedGP, ξ_IntegratedGP_LocalGP
-
 ]
 
 DICT_GR_ξs =  Dict([k => v for (k, v) in zip(IMPLEMENTED_GR_EFFECTS, IMPLEMENTED_ξs)]...)
-
-#=
-IMPLEMENTED_INTEGRANDS = [
-     integrand_on_mu_doppler, integrand_on_mu_lensing,
-     integrand_on_mu_localGP, integrand_on_mu_integratedGP,
-
-     int_on_mu_lensingdoppler, int_on_mu_dopplerlensing,
-     int_on_mu_dopplerlocalgp, int_on_mu_localgpdoppler,
-     int_on_mu_dopplerintegratedgp, int_on_mu_integratedgpdoppler,
-     int_on_mu_lensinglocalgp, int_on_mu_localgplensing,
-     int_on_mu_lensingintegratedgp, int_on_mu_integratedgplensing,
-     int_on_mu_localgpintegratedgp, int_on_mu_integratedgplocalgp,
-     ]
-
-dict_gr_mu = Dict([k => v for (k, v) in zip(IMPLEMENTED_GR_EFFECTS, IMPLEMENTED_INTEGRANDS)]...)
-=#
 
 include("PowerSpectrum.jl")
 include("XiMultipoles.jl")
