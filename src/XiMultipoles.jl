@@ -133,7 +133,7 @@ function integral_on_mu(
      μ_rtol::Float64 = 1e-2,
      kwargs...)
 
-     orig_f(μ) = integrand_on_mu(s1, s, μ, integrand, cosmo;
+     orig_f(μ) = enhancer * integrand_on_mu(s1, s, μ, integrand, cosmo;
           L = L, use_windows = use_windows, kwargs...)
 
      int =
