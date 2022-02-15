@@ -19,7 +19,7 @@
 
 
 @doc raw"""
-     integrand_ξ_localgpintegratedgp(
+     integrand_ξ_LocalGP_IntegratedGP(
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
@@ -52,10 +52,10 @@ where ``\mathcal{H} = a H``,
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_localgpintegratedgp`](@ref), [`int_on_mu_localgpintegratedgp`](@ref)
+See also: [`ξ_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function integrand_ξ_localgpintegratedgp(
+function integrand_ξ_LocalGP_IntegratedGP(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
@@ -77,19 +77,19 @@ function integrand_ξ_localgpintegratedgp(
 end
 
 
-function integrand_ξ_localgpintegratedgp(
+function integrand_ξ_LocalGP_IntegratedGP(
      χ2::Float64, s1::Float64, s2::Float64,
      y, cosmo::Cosmology;
      kwargs...)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ2, cosmo)
-     return integrand_ξ_localgpintegratedgp(IP, P1, P2, y, cosmo; kwargs...)
+     return integrand_ξ_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
 @doc raw"""
-     ξ_localgpintegratedgp(s1, s2, y, cosmo::Cosmology;
+     ξ_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the LocalGP-IntegratedGP cross-correlation function 
@@ -109,7 +109,7 @@ where ``\mathcal{H} = a H``,
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_localgpintegratedgp`.
+the integrand function `integrand_ξ_LocalGP_IntegratedGP`.
 
 
 ## Inputs
@@ -131,14 +131,14 @@ the integrand function `integrand_ξ_localgpintegratedgp`.
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_localgpintegratedgp`](@ref), [`int_on_mu_localgpintegratedgp`](@ref)
+See also: [`integrand_ξ_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function ξ_localgpintegratedgp(s1, s2, y, cosmo::Cosmology;
+function ξ_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
      #=
-     f(χ2) = en * integrand_ξ_localgpintegratedgp(χ2, s1, s2, y, cosmo)
+     f(χ2) = en * integrand_ξ_LocalGP_IntegratedGP(χ2, s1, s2, y, cosmo)
 
      return quadgk(f, 1e-6, s2; rtol=1e-3)[1] / en
      =#
@@ -150,7 +150,7 @@ function ξ_localgpintegratedgp(s1, s2, y, cosmo::Cosmology;
      IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_localgpintegratedgp(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo)
           for IP in IPs
      ]
 
@@ -166,7 +166,7 @@ end
 
 
 @doc raw"""
-     int_on_mu_localgpintegratedgp(s1, s, μ, cosmo::Cosmology;
+     int_on_mu_LocalGP_IntegratedGP(s1, s, μ, cosmo::Cosmology;
           L::Integer = 0, 
           use_windows::Bool = true, 
           en::Float64 = 1e6,
@@ -192,7 +192,7 @@ are removed, i.e is returned the following function ``f^{'}(s_1, s, \mu)``:
 ```
 
 The function ``\xi^{\phi\int\phi}(s_1, s_2, \cos{\theta})`` is calculated
-from `ξ_lensing`; note that these is an internal conversion of coordiate sistems
+from `ξ_Lensing`; note that these is an internal conversion of coordiate sistems
 from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 
 ## Inputs
@@ -220,12 +220,12 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
-See also: [`integrand_ξ_localgpintegratedgp`](@ref), [`ξ_localgpintegratedgp`](@ref),
+See also: [`integrand_ξ_LocalGP_IntegratedGP`](@ref), [`ξ_LocalGP_IntegratedGP`](@ref),
 [`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
 [`y`](@ref), [`s2`](@ref)
 """
-function int_on_mu_localgpintegratedgp(s1, s, μ, cosmo::Cosmology;
+function int_on_mu_LocalGP_IntegratedGP(s1, s, μ, cosmo::Cosmology;
      L::Integer = 0,
      use_windows::Bool = true,
      en::Float64 = 1e6,
@@ -237,13 +237,13 @@ function int_on_mu_localgpintegratedgp(s1, s, μ, cosmo::Cosmology;
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_localgpintegratedgp(s1, s2_value, y_value, cosmo;
+          int = ξ_LocalGP_IntegratedGP(s1, s2_value, y_value, cosmo;
                en = en, N_χs = N_χs)
           #println("int = $int")
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_localgpintegratedgp(s1, s2_value, y_value, cosmo;
+          int = ξ_LocalGP_IntegratedGP(s1, s2_value, y_value, cosmo;
                en = en, N_χs = N_χs)
           #println("int = $int")
           #println( "Pl(μ, L) = $(Pl(μ, L))")
@@ -266,12 +266,12 @@ end
 
 
 
-function ξ_integratedgplocalgp(s1, s2, y, cosmo::Cosmology; kwargs...)
-    ξ_localgpintegratedgp(s2, s1, y, cosmo; kwargs...)
+function ξ_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
+    ξ_LocalGP_IntegratedGP(s2, s1, y, cosmo; kwargs...)
 end
 
 
-function int_on_mu_integratedgplocalgp(s1, s, μ, cosmo::Cosmology;
+function int_on_mu_IntegratedGP_LocalGP(s1, s, μ, cosmo::Cosmology;
      L::Integer = 0,
      use_windows::Bool = true,
      en::Float64 = 1e6,
@@ -283,13 +283,13 @@ function int_on_mu_integratedgplocalgp(s1, s, μ, cosmo::Cosmology;
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_integratedgplocalgp(s1, s2_value, y_value, cosmo;
+          int = ξ_IntegratedGP_LocalGP(s1, s2_value, y_value, cosmo;
                en = en, N_χs = N_χs)
           #println("int = $int")
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_integratedgplocalgp(s1, s2_value, y_value, cosmo;
+          int = ξ_IntegratedGP_LocalGP(s1, s2_value, y_value, cosmo;
                en = en, N_χs = N_χs)
           #println("int = $int")
           #println( "Pl(μ, L) = $(Pl(μ, L))")

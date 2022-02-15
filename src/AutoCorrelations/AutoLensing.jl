@@ -20,13 +20,13 @@
 
 
 @doc raw"""
-     integrand_ξ_lensing(
+     integrand_ξ_Lensing(
           IP1::Point, IP2::Point,
           P1::Point, P2::Point,
           y, cosmo::Cosmology;
           Δχ_min::Float64 = 1e-4) :: Float64
 
-Return the integrand of the lensing auto-correlation function 
+Return the integrand of the Lensing auto-correlation function 
 ``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, i.e. the function 
 ``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
 
@@ -89,10 +89,10 @@ and the ``J`` coefficients are given by
   computational divergences.
 
 
-See also: [`ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
+See also: [`ξ_Lensing`](@ref), [`integrand_on_mu_Lensing`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function integrand_ξ_lensing(
+function integrand_ξ_Lensing(
      IP1::Point, IP2::Point,
      P1::Point, P2::Point,
      y, cosmo::Cosmology;
@@ -161,7 +161,7 @@ function integrand_ξ_lensing(
      return res
 end
 
-function integrand_ξ_lensing(
+function integrand_ξ_Lensing(
      χ1::Float64, χ2::Float64,
      s1::Float64, s2::Float64,
      y, cosmo::Cosmology;
@@ -169,7 +169,7 @@ function integrand_ξ_lensing(
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
-     return integrand_ξ_lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+     return integrand_ξ_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
 end
 
 #=
@@ -181,12 +181,12 @@ end
 
 
 @doc raw"""
-     ξ_lensing(s1, s2, y, cosmo::Cosmology;
+     ξ_Lensing(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6,
           Δχ_min::Float64 = 1e-3,
           N_χs::Integer = 100) :: Float64
 
-Return the lensing auto-correlation function 
+Return the Lensing auto-correlation function 
 ``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, defined as follows:
     
 ```math
@@ -222,7 +222,7 @@ and the ``J`` coefficients are given by
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_lensing`.
+the integrand function `integrand_ξ_Lensing`.
 
 
 
@@ -258,10 +258,10 @@ the integrand function `integrand_ξ_lensing`.
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_lensing`](@ref), [`integrand_on_mu_lensing`](@ref)
+See also: [`integrand_ξ_Lensing`](@ref), [`integrand_on_mu_Lensing`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function ξ_lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
+function ξ_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100, Δχ_min::Float64 = 1e-4)
 
      adim_χs = range(1e-8, 1.0, length = N_χs)[begin:end]
@@ -273,121 +273,18 @@ function ξ_lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
      IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-     int_ξ_lensings = [
-          en * GaPSE.integrand_ξ_lensing(IP1, IP2, P1, P2, y, cosmo; Δχ_min = Δχ_min)
+     int_ξ_Lensings = [
+          en * GaPSE.integrand_ξ_Lensing(IP1, IP2, P1, P2, y, cosmo; Δχ_min = Δχ_min)
           for IP1 in IP1s, IP2 in IP2s
      ]
 
-     res = trapz((χ1s, χ2s), int_ξ_lensings)
+     res = trapz((χ1s, χ2s), int_ξ_Lensings)
      #println("res = $res")
      return res / en
 end
 
 
-function ξ_lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
+function ξ_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_lensing(P1, P2, y, cosmo; kwargs...)
+     return ξ_Lensing(P1, P2, y, cosmo; kwargs...)
 end
-
-
-##########################################################################################92
-
-
-
-@doc raw"""
-     integrand_on_mu_lensing(s1, s, μ, cosmo::Cosmology;
-          L::Integer = 0, 
-          use_windows::Bool = true, 
-          en::Float64 = 1e6,
-          Δχ_min::Float64 = 1e-4,
-          N_χs::Integer = 100) :: Float64
-
-Return the integrand on ``\mu = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}`` 
-of the lensing auto-correlation function, i.e.
-the following function ``f(s_1, s, \mu)``:
-
-```math
-     f(s_1, s, \mu) = \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) 
-          \, \mathcal{L}_L(\mu) \,  \phi(s_2) \, F\left(\frac{s}{s_1}, \mu \right)
-```
-where ``y =  \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2`` and
-``s = \sqrt{s_1^2 + s_2^2 - 2 \, s_1 \, s_2 \, y}``.
-
-In case `use_windows` is set to `false`, the window functions ``\phi`` and ``F``
-are removed, i.e is returned the following function ``f^{'}(s_1, s, \mu)``:
-
-```math
-     f^{'}(s_1, s, \mu) = \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) 
-          \, \mathcal{L}_L(\mu) 
-```
-
-The function ``\xi^{\kappa\kappa}(s_1, s_2, \cos{\theta})`` is calculated
-from `ξ_lensing`; note that these is an internal conversion of coordiate sistems
-from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
-
-## Inputs
-
-- `s1`: the comoving distance where must be evaluated the integral
-
-- `s`: the comoving distance from `s1` where must be evaluated the integral
-
-- `μ`: the cosine between `s1` and `s` where must be evaluated the integral
-
-- `cosmo::Cosmology`: cosmology to be used in this computation
-
-
-## Optional arguments 
-
-- `L::Integer = 0`: order of the Legendre polynomial to be used
-
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
-  with small numbers;
-
-- `use_windows::Bool = false`: tells if the integrand must consider the two
-   window function ``\phi`` and ``F``
-
-- ` Δχ_min::Float64 = 1e-4` : parameter used inside `integrand_ξ_lensing` in order to
-  avoid computatinal divergences; it should be `0<Δχ_min<<1`, see the `integrand_ξ_lensing`
-  docstring for more informations.
-
-- `N_χs::Integer = 100`: number of points to be used for sampling the integral
-  along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
-  with `N_χs ≥ 50` the result is stable.
-
-See also: [`integrand_ξ_lensing`](@ref), [`ξ_lensing`](@ref),
-[`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
-[`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
-[`y`](@ref), [`s2`](@ref)
-"""
-function integrand_on_mu_lensing(s1, s, μ, cosmo::Cosmology;
-     L::Integer = 0, en::Float64 = 1e6,
-     use_windows::Bool = true, Δχ_min::Float64 = 1e-4,
-     N_χs::Integer = 100)
-
-     s2_value = s2(s1, s, μ)
-     y_value = y(s1, s, μ)
-     res = if use_windows == true
-          ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
-          (ϕ_s2 > 0.0) || (return 0.0)
-          #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_lensing(s1, s2_value, y_value, cosmo;
-               en = en, Δχ_min = Δχ_min, N_χs = N_χs)
-          #println("int = $int")
-          int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
-     else
-          #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_lensing(s1, s2_value, y_value, cosmo;
-               en = en, Δχ_min = Δχ_min, N_χs = N_χs)
-          #println("int = $int")
-          #println( "Pl(μ, L) = $(Pl(μ, L))")
-          int .* Pl(μ, L)
-     end
-
-     #println("res = $res")
-     return res
-end
-
-
-
-
-

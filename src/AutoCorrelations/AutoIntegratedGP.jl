@@ -19,7 +19,7 @@
 
 
 @doc raw"""
-     integrand_ξ_integratedGP(IP1::Point, IP2::Point,
+     integrand_ξ_IntegratedGP(IP1::Point, IP2::Point,
           P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
@@ -59,10 +59,10 @@ where ``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \, \chi_2 \, y} ``,
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_integratedGP`](@ref), [`integrand_on_mu_integratedGP`](@ref)
+See also: [`ξ_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function integrand_ξ_integratedGP(IP1::Point, IP2::Point,
+function integrand_ξ_IntegratedGP(IP1::Point, IP2::Point,
      P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
@@ -89,7 +89,7 @@ end
 
 
 @doc raw"""
-     ξ_integratedGP(s1, s2, y, cosmo::Cosmology; 
+     ξ_IntegratedGP(s1, s2, y, cosmo::Cosmology; 
           en::Float64 = 1e10,
           N_χs::Integer = 100) :: Float64
 
@@ -120,7 +120,7 @@ and ``P(q)`` is the input power spectrum.
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_lensing`.
+the integrand function `integrand_ξ_Lensing`.
 
 
 ## Inputs
@@ -141,10 +141,10 @@ the integrand function `integrand_ξ_lensing`.
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
-See also: [`integrand_ξ_integratedGP`](@ref), [`integrand_on_mu_integratedGP`](@ref)
+See also: [`integrand_ξ_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function ξ_integratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
+function ξ_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      en::Float64 = 1e10, N_χs::Integer = 100, focus::Float64 = 10.0)
 
      #adim_χs = range(1e-12, 1.0, N_χs)
@@ -158,7 +158,7 @@ function ξ_integratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξ_igp = [
-          en * GaPSE.integrand_ξ_integratedGP(IP1, IP2, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_IntegratedGP(IP1, IP2, P1, P2, y, cosmo)
           for IP1 in IP1s, IP2 in IP2s
      ]
 
@@ -177,7 +177,7 @@ function ξ_integratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
      matrix_IP2s = [[GaPSE.Point(x, cosmo) for x in y] for y in matrix_χ2s]
      matrix_int_ξs = [
-          [en * GaPSE.integrand_ξ_integratedGP(IP1, IP2, P1, P2, y, cosmo) 
+          [en * GaPSE.integrand_ξ_IntegratedGP(IP1, IP2, P1, P2, y, cosmo) 
           for IP2 in matrix_IP2s[i]]
           for (i,IP1) in enumerate(IP1s)]
      
@@ -188,9 +188,9 @@ function ξ_integratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
 end
 
 
-function ξ_integratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
+function ξ_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_integratedGP(P1, P2, y, cosmo; kwargs...)
+     return ξ_IntegratedGP(P1, P2, y, cosmo; kwargs...)
 end
 
 
@@ -199,7 +199,7 @@ end
 
 
 @doc raw"""
-     integrand_on_mu_integratedGP(s1, s, μ, cosmo::Cosmology;
+     integrand_on_mu_IntegratedGP(s1, s, μ, cosmo::Cosmology;
           L::Integer = 0, 
           use_windows::Bool = true,
           en::Float64 = 1e10,
@@ -225,7 +225,7 @@ are removed, i.e is returned the following function ``f^{'}(s_1, s, \mu)``:
 ```
 
 The function ``\xi^{\int\phi\int\phi}(s_1, s_2, \cos{\theta})`` is calculated
-from `ξ_integratedGP`; note that these is an internal conversion of coordiate sistems
+from `ξ_IntegratedGP`; note that these is an internal conversion of coordiate sistems
 from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 
 ## Inputs
@@ -253,12 +253,12 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
-See also: [`integrand_ξ_integratedGP`](@ref), [`ξ_integratedGP`](@ref),
+See also: [`integrand_ξ_IntegratedGP`](@ref), [`ξ_IntegratedGP`](@ref),
 [`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
 [`y`](@ref), [`s2`](@ref)
 """
-function integrand_on_mu_integratedGP(s1, s, μ, cosmo::Cosmology;
+function integrand_on_mu_IntegratedGP(s1, s, μ, cosmo::Cosmology;
      L::Integer = 0, en::Float64 = 1e10,
      use_windows::Bool = true,
      N_χs::Integer = 50)
@@ -269,12 +269,12 @@ function integrand_on_mu_integratedGP(s1, s, μ, cosmo::Cosmology;
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_integratedGP(s1, s2_value, y_value, cosmo; en = en, N_χs = N_χs)
+          int = ξ_IntegratedGP(s1, s2_value, y_value, cosmo; en = en, N_χs = N_χs)
           #println("int = $int")
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_integratedGP(s1, s2_value, y_value, cosmo; en = en, N_χs = N_χs)
+          int = ξ_IntegratedGP(s1, s2_value, y_value, cosmo; en = en, N_χs = N_χs)
           #println("int = $int")
           int .* Pl(μ, L)
      end

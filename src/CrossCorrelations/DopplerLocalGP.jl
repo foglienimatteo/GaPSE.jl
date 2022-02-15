@@ -19,7 +19,7 @@
 
 
 @doc raw"""
-     ξ_dopplerlocalgp(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
+     ξ_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
 
 Return the Doppler-LocalGP cross-correlation function, defined as follows:
 
@@ -48,7 +48,7 @@ I^n_l(s) = \int_0^\infty \frac{\mathrm{d}q}{2\pi^2} q^2 \, P(q) \, \frac{j_l(qs)
 
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
-function ξ_dopplerlocalgp(P1::Point, P2::Point, y, cosmo::Cosmology)
+function ξ_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ
      s2, D2, a2, ℛ2 = P2.comdist, P2.D, P2.a, P2.ℛ
 
@@ -64,9 +64,9 @@ function ξ_dopplerlocalgp(P1::Point, P2::Point, y, cosmo::Cosmology)
 end
 
 
-function ξ_dopplerlocalgp(s1, s2, y, cosmo::Cosmology)
+function ξ_Doppler_LocalGP(s1, s2, y, cosmo::Cosmology)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_dopplerlocalgp(P1, P2, y, cosmo)
+     return ξ_Doppler_LocalGP(P1, P2, y, cosmo)
 end
 
 
@@ -75,7 +75,7 @@ end
 
 
 @doc raw"""
-     int_on_mu_dopplerlocal(s1, s, μ, cosmo::Cosmology; 
+     int_on_mu_Dopplerlocal(s1, s, μ, cosmo::Cosmology; 
           L::Integer = 0, 
           use_windows::Bool = true) ::Float64
 
@@ -99,7 +99,7 @@ are removed, i.e is returned the following function ``f^{'}(s_1, s, \mu)``:
 ```
 
 The function ``\xi^{v_{\parallel}\phi} (s_1, s_2, \cos{\theta})`` is calculated
-from `ξ_dopplerlocalgp`; note that there is an internal conversion of coordiate sistems
+from `ξ_Doppler_LocalGP`; note that there is an internal conversion of coordiate sistems
 from `(s1, s, μ)` to `(s1, s2, y)` through the functions `y` and `s2`.
 
 
@@ -121,12 +121,12 @@ from `(s1, s, μ)` to `(s1, s2, y)` through the functions `y` and `s2`.
 - `use_windows::Bool = false`: tells if the integrand must consider the two
    window function ``\phi`` and ``F``
 
-See also: [`ξ_dopplerlocalgp`](@ref), 
+See also: [`ξ_Doppler_LocalGP`](@ref), 
 [`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
 [`y`](@ref), [`s2`](@ref)
 """
-function int_on_mu_dopplerlocalgp(s1, s, μ,
+function int_on_mu_Doppler_LocalGP(s1, s, μ,
      cosmo::Cosmology; L::Integer = 0,
      use_windows::Bool = true)
 
@@ -136,10 +136,10 @@ function int_on_mu_dopplerlocalgp(s1, s, μ,
      if use_windows == true
           ϕ_s2 = ϕ(s2_value)
           (ϕ_s2 > 0.0) || (return 0.0)
-          val = ξ_dopplerlocalgp(s1, s2_value, y_value, cosmo)
+          val = ξ_Doppler_LocalGP(s1, s2_value, y_value, cosmo)
           return val * ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L)
      else
-          val = ξ_dopplerlocalgp(s1, s2_value, y_value, cosmo)
+          val = ξ_Doppler_LocalGP(s1, s2_value, y_value, cosmo)
           return val * Pl(μ, L)
      end
 end
@@ -155,12 +155,12 @@ end
 
 
 
-function ξ_localgpdoppler(s1, s2, y, cosmo::Cosmology)
-     ξ_dopplerlocalgp(s2, s1, y, cosmo)
+function ξ_LocalGP_Doppler(s1, s2, y, cosmo::Cosmology)
+     ξ_Doppler_LocalGP(s2, s1, y, cosmo)
 end
 
 
-function int_on_mu_localgpdoppler(s1, s, μ, cosmo::Cosmology;
+function int_on_mu_LocalGP_Doppler(s1, s, μ, cosmo::Cosmology;
      L::Integer = 0,
      use_windows::Bool = true,
      en::Float64 = 1e6,
@@ -171,10 +171,10 @@ function int_on_mu_localgpdoppler(s1, s, μ, cosmo::Cosmology;
      res = if use_windows == true
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
-          int = ξ_localgpdoppler(s1, s2_value, y_value, cosmo)
+          int = ξ_LocalGP_Doppler(s1, s2_value, y_value, cosmo)
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
-          int = ξ_localgpdoppler(s1, s2_value, y_value, cosmo)
+          int = ξ_LocalGP_Doppler(s1, s2_value, y_value, cosmo)
           int .* Pl(μ, L)
      end
 

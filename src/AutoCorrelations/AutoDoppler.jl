@@ -18,7 +18,7 @@
 #
 
 @doc raw"""
-     ξ_doppler(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
+     ξ_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
 
 Return the Doppler auto-correlation function, defined as follows:
 ```math
@@ -50,7 +50,7 @@ the J coefficients are given by:
 
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
-function ξ_doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
+function ξ_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
      s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ
      s2, D2, f2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ
 
@@ -71,18 +71,18 @@ function ξ_doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
 end
 
 
-function ξ_doppler(s1, s2, y, cosmo::Cosmology)
+function ξ_Doppler(s1, s2, y, cosmo::Cosmology)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_doppler(P1, P2, y, cosmo)
+     return ξ_Doppler(P1, P2, y, cosmo)
 end
 
 
 ##########################################################################################92
 
-
+#=
 
 @doc raw"""
-     integrand_on_mu_doppler(s1, s, μ, cosmo::Cosmology; 
+     integrand_on_mu_Doppler(s1, s, μ, cosmo::Cosmology; 
           L::Integer = 0, 
           use_windows::Bool = true) ::Float64
 
@@ -106,7 +106,7 @@ are removed, i.e is returned the following function ``f^{'}(s_1, s, \mu)``:
 ```
 
 The function ``\xi^{v_{\parallel}v_{\parallel}} (s_1, s_2, \cos{\theta})`` is calculated
-from `ξ_doppler`; note that these is an internal conversion of coordiate sistems
+from `ξ_Doppler`; note that these is an internal conversion of coordiate sistems
 from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 
 
@@ -128,12 +128,12 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 - `use_windows::Bool = false`: tells if the integrand must consider the two
    window function ``\phi`` and ``F``
 
-See also: [`ξ_doppler`](@ref), 
+See also: [`ξ_Doppler`](@ref), 
 [`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
 [`y`](@ref), [`s2`](@ref)
 """
-function integrand_on_mu_doppler(s1, s, μ,
+function integrand_on_mu_Doppler(s1, s, μ,
      cosmo::Cosmology; L::Integer = 0,
      use_windows::Bool = true)
 
@@ -143,11 +143,12 @@ function integrand_on_mu_doppler(s1, s, μ,
      if use_windows == true
           ϕ_s2 = ϕ(s2_value)
           (ϕ_s2 > 0.0) || (return 0.0)
-          val = ξ_doppler(s1, s2_value, y_value, cosmo)
+          val = ξ_Doppler(s1, s2_value, y_value, cosmo)
           return val * ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L)
      else
-          val = ξ_doppler(s1, s2_value, y_value, cosmo)
+          val = ξ_Doppler(s1, s2_value, y_value, cosmo)
           return val * Pl(μ, L)
      end
 end
 
+=#

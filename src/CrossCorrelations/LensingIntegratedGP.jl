@@ -20,7 +20,7 @@
 
 
 @doc raw"""
-     integrand_ξ_lensingintegratedgp(
+     integrand_ξ_Lensing_IntegratedGP(
           IP1::Point, IP2::Point,
           P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
@@ -62,10 +62,10 @@ and the ``J`` coefficients are given by
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_lensingintegratedgp`](@ref), [`integrand_on_mu_lensingintegratedgp`](@ref)
+See also: [`ξ_Lensing_IntegratedGP`](@ref), [`integrand_on_mu_Lensing_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function integrand_ξ_lensingintegratedgp(
+function integrand_ξ_Lensing_IntegratedGP(
      IP1::Point, IP2::Point,
      P1::Point, P2::Point,
      y, cosmo::Cosmology)
@@ -95,7 +95,7 @@ function integrand_ξ_lensingintegratedgp(
 end
 
 
-function integrand_ξ_lensingintegratedgp(
+function integrand_ξ_Lensing_IntegratedGP(
      χ1::Float64, χ2::Float64,
      s1::Float64, s2::Float64,
      y, cosmo::Cosmology;
@@ -103,7 +103,7 @@ function integrand_ξ_lensingintegratedgp(
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
-     return integrand_ξ_lensingintegratedgp(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+     return integrand_ξ_Lensing_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
 end
 
 #=
@@ -115,7 +115,7 @@ end
 
 
 @doc raw"""
-     ξ_lensingintegratedgp(s1, s2, y, cosmo::Cosmology;
+     ξ_Lensing_IntegratedGP(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6,
           N_χs::Integer = 100) :: Float64
 
@@ -146,7 +146,7 @@ and the ``J`` coefficients are given by
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_lensingintegratedgp`.
+the integrand function `integrand_ξ_Lensing_IntegratedGP`.
 
 
 
@@ -169,10 +169,10 @@ the integrand function `integrand_ξ_lensingintegratedgp`.
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_lensingintegratedgp`](@ref), [`integrand_on_mu_lensingintegratedgp`](@ref)
+See also: [`integrand_ξ_Lensing_IntegratedGP`](@ref), [`integrand_on_mu_Lensing_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function ξ_lensingintegratedgp(P1::Point, P2::Point, y, cosmo::Cosmology;
+function ξ_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
      adim_χs = range(1.1e-8, 1.0, length = N_χs)[begin:end]
@@ -185,7 +185,7 @@ function ξ_lensingintegratedgp(P1::Point, P2::Point, y, cosmo::Cosmology;
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_lensingintegratedgp(IP1, IP2, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_Lensing_IntegratedGP(IP1, IP2, P1, P2, y, cosmo)
           for IP1 in IP1s, IP2 in IP2s
      ]
 
@@ -195,9 +195,9 @@ function ξ_lensingintegratedgp(P1::Point, P2::Point, y, cosmo::Cosmology;
 end
 
 
-function ξ_lensingintegratedgp(s1, s2, y, cosmo::Cosmology; kwargs...)
+function ξ_Lensing_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_lensingintegratedgp(P1, P2, y, cosmo; kwargs...)
+     return ξ_Lensing_IntegratedGP(P1, P2, y, cosmo; kwargs...)
 end
 
 
@@ -206,7 +206,7 @@ end
 
 
 @doc raw"""
-     int_on_mu_lensingintegratedgp(s1, s, μ, cosmo::Cosmology;
+     int_on_mu_Lensing_IntegratedGP(s1, s, μ, cosmo::Cosmology;
           L::Integer = 0, 
           use_windows::Bool = true, 
           en::Float64 = 1e6,
@@ -232,7 +232,7 @@ are removed, i.e is returned the following function ``f^{'}(s_1, s, \mu)``:
 ```
 
 The function ``\xi^{\kappa\int\phi}(s_1, s_2, \cos{\theta})`` is calculated
-from `ξ_lensingintegratedgp`; note that these is an internal conversion of coordiate sistems
+from `ξ_Lensing_IntegratedGP`; note that these is an internal conversion of coordiate sistems
 from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 
 ## Inputs
@@ -260,12 +260,12 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
-See also: [`integrand_ξ_lensingintegratedgp`](@ref), [`ξ_lensingintegratedgp`](@ref),
+See also: [`integrand_ξ_Lensing_IntegratedGP`](@ref), [`ξ_Lensing_IntegratedGP`](@ref),
 [`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
 [`y`](@ref), [`s2`](@ref)
 """
-function int_on_mu_lensingintegratedgp(s1, s, μ, cosmo::Cosmology;
+function int_on_mu_Lensing_IntegratedGP(s1, s, μ, cosmo::Cosmology;
      L::Integer = 0, en::Float64 = 1e6,
      use_windows::Bool = true,
      N_χs::Integer = 100)
@@ -276,13 +276,13 @@ function int_on_mu_lensingintegratedgp(s1, s, μ, cosmo::Cosmology;
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_lensingintegratedgp(s1, s2_value, y_value, cosmo;
+          int = ξ_Lensing_IntegratedGP(s1, s2_value, y_value, cosmo;
                en = en, N_χs = N_χs)
           #println("int = $int")
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
-          int = ξ_lensingintegratedgp(s1, s2_value, y_value, cosmo;
+          int = ξ_Lensing_IntegratedGP(s1, s2_value, y_value, cosmo;
                en = en, N_χs = N_χs)
           #println("int = $int")
           #println( "Pl(μ, L) = $(Pl(μ, L))")
@@ -304,12 +304,12 @@ end
 
 
 
-function ξ_integratedgplensing(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_lensingintegratedgp(s2, s1, y, cosmo; kwargs...)
+function ξ_IntegratedGP_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_Lensing_IntegratedGP(s2, s1, y, cosmo; kwargs...)
 end
 
 
-function int_on_mu_integratedgplensing(s1, s, μ, cosmo::Cosmology;
+function int_on_mu_IntegratedGP_Lensing(s1, s, μ, cosmo::Cosmology;
      L::Integer = 0,
      use_windows::Bool = true,
      en::Float64 = 1e6,
@@ -320,11 +320,11 @@ function int_on_mu_integratedgplensing(s1, s, μ, cosmo::Cosmology;
      res = if use_windows == true
           ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
-          int = ξ_integratedgplensing(s1, s2_value, y_value, cosmo;
+          int = ξ_IntegratedGP_Lensing(s1, s2_value, y_value, cosmo;
                en = en, N_χs = N_χs)
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
-          int = ξ_integratedgplensing(s1, s2_value, y_value, cosmo;
+          int = ξ_IntegratedGP_Lensing(s1, s2_value, y_value, cosmo;
                en = en, N_χs = N_χs)
           int .* Pl(μ, L)
      end
