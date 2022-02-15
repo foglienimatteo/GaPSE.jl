@@ -344,6 +344,26 @@ function expanded_I04_tilde(PK, ss;
      kmin = 1e-6, kmax = 1e3, kwargs...)
 
      fit_1, fit_2 = 0.1, 1.0
+
+     if all(ss .> fit_1)
+          return [func_I04_tilde(PK, s, kmin, kmax; kwargs...) for s in ss]
+     else
+          cutted_ss = ss[ss.>fit_1]
+          cutted_I04_tildes = [func_I04_tilde(PK, s, kmin, kmax; kwargs...) for s in cutted_ss]
+          l_si, l_b, l_a = GaPSE.power_law_from_data(cutted_ss, cutted_I04_tildes,
+               [-2.0, -1.0, 0.0], fit_1, fit_2; con = true)
+          #println("l_si, l_b, l_a = $l_si , $l_b , $l_a")
+          left_I04_tildes = [GaPSE.power_law(s, l_si, l_b, l_a) for s in ss[ss.<=fit_1]]
+
+          return vcat(left_I04_tildes, cutted_I04_tildes)
+     end
+end
+
+#=
+function expanded_I04_tilde(PK, ss;
+     kmin = 1e-6, kmax = 1e3, kwargs...)
+
+     fit_1, fit_2 = 0.1, 1.0
      fit_3, fit_4 = 1e3, 1e4
 
      if all(fit_1 .< ss .< fit_4)
@@ -387,3 +407,5 @@ function expanded_I04_tilde(PK, ss;
           return I04_tildes
      end
 end
+
+=#

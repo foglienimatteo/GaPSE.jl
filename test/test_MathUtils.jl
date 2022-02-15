@@ -69,11 +69,10 @@ end
 end
 
 
-#=
 @testset "test expanded_I04_tilde" begin
-     tab_I04_tildes = readdlm("datatest/I40_tilde.txt")
-     ss = convert(Vector{Float64}, tab_I04_tildes[2:end, 1])
-     I04_tildes = convert(Vector{Float64}, tab_I04_tildes[2:end, 2])
+     tab_I04_tildes = readdlm("datatest/I04_tilde_extended.txt", comments=true)
+     ss = convert(Vector{Float64}, tab_I04_tildes[:, 1])
+     I04_tildes = convert(Vector{Float64}, tab_I04_tildes[:, 2])
 
      table_ips = readdlm(FILE_PS)
      ks = convert(Vector{Float64}, table_ips[:, 1])
@@ -84,4 +83,4 @@ end
 
      @test all([isapprox(my, tr, rtol = 1e-3) for (my, tr) in zip(calc_I04_tildes, I04_tildes)])
 end
-=#
+

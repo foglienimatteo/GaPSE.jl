@@ -231,7 +231,7 @@ struct IPSTools
           I13 = Spline1D(xicalc(PK, 1, 3; N = 1024, kmin = kmin, kmax = kmax, r0 = s0)...; bc = "error")
      
           #ss = 10 .^ range(log10(s0), log10(s0) - log10(kmin) - log10(kmax), length = N)
-          ss = 10 .^ range(log10(lim), 6, length = 100)
+          ss = 10 .^ range(log10(lim), 4, length = 1000)
           I04_tildes = expanded_I04_tilde(PK, ss; kmin = kmin, kmax = kmax)
           I04_tilde = Spline1D(ss, I04_tildes; bc = "error")
      
