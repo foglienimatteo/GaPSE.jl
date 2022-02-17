@@ -265,7 +265,7 @@ function map_integral_on_mu(
      v_ss::Union{Vector{Float64},Nothing} = nothing;
      s_1::Union{Float64,Nothing} = nothing,
      pr::Bool = true, 
-     N_log::Integer = 100,
+     N_log::Integer = 1000,
      kwargs...)
 
      s1 = isnothing(s_1) ? cosmo.s_eff : s_1

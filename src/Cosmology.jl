@@ -18,11 +18,11 @@
 #
 
 
-function func_ℛ(s, ℋ; s_lim=10.0)
+function func_ℛ(s, ℋ; s_lim=0.01, ℋ_0 = ℋ0)
      if s > s_lim
           return 1.0 - 1.0/(s*ℋ)
      else
-          return 1.0 - 1.0/(s_lim*ℋ0)
+          return 1.0 - 1.0/(s_lim*ℋ_0)
      end
 end
 
@@ -70,42 +70,53 @@ function Cosmology(
           fit_max = params.fit_max, con = params.con) :
              IPSTools(IPS, file_Is)
 
-     s_lim = isnothing(params.s_lim) ? BD.comdist[2] : params.s_lim
-     ℛs = [func_ℛ(s, ℋ; s_lim = s_lim) for (s, ℋ) in zip(BD.comdist, BD.ℋ)]
+     s_lim = isnothing(params.s_lim) ? 1.0 : params.s_lim
 
+     #=
      z_of_s_lim = my_interpolation(BD.comdist[1], BD.z[1], BD.comdist[2], BD.z[2], s_lim)
-     ℋ_of_s_lim = my_interpolation(BD.comdist[1], BD.ℋ[1], BD.comdist[2], BD.ℋ[2], s_lim)
-     f_of_s_lim = my_interpolation(BD.comdist[1], BD.f[1], BD.comdist[2], BD.f[2], s_lim)
      D_of_s_lim = my_interpolation(BD.comdist[1], BD.D[1], BD.comdist[2], BD.D[2], s_lim)
+     f_of_s_lim = my_interpolation(BD.comdist[1], BD.f[1], BD.comdist[2], BD.f[2], s_lim)
+     ℋ_of_s_lim = my_interpolation(BD.comdist[1], BD.ℋ[1], BD.comdist[2], BD.ℋ[2], s_lim)
 
-     new_BD_comdist = vcat(0.0, s_lim, BD.comdist[3:end])
-     new_BD_z = vcat(0.0, z_of_s_lim, BD.z[3:end])
-     another_BD_comdist = vcat(s_lim, s_lim, BD.comdist[3:end])
-     another_BD_z = vcat(z_of_s_lim, z_of_s_lim, BD.z[3:end])
+     new_BD_comdist = vcat(0.0, s_lim, BD.comdist[2:end])
+     new_BD_z = vcat(0.0, z_of_s_lim, BD.z[2:end])
+     new_BD_D = vcat(D_of_s_lim, D_of_s_lim, BD.D[2:end])
+     new_BD_f = vcat(f_of_s_lim, f_of_s_lim, BD.f[2:end])
+     new_BD_ℋ = vcat(ℋ_of_s_lim, ℋ_of_s_lim, BD.ℋ[2:end])
 
-     new_BD_ℋ = vcat(ℋ_of_s_lim, ℋ_of_s_lim, BD.ℋ[3:end])
-     new_BD_D = vcat(D_of_s_lim, D_of_s_lim, BD.D[3:end])
-     new_BD_f = vcat(f_of_s_lim, f_of_s_lim, BD.f[3:end])
+     another_BD_comdist = vcat(s_lim, s_lim, BD.comdist[2:end])
+     another_BD_z = vcat(z_of_s_lim, z_of_s_lim, BD.z[2:end])
 
      z_of_s = Spline1D(new_BD_comdist, another_BD_z; bc = "error")
      s_of_z = Spline1D(new_BD_z, another_BD_comdist; bc = "error")
+     D_of_s = Spline1D(new_BD_comdist, new_BD_D; bc = "error")
+     f_of_s = Spline1D(new_BD_comdist, new_BD_f; bc = "error")
+     ℋ_of_s = Spline1D(new_BD_comdist, new_BD_ℋ; bc = "error")
+     =#
+
+     z_of_s = Spline1D(BD.comdist, BD.z; bc = "error")
+     s_of_z = Spline1D(BD.z, BD.comdist; bc = "error")
+     D_of_s = Spline1D(BD.comdist, BD.D; bc = "error")
+     f_of_s = Spline1D(BD.comdist, BD.f; bc = "error")
+     ℋ_of_s = Spline1D(BD.comdist, BD.ℋ; bc = "error")
+
+     ss = 10 .^ range(-4, log10(BD.comdist[end]), length = 1000)
+     ℛs = [func_ℛ(s, ℋ_of_s(s); s_lim = s_lim) for s in ss]
+     ℛ_of_s = Spline1D(vcat(0.0, ss), vcat(ℛs[begin], ℛs); bc = "error")
 
      s_min = s_of_z(params.z_min)
      s_max = s_of_z(params.z_max)
      z_eff = func_z_eff(s_min, s_max, z_of_s)
      s_eff = s_of_z(z_eff)
      vol = V_survey(s_min, s_max, params.θ_max)
+
      new(
           IPS,
           params,
           tools,
           windowF,
-          z_of_s,
-          s_of_z,
-          Spline1D(new_BD_comdist, new_BD_D; bc = "error"),
-          Spline1D(new_BD_comdist, new_BD_f; bc = "error"),
-          Spline1D(new_BD_comdist, new_BD_ℋ; bc = "error"),
-          Spline1D(new_BD_comdist, ℛs; bc = "error"),
+          z_of_s, s_of_z,
+          D_of_s, f_of_s, ℋ_of_s, ℛ_of_s,
           z_eff, s_min, s_max, s_eff,
           vol,
           file_data,
