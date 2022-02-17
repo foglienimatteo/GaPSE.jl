@@ -75,9 +75,9 @@ struct BackgroundData
      
           N_z_MAX = findfirst(z -> z <= z_max, data[:, I_redshift]) - 1
           com_dist_z_MAX = data[:, I_comdist][N_z_MAX]
-          N_2_com_dist_z_MAX = findfirst(s -> s <= 2.0 * com_dist_z_MAX, data[:, I_comdist]) - 1
+          N_2_com_dist_z_MAX = findfirst(s -> s <= 3.0 * com_dist_z_MAX, data[:, I_comdist]) - 1
      
-          data_dict = Dict([name => reverse(data[:, i][N_2_com_dist_z_MAX:end-1])
+          data_dict = Dict([name => reverse(data[:, i][N_2_com_dist_z_MAX:end])
                             for (i, name) in enumerate(names)]...)
      
           com_H = data_dict["H [1/Mpc]"] ./ h ./ (1.0 .+ data_dict["z"])
@@ -118,12 +118,13 @@ struct CosmoParams
      fit_min::Union{Float64,Nothing}
      fit_max::Union{Float64,Nothing}
      con::Bool
+     s_lim::Union{Float64, Nothing}
 
 
      function CosmoParams(z_min, z_max, θ_max;
           k_min = 1e-8, k_max = 10.0,
           Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70,
-          N = 1024, fit_min = 2.0, fit_max = 10.0, con=true)
+          N = 1024, fit_min = 2.0, fit_max = 10.0, con = true, s_lim = nothing)
      
           @assert 0.0 ≤ θ_max ≤ π / 2.0 " 0.0 ≤ θ_max ≤ π/2.0 must hold!"
           @assert 0.0 ≤ z_min < z_max " 0.0 ≤ z_min < z_max must hold!"
@@ -131,9 +132,10 @@ struct CosmoParams
           @assert Ω_b ≥ 0.0 " Ω_b ≥ 0.0 must hold!"
           @assert Ω_cdm ≥ 0.0 " Ω_cdm ≥ 0.0 must hold!"
           @assert 0.0 ≤ h_0 ≤ 1.0 " 0.0 ≤ h_0 ≤ 1.0 must hold!"
+          @assert isnothing(s_lim) || (0.0 < s_lim < 50.0) "0.0 < s_lim < 50.0 must hold!"
      
           new(z_min, z_max, θ_max, k_min, k_max, Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0,
-               N, fit_min, fit_max, con)
+               N, fit_min, fit_max, con, s_lim)
      end
 end
 
@@ -218,6 +220,7 @@ Return the value ``s_2 = \sqrt{s_1^2 + s^2 + 2 \, s_1 \, s \, \mu}``
 See also: [`s`](@ref), [`μ`](@ref), [`y`](@ref)
 """
 s2(s1, s, μ) = √(s1^2 + s^2 + 2 * s1 * s * μ)
+
 
 
 @doc raw"""

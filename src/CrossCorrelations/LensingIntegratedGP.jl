@@ -77,7 +77,7 @@ function integrand_ξ_Lensing_IntegratedGP(
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-     Δχ = Δχ_square > 1e-16 ? √(Δχ_square) : 1e-8
+     Δχ = √(Δχ_square) > 1e-8 ? √(Δχ_square) : 1e-8
 
      prefactor = 9 / 2 * ℋ0^4 * Ω_M0^2
      factor = D1 * D2 * χ2 * (s1 - χ1) / (s1 * a1 * a2)

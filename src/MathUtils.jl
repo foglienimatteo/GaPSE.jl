@@ -409,3 +409,14 @@ function expanded_I04_tilde(PK, ss;
 end
 
 =#
+
+
+function my_interpolation(x1, y1, x2, y2, x)
+     @assert x1 ≤ x ≤ x2 "x1 ≤ x ≤ x2 must hold!"
+     x > x1 || (return y1)
+     x < x2 || (return y2)
+     m = (y2 - y1) / (x2 - x1)
+     q = y1 - m * x1
+     y = m * x + q
+     return y
+end

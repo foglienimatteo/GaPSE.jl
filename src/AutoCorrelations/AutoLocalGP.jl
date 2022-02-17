@@ -47,8 +47,8 @@ where ``D_1 = D(s_1)``, ``D_2 = D(s_2)`` and so on, ``\mathcal{H} = a H``,
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
 function ξ_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
-     s1, D1, f1, a1, ℛ1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℛ
-     s2, D2, f2, a2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℛ
+     s1, D1, a1, ℛ1 = P1.comdist, P1.D, P1.a, P1.ℛ
+     s2, D2, a2, ℛ2 = P2.comdist, P2.D, P2.a, P2.ℛ
 
      Δs = s(s1, s2, y)
      prefac = 2.25 * ℋ0^4 * cosmo.params.Ω_M0^2 * D1 * D2 * Δs^4 / (a1 * a2)

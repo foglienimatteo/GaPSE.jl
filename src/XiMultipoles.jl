@@ -264,12 +264,14 @@ function map_integral_on_mu(
      effect::Union{String,Function},
      v_ss::Union{Vector{Float64},Nothing} = nothing;
      s_1::Union{Float64,Nothing} = nothing,
-     pr::Bool = true, kwargs...)
+     pr::Bool = true, 
+     N_log::Integer = 100,
+     kwargs...)
 
      s1 = isnothing(s_1) ? cosmo.s_eff : s_1
 
      t1 = time()
-     ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length = 100) : v_ss
+     ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length =  N_log) : v_ss
      xis = @showprogress [integral_on_mu(s1, s, effect, cosmo; kwargs...) for s in ss]
 
 

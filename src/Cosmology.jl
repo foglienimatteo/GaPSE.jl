@@ -18,11 +18,11 @@
 #
 
 
-function func_ℛ(s, ℋ; s_lim=1e-1)
+function func_ℛ(s, ℋ; s_lim=10.0)
      if s > s_lim
           return 1.0 - 1.0/(s*ℋ)
      else
-          return 1.0 - 1.0/(s_lim*ℋ)
+          return 1.0 - 1.0/(s_lim*ℋ0)
      end
 end
 
@@ -50,54 +50,69 @@ struct Cosmology
      file_ips::String
      file_windowF::String
 
-     function Cosmology(
-          params::CosmoParams,
-          file_data::String,
-          file_ips::String,
-          file_windowF::String,
-          file_Is::Union{String,Nothing} = nothing;
-          expand::Bool = true,
-          names_bg = NAMES_BACKGROUND
+function Cosmology(
+     params::CosmoParams,
+     file_data::String,
+     file_ips::String,
+     file_windowF::String,
+     file_Is::Union{String,Nothing} = nothing;
+     expand::Bool = true,
+     names_bg = NAMES_BACKGROUND
+)
+
+     BD = BackgroundData(file_data::String, params.z_max;
+          names = names_bg, h = params.h_0)
+     IPS = InputPS(file_ips; expand = expand)
+     windowF = WindowF(file_windowF)
+     tools = isnothing(file_Is) ?
+             IPSTools(IPS; k_min = params.k_min, k_max = params.k_max,
+          N = params.N, fit_min = params.fit_min,
+          fit_max = params.fit_max, con = params.con) :
+             IPSTools(IPS, file_Is)
+
+     s_lim = isnothing(params.s_lim) ? BD.comdist[2] : params.s_lim
+     ℛs = [func_ℛ(s, ℋ; s_lim = s_lim) for (s, ℋ) in zip(BD.comdist, BD.ℋ)]
+
+     z_of_s_lim = my_interpolation(BD.comdist[1], BD.z[1], BD.comdist[2], BD.z[2], s_lim)
+     ℋ_of_s_lim = my_interpolation(BD.comdist[1], BD.ℋ[1], BD.comdist[2], BD.ℋ[2], s_lim)
+     f_of_s_lim = my_interpolation(BD.comdist[1], BD.f[1], BD.comdist[2], BD.f[2], s_lim)
+     D_of_s_lim = my_interpolation(BD.comdist[1], BD.D[1], BD.comdist[2], BD.D[2], s_lim)
+
+     new_BD_comdist = vcat(0.0, s_lim, BD.comdist[3:end])
+     new_BD_z = vcat(0.0, z_of_s_lim, BD.z[3:end])
+     another_BD_comdist = vcat(s_lim, s_lim, BD.comdist[3:end])
+     another_BD_z = vcat(z_of_s_lim, z_of_s_lim, BD.z[3:end])
+
+     new_BD_ℋ = vcat(ℋ_of_s_lim, ℋ_of_s_lim, BD.ℋ[3:end])
+     new_BD_D = vcat(D_of_s_lim, D_of_s_lim, BD.D[3:end])
+     new_BD_f = vcat(f_of_s_lim, f_of_s_lim, BD.f[3:end])
+
+     z_of_s = Spline1D(new_BD_comdist, another_BD_z; bc = "error")
+     s_of_z = Spline1D(new_BD_z, another_BD_comdist; bc = "error")
+
+     s_min = s_of_z(params.z_min)
+     s_max = s_of_z(params.z_max)
+     z_eff = func_z_eff(s_min, s_max, z_of_s)
+     s_eff = s_of_z(z_eff)
+     vol = V_survey(s_min, s_max, params.θ_max)
+     new(
+          IPS,
+          params,
+          tools,
+          windowF,
+          z_of_s,
+          s_of_z,
+          Spline1D(new_BD_comdist, new_BD_D; bc = "error"),
+          Spline1D(new_BD_comdist, new_BD_f; bc = "error"),
+          Spline1D(new_BD_comdist, new_BD_ℋ; bc = "error"),
+          Spline1D(new_BD_comdist, ℛs; bc = "error"),
+          z_eff, s_min, s_max, s_eff,
+          vol,
+          file_data,
+          file_ips,
+          file_windowF
      )
-     
-          BD = BackgroundData(file_data::String, params.z_max;
-               names = names_bg, h = params.h_0)
-          IPS = InputPS(file_ips; expand = expand)
-          windowF = WindowF(file_windowF)
-          tools = isnothing(file_Is) ?
-                  IPSTools(IPS; k_min = params.k_min, k_max = params.k_max,
-               N = params.N, fit_min = params.fit_min,
-               fit_max = params.fit_max, con = params.con) :
-                  IPSTools(IPS, file_Is)
-     
-          ℛs = [func_ℛ(s, ℋ) for (s, ℋ) in zip(BD.comdist, BD.ℋ)]
-     
-          z_of_s = Spline1D(BD.comdist, BD.z; bc = "nearest")
-          s_of_z = Spline1D(BD.z, BD.comdist; bc = "nearest")
-     
-          s_min = s_of_z(params.z_min)
-          s_max = s_of_z(params.z_max)
-          z_eff = func_z_eff(s_min, s_max, z_of_s)
-          s_eff = s_of_z(z_eff)
-          vol = V_survey(s_min, s_max, params.θ_max)
-          new(
-               IPS,
-               params,
-               tools,
-               windowF,
-               z_of_s,
-               s_of_z,
-               Spline1D(BD.comdist, BD.D; bc = "nearest"),
-               Spline1D(BD.comdist, BD.f; bc = "nearest"),
-               Spline1D(BD.comdist, BD.ℋ; bc = "nearest"),
-               Spline1D(BD.comdist, ℛs; bc = "nearest"),
-               z_eff, s_min, s_max, s_eff,
-               vol,
-               file_data,
-               file_ips,
-               file_windowF
-          )
-     end
+end
 end
 
 
@@ -118,7 +133,6 @@ struct Point
 
      Point(z, comdist, D, f, ℋ, ℛ) = new(z, comdist, D, f, ℋ, ℛ, 1.0/(1.0+z))
      function Point(s, cosmo::Cosmology)
-          #println("s = $s")
           z = cosmo.z_of_s(s)
           new(z, s, cosmo.D_of_s(s), cosmo.f_of_s(s),
                cosmo.ℋ_of_s(s), cosmo.ℛ_of_s(s), 1.0/(1.0+z))
