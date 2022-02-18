@@ -18,7 +18,7 @@
 #
 
 @testset "test xi localgp_integratedgp L = 0" begin
-     table = readdlm("datatest/xi_localgp_integratedgp_L0.txt"; comments = true)
+     table = readdlm("datatest/monopoles/xi_localgp_integratedgp_L0.txt"; comments = true)
      ss = convert(Vector{Float64}, table[:, 1])
      xis = convert(Vector{Float64}, table[:, 2])
 

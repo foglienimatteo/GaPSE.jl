@@ -18,7 +18,7 @@
 #
 
 @testset "test xi auto_doppler L = 0" begin
-     table = readdlm("datatest/xi_doppler_L0.txt"; comments = true)
+     table = readdlm("datatest/monopoles/xi_doppler_L0.txt"; comments = true)
      ss = convert(Vector{Float64}, table[:, 1])
      xis = convert(Vector{Float64}, table[:, 2])
 

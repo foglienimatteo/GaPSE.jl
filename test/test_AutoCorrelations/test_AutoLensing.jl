@@ -18,14 +18,14 @@
 #
 
 @testset "test xi auto_lensing L = 0" begin
-     table = readdlm("datatest/xi_lensing_L0.txt"; comments = true)
+     table = readdlm("datatest/monopoles/xi_lensing_L0.txt"; comments = true)
      ss = convert(Vector{Float64}, table[:, 1])
      xis = convert(Vector{Float64}, table[:, 2])
 
      calc_xis = [GaPSE.ξ_multipole(COSMO.s_eff, s, "auto_lensing", COSMO;
-          L = 0, N_μs = 20, N_χs = 30, Δχ_min = 1e-4, enhancer = 1e10, use_windows=false) for s in ss]
+          L = 0, N_μs = 20, N_χs = 30, Δχ_min = 1e-4, enhancer = 1e10, use_windows = false) for s in ss]
 
-     @test all([isapprox(xi, calc_xi, rtol = 1e-3) for (xi, calc_xi) in 
-          zip(xis[ss.>0.5], calc_xis[ss.>0.5])])
+     @test all([isapprox(xi, calc_xi, rtol = 1e-3) for (xi, calc_xi) in
+                zip(xis[ss.>0.5], calc_xis[ss.>0.5])])
 end
 

@@ -18,12 +18,12 @@
 #
 
 @testset "test xi auto_integratedgp L = 0" begin
-     table = readdlm("datatest/xi_integratedgp_L0.txt"; comments = true)
+     table = readdlm("datatest/monopoles/xi_integratedgp_L0.txt"; comments = true)
      ss = convert(Vector{Float64}, table[:, 1])
      xis = convert(Vector{Float64}, table[:, 2])
 
      calc_xis = [GaPSE.ξ_multipole(COSMO.s_eff, s, "auto_integratedgp", COSMO;
-          L = 0, N_μs = 30, N_χs = 50, enhancer = 1e10, use_windows=false) for s in ss]
+          L = 0, N_μs = 30, N_χs = 50, enhancer = 1e10, use_windows = false) for s in ss]
 
      @test all([isapprox(xi, calc_xi, rtol = 1e-3) for (xi, calc_xi) in zip(xis, calc_xis)])
 end
