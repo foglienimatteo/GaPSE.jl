@@ -71,9 +71,10 @@ const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
 const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP; expand = false)
 
 common_kwargs = Dict(
+     :use_windows => false,
      :enhancer => 1e8, :N_μs => 30,
      :μ_atol => 0.0, :μ_rtol => 1e-2,
-     #:N_log => 100,
+     :N_log => 100,
 );
 
 spec_effect = [
@@ -90,6 +91,10 @@ specific_kwargs = [effect ∈ spec_effect ? Dict(
 
 joint_kwargs = [isnothing(spec) ? common_kwargs : merge(common_kwargs, spec)
                 for spec in specific_kwargs];
+
+dict_L_dir = Dict(0 => "monopoles", 1 => "dipoles", 2 => "tripoles",
+     3 => "quadrupoles", 4 => "pentapoles")
+
 
 @testset "test_AutoDoppler" begin
      include("test_AutoCorrelations/test_AutoDoppler.jl")
@@ -110,11 +115,27 @@ end
 
 ######
 
+@testset "test_DopplerLensing" begin
+     include("test_CrossCorrelations/test_DopplerLensing.jl")
+end
+
+@testset "test_DopplerLocalGP" begin
+     include("test_CrossCorrelations/test_DopplerLocalGP.jl")
+end
+
 @testset "test_DopplerIntegratedGP" begin
      include("test_CrossCorrelations/test_DopplerIntegratedGP.jl")
 end
 
-@testset "test_LocalGPIntegratedGP" begin
-     include("test_CrossCorrelations/test_LocalGPIntegratedGP.jl")
+@testset "test_DopplerLocalGP" begin
+     include("test_CrossCorrelations/test_DopplerLocalGP.jl")
+end
+
+@testset "test_LensingIntegratedGP" begin
+     include("test_CrossCorrelations/test_LensingIntegratedGP.jl")
+end
+
+@testset "test_LensingIntegratedGP" begin
+     include("test_CrossCorrelations/test_LensingIntegratedGP.jl")
 end
 

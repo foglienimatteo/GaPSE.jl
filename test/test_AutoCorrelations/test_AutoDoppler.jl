@@ -18,16 +18,25 @@
 #
 
 @testset "test xi auto_doppler L = 0" begin
-     table = readdlm("datatest/monopoles/xi_doppler_L0.txt"; comments = true)
+     effect = "auto_doppler"
+     L = 0
+
+     table = readdlm("datatest/" * dict_L_dir[L] * "/xi_" * effect * "_L" * string(L) * ".txt"; comments = true)
      ss = convert(Vector{Float64}, table[:, 1])
      xis = convert(Vector{Float64}, table[:, 2])
 
-     calc_xis = [GaPSE.ξ_multipole(COSMO.s_eff, s, "auto_doppler", COSMO;
-          L = 0, joint_kwargs[GaPSE.INDEX_GR_EFFECT["auto_doppler"]]...) for s in ss]
+     name = "calc_xi_" * effect * "_L" * string(L) * ".txt"
+     isfile(name) && rm(name)
+     GaPSE.print_map_ξ_multipole(COSMO, name, effect;
+          L = L, joint_kwargs[GaPSE.INDEX_GR_EFFECT[effect]]...)
 
-     GaPSE.my_println_vec(calc_xis, "calc_xis"; N = 5)
-     GaPSE.my_println_vec(xis, "xis"; N = 5)
+     calc_table = readdlm(name; comments = true)
+     calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+     calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
+     @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
      @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+
+     rm(name)
 end
 

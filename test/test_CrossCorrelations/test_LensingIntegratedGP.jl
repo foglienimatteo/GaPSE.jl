@@ -17,8 +17,8 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-@testset "test xi auto_localgp L = 0" begin
-     effect = "auto_localgp"
+@testset "test xi lensing_integratedgp L = 0" begin
+     effect = "lensing_integratedgp"
      L = 0
 
      table = readdlm("datatest/" * dict_L_dir[L] * "/xi_" * effect * "_L" * string(L) * ".txt"; comments = true)
