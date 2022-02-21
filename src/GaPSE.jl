@@ -65,28 +65,29 @@ include("CrossCorrelations/LocalGPIntegratedGP.jl")
 
 IMPLEMENTED_GR_EFFECTS = [
      "auto_doppler", "auto_lensing",
-     "auto_localgp", "auto_integratedgp",
-
-     "lensing_doppler", "doppler_lensing",
+     "auto_localgp", "auto_integratedgp", "lensing_doppler", "doppler_lensing",
      "doppler_localgp", "localgp_doppler",
-     "doppler_integratedgp",  "integratedgp_doppler",
+     "doppler_integratedgp", "integratedgp_doppler",
      "lensing_localgp", "localgp_lensing",
-     "lensing_integratedgp",  "integratedgp_lensing",
+     "lensing_integratedgp", "integratedgp_lensing",
      "localgp_integratedgp", "integratedgp_localgp",
 ]
 
 IMPLEMENTED_ξs = [
-     ξ_Doppler, ξ_Lensing, ξ_LocalGP, ξ_IntegratedGP,
-
-     ξ_Lensing_Doppler, ξ_Doppler_Lensing,
+     ξ_Doppler, ξ_Lensing, ξ_LocalGP, ξ_IntegratedGP, ξ_Lensing_Doppler, ξ_Doppler_Lensing,
      ξ_Doppler_LocalGP, ξ_LocalGP_Doppler,
      ξ_Doppler_IntegratedGP, ξ_IntegratedGP_Doppler,
      ξ_Lensing_LocalGP, ξ_LocalGP_Lensing,
-     ξ_Lensing_IntegratedGP,  ξ_IntegratedGP_Lensing,
+     ξ_Lensing_IntegratedGP, ξ_IntegratedGP_Lensing,
      ξ_LocalGP_IntegratedGP, ξ_IntegratedGP_LocalGP
 ]
 
-DICT_GR_ξs =  Dict([k => v for (k, v) in zip(IMPLEMENTED_GR_EFFECTS, IMPLEMENTED_ξs)]...)
+DICT_GR_ξs = Dict([k => v for (k, v) in zip(IMPLEMENTED_GR_EFFECTS, IMPLEMENTED_ξs)]...)
+INDEX_GR_EFFECT = Dict([name => i for (i, name) in
+                        enumerate(IMPLEMENTED_GR_EFFECTS)]...)
+GR_EFFECT_INDEXED = Dict([i => name for (i, name) in
+                          enumerate(IMPLEMENTED_GR_EFFECTS)]...)
+
 
 include("PowerSpectrum.jl")
 include("XiMultipoles.jl")

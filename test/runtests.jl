@@ -70,6 +70,27 @@ const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
 
 const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP; expand = false)
 
+common_kwargs = Dict(
+     :enhancer => 1e8, :N_μs => 30,
+     :μ_atol => 0.0, :μ_rtol => 1e-2,
+     #:N_log => 100,
+);
+
+spec_effect = [
+     "auto_lensing", "auto_integratedgp",
+     "lensing_doppler", "doppler_lensing",
+     "doppler_integratedgp", "integratedgp_doppler",
+     "lensing_localgp", "localgp_lensing",
+     "lensing_integratedgp", "integratedgp_lensing",
+     "localgp_integratedgp", "integratedgp_localgp",
+];
+
+specific_kwargs = [effect ∈ spec_effect ? Dict(
+     :en => 1e12, :N_χs => 30) : nothing for effect in GaPSE.IMPLEMENTED_GR_EFFECTS]
+
+joint_kwargs = [isnothing(spec) ? common_kwargs : merge(common_kwargs, spec)
+                for spec in specific_kwargs];
+
 @testset "test_AutoDoppler" begin
      include("test_AutoCorrelations/test_AutoDoppler.jl")
 end

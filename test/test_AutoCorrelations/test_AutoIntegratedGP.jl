@@ -23,7 +23,7 @@
      xis = convert(Vector{Float64}, table[:, 2])
 
      calc_xis = [GaPSE.ξ_multipole(COSMO.s_eff, s, "auto_integratedgp", COSMO;
-          L = 0, N_μs = 30, N_χs = 50, enhancer = 1e10, use_windows = false) for s in ss]
+          L = 0, joint_kwargs[GaPSE.INDEX_GR_EFFECT["auto_integratedgp"]]...) for s in ss]
 
      @test all([isapprox(xi, calc_xi, rtol = 1e-3) for (xi, calc_xi) in zip(xis, calc_xis)])
 end
