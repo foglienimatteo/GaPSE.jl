@@ -71,6 +71,7 @@ const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
 const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP; expand = false)
 
 common_kwargs = Dict(
+     :pr=>false,
      :use_windows => false,
      :enhancer => 1e8, :N_μs => 30,
      :μ_atol => 0.0, :μ_rtol => 1e-2,

@@ -273,10 +273,12 @@ function map_integral_on_mu(
 
      t1 = time()
      ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length =  N_log) : v_ss
-     xis = @showprogress "$effect, L=$L: " [
+     xis = pr ? begin
+          @showprogress "$effect, L=$L: " [
+          integral_on_mu(s1, s, effect, cosmo; L = L, kwargs...) for s in ss
+          ] end : [
           integral_on_mu(s1, s, effect, cosmo; L = L, kwargs...) for s in ss
           ]
-
 
      t2 = time()
      pr && println("\ntime needed for map_integral_on_mu for $effect " *

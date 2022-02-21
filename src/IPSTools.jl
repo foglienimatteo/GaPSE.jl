@@ -161,8 +161,59 @@ end
 
 
 
-"""
+@doc raw"""
+     IPSTools(
+          I00::Dierckx.Spline1D
+          I20::Dierckx.Spline1D
+          I40::Dierckx.Spline1D
+          I02::Dierckx.Spline1D
+          I22::Dierckx.Spline1D
+          I31::Dierckx.Spline1D
+          I13::Dierckx.Spline1D
+          I11::Dierckx.Spline1D
 
+          I04_tilde::Dierckx.Spline1D
+
+          σ_0::Float64
+          σ_1::Float64
+          σ_2::Float64
+          σ_3::Float64
+
+          fit_min::Union{Float64,Nothing}
+          fit_max::Union{Float64,Nothing}
+          k_min::Float64
+          k_max::Float64
+          s_0::Float64
+          )
+
+Struct that contains all the function and values obtained from the 
+Input Power Spectrum.
+
+## Arguments
+
+- `I00, I20, I40, I02, I22, I31, I13, I11 ::Dierckx.Spline1D`: spline that
+  return the value of the integral:
+
+  ```math
+  I_\ell^n(s) = \int_0^\infty \frac{\mathrm{d} q}{2 \pi^2} q^2 \, P(q) 
+    \, \frac{j_\ell(qs)}{(qs)^n}
+  ```
+  where, for a generic `Iab` name, ``\ell`` is the FIRST number (`a`) and 
+  ``n`` the second (`b`).
+
+  These function are obtained through a `Spline1D` (from the 
+  [Dierckx](https://github.com/kbarbary/Dierckx.jl) Julia package) of the Spherical
+  Bessel Transform function `xicalc` (from the 
+  [TwoFAST](https://github.com/hsgg/TwoFAST.jl) Julia package) applied to the 
+  input Power Spectrum `P(q)`. 
+
+- `I04_tilde::Dierckx.Spline1D`: spline that
+  return the value of the integral:
+
+  ```math
+  I_\ell^n(s) = \int_0^\infty \frac{\mathrm{d} q}{2 \pi^2} q^2 \, P(q) 
+    \, \frac{j_\ell(qs)}{(qs)^n}
+  ```
 
 """
 struct IPSTools
