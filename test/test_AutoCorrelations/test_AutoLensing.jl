@@ -38,7 +38,7 @@
      #GaPSE.my_println_vec(xis, "xis"; N = 7)
 
      @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
-     @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis[ss.>0.5], calc_xisxis[ss.>0.5])])
+     @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis[ss.>0.5], calc_xis[ss.>0.5])])
 
      rm(name)
 end
