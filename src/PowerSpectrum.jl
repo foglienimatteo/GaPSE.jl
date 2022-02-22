@@ -18,47 +18,80 @@
 #
 
 function PS_multipole(
-     f_in::Union{Function,Dierckx.Spline1D},
-     int_s_min = 1e-8, int_s_max = 1000.0;
-     L::Integer = 0, N::Integer = 128,
-     pr::Bool = true)
+     f_in::Union{Function,Dierckx.Spline1D};
+     int_s_min::Float64 = 1e-8, int_s_max::Float64 = 1000.0,
+     L::Integer = 0, N::Integer = 1024,
+     pr::Bool = true, kwargs...)
 
      t1 = time()
-     ks, pks = xicalc(x -> 2 * π^2 * f_in(x), L, 0; N = N, kmin = int_s_min, kmax = int_s_max, r0 = 1 / int_s_max)
+     ks, pks = xicalc(s -> 2 * π^2 * s^2 * f_in(s), L, 0;
+          N = N, kmin = int_s_min, kmax = int_s_max, r0 = 1 / int_s_max)
      t2 = time()
      pr && println("\ntime needed for Power Spectrum  computation [in s] = $(t2-t1)\n")
 
      if iseven(L)
-          return ks, ((2 * L + 1) / A_prime * (-1)^(L / 2)) .* pks
+          return ks, (1 / A_prime * (-1)^(L / 2)) .* pks
      else
-          return ks, ((2 * L + 1) / A_prime * (-im)^L) .* pks
+          return ks, (1 / A_prime * (-im)^L) .* pks
      end
 end
 
 
 function PS_multipole(
      in::String;
-     L::Integer = 0, N::Integer = 128,
-     pr::Bool = true)
+     L::Integer = 0, N::Integer = 1024,
+     pr::Bool = true,
+     int_s_min::Union{Float64,Nothing} = nothing,
+     int_s_max::Union{Float64,Nothing} = nothing)
 
      xi_table = readdlm(in, comments = true)
      ss = convert(Vector{Float64}, xi_table[:, 1])
      fs = convert(Vector{Float64}, xi_table[:, 2])
      f_in = Spline1D(ss, fs; bc = "error")
 
-     int_s_min = min(ss...)
-     int_s_max = max(ss...)
-     return PS_multipole(f_in, int_s_min, int_s_max; N = N, L = L, pr = pr)
+     #intsmin = isnothing(int_s_min) ? min(ss...) : int_s_min
+     #intsmax = isnothing(int_s_max) ? max(ss...) : int_s_max
+     intsmin = 1e-2
+     intsmax = 1e3
+     return PS_multipole(f_in; int_s_min = intsmin, int_s_max = intsmax, N = N, L = L, pr = pr)
 end
 
 
 
+function PS_multipole(
+     effect::String, cosmo::Cosmology;
+     int_s_min::Float64 = 1e-8, int_s_max::Float64 = 1000.0,
+     L::Integer = 0, N::Integer = 1024,
+     pr::Bool = true, kwargs...)
+
+     error = "$effect is not a valid GR effect name.\n" *
+             "Valid GR effect names are the following:\n" *
+             string(IMPLEMENTED_GR_EFFECTS .* " , "...)
+     @assert (effect ∈ IMPLEMENTED_GR_EFFECTS) error
+
+     xs, ys = map_ξ_multipole(cosmo, effect; L = L, pr = pr, kwargs...)
+     f_in = Spline1D(xs, ys; bc="error")
+
+     t1 = time()
+     ks, pks = xicalc(s -> 2 * π^2 * s^2 * f_in(s), L, 0;
+          N = N, kmin = int_s_min, kmax = int_s_max, r0 = 1 / int_s_max)
+     t2 = time()
+     pr && println("\ntime needed for Power Spectrum  computation [in s] = $(t2-t1)\n")
+
+     if iseven(L)
+          return ks, (1 / A_prime * (-1)^(L / 2)) .* pks
+     else
+          return ks, (1 / A_prime * (-im)^L) .* pks
+     end
+end
+
+
 @doc raw"""
      PS_multipole(in::String, int_s_min = 0.0, int_s_max = 1000.0; 
-          L::Integer = 0, N::Integer = 128, pr::Bool = true)
+          L::Integer = 0, N::Integer = 1024, pr::Bool = true)
      PS_multipole(
           f_in::Union{Function,Dierckx.Spline1D}, int_s_min = 0.0, int_s_max = 1000.0; 
-          L::Integer = 0, N::Integer = 128, pr::Bool = true
+          L::Integer = 0, N::Integer = 1024, pr::Bool = true
           ) :: Tuple{Vector{Float64}, Vector{Float64}}
 
 Return the `L`-order multipole from the input function `f_in`, through the
@@ -67,7 +100,7 @@ following Fast Fourier Transform and the effective redshift approximation:
 ```math
 P_L(k) = \frac{2 L + 1}{A^{'}} (-i)^L \, \phi(s_\mathrm{eff}) \int_0^\infty 
         \mathrm{d} s \; s^2 \, j_L(ks) \, f_\mathrm{in}(s) \; ,
-        \quad \; A^{'} = 4 \, \pi^2
+        \quad \; A^{'} = 8 \, \pi^2
 ```
 
 This expression can be easily obtained from the standard one:
@@ -103,53 +136,21 @@ PS_multipole
 
 
 
-function print_PS_multipole(in::String, out::String,
-     cosmo::Union{Cosmology,Nothing} = nothing;
-     L::Integer = 0, N::Integer = 128,
+function print_PS_multipole(in::String, out::String;
+     L::Integer = 0, N::Integer = 1024,
      pr::Bool = true, kwargs...)
 
+     pr && println("\nI'm computiong the PS_multipole from the file $in")
+
      time_1 = time()
-
-     vec = if isfile(in)
-          pr && println("\nI'm computiong the PS_multipole from the file $in")
-          PS_multipole(in; N = N, L = L, pr = pr, kwargs...)
-     else
-          if in ∈ keys(dict_gr_mu) && isnothing(cosmo)
-               !
-               pr && println("\nI'm computiong the PS_multipole for the $in GR effect.")
-               t1 = time()
-               ss = 10 .^ range(-1, 3, length = 100)
-               v = [integral_on_mu(cosmo.s_eff, s, dict_gr_mu[in], cosmo; L = L, kwargs...) for s in ss]
-               xis, xis_err = [x[1] for x in v], [x[2] for x in v]
-               t2 = time()
-               pr && println("\ntime needed to create the xi map [in s] = $(t2-t1)\n")
-               f_in = Spline1D(ss, xis; bc = "error")
-               PS_multipole(f_in, cosmo.s_min, cosmo.s_max; N = N, L = L, pr = pr)
-          else
-               if in ∉ keys(dict_gr_mu)
-                    throw(ErrorException(
-                         "$in is neither a GR implemented effect or a file.\n" *
-                         "\t The implemented GR effects are currently: \n" *
-                         string(keys(dict_gr_mu) .* " , "...)
-                    ))
-               else
-                    throw(ErrorException(
-                         " you have to give an input cosmology to perform the " *
-                         " power spectrum multipole computation directly! "))
-               end
-          end
-     end
-
+     vec = PS_multipole(in; N = N, L = L, pr = pr, kwargs...)
      time_2 = time()
+
+     pr && println("\ntime needed for Power Spectrum  computation [in s] = $(time_2-time_1)\n")
 
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
-          if isnothing(cosmo)
-               println(io, "# Power Spectrum Multipole computation of the file: $in")
-          else
-               println(io, "# Power Spectrum Multipole computation with an input cosmology")
-               parameters_used(io, cosmo)
-          end
+          println(io, "# Power Spectrum Multipole computation of the file: $in")
           println(io, "#\n# For this PS_multipole computation we set: ")
           println(io, "# \t #points used in Fourier transform N = $N")
           println(io, "# \t multipole degree in consideration L = $L")
@@ -172,3 +173,49 @@ function print_PS_multipole(in::String, out::String,
      end
 end
 
+
+function print_PS_multipole(
+     effect::String, out::String,
+     cosmo::Cosmology;
+     L::Integer = 0, N::Integer = 1024,
+     pr::Bool = true, kwargs...)
+
+     error = "$effect is not a valid GR effect name.\n" *
+             "Valid GR effect names are the following:\n" *
+             string(IMPLEMENTED_GR_EFFECTS .* " , "...)
+     @assert (effect ∈ IMPLEMENTED_GR_EFFECTS) error
+
+     pr && println("\nI'm computiong the PS_multipole for the $effect GR effect.")
+
+     time_1 = time()
+     vec = PS_multipole(effect, cosmo; N = N, L = L, pr = pr, kwargs...)
+     time_2 = time()
+
+     pr && println("\ntime needed for Power Spectrum  computation [in s] = $(time_2-time_1)\n")
+
+     isfile(out) && run(`rm $out`)
+     open(out, "w") do io
+          println(io, "# Power Spectrum Multipole computation for the $effect GR effect.")
+          println(io, "# The following cosmology data were given:\n#")
+          parameters_used(io, cosmo)
+          println(io, "#\n# For this PS_multipole computation we set: ")
+          println(io, "# \t #points used in Fourier transform N = $N")
+          println(io, "# \t multipole degree in consideration L = $L")
+          println(io, "# computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
+          print(io, "# kwards passed: ")
+
+          if isempty(kwargs)
+               println(io, "none")
+          else
+               print(io, "\n")
+               for (i, key) in enumerate(keys(kwargs))
+                    println(io, "# \t\t$(key) = $(kwargs[key])")
+               end
+          end
+          println(io, "# ")
+          println(io, "# k [h_0/Mpc] \t \t  P [(Mpc/h_0)^3]")
+          for (k, pk) in zip(vec[1], vec[2])
+               println(io, "$k \t $pk")
+          end
+     end
+end

@@ -461,10 +461,10 @@ end
 
 It's the Power Spectrum multipole normalization coefficient ``A^{'}``, i.e.:
 ```math
-     A^{'} = \frac{3 \, A}{ (s_\mathrm{max}^3 - s_\mathrm{min}^3)} = 4 \pi^2
+     A^{'} = \frac{3 \, A}{ (s_\mathrm{max}^3 - s_\mathrm{min}^3)} = 8 \pi^2
 ```
 
 See also: [`A`](@ref), [`V_survey`](@ref)
 """
-const A_prime = 4.0 * π^2
+const A_prime = 8.0 * π^2
 
