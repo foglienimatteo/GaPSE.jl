@@ -19,12 +19,12 @@
 
 function PS_multipole(
      f_in::Union{Function,Dierckx.Spline1D};
-     int_s_min::Float64 = 1e-8, int_s_max::Float64 = 1000.0,
+     int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3,
      L::Integer = 0, N::Integer = 1024,
      pr::Bool = true, kwargs...)
 
      t1 = time()
-     ks, pks = xicalc(s -> 2 * π^2 * s^2 * f_in(s), L, 0;
+     ks, pks = xicalc(s -> 2 * π^2 * f_in(s), L, 0;
           N = N, kmin = int_s_min, kmax = int_s_max, r0 = 1 / int_s_max)
      t2 = time()
      pr && println("\ntime needed for Power Spectrum  computation [in s] = $(t2-t1)\n")
@@ -47,12 +47,11 @@ function PS_multipole(
      xi_table = readdlm(in, comments = true)
      ss = convert(Vector{Float64}, xi_table[:, 1])
      fs = convert(Vector{Float64}, xi_table[:, 2])
+
      f_in = Spline1D(ss, fs; bc = "error")
 
-     #intsmin = isnothing(int_s_min) ? min(ss...) : int_s_min
-     #intsmax = isnothing(int_s_max) ? max(ss...) : int_s_max
-     intsmin = 1e-2
-     intsmax = 1e3
+     intsmin = isnothing(int_s_min) ? min(ss...) : int_s_min
+     intsmax = isnothing(int_s_max) ? max(ss...) : int_s_max
      return PS_multipole(f_in; int_s_min = intsmin, int_s_max = intsmax, N = N, L = L, pr = pr)
 end
 
@@ -60,8 +59,8 @@ end
 
 function PS_multipole(
      effect::String, cosmo::Cosmology;
-     int_s_min::Float64 = 1e-8, int_s_max::Float64 = 1000.0,
-     L::Integer = 0, N::Integer = 1024,
+     int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3,
+     L::Integer = 0, N::Integer = 100,
      pr::Bool = true, kwargs...)
 
      error = "$effect is not a valid GR effect name.\n" *
@@ -70,10 +69,10 @@ function PS_multipole(
      @assert (effect ∈ IMPLEMENTED_GR_EFFECTS) error
 
      xs, ys = map_ξ_multipole(cosmo, effect; L = L, pr = pr, kwargs...)
-     f_in = Spline1D(xs, ys; bc="error")
+     f_in = Spline1D(xs, ys; bc = "error")
 
      t1 = time()
-     ks, pks = xicalc(s -> 2 * π^2 * s^2 * f_in(s), L, 0;
+     ks, pks = xicalc(s -> 2 * π^2 * f_in(s), L, 0;
           N = N, kmin = int_s_min, kmax = int_s_max, r0 = 1 / int_s_max)
      t2 = time()
      pr && println("\ntime needed for Power Spectrum  computation [in s] = $(t2-t1)\n")
