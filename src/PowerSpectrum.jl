@@ -30,9 +30,9 @@ function PS_multipole(
      pr && println("\ntime needed for Power Spectrum  computation [in s] = $(t2-t1)\n")
 
      if iseven(L)
-          return ks, (1 / A_prime * (-1)^(L / 2)) .* pks
+          return ks, (1 / π * (-1)^(L / 2)) .* pks #(1 / A_prime * (-1)^(L / 2)) .* pks
      else
-          return ks, (1 / A_prime * (-im)^L) .* pks
+          return ks, (1 / π * (-im)^L) .* pks #(1 / A_prime * (-im)^L) .* pks
      end
 end
 
@@ -78,9 +78,9 @@ function PS_multipole(
      pr && println("\ntime needed for Power Spectrum  computation [in s] = $(t2-t1)\n")
 
      if iseven(L)
-          return ks, (1 / A_prime * (-1)^(L / 2)) .* pks
+          return ks, (1 / π * (-1)^(L / 2)) .* pks #(1 / A_prime * (-1)^(L / 2)) .* pks
      else
-          return ks, (1 / A_prime * (-im)^L) .* pks
+          return ks, (1 / π * (-im)^L) .* pks #(1 / A_prime * (-im)^L) .* pks
      end
 end
 

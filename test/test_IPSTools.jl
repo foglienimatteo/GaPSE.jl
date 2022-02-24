@@ -105,7 +105,7 @@ end
      ips = GaPSE.InputPS(FILE_PS; expand = false)
      k_min, k_max = 1e-6, 10.0
 
-     tools = GaPSE.IPSTools(ips; k_min = k_min, k_max = k_max)
+     tools = GaPSE.IPSTools(ips; k_min = k_min, k_max = k_max, con=true)
      PK = Spline1D(ips.ks, ips.pks)
 
      tab_Is = readdlm(FILE_ILN, comments = true)
@@ -136,9 +136,9 @@ end
           @test all([isapprox(tools.I20(s), i, rtol = 1e-1) for (s, i) in zip(ss, I20s)])
           @test all([isapprox(tools.I40(s), i, rtol = 1e-2) for (s, i) in zip(ss, I40s)])
           @test all([isapprox(tools.I02(s), i, rtol = 1e-1) for (s, i) in zip(ss, I02s)])
-          @test all([isapprox(tools.I22(s), i, rtol = 5e-2) for (s, i) in zip(ss, I22s)])
+          @test all([isapprox(tools.I22(s), i, rtol = 1e-2) for (s, i) in zip(ss, I22s)])
           @test all([isapprox(tools.I31(s), i, rtol = 1e-2) for (s, i) in zip(ss, I31s)])
-          @test all([isapprox(tools.I11(s), i, rtol = 5e-2) for (s, i) in zip(ss, I11s)])
+          @test all([isapprox(tools.I11(s), i, rtol = 1e-2) for (s, i) in zip(ss, I11s)])
      end
 
 end
