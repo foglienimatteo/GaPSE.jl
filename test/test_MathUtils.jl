@@ -54,6 +54,46 @@ end
 
 end
 
+
+@testset "test power_law_from_data" begin
+     @testset "first" begin
+          si, b, a = 2.69, 3.45, 0.0
+          xs = 1:0.1:10
+          ys = [a + b * x ^ (si)  for x in xs]
+          p0 = [1.0, 1.0]
+          c_si, c_b, c_a = GaPSE.power_law_from_data(xs, ys, p0; con = false)
+          @test isapprox(si, c_si, rtol=1e-2)
+          @test isapprox(b, c_b, rtol=1e-2)
+          @test isapprox(a, c_a, rtol=1e-2)
+     end
+
+     @testset "second" begin
+          si, b, a = -2.69, 3.45, 0.0
+          xs = 10 .^ range(4, 6, length=100)
+          ys = [a + b * x ^ (si)  for x in xs]
+          p0 = [-1.0, 1.0]
+          c_si, c_b, c_a = GaPSE.power_law_from_data(xs, ys, p0; con = false)
+          @test isapprox(si, c_si, rtol=1e-2)
+          @test isapprox(b, c_b, rtol=5e-2)
+          @test isapprox(a, c_a, rtol=1e-2)
+     end
+
+     #=
+     @testset "third" begin
+          si, b, a = -2.69, 3.45, 13245.23
+          xs = 10 .^ range(4, 6, length=100)
+          ys = [a + b * x ^ (si)  for x in xs]
+          p0 = [-2.69, 3.45, 1e4]
+          c_si, c_b, c_a = GaPSE.power_law_from_data(xs, ys, p0; con = true)
+          @test isapprox(si, c_si, rtol=1e-2)
+          @test isapprox(b, c_b, rtol=5e-2)
+          @test isapprox(a, c_a, rtol=1e-2)
+     end
+     =#
+
+
+end
+
 @testset "test func_I04_tilde" begin
      table_ips = readdlm(FILE_PS)
      ks = convert(Vector{Float64}, table_ips[:, 1])
@@ -70,7 +110,7 @@ end
 
 
 @testset "test expanded_I04_tilde" begin
-     tab_I04_tildes = readdlm("datatest/I04_tilde_extended.txt", comments=true)
+     tab_I04_tildes = readdlm("datatest/I04_tilde_extended_NO_CONST.txt", comments=true)
      ss = convert(Vector{Float64}, tab_I04_tildes[:, 1])
      I04_tildes = convert(Vector{Float64}, tab_I04_tildes[:, 2])
 

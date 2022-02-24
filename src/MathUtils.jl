@@ -150,10 +150,13 @@ end
 
 function power_law_from_data(xs, ys, p0, x1::Number, x2::Number; con = false)
      @assert length(xs) == length(ys) "xs and ys must have same length"
-     new_xs = xs[x1.<xs.<x2]
-     mean_exp = sum([log10(abs(y)) for y in ys[x1.<xs.<x2]]) / length(ys[x1.<xs.<x2])
-     enhancer = 10.0^(-mean_exp)
-     new_ys = ys[x1.<xs.<x2] .* enhancer
+     mean_exp_xs = sum([log10(abs(x)) for x in xs[x1.<xs.<x2]]) / length(xs[x1.<xs.<x2])
+     en_xs = 10.0^(-mean_exp_xs)
+     new_xs = xs[x1.<xs.<x2] .* en_xs
+
+     mean_exp_ys = sum([log10(abs(y)) for y in ys[x1.<xs.<x2]]) / length(ys[x1.<xs.<x2])
+     en_ys = 10.0^(-mean_exp_ys)
+     new_ys = ys[x1.<xs.<x2] .* en_ys
 
      #si = mean_spectral_index(xs, ys; N=N, con=con)
      si, b, a =
@@ -168,7 +171,7 @@ function power_law_from_data(xs, ys, p0, x1::Number, x2::Number; con = false)
                     new_xs, new_ys, p0))
           end
 
-     return si, b / enhancer, a / enhancer
+     return si, b * (en_xs ^ si) / en_ys, a / en_ys
 end
 
 
@@ -201,8 +204,9 @@ end
 =#
 
 function expand_left_log(xs, ys; lim = 1e-8, fit_min = 2.0,
-     fit_max = 10.0, p0 = [-1.0, 1.0, 0.0], con = true)
+     fit_max = 10.0, p0 = nothing, con = false)
 
+     p_0 = isnothing(p0) ? (con==true ? [-1.0, 1.0, 0.0]  : [-1.0, 1.0]) : p0
      si, b, a = power_law_from_data(
           xs[fit_min.<xs.<fit_max], ys[fit_min.<xs.<fit_max],
           p0, fit_min, fit_max; con = con)
@@ -217,8 +221,9 @@ function expand_left_log(xs, ys; lim = 1e-8, fit_min = 2.0,
 end
 
 function expand_right_log(xs, ys; lim = 3e3, fit_min = 5.0,
-     fit_max = 10.0, p0 = [-3.0, 1.0, 0.0], con = true)
+     fit_max = 10.0, p0 = nothing, con = false)
 
+     p_0 = isnothing(p0) ? (con==true ? [-3.0, 1.0, 0.0]  : [-3.0, 1.0]) : p0
      si, b, a = power_law_from_data(
           xs[fit_min.<xs.<fit_max], ys[fit_min.<xs.<fit_max],
           p0, fit_min, fit_max; con = con)
@@ -298,17 +303,18 @@ end
 
 """
      expanded_Iln(PK, l, n; N = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
-          fit_min = 2.0, fit_max = 10.0, p0 = [-1.0, 1.0, 0.0], con = true)
+          fit_min = 2.0, fit_max = 10.0, p0 = [-1.0, 1.0, 0.0], con = false)
 
 
 """
 function expanded_Iln(PK, l, n; lim = 1e-4, N = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
-     fit_min = 2.0, fit_max = 10.0, p0 = [-1.0, 1.0, 0.0], con = true)
+     fit_min = 2.0, fit_max = 10.0, p0 = nothing, con = false)
 
      rs, xis = xicalc(PK, l, n; N = N, kmin = kmin, kmax = kmax, r0 = s0)
 
+     p_0 = isnothing(p0) ? (con==true ? [-1.0, 1.0, 0.0]  : [-1.0, 1.0]) : p0
      new_left_rs, new_left_Is = expand_left_log(rs, xis; lim = lim, fit_min = fit_min,
-          fit_max = fit_max, p0 = p0, con = con)
+          fit_max = fit_max, p0 = p_0, con = con)
 
      new_rs = vcat(new_left_rs, rs[rs.>fit_min])
      new_Is = vcat(new_left_Is, xis[rs.>fit_min])
@@ -351,7 +357,7 @@ function expanded_I04_tilde(PK, ss;
           cutted_ss = ss[ss.>fit_1]
           cutted_I04_tildes = [func_I04_tilde(PK, s, kmin, kmax; kwargs...) for s in cutted_ss]
           l_si, l_b, l_a = GaPSE.power_law_from_data(cutted_ss, cutted_I04_tildes,
-               [-2.0, -1.0, 0.0], fit_1, fit_2; con = true)
+               [-2.0, -1.0], fit_1, fit_2; con = false)
           #println("l_si, l_b, l_a = $l_si , $l_b , $l_a")
           left_I04_tildes = [GaPSE.power_law(s, l_si, l_b, l_a) for s in ss[ss.<=fit_1]]
 

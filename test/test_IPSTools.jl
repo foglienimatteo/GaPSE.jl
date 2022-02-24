@@ -132,13 +132,13 @@ end
      end
 
      @testset "test Iln" begin
-          @test all([isapprox(tools.I00(s), i, rtol = 3e-2) for (s, i) in zip(ss, I00s)])
+          @test all([isapprox(tools.I00(s), i, rtol = 5e-2) for (s, i) in zip(ss, I00s)])
           @test all([isapprox(tools.I20(s), i, rtol = 1e-1) for (s, i) in zip(ss, I20s)])
           @test all([isapprox(tools.I40(s), i, rtol = 1e-2) for (s, i) in zip(ss, I40s)])
           @test all([isapprox(tools.I02(s), i, rtol = 1e-1) for (s, i) in zip(ss, I02s)])
-          @test all([isapprox(tools.I22(s), i, rtol = 1e-2) for (s, i) in zip(ss, I22s)])
+          @test all([isapprox(tools.I22(s), i, rtol = 5e-2) for (s, i) in zip(ss, I22s)])
           @test all([isapprox(tools.I31(s), i, rtol = 1e-2) for (s, i) in zip(ss, I31s)])
-          @test all([isapprox(tools.I11(s), i, rtol = 1e-2) for (s, i) in zip(ss, I11s)])
+          @test all([isapprox(tools.I11(s), i, rtol = 5e-2) for (s, i) in zip(ss, I11s)])
      end
 
 end

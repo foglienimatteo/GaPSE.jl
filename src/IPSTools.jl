@@ -130,7 +130,7 @@ struct InputPS
 
           ks, pks = expand ? begin
                println("I expand the input power spectrum at its extremes.")
-               expanded_IPS(data[:, 1], data[:, 2]; con = true)
+               expanded_IPS(data[:, 1], data[:, 2]; con = false)
           end : begin
                println("I take the input power spectrum as it is,without expanding.")
                (data[:, 1], data[:, 2])
@@ -145,7 +145,7 @@ struct InputPS
           @assert size(ks) == size(pks) "ks and pks must have the same length!"
           new_ks, new_pks = expand ? begin
                println("I expand the input power spectrum at its extremes.")
-               expanded_IPS(ks, pks; con = true)
+               expanded_IPS(ks, pks; con = false)
           end : begin
                println("I take the input power spectrum as it is,without expanding.")
                (ks, pks)
@@ -244,7 +244,7 @@ struct IPSTools
           N = 1024,
           fit_min::Float64 = 0.05,
           fit_max::Float64 = 0.5,
-          con::Bool = true,
+          con::Bool = false,
           k_min::Float64 = 1e-6,
           k_max::Float64 = 10.0,
           lim::Float64 = 1e-8
@@ -255,7 +255,7 @@ struct IPSTools
           #kmin, kmax = min(ips.ks...), max(ips.ks...)
           kmin, kmax, s0 = 1e-5, 1e3, 1e-3
 
-          p0 = [-1.0, 1.0, 0.0]
+          p0 = con ? [-1.0, 1.0, 0.0] : [-1.0, 1.0]
           I00 = Spline1D(expanded_Iln(PK, 0, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                     fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
           I20 = Spline1D(expanded_Iln(PK, 2, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
