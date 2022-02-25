@@ -33,19 +33,31 @@ function derivate_point(xp, yp, x1, y1, x2, y2)
      return res
 end
 
-function derivate_vector(xs, ys; N::Integer = 1)
+function derivate_vector(XS, YS; N::Integer = 1)
+     @assert length(XS) == length(YS) "xs and ys must have the same length!"
+     @assert length(YS) > 2*N "length of xs and ys must be > 2N !"
+    
+     mean_exp_xs = sum([log10(abs(x)) for x in XS]) / length(XS)
+     en_xs = 10.0^(-mean_exp_xs)
+     xs = XS .* en_xs
+
+     mean_exp_ys = sum([log10(abs(y)) for y in YS]) / length(YS)
+     en_ys = 10.0^(-mean_exp_ys)
+     ys = YS .* en_ys
+    
+     mean_ys = sum(ys)/length(ys)
+     @assert !all([isapprox(y/mean_ys, 1.0, rtol=1e-6) for y in ys]) "DO NOT WORK!"
+    
      if N == 1
           real_vec = [derivate_point(xs[i], ys[i], xs[i-1], ys[i-1], xs[i+1], ys[i+1])
                       for i in (N+1):(length(xs)-N)]
-          return vcat(real_vec[begin], real_vec, real_vec[end])
-     elseif N > 1
+          return vcat(real_vec[begin], real_vec, real_vec[end]) .* (en_xs / en_ys)
+     else
           vec = [derivate_point(xs[i], ys[i], xs[i-j], ys[i-j], xs[i+j], ys[i+j])
                  for i in (N+1):(length(xs)-N), j in 1:N]
           real_vec = [sum(row) / N for row in eachrow(vec)]
           return vcat([real_vec[begin] for i in 1:N], real_vec,
-               [real_vec[end] for i in 1:N])
-     else
-          throw(ErrorException(" N must be an integer >1, not $N!"))
+               [real_vec[end] for i in 1:N]) .* (en_xs / en_ys)
      end
 end
 
@@ -54,11 +66,20 @@ function spectral_index(xs, ys; N::Integer = 1, con = false)
      derivs = derivate_vector(xs, ys; N = N)
 
      if con == false
-          return [x * d / y for (x, y, d) in zip(xs, ys, derivs)]
+          res = [x * d / y for (x, y, d) in zip(xs, ys, derivs)]
+          return vcat(
+               [res[begin+N] for i in 1:N], 
+               res[begin+N:end-N], 
+               [res[end-N] for i in 1:N]
+          )
      else
           sec_derivs = derivate_vector(xs, derivs; N = N)
-          vec = [x * d2 / d for (x, d, d2) in zip(xs, derivs, sec_derivs)]
-          return vec .+ 1.0
+          res = [x * d2 / d for (x, d, d2) in zip(xs, derivs, sec_derivs)] .+ 1.0
+          return vcat(
+               [res[begin+N+1] for i in 1:N+1], 
+               res[begin+N+1:end-N-1], 
+               [res[end-N-1] for i in 1:N+1]
+          )
      end
 end
 
@@ -78,13 +99,15 @@ defined as:
 ```
 """
 function mean_spectral_index(xs, ys; N::Integer = 1, con = false)
-     vec = spectral_index(xs, ys; N = N, con = con)[begin+2*N:end-2*N]
+     @assert length(xs) > 2*N + 2 "length of xs and ys must be > 2N+2"
+     vec = spectral_index(xs, ys; N = N, con = con)[begin+N+1:end-N-1]
      return sum(vec) / length(vec)
 end
 
 
 power_law(x, si, b, a) = a .+ b .* (x .^ si)
 
+#=
 function power_law_b_a(xs, ys, si, p0; con = false)
      if con == true
           @assert length(p0) == 2 " b, a to be fitted, so length(p0) must be 2!"
@@ -97,7 +120,6 @@ function power_law_b_a(xs, ys, si, p0; con = false)
      end
 end
 
-#=
 power_law_b(x1, y1, x2, y2, si) = (y2 - y1)/(x2^si - x1^si)
 function power_law_b(ixs, ys, sis; logscale=false)
     xs = !logscale ? ixs : begin

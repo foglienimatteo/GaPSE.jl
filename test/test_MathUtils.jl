@@ -36,6 +36,153 @@ end
 
 
 
+@testset "test derivate_vector" begin
+     @testset "zeros" begin
+          xs = 1:0.1:2
+          ys = [2.5 + 3.65*x^(-3.5) for x in xs]
+          @test_throws AssertionError GaPSE.derivate_vector(xs, ys[begin+1:end])
+          @test_throws AssertionError GaPSE.derivate_vector(xs[begin+1:end], ys)
+          @test_throws AssertionError GaPSE.derivate_vector(xs, ys; N=6)
+     end
+
+     @testset "first" begin
+          xs = 1:0.1:2
+          ys = [2.5 + 3.65*x for x in xs]
+          calc = GaPSE.derivate_vector(xs, ys; N=1)
+          @test all([isapprox(3.65, c; rtol=1e-4) for c in calc])
+     end
+
+     @testset "second" begin
+          xs = 1:0.01:2
+          ys = [2.5 + 3.65*x^2.0 for x in xs]
+          calc = GaPSE.derivate_vector(xs, ys)
+          @test all([isapprox(1.0, 3.65*2.0*x/c; rtol=1e-4) 
+               for (x,c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
+     end
+
+     @testset "third" begin
+          xs = 1:0.01:2
+          ys = [2.5 + 3.65*x^3.5 for x in xs]
+          calc = GaPSE.derivate_vector(xs, ys)
+          @test all([isapprox(1.0, 3.65*3.5*x^2.5/c; rtol=1e-4) 
+               for (x,c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
+     end
+
+     @testset "fourth" begin
+          xs = 1:0.01:2
+          ys = [2.5 + 3.65*x^(-3.5) for x in xs]
+          calc = GaPSE.derivate_vector(xs, ys)
+          @test all([isapprox(1.0, -3.65*3.5*x^(-4.5)/c; rtol=1e-2) 
+               for (x,c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
+     end
+
+     @testset "fifth" begin
+          xs = 10 .^ range(4,6, length=100)
+          ys = [2.5e99 + 3.65*x^(3.5) for x in xs]
+          @test_throws AssertionError GaPSE.derivate_vector(xs, ys; N=1)
+          @test_throws AssertionError GaPSE.derivate_vector(xs, ys; N=6)
+     end
+
+     @testset "sixth" begin
+          xs = 10 .^ range(4,6, length=100)
+          ys = [2.5e23 + 3.65*x^(3.5) for x in xs]
+          calc = GaPSE.derivate_vector(xs, ys)
+          @test all([isapprox(1.0, 3.65*3.5*x^(2.5)/c; rtol=1e-2) 
+               for (x,c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
+     end
+
+     @testset "seventh" begin
+          xs = 10 .^ range(-6,-4, length=100)
+          ys = [3.6e-22 + 3.65*x^(3.5) for x in xs]
+          calc = GaPSE.derivate_vector(xs, ys)
+          @test all([isapprox(1.0, 3.65*3.5*x^(2.5)/c; rtol=1e-2) 
+               for (x,c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
+     end
+
+     @testset "eigth" begin
+          xs = 10 .^ range(-6,-4, length=100)
+          ys = [3.6e-22 + 3.65*x^(-3.5) for x in xs]
+          calc = GaPSE.derivate_vector(xs, ys)
+          @test all([isapprox(1.0, -3.65*3.5*x^(-4.5)/c; rtol=1e-2) 
+               for (x,c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
+     end
+end
+
+
+
+@testset "test spectral_index" begin
+     @testset "zeros" begin
+          xs = 1:0.1:2
+          ys = [2.5 + 3.65*x^(-3.5) for x in xs]
+          @test_throws AssertionError GaPSE.spectral_index(xs, ys[begin+1:end])
+          @test_throws AssertionError GaPSE.spectral_index(xs[begin+1:end], ys)
+          @test_throws AssertionError GaPSE.spectral_index(xs, ys; N=6)
+     end
+
+
+     @testset "first" begin
+          xs = 10:0.1:20
+          ys = [3.65*x^(-1.5) for x in xs]
+          calc = GaPSE.spectral_index(xs, ys; N=1, con=false)
+          @test all([isapprox(-1.5, c; rtol=1e-3) for c in calc])
+     end
+
+     @testset "second" begin
+          xs = 10:0.1:20
+          ys = [1434.5 + 3.65*x^(-1.5) for x in xs]
+          calc = GaPSE.spectral_index(xs, ys; N=1, con=true)
+          @test all([isapprox(-1.5, c; rtol=1e-3) for c in calc])
+     end
+
+     @testset "third" begin
+          xs = 10 .^ range(4,6, length=100)
+          ys = [2.5e23 + 3.65*x^(3.5) for x in xs]
+          calc = GaPSE.spectral_index(xs, ys; N=1, con=true)
+          @test all([isapprox(3.5, c; rtol=1e-3) for c in calc])
+     end
+
+     @testset "fourth" begin
+          xs = 10 .^ range(4,6, length=100)
+          ys = [2.5e99 + 3.65*x^(3.5) for x in xs]
+          @test_throws AssertionError GaPSE.spectral_index(xs, ys; N=1, con=true)
+          @test_throws AssertionError GaPSE.spectral_index(xs, ys; N=1, con=false)
+     end
+
+     @testset "fifth" begin
+          xs = 10 .^ range(-6,-4, length=100)
+          ys = [3.65*x^(3.5) for x in xs]
+          calc = GaPSE.spectral_index(xs, ys; N=1, con=false)
+          @test all([isapprox(1.0, 3.5/c; rtol=1e-2) 
+               for (x,c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
+     end
+
+     @testset "sixth" begin
+          xs = 10 .^ range(-6,-4, length=100)
+          ys = [3.6e-22 + 3.65*x^(3.5) for x in xs]
+          calc = GaPSE.spectral_index(xs, ys; N=1, con=true)
+          @test all([isapprox(1.0, 3.5/c; rtol=1e-2) 
+               for (x,c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
+     end
+
+     @testset "seventh" begin
+          xs = 10 .^ range(-6,-4, length=100)
+          ys = [3.65*x^(-3.5) for x in xs]
+          calc = GaPSE.spectral_index(xs, ys; N=1, con=false)
+          @test all([isapprox(1.0, -3.5/c; rtol=1e-2) 
+               for (x,c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
+     end
+
+     @testset "eigth" begin
+          xs = 10 .^ range(-6,-4, length=100)
+          ys = [3.6e-22 + 3.65*x^(-3.5) for x in xs]
+          calc = GaPSE.spectral_index(xs, ys; N=1, con=true)
+          @test all([isapprox(1.0, -3.5/c; rtol=3e-2) 
+               for (x,c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
+     end
+end
+
+
+
 @testset "mean_spectral_index" begin
      @testset "first" begin
           xs = range(1.0, 10.0, 100)
@@ -52,6 +199,46 @@ end
           @test isapprox(GaPSE.mean_spectral_index(xs, ys; con = true), 1.856; atol = 1e-4)
      end
 
+     @testset "third" begin
+          xs = 10 .^ range(4, 6, length=100)
+          ys = [3.54e6 * x^4.856 for x in xs]
+
+          @test isapprox(GaPSE.mean_spectral_index(xs, ys; con = false), 4.856; atol = 3e-2)
+     end
+
+     @testset "fourth" begin
+          xs = 10 .^ range(4, 6, length=100)
+          ys = [8.3e30 - 3.54e6 * x^4.856 for x in xs]
+
+          @test isapprox(GaPSE.mean_spectral_index(xs, ys; con = true)/4.856, 1.0; atol = 3e-2)
+     end
+
+     @testset "fifth" begin
+          xs = 10 .^ range(-6, -4, length=100)
+          ys = [3.54e6 * x^(-4.856) for x in xs]
+
+          @test isapprox(GaPSE.mean_spectral_index(xs, ys; con = false)/(-4.856), 1.0; atol = 3e-2)
+     end
+
+     @testset "sixth" begin
+          xs = 10 .^ range(-6, -4, length=100)
+          ys = [8.3e-27 - 3.54e-6 * x^(-4.856) for x in xs]
+
+          @test isapprox(GaPSE.mean_spectral_index(xs, ys; con = true)/(-4.856), 1.0; atol = 3e-2)
+     end
+
+end
+
+
+
+##########################################################################################92
+
+
+
+@testset "test power_law" begin
+     x, y = 2.0, 31.0
+     si, b, a = 3.0, 2.0, 15.0
+     @test isapprox(y, GaPSE.power_law(x, si, b, a), rtol=1e-6)
 end
 
 
@@ -108,6 +295,12 @@ end
           @test isapprox(a, c_a, rtol=1e-2)
      end
 end
+
+
+
+##########################################################################################92
+
+
 
 @testset "test func_I04_tilde" begin
      table_ips = readdlm(FILE_PS)
