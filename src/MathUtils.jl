@@ -105,6 +105,10 @@ function mean_spectral_index(xs, ys; N::Integer = 1, con = false)
 end
 
 
+
+##########################################################################################92
+
+
 power_law(x, si, b, a) = a .+ b .* (x .^ si)
 
 #=
@@ -140,9 +144,6 @@ function power_law_a(ixs, ys, bs, sis; logscale=false)
     [y - b*(x^si) for (x,y,b,si) in zip(xs,ys,bs,sis)]
 end
 =#
-
-##########################################################################################92
-
 
 #=
 function my_power_law_from_data(xs, ys, p0, x1::Number, x2::Number; N = 3, con = false)
@@ -270,6 +271,13 @@ function power_law_from_data(xs, ys, x1::Number, x2::Number; N=3,
     return si, b, a
 end
 =#
+
+
+
+##########################################################################################92
+
+
+
 
 function expand_left_log(xs, ys; lim = 1e-8, fit_min = 2.0,
      fit_max = 10.0, p0 = nothing, con = false)
@@ -494,6 +502,10 @@ function my_interpolation(x1, y1, x2, y2, x)
      y = m * x + q
      return y
 end
+
+
+##########################################################################################92
+
 
 
 function my_println_vec(io::IO, vec::Vector{T}, name::String; N::Integer=5) where T
