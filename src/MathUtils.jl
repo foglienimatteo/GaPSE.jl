@@ -148,8 +148,17 @@ end
 =#
 
 
-function power_law_from_data(xs, ys, p0, x1::Number, x2::Number; con = false)
+function power_law_from_data(
+        xs, ys, 
+        P0::Vector{Float64}, 
+        x1::Number, x2::Number; con = false)
+    
      @assert length(xs) == length(ys) "xs and ys must have same length"
+     @assert length(P0) ∈ [2, 3] "length of P0 must be 2 or 3!"
+    
+     #p0 = abs(P0[1]) < 1.5 ? P0 : [ P0[1] - floor() , P0[2:end]...]
+     p0=P0
+    
      mean_exp_xs = sum([log10(abs(x)) for x in xs[x1.<xs.<x2]]) / length(xs[x1.<xs.<x2])
      en_xs = 10.0^(-mean_exp_xs)
      new_xs = xs[x1.<xs.<x2] .* en_xs
@@ -157,28 +166,65 @@ function power_law_from_data(xs, ys, p0, x1::Number, x2::Number; con = false)
      mean_exp_ys = sum([log10(abs(y)) for y in ys[x1.<xs.<x2]]) / length(ys[x1.<xs.<x2])
      en_ys = 10.0^(-mean_exp_ys)
      new_ys = ys[x1.<xs.<x2] .* en_ys
-
+    
+     mean_ys = sum(new_ys)/length(new_ys)
+     @assert !all([isapprox(y/mean_ys, 1.0, rtol=1e-6) for y in new_ys]) "DO NOT WORK!"
      #si = mean_spectral_index(xs, ys; N=N, con=con)
-     si, b, a =
-          if con == false
-               @assert length(p0) == 2 " si,b to be fitted, so length(p0) must be 2!"
-               vec = coef(curve_fit((x, p) -> power_law(x, p[1], p[2], 0.0),
-                    new_xs, new_ys, p0))
-               vcat(vec, 0.0)
-          else
-               @assert length(p0) == 3 " si,b,a to be fitted, so length(p0) must be 3!"
-               coef(curve_fit((x, p) -> power_law(x, p[1], p[2], p[3]),
-                    new_xs, new_ys, p0))
+    
+    if con==false
+          @assert length(p0) == 2 " si,b to be fitted, so length(p0) must be 2!"
+          vec = coef(curve_fit((x, p) -> power_law(x, p[1], p[2], 0.0),
+               new_xs, new_ys, p0))
+          si, b, a = vcat(vec, 0.0)
+          return si, b * (en_xs ^ si) / en_ys, a / en_ys
+        
+    else
+          @assert length(p0) == 3 " si,b,a to be fitted, so length(p0) must be 3!"
+        
+          try
+               fit_1 = curve_fit((x, p) -> power_law(x, p[1], p[2], p[3]),
+                    new_xs, new_ys, p0)
+               vals_1 = coef(fit_1)
+               stds_1 = stderror(fit_1)
+               pers_1 = [s/v for (s,v) in zip(stds_1, vals_1)]
+          
+               si, b, a = 
+                    if all(x->x<0.05, pers_1) 
+                         vals_1 
+                    elseif pers_1[3] < 0.05 
+                         fit_2 = curve_fit((x, p) -> power_law(x, p[1], p[2], vals_1[3]),
+                         new_xs, new_ys, p0)
+                         vals_2 = coef(fit_2)
+                         vcat(vals_2, vals_1[3])
+                    else
+                         fit_3 = curve_fit((x, p) -> power_law(x, p[1], p[2], 0.0),
+                         new_xs, new_ys, p0)
+                         vals_3 = coef(fit_3)
+                         fit_4 = curve_fit((x, p) -> power_law(x, vals_3[1], vals_3[2], p[3]),
+                         new_xs, new_ys, p0)
+                         vals_4 = coef(fit_4)
+                    
+                         vcat(vals_3, vals_4)
+                    end
+          
+               return si, b * (en_xs ^ si) / en_ys, a / en_ys
+               
+          catch e
+               fit_3 = curve_fit((x, p) -> power_law(x, p[1], p[2], 0.0),
+                         new_xs, new_ys, [p0[1], p0[2]])
+               si, b, a = vcat(coef(fit_3), 0.0)
+               
+               return si, b * (en_xs ^ si) / en_ys, a / en_ys
           end
-
-     return si, b * (en_xs ^ si) / en_ys, a / en_ys
-end
-
+     end
+end;
 
 
-function power_law_from_data(xs, ys, p0; con = false)
+
+function power_law_from_data(
+        xs, ys, p0::Vector{Float64}; con = false)
      power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con = con)
-end
+end;
 
 #=
 function power_law_from_data(xs, ys, x1::Number, x2::Number; N=3, 

@@ -56,6 +56,17 @@ end
 
 
 @testset "test power_law_from_data" begin
+     @testset "zeros" begin
+          si, b, a = 2.69, 3.45, 0.0
+          xs = 1:0.1:10
+          ys = [a + b * x ^ (si)  for x in xs]
+          p0=[1.0, 1.0]
+          @test_throws AssertionError GaPSE.power_law_from_data(xs[begin:end-1], ys, p0; con = false)
+          @test_throws AssertionError GaPSE.power_law_from_data(xs, ys[begin:end-1], p0; con = false)
+          @test_throws AssertionError GaPSE.power_law_from_data(xs, ys, [1.0, 1.0, 1.0]; con = false)
+          @test_throws AssertionError GaPSE.power_law_from_data(xs, ys, [1.0, 1.0]; con = true)
+     end
+
      @testset "first" begin
           si, b, a = 2.69, 3.45, 0.0
           xs = 1:0.1:10
@@ -74,24 +85,28 @@ end
           p0 = [-1.0, 1.0]
           c_si, c_b, c_a = GaPSE.power_law_from_data(xs, ys, p0; con = false)
           @test isapprox(si, c_si, rtol=1e-2)
-          @test isapprox(b, c_b, rtol=5e-2)
+          @test isapprox(b, c_b, rtol=1e-2)
           @test isapprox(a, c_a, rtol=1e-2)
      end
 
-     #=
      @testset "third" begin
           si, b, a = -2.69, 3.45, 13245.23
           xs = 10 .^ range(4, 6, length=100)
           ys = [a + b * x ^ (si)  for x in xs]
-          p0 = [-2.69, 3.45, 1e4]
+          p0 =  [-1.0, 1.0, 1.0]
+          @test_throws AssertionError GaPSE.power_law_from_data(xs, ys, p0; con = true)
+     end
+
+     @testset "fourth" begin
+          si, b, a = -2.65, 1.54e3, 2.34563e-15
+          xs = 10 .^ range(4, 6, length=100)
+          ys = [a + b * x ^ (si)  for x in xs]
+          p0 = [-1.0, 1.0, 1.0]
           c_si, c_b, c_a = GaPSE.power_law_from_data(xs, ys, p0; con = true)
           @test isapprox(si, c_si, rtol=1e-2)
-          @test isapprox(b, c_b, rtol=5e-2)
+          @test isapprox(b, c_b, rtol=1e-2)
           @test isapprox(a, c_a, rtol=1e-2)
      end
-     =#
-
-
 end
 
 @testset "test func_I04_tilde" begin
