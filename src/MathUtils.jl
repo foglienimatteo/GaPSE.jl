@@ -35,8 +35,8 @@ end
 
 function derivate_vector(XS, YS; N::Integer = 1)
      @assert length(XS) == length(YS) "xs and ys must have the same length!"
-     @assert length(YS) > 2*N "length of xs and ys must be > 2N !"
-    
+     @assert length(YS) > 2 * N "length of xs and ys must be > 2N !"
+
      mean_exp_xs = sum([log10(abs(x)) for x in XS]) / length(XS)
      en_xs = 10.0^(-mean_exp_xs)
      xs = XS .* en_xs
@@ -44,10 +44,10 @@ function derivate_vector(XS, YS; N::Integer = 1)
      mean_exp_ys = sum([log10(abs(y)) for y in YS]) / length(YS)
      en_ys = 10.0^(-mean_exp_ys)
      ys = YS .* en_ys
-    
-     mean_ys = sum(ys)/length(ys)
-     @assert !all([isapprox(y/mean_ys, 1.0, rtol=1e-6) for y in ys]) "DO NOT WORK!"
-    
+
+     mean_ys = sum(ys) / length(ys)
+     @assert !all([isapprox(y / mean_ys, 1.0, rtol = 1e-6) for y in ys]) "DO NOT WORK!"
+
      if N == 1
           real_vec = [derivate_point(xs[i], ys[i], xs[i-1], ys[i-1], xs[i+1], ys[i+1])
                       for i in (N+1):(length(xs)-N)]
@@ -68,16 +68,16 @@ function spectral_index(xs, ys; N::Integer = 1, con = false)
      if con == false
           res = [x * d / y for (x, y, d) in zip(xs, ys, derivs)]
           return vcat(
-               [res[begin+N] for i in 1:N], 
-               res[begin+N:end-N], 
+               [res[begin+N] for i in 1:N],
+               res[begin+N:end-N],
                [res[end-N] for i in 1:N]
           )
      else
           sec_derivs = derivate_vector(xs, derivs; N = N)
           res = [x * d2 / d for (x, d, d2) in zip(xs, derivs, sec_derivs)] .+ 1.0
           return vcat(
-               [res[begin+N+1] for i in 1:N+1], 
-               res[begin+N+1:end-N-1], 
+               [res[begin+N+1] for i in 1:N+1],
+               res[begin+N+1:end-N-1],
                [res[end-N-1] for i in 1:N+1]
           )
      end
@@ -99,7 +99,7 @@ defined as:
 ```
 """
 function mean_spectral_index(xs, ys; N::Integer = 1, con = false)
-     @assert length(xs) > 2*N + 2 "length of xs and ys must be > 2N+2"
+     @assert length(xs) > 2 * N + 2 "length of xs and ys must be > 2N+2"
      vec = spectral_index(xs, ys; N = N, con = con)[begin+N+1:end-N-1]
      return sum(vec) / length(vec)
 end
@@ -146,11 +146,11 @@ end
 =#
 
 #=
-function my_power_law_from_data(xs, ys, p0, x1::Number, x2::Number; N = 3, con = false)
+function my_power_law_from_data(xs, ys, p0, fit_min::Number, fit_max::Number; N = 3, con = false)
      @assert length(xs) == length(ys) "xs and ys must have same length"
      #Num = length(xs)
-     new_xs = xs[x1.<xs.<x2]
-     new_ys = ys[x1.<xs.<x2]
+     new_xs = xs[fit_min.<xs.<fit_max]
+     new_ys = ys[fit_min.<xs.<fit_max]
 
      if con == false
           @assert length(p0) == 2 " si,b to be fitted, so length(p0) must be 2!"
@@ -172,90 +172,91 @@ end
 
 
 function power_law_from_data(
-        xs, ys, 
-        P0::Vector{Float64}, 
-        x1::Number, x2::Number; con = false)
-    
+     xs, ys,
+     P0::Vector{Float64},
+     fit_min::Number, fit_max::Number; con = false)
+
      @assert length(xs) == length(ys) "xs and ys must have same length"
      @assert length(P0) ∈ [2, 3] "length of P0 must be 2 or 3!"
-    
-     #p0 = abs(P0[1]) < 1.5 ? P0 : [ P0[1] - floor() , P0[2:end]...]
-     p0=P0
-    
-     mean_exp_xs = sum([log10(abs(x)) for x in xs[x1.<xs.<x2]]) / length(xs[x1.<xs.<x2])
-     en_xs = 10.0^(-mean_exp_xs)
-     new_xs = xs[x1.<xs.<x2] .* en_xs
+     @assert min(xs...) <= fit_min "fit_min must be > min(xs...) !"
+     @assert max(xs...) >= fit_max "fit_max must be < max(xs...) !"
 
-     mean_exp_ys = sum([log10(abs(y)) for y in ys[x1.<xs.<x2]]) / length(ys[x1.<xs.<x2])
+     #p0 = abs(P0[1]) < 1.5 ? P0 : [ P0[1] - floor() , P0[2:end]...]
+     p0 = P0
+
+     mean_exp_xs = sum([log10(abs(x)) for x in xs[fit_min.<xs.<fit_max]]) / length(xs[fit_min.<xs.<fit_max])
+     en_xs = 10.0^(-mean_exp_xs)
+     new_xs = xs[fit_min.<xs.<fit_max] .* en_xs
+
+     mean_exp_ys = sum([log10(abs(y)) for y in ys[fit_min.<xs.<fit_max]]) / length(ys[fit_min.<xs.<fit_max])
      en_ys = 10.0^(-mean_exp_ys)
-     new_ys = ys[x1.<xs.<x2] .* en_ys
-    
-     mean_ys = sum(new_ys)/length(new_ys)
-     @assert !all([isapprox(y/mean_ys, 1.0, rtol=1e-6) for y in new_ys]) "DO NOT WORK!"
+     new_ys = ys[fit_min.<xs.<fit_max] .* en_ys
+
+     mean_ys = sum(new_ys) / length(new_ys)
+     @assert !all([isapprox(y / mean_ys, 1.0, rtol = 1e-6) for y in new_ys]) "DO NOT WORK!"
      #si = mean_spectral_index(xs, ys; N=N, con=con)
-    
-    if con==false
+
+     if con == false
           @assert length(p0) == 2 " si,b to be fitted, so length(p0) must be 2!"
           vec = coef(curve_fit((x, p) -> power_law(x, p[1], p[2], 0.0),
                new_xs, new_ys, p0))
           si, b, a = vcat(vec, 0.0)
-          return si, b * (en_xs ^ si) / en_ys, a / en_ys
-        
-    else
+          return si, b * (en_xs^si) / en_ys, a / en_ys
+
+     else
           @assert length(p0) == 3 " si,b,a to be fitted, so length(p0) must be 3!"
-        
+
           try
                fit_1 = curve_fit((x, p) -> power_law(x, p[1], p[2], p[3]),
                     new_xs, new_ys, p0)
                vals_1 = coef(fit_1)
                stds_1 = stderror(fit_1)
-               pers_1 = [s/v for (s,v) in zip(stds_1, vals_1)]
-          
-               si, b, a = 
-                    if all(x->x<0.05, pers_1) 
-                         vals_1 
-                    elseif pers_1[3] < 0.05 
+               pers_1 = [s / v for (s, v) in zip(stds_1, vals_1)]
+
+               si, b, a =
+                    if all(x -> x < 0.05, pers_1)
+                         vals_1
+                    elseif pers_1[3] < 0.05
                          fit_2 = curve_fit((x, p) -> power_law(x, p[1], p[2], vals_1[3]),
-                         new_xs, new_ys, p0)
+                              new_xs, new_ys, p0)
                          vals_2 = coef(fit_2)
                          vcat(vals_2, vals_1[3])
                     else
                          fit_3 = curve_fit((x, p) -> power_law(x, p[1], p[2], 0.0),
-                         new_xs, new_ys, p0)
+                              new_xs, new_ys, p0)
                          vals_3 = coef(fit_3)
                          fit_4 = curve_fit((x, p) -> power_law(x, vals_3[1], vals_3[2], p[3]),
-                         new_xs, new_ys, p0)
+                              new_xs, new_ys, p0)
                          vals_4 = coef(fit_4)
-                    
+
                          vcat(vals_3, vals_4)
                     end
-          
-               return si, b * (en_xs ^ si) / en_ys, a / en_ys
-               
+
+               return si, b * (en_xs^si) / en_ys, a / en_ys
+
           catch e
                fit_3 = curve_fit((x, p) -> power_law(x, p[1], p[2], 0.0),
-                         new_xs, new_ys, [p0[1], p0[2]])
+                    new_xs, new_ys, [p0[1], p0[2]])
                si, b, a = vcat(coef(fit_3), 0.0)
-               
-               return si, b * (en_xs ^ si) / en_ys, a / en_ys
+
+               return si, b * (en_xs^si) / en_ys, a / en_ys
           end
      end
 end;
 
 
 
-function power_law_from_data(
-        xs, ys, p0::Vector{Float64}; con = false)
+function power_law_from_data(xs, ys, p0::Vector{Float64}; con = false)
      power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con = con)
 end;
 
 #=
-function power_law_from_data(xs, ys, x1::Number, x2::Number; N=3, 
+function power_law_from_data(xs, ys, fit_min::Number, fit_max::Number; N=3, 
         con=false, logscale=false)
     @assert length(xs) == length(ys) "xs and ys must have same length"
     Num = length(xs)
-    new_xs = xs[x1 .< xs .< x2]
-    new_ys = ys[x1 .< xs .< x2]
+    new_xs = xs[fit_min .< xs .< fit_max]
+    new_ys = ys[fit_min .< xs .< fit_max]
 
     sis = spectral_index(new_xs, new_ys; N = N, con = con, logscale = logscale)
 
@@ -279,13 +280,19 @@ end
 
 
 
-function expand_left_log(xs, ys; lim = 1e-8, fit_min = 2.0,
-     fit_max = 10.0, p0 = nothing, con = false)
+function expand_left_log(xs, ys;
+     lim = 1e-8, fit_min = 0.05, fit_max = 0.5,
+     p0::Union{Vector{Float64},Nothing} = nothing,
+     con::Bool = false)
 
-     p_0 = isnothing(p0) ? (con==true ? [-1.0, 1.0, 0.0]  : [-1.0, 1.0]) : p0
+     @assert fit_min < fit_max "fit_min must be < fit_max !"
+     @assert lim < fit_min "lim must be < fit_min !"
+     @assert min(xs...) <= fit_min "fit_min must be >= min(xs...) !"
+     @assert max(xs...) >= fit_max "fit_max must be <= max(xs...) !"
+
+     p_0 = isnothing(p0) ? (con == true ? [-1.0, 1.0, 0.0] : [-1.0, 1.0]) : p0
      si, b, a = power_law_from_data(
-          xs[fit_min.<xs.<fit_max], ys[fit_min.<xs.<fit_max],
-          p0, fit_min, fit_max; con = con)
+          xs, ys, p_0, fit_min, fit_max; con = con)
 
      i = findfirst(x -> x > fit_min, xs) - 1
      f = xs[begin] / xs[begin+1]
@@ -294,15 +301,21 @@ function expand_left_log(xs, ys; lim = 1e-8, fit_min = 2.0,
      new_left_ys = [power_law(x, si, b, a) for x in new_left_xs]
 
      return new_left_xs, new_left_ys
-end
+end;
 
-function expand_right_log(xs, ys; lim = 3e3, fit_min = 5.0,
-     fit_max = 10.0, p0 = nothing, con = false)
+function expand_right_log(xs, ys;
+     lim = 3e3, fit_min = 5.0, fit_max = 10.0,
+     p0::Union{Vector{Float64},Nothing} = nothing,
+     con::Bool = false)
 
-     p_0 = isnothing(p0) ? (con==true ? [-3.0, 1.0, 0.0]  : [-3.0, 1.0]) : p0
+     @assert fit_min < fit_max "fit_min must be < fit_max !"
+     @assert lim > fit_max "lim must be > fit_max !"
+     @assert min(xs...) <= fit_min "fit_min must be > min(xs...) !"
+     @assert max(xs...) >= fit_max "fit_max must be < max(xs...) !"
+
+     p_0 = isnothing(p0) ? (con == true ? [-3.0, 1.0, 0.0] : [-3.0, 1.0]) : p0
      si, b, a = power_law_from_data(
-          xs[fit_min.<xs.<fit_max], ys[fit_min.<xs.<fit_max],
-          p0, fit_min, fit_max; con = con)
+          xs, ys, p_0, fit_min, fit_max; con = con)
 
      i = findfirst(x -> x > fit_max, xs)
      f = xs[end] / xs[end-1]
@@ -311,9 +324,7 @@ function expand_right_log(xs, ys; lim = 3e3, fit_min = 5.0,
      new_right_ys = [power_law(x, si, b, a) for x in new_right_xs]
 
      return new_right_xs, new_right_ys
-end
-
-
+end;
 
 ##########################################################################################92
 
@@ -388,7 +399,7 @@ function expanded_Iln(PK, l, n; lim = 1e-4, N = 1024, kmin = 1e-4, kmax = 1e3, s
 
      rs, xis = xicalc(PK, l, n; N = N, kmin = kmin, kmax = kmax, r0 = s0)
 
-     p_0 = isnothing(p0) ? (con==true ? [-1.0, 1.0, 0.0]  : [-1.0, 1.0]) : p0
+     p_0 = isnothing(p0) ? (con == true ? [-1.0, 1.0, 0.0] : [-1.0, 1.0]) : p0
      new_left_rs, new_left_Is = expand_left_log(rs, xis; lim = lim, fit_min = fit_min,
           fit_max = fit_max, p0 = p_0, con = con)
 
@@ -430,14 +441,15 @@ function expanded_I04_tilde(PK, ss;
      if all(ss .> fit_1)
           return [func_I04_tilde(PK, s, kmin, kmax; kwargs...) for s in ss]
      else
-          cutted_ss = ss[ss.>fit_1]
+          ind = findfirst(x -> x >= fit_1, ss)
+          cutted_ss = ss[ind-1:end]
           cutted_I04_tildes = [func_I04_tilde(PK, s, kmin, kmax; kwargs...) for s in cutted_ss]
           l_si, l_b, l_a = GaPSE.power_law_from_data(cutted_ss, cutted_I04_tildes,
                [-2.0, -1.0], fit_1, fit_2; con = false)
           #println("l_si, l_b, l_a = $l_si , $l_b , $l_a")
           left_I04_tildes = [GaPSE.power_law(s, l_si, l_b, l_a) for s in ss[ss.<=fit_1]]
-
-          return vcat(left_I04_tildes, cutted_I04_tildes)
+     
+          return vcat(left_I04_tildes, cutted_I04_tildes[2:end])
      end
 end
 
@@ -508,20 +520,20 @@ end
 
 
 
-function my_println_vec(io::IO, vec::Vector{T}, name::String; N::Integer=5) where T
-    @assert N>1 "N must be an integer >1, not $N !"
+function my_println_vec(io::IO, vec::Vector{T}, name::String; N::Integer = 5) where {T}
+     @assert N > 1 "N must be an integer >1, not $N !"
 
-    println(io, name * " = [")
-    for (i,el) in enumerate(vec)
-        print(io, string(el)*" , ") 
-        (i%N ≠ 0) || print(io, "\n")
-    end
-    (length(vec)%N ≠ 0) && print(io, "\n")
-    print(io, "]\n")
-    
-    return nothing
+     println(io, name * " = [")
+     for (i, el) in enumerate(vec)
+          print(io, string(el) * " , ")
+          (i % N ≠ 0) || print(io, "\n")
+     end
+     (length(vec) % N ≠ 0) && print(io, "\n")
+     print(io, "]\n")
+
+     return nothing
 end
 
-function my_println_vec(vec::Vector{T}, name::String; N::Integer=5) where T
+function my_println_vec(vec::Vector{T}, name::String; N::Integer = 5) where {T}
      my_println_vec(stdout, vec, name; N = N)
 end
