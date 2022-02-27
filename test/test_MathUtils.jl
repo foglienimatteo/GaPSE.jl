@@ -402,6 +402,42 @@ end
                lim = lim, fit_min = fit_min, fit_max = fit_max, p0 = p0, con = true)
 
      end
+
+     @testset "sixth" begin
+          xs = 10 .^ range(2, 4; length = 9)
+          ys = [2 * x for x in xs]
+          lim, fit_1, fit_2 = 1e1, 1e3 - 1e-5, 1e4
+          new_left_xs, new_left_ys = GaPSE.expand_left_log(xs, ys;
+               lim = lim, fit_min = fit_1, fit_max = fit_2, con = true)
+
+          @test isapprox(new_left_xs[end] / (xs[xs.<fit_1][end]), 1.0, rtol = 1e-5)
+          @test isapprox(new_left_xs[end] / (562.341325190349), 1.0, rtol = 1e-5)
+          @test isapprox(new_left_ys[end] / (ys[xs.<fit_1][end]), 1.0, rtol = 1e-5)
+     end
+
+     @testset "seventh" begin
+          xs = 10 .^ range(2, 4; length = 9)
+          ys = [2 * x for x in xs]
+          lim, fit_1, fit_2 = 1e1, 1e3, 1e4
+          new_left_xs, new_left_ys = GaPSE.expand_left_log(xs, ys;
+               lim = lim, fit_min = fit_1, fit_max = fit_2, con = true)
+
+          @test isapprox(new_left_xs[end] / (xs[xs.<fit_1][end]), 1.0, rtol = 1e-5)
+          @test isapprox(new_left_xs[end] / (562.341325190349), 1.0, rtol = 1e-5)
+          @test isapprox(new_left_ys[end] / (ys[xs.<fit_1][end]), 1.0, rtol = 1e-5)
+     end
+
+     @testset "eighth" begin
+          xs = 10 .^ range(2, 4; length = 9)
+          ys = [2 * x for x in xs]
+          lim, fit_1, fit_2 = 1e1, 1e3 + 1e-5, 1e4
+          new_left_xs, new_left_ys = GaPSE.expand_left_log(xs, ys;
+               lim = lim, fit_min = fit_1, fit_max = fit_2, con = true)
+
+          @test isapprox(new_left_xs[end] / (xs[xs.<fit_1][end]), 1.0, rtol = 1e-5)
+          @test isapprox(new_left_xs[end] / (1000.0), 1.0, rtol = 1e-5)
+          @test isapprox(new_left_ys[end] / (ys[xs.<fit_1][end]), 1.0, rtol = 1e-5)
+     end
 end
 
 @testset "test expand_right_log" begin
@@ -502,14 +538,62 @@ end
                lim = lim, fit_min = fit_min, fit_max = fit_max, p0 = p0, con = true)
 
      end
+
+     @testset "sixth" begin
+          xs = 10 .^ range(2, 4; length = 9)
+          ys = [2 * x for x in xs]
+          fit_1, fit_2, lim = 1e2, 1e3 + 1e-5, 1e6
+          new_right_xs, new_right_ys = GaPSE.expand_right_log(xs, ys;
+               lim = lim, fit_min = fit_1, fit_max = fit_2, con = true)
+
+          @test isapprox(new_right_xs[1] / (xs[xs.>fit_2][1]), 1.0, rtol = 1e-5)
+          @test isapprox(new_right_xs[1] / (1778.2794100389228), 1.0, rtol = 1e-5)
+          @test isapprox(new_right_ys[1] / (ys[xs.>fit_2][1]), 1.0, rtol = 1e-5)
+     end
+
+     @testset "seventh" begin
+          xs = 10 .^ range(2, 4; length = 9)
+          ys = [2 * x for x in xs]
+          fit_1, fit_2, lim = 1e2, 1e3, 1e6
+          new_right_xs, new_right_ys = GaPSE.expand_right_log(xs, ys;
+               lim = lim, fit_min = fit_1, fit_max = fit_2, con = true)
+
+          @test isapprox(new_right_xs[1] / (xs[xs.>fit_2][1]), 1.0, rtol = 1e-5)
+          @test isapprox(new_right_xs[1] / (1778.2794100389228), 1.0, rtol = 1e-5)
+          @test isapprox(new_right_ys[1] / (ys[xs.>fit_2][1]), 1.0, rtol = 1e-5)
+     end
+
+     @testset "eighth" begin
+          xs = 10 .^ range(2, 4; length = 9)
+          ys = [2 * x for x in xs]
+          fit_1, fit_2, lim = 1e2, 1e3 - 1e-5, 1e6
+          new_right_xs, new_right_ys = GaPSE.expand_right_log(xs, ys;
+               lim = lim, fit_min = fit_1, fit_max = fit_2, con = true)
+
+          @test isapprox(new_right_xs[1] / (xs[xs.>fit_2][1]), 1.0, rtol = 1e-5)
+          @test isapprox(new_right_xs[1] / (1000.0), 1.0, rtol = 1e-5)
+          @test isapprox(new_right_ys[1] / (ys[xs.>fit_2][1]), 1.0, rtol = 1e-5)
+     end
 end
-
-
 
 
 ##########################################################################################92
 
+@testset "test expanded_IPS" begin
+     tab_IPS = readdlm("datatest/WideA_ZA_pk.dat", comments = true)
+     ks = convert(Vector{Float64}, tab_IPS[:, 1])
+     pks = convert(Vector{Float64}, tab_IPS[:, 2])
 
+     tab_expanded_IPS = readdlm("datatest/expanded_IPS_CLASS.txt", comments = true)
+     ex_ks = convert(Vector{Float64}, tab_expanded_IPS[:, 1])
+     ex_pks = convert(Vector{Float64}, tab_expanded_IPS[:, 2])
+
+     calc_ks, calc_pks = GaPSE.expanded_IPS(ks, pks; k_in = 1e-12, k_end = 1e5,
+          k1 = 1e-6, k2 = 3e-6, k3 = 1e1, k4 = 2e1)
+
+     @test all([isapprox(x1, x2, rtol = 1e-6) for (x1, x2) in zip(calc_ks, ex_ks)])
+     @test all([isapprox(x1, x2, rtol = 1e-6) for (x1, x2) in zip(calc_pks, ex_pks)])
+end
 
 @testset "test func_I04_tilde" begin
      table_ips = readdlm(FILE_PS)

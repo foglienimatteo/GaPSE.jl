@@ -294,13 +294,17 @@ function expand_left_log(xs, ys;
      si, b, a = power_law_from_data(
           xs, ys, p_0, fit_min, fit_max; con = con)
 
-     i = findfirst(x -> x > fit_min, xs) - 1
+     i = findfirst(x -> x >= fit_min, xs) - 1
      f = xs[begin] / xs[begin+1]
 
      new_left_xs = unique(10 .^ range(log10(lim), log10(xs[i]), step = -log10(f)))
      new_left_ys = [power_law(x, si, b, a) for x in new_left_xs]
 
-     return new_left_xs, new_left_ys
+     if isapprox(new_left_xs[end] / xs[i], 1.0, rtol = 1e-6)
+          return new_left_xs, new_left_ys
+     else
+          return vcat(new_left_xs, xs[i]), vcat(new_left_ys, power_law(xs[i], si, b, a))
+     end
 end;
 
 function expand_right_log(xs, ys;
@@ -323,7 +327,11 @@ function expand_right_log(xs, ys;
      new_right_xs = unique(10 .^ range(log10(xs[i]), log10(lim), step = log10(f)))
      new_right_ys = [power_law(x, si, b, a) for x in new_right_xs]
 
-     return new_right_xs, new_right_ys
+     if isapprox(new_right_xs[begin] / xs[i], 1.0, rtol = 1e-6)
+          return new_right_xs, new_right_ys
+     else
+          return vcat(xs[i], new_right_xs), vcat(power_law(xs[i], si, b, a), new_right_ys)
+     end
 end;
 
 ##########################################################################################92
@@ -336,50 +344,44 @@ Given the `ks` and `pks` of a chosen Power Spectrum, returns the same PS
 with "longer tails", i.e. it is prolonged for higher and lower `ks` than 
 the input ones.
 """
-function expanded_IPS(ks, pks; k_in = 1e-8, k_end = 3e3, con = false)
-     k1, k2 = 1e-6, 1e-4
-     k3, k4 = 1e1, 2e1
+function expanded_IPS(ks, pks; k_in = 1e-8, k_end = 3e3,
+     k1 = 1e-6, k2 = 3e-6, k3 = 1e1, k4 = 2e1)
 
-     p0_beg = con ? [1.0, 1.0, 1.0] : [1.0, 1.0]
-     p0_end = con ? [-3.0, 1.0, 1.0] : [-3.0, 1.0]
+     @assert k1 < k2 "k1 must be < k2 !"
+     @assert k3 < k4 "k3 must be < k4 !"
+     @assert k2 < k3 "k1-k2 and k3-k4 ranges should not overlap!"
+     @assert k_in < k1 "k_in must be < k1 !"
+     @assert k_end > k4 "k_end must be > k4 !"
+     @assert min(ks...) <= k1 "k1 must be > min(ks...) !"
+     @assert max(ks...) >= k4 "k4 must be < max(ks...) !"
 
-     #=
-     si_beg, b_beg, a_beg, step_beg, fac_beg =  ks[begin]>k_in ? 
-         (power_law_from_data(ks, pks, p0_beg, k1, k2; con=con)..., 
-         ks[begin+1] - ks[begin] ,  ks[begin] / ks[begin+1]) :
-         (nothing, nothing, nothing, nothing, nothing)
-
-
-     si_end, b_end, a_end, step_end, fac_end = ks[end]<k_end ?  
-         (power_law_from_data(ks, pks, p0_end, k3, k4; con=con)... ,
-         ks[end] - ks[end-1], ks[end] / ks[end-1]) :
-         (nothing, nothing, nothing, nothing, nothing)
-
-     println("$si_beg , $b_beg , $a_beg , $step_beg , $fac_beg")
-     println("$si_end , $b_end , $a_end , $step_end , $fac_end")
-     =#
+     #p0_beg = con ? [1.0, 1.0, 0.0] : [1.0, 1.0]
+     #p0_end = con ? [-3.0, 1.0, 0.0] : [-3.0, 1.0]
+     p0_beg, p0_end = [1.0, 1.0], [-3.0, 1.0]
 
      new_left_ks, new_left_pks =
-          ks[begin] > k_in ?
+          k_in < ks[begin] ?
           expand_left_log(ks, pks; lim = k_in, fit_min = k1,
-               fit_max = k2, p0 = p0_beg, con = con) : (nothing, nothing)
+               fit_max = k2, p0 = p0_beg, con = false) :
+          (nothing, nothing)
 
      new_right_ks, new_right_pks =
           ks[end] < k_end ?
           expand_right_log(ks, pks; lim = k_end, fit_min = k3,
-               fit_max = k4, p0 = p0_end, con = con) : (nothing, nothing)
+               fit_max = k4, p0 = p0_end, con = false) :
+          (nothing, nothing)
 
 
      new_ks, new_pks =
           if !isnothing(new_left_ks) && !isnothing(new_right_ks)
-               (vcat(new_left_ks, ks[k1.<ks.<k4], new_right_ks),
-                    vcat(new_left_pks, pks[k1.<ks.<k4], new_right_pks))
+               (vcat(new_left_ks, ks[k1.<=ks.<=k4], new_right_ks),
+                    vcat(new_left_pks, pks[k1.<=ks.<=k4], new_right_pks))
           elseif isnothing(new_left_ks) && !isnothing(new_right_ks)
-               (vcat(ks[ks.<k4], new_right_ks),
-                    vcat(pks[ks.<k4], new_right_pks))
+               (vcat(ks[ks.<=k4], new_right_ks),
+                    vcat(pks[ks.<=k4], new_right_pks))
           elseif !isnothing(new_left_ks) && isnothing(new_right_ks)
-               (vcat(new_left_ks, ks[k1.<ks]),
-                    vcat(new_left_pks, pks[k1.<ks]))
+               (vcat(new_left_ks, ks[k1.<=ks]),
+                    vcat(new_left_pks, pks[k1.<=ks]))
           else
                (ks, pks)
           end

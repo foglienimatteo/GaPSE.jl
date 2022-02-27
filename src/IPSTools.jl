@@ -130,7 +130,7 @@ struct InputPS
 
           ks, pks = expand ? begin
                println("I expand the input power spectrum at its extremes.")
-               expanded_IPS(data[:, 1], data[:, 2]; con = false)
+               expanded_IPS(data[:, 1], data[:, 2])
           end : begin
                println("I take the input power spectrum as it is,without expanding.")
                (data[:, 1], data[:, 2])
