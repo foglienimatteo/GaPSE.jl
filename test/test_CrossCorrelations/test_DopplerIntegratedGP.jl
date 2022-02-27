@@ -40,3 +40,25 @@
      rm(name)
 end
 
+@testset "test xi integratedgp_doppler L = 0" begin
+     effect = "integratedgp_doppler"
+     L = 0
+
+     table = readdlm("datatest/" * dict_L_dir[L] * "/xi_" * effect * "_L" * string(L) * ".txt"; comments = true)
+     ss = convert(Vector{Float64}, table[:, 1])
+     xis = convert(Vector{Float64}, table[:, 2])
+
+     name = "calc_xi_" * effect * "_L" * string(L) * ".txt"
+     isfile(name) && rm(name)
+     GaPSE.print_map_ξ_multipole(COSMO, name, effect;
+          L = L, joint_kwargs[GaPSE.INDEX_GR_EFFECT[effect]]...)
+
+     calc_table = readdlm(name; comments = true)
+     calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+     calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+
+     @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
+     @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+
+     rm(name)
+end
