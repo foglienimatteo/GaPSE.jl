@@ -68,13 +68,13 @@ function integrand_ξ_IntegratedGP(IP1::Point, IP2::Point,
 
      s1, ℛ_s1 = P1.comdist, P1.ℛ
      s2, ℛ_s2 = P2.comdist, P2.ℛ
-     χ1, D1, a_χ1, ℋ1, f1 = IP1.comdist, IP1.D, IP1.a, IP1.ℋ, IP1.f
-     χ2, D2, a_χ2, ℋ2, f2 = IP2.comdist, IP2.D, IP2.a, IP2.ℋ, IP2.f
+     χ1, D1, a1, ℋ1, f1 = IP1.comdist, IP1.D, IP1.a, IP1.ℋ, IP1.f
+     χ2, D2, a2, ℋ2, f2 = IP2.comdist, IP2.D, IP2.a, IP2.ℋ, IP2.f
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ = √(χ1^2 + χ2^2 - 2 * χ1 * χ2 * y)
 
-     factor = 9 * ℋ0^4 * Ω_M0^2 * D1 * D2 * Δχ^4 / (s1 * s2 * a_χ1 * a_χ2)
+     factor = 9 * ℋ0^4 * Ω_M0^2 * D1 * D2 * Δχ^4 / (s1 * s2 * a1 * a2)
      par_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 1
      par_2 = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 1
      #println("factor = $factor")
