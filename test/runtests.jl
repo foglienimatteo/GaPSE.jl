@@ -24,7 +24,8 @@ using Dierckx, DelimitedFiles, QuadGK
 
 const FILE_F_MAP = "datatest/F_REFERENCE.txt"
 const FILE_PS = "datatest/file_pk.txt"
-const FILE_ILN = "datatest/tab_xi.txt"
+#const FILE_ILN = "datatest/tab_xi.txt"
+const FILE_ILN = "datatest/table_Iln.txt"
 const FILE_BACKGROUND = "datatest/WideA_ZA_background.dat"
 
 const Z_MIN = 0.05
@@ -46,6 +47,10 @@ end
 
 @testset "test_IPSTools" begin
      include("test_IPSTools.jl")
+end
+
+@testset "test_F_evaluation" begin
+     include("test_F_evaluation.jl")
 end
 
 @testset "test_BackgroundData" begin

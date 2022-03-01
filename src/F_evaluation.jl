@@ -166,7 +166,7 @@ function F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
                end
           end
 
-          println(io, "# \nx \t mu \t F \t F_error")
+          println(io, "#\n#x \t mu \t F \t F_error")
           for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
                println(io, "$x\t $μ $(F[1])\t $(F[2])")
           end
@@ -208,7 +208,7 @@ function F_map(xs::Vector{Float64}, μs::Vector{Float64};
                end
           end
 
-          println(io, "\nx \t mu \t F \t F_error")
+          println(io, "#\n# x \t mu \t F \t F_error")
           for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
                println(io, "$x\t $μ \t $(F[1]) \t $(F[2])")
           end

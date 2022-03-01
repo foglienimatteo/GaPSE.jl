@@ -79,8 +79,7 @@ function integrand_ξ_IntegratedGP(IP1::Point, IP2::Point,
      par_2 = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 1
      #println("factor = $factor")
      #println("denomin = $denomin")
-
-     #println(Δχ)
+     
      I04_t = cosmo.tools.I04_tilde(Δχ)
 
      return factor * par_1 * par_2 * I04_t

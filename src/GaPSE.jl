@@ -27,6 +27,7 @@ using GridInterpolations  # Licence: MIT "Expat"
 using ProgressMeter, Documenter  # Licence: MIT "Expat"
 using Test, Printf, DelimitedFiles  # Licence: MIT "Expat"
 
+#=
 const θ_MAX = π / 2.0
 
 const z_MIN = 0.05
@@ -36,6 +37,7 @@ const z_EFF = 0.15045636097417317
 const s_MIN = 148.1920001343431
 const s_MAX = 571.7022420911966
 const s_EFF = 435.37470960794167
+=#
 
 NAMES_F_MAP = ["x", "mu", "F", "F_error"]
 NAMES_PS = ["k (h/Mpc)", "P (Mpc/h)^3"]

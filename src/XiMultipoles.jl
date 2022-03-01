@@ -90,7 +90,7 @@ function integrand_on_mu(s1, s, μ, integrand::Function, cosmo::Cosmology;
      s2_value = s2(s1, s, μ)
      y_value = y(s1, s, μ)
      res = if use_windows == true
-          ϕ_s2 = ϕ(s2_value; s_min = cosmo.s_min, s_max = cosmo.s_max)
+          ϕ_s2 = ϕ(s2_value, cosmo.s_min, cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
           #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
           int = integrand(s1, s2_value, y_value, cosmo; kwargs...)

@@ -28,7 +28,7 @@ FILE_NAME = split(PROGRAM_FILE, "/")[end]
 function main()
      FILE_F_MAP = "data/F_REFERENCE.txt"
      #FILE_PS = "data/WideA_ZA_pk.dat"
-     FILE_PS = "file_pk.txt"
+     FILE_PS = "test/datatest/file_pk.txt"
      FILE_BACKGROUND = "data/WideA_ZA_background.dat"
 
      #casto_tab = readdlm("data/tab_kappa_terms.dat", comments = true)
@@ -54,14 +54,14 @@ function main()
      GaPSE.print_PS_multipole("outputs/xi_doppler.txt", "outputs/P_doppler.txt", nothing)
      =#
 
-     GaPSE.print_map_ξ_multipole(cosmo, 
-          "outputs/xi_lensing_L0.txt", "auto_lensing"; use_windows = false, 
-          N_χs = 50, Δχ_min = 1e-4, enhancer=1e10, μ_rtol=1e-2)
+     #GaPSE.print_map_ξ_multipole(cosmo, 
+     #     "outputs/xi_lensing_L0.txt", "auto_lensing"; use_windows = false, 
+     #     N_χs = 50, Δχ_min = 1e-4, enhancer=1e10, μ_rtol=1e-2)
 
-     #xs = [x for x in 0:0.1:3]
+     xs = [x for x in 0:0.25:3]
+     μs = vcat([-1.0, -0.98, -0.95], [μ for μ in -0.9:0.1:0.9], [0.95, 0.98, 1.0])
      #μs = vcat([μ for μ in -1:0.01:-0.91], [μ for μ in -0.9:0.1:0.9], [μ for μ in 0.91:0.01:1.0])
-     #GaPSE.F_map(xs, μs; out = "data/F_REFERENCE.txt", rtol=5e-3, atol=1e-2)
-
+     GaPSE.F_map(xs, μs; out = "outputs/F.txt", rtol=5e-3, atol=1e-2)
 
 end
 

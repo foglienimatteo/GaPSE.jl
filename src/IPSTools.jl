@@ -161,6 +161,57 @@ end
 
 
 
+struct IntegralIPS
+     si::Float64
+     b::Float64
+     a::Float64
+     left::Float64
+     spline::Dierckx.Spline1D
+
+     function IntegralIPS(ips, l, n; N = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
+          fit_min = 2.0, fit_max = 10.0, p0 = nothing, con = false)
+
+          rs, xis = xicalc(ips, l, n; N = N, kmin = kmin, kmax = kmax, r0 = s0)
+
+          p_0 = isnothing(p0) ? (con == true ? [-1.0, 1.0, 0.0] : [-1.0, 1.0]) : p0
+          si, b, a = power_law_from_data(
+               rs, xis, p_0, fit_min, fit_max; con = con)
+
+          ind = findfirst(x->x>fit_min, rs)-1
+          new_rs = vcat(rs[ind:end])
+          new_Is = vcat(xis[ind:end])
+          spline = Spline1D(new_rs, new_Is; bc="error")
+
+          new(si, b, a, fit_min, spline)
+     end
+
+     function IntegralIPS(ips, func::Function; N = 1024, kmin = 1e-4, kmax = 1e3,
+          fit_min = 0.1, fit_max = 1.0, p0 = nothing, con = false, kwargs...)
+
+          ss = 10 .^ range(log10(0.9*fit_min), 4, length = 1024)
+          Is = [func(ips, s, kmin, kmax; kwargs...) for s in ss]
+
+          p_0 = isnothing(p0) ? (con == true ? [-2.0, -1.0, 0.0] : [-2.0, -1.0]) : p0
+          si, b, a = power_law_from_data(
+               ss, Is, p_0, fit_min, fit_max; con = con)
+          #println("si, b, a = $si , $b , $a")
+
+          spline = Spline1D(ss, Is; bc="error")
+
+          new(si, b, a, fit_min, spline)
+     end
+
+end
+
+function (Iln::IntegralIPS)(x)
+     if x < Iln.left
+          return power_law(x, Iln.si, Iln.b, Iln.a)
+     else 
+          return Iln.spline(x)
+     end
+end
+
+
 @doc raw"""
      IPSTools(
           I00::Dierckx.Spline1D
@@ -217,6 +268,7 @@ Input Power Spectrum.
 
 """
 struct IPSTools
+     #=
      I00::Dierckx.Spline1D
      I20::Dierckx.Spline1D
      I40::Dierckx.Spline1D
@@ -227,6 +279,18 @@ struct IPSTools
      I11::Dierckx.Spline1D
 
      I04_tilde::Dierckx.Spline1D
+     =#
+
+     I00::IntegralIPS
+     I20::IntegralIPS
+     I40::IntegralIPS
+     I02::IntegralIPS
+     I22::IntegralIPS
+     I31::IntegralIPS
+     I13::IntegralIPS
+     I11::IntegralIPS
+
+     I04_tilde::IntegralIPS
 
      σ_0::Float64
      σ_1::Float64
@@ -256,6 +320,30 @@ struct IPSTools
           kmin, kmax, s0 = 1e-5, 1e3, 1e-3
 
           p0 = con ? [-1.0, 1.0, 0.0] : [-1.0, 1.0]
+
+          I00 = IntegralIPS(PK, 0, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)
+          I20 = IntegralIPS(PK, 2, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)
+          I40 = IntegralIPS(PK, 4, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)
+          I02 = IntegralIPS(PK, 0, 2; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)
+          I22 = IntegralIPS(PK, 2, 2; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)
+          I31 = IntegralIPS(PK, 3, 1; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)
+          I13 = IntegralIPS(PK, 1, 3; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)
+          I11 = IntegralIPS(PK, 1, 1; N = N, kmin = kmin, kmax = kmax, s0 = s0,
+                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)
+
+
+          I04_tilde = IntegralIPS(PK, func_I04_tilde; N = N, kmin = kmin, kmax = kmax,
+               fit_min = 0.1, fit_max = 1.0, p0 = nothing, con = con)
+
+
+          #=
           I00 = Spline1D(expanded_Iln(PK, 0, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                     fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
           I20 = Spline1D(expanded_Iln(PK, 2, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
@@ -277,7 +365,8 @@ struct IPSTools
           ss = 10 .^ range(log10(lim), 6, length = 1024)
           I04_tildes = expanded_I04_tilde(PK, ss; kmin = kmin, kmax = kmax)
           #I04_tildes = [func_I04_tilde(PK, s, kmin, kmax) for s in ss]
-          I04_tilde = Spline1D(ss, I04_tildes; bc = "nearest")
+          I04_tilde = Spline1D(ss, I04_tildes; bc = "error")
+          =#
 
           σ_0 = quadgk(q -> PK(q) * q^2 / (2 * π^2), k_min, k_max)[1]
           σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), k_min, k_max)[1]
@@ -366,7 +455,7 @@ where  `P(q)` is the input Power Spectrum.
 
 
 @doc raw"""
-     ϕ(s; s_min = s_MIN, s_max = s_MAX) :: Float64
+     ϕ(s, s_min, s_max) :: Float64
 
 Radial part of the survey window function. Return `1.0` if is true that
 ``s_\mathrm{min} \le s \le s_\mathrm{max}`` and `0.0` otherwise.
@@ -380,7 +469,7 @@ separated into a radial and angular part, i.e.:
 
 See also: [`W`](@ref)
 """
-ϕ(s; s_min = s_MIN, s_max = s_MAX) = s_min < s < s_max ? 1.0 : 0.0
+ϕ(s, s_min, s_max) = s_min < s < s_max ? 1.0 : 0.0
 
 
 
@@ -400,7 +489,7 @@ separated into a radial and angular part, i.e.:
 
 See also: [`ϕ`](@ref)
 """
-W(θ; θ_max = θ_MAX) = 0.0 ≤ θ < θ_max ? 1.0 : 0.0
+W(θ, θ_max) = 0.0 ≤ θ < θ_max ? 1.0 : 0.0
 
 
 @doc raw"""
@@ -421,7 +510,7 @@ Return the volume of a survey with azimutal simmetry, i.e.:
 \end{split}
 ```
 """
-function V_survey(s_min = s_MIN, s_max = s_MAX, θ_max = θ_MAX)
+function V_survey(s_min, s_max, θ_max)
      sin_θ, cos_θ = sin(θ_max), cos(θ_max)
      diff_up_down = (s_max^3 - s_min^3) * (1 - cos_θ)^2 * (2 + cos_θ)
      tr = (s_max^2 + s_min^2 + s_max * s_min) * (s_max - s_min) * cos_θ * sin_θ^2
@@ -435,7 +524,7 @@ end
 
 
 @doc raw"""
-     A(s_min = s_MIN, s_max = s_MAX, θ_max = θ_MAX) :: Float64
+     A(s_min, s_max, θ_max) :: Float64
 
 Return the Power Spectrum multipole normalization coefficient `A`, i.e.:
 ```math
@@ -450,7 +539,7 @@ instead [`A_prime`](@ref)
 
 See also: [`V_survey`](@ref)
 """
-function A(s_min = s_MIN, s_max = s_MAX, θ_max = θ_MAX)
+function A(s_min, s_max, θ_max)
      2.0 * π * V_survey(s_min, s_max, θ_max)
 end
 

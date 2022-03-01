@@ -109,6 +109,17 @@ end
      PK = Spline1D(ips.ks, ips.pks)
 
      tab_Is = readdlm(FILE_ILN, comments = true)
+     ss = convert(Vector{Float64}, tab_Is[:, 1])
+     I00s = convert(Vector{Float64}, tab_Is[:, 2])
+     I20s = convert(Vector{Float64}, tab_Is[:, 3])
+     I40s = convert(Vector{Float64}, tab_Is[:, 4])
+     I02s = convert(Vector{Float64}, tab_Is[:, 5])
+     I22s = convert(Vector{Float64}, tab_Is[:, 6])
+     I31s = convert(Vector{Float64}, tab_Is[:, 7])
+     I11s = convert(Vector{Float64}, tab_Is[:, 8])
+     I13s = convert(Vector{Float64}, tab_Is[:, 9])
+     I04_tildes = convert(Vector{Float64}, tab_Is[:, 10])
+     #=
      true_ss = convert(Vector{Float64}, tab_Is[2:end, 1])
      ss = true_ss[1e-3 .< true_ss .< 1e3]
      I00s = convert(Vector{Float64}, tab_Is[2:end, 2])[1e-3 .< true_ss .< 1e3]
@@ -118,6 +129,8 @@ end
      I22s = convert(Vector{Float64}, tab_Is[2:end, 6])[1e-3 .< true_ss .< 1e3] ./ ss .^ 2
      I31s = convert(Vector{Float64}, tab_Is[2:end, 7])[1e-3 .< true_ss .< 1e3] ./ ss
      I11s = convert(Vector{Float64}, tab_Is[2:end, 8])[1e-3 .< true_ss .< 1e3] ./ ss
+     =#
+
 
      @testset "test sigmas" begin
           σ_0, _ = quadgk(q -> PK(q) * q^2 / (2 * π^2), k_min, k_max)
@@ -132,13 +145,43 @@ end
      end
 
      @testset "test Iln" begin
-          @test all([isapprox(tools.I00(s), i, rtol = 5e-2) for (s, i) in zip(ss, I00s)])
-          @test all([isapprox(tools.I20(s), i, rtol = 1e-1) for (s, i) in zip(ss, I20s)])
-          @test all([isapprox(tools.I40(s), i, rtol = 1e-2) for (s, i) in zip(ss, I40s)])
-          @test all([isapprox(tools.I02(s), i, rtol = 1e-1) for (s, i) in zip(ss, I02s)])
-          @test all([isapprox(tools.I22(s), i, rtol = 1e-2) for (s, i) in zip(ss, I22s)])
-          @test all([isapprox(tools.I31(s), i, rtol = 1e-2) for (s, i) in zip(ss, I31s)])
-          @test all([isapprox(tools.I11(s), i, rtol = 1e-2) for (s, i) in zip(ss, I11s)])
+          @test all([isapprox(tools.I00(s), i, rtol = 1e-3) for (s, i) in zip(ss, I00s)])
+          @test all([isapprox(tools.I20(s), i, rtol = 1e-3) for (s, i) in zip(ss, I20s)])
+          @test all([isapprox(tools.I40(s), i, rtol = 1e-3) for (s, i) in zip(ss, I40s)])
+          @test all([isapprox(tools.I02(s), i, rtol = 1e-3) for (s, i) in zip(ss, I02s)])
+          @test all([isapprox(tools.I22(s), i, rtol = 1e-3) for (s, i) in zip(ss, I22s)])
+          @test all([isapprox(tools.I31(s), i, rtol = 1e-3) for (s, i) in zip(ss, I31s)])
+          @test all([isapprox(tools.I11(s), i, rtol = 1e-3) for (s, i) in zip(ss, I11s)])
+          @test all([isapprox(tools.I13(s), i, rtol = 1e-3) for (s, i) in zip(ss, I13s)])
+          @test all([isapprox(tools.I04_tilde(s), i, rtol = 1e-3) for (s, i) in zip(ss, I04_tildes)])
      end
-
 end
+
+@testset "V_survey" begin
+     @test isapprox(GaPSE.V_survey(1, 2, π/2), 14.660765716752364, rtol=1e-4)
+     @test isapprox(GaPSE.V_survey(10, 20, π/2), 14660.765716752363, rtol=1e-4)
+     
+     @test isapprox(GaPSE.V_survey(1, 2, 0.0), 0.0, rtol=1e-4)
+     @test isapprox(GaPSE.V_survey(1, 2, π/6), 1.9641701671128426, rtol=1e-4)
+
+     @test isapprox(GaPSE.V_survey(S_MIN, S_MAX, π/2), 3.845366169354268e8, rtol=1e-4)
+end
+
+@testset "test ϕ" begin
+     @test GaPSE.ϕ(0, 1.0, 2.0) ≈ 0.0
+     @test GaPSE.ϕ(0.5, 1.0, 2.0) ≈ 0.0
+     @test GaPSE.ϕ(1.0, 1.0, 2.0) ≈ 0.0
+     @test GaPSE.ϕ(1.0 + 1e-5, 1.0, 2.0) ≈ 1.0
+     @test GaPSE.ϕ(1.5, 1.0, 2.0) ≈ 1.0
+     @test GaPSE.ϕ(2.0 - 1e-5, 1.0, 2.0) ≈ 1.0
+     @test GaPSE.ϕ(2.0, 1.0, 2.0) ≈ 0.0
+     @test GaPSE.ϕ(2.5, 1.0, 2.0) ≈ 0.0
+end
+
+@testset "test W" begin  
+     @test GaPSE.W(0, π/3) ≈ 1.0
+     @test GaPSE.W(1.0, π/3) ≈ 1.0
+     @test GaPSE.W(π/3, π/3) ≈ 0.0
+     @test GaPSE.W(π, π/3) ≈ 0.0
+end
+

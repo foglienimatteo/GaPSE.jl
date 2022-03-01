@@ -41,7 +41,7 @@
 end
 
 @testset "test xi integratedgp_localgp L = 0" begin
-     effect = "localgp_integratedgp"
+     effect = "integratedgp_localgp"
      L = 0
 
      table = readdlm("datatest/" * dict_L_dir[L] * "/xi_" * effect * "_L" * string(L) * ".txt"; comments = true)
