@@ -162,50 +162,74 @@ end
 
 
 struct IntegralIPS
-     si::Float64
-     b::Float64
-     a::Float64
+     l_si::Float64
+     l_b::Float64
+     l_a::Float64
      left::Float64
      spline::Dierckx.Spline1D
+     r_si::Float64
+     r_b::Float64
+     r_a::Float64
+     right::Float64
 
      function IntegralIPS(ips, l, n; N = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
-          fit_min = 2.0, fit_max = 10.0, p0 = nothing, con = false)
+          fit_left_min = 2.0, fit_left_max = 10.0, p0_left = nothing, con = false,
+          fit_right_min = nothing, fit_right_max = nothing, p0_right = nothing)
 
           rs, xis = xicalc(ips, l, n; N = N, kmin = kmin, kmax = kmax, r0 = s0)
 
-          p_0 = isnothing(p0) ? (con == true ? [-1.0, 1.0, 0.0] : [-1.0, 1.0]) : p0
-          si, b, a = power_law_from_data(
-               rs, xis, p_0, fit_min, fit_max; con = con)
+          p_0_left = isnothing(p0_left) ? (con == true ? [-1.0, 1.0, 0.0] : [-1.0, 1.0]) : p0_left
+          l_si, l_b, l_a = power_law_from_data(
+               rs, xis, p_0_left, fit_left_min, fit_left_max; con = con)
 
-          ind = findfirst(x->x>fit_min, rs)-1
-          new_rs = vcat(rs[ind:end])
-          new_Is = vcat(xis[ind:end])
+          fit_right_MIN = isnothing(fit_right_min) ? rs[length(rs)-16] : fit_right_min
+          fit_right_MAX = isnothing(fit_right_max) ? rs[length(rs)-1] : fit_right_max
+          p_0_right = isnothing(p0_right) ? [-4.0, 1.0] : p0_right
+          r_si, r_b, r_a = power_law_from_data(
+               rs, xis, p_0_right, fit_right_MIN, fit_right_MAX; con = false)
+
+          ind_left = findfirst(x->x>fit_left_min, rs)-1
+          ind_right = findfirst(x->x>=fit_right_MAX, rs)
+          new_rs = vcat(rs[ind_left:ind_right])
+          new_Is = vcat(xis[ind_left:ind_right])
           spline = Spline1D(new_rs, new_Is; bc="error")
 
-          new(si, b, a, fit_min, spline)
+          new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_MAX)
      end
 
      function IntegralIPS(ips, func::Function; N = 1024, kmin = 1e-4, kmax = 1e3,
-          fit_min = 0.1, fit_max = 1.0, p0 = nothing, con = false, kwargs...)
+          fit_left_min = 0.1, fit_left_max = 1.0, p0_left = nothing, con = false, 
+          fit_right_min = nothing, fit_right_max = nothing, p0_right = nothing,
+          kwargs...)
 
-          ss = 10 .^ range(log10(0.9*fit_min), 4, length = 1024)
+          ss = 10 .^ range(log10(0.999*fit_left_min), 4, length = 1024)
           Is = [func(ips, s, kmin, kmax; kwargs...) for s in ss]
 
-          p_0 = isnothing(p0) ? (con == true ? [-2.0, -1.0, 0.0] : [-2.0, -1.0]) : p0
-          si, b, a = power_law_from_data(
-               ss, Is, p_0, fit_min, fit_max; con = con)
-          #println("si, b, a = $si , $b , $a")
+          p_0_left = isnothing(p0_left) ? (con == true ? [-2.0, -1.0, 0.0] : [-2.0, -1.0]) : p0_left
+          l_si, l_b, l_a = power_law_from_data(
+               ss, Is, p_0_left, fit_left_min, fit_left_max; con = con)
+          println("l_si, l_b, l_a = $l_si , $l_b , $l_a")
+
+          fit_right_MIN = isnothing(fit_right_min) ? ss[length(ss)-13] : fit_right_min
+          fit_right_MAX = isnothing(fit_right_max) ? ss[length(ss)-1] : fit_right_max
+          p_0_right = isnothing(p0_right) ? [-4.0, -1.0] : p0_right
+          r_si, r_b, r_a = power_law_from_data(
+               ss, Is, p_0_right, fit_right_MIN, fit_right_MAX; con = false)
+          println("r_si, r_b, r_a = $r_si , $r_b , $r_a")
 
           spline = Spline1D(ss, Is; bc="error")
 
-          new(si, b, a, fit_min, spline)
+          new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_MAX)
      end
 
 end
 
 function (Iln::IntegralIPS)(x)
      if x < Iln.left
-          return power_law(x, Iln.si, Iln.b, Iln.a)
+          return power_law(x, Iln.l_si, Iln.l_b, Iln.l_a)
+     elseif x > Iln.right
+          warning("i am going too right! ")
+          return power_law(x, Iln.r_si, Iln.r_b, Iln.r_a)
      else 
           return Iln.spline(x)
      end
@@ -322,44 +346,44 @@ struct IPSTools
           p0 = con ? [-1.0, 1.0, 0.0] : [-1.0, 1.0]
 
           I00 = IntegralIPS(PK, 0, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)
+                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
           I20 = IntegralIPS(PK, 2, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)
+                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
           I40 = IntegralIPS(PK, 4, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)
+                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
           I02 = IntegralIPS(PK, 0, 2; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)
+                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
           I22 = IntegralIPS(PK, 2, 2; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)
+                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
           I31 = IntegralIPS(PK, 3, 1; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)
+                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
           I13 = IntegralIPS(PK, 1, 3; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)
+                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
           I11 = IntegralIPS(PK, 1, 1; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)
+                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
 
-
+          p0_tilde = con ? [-2.0, -1.0, 0.0] : [-2.0, -1.0]
           I04_tilde = IntegralIPS(PK, func_I04_tilde; N = N, kmin = kmin, kmax = kmax,
-               fit_min = 0.1, fit_max = 1.0, p0 = nothing, con = con)
+               fit_left_min = 0.1, fit_left_max = 1.0, p0_left = p0_tilde, con = con)
 
 
           #=
           I00 = Spline1D(expanded_Iln(PK, 0, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
+                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
           I20 = Spline1D(expanded_Iln(PK, 2, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
+                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
           I40 = Spline1D(expanded_Iln(PK, 4, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
+                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
           I02 = Spline1D(expanded_Iln(PK, 0, 2; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
+                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
           I22 = Spline1D(expanded_Iln(PK, 2, 2; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
+                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
           I31 = Spline1D(expanded_Iln(PK, 3, 1; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
+                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
           I13 = Spline1D(expanded_Iln(PK, 1, 3; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
+                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
           I11 = Spline1D(expanded_Iln(PK, 1, 1; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_min = fit_min, fit_max = fit_max, p0 = p0, con = con)...; bc = "error")
+                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
 
           #ss = 10 .^ range(log10(s0), log10(s0) - log10(kmin) - log10(kmax), length = N)
           ss = 10 .^ range(log10(lim), 6, length = 1024)

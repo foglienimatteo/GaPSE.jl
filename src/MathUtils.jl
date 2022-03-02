@@ -18,6 +18,14 @@
 #
 
 
+function warning(io::IO, msg::String)
+    red = "\033[1m\033[31m" 
+    printstyled(io, "WARNING: " * msg * "\n"; color=:red, bold=true)
+    return
+end
+warning(msg::String) = warning(stdout, msg)
+
+
 """
      derivate_point(xp, yp, x1, y1, x2, y2)
 
