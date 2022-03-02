@@ -166,134 +166,136 @@ end
           σ_2, _ = quadgk(q -> PK(q) / (2 * π^2), k_min, k_max)
           σ_3, _ = quadgk(q -> PK(q) / (2 * π^2 * q), k_min, k_max)
 
-          @test isapprox(tools.σ_0, σ_0) && isapprox(σ_0, 15.593462966741178)
-          @test isapprox(tools.σ_1, σ_1) && isapprox(σ_1, 15.074895881392285)
-          @test isapprox(tools.σ_2, σ_2) && isapprox(σ_2, 100.85852368830221)
-          @test isapprox(tools.σ_3, σ_3) && isapprox(σ_3, 3734.849690975012)
+          @test isapprox(tools.σ_0, σ_0, rtol=1e-4) && isapprox(σ_0, 15.593462966741178, rtol=1e-4)
+          @test isapprox(tools.σ_1, σ_1, rtol=1e-4) && isapprox(σ_1, 15.074895881392285, rtol=1e-4)
+          @test isapprox(tools.σ_2, σ_2, rtol=1e-4) && isapprox(σ_2, 100.85852368830221, rtol=1e-4)
+          @test isapprox(tools.σ_3, σ_3, rtol=1e-4) && isapprox(σ_3, 3734.849690975012, rtol=1e-4))
      end
 
-     @testset "test I00" begin
-          @test tools.I00.l_si ≈ -0.3480008484088528
-          @test tools.I00.l_b ≈ 11.575473646894222
-          @test tools.I00.l_a ≈  -6.492685627424222
-          @test tools.I00.left ≈ 0.05
+     RTOL = 1e-4
 
-          @test tools.I00.r_si ≈ 2.8758516589192706
-          @test tools.I00.r_b ≈ 8.345990355535678e-29
-          @test tools.I00.r_a ≈ 0.0
-          @test tools.I00.right ≈ 96466.16199111959
+     @testset "test I00" begin
+          @test isapprox(tools.I00.l_si , -0.3480008484088528  ; rtol=RTOL)
+          @test isapprox(tools.I00.l_b , 11.575473646894222  ; rtol=RTOL)
+          @test isapprox(tools.I00.l_a ,  -6.492685627424222  ; rtol=RTOL)
+          @test isapprox(tools.I00.left , 0.05  ; rtol=RTOL)
+
+          @test isapprox(tools.I00.r_si , 2.8758516589192706  ; rtol=RTOL)
+          @test isapprox(tools.I00.r_b , 8.345990355535678e-29  ; rtol=RTOL)
+          @test isapprox(tools.I00.r_a , 0.0  ; rtol=RTOL)
+          @test isapprox(tools.I00.right , 96466.16199111959  ; rtol=RTOL)
 
           @test all([isapprox(tools.I00(s), i, rtol = 1e-3) for (s, i) in zip(ss, I00s)])
      end
 
      @testset "test I20" begin
-          @test tools.I20.l_si ≈ -0.3434449376790657
-          @test tools.I20.l_b ≈ 1.5505826777939757
-          @test tools.I20.l_a ≈  -0.035265713349630266
-          @test tools.I20.left ≈ 0.05
+          @test isapprox(tools.I20.l_si , -0.3434449376790657  ; rtol=RTOL)
+          @test isapprox(tools.I20.l_b , 1.5505826777939757  ; rtol=RTOL)
+          @test isapprox(tools.I20.l_a ,  -0.035265713349630266  ; rtol=RTOL)
+          @test isapprox(tools.I20.left , 0.05  ; rtol=RTOL)
 
-          @test tools.I20.r_si ≈ -3.9578746738388397
-          @test tools.I20.r_b ≈ 1.1832931457198192e6
-          @test tools.I20.r_a ≈ 0.0
-          @test tools.I20.right ≈ 96466.16199111959
+          @test isapprox(tools.I20.r_si , -3.9578746738388397  ; rtol=RTOL)
+          @test isapprox(tools.I20.r_b , 1.1832931457198192e6  ; rtol=RTOL)
+          @test isapprox(tools.I20.r_a , 0.0  ; rtol=RTOL)
+          @test isapprox(tools.I20.right , 96466.16199111959  ; rtol=RTOL)
 
           @test all([isapprox(tools.I20(s), i, rtol = 1e-3) for (s, i) in zip(ss, I20s)])
      end
 
      @testset "test I40" begin
-          @test tools.I40.l_si ≈ -0.3468022218825587
-          @test tools.I40.l_b ≈ 0.7681399976144987
-          @test tools.I40.l_a ≈  -0.00028247463623223634
-          @test tools.I40.left ≈ 0.05
+          @test isapprox(tools.I40.l_si , -0.3468022218825587  ; rtol=RTOL)
+          @test isapprox(tools.I40.l_b , 0.7681399976144987  ; rtol=RTOL)
+          @test isapprox(tools.I40.l_a ,  -0.00028247463623223634  ; rtol=RTOL)
+          @test isapprox(tools.I40.left , 0.05  ; rtol=RTOL)
 
-          @test tools.I40.r_si ≈ -3.9597415622888192
-          @test tools.I40.r_b ≈ 6.92151268083521e6
-          @test tools.I40.r_a ≈ 0.0
-          @test tools.I40.right ≈ 96466.16199111959
+          @test isapprox(tools.I40.r_si , -3.9597415622888192  ; rtol=RTOL)
+          @test isapprox(tools.I40.r_b , 6.92151268083521e6  ; rtol=RTOL)
+          @test isapprox(tools.I40.r_a , 0.0  ; rtol=RTOL)
+          @test isapprox(tools.I40.right , 96466.16199111959  ; rtol=RTOL)
 
           @test all([isapprox(tools.I40(s), i, rtol = 1e-3) for (s, i) in zip(ss, I40s)])
      end
 
      @testset "test I02" begin
-          @test tools.I02.l_si ≈ -2.00164755613052
-          @test tools.I02.l_b ≈ 100.44877199997933
-          @test tools.I02.l_a ≈  0.0
-          @test tools.I02.left ≈ 0.05
+          @test isapprox(tools.I02.l_si , -2.00164755613052  ; rtol=RTOL)
+          @test isapprox(tools.I02.l_b , 100.44877199997933  ; rtol=RTOL)
+          @test isapprox(tools.I02.l_a ,  0.0  ; rtol=RTOL)
+          @test isapprox(tools.I02.left , 0.05  ; rtol=RTOL)
 
-          @test tools.I02.r_si ≈ -5.866385247535877
-          @test tools.I02.r_b ≈ 1.7556551321550488e14
-          @test tools.I02.r_a ≈ 0.0
-          @test tools.I02.right ≈ 96466.16199111959
+          @test isapprox(tools.I02.r_si , -5.866385247535877  ; rtol=RTOL)
+          @test isapprox(tools.I02.r_b , 1.7556551321550488e14  ; rtol=RTOL)
+          @test isapprox(tools.I02.r_a , 0.0  ; rtol=RTOL)
+          @test isapprox(tools.I02.right , 96466.16199111959  ; rtol=RTOL)
 
           @test all([isapprox(tools.I02(s), i, rtol = 1e-3) for (s, i) in zip(ss, I02s)])
      end
 
      @testset "test I22" begin
-          @test tools.I22.l_si ≈ -0.34727171081772734
-          @test tools.I22.l_b ≈ 0.9412777254767503
-          @test tools.I22.l_a ≈ -0.43616927284862367
-          @test tools.I22.left ≈ 0.05
+          @test isapprox(tools.I22.l_si , -0.34727171081772734  ; rtol=RTOL)
+          @test isapprox(tools.I22.l_b , 0.9412777254767503  ; rtol=RTOL)
+          @test isapprox(tools.I22.l_a , -0.43616927284862367  ; rtol=RTOL)
+          @test isapprox(tools.I22.left , 0.05  ; rtol=RTOL)
 
-          @test tools.I22.r_si ≈ -3.431171897505612
-          @test tools.I22.r_b ≈ 851.4607831995294
-          @test tools.I22.r_a ≈ 0.0
-          @test tools.I22.right ≈ 96466.16199111959
+          @test isapprox(tools.I22.r_si , -3.431171897505612  ; rtol=RTOL)
+          @test isapprox(tools.I22.r_b , 851.4607831995294  ; rtol=RTOL)
+          @test isapprox(tools.I22.r_a , 0.0  ; rtol=RTOL)
+          @test isapprox(tools.I22.right , 96466.16199111959  ; rtol=RTOL)
 
           @test all([isapprox(tools.I22(s), i, rtol = 1e-3) for (s, i) in zip(ss, I22s)])
      end
 
      @testset "test I31" begin
-          @test tools.I31.l_si ≈  -0.3445696461864395
-          @test tools.I31.l_b ≈ 0.33123234468023927
-          @test tools.I31.l_a ≈ -0.005064156263986402
-          @test tools.I31.left ≈ 0.05
+          @test isapprox(tools.I31.l_si ,  -0.3445696461864395  ; rtol=RTOL)
+          @test isapprox(tools.I31.l_b , 0.33123234468023927  ; rtol=RTOL)
+          @test isapprox(tools.I31.l_a , -0.005064156263986402  ; rtol=RTOL)
+          @test isapprox(tools.I31.left , 0.05  ; rtol=RTOL)
 
-          @test tools.I31.r_si ≈ -3.9594640605240348
-          @test tools.I31.r_b ≈ 1.157797082289167e6
-          @test tools.I31.r_a ≈ 0.0
-          @test tools.I31.right ≈ 96466.16199111959
+          @test isapprox(tools.I31.r_si , -3.9594640605240348  ; rtol=RTOL)
+          @test isapprox(tools.I31.r_b , 1.157797082289167e6  ; rtol=RTOL)
+          @test isapprox(tools.I31.r_a , 0.0  ; rtol=RTOL)
+          @test isapprox(tools.I31.right , 96466.16199111959  ; rtol=RTOL)
 
           @test all([isapprox(tools.I31(s), i, rtol = 1e-3) for (s, i) in zip(ss, I31s)])
      end
 
      @testset "test I11" begin
-          @test tools.I11.l_si ≈ -0.3474733407904323
-          @test tools.I11.l_b ≈ 4.375198496682168
-          @test tools.I11.l_a ≈ -2.17582565657694
-          @test tools.I11.left ≈ 0.05
+          @test isapprox(tools.I11.l_si , -0.3474733407904323  ; rtol=RTOL)
+          @test isapprox(tools.I11.l_b , 4.375198496682168  ; rtol=RTOL)
+          @test isapprox(tools.I11.l_a , -2.17582565657694  ; rtol=RTOL)
+          @test isapprox(tools.I11.left , 0.05  ; rtol=RTOL)
 
-          @test tools.I11.r_si ≈ -2.270802848837033
-          @test tools.I11.r_b ≈ 0.002613631263376589
-          @test tools.I11.r_a ≈ 0.0
-          @test tools.I11.right ≈ 96466.16199111959
+          @test isapprox(tools.I11.r_si , -2.270802848837033  ; rtol=RTOL)
+          @test isapprox(tools.I11.r_b , 0.002613631263376589  ; rtol=RTOL)
+          @test isapprox(tools.I11.r_a , 0.0  ; rtol=RTOL)
+          @test isapprox(tools.I11.right , 96466.16199111959  ; rtol=RTOL)
 
           @test all([isapprox(tools.I11(s), i, rtol = 1e-3) for (s, i) in zip(ss, I11s)])
      end
 
      @testset "test I13" begin
-          @test tools.I13.l_si ≈  -2.0001163229203924
-          @test tools.I13.l_b ≈ 33.62113907833843
-          @test tools.I13.l_a ≈ -0.5498036524608388
-          @test tools.I13.left ≈ 0.05
+          @test isapprox(tools.I13.l_si ,  -2.0001163229203924  ; rtol=RTOL)
+          @test isapprox(tools.I13.l_b , 33.62113907833843  ; rtol=RTOL)
+          @test isapprox(tools.I13.l_a , -0.5498036524608388  ; rtol=RTOL)
+          @test isapprox(tools.I13.left , 0.05  ; rtol=RTOL)
 
-          @test tools.I13.r_si ≈ -4.387393755963048
-          @test tools.I13.r_b ≈ 1.5388770882263558e7
-          @test tools.I13.r_a ≈ 0.0
-          @test tools.I13.right ≈ 96466.16199111959
+          @test isapprox(tools.I13.r_si , -4.387393755963048  ; rtol=RTOL)
+          @test isapprox(tools.I13.r_b , 1.5388770882263558e7  ; rtol=RTOL)
+          @test isapprox(tools.I13.r_a , 0.0  ; rtol=RTOL)
+          @test isapprox(tools.I13.right , 96466.16199111959  ; rtol=RTOL)
 
           @test all([isapprox(tools.I13(s), i, rtol = 1e-3) for (s, i) in zip(ss, I13s)])
      end
 
      @testset "test I04_tilde" begin
-          @test tools.I04_tilde.l_si ≈ -2.0002445476746975
-          @test tools.I04_tilde.l_b ≈ -16.80636730509123
-          @test tools.I04_tilde.l_a ≈ 0.10615797439188279
-          @test tools.I04_tilde.left ≈ 0.1
+          @test isapprox(tools.I04_tilde.l_si , -2.0002445476746975  ; rtol=RTOL)
+          @test isapprox(tools.I04_tilde.l_b , -16.80636730509123  ; rtol=RTOL)
+          @test isapprox(tools.I04_tilde.l_a , 0.10615797439188279  ; rtol=RTOL)
+          @test isapprox(tools.I04_tilde.left , 0.1  ; rtol=RTOL)
 
-          @test tools.I04_tilde.r_si ≈ -3.746166614932489
-          @test tools.I04_tilde.r_b ≈ -83772.05493095529
-          @test tools.I04_tilde.r_a ≈ 0.0
-          @test tools.I04_tilde.right ≈ 9888.080416307215
+          @test isapprox(tools.I04_tilde.r_si , -3.746166614932489  ; rtol=RTOL)
+          @test isapprox(tools.I04_tilde.r_b , -83772.05493095529  ; rtol=RTOL)
+          @test isapprox(tools.I04_tilde.r_a , 0.0  ; rtol=RTOL)
+          @test isapprox(tools.I04_tilde.right , 9888.080416307215  ; rtol=RTOL)
 
           @test all([isapprox(tools.I04_tilde(s), i, rtol = 1e-3) for (s, i) in zip(ss, I04_tildes)])
      end
