@@ -169,7 +169,7 @@ end
           @test isapprox(tools.σ_0, σ_0, rtol=1e-4) && isapprox(σ_0, 15.593462966741178, rtol=1e-4)
           @test isapprox(tools.σ_1, σ_1, rtol=1e-4) && isapprox(σ_1, 15.074895881392285, rtol=1e-4)
           @test isapprox(tools.σ_2, σ_2, rtol=1e-4) && isapprox(σ_2, 100.85852368830221, rtol=1e-4)
-          @test isapprox(tools.σ_3, σ_3, rtol=1e-4) && isapprox(σ_3, 3734.849690975012, rtol=1e-4))
+          @test isapprox(tools.σ_3, σ_3, rtol=1e-4) && isapprox(σ_3, 3734.849690975012, rtol=1e-4)
      end
 
      RTOL = 1e-4
