@@ -56,13 +56,12 @@ function Cosmology(
      file_ips::String,
      file_windowF::String,
      file_Is::Union{String,Nothing} = nothing;
-     expand::Bool = true,
      names_bg = NAMES_BACKGROUND
 )
 
      BD = BackgroundData(file_data::String, params.z_max;
           names = names_bg, h = params.h_0)
-     IPS = InputPS(file_ips; expand = expand)
+     IPS = InputPS(file_ips)
      windowF = WindowF(file_windowF)
      tools = isnothing(file_Is) ?
              IPSTools(IPS; k_min = params.k_min, k_max = params.k_max,

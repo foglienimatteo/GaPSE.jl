@@ -121,39 +121,75 @@ Store the Input Power Spectrum.
 See also: [`expanded_IPS`](@ref)
 """
 struct InputPS
-     ks::Vector{Float64}
-     pks::Vector{Float64}
+     l_si::Float64
+     l_b::Float64
+     l_a::Float64
+     left::Float64
+     spline::Dierckx.Spline1D
+     r_si::Float64
+     r_b::Float64
+     r_a::Float64
+     right::Float64
+     
 
-     function InputPS(file::String; expand::Bool = true)
+     function InputPS(file::String; fit_left_min = 1e-6, fit_left_max = 3e-6,
+          fit_right_min = 1e1, fit_right_max = 2e1)
+
           data = readdlm(file, comments = true)
           @assert size(data[:, 1]) == size(data[:, 2]) "ks and pks must have the same length!"
 
-          ks, pks = expand ? begin
-               println("I expand the input power spectrum at its extremes.")
-               expanded_IPS(data[:, 1], data[:, 2])
-          end : begin
-               println("I take the input power spectrum as it is,without expanding.")
-               (data[:, 1], data[:, 2])
-          end
+          ks = convert(Vector{Float64}, data[:,1]) 
+          pks = convert(Vector{Float64}, data[:,2]) 
 
-          new(ks, pks)
+          l_si, l_b, l_a = power_law_from_data(
+               ks, pks, [1.0, 1.0], fit_left_min, fit_left_max; con = false)
+
+          r_si, r_b, r_a = power_law_from_data(
+               ks, pks, [-3.0, 1.0], fit_right_min, fit_right_max; con = false)
+
+          ind_left = findfirst(x->x>fit_left_min, ks)-1
+          ind_right = findfirst(x->x>=fit_right_max, ks)
+          new_ks = vcat(ks[ind_left:ind_right])
+          new_pks = vcat(pks[ind_left:ind_right])
+          spline = Spline1D(new_ks, new_pks; bc="error")
+
+
+          new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_max)
      end
 
      function InputPS(ks::AbstractVector{T1}, pks::AbstractVector{T2};
-          expand::Bool = true) where {T1,T2}
+          fit_left_min = 1e-6, fit_left_max = 3e-6,
+          fit_right_min = 1e1, fit_right_max = 2e1) where {T1,T2}
 
           @assert size(ks) == size(pks) "ks and pks must have the same length!"
-          new_ks, new_pks = expand ? begin
-               println("I expand the input power spectrum at its extremes.")
-               expanded_IPS(ks, pks; con = false)
-          end : begin
-               println("I take the input power spectrum as it is,without expanding.")
-               (ks, pks)
-          end
+          
+          l_si, l_b, l_a = power_law_from_data(
+               ks, pks, [1.0, 1.0], fit_left_min, fit_left_max; con = false)
 
-          new(new_ks, new_pks)
+          r_si, r_b, r_a = power_law_from_data(
+               ks, pks, [-3.0, 1.0], fit_right_min, fit_right_max; con = false)
+
+          ind_left = findfirst(x->x>fit_left_min, ks)-1
+          ind_right = findfirst(x->x>=fit_right_max, ks)
+          new_ks = vcat(ks[ind_left:ind_right])
+          new_pks = vcat(pks[ind_left:ind_right])
+          spline = Spline1D(new_ks, new_pks; bc="error")
+
+          new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_max)
      end
 end
+
+
+function (IPS::InputPS)(x)
+     if x < IPS.left
+          return power_law(x, IPS.l_si, IPS.l_b, IPS.l_a)
+     elseif x > IPS.right
+          return power_law(x, IPS.r_si, IPS.r_b, IPS.r_a)
+     else 
+          return IPS.spline(x)
+     end
+end
+
 
 
 ##########################################################################################92
@@ -193,6 +229,9 @@ struct IntegralIPS
           new_rs = vcat(rs[ind_left:ind_right])
           new_Is = vcat(xis[ind_left:ind_right])
           spline = Spline1D(new_rs, new_Is; bc="error")
+          
+          #println("\nleft = $l_si , $l_b , $l_a, $fit_left_min")
+          #println("right = $r_si , $r_b , $r_a, $fit_right_MAX\n")
 
           new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_MAX)
      end
@@ -208,19 +247,48 @@ struct IntegralIPS
           p_0_left = isnothing(p0_left) ? (con == true ? [-2.0, -1.0, 0.0] : [-2.0, -1.0]) : p0_left
           l_si, l_b, l_a = power_law_from_data(
                ss, Is, p_0_left, fit_left_min, fit_left_max; con = con)
-          println("l_si, l_b, l_a = $l_si , $l_b , $l_a")
 
           fit_right_MIN = isnothing(fit_right_min) ? ss[length(ss)-13] : fit_right_min
           fit_right_MAX = isnothing(fit_right_max) ? ss[length(ss)-1] : fit_right_max
           p_0_right = isnothing(p0_right) ? [-4.0, -1.0] : p0_right
           r_si, r_b, r_a = power_law_from_data(
                ss, Is, p_0_right, fit_right_MIN, fit_right_MAX; con = false)
-          println("r_si, r_b, r_a = $r_si , $r_b , $r_a")
+
+          #println("\nLEFT = $l_si , $l_b , $l_a, $fit_left_min")
+          #println("RIGHT = $r_si , $r_b , $r_a, $fit_right_MAX\n")
 
           spline = Spline1D(ss, Is; bc="error")
 
           new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_MAX)
      end
+
+     #=
+     function IntegralIPS(xs::Vector{Float64}, ys::Vector{Float64}; N = 1024, kmin = 1e-4, kmax = 1e3,
+          fit_left_min = 0.1, fit_left_max = 1.0, p0_left = nothing, con = false, 
+          fit_right_min = nothing, fit_right_max = nothing, p0_right = nothing,
+          kwargs...)
+
+          ss = 10 .^ range(log10(0.999*fit_left_min), 4, length = 1024)
+          Is = [func(ips, s, kmin, kmax; kwargs...) for s in ss]
+
+          p_0_left = isnothing(p0_left) ? (con == true ? [-2.0, -1.0, 0.0] : [-2.0, -1.0]) : p0_left
+          l_si, l_b, l_a = power_law_from_data(
+               ss, Is, p_0_left, fit_left_min, fit_left_max; con = con)
+
+          fit_right_MIN = isnothing(fit_right_min) ? ss[length(ss)-13] : fit_right_min
+          fit_right_MAX = isnothing(fit_right_max) ? ss[length(ss)-1] : fit_right_max
+          p_0_right = isnothing(p0_right) ? [-4.0, -1.0] : p0_right
+          r_si, r_b, r_a = power_law_from_data(
+               ss, Is, p_0_right, fit_right_MIN, fit_right_MAX; con = false)
+
+          #println("\nLEFT = $l_si , $l_b , $l_a, $fit_left_min")
+          #println("RIGHT = $r_si , $r_b , $r_a, $fit_right_MAX\n")
+
+          spline = Spline1D(ss, Is; bc="error")
+
+          new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_MAX)
+     end
+     =#
 
 end
 
@@ -335,10 +403,9 @@ struct IPSTools
           con::Bool = false,
           k_min::Float64 = 1e-6,
           k_max::Float64 = 10.0,
-          lim::Float64 = 1e-8
      )
-
-          PK = Spline1D(ips.ks, ips.pks; bc = "error")
+          #PK = Spline1D(ips.ks, ips.pks; bc = "error")
+          PK = ips
 
           #kmin, kmax = min(ips.ks...), max(ips.ks...)
           kmin, kmax, s0 = 1e-5, 1e3, 1e-3
@@ -401,11 +468,13 @@ struct IPSTools
                fit_min, fit_max, k_min, k_max, s0)
      end
 
+     #=
      function IPSTools(ips::InputPS, iIs::String;
           k_min::Float64 = 1e-8,
           k_max::Float64 = 10.0
      )
-          PK = Spline1D(ips.ks, ips.pks; bc = "error")
+          #PK = Spline1D(ips.ks, ips.pks; bc = "error")
+          Pk= ips
 
           tab_Is = readdlm(iIs, comments = true)
           ss = convert(Vector{Float64}, tab_Is[2:end, 1])
@@ -435,6 +504,7 @@ struct IPSTools
           new(I00, I20, I40, I02, I22, I31, I13, I11, I04_tilde, σ_0, σ_1, σ_2, σ_3,
                nothing, nothing, k_min, k_max, s0)
      end
+     =#
 
 end
 

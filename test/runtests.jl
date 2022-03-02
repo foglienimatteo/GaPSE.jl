@@ -73,7 +73,7 @@ const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
      Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70,
      N = 1024, fit_min = 0.05, fit_max = 0.5, con = true)
 
-const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP; expand = false)
+const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP)
 
 common_kwargs = Dict(
      :pr=>false,
@@ -133,15 +133,15 @@ end
      include("test_CrossCorrelations/test_DopplerIntegratedGP.jl")
 end
 
-@testset "test_DopplerLocalGP" begin
-     include("test_CrossCorrelations/test_DopplerLocalGP.jl")
-end
-
 @testset "test_LensingIntegratedGP" begin
      include("test_CrossCorrelations/test_LensingIntegratedGP.jl")
 end
 
-@testset "test_LensingIntegratedGP" begin
-     include("test_CrossCorrelations/test_LensingIntegratedGP.jl")
+@testset "test_LensingLocalGP" begin
+     include("test_CrossCorrelations/test_LensingLocalGP.jl")
+end
+
+@testset "test_LocalGPIntegratedGP" begin
+     include("test_CrossCorrelations/test_LocalGPIntegratedGP.jl")
 end
 
