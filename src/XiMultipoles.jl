@@ -134,12 +134,17 @@ function integral_on_mu(
      SPLINE::Bool = false,
      kwargs...)
 
+     error = "$(string(integrand)) is not a valid GR effect function.\n" *
+             "Valid GR effect functions are the following:\n" *
+             string(string.(IMPLEMENTED_ξs) .* " , "...)
+     @assert (integrand ∈ IMPLEMENTED_ξs) error
+
      orig_f(μ) = enhancer * integrand_on_mu(s1, s, μ, integrand, cosmo;
           L = L, use_windows = use_windows, kwargs...)
 
      μs = union(range(-1.0, -0.95, length = N_μs),
-               range(-0.95, +0.95, length = N_μs),
-               range(+0.95, +1.0, length = N_μs))
+          range(-0.95, +0.95, length = N_μs),
+          range(+0.95, +1.0, length = N_μs))
      int =
           if s > 1.0 && SPLINE == false
                quadgk(μ -> orig_f(μ), -1.0, 1.0; atol = μ_atol, rtol = μ_rtol)[1]
@@ -332,12 +337,14 @@ function print_map_int_on_mu(
                println(io, "none")
           else
                print(io, "\n")
-               for (i, key) in enumerate(keys(kwargs))
+               for key in keys(kwargs)
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
           end
+          isnothing(s_1) || println(io, "#\n# NOTE: the computation is done not in " *
+                                        "s1 = s_eff, because you specified in input s1 = $s_1 !")
           println(io, "# ")
-          println(io, "# s [Mpc/h_0] \t \t xi")
+          println(io, "# s [Mpc/h_0] \t \t integral_on_mu")
           for (s, xi) in zip(vec[1], vec[2])
                println(io, "$s \t $xi")
           end
@@ -368,10 +375,12 @@ function print_map_ξ_multipole(
                println(io, "none")
           else
                print(io, "\n")
-               for (i, key) in enumerate(keys(kwargs))
+               for key in keys(kwargs)
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
           end
+          isnothing(s_1) || println(io, "#\n# NOTE: the computation is done not in "*
+           "s1 = s_eff, because you specified in input s1 = $s_1 !")
           println(io, "# ")
           println(io, "# s [Mpc/h_0] \t \t xi")
           for (s, xi) in zip(vec[1], vec[2])
