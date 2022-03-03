@@ -119,64 +119,15 @@ end
 
 power_law(x, si, b, a) = a .+ b .* (x .^ si)
 
-#=
-function power_law_b_a(xs, ys, si, p0; con = false)
-     if con == true
-          @assert length(p0) == 2 " b, a to be fitted, so length(p0) must be 2!"
-          fit = curve_fit((x, p) -> power_law(x, si, p[1], p[2]), xs, ys, p0)
-          return coef(fit)
+
+function two_power_laws(x; switch=5.0, si_1=1.0, si_2=2.0, b=1.0, a=0.0)
+     @assert switch > 0 "switch must be >0 !"
+     if x<=switch
+          return power_law(x, si_1, b, a)
      else
-          @assert length(p0) == 1 " b to be fitted, so length(p0) must be 1!"
-          fit = curve_fit((x, p) -> power_law(x, si, p[1], 0.0), xs, ys, p0)
-          return vcat(coef(fit), 0.0)
+          return power_law(x, si_2, b/(switch^(si_2-si_1)), a)
      end
 end
-
-power_law_b(x1, y1, x2, y2, si) = (y2 - y1)/(x2^si - x1^si)
-function power_law_b(ixs, ys, sis; logscale=false)
-    xs = !logscale ? ixs : begin
-            fac = ixs[begin+1] / ixs[begin];
-            [x/(fac^i) for (i,x) in enumerate(ixs)]
-        end
-    bs = [power_law_b(xs[i], ys[i], xs[i+1], ys[i+1], sis[i]) for i in 1:length(xs)-1]
-    return vcat(bs, bs[end])
-end
-
-power_law_a(x, y, b, si) = y - b*(x^si)
-
-function power_law_a(ixs, ys, bs, sis; logscale=false)
-   xs = !logscale ? ixs : begin
-            fac = ixs[begin+1] / ixs[begin];
-            [x/(fac^i) for (i,x) in enumerate(ixs)]
-        end
-    [y - b*(x^si) for (x,y,b,si) in zip(xs,ys,bs,sis)]
-end
-=#
-
-#=
-function my_power_law_from_data(xs, ys, p0, fit_min::Number, fit_max::Number; N = 3, con = false)
-     @assert length(xs) == length(ys) "xs and ys must have same length"
-     #Num = length(xs)
-     new_xs = xs[fit_min.<xs.<fit_max]
-     new_ys = ys[fit_min.<xs.<fit_max]
-
-     if con == false
-          @assert length(p0) == 2 " si,b to be fitted, so length(p0) must be 2!"
-          my_si = mean_spectral_index(new_xs, new_ys; N = N, con = con)
-          my_b, my_a = power_law_b_a(new_xs, new_ys, my_si, [p0[2]]; con = con)
-          return my_si, my_b, my_a
-     else
-          @assert length(p0) == 3 " si,b,a to be fitted, so length(p0) must be 3!"
-          my_si = mean_spectral_index(new_xs, new_ys; N = N, con = con)
-          my_b, my_a = power_law_b_a(new_xs, new_ys, my_si, [p0[2], p0[3]]; con = con)
-          return my_si, my_b, my_a
-     end
-end
-
-function my_power_law_from_data(xs, ys, p0; con = false)
-     my_power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con = con)
-end
-=#
 
 
 function power_law_from_data(
@@ -400,21 +351,21 @@ end
 
 """
      expanded_Iln(PK, l, n; N = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
-          fit_min = 2.0, fit_max = 10.0, p0 = [-1.0, 1.0, 0.0], con = false)
+          fit_left_min = 2.0, fit_left_max = 10.0, p0 = [-1.0, 1.0, 0.0], con = false)
 
 
 """
 function expanded_Iln(PK, l, n; lim = 1e-4, N = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
-     fit_min = 2.0, fit_max = 10.0, p0 = nothing, con = false)
+     fit_left_min = 2.0, fit_left_max = 10.0, p0_left = nothing, con = false)
 
      rs, xis = xicalc(PK, l, n; N = N, kmin = kmin, kmax = kmax, r0 = s0)
 
-     p_0 = isnothing(p0) ? (con == true ? [-1.0, 1.0, 0.0] : [-1.0, 1.0]) : p0
-     new_left_rs, new_left_Is = expand_left_log(rs, xis; lim = lim, fit_min = fit_min,
-          fit_max = fit_max, p0 = p_0, con = con)
+     p_0 = isnothing(p0_left) ? (con == true ? [-1.0, 1.0, 0.0] : [-1.0, 1.0]) : p0_left
+     new_left_rs, new_left_Is = expand_left_log(rs, xis; lim = lim, fit_min = fit_left_min,
+          fit_max = fit_left_max, p0 = p_0, con = con)
 
-     new_rs = vcat(new_left_rs, rs[rs.>fit_min])
-     new_Is = vcat(new_left_Is, xis[rs.>fit_min])
+     new_rs = vcat(new_left_rs, rs[rs.>fit_left_min])
+     new_Is = vcat(new_left_Is, xis[rs.>fit_left_min])
 
      return new_rs, new_Is
 end

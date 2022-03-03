@@ -242,6 +242,36 @@ end
 end
 
 
+@testset "test two_power_laws" begin
+     xs = range(1, 20, length = 100)
+
+     @testset "first" begin
+          switch, si_1, si_2, b, a = 5.0, 1.0, 2.0, 1.0, π
+          new_b = b / (switch^(si_2 - si_1))
+          calc_ys = [GaPSE.two_power_laws(x; switch = switch, si_1 = si_1,
+               si_2 = si_2, b = b, a = a) for x in xs]
+
+          @test isapprox(new_b, 1 / 5; rtol = 1e-4)
+          @test all([isapprox(GaPSE.power_law(x, si_1, b, a), y; rtol = 1e-4)
+                     for (x, y) in zip(xs[xs.<=switch], calc_ys[xs.<=switch])])
+          @test all([isapprox(GaPSE.power_law(x, si_2, new_b, a), y; rtol = 1e-4)
+                     for (x, y) in zip(xs[xs.>switch], calc_ys[xs.>switch])])
+     end
+
+     @testset "second" begin
+          switch, si_1, si_2, b, a = 5.0, -1.0, -2.0, -6.0, 12.0
+          new_b = b / (switch^(si_2 - si_1))
+          calc_ys = [GaPSE.two_power_laws(x; switch = switch, si_1 = si_1,
+               si_2 = si_2, b = b, a = a) for x in xs]
+
+          @test isapprox(new_b, -30; rtol = 1e-4)
+          @test all([isapprox(GaPSE.power_law(x, si_1, b, a), y; rtol = 1e-4)
+                     for (x, y) in zip(xs[xs.<=switch], calc_ys[xs.<=switch])])
+          @test all([isapprox(GaPSE.power_law(x, si_2, new_b, a), y; rtol = 1e-4)
+                     for (x, y) in zip(xs[xs.>switch], calc_ys[xs.>switch])])
+     end
+end
+
 @testset "test power_law_from_data" begin
      @testset "zeros" begin
           si, b, a = 2.69, 3.45, 0.0
@@ -579,6 +609,7 @@ end
 
 ##########################################################################################92
 
+
 @testset "test expanded_IPS" begin
      tab_IPS = readdlm("datatest/WideA_ZA_pk.dat", comments = true)
      ks = convert(Vector{Float64}, tab_IPS[:, 1])
@@ -594,6 +625,52 @@ end
      @test all([isapprox(x1, x2, rtol = 1e-6) for (x1, x2) in zip(calc_ks, ex_ks)])
      @test all([isapprox(x1, x2, rtol = 1e-6) for (x1, x2) in zip(calc_pks, ex_pks)])
 end
+
+@testset "test expanded_Iln" begin
+     tab_IPS = readdlm(FILE_PS, comments = true)
+     ks = convert(Vector{Float64}, tab_IPS[:, 1])
+     pks = convert(Vector{Float64}, tab_IPS[:, 2])
+     PK = Spline1D(ks, pks)
+
+     table_Iln = readdlm(FILE_ILN, comments = true)
+     ss = convert(Vector{Float64}, table_Iln[:, 1])
+     Ilns = [convert(Vector{Float64}, table_Iln[:, i]) for i in 2:10]
+
+     lim = 1e-4
+     N = 1024
+     fit_min, fit_max = 0.05, 0.5
+     kmin, kmax, s0 = 1e-5, 1e3, 1e-3
+     con = true
+     p0 = [-1.0, 1.0, 0.0]
+
+     I00 = Spline1D(GaPSE.expanded_Iln(PK, 0, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
+               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
+     I20 = Spline1D(GaPSE.expanded_Iln(PK, 2, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
+               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
+     I40 = Spline1D(GaPSE.expanded_Iln(PK, 4, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
+               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
+     I02 = Spline1D(GaPSE.expanded_Iln(PK, 0, 2; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
+               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
+     I22 = Spline1D(GaPSE.expanded_Iln(PK, 2, 2; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
+               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
+     I31 = Spline1D(GaPSE.expanded_Iln(PK, 3, 1; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
+               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
+     I13 = Spline1D(GaPSE.expanded_Iln(PK, 1, 3; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
+               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
+     I11 = Spline1D(GaPSE.expanded_Iln(PK, 1, 1; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
+               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
+
+     RTOL = 1e-4
+     @test all([isapprox(I00(s), I, rtol = RTOL) for (s, I) in zip(ss, Ilns[1])])
+     @test all([isapprox(I20(s), I, rtol = RTOL) for (s, I) in zip(ss, Ilns[2])])
+     @test all([isapprox(I40(s), I, rtol = RTOL) for (s, I) in zip(ss, Ilns[3])])
+     @test all([isapprox(I02(s), I, rtol = RTOL) for (s, I) in zip(ss, Ilns[4])])
+     @test all([isapprox(I22(s), I, rtol = RTOL) for (s, I) in zip(ss, Ilns[5])])
+     @test all([isapprox(I31(s), I, rtol = RTOL) for (s, I) in zip(ss, Ilns[6])])
+     @test all([isapprox(I11(s), I, rtol = RTOL) for (s, I) in zip(ss, Ilns[7])])
+     @test all([isapprox(I13(s), I, rtol = RTOL) for (s, I) in zip(ss, Ilns[8])])
+end
+
 
 @testset "test func_I04_tilde" begin
      table_ips = readdlm(FILE_PS)
