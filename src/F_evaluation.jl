@@ -133,6 +133,7 @@ function F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
 
      @assert x1 >= 0.0 "The lower limit of x must be >0, not $(x1)!"
      @assert x2 > x1 "The upper limit of x must be > than the lower one, not $(x2)<=$(x1)!"
+     @assert x2 <= 10.0 "The upper limit of x must be <10, not $(x2)!"
      @assert μ1 >= -1.0 "The lower limit of μ must be >=-1, not $(μ1)!"
      @assert μ2 <= 1.0 "The upper limit of μ must be <=1, not $(μ2)!"
      @assert μ2 > μ1 "The upper limit of μ must be > than the lower one, not $(μ2)<=$(μ1)!"
@@ -146,7 +147,7 @@ function F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
 
      time_1 = time()
      new_F(x, μ) = F(x, μ; kwargs...)
-     Fs_grid = @showprogress map(new_F, xs_grid, μs_grid)
+     Fs_grid = @showprogress "window F evaluation: " map(new_F, xs_grid, μs_grid)
      time_2 = time()
 
      #run(`rm $(out)`)
@@ -168,7 +169,7 @@ function F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
 
           println(io, "#\n#x \t mu \t F \t F_error")
           for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
-               println(io, "$x\t $μ $(F[1])\t $(F[2])")
+               println(io, "$x\t $μ \t $(F[1]) \t $(F[2])")
           end
      end
 end
@@ -190,7 +191,7 @@ function F_map(xs::Vector{Float64}, μs::Vector{Float64};
 
      time_1 = time()
      new_F(x, μ) = F(x, μ; kwargs...)
-     Fs_grid = @showprogress map(new_F, xs_grid, μs_grid)
+     Fs_grid = @showprogress "window F evaluation: " map(new_F, xs_grid, μs_grid)
      time_2 = time()
 
      #run(`rm $(out)`)
