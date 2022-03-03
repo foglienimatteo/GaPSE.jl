@@ -660,7 +660,7 @@ end
      I11 = Spline1D(GaPSE.expanded_Iln(PK, 1, 1; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
 
-     RTOL = 1e-4
+     RTOL = 1e-3
      @test all([isapprox(I00(s), I, rtol = RTOL) for (s, I) in zip(ss, Ilns[1])])
      @test all([isapprox(I20(s), I, rtol = RTOL) for (s, I) in zip(ss, Ilns[2])])
      @test all([isapprox(I40(s), I, rtol = RTOL) for (s, I) in zip(ss, Ilns[3])])
@@ -700,5 +700,50 @@ end
      calc_I04_tildes = GaPSE.expanded_I04_tilde(PK, ss; kmin = kmin, kmax = kmax)
 
      @test all([isapprox(my, tr, rtol = 1e-3) for (my, tr) in zip(calc_I04_tildes, I04_tildes)])
+end
+
+
+##########################################################################################92
+
+
+@testset "test my_interpolation" begin
+     @test_throws AssertionError GaPSE.my_interpolation(1.0, 1.0, 2.0, 2.0, 0.5)
+     @test_throws AssertionError GaPSE.my_interpolation(1.0, 1.0, 2.0, 2.0, 2.5)
+
+     @test isapprox(GaPSE.my_interpolation(1.0, 1.0, 2.0, 4.0, 1.0), 1.0; rtol = 1e-4)
+     @test isapprox(GaPSE.my_interpolation(1.0, 1.0, 2.0, 4.0, 1.25), 1.75; rtol = 1e-4)
+     @test isapprox(GaPSE.my_interpolation(1.0, 1.0, 2.0, 4.0, 2.0), 4.0; rtol = 1e-4)
+end
+
+@testset "test my_println_vec" begin
+     vec = [x for x in 1:0.1:4]
+
+     out_1 = @capture_out begin
+          GaPSE.my_println_vec(vec, "vector"; N = 8)
+     end
+
+     @test out_1 == "vector = [\n" *
+                    "1.0 , 1.1 , 1.2 , 1.3 , 1.4 , 1.5 , 1.6 , 1.7 , \n" *
+                    "1.8 , 1.9 , 2.0 , 2.1 , 2.2 , 2.3 , 2.4 , 2.5 , \n" *
+                    "2.6 , 2.7 , 2.8 , 2.9 , 3.0 , 3.1 , 3.2 , 3.3 , \n" *
+                    "3.4 , 3.5 , 3.6 , 3.7 , 3.8 , 3.9 , 4.0 , \n" *
+                    "];\n"
+
+     out_2 = @capture_out begin
+          GaPSE.my_println_vec(vec, "vector"; N = 3)
+     end
+     @test out_2 == "vector = [\n"*
+          "1.0 , 1.1 , 1.2 , \n"*
+          "1.3 , 1.4 , 1.5 , \n"*
+          "1.6 , 1.7 , 1.8 , \n"*
+          "1.9 , 2.0 , 2.1 , \n"*
+          "2.2 , 2.3 , 2.4 , \n"*
+          "2.5 , 2.6 , 2.7 , \n"*
+          "2.8 , 2.9 , 3.0 , \n"*
+          "3.1 , 3.2 , 3.3 , \n"*
+          "3.4 , 3.5 , 3.6 , \n"*
+          "3.7 , 3.8 , 3.9 , \n"*
+          "4.0 , \n"*
+          "];\n"
 end
 

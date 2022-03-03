@@ -26,6 +26,7 @@ using SpecialFunctions, Trapz, LsqFit # Licence: MIT
 using GridInterpolations  # Licence: MIT "Expat"
 using ProgressMeter, Documenter  # Licence: MIT "Expat"
 using Test, Printf, DelimitedFiles  # Licence: MIT "Expat"
+using Suppressor # Licence: MIT "Expat"
 
 #=
 const θ_MAX = π / 2.0

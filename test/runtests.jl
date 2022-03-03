@@ -19,7 +19,7 @@
 
 
 using GaPSE, Test
-using Dierckx, DelimitedFiles, QuadGK
+using Dierckx, DelimitedFiles, QuadGK, Suppressor
 
 
 const FILE_F_MAP = "datatest/F_REFERENCE.txt"

@@ -209,34 +209,8 @@ function power_law_from_data(xs, ys, p0::Vector{Float64}; con = false)
      power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con = con)
 end;
 
-#=
-function power_law_from_data(xs, ys, fit_min::Number, fit_max::Number; N=3, 
-        con=false, logscale=false)
-    @assert length(xs) == length(ys) "xs and ys must have same length"
-    Num = length(xs)
-    new_xs = xs[fit_min .< xs .< fit_max]
-    new_ys = ys[fit_min .< xs .< fit_max]
-
-    sis = spectral_index(new_xs, new_ys; N = N, con = con, logscale = logscale)
-
-    bs = power_law_b(new_xs, new_ys, sis, logscale = logscale)
-    println(bs)
-
-    as = con ? power_law_a(new_xs, new_ys, bs, sis; logscale = logscale) : 
-        [0.0 for i in 1:length(new_xs)]
-    r = 3*N
-    a = sum(as[begin+r:end-r])/ (Num - 2*r)
-    b = sum(bs[begin+r:end-r])/ (Num - 2*r)
-    si = sum(sis[begin+r:end-r])/ (Num - 2*r)
-    return si, b, a
-end
-=#
-
-
 
 ##########################################################################################92
-
-
 
 
 function expand_left_log(xs, ys;
@@ -490,7 +464,7 @@ function my_println_vec(io::IO, vec::Vector{T}, name::String; N::Integer = 5) wh
           (i % N ≠ 0) || print(io, "\n")
      end
      (length(vec) % N ≠ 0) && print(io, "\n")
-     print(io, "]\n")
+     print(io, "];\n")
 
      return nothing
 end
