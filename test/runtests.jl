@@ -41,28 +41,24 @@ include("TEST_DATA.jl")
 
 ##########################################################################################92
 
-@testset "test_MathUtils" begin
+@testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
 
-@testset "test_IPSTools" begin
+@testset "test IPSTools" begin
      include("test_IPSTools.jl")
 end
 
-@testset "test_F_evaluation" begin
+@testset "test F_evaluation" begin
      include("test_F_evaluation.jl")
 end
 
-@testset "test_BackgroundData" begin
+@testset "test BackgroundData" begin
      include("test_BackgroundData.jl")
 end
 
-@testset "test_Cosmology" begin
+@testset "test Cosmology" begin
      include("test_Cosmology.jl")
-end
-
-@testset "test_PowerSpectrum" begin
-     include("test_PowerSpectrum.jl")
 end
 
 
@@ -76,7 +72,7 @@ const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
 const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP)
 
 common_kwargs = Dict(
-     :pr=>false,
+     :pr => false,
      :use_windows => false,
      :enhancer => 1e8, :N_μs => 30,
      :μ_atol => 0.0, :μ_rtol => 1e-2,
@@ -102,46 +98,64 @@ dict_L_dir = Dict(0 => "monopoles", 1 => "dipoles", 2 => "tripoles",
      3 => "quadrupoles", 4 => "pentapoles")
 
 
-@testset "test_AutoDoppler" begin
+
+
+##############################
+
+
+@testset "test XiMultipoles" begin
+     include("test_XiMultipoles.jl")
+end
+
+@testset "test PowerSpectrum" begin
+     include("test_PowerSpectrum.jl")
+end
+
+
+##############################
+
+@testset "test AutoDoppler" begin
      include("test_AutoCorrelations/test_AutoDoppler.jl")
 end
 
-@testset "test_AutoIntegatedGP" begin
+@testset "test AutoIntegatedGP" begin
      include("test_AutoCorrelations/test_AutoIntegratedGP.jl")
 end
 
-@testset "test_AutoLocalGP" begin
+@testset "test AutoLocalGP" begin
      include("test_AutoCorrelations/test_AutoLocalGP.jl")
 end
 
-@testset "test_AutoLensing" begin
+@testset "test AutoLensing" begin
      include("test_AutoCorrelations/test_AutoLensing.jl")
 end
 
 
-######
+##############################
 
-@testset "test_DopplerLensing" begin
+
+
+@testset "test DopplerLensing" begin
      include("test_CrossCorrelations/test_DopplerLensing.jl")
 end
 
-@testset "test_DopplerLocalGP" begin
+@testset "test DopplerLocalGP" begin
      include("test_CrossCorrelations/test_DopplerLocalGP.jl")
 end
 
-@testset "test_DopplerIntegratedGP" begin
+@testset "test DopplerIntegratedGP" begin
      include("test_CrossCorrelations/test_DopplerIntegratedGP.jl")
 end
 
-@testset "test_LensingIntegratedGP" begin
+@testset "test LensingIntegratedGP" begin
      include("test_CrossCorrelations/test_LensingIntegratedGP.jl")
 end
 
-@testset "test_LensingLocalGP" begin
+@testset "test LensingLocalGP" begin
      include("test_CrossCorrelations/test_LensingLocalGP.jl")
 end
 
-@testset "test_LocalGPIntegratedGP" begin
+@testset "test LocalGPIntegratedGP" begin
      include("test_CrossCorrelations/test_LocalGPIntegratedGP.jl")
 end
 

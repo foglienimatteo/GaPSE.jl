@@ -21,11 +21,11 @@
      effect = "lensing_integratedgp"
      L = 0
 
-     table = readdlm("datatest/" * dict_L_dir[L] * "/xi_" * effect * "_L" * string(L) * ".txt"; comments = true)
+     table = readdlm("datatest/" * dict_L_dir[L] * "/xi_" * effect * "_L$L" * ".txt"; comments = true)
      ss = convert(Vector{Float64}, table[:, 1])
      xis = convert(Vector{Float64}, table[:, 2])
 
-     name = "calc_xi_" * effect * "_L" * string(L) * ".txt"
+     name = "calc_xi_" * effect * "_L$L" * ".txt"
      isfile(name) && rm(name)
      GaPSE.print_map_ξ_multipole(COSMO, name, effect;
           L = L, joint_kwargs[GaPSE.INDEX_GR_EFFECT[effect]]...)
@@ -45,11 +45,11 @@ end
      effect = "integratedgp_lensing"
      L = 0
 
-     table = readdlm("datatest/" * dict_L_dir[L] * "/xi_" * effect * "_L" * string(L) * ".txt"; comments = true)
+     table = readdlm("datatest/" * dict_L_dir[L] * "/xi_" * effect * "_L$L" * ".txt"; comments = true)
      ss = convert(Vector{Float64}, table[:, 1])
      xis = convert(Vector{Float64}, table[:, 2])
 
-     name = "calc_xi_" * effect * "_L" * string(L) * ".txt"
+     name = "calc_xi_" * effect * "_L$L" * ".txt"
      isfile(name) && rm(name)
      GaPSE.print_map_ξ_multipole(COSMO, name, effect;
           L = L, joint_kwargs[GaPSE.INDEX_GR_EFFECT[effect]]...)
