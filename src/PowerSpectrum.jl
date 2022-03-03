@@ -38,13 +38,13 @@ end
 
 
 function PS_multipole(
-     in::String;
+     input::String;
      L::Integer = 0, N::Integer = 1024,
      pr::Bool = true,
      int_s_min::Union{Float64,Nothing} = nothing,
      int_s_max::Union{Float64,Nothing} = nothing)
 
-     xi_table = readdlm(in, comments = true)
+     xi_table = readdlm(input, comments = true)
      ss = convert(Vector{Float64}, xi_table[:, 1])
      fs = convert(Vector{Float64}, xi_table[:, 2])
 

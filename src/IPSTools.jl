@@ -130,7 +130,7 @@ struct InputPS
      r_b::Float64
      r_a::Float64
      right::Float64
-     
+
 
      function InputPS(file::String; fit_left_min = 1e-6, fit_left_max = 3e-6,
           fit_right_min = 1e1, fit_right_max = 2e1)
@@ -138,8 +138,8 @@ struct InputPS
           data = readdlm(file, comments = true)
           @assert size(data[:, 1]) == size(data[:, 2]) "ks and pks must have the same length!"
 
-          ks = convert(Vector{Float64}, data[:,1]) 
-          pks = convert(Vector{Float64}, data[:,2]) 
+          ks = convert(Vector{Float64}, data[:, 1])
+          pks = convert(Vector{Float64}, data[:, 2])
 
           l_si, l_b, l_a = power_law_from_data(
                ks, pks, [1.0, 1.0], fit_left_min, fit_left_max; con = false)
@@ -147,11 +147,11 @@ struct InputPS
           r_si, r_b, r_a = power_law_from_data(
                ks, pks, [-3.0, 1.0], fit_right_min, fit_right_max; con = false)
 
-          ind_left = findfirst(x->x>fit_left_min, ks)-1
-          ind_right = findfirst(x->x>=fit_right_max, ks)
+          ind_left = findfirst(x -> x > fit_left_min, ks) - 1
+          ind_right = findfirst(x -> x >= fit_right_max, ks)
           new_ks = vcat(ks[ind_left:ind_right])
           new_pks = vcat(pks[ind_left:ind_right])
-          spline = Spline1D(new_ks, new_pks; bc="error")
+          spline = Spline1D(new_ks, new_pks; bc = "error")
 
 
           new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_max)
@@ -162,18 +162,18 @@ struct InputPS
           fit_right_min = 1e1, fit_right_max = 2e1) where {T1,T2}
 
           @assert size(ks) == size(pks) "ks and pks must have the same length!"
-          
+
           l_si, l_b, l_a = power_law_from_data(
                ks, pks, [1.0, 1.0], fit_left_min, fit_left_max; con = false)
 
           r_si, r_b, r_a = power_law_from_data(
                ks, pks, [-3.0, 1.0], fit_right_min, fit_right_max; con = false)
 
-          ind_left = findfirst(x->x>fit_left_min, ks)-1
-          ind_right = findfirst(x->x>=fit_right_max, ks)
+          ind_left = findfirst(x -> x > fit_left_min, ks) - 1
+          ind_right = findfirst(x -> x >= fit_right_max, ks)
           new_ks = vcat(ks[ind_left:ind_right])
           new_pks = vcat(pks[ind_left:ind_right])
-          spline = Spline1D(new_ks, new_pks; bc="error")
+          spline = Spline1D(new_ks, new_pks; bc = "error")
 
           new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_max)
      end
@@ -185,7 +185,7 @@ function (IPS::InputPS)(x)
           return power_law(x, IPS.l_si, IPS.l_b, IPS.l_a)
      elseif x > IPS.right
           return power_law(x, IPS.r_si, IPS.r_b, IPS.r_a)
-     else 
+     else
           return IPS.spline(x)
      end
 end
@@ -196,7 +196,25 @@ end
 
 
 
+"""
+     IntegralIPS(
+          l_si::Float64
+          l_b::Float64
+          l_a::Float64
+          left::Float64
+          spline::Dierckx.Spline1D
+          r_si::Float64
+          r_b::Float64
+          r_a::Float64
+          right::Float64
+     )
 
+These function are obtained through a `Spline1D` (from the 
+[Dierckx](https://github.com/kbarbary/Dierckx.jl) Julia package) of the Spherical
+Bessel Transform function `xicalc` (from the 
+[TwoFAST](https://github.com/hsgg/TwoFAST.jl) Julia package) applied to the 
+input Power Spectrum `P(q)`. 
+"""
 struct IntegralIPS
      l_si::Float64
      l_b::Float64
@@ -224,12 +242,12 @@ struct IntegralIPS
           r_si, r_b, r_a = power_law_from_data(
                rs, xis, p_0_right, fit_right_MIN, fit_right_MAX; con = false)
 
-          ind_left = findfirst(x->x>fit_left_min, rs)-1
-          ind_right = findfirst(x->x>=fit_right_MAX, rs)
+          ind_left = findfirst(x -> x > fit_left_min, rs) - 1
+          ind_right = findfirst(x -> x >= fit_right_MAX, rs)
           new_rs = vcat(rs[ind_left:ind_right])
           new_Is = vcat(xis[ind_left:ind_right])
-          spline = Spline1D(new_rs, new_Is; bc="error")
-          
+          spline = Spline1D(new_rs, new_Is; bc = "error")
+
           #println("\nleft = $l_si , $l_b , $l_a, $fit_left_min")
           #println("right = $r_si , $r_b , $r_a, $fit_right_MAX\n")
 
@@ -237,11 +255,11 @@ struct IntegralIPS
      end
 
      function IntegralIPS(ips, func::Function; N = 1024, kmin = 1e-4, kmax = 1e3,
-          fit_left_min = 0.1, fit_left_max = 1.0, p0_left = nothing, con = false, 
+          fit_left_min = 0.1, fit_left_max = 1.0, p0_left = nothing, con = false,
           fit_right_min = nothing, fit_right_max = nothing, p0_right = nothing,
           kwargs...)
 
-          ss = 10 .^ range(log10(0.999*fit_left_min), 4, length = 1024)
+          ss = 10 .^ range(log10(0.999 * fit_left_min), 4, length = 1024)
           Is = [func(ips, s, kmin, kmax; kwargs...) for s in ss]
 
           p_0_left = isnothing(p0_left) ? (con == true ? [-2.0, -1.0, 0.0] : [-2.0, -1.0]) : p0_left
@@ -257,7 +275,7 @@ struct IntegralIPS
           #println("\nLEFT = $l_si , $l_b , $l_a, $fit_left_min")
           #println("RIGHT = $r_si , $r_b , $r_a, $fit_right_MAX\n")
 
-          spline = Spline1D(ss, Is; bc="error")
+          spline = Spline1D(ss, Is; bc = "error")
 
           new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_MAX)
      end
@@ -298,7 +316,7 @@ function (Iln::IntegralIPS)(x)
      elseif x > Iln.right
           warning("i am going too right! ")
           return power_law(x, Iln.r_si, Iln.r_b, Iln.r_a)
-     else 
+     else
           return Iln.spline(x)
      end
 end
@@ -306,16 +324,16 @@ end
 
 @doc raw"""
      IPSTools(
-          I00::Dierckx.Spline1D
-          I20::Dierckx.Spline1D
-          I40::Dierckx.Spline1D
-          I02::Dierckx.Spline1D
-          I22::Dierckx.Spline1D
-          I31::Dierckx.Spline1D
-          I13::Dierckx.Spline1D
-          I11::Dierckx.Spline1D
+          I00::IntegralIPS
+          I20::IntegralIPS
+          I40::IntegralIPS
+          I02::IntegralIPS
+          I22::IntegralIPS
+          I31::IntegralIPS
+          I13::IntegralIPS
+          I11::IntegralIPS
 
-          I04_tilde::Dierckx.Spline1D
+          I04_tilde::IntegralIPS
 
           σ_0::Float64
           σ_1::Float64
@@ -334,8 +352,8 @@ Input Power Spectrum.
 
 ## Arguments
 
-- `I00, I20, I40, I02, I22, I31, I13, I11 ::Dierckx.Spline1D`: spline that
-  return the value of the integral:
+- `I00, I20, I40, I02, I22, I31, I13, I11 ::IntegralIPS`: they return
+  the value of the corresponding integral:
 
   ```math
   I_\ell^n(s) = \int_0^\infty \frac{\mathrm{d} q}{2 \pi^2} q^2 \, P(q) 
@@ -344,19 +362,25 @@ Input Power Spectrum.
   where, for a generic `Iab` name, ``\ell`` is the FIRST number (`a`) and 
   ``n`` the second (`b`).
 
-  These function are obtained through a `Spline1D` (from the 
-  [Dierckx](https://github.com/kbarbary/Dierckx.jl) Julia package) of the Spherical
-  Bessel Transform function `xicalc` (from the 
-  [TwoFAST](https://github.com/hsgg/TwoFAST.jl) Julia package) applied to the 
-  input Power Spectrum `P(q)`. 
-
-- `I04_tilde::Dierckx.Spline1D`: spline that
-  return the value of the integral:
+- `I04_tilde::IntegralIPS`: it returns the value of the integral:
 
   ```math
-  I_\ell^n(s) = \int_0^\infty \frac{\mathrm{d} q}{2 \pi^2} q^2 \, P(q) 
-    \, \frac{j_\ell(qs)}{(qs)^n}
+  \tilde{I}^4_0 (s) = \int \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, 
+     P(q) \,  \frac{j_0(qs) - 1}{(qs)^4} 
   ```
+
+- `σ_0, σ_1, σ_2, σ_3 :: Float64`: these are the results of the following integral:
+  ```math
+  \sigma_i = \int_{k_\mathrm{min}}^{k_\mathrm{max}} \frac{\mathrm{d} q}{2 \pi^2} \, q^{2-i} \, P(q)
+  ```
+
+- `fit_min, fit_max :: Float64`: the limits (min and max) where the integral ``I_\ell^n``
+  must be fitted with a power law. This operation is necessary, because `xicalc`, applied
+  in this context, gives wrong results for too small input distance `s`; nevertheless, all
+  these integrals have fixed power-law trends for ``s \rightarrow 0``, so this approach gives
+  good results.
+
+- `k_min k_max::Float64`
 
 """
 struct IPSTools
@@ -389,8 +413,8 @@ struct IPSTools
      σ_2::Float64
      σ_3::Float64
 
-     fit_min::Union{Float64,Nothing}
-     fit_max::Union{Float64,Nothing}
+     fit_min::Float64
+     fit_max::Float64
      k_min::Float64
      k_max::Float64
      s_0::Float64
@@ -402,7 +426,7 @@ struct IPSTools
           fit_max::Float64 = 0.5,
           con::Bool = false,
           k_min::Float64 = 1e-6,
-          k_max::Float64 = 10.0,
+          k_max::Float64 = 10.0
      )
           #PK = Spline1D(ips.ks, ips.pks; bc = "error")
           PK = ips
@@ -413,21 +437,21 @@ struct IPSTools
           p0 = con ? [-1.0, 1.0, 0.0] : [-1.0, 1.0]
 
           I00 = IntegralIPS(PK, 0, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
+               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
           I20 = IntegralIPS(PK, 2, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
+               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
           I40 = IntegralIPS(PK, 4, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
+               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
           I02 = IntegralIPS(PK, 0, 2; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
+               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
           I22 = IntegralIPS(PK, 2, 2; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
+               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
           I31 = IntegralIPS(PK, 3, 1; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
+               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
           I13 = IntegralIPS(PK, 1, 3; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
+               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
           I11 = IntegralIPS(PK, 1, 1; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-                    fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
+               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
 
           p0_tilde = con ? [-2.0, -1.0, 0.0] : [-2.0, -1.0]
           I04_tilde = IntegralIPS(PK, func_I04_tilde; N = N, kmin = kmin, kmax = kmax,
@@ -509,26 +533,6 @@ struct IPSTools
 end
 
 #=
-@doc raw"""
-     I00, I20, I40, I02, I22, I31, I13, I11 ::Float64
-
-Return the value of the integral:
-
-```math
-I_\ell^n(s)=\int_0^\infty \frac{\mathrm{d} q}{2 \pi^2} q^2 \, P(q) 
-    \, \frac{j_\ell(qs)}{(qs)^n}
-```
-
-where, for a generic Iab name, ``\ell`` is the FIRST number (`a`) and 
-``n`` the second (`b`).
-
-These function are obtained through a `Spline1D` (from the 
-[Dierckx](https://github.com/kbarbary/Dierckx.jl) Julia package) of the Spherical
-Bessel Transform function `xicalc` (from the 
-[TwoFAST](https://github.com/hsgg/TwoFAST.jl) Julia package) applied to the 
-input Power Spectrum `P(q)`.
-"""
-I00, I20, I40, I02, I22, I31, I13, I11
 
 
 @doc raw"""
