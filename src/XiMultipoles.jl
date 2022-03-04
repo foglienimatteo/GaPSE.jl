@@ -379,8 +379,8 @@ function print_map_ξ_multipole(
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
           end
-          isnothing(s_1) || println(io, "#\n# NOTE: the computation is done not in "*
-           "s1 = s_eff, because you specified in input s1 = $s_1 !")
+          isnothing(s_1) || println(io, "#\n# NOTE: the computation is done not in " *
+                                        "s1 = s_eff, because you specified in input s1 = $s_1 !")
           println(io, "# ")
           println(io, "# s [Mpc/h_0] \t \t xi")
           for (s, xi) in zip(vec[1], vec[2])

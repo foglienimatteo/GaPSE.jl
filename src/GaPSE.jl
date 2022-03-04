@@ -93,6 +93,7 @@ GR_EFFECT_INDEXED = Dict([i => name for (i, name) in
 
 include("PowerSpectrum.jl")
 include("XiMultipoles.jl")
+include("SumXiMultipoles.jl")
 
 
 function parameters_used(io::IO, cosmo::Cosmology)
