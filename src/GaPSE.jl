@@ -67,7 +67,9 @@ include("CrossCorrelations/LocalGPIntegratedGP.jl")
 
 IMPLEMENTED_GR_EFFECTS = [
      "auto_doppler", "auto_lensing",
-     "auto_localgp", "auto_integratedgp", "lensing_doppler", "doppler_lensing",
+     "auto_localgp", "auto_integratedgp", 
+     
+     "lensing_doppler", "doppler_lensing",
      "doppler_localgp", "localgp_doppler",
      "doppler_integratedgp", "integratedgp_doppler",
      "lensing_localgp", "localgp_lensing",

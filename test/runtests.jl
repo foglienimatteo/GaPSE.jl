@@ -71,6 +71,7 @@ const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
 
 const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP)
 
+
 common_kwargs = Dict(
      :pr => false,
      :use_windows => false,
@@ -111,6 +112,9 @@ end
      include("test_PowerSpectrum.jl")
 end
 
+@testset "test SumXiMultipoles" begin
+     include("test_SumXiMultipoles.jl")
+end
 
 ##############################
 
@@ -159,3 +163,5 @@ end
      include("test_CrossCorrelations/test_LocalGPIntegratedGP.jl")
 end
 
+
+##############################
