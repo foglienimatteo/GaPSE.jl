@@ -196,37 +196,108 @@ end
 
 
 
-"""
+@doc raw"""
      IntegralIPS(
           l_si::Float64
           l_b::Float64
           l_a::Float64
           left::Float64
+
           spline::Dierckx.Spline1D
+
           r_si::Float64
           r_b::Float64
           r_a::Float64
           right::Float64
      )
 
-These function are obtained through a `Spline1D` (from the 
-[Dierckx](https://github.com/kbarbary/Dierckx.jl) Julia package) of the Spherical
-Bessel Transform function `xicalc` (from the 
-[TwoFAST](https://github.com/hsgg/TwoFAST.jl) Julia package) applied to the 
-input Power Spectrum `P(q)`. 
+Contains all the information useful in order to return the value of an integral
+obtained from the Input Power Spectrum.
+
+## Arguments 
+
+- `l_si, l_b, l_a :: Float64` : coefficient for the spurious power-law 
+  ``y = f(x) = a + b \, x^s`` for the LEFT edge; when an input value `x < left` is
+  given, the returned one is obtained from `power_law` with this coefficients (
+  where, of course, `l_si` is the exponent, `l_b` the coefficient and `l_a` the 
+  spurious adding constant). 
+
+- `left::Float64` : the break between the left power-law (for `x <left`) and the 
+  spline (for `x ≥ left`)
+
+- `spline::Dierckx.Spline1D` : spline that interpolates between the real values of the 
+  integral calculated inside the range `left ≤ x ≤ right`
+
+- `right::Float64` : the break between the right power-law (for `x > left`) and the 
+  spline (for `x ≤ right`)
+
+- `r_si, r_b, r_a :: Float64` : coefficient for the spurious power-law 
+  ``y = f(x) = a + b \, x^s`` for the RIGHT edge; when an input value `x > right` is
+  given, the returned one is obtained from `power_law` with this coefficients (
+  where, of course, `r_si` is the exponent, `r_b`` the coefficient and `r_a` the 
+  spurious adding constant). 
+
+## Constructors
+
+There are two type of integrals we are interested in, and so two constructors are
+here provided:
+
+- `IntegralIPS(ips, l, n; N::Integer = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
+     fit_left_min = 2.0, fit_left_max = 10.0, p0_left = nothing, con = false,
+     fit_right_min = nothing, fit_right_max = nothing, p0_right = nothing)`
+  This is the one used for the "classical" ``I_\ell_n`` integrals:
+  ```math
+  I_\ell^n(s) = \int_0^\infty \frac{\mathrm{d} q}{2 \pi^2} q^2 \, P(q) 
+    \, \frac{j_\ell(qs)}{(qs)^n}
+  ```
+  where, for a generic `Iab` name, ``\ell`` is the FIRST number (`a`) and 
+  ``n`` the second (`b`).
+  The integral obtained with this constructor is calculated through `xicalc`, and
+  expanded with power-laws at the edges.
+
+     - `ips`: the function/spline that gives the Input Power Spectrum
+
+     - `l` and `n`: self-explanatory degree of the integral, with the convenction
+       above mentioned
+
+     - `kmin = 1e-4, kmax = 1e3, s0 = 1e-3` : values to be passed to `xicalc` for the
+       integration
+
+     - `fit_left_min = 2.0, fit_left_max = 10.0,` : the limits (min and max) where the integral ``I_\ell^n``
+       must be fitted with a power law, for small distances. This operation is necessary, because `xicalc`,
+       in this context, gives wrong results for too small input distance `s`; nevertheless, all
+       these ``I_\ell^n`` integrals have fixed power-law trends for ``s \rightarrow 0``, so this approach gives
+       good results.
+
+     - `p0_left = nothing` : vector with the inital values for the left power-law fitting; its length must
+       be 2 (if you want to fit with a pure power-law ``y = f(x) = b * x^s``, so only `l_si` and `l_b` 
+       are matter of concern) or 3 (if you want to fit with a spurious power-law ``y = f(x) = a + b * x^s``,
+       so you are also interested in `l_a`), depending on the value of `con`; if `nothing`, it will be
+       automatically setted `p0 = [-1.0, 1.0, 0.0]` for `con==true` and
+       `p0 = [-1.0, 1.0]` for `con==false`.
+
+     - `con::Bool = false` : do you want that the fit of all the ``I_\ell^n`` for the LEFT edge
+       is not a simple power-law ``y = f(x) = b \, x^s``, but also consider a constant ``a``,
+       such that ``y = f(x) = a + b \, x^s``?
+       For the LEFT side, there is not a lot of difference empirically. 
+       For the RIGHT side, there is not such an option due to numerical problems (it's like 
+       is always setted `con==false`).
+
 """
 struct IntegralIPS
      l_si::Float64
      l_b::Float64
      l_a::Float64
      left::Float64
+
      spline::Dierckx.Spline1D
+
      r_si::Float64
      r_b::Float64
      r_a::Float64
      right::Float64
 
-     function IntegralIPS(ips, l, n; N = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
+     function IntegralIPS(ips, l, n; N::Integer = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
           fit_left_min = 2.0, fit_left_max = 10.0, p0_left = nothing, con = false,
           fit_right_min = nothing, fit_right_max = nothing, p0_right = nothing)
 
@@ -347,7 +418,7 @@ end
           s_0::Float64
           )
 
-Struct that contains all the function and values obtained from the 
+Struct that contains all the useful functions and values obtained from the 
 Input Power Spectrum.
 
 ## Arguments
@@ -361,13 +432,18 @@ Input Power Spectrum.
   ```
   where, for a generic `Iab` name, ``\ell`` is the FIRST number (`a`) and 
   ``n`` the second (`b`).
+  These integrals are performed through `xicalc`, with `kmin, kmax, s0 = 1e-5, 1e3, 1e-3`;
+  at the edges they are fitted with power laws (for `s < fit_min` and 
+  `s > max_s_returned_from_xi_calc`).
 
 - `I04_tilde::IntegralIPS`: it returns the value of the integral:
 
   ```math
   \tilde{I}^4_0 (s) = \int \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, 
-     P(q) \,  \frac{j_0(qs) - 1}{(qs)^4} 
+     P(q) \,  \frac{j_0(qs) - 1}{(qs)^4} \;.
   ```
+  This integral is calculated brute-force with `quadgk`, and fitted with power-laws
+  at the edges (for `s < 0.1` and `s > 1e4`).
 
 - `σ_0, σ_1, σ_2, σ_3 :: Float64`: these are the results of the following integral:
   ```math
@@ -375,13 +451,41 @@ Input Power Spectrum.
   ```
 
 - `fit_min, fit_max :: Float64`: the limits (min and max) where the integral ``I_\ell^n``
-  must be fitted with a power law. This operation is necessary, because `xicalc`, applied
+  must be fitted with a power law, for small distances. This operation is necessary, because `xicalc`,
   in this context, gives wrong results for too small input distance `s`; nevertheless, all
-  these integrals have fixed power-law trends for ``s \rightarrow 0``, so this approach gives
+  these ``I_\ell^n`` integrals have fixed power-law trends for ``s \rightarrow 0``, so this approach gives
   good results.
 
-- `k_min k_max::Float64`
+- `k_min k_max::Float64` : because some of the ``\sigma_i`` integrals from ``q = 0`` to
+  ``q = +\infty`` diverge, it is common practice to cut the integrals at the edges, so they
+  are calculated from ``q = k_\mathrm{min}`` to ``q = k_\mathrm{max}``
 
+
+## Constructors
+
+`IPSTools(ips::InputPS; N::Integer = 1024,
+     fit_min::Float64 = 0.05, fit_max::Float64 = 0.5,
+     k_min::Float64 = 1e-6, k_max::Float64 = 10.0
+     con::Bool = false
+     )`
+
+- `ips::InputPS` : the Input Power Spectrum to be used in all the calculations.
+
+- `N::Integer = 1024` : number of points to be used in the `xicalc` function
+
+- `k_min::Float64 = 1e-6, k_max::Float64 = 10.0` : integrations extremes of 
+  the ``\sigma_i``s
+
+- `con::Bool = false` : do you want that the fit of all the ``I_\ell^n`` for the LEFT edge
+  is not a simple power-law ``y = f(x) = b \, x^s``, but also consider a constant ``a``,
+  such that ``y = f(x) = a + b \, x^s``?
+  For the LEFT side, there is not a lot of difference empirically. 
+  For the RIGHT side, there is not such an option due to numerical problems (it's like 
+  is always setted `con==false`).
+
+
+
+See also: [`IntegralIPS`](@ref), [`InputPS`](@ref)
 """
 struct IPSTools
      #=
@@ -417,11 +521,10 @@ struct IPSTools
      fit_max::Float64
      k_min::Float64
      k_max::Float64
-     s_0::Float64
 
      function IPSTools(
           ips::InputPS;
-          N = 1024,
+          N::Integer = 1024,
           fit_min::Float64 = 0.05,
           fit_max::Float64 = 0.5,
           con::Bool = false,
@@ -489,7 +592,7 @@ struct IPSTools
           σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), k_min, k_max)[1]
 
           new(I00, I20, I40, I02, I22, I31, I13, I11, I04_tilde, σ_0, σ_1, σ_2, σ_3,
-               fit_min, fit_max, k_min, k_max, s0)
+               fit_min, fit_max, k_min, k_max)
      end
 
      #=
@@ -532,20 +635,6 @@ struct IPSTools
 
 end
 
-#=
-
-
-@doc raw"""
-     σ_0, σ_1, σ_2, σ_3
-
-These are the results of the following integral:
-```math
-     \sigma_i = \int_0^\infty \frac{\mathrm{d} q}{2 \pi^2} q^{2-i} \, P(q) 
-```
-where  `P(q)` is the input Power Spectrum.
-"""
-σ_0, σ_1, σ_2, σ_3
-=#
 
 
 ##########################################################################################92
@@ -556,7 +645,7 @@ where  `P(q)` is the input Power Spectrum.
      ϕ(s, s_min, s_max) :: Float64
 
 Radial part of the survey window function. Return `1.0` if is true that
-``s_\mathrm{min} \le s \le s_\mathrm{max}`` and `0.0` otherwise.
+``s_\mathrm{min} < s < s_\mathrm{max}`` and `0.0` otherwise.
 
 In this software we made the assuption that the survey window function can be
 separated into a radial and angular part, i.e.:
@@ -572,10 +661,10 @@ See also: [`W`](@ref)
 
 
 @doc raw"""
-     W(θ; θ_max = θ_MAX) :: Float64
+     W(θ, θ_max) :: Float64
 
 Angular part of the survey window function. Return `1.0` if is true that
-``0.0 \leq \theta \le \theta_\mathrm{max}`` and `0.0` otherwise. It is
+``0.0 \leq \theta < \theta_\mathrm{max}`` and `0.0` otherwise. It is
 implicitly assumed an azimutal simmetry of the survey.
 
 In this software we made the assuption that the survey window function can be
@@ -591,7 +680,7 @@ W(θ, θ_max) = 0.0 ≤ θ < θ_max ? 1.0 : 0.0
 
 
 @doc raw"""
-     V_survey(s_min = s_MIN, s_max = s_MAX, θ_max = θ_MAX) :: Float64
+     V_survey(s_min, s_max, θ_max) :: Float64
 
 Return the volume of a survey with azimutal simmetry, i.e.:
 

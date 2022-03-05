@@ -26,6 +26,14 @@ This project, and the analytical expressions used for the TPCFs, are based on th
 This software is under the [GNU 3.0 General Public Licence](https://www.gnu.org/licenses/gpl-3.0.en.html). See the file [LICENCE.md](./LICENCE.md).
 
 
+
+## Acknowledgements
+
+This package make extensive use of `Spline1D` (from the 
+[Dierckx](https://github.com/kbarbary/Dierckx.jl)[[4]][#1] Julia package) and the Spherical Bessel Transform function `xicalc` (from the 
+[TwoFAST](https://github.com/hsgg/TwoFAST.jl)[[5]][#1] Julia package).
+
+
 ## References
 <a id="1">[1]</a> 
 Dalal, Doré et al., _Imprints of primordial non-Gaussianities on large-scale structure_ (2008), American Physical Society, DOI: 10.1103/physrevd.77.123514, ISSN:1550-2368
@@ -35,3 +43,9 @@ Slosar, Hirata et al., _Constraints on local primordial non-Gaussianity from lar
 
 <a id="3">[3]</a> 
 Castorina, Di Dio, _The observed galaxy power spectrum in General Relativity_ (2022), Journal of Cosmology and Astroparticle Physics, DOI: 10.1088/1475-7516/2022/01/061, ISSN: 1475-7516
+
+<a id="4">[4]</a>
+Paul Dierckx, _Curve and Surface Fitting with Splines_ (1993), Oxford University Press
+
+<a id="5">[5]</a>
+Gebhardt, Jeong et al, _Fast and accurate computation of projected two-point functions_ (2018), American Physical Society, DOI: 10.1103/PhysRevD.97.023504, url: https://link.aps.org/doi/10.1103/PhysRevD.97.023504
