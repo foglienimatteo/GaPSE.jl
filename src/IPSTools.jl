@@ -234,6 +234,27 @@ struct InputPS
 end
 
 
+@doc raw"""
+     (f::InputPS)(x)
+
+Return the value of the `f::InputPS` as follows:
+```math
+f(x)=
+\begin{cases}
+a_\mathrm{L} + b_\mathrm{L} \, x ^ {s_\mathrm{L}} \; ,
+    \quad x < \mathrm{left}\\
+\mathrm{spline}(x) \; , \quad \mathrm{left} \leq x \leq \mathrm{right} \\
+a_\mathrm{R} + b_\mathrm{R} \, x ^ {s_\mathrm{R}} \; , 
+\quad x > \mathrm{right}
+\end{cases}
+```
+
+where ``a_\mathrm{L}``, ``b_\mathrm{L}``, ``s_\mathrm{L}``, ``\mathrm{left}``,
+``\mathrm{spline}``, ``a_\mathrm{R}``, ``b_\mathrm{R}``, ``s_\mathrm{R}`` and 
+``\mathrm{right}`` are all stored inside the `InputPS` considered.
+
+See also: [`InputPS`](@ref)
+"""
 function (IPS::InputPS)(x)
      if x < IPS.left
           return power_law(x, IPS.l_si, IPS.l_b, IPS.l_a)
@@ -507,6 +528,28 @@ struct IntegralIPS
 
 end
 
+
+@doc raw"""
+     (f::IntegralIPS)(x)
+
+Return the value of the `f::IntegralIPS` as follows:
+```math
+f(x)=
+\begin{cases}
+a_\mathrm{L} + b_\mathrm{L} \, x ^ {s_\mathrm{L}} \; ,
+    \quad x < \mathrm{left}\\
+\mathrm{spline}(x) \; , \quad \mathrm{left} \leq x \leq \mathrm{right} \\
+a_\mathrm{R} + b_\mathrm{R} \, x ^ {s_\mathrm{R}} \; , 
+\quad x > \mathrm{right}
+\end{cases}
+```
+
+where ``a_\mathrm{L}``, ``b_\mathrm{L}``, ``s_\mathrm{L}``, ``\mathrm{left}``,
+``\mathrm{spline}``, ``a_\mathrm{R}``, ``b_\mathrm{R}``, ``s_\mathrm{R}`` and 
+``\mathrm{right}`` are all stored inside the `IntegralIPS` considered.
+
+See also: [`IntegralIPS`](@ref)
+"""
 function (Iln::IntegralIPS)(x)
      if x < Iln.left
           return power_law(x, Iln.l_si, Iln.l_b, Iln.l_a)
@@ -608,7 +651,6 @@ Input Power Spectrum.
   For the LEFT side, there is not a lot of difference empirically. 
   For the RIGHT side, there is not such an option due to numerical problems (it's like 
   is always set `con==false`).
-
 
 
 See also: [`IntegralIPS`](@ref), [`InputPS`](@ref)
