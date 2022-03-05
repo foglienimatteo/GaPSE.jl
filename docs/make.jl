@@ -15,7 +15,7 @@ Documenter.makedocs(
           "Cosmology Struct" => "Cosmology.md",
           "Power Spectrum Multipoles" => "PowerSpectrum.md",
           "Auto Correlations" => "AutoCorrelations.md",
-          "CrossCorrelations" => "CrossCorrelations.md"
+          "CrossCorrelations" => "CrossCorrelations.md",
           "Mathematical Utilities" => "MathUtils.md",
      ],
 )
