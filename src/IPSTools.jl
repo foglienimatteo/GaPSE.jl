@@ -97,35 +97,89 @@ spline_F(x, μ) = GridInterpolations.interpolate(my_F_grid, _Fs, [μ, x])
 
 
 @doc raw"""
-     InputPS(ks::Vector{Float64}, pks::Vector{Float64})
+     InputPS(
+          l_si::Float64
+          l_b::Float64
+          l_a::Float64
+          left::Float64
+
+          spline::Dierckx.Spline1D
+          
+          r_si::Float64
+          r_b::Float64
+          r_a::Float64
+          right::Float64)
 
 Store the Input Power Spectrum.
 
+## Arguments 
+
+- `l_si, l_b, l_a :: Float64` : coefficient for the spurious power-law 
+  ``y = f(x) = a + b \, x^s`` for the LEFT edge; when an input value `x < left` is
+  given, the returned one is obtained from `power_law` with this coefficients (
+  where, of course, `l_si` is the exponent, `l_b` the coefficient and `l_a` the 
+  spurious adding constant). 
+
+- `left::Float64` : the break between the left power-law (for `x <left`) and the 
+  spline (for `x ≥ left`); its value is the `fit_min` of the used constructor.
+
+- `spline::Dierckx.Spline1D` : spline that interpolates between the real values of the 
+  power spectrum inside the range `left ≤ x ≤ right`
+
+- `right::Float64` : the break between the right power-law (for `x > left`) and the 
+  spline (for `x ≤ right`); its value is the `fit_max` of the used constructor.
+
+- `r_si, r_b, r_a :: Float64` : coefficient for the spurious power-law 
+  ``y = f(x) = a + b \, x^s`` for the RIGHT edge; when an input value `x > right` is
+  given, the returned one is obtained from `power_law` with this coefficients (
+  where, of course, `r_si` is the exponent, `r_b`` the coefficient and `r_a` the 
+  spurious adding constant). 
+  NOTE: for numerical issues, only the "pure" power-law ``y = f(x) = b + x^s`` can be used. 
+  In other words, it always set `r_a = 0.0`.
+
+
 ## Constructors
 
-- `InputPS(file::String; expand::Bool = true)` : read the IPS from
+- `InputPS(file::String; fit_left_min = 1e-6, fit_left_max = 3e-6,
+     fit_right_min = 1e1, fit_right_max = 2e1)` : read the IPS from
   the given input `file`; it can contain comments (defined with a 
-  starting # on each line), but the file structure mus be space-separated.
+  starting `#` on each line), but the file structure must be space-separated in two colums
+  (former for `k` values, latter for `P` ones).
 
-- `InputPS(ks::AbstractVector{T1}, pks::AbstractVector{T2}; expand::Bool = true) where {T1,T2}` :
-  take `ks` as x-axis and `pks` as y-axis values of the IPS
+     - `fit_left_min = 1e-6, fit_left_max = 3e-6` : the limits (min and max) where the PS
+       must be fitted with a power law, for small wavenumbers. 
 
-## Optional arguments
+     - `fit_right_min = 1e1, fit_right_max = 2e1` : the limits (min and max) where the PS
+       must be fitted with a power law, for high wavenumbers. 
 
-- `expand::Bool = true` : if `true`, the IPS is expanded toward small (until 
-  ``k \geq 10^{-8}  \; h_0 \, \mathrm{Mpc}^{-1}``) and high (until 
-  ``k \seq 10^{3}  \; h_0 \, \mathrm{Mpc}^{-1}``) k-values; if the IPS already 
-  arrives at this limits, nothing is changed.
-  The expansion is made through `expanded_IPS`
+
+- `InputPS(ks::AbstractVector{T1}, pks::AbstractVector{T2}; fit_left_min = 1e-6, fit_left_max = 3e-6,
+     fit_right_min = 1e1, fit_right_max = 2e1)`
+
+     - `ks::AbstractVector{T1}, pks::AbstractVector{T2}` : self-explanatory `ks` and `pks`
+       array-like values.
+
+     - `fit_left_min = 1e-6, fit_left_max = 3e-6` : the limits (min and max) where the PS
+       must be fitted with a power law, for small wavenumbers. 
+
+     - `fit_right_min = 1e1, fit_right_max = 2e1` : the limits (min and max) where the PS
+       must be fitted with a power law, for high wavenumbers. 
+
+
   
-See also: [`expanded_IPS`](@ref)
+All the power-law fitting (both "pure" and spurious) are made through the 
+local function `power_law_from_data`.
+
+See also: [`power_law_from_data`](@ref)
 """
 struct InputPS
      l_si::Float64
      l_b::Float64
      l_a::Float64
      left::Float64
+
      spline::Dierckx.Spline1D
+
      r_si::Float64
      r_b::Float64
      r_a::Float64
@@ -223,19 +277,21 @@ obtained from the Input Power Spectrum.
   spurious adding constant). 
 
 - `left::Float64` : the break between the left power-law (for `x <left`) and the 
-  spline (for `x ≥ left`)
+  spline (for `x ≥ left`); its value is the `fit_min` of the used constructor.
 
 - `spline::Dierckx.Spline1D` : spline that interpolates between the real values of the 
   integral calculated inside the range `left ≤ x ≤ right`
 
 - `right::Float64` : the break between the right power-law (for `x > left`) and the 
-  spline (for `x ≤ right`)
+  spline (for `x ≤ right`); its value is the `fit_max` of the used constructor.
 
 - `r_si, r_b, r_a :: Float64` : coefficient for the spurious power-law 
   ``y = f(x) = a + b \, x^s`` for the RIGHT edge; when an input value `x > right` is
   given, the returned one is obtained from `power_law` with this coefficients (
   where, of course, `r_si` is the exponent, `r_b`` the coefficient and `r_a` the 
   spurious adding constant). 
+  NOTE: for numerical issues, only the "pure" power-law ``y = f(x) = b + x^s`` can be used. 
+  In other words, it always set `r_a = 0.0`.
 
 ## Constructors
 
@@ -269,11 +325,11 @@ here provided:
        these ``I_\ell^n`` integrals have fixed power-law trends for ``s \rightarrow 0``, so this approach gives
        good results.
 
-     - `p0_left = nothing` : vector with the inital values for the left power-law fitting; its length must
+     - `p0_left = nothing` : vector with the initial values for the left power-law fitting; its length must
        be 2 (if you want to fit with a pure power-law ``y = f(x) = b * x^s``, so only `l_si` and `l_b` 
        are matter of concern) or 3 (if you want to fit with a spurious power-law ``y = f(x) = a + b * x^s``,
        so you are also interested in `l_a`), depending on the value of `con`; if `nothing`, it will be
-       automatically setted `p0 = [-1.0, 1.0, 0.0]` for `con==true` and
+       automatically set `p0 = [-1.0, 1.0, 0.0]` for `con==true` and
        `p0 = [-1.0, 1.0]` for `con==false`.
 
      - `con::Bool = false` : do you want that the fit of all the ``I_\ell^n`` for the LEFT edge
@@ -281,8 +337,78 @@ here provided:
        such that ``y = f(x) = a + b \, x^s``?
        For the LEFT side, there is not a lot of difference empirically. 
        For the RIGHT side, there is not such an option due to numerical problems (it's like 
-       is always setted `con==false`).
+       is always set `con==false`).
 
+     - `fit_right_min = nothing, fit_right_max = nothing` : the limits (min and max) where the integral ``I_\ell^n``
+       must be fitted with a power law, for high distances. 
+       These ``I_\ell^n`` integrals have fixed power-law trends for ``s \rightarrow infty``, so this approach gives
+       good results. If `nothing`, the last 15 points returned from `xicalc` are used for
+       this fitting.
+       NOTE: for numerical issues, only the "pure" power-law ``y = f(x) = b + x^s`` can be used. 
+
+     - `p0_right = nothing` : vector with the initial values for the left power-law fitting; its length must
+       be 2 (to fit with a pure power-law ``y = f(x) = b * x^s``, so only `r_si` and `r_b` 
+       are matter of concern); if `nothing`, it will be
+       automatically set `p0 = [-4.0, 1.0, 0.0]`.
+
+
+- `IntegralIPS(ips, func::Function; N::Integer = 1024, kmin = 1e-4, kmax = 1e3,
+     fit_left_min = 0.1, fit_left_max = 1.0, p0_left = nothing, con = false,
+     fit_right_min = nothing, fit_right_max = nothing, p0_right = nothing,
+     kwargs...)`
+  This is the one used for the "strange" ``\tilde{I}`` integrals, such as:
+  ```math
+  \tilde{I}^4_0 (s) = \int \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, 
+     P(q) \,  \frac{j_0(qs) - 1}{(qs)^4} \;.
+  ```
+  The integral obtained with this constructor is calculated through the
+  input function `func`, and expanded with power-laws at the edges.
+  For `\tilde{I}^4_0`, the function is `func_I04_tilde`.  
+
+     - `ips`: the function/spline that gives the Input Power Spectrum
+
+     - `func`: function that return the value of this specific integral in a given value
+
+     - `kmin = 1e-4, kmax = 1e3, s0 = 1e-3` : values to be passed to `func` as extremes
+       of integration
+
+     - `fit_left_min = 0.1, fit_left_max = 1.0,` : the limits (min and max) where the integral ``\tilde{I}``
+       must be fitted with a power law, for small distances. This operation is necessary, because `xicalc`,
+       in this context, gives wrong results for too small input distance `s`; nevertheless, all
+       this ``\tilde{I}`` integral have fixed power-law trends for ``s \rightarrow 0``, so this approach gives
+       good results.
+
+     - `p0_left = nothing` : vector with the initial values for the left power-law fitting; its length must
+       be 2 (if you want to fit with a pure power-law ``y = f(x) = b * x^s``, so only `l_si` and `l_b` 
+       are matter of concern) or 3 (if you want to fit with a spurious power-law ``y = f(x) = a + b * x^s``,
+       so you are also interested in `l_a`), depending on the value of `con`; if `nothing`, it will be
+       automatically set `p0 = [-2.0, -1.0, 0.0]` for `con==true` and
+       `p0 = [-2.0, -1.0]` for `con==false`.
+
+     - `con::Bool = false` : do you want that the fit of all the ``I_\ell^n`` for the LEFT edge
+       is not a simple power-law ``y = f(x) = b \, x^s``, but also consider a constant ``a``,
+       such that ``y = f(x) = a + b \, x^s``?
+       For the LEFT side, there is not a lot of difference empirically. 
+       For the RIGHT side, there is not such an option due to numerical problems (it's like 
+       is always set `con==false`).
+
+     - `fit_right_min = nothing, fit_right_max = nothing` : the limits (min and max) where the integral ``I_\ell^n``
+       must be fitted with a power law, for high distances. 
+       These ``I_\ell^n`` integrals have fixed power-law trends for ``s \rightarrow infty``, so this approach gives
+       good results. If `nothing`, the last 15 points returned from `xicalc` are used for
+       this fitting.
+       NOTE: for numerical issues, only the "pure" power-law ``y = f(x) = b + x^s`` can be used. 
+
+     - `p0_right = nothing` : vector with the initial values for the left power-law fitting; its length must
+       be 2 (to fit with a pure power-law ``y = f(x) = b * x^s``, so only `r_si` and `r_b` 
+       are matter of concern); if `nothing`, it will be
+       automatically set `p0 = [-4.0, -1.0]`.
+
+
+All the power-law fitting (both "pure" and spurious) are made through the 
+local function `power_law_from_data`.
+
+See also: [`power_law_from_data`](@ref), [`func_I04_tilde`](@ref)
 """
 struct IntegralIPS
      l_si::Float64
@@ -325,12 +451,12 @@ struct IntegralIPS
           new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_MAX)
      end
 
-     function IntegralIPS(ips, func::Function; N = 1024, kmin = 1e-4, kmax = 1e3,
+     function IntegralIPS(ips, func::Function; N::Integer = 1024, kmin = 1e-4, kmax = 1e3,
           fit_left_min = 0.1, fit_left_max = 1.0, p0_left = nothing, con = false,
           fit_right_min = nothing, fit_right_max = nothing, p0_right = nothing,
           kwargs...)
 
-          ss = 10 .^ range(log10(0.999 * fit_left_min), 4, length = 1024)
+          ss = 10 .^ range(log10(0.999 * fit_left_min), 4, length = N)
           Is = [func(ips, s, kmin, kmax; kwargs...) for s in ss]
 
           p_0_left = isnothing(p0_left) ? (con == true ? [-2.0, -1.0, 0.0] : [-2.0, -1.0]) : p0_left
@@ -481,7 +607,7 @@ Input Power Spectrum.
   such that ``y = f(x) = a + b \, x^s``?
   For the LEFT side, there is not a lot of difference empirically. 
   For the RIGHT side, there is not such an option due to numerical problems (it's like 
-  is always setted `con==false`).
+  is always set `con==false`).
 
 
 
