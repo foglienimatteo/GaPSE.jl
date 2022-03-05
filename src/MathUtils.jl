@@ -117,6 +117,16 @@ end
 ##########################################################################################92
 
 
+@doc raw"""
+     power_law(x, si, b, a) ::Float64
+
+Return the following ``y = f(x)`` "spurious" power-law value:
+```math
+y = f(x) = a + b \, x^s
+```
+where `si` is the exponent (``s``), `b` the coefficient (``b``) and
+`a` is the added constant (``a``).
+"""
 power_law(x, si, b, a) = a .+ b .* (x .^ si)
 
 
@@ -128,6 +138,7 @@ function two_power_laws(x; switch=5.0, si_1=1.0, si_2=2.0, b=1.0, a=0.0)
           return power_law(x, si_2, b/(switch^(si_2-si_1)), a)
      end
 end
+
 
 
 function power_law_from_data(
@@ -208,6 +219,33 @@ end;
 function power_law_from_data(xs, ys, p0::Vector{Float64}; con = false)
      power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con = con)
 end;
+
+
+@doc raw"""
+     power_law_from_data(xs, ys, p0::Vector{Float64},
+          fit_min::Number, fit_max::Number; con = false)
+
+     power_law_from_data(xs, ys, p0::Vector{Float64}; con = false) = 
+          power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con = con)
+
+Returns the "spurious" power-law
+coefficients ``s``, ``b`` and ``a`` obtained from the fitting of the data vectors
+`xs` and `ys` inside the limits `fit_min` and `fit_max`.
+
+If `con == false`, the returned `a` is always `0.0`, because it is considered the
+"pure" power-law fitting function:
+```math
+     y = f(x) = b \, x^s
+```
+while if `con == false` it is used the spurious one:
+```math
+     y = f(x) = a + b \, x^s
+```
+(and consequently ``a`` may be ≠0).
+ 
+See also: [`power_law`](@ref)
+"""
+power_law_from_data
 
 
 ##########################################################################################92
@@ -358,7 +396,18 @@ Return the following integral:
 \tilde{I}^4_0 (s) = \int_0^\infty \frac{\mathrm{d}q}{2\pi^2} 
      q^2 \, P(q) \, \frac{j_0(q s) - 1}{(q s)^4}
 ```
+It is brute-force calcuated with `quadgk`.
 
+## Arguments
+
+- `PK` : function that return the Input Power Spectrum
+
+- `s` : value of ``s`` whre the integral must be evaluated
+
+- `kmin, kmax` : extremes (min and max) of integration
+
+- `kwargs...` : keyword argruments that must be passed to `quadgk`,
+  such as `rtol` or `atol`
 """
 function func_I04_tilde(PK, s, kmin, kmax; kwargs...)
      res = quadgk(lq -> (sphericalbesselj(0, s * exp(lq)) - 1.0) * PK(exp(lq)) / (2.0 * π^2 * exp(lq)),

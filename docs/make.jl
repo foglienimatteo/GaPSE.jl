@@ -12,9 +12,11 @@ Documenter.makedocs(
           "The F window function" => "F_evaluation.md",
           "Background Data" => "BackgroundData.md",
           "Input Power Spectrum Tools" => "IPSTools.md",
+          "Cosmology Struct" => "Cosmology.md",
           "Power Spectrum Multipoles" => "PowerSpectrum.md",
           "Auto Correlations" => "AutoCorrelations.md",
           "CrossCorrelations" => "CrossCorrelations.md"
+          "Mathematical Utilities" => "MathUtils.md",
      ],
 )
 
