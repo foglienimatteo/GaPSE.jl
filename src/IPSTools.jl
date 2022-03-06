@@ -554,7 +554,7 @@ function (Iln::IntegralIPS)(x)
      if x < Iln.left
           return power_law(x, Iln.l_si, Iln.l_b, Iln.l_a)
      elseif x > Iln.right
-          warning("i am going too right! ")
+          #warning("i am going too right! ")
           return power_law(x, Iln.r_si, Iln.r_b, Iln.r_a)
      else
           return Iln.spline(x)
