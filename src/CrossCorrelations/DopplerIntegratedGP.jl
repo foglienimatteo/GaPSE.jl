@@ -34,7 +34,7 @@ f(s_1, s_2, y, \chi_1, \chi_2) =
 ```
 where ``\mathcal{H} = a H``, 
 ``\chi = \sqrt{s_1^2 + \chi_2^2 - 2 s_1 \chi_2 \cos{\theta}}``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``) 
+``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2``) 
 and:
 
 ```math
@@ -124,7 +124,7 @@ Return the Doppler-LocalGP cross-correlation function
 
 where ``\mathcal{H} = a H``, 
 ``\chi = \sqrt{s_1^2 + \chi_2^2 - 2 s_1 \chi_2 \cos{\theta}}``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``) 
+``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2``) 
 and:
 
 ```math

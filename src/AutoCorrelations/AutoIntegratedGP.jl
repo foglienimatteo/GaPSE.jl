@@ -31,7 +31,7 @@ i.e. the function ``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:
 f(s_1, s_2, y, \chi_1, \chi_2) = J_{40}(s_1, s_2, y, \chi_1, \chi_2) \tilde{I}^4_0(\chi)
 ```
 where ``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \, \chi_2 \, y} ``,
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2`` and:
+``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2`` and:
 ```math
 \begin{split}
      &J_{40}(s_1, s_2, y, \chi_1, \chi_2)  = 
@@ -87,62 +87,6 @@ end
 
 
 
-@doc raw"""
-     ξ_IntegratedGP(s1, s2, y, cosmo::Cosmology; 
-          en::Float64 = 1e10,
-          N_χs::Integer = 100) :: Float64
-
-Return the integrated gravitational potential auto-correlation function 
-``\xi^{\int\phi\int\phi}(s_1, s_2, \cos{\theta})``, defined as follows:
-    
-```math
-\xi^{\int\phi\int\phi} (s_1, s_2, \cos{\theta}) = 
-     \int_0^{s_1} \mathrm{d} \chi_1 \int_0^{s_2}\mathrm{d} \chi_2 \;
-     J_{40}(s_1, s_2, y, \chi_1, \chi_2) \, \tilde{I}^4_0(\chi)
-```
-where ``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \, \chi_2 \, y} ``,
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2`` and:
-```math
-\begin{align*}
-     J_{40}(s_1, s_2, y, \chi_1, \chi_2) &= 
-          \frac{
-                    9 \mathcal{H}_0^4 \Omega_{M0}^2 D(\chi_1) D(\chi_2) \chi^4
-          }{    a(\chi_1) a(\chi_2) s_1 s_2} 
-          (s_2 \mathcal{H}(\chi_2) \mathcal{R}(s_2) (f(\chi_2)-1) - 1) 
-          (s_1 \mathcal{H}(\chi_1) \mathcal{R}(s_1) (f(\chi_1)-1) - 1) \\[5pt]
-     \tilde{I}^4_0 (s) &= \int_0^\infty \frac{\mathrm{d}q}{2\pi^2} 
-          q^2 \, P(q) \, \frac{j_0(q s) - 1}{(q s)^4}
-\end{aling*}
-```
-and ``P(q)`` is the input power spectrum.
-
-
-The computation is made applying [`trapz`](@ref) (see the 
-[Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_Lensing`.
-
-
-## Inputs
-
-- `s1` and `s2`: comovign distances where the function must be evaluated
-
-- `y`: the cosine of the angle between the two points `P1` and `P2`
-
-- `cosmo::Cosmology`: cosmology to be used in this computation
-
-
-## Optional arguments 
-
-- `en::Float64 = 1e10`: just a float number used in order to deal better 
-  with small numbers.
-
-- `N_χs::Integer = 100`: number of points to be used for sampling the integral
-  along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
-  with `N_χs ≥ 50` the result is stable.
-
-See also: [`integrand_ξ_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
-"""
 function ξ_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      en::Float64 = 1e10, N_χs::Integer = 100, focus::Float64 = 10.0)
 
@@ -192,3 +136,65 @@ function ξ_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
      return ξ_IntegratedGP(P1, P2, y, cosmo; kwargs...)
 end
 
+
+
+@doc raw"""
+     ξ_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
+          en::Float64 = 1e10,
+          N_χs::Integer = 100) :: Float64
+
+     ξ_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...) = 
+          ξ_IntegratedGP(Point(s1, cosmo), Point(s2, cosmo), y, cosmo; kwargs...)
+
+Return the integrated gravitational potential auto-correlation function 
+``\xi^{\int\phi\int\phi}(s_1, s_2, \cos{\theta})``, defined as follows:
+    
+```math
+\xi^{\int\phi\int\phi} (s_1, s_2, \cos{\theta}) = 
+     \int_0^{s_1} \mathrm{d} \chi_1 \int_0^{s_2}\mathrm{d} \chi_2 \;
+     J_{40}(s_1, s_2, y, \chi_1, \chi_2) \, \tilde{I}^4_0(\chi)
+```
+where ``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \, \chi_2 \, y} ``,
+``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2`` and:
+```math
+\begin{split}
+     &J_{40}(s_1, s_2, y, \chi_1, \chi_2)  = 
+          \frac{
+               9 \mathcal{H}_0^4 \Omega_{M0}^2 D(\chi_1) D(\chi_2) \chi^4
+          }{    a(\chi_1) a(\chi_2) s_1 s_2} 
+          (s_2 \mathcal{H}(\chi_2) \mathcal{R}(s_2) (f(\chi_2)-1) - 1) 
+          (s_1 \mathcal{H}(\chi_1) \mathcal{R}(s_1) (f(\chi_1)-1) - 1)\\[5pt]
+     &\tilde{I}^4_0 (s) = \int_0^\infty \frac{\mathrm{d}q}{2\pi^2} 
+          q^2 \, P(q) \, \frac{j_0(q s) - 1}{(q s)^4}
+\end{split}
+```
+and ``P(q)`` is the input power spectrum.
+
+
+The computation is made applying [`trapz`](@ref) (see the 
+[Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
+the integrand function `integrand_ξ_Lensing`.
+
+
+## Inputs
+
+- `s1` and `s2`: comovign distances where the function must be evaluated
+
+- `y`: the cosine of the angle between the two points `P1` and `P2`
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
+
+
+## Optional arguments 
+
+- `en::Float64 = 1e10`: just a float number used in order to deal better 
+  with small numbers.
+
+- `N_χs::Integer = 100`: number of points to be used for sampling the integral
+  along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
+  with `N_χs ≥ 50` the result is stable.
+
+See also: [`integrand_ξ_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
+[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
+"""
+ξ_IntegratedGP

@@ -17,39 +17,7 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-@doc raw"""
-     ξ_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
 
-Return the Doppler auto-correlation function, defined as follows:
-```math
-\xi^{v_{\parallel}v_{\parallel}} (s_1, s_2, \cos{\theta}) 
-= D_1 D_2 f_1 f_2 \mathcal{H}_1 \mathcal{H}_2 \mathcal{R}_1 \mathcal{R}_2 
-(J_{00}\, I^0_0(s) + J_{02}\,I^0_2(s) + J_{04}\,I^0_4(s) + J_{20}\,I^2_0(s))
-```
-where ``D_1 = D(s_1)``, ``D_2 = D(s_2)`` and so on, ``\mathcal{H} = a H``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2`` and 
-the J coefficients are given by:
-```math
-\begin{align*}
-    J_{00} (s_1, s_2, y) & = \frac{1}{45} (y^2 s_1 s_2 - 2y(s_1^2 + s_2^2) + 3s_1 s_2) \\
-    J_{02} (s_1, s_2, y) & = \frac{2}{63} (y^2 s_1 s_2 - 2y(s_1^2 + s_2^2) + 3s_1 s_2) \\
-    J_{04} (s_1, s_2, y) & = \frac{1}{105} (y^2 s_1 s_2 - 2y(s_1^2 + s_2^2) + 3s_1 s_2) \\
-    J_{20} (s_1, s_2, y) & = \frac{1}{3} y s^2
-\end{align*}
-```
-
-## Inputs
-
-- `P1::Point` and `P2::Point`: `Point` where the CF has to be calculated; they contain all the 
-  data of interest needed for this calculus (comoving distance, growth factor and so on)
-     
-- `y`: the cosine of the angle between the two points `P1` and `P2`
-
-- `cosmo::Cosmology`: cosmology to be used in this computation
-
-
-See also: [`Point`](@ref), [`Cosmology`](@ref)
-"""
 function ξ_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
      s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ
      s2, D2, f2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ
@@ -76,3 +44,42 @@ function ξ_Doppler(s1, s2, y, cosmo::Cosmology)
      return ξ_Doppler(P1, P2, y, cosmo)
 end
 
+
+
+@doc raw"""
+     ξ_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
+
+     ξ_Doppler(s1, s2, y, cosmo::Cosmology) = 
+          ξ_Doppler(Point(s1, cosmo), Point(s2, cosmo), y, cosmo)
+
+Return the Doppler auto-correlation function, defined as follows:
+```math
+\xi^{v_{\parallel}v_{\parallel}} (s_1, s_2, \cos{\theta}) 
+= D_1 D_2 f_1 f_2 \mathcal{H}_1 \mathcal{H}_2 \mathcal{R}_1 \mathcal{R}_2 
+(J_{00}\, I^0_0(s) + J_{02}\,I^0_2(s) + J_{04}\,I^0_4(s) + J_{20}\,I^2_0(s))
+```
+where ``D_1 = D(s_1)``, ``D_2 = D(s_2)`` and so on, ``\mathcal{H} = a H``, 
+``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2`` and 
+the J coefficients are given by:
+```math
+\begin{align*}
+    J_{00} (s_1, s_2, y) & = \frac{1}{45} (y^2 s_1 s_2 - 2y(s_1^2 + s_2^2) + 3s_1 s_2) \\
+    J_{02} (s_1, s_2, y) & = \frac{2}{63} (y^2 s_1 s_2 - 2y(s_1^2 + s_2^2) + 3s_1 s_2) \\
+    J_{04} (s_1, s_2, y) & = \frac{1}{105} (y^2 s_1 s_2 - 2y(s_1^2 + s_2^2) + 3s_1 s_2) \\
+    J_{20} (s_1, s_2, y) & = \frac{1}{3} y s^2
+\end{align*}
+```
+
+## Inputs
+
+- `P1::Point` and `P2::Point`: `Point` where the CF has to be calculated; they contain all the 
+  data of interest needed for this calculus (comoving distance, growth factor and so on)
+     
+- `y`: the cosine of the angle between the two points `P1` and `P2`
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
+
+
+See also: [`Point`](@ref), [`Cosmology`](@ref)
+"""
+ξ_Doppler

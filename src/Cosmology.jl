@@ -18,6 +18,20 @@
 #
 
 
+@doc raw"""
+     func_ℛ(s, ℋ; s_lim=0.01, ℋ_0 = ℋ0)
+
+Return the following value:
+```math
+\mathrm{func_ℛ}(s, \scrH)=
+\begin{cases}
+1 - \frac{1}{\scrH \, s} \; ,
+    \quad s > s_\mathrm{lim}\\
+1 - \frac{1}{\scrH_0 \, s_\mathrm{lim}} \; , 
+     \quad \quad 0 \leq s \leq s_\mathrm{lim}
+\end{cases}
+```
+"""
 function func_ℛ(s, ℋ; s_lim=0.01, ℋ_0 = ℋ0)
      if s > s_lim
           return 1.0 - 1.0/(s*ℋ)
@@ -55,6 +69,15 @@ end
 Struct that contains all the information that may be used for the 
 Correlation Function computations.
 
+## Constructors
+
+`Cosmology(
+     params::CosmoParams,
+     file_data::String,
+     file_ips::String,
+     file_windowF::String,
+     file_Is::Union{String,Nothing} = nothing;
+     names_bg = NAMES_BACKGROUND)`
 
 See also:  [`InputPS`](@ref), [`CosmoParams`](@ref), [`IPSTools`](@ref),
 [`WindowF`](@ref)
@@ -101,8 +124,6 @@ struct Cosmology
                fit_max = params.fit_max, con = params.con) :
                IPSTools(IPS, file_Is)
 
-          s_lim = isnothing(params.s_lim) ? 1.0 : params.s_lim
-
           #=
           z_of_s_lim = my_interpolation(BD.comdist[1], BD.z[1], BD.comdist[2], BD.z[2], s_lim)
           D_of_s_lim = my_interpolation(BD.comdist[1], BD.D[1], BD.comdist[2], BD.D[2], s_lim)
@@ -132,7 +153,7 @@ struct Cosmology
           ℋ_of_s = Spline1D(BD.comdist, BD.ℋ; bc = "error")
 
           ss = 10 .^ range(-4, log10(BD.comdist[end]), length = 1000)
-          ℛs = [func_ℛ(s, ℋ_of_s(s); s_lim = s_lim) for s in ss]
+          ℛs = [func_ℛ(s, ℋ_of_s(s); s_lim =  params.s_lim) for s in ss]
           ℛ_of_s = Spline1D(vcat(0.0, ss), vcat(ℛs[begin], ℛs); bc = "error")
 
           s_min = s_of_z(params.z_min)

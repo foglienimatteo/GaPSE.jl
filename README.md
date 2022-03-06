@@ -30,19 +30,20 @@ This software is under the [GNU 3.0 General Public Licence](https://www.gnu.org/
 ## Acknowledgements
 
 This package make extensive use of `Spline1D` (from the 
-[Dierckx](https://github.com/kbarbary/Dierckx.jl)[[4]][#1] Julia package) and the Spherical Bessel Transform function `xicalc` (from the 
-[TwoFAST](https://github.com/hsgg/TwoFAST.jl)[[5]][#1] Julia package).
+[Dierckx](https://github.com/kbarbary/Dierckx.jl)[[4]](#1) Julia package) and the Spherical Bessel Transform function `xicalc` (from the 
+[TwoFAST](https://github.com/hsgg/TwoFAST.jl)[[5]](#1) Julia package).
 
 
 ## References
 <a id="1">[1]</a> 
-Dalal, Doré et al., _Imprints of primordial non-Gaussianities on large-scale structure_ (2008), American Physical Society, DOI: 10.1103/physrevd.77.123514, ISSN:1550-2368
+Dalal, Doré et al., _Imprints of primordial non-Gaussianities on large-scale structure_ (2008), American Physical Society, DOI: 10.1103/PhysRevD.77.123514, 
+url: https://journals.aps.org/prd/abstract/10.1103/PhysRevD.77.123514
 
 <a id="2">[2]</a> 
-Slosar, Hirata et al., _Constraints on local primordial non-Gaussianity from large scale structure_ (2008), Journal of Cosmology and Astroparticle Physics, DOI: 10.1088/1475-7516/2008/08/031, ISSN: 1475-7516
+Slosar, Hirata et al., _Constraints on local primordial non-Gaussianity from large scale structure_ (2008), Journal of Cosmology and Astroparticle Physics, DOI: 10.1088/1475-7516/2008/08/031, url: https://doi.org/10.1088/1475-7516/2008/08/031
 
 <a id="3">[3]</a> 
-Castorina, Di Dio, _The observed galaxy power spectrum in General Relativity_ (2022), Journal of Cosmology and Astroparticle Physics, DOI: 10.1088/1475-7516/2022/01/061, ISSN: 1475-7516
+Castorina, Di Dio, _The observed galaxy power spectrum in General Relativity_ (2022), Journal of Cosmology and Astroparticle Physics, DOI: 10.1088/1475-7516/2022/01/061, url: https://doi.org/10.1088/1475-7516/2022/01/061
 
 <a id="4">[4]</a>
 Paul Dierckx, _Curve and Surface Fitting with Splines_ (1993), Oxford University Press

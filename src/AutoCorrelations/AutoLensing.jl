@@ -43,7 +43,7 @@ f(s_1, s_2, y, \chi_1, \chi_2) =
 
 where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
 ``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2\chi_1\chi_2\cos{\theta}}``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``) 
+``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2``) 
 and the ``J`` coefficients are given by 
 
 ```math
@@ -179,13 +179,47 @@ function func_Δχ_min(s1, s2, y; frac = 1e-4)
 end
 =#
 
+function ξ_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
+     en::Float64 = 1e6, N_χs::Integer = 100, Δχ_min::Float64 = 1e-4)
+
+     adim_1χs = range(1e-8, 1.0, length = N_χs)[begin:end]
+     adim_2χs = range(1e-7, 1.0, length = N_χs)[begin:end]
+     #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
+
+     χ1s = P1.comdist .* adim_1χs
+     χ2s = P2.comdist .* adim_2χs
+
+     IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+     IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
+
+     int_ξ_Lensings = [
+          en * GaPSE.integrand_ξ_Lensing(IP1, IP2, P1, P2, y, cosmo; Δχ_min = Δχ_min)
+          for IP1 in IP1s, IP2 in IP2s
+     ]
+
+     res = trapz((χ1s, χ2s), int_ξ_Lensings)
+     #println("res = $res")
+     return res / en
+end
+
+
+function ξ_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
+     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+     return ξ_Lensing(P1, P2, y, cosmo; kwargs...)
+end
+
+
 
 @doc raw"""
-     ξ_Lensing(s1, s2, y, cosmo::Cosmology;
+     ξ_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
           en::Float64 = 1e6,
           Δχ_min::Float64 = 1e-3,
           N_χs::Integer = 100) :: Float64
 
+     ξ_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...) = 
+          ξ_Lensing(Point(s1, cosmo), Point(s2, cosmo), y, cosmo; kwargs...)
+
+          
 Return the Lensing auto-correlation function 
 ``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, defined as follows:
     
@@ -203,7 +237,7 @@ Return the Lensing auto-correlation function
 
 where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
 ``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2\chi_1\chi_2\cos{\theta}}``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``) 
+``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2``) 
 and the ``J`` coefficients are given by 
 
 ```math
@@ -261,31 +295,4 @@ the integrand function `integrand_ξ_Lensing`.
 See also: [`integrand_ξ_Lensing`](@ref), [`integrand_on_mu_Lensing`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function ξ_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Integer = 100, Δχ_min::Float64 = 1e-4)
-
-     adim_1χs = range(1e-8, 1.0, length = N_χs)[begin:end]
-     adim_2χs = range(1e-7, 1.0, length = N_χs)[begin:end]
-     #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
-
-     χ1s = P1.comdist .* adim_1χs
-     χ2s = P2.comdist .* adim_2χs
-
-     IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-     IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
-
-     int_ξ_Lensings = [
-          en * GaPSE.integrand_ξ_Lensing(IP1, IP2, P1, P2, y, cosmo; Δχ_min = Δχ_min)
-          for IP1 in IP1s, IP2 in IP2s
-     ]
-
-     res = trapz((χ1s, χ2s), int_ξ_Lensings)
-     #println("res = $res")
-     return res / en
-end
-
-
-function ξ_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_Lensing(P1, P2, y, cosmo; kwargs...)
-end
+ξ_Lensing

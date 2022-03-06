@@ -53,7 +53,70 @@ const ℋ0 = 3.3356409519815204e-4 # h_0/Mpc
 ##########################################################################################92
 
 
+"""
+     BackgroundData(
+          z::Vector{Float64}
+          conftime::Vector{Float64}
+          comdist::Vector{Float64}
+          angdist::Vector{Float64}
+          lumdist::Vector{Float64}
+          D::Vector{Float64}
+          f::Vector{Float64}
+          ℋ::Vector{Float64}
+          ℋ_p::Vector{Float64})
 
+Struct that contains all the relevant cosmological information for
+future computations.
+The data are stored with increasing distance values 
+(so the first ones are associated to `z=0`).
+It is internally used in `Cosmology.`
+
+## Arguments
+
+- `z::Vector{Float64}` : redshifts (adimensionals).
+
+- `conftime::Vector{Float64}` : conformal times, measured in [Mpc/h].
+
+- `comdist::Vector{Float64}` : comoving distances, measured in [Mpc/h].
+
+- `angdist::Vector{Float64}` : angular diameter distances, measured in [Mpc/h].
+
+- `lumdist::Vector{Float64}` : luminosity distances, measured in [Mpc/h].
+
+- `D::Vector{Float64}` : linear growth factors, normalized to 1.0 at the present day (adimensional).
+
+- `f::Vector{Float64}` : linear growth rates (adimensional).
+
+- `ℋ::Vector{Float64}` : comoving Hubble parameters, measured in [h/Mpc].
+
+- `ℋ_p::Vector{Float64}` : derivatives of the comoving Hubble parameter wrt the conformal time.
+  It is here manually computed with the Dierckx function `derivative`.
+
+
+## Constructors
+
+`BackgroundData(file::String, z_max; names = NAMES_BACKGROUND, h = 0.7)`
+
+- `file::string` : input file where the data are stored; it is expected that such file
+  is a background output of the CLASS program (link: https://github.com/lesgourg/class_public)
+
+- `z_max` : the maximum redhsift we are interested in our analysis. The constructor will
+  store the data necessary for a study only in `0 < z < z_max`, for optimisation purposes
+  (More precisely, the maximum distance stored will be `3*z_max`).
+
+- `names = NAMES_BACKGROUND` : the column names of the `file`. If the colum order change from
+  the default one `NAMES_BACKGROUND`, you must set as input the vector of string with the correct
+  one, with the SAME names. They are, with the default order:
+  $(println(NAMES_BACKGROUND))  
+
+- `h = 0.7` : the adimensional hubble constant. By default, CLASS background data are measured with
+  it nuymerically expressed (so distances are measured in `Mpc`, for example), while this code works
+  with `h` in the unit of measure (so distances are measured in `Mpc/h`, for example).
+  Change this value to `1.0` if the input data do not have this issue, or to your value of interest 
+  (`0.67`, `0.5`, ...).
+
+See also: [`CosmoParams`](@ref), [`Cosmology`](@ref)
+"""
 struct BackgroundData
      z::Vector{Float64}
      conftime::Vector{Float64}
@@ -100,7 +163,73 @@ struct BackgroundData
 end
 
 
+@doc raw"""
+     CosmoParams(
+          z_min::Float64
+          z_max::Float64
+          θ_max::Float64
 
+          k_min::Float64
+          k_max::Float64
+
+          Ω_b::Float64
+          Ω_cdm::Float64
+          Ω_M0::Float64
+          h_0::Float64
+
+          N::Integer
+          fit_min::Float64
+          fit_max::Float64
+          con::Bool
+          s_lim::Float64)
+
+
+Struct that contains all the parameters and options that are 
+matter of concerns for the `Cosmology` we are interested in.
+
+## Arguments
+
+- `z_min::Float64` and `z_max::Float64` : the minimum and maximum redshifts of the
+  survey we want to study.
+
+- `θ_max::Float64` : Angular maximum value of the survey. It is
+  implicitly assumed an azimutal simmetry of the survey.
+
+- `k_min::Float64` and `k_max::Float64` : extremes of integration for the `σ_i`
+  integrals in `IPSTools`.
+
+- `Ω_b::Float64`, `Ω_cdm::Float64` and `Ω_M0::Float64` : barionic, cold-dark-matter and
+  total matter density parameters.
+
+- `h_0::Float64` : today's Hubble adimensional parameter (`H_0 = h_0 * 100 km/(s * Mpc)`).
+
+- `N::Integer` : number of points to be used in the Sperical Bessel Fourier Transform made
+  by `xicalc` in `IPSTools`.
+
+- `fit_min::Float64` and `fit_max::Float64` : the limits (min and max) where the integral ``I_\ell^n``
+  in `Cosmology` must be fitted with a power law, for small distances. This operation is necessary, 
+  because `xicalc`, in this context, gives wrong results for too small input distance `s`; nevertheless, all
+  these ``I_\ell^n`` integrals have fixed power-law trends for ``s \rightarrow 0``, so this approach gives
+  good results.
+
+- `con::Bool` : do you want that the fit of all the ``I_\ell^n`` in `IPSTools` for the LEFT edge
+  is not a simple power-law ``y = f(x) = b \, x^s``, but also consider a constant ``a``,
+  such that ``y = f(x) = a + b \, x^s``?
+
+- `s_lim::Float64` : the lower-bound value for the function `func_ℛ`; it is necessary, because
+  `ℛ` blows up for ``s \rightarrow 0^{+}``. Consequently, if the `func_ℛ` input value is 
+  `0 ≤ s < s_lim`, the returned value is always `func_ℛ(s_lim)`.
+
+## Constructors
+
+`CosmoParams(z_min, z_max, θ_max; k_min = 1e-8, k_max = 10.0,
+     Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70, N::Integer = 1024, 
+     fit_min = 0.05, fit_max = 0.5, con::Bool = true, 
+     s_lim = 1e-2)`
+The associations are trivials, with `Ω_M0 = Ω_cdm + Ω_b`.
+
+See also: [`Cosmology`](@ref), [`IPSTools`](@ref), [`func_ℛ`](@ref)
+"""
 struct CosmoParams
      z_min::Float64
      z_max::Float64
@@ -114,30 +243,36 @@ struct CosmoParams
      Ω_M0::Float64
      h_0::Float64
 
-     N::Int
-     fit_min::Union{Float64,Nothing}
-     fit_max::Union{Float64,Nothing}
+     N::Integer
+     fit_min::Float64
+     fit_max::Float64
      con::Bool
-     s_lim::Union{Float64, Nothing}
+     s_lim::Float64
 
 
      function CosmoParams(z_min, z_max, θ_max;
           k_min = 1e-8, k_max = 10.0,
           Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70,
-          N = 1024, fit_min = 2.0, fit_max = 10.0, con = true, s_lim = nothing)
+          N::Integer = 1024, fit_min = 0.05, fit_max = 0.5, con::Bool = true, 
+          s_lim = 1e-2)
      
+          @assert 0.0 < z_min < z_max " 0.0 < z_min < z_max must hold!"
           @assert 0.0 ≤ θ_max ≤ π / 2.0 " 0.0 ≤ θ_max ≤ π/2.0 must hold!"
-          @assert 0.0 ≤ z_min < z_max " 0.0 ≤ z_min < z_max must hold!"
+
           @assert 0.0 ≤ k_min < k_max " 0.0 ≤ k_min < k_max must hold!"
-          @assert Ω_b ≥ 0.0 " Ω_b ≥ 0.0 must hold!"
-          @assert Ω_cdm ≥ 0.0 " Ω_cdm ≥ 0.0 must hold!"
+          @assert 0.0 ≤ Ω_b ≤ 1.0 " 0.0 ≤ Ω_b ≤ 1.0 must hold!"
+          @assert 0.0 ≤ Ω_cdm ≤ 1.0 " 0.0 ≤ Ω_cdm ≤ 1.0 must hold!"
           @assert 0.0 ≤ h_0 ≤ 1.0 " 0.0 ≤ h_0 ≤ 1.0 must hold!"
-          @assert isnothing(s_lim) || (0.0 < s_lim < 50.0) "0.0 < s_lim < 50.0 must hold!"
+
+          @assert N > 7 " N > 7 must hold!"
+          @assert 1e-2 ≤ fit_min < fit_max < 10.0 " 1e-2 ≤ fit_min < fit_max < 10.0 must hold!"
+          @assert 0.0 < s_lim < 10.0 "0.0 < s_lim < 10.0 must hold!"
      
           new(z_min, z_max, θ_max, k_min, k_max, Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0,
                N, fit_min, fit_max, con, s_lim)
      end
 end
+
 
 
 ##########################################################################################92
@@ -149,7 +284,7 @@ end
 
 Return the effective redshift ``z_\mathrm{eff}``, calcuated as follows:
 ```math
-\begin{align*}
+\begin{split}
 z_\mathrm{eff} := 
     \frac{
         \int \mathrm{d}^3\mathbf{s} \, \phi^2(\mathbf{s}) \, z(s)
@@ -169,7 +304,7 @@ z_\mathrm{eff} :=
       } \\[4pt]
       &= \frac{3}{s_\mathrm{max}^3 - s_\mathrm{min}^3} \,
           \int_{s_\mathrm{min}}^{s_\mathrm{max}} \mathrm{d}s  \, s^2 \, z(s)
-\end{align*}
+\end{split}
 ```
 where we have used our assuption on separability of the window function
 ```math

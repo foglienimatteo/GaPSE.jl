@@ -39,7 +39,7 @@ f(s_1, s_2, y, \chi_1, \chi_2) =
 
 where ``\mathcal{H} = a H``, 
 ``\Delta\chi_1 = \sqrt{\chi_1^2 + s_2^2 - 2\chi_1s_2\cos{\theta}}``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``) 
+``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2``) 
 and the ``J`` coefficients are given by 
 
 ```math
@@ -155,7 +155,7 @@ Return the Lensing-Doppler cross-correlation function
 
 where ``\mathcal{H} = a H``, 
 ``\Delta\chi_1= \sqrt{\chi_1^2 + s_2^2 - 2 \chi_1 s_2 \cos{\theta}}``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``) 
+``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2``) 
 and the ``J`` coefficients are given by:
 
 ```math
