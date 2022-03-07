@@ -152,8 +152,8 @@ Correlation Function computations.
 
 - `names = NAMES_BACKGROUND` : the column names of the `file_data`. If the colum order change from
   the default one `NAMES_BACKGROUND`, you must set as input the vector of string with the correct
-  one, with the SAME names. They are, with the default order:
-  $(println(NAMES_BACKGROUND))  
+  one, with the SAME names. They are, with the default order:\n
+  $(NAMES_BACKGROUND)  
 
 See also:  [`InputPS`](@ref), [`CosmoParams`](@ref), [`IPSTools`](@ref),
 [`BackgroundData`](@ref), [`WindowF`](@ref), [`F_map`](@ref), [`func_z_eff`](@ref),

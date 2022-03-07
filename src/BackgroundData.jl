@@ -106,8 +106,8 @@ It is internally used in `Cosmology.`
 
 - `names = NAMES_BACKGROUND` : the column names of the `file`. If the colum order change from
   the default one `NAMES_BACKGROUND`, you must set as input the vector of string with the correct
-  one, with the SAME names. They are, with the default order:
-  $(println(NAMES_BACKGROUND))  
+  one, with the SAME names. They are, with the default order:\n
+  $(NAMES_BACKGROUND)
 
 - `h = 0.7` : the adimensional hubble constant. By default, CLASS background data are measured with
   it nuymerically expressed (so distances are measured in `Mpc`, for example), while this code works
@@ -251,8 +251,8 @@ struct CosmoParams
 
 
      function CosmoParams(z_min, z_max, θ_max;
-          k_min = 1e-8, k_max = 10.0,
           Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70,
+          k_min = 1e-8, k_max = 10.0,
           N::Integer = 1024, fit_min = 0.05, fit_max = 0.5, con::Bool = true, 
           s_lim = 1e-2)
      

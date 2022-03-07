@@ -18,6 +18,10 @@
 #
 
 @testset "test sum_ξ_multipole" begin
+     table = readdlm("datatest/map_sum_xi_L0.txt", comments = true)
+     ss = convert(Vector{Float64}, table[:, 1])
+     all_res_sums = convert(Vector{Float64}, table[:, 2])
+     all_res_xis = [convert(Vector{Float64}, table[:, i]) for i in 3:18]
      RTOL = 1e-2
 
      kwargs = Dict(
@@ -39,13 +43,10 @@
 
      @testset "s = 10, L = 0, no_window" begin
           s, L, use_windows = 10, 0, false
-          res_sum = 3.100057865775196e-5
-          res_xis = [3.1083647323130395e-5, 1.617540202369208e-7, -1.21383701230076e-10,
-               -3.49295089623204e-10, -1.6900809977615647e-7, -1.6924376436917377e-7,
-               8.264905880080302e-10, 6.044013181911759e-10, 3.906461398291596e-8,
-               3.906284620812885e-8, 7.272492754980249e-9, 7.27786631713832e-9,
-               2.1861059508231394e-9, 2.187002470696239e-9, -2.2909254896728633e-9,
-               -2.2910367803886207e-9]
+
+          ind = findfirst(x -> x≈s, ss)
+          res_sum =  all_res_sums[ind]
+          res_xis = [vec[ind] for vec in all_res_xis] 
 
           calc_res_sum, calc_res_xis = GaPSE.sum_ξ_multipole(COSMO.s_eff, s, COSMO;
                all = true, kwargs...)
@@ -56,13 +57,10 @@
 
      @testset "s = 100, L = 0, no_window" begin
           s, L, use_windows = 100, 0, false
-          res_sum = 6.006178411066864e-6
-          res_xis = [6.024865181025425e-6, 1.9780419647453728e-8, -4.9633712604631205e-9,
-               -3.870682784239748e-10, -7.051019541134061e-8, -7.711583800345777e-8,
-               2.292720951467199e-8, 1.698413720953249e-8, 3.2354497106195044e-8,
-               3.224582344522693e-8, 5.74351175585059e-9, 6.104777136983635e-9,
-               1.537461723506664e-9, 1.595320758808456e-9, -2.4870626291800128e-9,
-               -2.496392673925445e-9]
+
+          ind = findfirst(x -> x≈s, ss)
+          res_sum =  all_res_sums[ind]
+          res_xis = [vec[ind] for vec in all_res_xis]
 
           calc_res_sum, calc_res_xis = GaPSE.sum_ξ_multipole(COSMO.s_eff, s, COSMO;
                all = true, kwargs...)
@@ -70,16 +68,14 @@
           @test isapprox(res_sum, calc_res_sum; rtol = RTOL)
           @test all([isapprox(a, r; rtol = RTOL) for (a, r) in zip(calc_res_xis, res_xis)])
      end
+
 
      @testset "s = 700, L = 0, no_window" begin
           s, L, use_windows = 700, 0, false
-          res_sum = 1.9540157917742675e-7
-          res_xis = [1.4055178762472735e-7, 1.65683447635497e-9, -1.387147283648418e-8,
-               -9.952329450745797e-10, 5.971511328265444e-10, -5.111667985927547e-9,
-               1.3513756515145347e-8, 4.035832620379043e-8, 1.3147582840969097e-8,
-               1.0360300419959947e-8, -5.233533247831251e-11, 2.498063130210084e-9,
-               2.358619426410098e-10, 4.856778020909242e-10, -5.07087713847432e-9,
-               -2.902176672849967e-9]
+
+          ind = findfirst(x -> x≈s, ss)
+          res_sum =  all_res_sums[ind]
+          res_xis = [vec[ind] for vec in all_res_xis]
 
           calc_res_sum, calc_res_xis = GaPSE.sum_ξ_multipole(COSMO.s_eff, s, COSMO;
                all = true, kwargs...)
@@ -87,6 +83,7 @@
           @test isapprox(res_sum, calc_res_sum; rtol = RTOL)
           @test all([isapprox(a, r; rtol = RTOL) for (a, r) in zip(calc_res_xis, res_xis)])
      end
+
 end
 
 @testset "test map_sum_ξ_multipole" begin

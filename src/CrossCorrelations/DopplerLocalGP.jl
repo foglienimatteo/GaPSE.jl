@@ -27,7 +27,7 @@ Return the Doppler-LocalGP cross-correlation function, defined as follows:
 \xi^{v_{\parallel}\phi} (s_1, s_2, \cos{\theta}) = 
      \frac{3}{2 a(s_2)} \mathcal{H}(s_1) f(s_1) D(s_1)
      \mathcal{R}(s_1) \mathcal{H}_0^2 \Omega_{M0} D(s_2)
-     (1 + \mathcal{R}(s_2)) (s_1 - s_2\cos{\theta}) s^2 I^3_1(s)
+     (1 + \mathcal{R}(s_2)) (s_2\cos{\theta} - s_1) s^2 I^3_1(s)
 ```
 where ``\mathcal{H} = a H``,
 ``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2`` and :
@@ -56,7 +56,7 @@ function ξ_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      Δs = s(s1, s2, y)
 
      prefac = 1.5 / a2 * ℋ1 * f1 * D1 * ℛ1 * ℋ0^2 * Ω_M0 * D2 * (1 + ℛ2)
-     factor = (s1 - s2 * y) * Δs^2
+     factor = (s2 * y - s1) * Δs^2
 
      I13 = cosmo.tools.I13(Δs)
 

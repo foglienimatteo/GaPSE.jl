@@ -41,7 +41,7 @@ and:
 J_{31} = 
      \frac{D(\chi_2) (s_1 - \chi_2 \cos{\theta})}{a(\chi_2)} \chi^2 
      \left(
-          - \frac{1}{s_2} + \mathcal{R}(s_2) \mathcal{H}(\chi_2) (f(\chi_2) - 1)
+          \frac{1}{s_2} - \mathcal{R}(s_2) \mathcal{H}(\chi_2) (f(\chi_2) - 1)
      \right)
 ```
 
@@ -84,7 +84,7 @@ function integrand_ξ_Doppler_IntegratedGP(
      #first = common * factor * (1 / 15 * I00 + 2 / 21 * I20 + 1 / 35 * I40 + I02)
 
      #new_J31 = -3 * χ2^3 * y * f0 * ℋ0 * (ℛ_s1 + 1) * (s2 * (f2 - 1) * ℋ2 * ℛ_s2 + 1)
-     new_J31 = Δχ2^2 * D2 * (s1 - χ2 * y) / a2 * (ℛ_s2 * ℋ2 * (f2 - 1) - 1 / s2)
+     new_J31 = Δχ2^2 * D2 * (s1 - χ2 * y) / a2 * ( 1 / s2 - ℛ_s2 * ℋ2 * (f2 - 1))
      I13 = cosmo.tools.I13(Δχ2)
 
      second = common * new_J31 * I13
