@@ -163,6 +163,9 @@ struct BackgroundData
 end
 
 
+default_IPS_opts = Dict(:k_min => 1e-8::Real, :k_max => 10.0::Real)
+default_IPSTools_opts = Dict(:N => 1024::Integer, :fit_min => 0.05, :fit_max => 0.5, :con => true::Bool)
+
 @doc raw"""
      CosmoParams(
           z_min::Float64
@@ -252,8 +255,8 @@ struct CosmoParams
 
      function CosmoParams(z_min, z_max, θ_max;
           Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70,
-          k_min = 1e-8, k_max = 10.0,
-          N::Integer = 1024, fit_min = 0.05, fit_max = 0.5, con::Bool = true, 
+          IPS_opts::Dict{Symbol, T} = Dict{Symbol, Any}(),
+          IPSTools_opts::Dict{Symbol, T} = Dict{Symbol, Any}(), 
           s_lim = 1e-2)
      
           @assert 0.0 < z_min < z_max " 0.0 < z_min < z_max must hold!"
