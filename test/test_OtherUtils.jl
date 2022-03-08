@@ -1,0 +1,78 @@
+# -*- encoding: utf-8 -*-
+#
+# This file is part of GaPSE
+# Copyright (C) 2022 Matteo Foglieni
+#
+# GaPSE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# GaPSE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
+#
+
+
+@testset "test warning" begin
+     @test "WARNING: ciao\n" == @capture_out GaPSE.warning("ciao") 
+end
+
+
+@testset "test check_compatible_dicts" begin
+     REF = Dict(
+          :N => 1024::Integer, :fit_min => 0.05::Float64, 
+          :fit_max => 0.5::Float64, :con => true::Bool, :name => "file_name.txt"::String)
+
+     var = 3.0
+     @test_throws AssertionError GaPSE.check_compatible_dicts(REF, Dict(:ma => 1.0, :con=>true), "x") 
+     @test_throws AssertionError GaPSE.check_compatible_dicts(REF, Dict(var => 1.0)) 
+     @test_throws AssertionError GaPSE.check_compatible_dicts(REF, Dict("con" => true))
+
+     @test_throws AssertionError GaPSE.check_compatible_dicts(REF, Dict(:con => 1.0), "x")   
+     @test_throws AssertionError GaPSE.check_compatible_dicts(REF, Dict(:con => true, :N => 3.14)) 
+     @test_throws AssertionError GaPSE.check_compatible_dicts(REF, Dict(:ma => 1.0), "x") 
+
+     @test_throws AssertionError GaPSE.check_compatible_dicts(REF, Dict(:fit_min => 1.0 + 3*im), "x") 
+     
+     @test isnothing(GaPSE.check_compatible_dicts(REF, Dict(:fit_min => 1, :fit_max=>17.43), "x"))
+     @test isnothing(GaPSE.check_compatible_dicts(REF, Dict(:fit_min => 1e-2, :fit_max=>17)))
+     @test isnothing(GaPSE.check_compatible_dicts(REF, Dict()))
+end
+
+
+@testset "test my_println_vec" begin
+     vec = [x for x in 1:0.1:4]
+
+     out_1 = @capture_out begin
+          GaPSE.my_println_vec(vec, "vector"; N = 8)
+     end
+
+     @test out_1 == "vector = [\n" *
+                    "1.0 , 1.1 , 1.2 , 1.3 , 1.4 , 1.5 , 1.6 , 1.7 , \n" *
+                    "1.8 , 1.9 , 2.0 , 2.1 , 2.2 , 2.3 , 2.4 , 2.5 , \n" *
+                    "2.6 , 2.7 , 2.8 , 2.9 , 3.0 , 3.1 , 3.2 , 3.3 , \n" *
+                    "3.4 , 3.5 , 3.6 , 3.7 , 3.8 , 3.9 , 4.0 , \n" *
+                    "];\n"
+
+     out_2 = @capture_out begin
+          GaPSE.my_println_vec(vec, "vector"; N = 3)
+     end
+     @test out_2 == "vector = [\n"*
+          "1.0 , 1.1 , 1.2 , \n"*
+          "1.3 , 1.4 , 1.5 , \n"*
+          "1.6 , 1.7 , 1.8 , \n"*
+          "1.9 , 2.0 , 2.1 , \n"*
+          "2.2 , 2.3 , 2.4 , \n"*
+          "2.5 , 2.6 , 2.7 , \n"*
+          "2.8 , 2.9 , 3.0 , \n"*
+          "3.1 , 3.2 , 3.3 , \n"*
+          "3.4 , 3.5 , 3.6 , \n"*
+          "3.7 , 3.8 , 3.9 , \n"*
+          "4.0 , \n"*
+          "];\n"
+end

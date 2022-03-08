@@ -715,35 +715,4 @@ end
      @test isapprox(GaPSE.my_interpolation(1.0, 1.0, 2.0, 4.0, 2.0), 4.0; rtol = 1e-4)
 end
 
-@testset "test my_println_vec" begin
-     vec = [x for x in 1:0.1:4]
-
-     out_1 = @capture_out begin
-          GaPSE.my_println_vec(vec, "vector"; N = 8)
-     end
-
-     @test out_1 == "vector = [\n" *
-                    "1.0 , 1.1 , 1.2 , 1.3 , 1.4 , 1.5 , 1.6 , 1.7 , \n" *
-                    "1.8 , 1.9 , 2.0 , 2.1 , 2.2 , 2.3 , 2.4 , 2.5 , \n" *
-                    "2.6 , 2.7 , 2.8 , 2.9 , 3.0 , 3.1 , 3.2 , 3.3 , \n" *
-                    "3.4 , 3.5 , 3.6 , 3.7 , 3.8 , 3.9 , 4.0 , \n" *
-                    "];\n"
-
-     out_2 = @capture_out begin
-          GaPSE.my_println_vec(vec, "vector"; N = 3)
-     end
-     @test out_2 == "vector = [\n"*
-          "1.0 , 1.1 , 1.2 , \n"*
-          "1.3 , 1.4 , 1.5 , \n"*
-          "1.6 , 1.7 , 1.8 , \n"*
-          "1.9 , 2.0 , 2.1 , \n"*
-          "2.2 , 2.3 , 2.4 , \n"*
-          "2.5 , 2.6 , 2.7 , \n"*
-          "2.8 , 2.9 , 3.0 , \n"*
-          "3.1 , 3.2 , 3.3 , \n"*
-          "3.4 , 3.5 , 3.6 , \n"*
-          "3.7 , 3.8 , 3.9 , \n"*
-          "4.0 , \n"*
-          "];\n"
-end
 

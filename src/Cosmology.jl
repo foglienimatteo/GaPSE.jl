@@ -198,8 +198,8 @@ struct Cosmology
           IPS = InputPS(file_ips)
           windowF = WindowF(file_windowF)
           tools = isnothing(file_Is) ?
-               IPSTools(IPS; k_min = params.k_min, k_max = params.k_max,
-               N = params.N, fit_min = params.fit_min,
+               IPSTools(IPS; k_min = params.IPS[:k_min], k_max = params.IPS[:k_max],
+               N = params.IPS[:N], fit_min = params.IPS[:fit_min],
                fit_max = params.fit_max, con = params.con) :
                IPSTools(IPS, file_Is)
 

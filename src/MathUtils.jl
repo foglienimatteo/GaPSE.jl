@@ -18,13 +18,6 @@
 #
 
 
-function warning(io::IO, msg::String)
-    red = "\033[1m\033[31m" 
-    printstyled(io, "WARNING: " * msg * "\n"; color=:red, bold=true)
-    return
-end
-warning(msg::String) = warning(stdout, msg)
-
 
 """
      derivate_point(xp, yp, x1, y1, x2, y2)
@@ -500,24 +493,4 @@ function my_interpolation(x1, y1, x2, y2, x)
 end
 
 
-##########################################################################################92
 
-
-
-function my_println_vec(io::IO, vec::Vector{T}, name::String; N::Integer = 5) where {T}
-     @assert N > 1 "N must be an integer >1, not $N !"
-
-     println(io, name * " = [")
-     for (i, el) in enumerate(vec)
-          print(io, string(el) * " , ")
-          (i % N ≠ 0) || print(io, "\n")
-     end
-     (length(vec) % N ≠ 0) && print(io, "\n")
-     print(io, "];\n")
-
-     return nothing
-end
-
-function my_println_vec(vec::Vector{T}, name::String; N::Integer = 5) where {T}
-     my_println_vec(stdout, vec, name; N = N)
-end

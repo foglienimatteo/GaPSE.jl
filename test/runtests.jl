@@ -41,6 +41,12 @@ include("TEST_DATA.jl")
 
 ##########################################################################################92
 
+
+@testset "test OtherUtils" begin
+     include("test_OtherUtils.jl")
+end
+
+
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
@@ -49,8 +55,8 @@ end
      include("test_IPSTools.jl")
 end
 
-@testset "test F_evaluation" begin
-     include("test_F_evaluation.jl")
+@testset "test BackgroundData" begin
+     include("test_BackgroundData.jl")
 end
 
 @testset "test BackgroundData" begin
@@ -59,6 +65,10 @@ end
 
 @testset "test Cosmology" begin
      include("test_Cosmology.jl")
+end
+
+@testset "test F_evaluation" begin
+     include("test_F_evaluation.jl")
 end
 
 
