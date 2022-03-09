@@ -80,9 +80,10 @@ end
      @testset "first" begin
           z_min, z_max, θ_max = 0.05, 0.20, π/2.0
           Ω_b, Ω_cdm, h_0 = 0.023, 0.34, 0.99
+          s_lim = 1e-3
 
           params = GaPSE.CosmoParams(z_min, z_max, θ_max;
-               Ω_b = Ω_b, Ω_cdm = Ω_cdm, h_0 = h_0,
+               Ω_b = Ω_b, Ω_cdm = Ω_cdm, h_0 = h_0, s_lim = s_lim,
                IPS_opts = Dict{Symbol, Any}(),
                IPSTools_opts = Dict{Symbol, Any}(),
                ) 
@@ -91,6 +92,8 @@ end
           @test params.Ω_b ≈ Ω_b
           @test params.Ω_cdm ≈ Ω_cdm
           @test params.Ω_M0 ≈ Ω_b + Ω_cdm
+          @test params.s_lim ≈ s_lim
+
           for k in keys(GaPSE.DEFAULT_IPS_OPTS)
                @test params.IPS[k] ≈ GaPSE.DEFAULT_IPS_OPTS[k]
           end
@@ -102,12 +105,13 @@ end
      @testset "second" begin
           z_min, z_max, θ_max = 0.05, 0.20, π/2.0
           Ω_b, Ω_cdm, h_0 = 0.023, 0.34, 0.99
-          
-          A = Dict(:k_min => 1e-20)
-          B = Dict(:N => 12)
+          s_lim = 1e-3
+
+          A = Dict(:fit_left_min => 1e-20, :fit_right_min => 0.7)
+          B = Dict(:N => 12, :con => false)
 
           params = GaPSE.CosmoParams(z_min, z_max, θ_max;
-               Ω_b = Ω_b, Ω_cdm = Ω_cdm, h_0 = h_0,
+               Ω_b = Ω_b, Ω_cdm = Ω_cdm, h_0 = h_0, s_lim = s_lim,
                IPS_opts = A,
                IPSTools_opts = B,
                ) 
@@ -116,6 +120,7 @@ end
           @test params.Ω_b ≈ Ω_b
           @test params.Ω_cdm ≈ Ω_cdm
           @test params.Ω_M0 ≈ Ω_b + Ω_cdm
+          @test params.s_lim ≈ s_lim
 
           for k in keys(A)
                @test params.IPS[k] ≈ A[k]

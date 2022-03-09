@@ -165,16 +165,19 @@ end
 
 
 DEFAULT_IPS_OPTS = Dict(
-     :k_min => 1e-8::Float64, 
-     :k_max => 10.0::Float64,
+     :fit_left_min => 1e-6::Float64, 
+     :fit_left_max => 3e-6::Float64,
+     :fit_right_min => 1e1::Float64, 
+     :fit_right_max => 2e1::Float64,
      )
 
- DEFAULT_IPSTOOLS_OPTS = Dict(
+DEFAULT_IPSTOOLS_OPTS = Dict(
      :N => 1024::Integer, 
      :fit_min => 0.05::Float64, 
      :fit_max => 0.5::Float64, 
      :con => true::Bool,
-     :s_lim => 1e-2::Float64,
+     :k_min => 1e-6::Float64,
+     :k_max => 10.0::Float64,
      )
 
 @doc raw"""
@@ -254,11 +257,13 @@ struct CosmoParams
      Ω_M0::Float64
      h_0::Float64
 
+     s_lim::Float64
+
      IPS::Dict{Symbol, T} where T
      IPSTools::Dict{Symbol, T} where T
 
      function CosmoParams(z_min, z_max, θ_max;
-               Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70,
+               Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70, s_lim = 1e-2,
                IPS_opts::Dict = Dict{Symbol, Any}(),
                IPSTools_opts::Dict = Dict{Symbol, Any}(),
                ) 
@@ -270,7 +275,7 @@ struct CosmoParams
           "the IPSTools_opts dict have to be Symbols (like :k_min, :N, ...)"
 
           check_compatible_dicts(DEFAULT_IPS_OPTS, IPS_opts, "IPS_opts")
-          check_compatible_dicts(DEFAULT_IPSTOOLS_OPTS, IPSTools_opts, "IPS_opts")
+          check_compatible_dicts(DEFAULT_IPSTOOLS_OPTS, IPSTools_opts, "IPSTools_opts")
 
           IPS = merge(DEFAULT_IPS_OPTS, IPS_opts)
           IPSTools = merge(DEFAULT_IPSTOOLS_OPTS, IPSTools_opts)
@@ -280,15 +285,19 @@ struct CosmoParams
           @assert 0.0 ≤ Ω_b ≤ 1.0 " 0.0 ≤ Ω_b ≤ 1.0 must hold!"
           @assert 0.0 ≤ Ω_cdm ≤ 1.0 " 0.0 ≤ Ω_cdm ≤ 1.0 must hold!"
           @assert 0.0 < h_0 ≤ 1.0 " 0.0 < h_0 ≤ 1.0 must hold!"
+          @assert 0.0 < s_lim < 10.0 "0.0 < s_lim < 10.0 must hold!"
 
-          @assert 0.0 ≤ IPS[:k_min] < IPS[:k_max] " 0.0 ≤ k_min < k_max must hold!"
+          @assert 0.0 < IPS[:fit_left_min] < IPS[:fit_left_max] < 1e-1 
+               " 0 < fit_left_min < fit_left_max < 0.1 must hold!"
+          @assert 0.5 < IPS[:fit_right_min] < IPS[:fit_right_max] < 1e6
+               " 0.5 < fit_right_min < fit_right_max < 1e6 must hold!"
 
+          @assert 0.0 ≤ IPSTools[:k_min] < IPSTools[:k_max] " 0.0 ≤ k_min < k_max must hold!"
           @assert IPSTools[:N] > 7 " N > 7 must hold!"
           @assert 1e-2 ≤ IPSTools[:fit_min] < IPSTools[:fit_max] < 10.0 " 1e-2 "*
                "≤ fit_min < fit_max < 10.0 must hold!"
-          @assert 0.0 < IPSTools[:s_lim] < 10.0 "0.0 < s_lim < 10.0 must hold!"
      
-          new(z_min, z_max, θ_max, Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0,
+          new(z_min, z_max, θ_max, Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0, s_lim,
                IPS, IPSTools)
      end
 end

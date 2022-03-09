@@ -118,12 +118,12 @@ function parameters_used(io::IO, cosmo::Cosmology)
      
      println(io, "# CosmoParams about the Input Power Spectrum: ")
      for key in keys(cosmo.params.IPS)
-          println(io, "#\t $key = $(cosmo.params.IPS[k])")
+          println(io, "#\t $key = $(cosmo.params.IPS[key])")
      end
      println(io, "#")     
      println(io, "# CosmoParams about the Input Power Spectrum Tools: ")
      for key in keys(cosmo.params.IPSTools)
-          println(io, "#\t $key = $(cosmo.params.IPSTools[k])")
+          println(io, "#\t $key = $(cosmo.params.IPSTools[key])")
      end  
      println(io, "#") 
 

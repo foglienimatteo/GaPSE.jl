@@ -195,13 +195,10 @@ struct Cosmology
 
           BD = BackgroundData(file_data::String, params.z_max;
                names = names_bg, h = params.h_0)
-          IPS = InputPS(file_ips)
+          IPS = InputPS(file_ips; )
           windowF = WindowF(file_windowF)
           tools = isnothing(file_Is) ?
-               IPSTools(IPS; k_min = params.IPS[:k_min], k_max = params.IPS[:k_max],
-               N = params.IPS[:N], fit_min = params.IPS[:fit_min],
-               fit_max = params.fit_max, con = params.con) :
-               IPSTools(IPS, file_Is)
+               IPSTools(IPS; params.IPSTools...) : IPSTools(IPS, file_Is)
 
           #=
           z_of_s_lim = my_interpolation(BD.comdist[1], BD.z[1], BD.comdist[2], BD.z[2], s_lim)
