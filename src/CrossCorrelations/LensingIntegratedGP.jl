@@ -19,34 +19,34 @@
 
 
 
-@doc raw"""
+"""
      integrand_ξ_Lensing_IntegratedGP(
           IP1::Point, IP2::Point,
           P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
 Return the integrand of theLensing-IntegratedGP cross-correlation function 
-``\xi^{\kappa\int\phi} (s_1, s_2, \cos{\theta})``, i.e. the function 
-``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
+``\\xi^{\\kappa\\int\\phi} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
+``f(s_1, s_2, y, \\chi_1, \\chi_2)`` defined as follows:  
 
 ```math
-f(s_1, s_2, y, \chi_1, \chi_2) = 
-    \frac{9}{2}\mathcal{H}_0^4\Omega_{M0}^2 
-    \frac{D(\chi_1)D(\chi_2)\chi_2(s_1 - \chi_1)}{s_1a(\chi_1)a(\chi_2)}
-    \left(\mathcal{H}(\chi_2)(f(\chi_2) - 1)\mathcal{R}(s_2) -\frac{1}{s_2} \right)
-    \left( J_{31} I^3_1(\chi) + J_{22} I^2_2(\chi) \right)
+f(s_1, s_2, y, \\chi_1, \\chi_2) = 
+    \\frac{9}{2}\\mathcal{H}_0^4\\Omega_{M0}^2 
+    \\frac{D(\\chi_1)D(\\chi_2)\\chi_2(s_1 - \\chi_1)}{s_1a(\\chi_1)a(\\chi_2)}
+    \\left(\\mathcal{H}(\\chi_2)(f(\\chi_2) - 1)\\mathcal{R}(s_2) -\\frac{1}{s_2} \\right)
+    \\left( J_{31} I^3_1(\\chi) + J_{22} I^2_2(\\chi) \\right)
 ```
 
-where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
-``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2\chi_1\chi_2\cos{\theta}}``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2``) 
+where ``D_1 = D(\\chi_1)``, ``D_2 = D(\\chi_2)`` and so on, ``\\mathcal{H} = a H``, 
+``\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2\\chi_1\\chi_2\\cos{\\theta}}``, 
+``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``) 
 and the ``J`` coefficients are given by 
 
 ```math
-\begin{align*}
-     J_{31} & = -2y\chi^2 \\
-     J_{22} & = \chi_1\chi_2(1-y^2)
-\end{align*}
+\\begin{align*}
+     J_{31} & = -2y\\chi^2 \\\\
+     J_{22} & = \\chi_1\\chi_2(1-y^2)
+\\end{align*}
 ```
 
 ## Inputs
@@ -114,34 +114,34 @@ end
 =#
 
 
-@doc raw"""
+"""
      ξ_Lensing_IntegratedGP(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6,
           N_χs::Integer = 100) :: Float64
 
 Return theLensing-IntegratedGP cross-correlation function 
-``\xi^{\kappa\int\phi} (s_1, s_2, \cos{\theta})``, defined as follows:
+``\\xi^{\\kappa\\int\\phi} (s_1, s_2, \\cos{\\theta})``, defined as follows:
     
 ```math
-\xi^{\kappa\int\phi} (s_1, s_2, \cos{\theta}) = 
-     \frac{9}{2}\mathcal{H}_0^4\Omega_{M0}^2 
-     &\mathrm{d}\chi_1 \int_0^{s_2} \mathrm{d}\chi_2 
-     \frac{D(\chi_1)D(\chi_2)\chi_2(s_1 - \chi_1)}{s_1a(\chi_1)a(\chi_2)} \\
-     &\left(\mathcal{H}(\chi_2)(f(\chi_2) - 1)\mathcal{R}(s_2) -\frac{1}{s_2} \right)
-     \left( J_{31} I^3_1(\chi) + J_{22} I^2_2(\chi) \right)
-\end{split}
+\\xi^{\\kappa\\int\\phi} (s_1, s_2, \\cos{\\theta}) = 
+     \\frac{9}{2}\\mathcal{H}_0^4\\Omega_{M0}^2 
+     &\\mathrm{d}\\chi_1 \\int_0^{s_2} \\mathrm{d}\\chi_2 
+     \\frac{D(\\chi_1)D(\\chi_2)\\chi_2(s_1 - \\chi_1)}{s_1a(\\chi_1)a(\\chi_2)} \\\\
+     &\\left(\\mathcal{H}(\\chi_2)(f(\\chi_2) - 1)\\mathcal{R}(s_2) -\\frac{1}{s_2} \\right)
+     \\left( J_{31} I^3_1(\\chi) + J_{22} I^2_2(\\chi) \\right)
+\\end{split}
 ```
 
-where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
-``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2\chi_1\chi_2\cos{\theta}}``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2``) 
+where ``D_1 = D(\\chi_1)``, ``D_2 = D(\\chi_2)`` and so on, ``\\mathcal{H} = a H``, 
+``\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2\\chi_1\\chi_2\\cos{\\theta}}``, 
+``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``) 
 and the ``J`` coefficients are given by 
 
 ```math
-\begin{align*}
-     J_{31} & = -2y\chi^2 \\
-     J_{22} & = \chi_1\chi_2(1-y^2)
-\end{align*}
+\\begin{align*}
+     J_{31} & = -2y\\chi^2 \\\\
+     J_{22} & = \\chi_1\\chi_2(1-y^2)
+\\end{align*}
 ```
 
 The computation is made applying [`trapz`](@ref) (see the 

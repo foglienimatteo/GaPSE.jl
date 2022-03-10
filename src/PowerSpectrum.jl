@@ -18,7 +18,7 @@
 #
 
 function PS_multipole(
-     f_in::Union{Function,Dierckx.Spline1D};
+     f_in;
      int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3,
      L::Integer = 0, N::Integer = 1024,
      pr::Bool = true, kwargs...)
@@ -48,7 +48,8 @@ function PS_multipole(
      ss = convert(Vector{Float64}, xi_table[:, 1])
      fs = convert(Vector{Float64}, xi_table[:, 2])
 
-     f_in = Spline1D(ss, fs; bc = "error")
+     #f_in = Spline1D(ss, fs; bc = "error")
+     f_in = EPLs(ss, fs, [-2.0, 1.0], [1.0, 1.0])
 
      intsmin = isnothing(int_s_min) ? min(ss...) : int_s_min
      intsmax = isnothing(int_s_max) ? max(ss...) : int_s_max
@@ -89,7 +90,7 @@ end
      PS_multipole(in::String, int_s_min = 0.0, int_s_max = 1000.0; 
           L::Integer = 0, N::Integer = 1024, pr::Bool = true)
      PS_multipole(
-          f_in::Union{Function,Dierckx.Spline1D}, int_s_min = 0.0, int_s_max = 1000.0; 
+          f_in, int_s_min = 0.0, int_s_max = 1000.0; 
           L::Integer = 0, N::Integer = 1024, pr::Bool = true
           ) :: Tuple{Vector{Float64}, Vector{Float64}}
 

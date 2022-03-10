@@ -18,9 +18,6 @@
 #
 
 
-##########################################################################################92
-
-
 function warning(io::IO, msg::String)
     red = "\033[1m\033[31m" 
     printstyled(io, "WARNING: " * msg * "\n"; color=:red, bold=true)
@@ -55,6 +52,11 @@ function check_compatible_dicts(ref::Dict, b::Dict, name::String = "NO-NAME")
 end
 
 
+
+##########################################################################################92
+
+
+
 function my_println_vec(io::IO, vec::Vector{T}, name::String; N::Integer = 5) where {T}
      @assert N > 1 "N must be an integer >1, not $N !"
 
@@ -72,3 +74,26 @@ end
 function my_println_vec(vec::Vector{T}, name::String; N::Integer = 5) where {T}
      my_println_vec(stdout, vec, name; N = N)
 end
+
+
+
+##########################################################################################92
+
+
+
+function my_println_dict(io::IO, dict::Dict; pref::String="", N::Integer = 3)
+     @assert N > 1 "N must be an integer >1, not $N !"
+
+     print(io, pref)
+     for (i, key) in enumerate(keys(dict))
+          print(io, "$key = $(dict[key]) \t ")
+          (i % N ≠ 0)  || (length(keys(dict)) ≠ i  && print(io, "\n"*pref))
+     end
+     (length(keys(dict)) % N ≠ 0) || print(io, "\n")
+
+     return nothing
+end
+
+function my_println_dict(dict::Dict; pref::String="", N::Integer = 3)
+     my_println_dict(stdout, dict; pref = pref,  N = N)
+end;

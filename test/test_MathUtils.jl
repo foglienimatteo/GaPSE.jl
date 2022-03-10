@@ -715,4 +715,38 @@ end
      @test isapprox(GaPSE.my_interpolation(1.0, 1.0, 2.0, 4.0, 2.0), 4.0; rtol = 1e-4)
 end
 
+@testset "test EPLs" begin
 
+     @testset "zeros" begin
+          xs = 10 .^ range(1, 2, length=100);
+          ys = [2.45e2*x^1.564 for x in xs];
+          p0_l, p0_r = [1.0, 1.0, 0.0], [1.0, 1.0, 0.0]
+
+          @test_throws AssertionError GaPSE.EPLs(xs[begin+1], ys, p0_l, p0_r)
+          @test_throws AssertionError GaPSE.EPLs(xs, ys[end-1], p0_l, p0_r)
+          @test_throws AssertionError GaPSE.EPLs(xs, ys, [1, 2, 3, 4], p0_r)
+          @test_throws AssertionError GaPSE.EPLs(xs, ys, p0_l, [1, 2, 3, 4])
+          @test_throws AssertionError GaPSE.EPLs(xs, ys, p0_l, p0_r; N_left = 1)
+          @test_throws AssertionError GaPSE.EPLs(xs, ys, p0_l, p0_r; N_right = 1)
+     end
+
+     @testset "first" begin
+          switch, si_1, si_2, b, a = 38, 1.3, 2.1, 6.1234e1, 1.123e2
+
+          xs = 10 .^ range(1, 2, length=100)
+          ys = [GaPSE.two_power_laws(x; switch=38, si_1 = si_1, si_2 = si_2, b = b, a = a) 
+               for x in xs];
+
+          epls = GaPSE.EPLs(xs, ys, [1.0, 1.0, 0.0], [1.0, 1.0, 0.0]; 
+               N_left = 15, N_right = 15)
+
+          new_xs = 10 .^ range(0, 3, length=1000)
+          new_ys = [epls(x) for x in new_xs]
+
+          @test all([isapprox(
+               GaPSE.two_power_laws(x; switch = switch, si_1 = si_1, si_2 = si_2, b = b, a = a) , 
+               y; rtol=1e-2) 
+               for (x,y) in zip(new_xs, new_ys)])
+     end
+
+end

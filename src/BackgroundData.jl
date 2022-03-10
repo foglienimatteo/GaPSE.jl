@@ -17,18 +17,18 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-@doc raw"""
+"""
      const f0 :: Float64
 
 Linear growth rate at present time. Its value is equal to:
 ```math
-     f_0 \simeq 0.5126998572951
+     f_0 \\simeq 0.5126998572951
 ```
 """
 const f0 = 5.126998572951e-01
 
 
-@doc raw"""
+"""
      const D0 :: Float64
 
 Linear growth factor at present time. Its value is equal to:
@@ -39,12 +39,12 @@ Linear growth factor at present time. Its value is equal to:
 const D0 = 1.0
 
 
-@doc raw"""
+"""
      const ℋ0 :: Float64
 
 Comoving Hubble constant at present time. Its value is, in natural system
 (where the speed of light c=1): 
-``\mathcal{H}_0 \simeq 3.335641\times10^{-4} \; h_0^{-1}\mathrm{Mpc}``
+``\\mathcal{H}_0 \\simeq 3.335641\\times10^{-4} \\; h_0^{-1}\\mathrm{Mpc}``
 """
 const ℋ0 = 3.3356409519815204e-4 # h_0/Mpc
 
@@ -180,7 +180,7 @@ DEFAULT_IPSTOOLS_OPTS = Dict(
      :k_max => 10.0::Float64,
      )
 
-@doc raw"""
+"""
      CosmoParams(
           z_min::Float64
           z_max::Float64
@@ -223,18 +223,18 @@ matter of concerns for the `Cosmology` we are interested in.
 - `N::Integer` : number of points to be used in the Sperical Bessel Fourier Transform made
   by `xicalc` in `IPSTools`.
 
-- `fit_min::Float64` and `fit_max::Float64` : the limits (min and max) where the integral ``I_\ell^n``
+- `fit_min::Float64` and `fit_max::Float64` : the limits (min and max) where the integral ``I_\\ell^n``
   in `Cosmology` must be fitted with a power law, for small distances. This operation is necessary, 
   because `xicalc`, in this context, gives wrong results for too small input distance `s`; nevertheless, all
-  these ``I_\ell^n`` integrals have fixed power-law trends for ``s \rightarrow 0``, so this approach gives
+  these ``I_\\ell^n`` integrals have fixed power-law trends for ``s \\rightarrow 0``, so this approach gives
   good results.
 
-- `con::Bool` : do you want that the fit of all the ``I_\ell^n`` in `IPSTools` for the LEFT edge
-  is not a simple power-law ``y = f(x) = b \, x^s``, but also consider a constant ``a``,
-  such that ``y = f(x) = a + b \, x^s``?
+- `con::Bool` : do you want that the fit of all the ``I_\\ell^n`` in `IPSTools` for the LEFT edge
+  is not a simple power-law ``y = f(x) = b \\, x^s``, but also consider a constant ``a``,
+  such that ``y = f(x) = a + b \\, x^s``?
 
 - `s_lim::Float64` : the lower-bound value for the function `func_ℛ`; it is necessary, because
-  `ℛ` blows up for ``s \rightarrow 0^{+}``. Consequently, if the `func_ℛ` input value is 
+  `ℛ` blows up for ``s \\rightarrow 0^{+}``. Consequently, if the `func_ℛ` input value is 
   `0 ≤ s < s_lim`, the returned value is always `func_ℛ(s_lim)`.
 
 ## Constructors
@@ -308,36 +308,36 @@ end
 
 
 
-@doc raw"""
+"""
      func_z_eff(s_min, s_max, z_of_s) :: Float64
 
-Return the effective redshift ``z_\mathrm{eff}``, calcuated as follows:
+Return the effective redshift ``z_\\mathrm{eff}``, calcuated as follows:
 ```math
-\begin{split}
-z_\mathrm{eff} := 
-    \frac{
-        \int \mathrm{d}^3\mathbf{s} \, \phi^2(\mathbf{s}) \, z(s)
+\\begin{split}
+z_\\mathrm{eff} := 
+    \\frac{
+        \\int \\mathrm{d}^3\\mathbf{s} \\, \\phi^2(\\mathbf{s}) \\, z(s)
      }{
-         \int \mathrm{d}^3\mathbf{s}\, \phi^2(\mathbf{s}) 
-      } &= \frac{
-          \int_0^\infty \mathrm{d}s  \, s^2 \, \phi^2(s) \, z(s) \times
-          \int_{4\pi}\mathrm{d}^2\hat{\mathbf{s}} \, W^2(\hat{\mathbf{s}})
+         \\int \\mathrm{d}^3\\mathbf{s}\\, \\phi^2(\\mathbf{s}) 
+      } &= \\frac{
+          \\int_0^\\infty \\mathrm{d}s  \\, s^2 \\, \\phi^2(s) \\, z(s) \\times
+          \\int_{4\\pi}\\mathrm{d}^2\\hat{\\mathbf{s}} \\, W^2(\\hat{\\mathbf{s}})
       }{
-          \int_0^\infty \mathrm{d}s \, s^2 \, \phi^2(s)\times
-          \int_{4\pi}\mathrm{d}^2\hat{\mathbf{s}} \, W^2(\hat{\mathbf{s}})
-      } \\[5pt]
-      &= \frac{
-          \int_0^\infty \mathrm{d}s  \, s^2 \, \phi^2(s) \, z(s)
+          \\int_0^\\infty \\mathrm{d}s \\, s^2 \\, \\phi^2(s)\\times
+          \\int_{4\\pi}\\mathrm{d}^2\\hat{\\mathbf{s}} \\, W^2(\\hat{\\mathbf{s}})
+      } \\\\[5pt]
+      &= \\frac{
+          \\int_0^\\infty \\mathrm{d}s  \\, s^2 \\, \\phi^2(s) \\, z(s)
       }{
-          \int_0^\infty \mathrm{d}s \, s^2 \, \phi^2(s)
-      } \\[4pt]
-      &= \frac{3}{s_\mathrm{max}^3 - s_\mathrm{min}^3} \,
-          \int_{s_\mathrm{min}}^{s_\mathrm{max}} \mathrm{d}s  \, s^2 \, z(s)
-\end{split}
+          \\int_0^\\infty \\mathrm{d}s \\, s^2 \\, \\phi^2(s)
+      } \\\\[4pt]
+      &= \\frac{3}{s_\\mathrm{max}^3 - s_\\mathrm{min}^3} \\,
+          \\int_{s_\\mathrm{min}}^{s_\\mathrm{max}} \\mathrm{d}s  \\, s^2 \\, z(s)
+\\end{split}
 ```
 where we have used our assuption on separability of the window function
 ```math
-     \phi(\mathbf{s}) = \phi(s) \, W(\hat{s})
+     \\phi(\\mathbf{s}) = \\phi(s) \\, W(\\hat{s})
 ```
 and their definitions.
 
@@ -349,25 +349,25 @@ function func_z_eff(s_min, s_max, z_of_s)
 end
 
 
-@doc raw"""
+"""
      s(s1, s2, y) :: Float64
 
-Return the value ``s = \sqrt{s_1^2 + s_2^2 - 2 \, s_1 \, s_2 \, y}``
+Return the value ``s = \\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}``
 
 See also: [`μ`](@ref), [`s2`](@ref), [`y`](@ref)
 """
 s(s1, s2, y) = √(s1^2 + s2^2 - 2 * s1 * s2 * y)
 
 
-@doc raw"""
+"""
      μ(s1, s2, y) :: Float64
 
-Return the value ``\mu=\hat{\mathbf{s}}_1\dot\hat{\mathbf{s}}``, defined as:
+Return the value ``\\mu=\\hat{\\mathbf{s}}_1\\cdot\\hat{\\mathbf{s}}``, defined as:
 ```math
-\mu = \mu(s_1, s_2, y) = \frac{y \, s_2 - s_1}{s(s_1, s_2, y)} \;,
-\quad s(s_1, s_2, y) = \sqrt{s_1^2 + s^2 - 2 \, s_1 \, s_2 \, y}
+\\mu = \\mu(s_1, s_2, y) = \\frac{y \\, s_2 - s_1}{s(s_1, s_2, y)} \\;,
+\\quad s(s_1, s_2, y) = \\sqrt{s_1^2 + s^2 - 2 \\, s_1 \\, s_2 \\, y}
 ```
-with ``y=\cos\theta=\hat{\mathbf{s}}_1\dot\hat{\mathbf{s}}`` and where ``s`` is 
+with ``y=\\cos\\theta=\\hat{\\mathbf{s}}_1\\cdot\\hat{\\mathbf{s}}`` and where ``s`` is 
 obtained from the function `s`
 
 See also: [`s`](@ref), [`s2`](@ref), [`y`](@ref)
@@ -376,10 +376,10 @@ See also: [`s`](@ref), [`s2`](@ref), [`y`](@ref)
 
 
 
-@doc raw"""
+"""
      s2(s1, s, μ) :: Float64
 
-Return the value ``s_2 = \sqrt{s_1^2 + s^2 + 2 \, s_1 \, s \, \mu}``
+Return the value ``s_2 = \\sqrt{s_1^2 + s^2 + 2 \\, s_1 \\, s \\, \\mu}``
 
 See also: [`s`](@ref), [`μ`](@ref), [`y`](@ref)
 """
@@ -387,15 +387,15 @@ s2(s1, s, μ) = √(s1^2 + s^2 + 2 * s1 * s * μ)
 
 
 
-@doc raw"""
+"""
      y(s1, s, μ) :: Float64
 
-Return the value ``y=\cos\theta``, defined as:
+Return the value ``y=\\cos\\theta``, defined as:
 ```math
-y = y(s_1, s, \mu) = \frac{\mu \, s + s_1}{s2(s_1, s, \mu)} \;,
-\quad s_2 = \sqrt{s_1^2 + s^2 + 2 \, s_1 \, s \, \mu}
+y = y(s_1, s, \\mu) = \\frac{\\mu \\, s + s_1}{s2(s_1, s, \\mu)} \\;,
+\\quad s_2 = \\sqrt{s_1^2 + s^2 + 2 \\, s_1 \\, s \\, \\mu}
 ```
-with ``\mu=\hat{\mathbf{s}}_1\dot\hat{\mathbf{s}}_2`` and 
+with ``\\mu=\\hat{\\mathbf{s}}_1\\cdot\\hat{\\mathbf{s}}_2`` and 
 where ``s_2`` is btained from the function `s2`
 
 See also: [`s`](@ref), [`μ`](@ref), [`s2`](@ref)

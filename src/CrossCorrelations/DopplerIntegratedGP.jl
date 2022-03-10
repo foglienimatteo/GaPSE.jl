@@ -24,25 +24,25 @@
           y, cosmo::Cosmology) :: Float64
 
 Return the integrand of the Doppler-LocalGP cross-correlation function 
-``\xi^{v_{\parallel}\int\phi} (s_1, s_2, \cos{\theta})``, i.e. the function 
-``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
+``\\xi^{v_{\\parallel}\\int\\phi} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
+``f(s_1, s_2, y, \\chi_1, \\chi_2)`` defined as follows:  
 
 ```math
-f(s_1, s_2, y, \chi_1, \chi_2) = 
-     3 \mathcal{H}(s_1) f(s_1) D(s_1) \mathcal{H_0}^2 \Omega_{M0} 
-     \mathcal{R}(s_1) J_{31} I^3_1(\chi)
+f(s_1, s_2, y, \\chi_1, \\chi_2) = 
+     3 \\mathcal{H}(s_1) f(s_1) D(s_1) \\mathcal{H_0}^2 \\Omega_{M0} 
+     \\mathcal{R}(s_1) J_{31} I^3_1(\\chi)
 ```
-where ``\mathcal{H} = a H``, 
-``\chi = \sqrt{s_1^2 + \chi_2^2 - 2 s_1 \chi_2 \cos{\theta}}``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2``) 
+where ``\\mathcal{H} = a H``, 
+``\\chi = \\sqrt{s_1^2 + \\chi_2^2 - 2 s_1 \\chi_2 \\cos{\\theta}}``, 
+``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``) 
 and:
 
 ```math
 J_{31} = 
-     \frac{D(\chi_2) (s_1 - \chi_2 \cos{\theta})}{a(\chi_2)} \chi^2 
-     \left(
-          \frac{1}{s_2} - \mathcal{R}(s_2) \mathcal{H}(\chi_2) (f(\chi_2) - 1)
-     \right)
+     \\frac{D(\\chi_2) (s_1 - \\chi_2 \\cos{\\theta})}{a(\\chi_2)} \\chi^2 
+     \\left(
+          \\frac{1}{s_2} - \\mathcal{R}(s_2) \\mathcal{H}(\\chi_2) (f(\\chi_2) - 1)
+     \\right)
 ```
 
 ## Inputs
@@ -114,25 +114,25 @@ end
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the Doppler-LocalGP cross-correlation function 
-``\xi^{v_{\parallel}\int\phi} (s_1, s_2, \cos{\theta})``, defined as follows:
+``\\xi^{v_{\\parallel}\\int\\phi} (s_1, s_2, \\cos{\\theta})``, defined as follows:
     
 ```math
-\xi^{v_{\parallel}\int\phi} (s_1, s_2, \cos{\theta}) = 
-     3 \mathcal{H}(s_1) f(s_1) D(s_1) \mathcal{H_0}^2 \Omega_{M0} \mathcal{R}(s_1) 
-     \int_0^{s_2} \mathrm{d}\chi_2 \,  J_{31} \,  I^3_1(\chi)
+\\xi^{v_{\\parallel}\\int\\phi} (s_1, s_2, \\cos{\\theta}) = 
+     3 \\mathcal{H}(s_1) f(s_1) D(s_1) \\mathcal{H_0}^2 \\Omega_{M0} \\mathcal{R}(s_1) 
+     \\int_0^{s_2} \\mathrm{d}\\chi_2 \\,  J_{31} \\,  I^3_1(\\chi)
 ```
 
-where ``\mathcal{H} = a H``, 
-``\chi = \sqrt{s_1^2 + \chi_2^2 - 2 s_1 \chi_2 \cos{\theta}}``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2``) 
+where ``\\mathcal{H} = a H``, 
+``\\chi = \\sqrt{s_1^2 + \\chi_2^2 - 2 s_1 \\chi_2 \\cos{\\theta}}``, 
+``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``) 
 and:
 
 ```math
 J_{31} = 
-     \frac{D(\chi_2) (s_1 - \chi_2 \cos{\theta})}{a(\chi_2)} \chi^2 
-     \left(
-          - \frac{1}{s_2} + \mathcal{R}(s_2) \mathcal{H}(\chi_2) (f(\chi_2) - 1)
-     \right)
+     \\frac{D(\\chi_2) (s_1 - \\chi_2 \\cos{\\theta})}{a(\\chi_2)} \\chi^2 
+     \\left(
+          - \\frac{1}{s_2} + \\mathcal{R}(s_2) \\mathcal{H}(\\chi_2) (f(\\chi_2) - 1)
+     \\right)
 ```
 
 The computation is made applying [`trapz`](@ref) (see the 

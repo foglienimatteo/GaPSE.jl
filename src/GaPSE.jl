@@ -120,17 +120,17 @@ function parameters_used(io::IO, cosmo::Cosmology)
 
      println(io, "# - Basic CosmoParams considered: ")
      println(io, "#\t z_min = $(cosmo.params.z_min) \t z_max = $(cosmo.params.z_max)")
-     println(io, "#\t theta_max = $(cosmo.params.θ_max) [rad] \t h_0 = $(cosmo.params.h_0)")
+     println(io, "#\t θ_max = $(cosmo.params.θ_max) [rad] \t h_0 = $(cosmo.params.h_0)")
      println(io, "#\t Ω_b = $(cosmo.params.Ω_b) \t " *
                  "Ω_cdm = $(cosmo.params.Ω_cdm) \t Ω_M0 = $(cosmo.params.Ω_M0)")
      println(io, "#")
     
      println(io, "# - CosmoParams about the Input Power Spectrum: ")
-     my_println_dict(cosmo.params.IPS; pref ="#\t ", N = 2)
+     my_println_dict(io, cosmo.params.IPS; pref ="#\t ", N = 2)
      println(io, "#")
     
      println(io, "# - CosmoParams about the Input Power Spectrum Tools: ")
-     my_println_dict(cosmo.params.IPSTools; pref ="#\t ", N = 3)
+     my_println_dict(io, cosmo.params.IPSTools; pref ="#\t ", N = 3)
      println(io, "#") 
 
      println(io, "# - Computed quantities: ")
