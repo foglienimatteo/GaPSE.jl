@@ -883,8 +883,10 @@ end
 
 Return the Power Spectrum multipole normalization coefficient `A`, i.e.:
 ```math
-     A(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})= 2 \\, \\pi \\, 
-     V(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})
+     A(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})= 
+     \\frac{
+          V(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})
+     }{4 \\, \\pi^2}
 ```
 where ``V(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})`` is the 
 survey volume.
@@ -895,7 +897,7 @@ instead [`A_prime`](@ref)
 See also: [`V_survey`](@ref)
 """
 function A(s_min, s_max, θ_max)
-     2.0 * π * V_survey(s_min, s_max, θ_max)
+     V_survey(s_min, s_max, θ_max) / (4.0 * π^2)
 end
 
 
@@ -905,10 +907,11 @@ end
 
 It's the Power Spectrum multipole normalization coefficient ``A^{'}``, i.e.:
 ```math
-     A^{'} = \\frac{3 \\, A}{ (s_\\mathrm{max}^3 - s_\\mathrm{min}^3)} = 8 \\pi^2
+     A^{'} = \\frac{3 \\, A}{ (s_\\mathrm{max}^3 - s_\\mathrm{min}^3)} = 
+     \\frac{1}{4\\,\\pi}
 ```
 
 See also: [`A`](@ref), [`V_survey`](@ref)
 """
-const A_prime = 8.0 * π^2
+const A_prime = 1.0 / (4.0 * π)
 

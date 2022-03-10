@@ -17,11 +17,9 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-function PS_multipole(
-     f_in;
+function PS_multipole(f_in;
      int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3,
-     L::Integer = 0, N::Integer = 1024,
-     pr::Bool = true, kwargs...)
+     L::Integer = 0, N::Integer = 1024, pr::Bool = true)
 
      t1 = time()
      ks, pks = xicalc(s -> 2 * π^2 * f_in(s), L, 0;
@@ -30,38 +28,35 @@ function PS_multipole(
      pr && println("\ntime needed for Power Spectrum  computation [in s] = $(t2-t1)\n")
 
      if iseven(L)
-          return ks, (1 / π * (-1)^(L / 2)) .* pks #(1 / A_prime * (-1)^(L / 2)) .* pks
+          return ks, (1 / A_prime * (-1)^(L / 2)) .* pks
      else
-          return ks, (1 / π * (-im)^L) .* pks #(1 / A_prime * (-im)^L) .* pks
+          return ks, (1 / A_prime * (-im)^L) .* pks
      end
 end
 
 
-function PS_multipole(
-     input::String;
-     L::Integer = 0, N::Integer = 1024,
-     pr::Bool = true,
-     int_s_min::Union{Float64,Nothing} = nothing,
-     int_s_max::Union{Float64,Nothing} = nothing)
+function PS_multipole(input::String;
+     N_left::Integer = 12, N_right::Integer = 12, kwargs...)
 
      xi_table = readdlm(input, comments = true)
      ss = convert(Vector{Float64}, xi_table[:, 1])
      fs = convert(Vector{Float64}, xi_table[:, 2])
 
      #f_in = Spline1D(ss, fs; bc = "error")
-     f_in = EPLs(ss, fs, [-2.0, 1.0], [1.0, 1.0])
+     f_in = EPLs(ss, fs, [-2.0, 1.0], [1.0, 1.0];
+          N_left = N_left, N_right = N_right)
 
-     intsmin = isnothing(int_s_min) ? min(ss...) : int_s_min
-     intsmax = isnothing(int_s_max) ? max(ss...) : int_s_max
-     return PS_multipole(f_in; int_s_min = intsmin, int_s_max = intsmax, N = N, L = L, pr = pr)
+     #intsmin = isnothing(int_s_min) ? min(ss...) : int_s_min
+     #intsmax = isnothing(int_s_max) ? max(ss...) : int_s_max
+     return PS_multipole(f_in; kwargs...)
 end
 
 
-
-function PS_multipole(
-     effect::String, cosmo::Cosmology;
+#=
+function PS_multipole(effect::String, cosmo::Cosmology;
      int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3,
-     L::Integer = 0, N::Integer = 100,
+     L::Integer = 0, N::Integer = 1024, 
+     ss::Vector{Float64} = 
      pr::Bool = true, kwargs...)
 
      error = "$effect is not a valid GR effect name.\n" *
@@ -69,7 +64,7 @@ function PS_multipole(
              string(IMPLEMENTED_GR_EFFECTS .* " , "...)
      @assert (effect ∈ IMPLEMENTED_GR_EFFECTS) error
 
-     xs, ys = map_ξ_multipole(cosmo, effect; L = L, pr = pr, kwargs...)
+     xs, ys = map_ξ_multipole(cosmo, effect, ss; L = L, pr = pr, kwargs...)
      f_in = Spline1D(xs, ys; bc = "error")
 
      t1 = time()
@@ -84,45 +79,50 @@ function PS_multipole(
           return ks, (1 / π * (-im)^L) .* pks #(1 / A_prime * (-im)^L) .* pks
      end
 end
+=#
 
 
-@doc raw"""
-     PS_multipole(in::String, int_s_min = 0.0, int_s_max = 1000.0; 
-          L::Integer = 0, N::Integer = 1024, pr::Bool = true)
-     PS_multipole(
-          f_in, int_s_min = 0.0, int_s_max = 1000.0; 
-          L::Integer = 0, N::Integer = 1024, pr::Bool = true
+"""
+     PS_multipole(f_in; int_s_min::Float64 = 1e-1, 
+          int_s_max::Float64 = 1e3, L::Integer = 0, 
+          N::Integer = 1024, pr::Bool = true
+          ) :: Tuple{Vector{Float64}, Vector{Float64}}
+
+     PS_multipole(input::String; N_left::Integer = 12, 
+          N_right::Integer = 12, kwargs...
           ) :: Tuple{Vector{Float64}, Vector{Float64}}
 
 Return the `L`-order multipole from the input function `f_in`, through the
 following Fast Fourier Transform and the effective redshift approximation:
 
 ```math
-P_L(k) = \frac{2 L + 1}{A^{'}} (-i)^L \, \phi(s_\mathrm{eff}) \int_0^\infty 
-        \mathrm{d} s \; s^2 \, j_L(ks) \, f_\mathrm{in}(s) \; ,
-        \quad \; A^{'} = 8 \, \pi^2
+P_L(k) = \\frac{2 L + 1}{A^{'}} (-i)^L \\, \\phi(s_\\mathrm{eff}) \\int_0^\\infty 
+        \\mathrm{d} s \\; s^2 \\, j_L(ks) \\, f_\\mathrm{in}(s) \\; ,
+        \\quad \\; A^{'} = \\frac{1}{4\\,\\pi}
 ```
 
 This expression can be easily obtained from the standard one:
 ```math
-\begin{split}
-    P_L(k) = &\frac{2 L + 1}{A} (-i)^L \, 
-        \int_0^\infty \mathrm{d} s_1 \; s_1^2 
-        \int_0^\infty \mathrm{d} s \; s^2 
-        \int_{-1}^{+1} \mathrm{d} \mu \;
-        j_L(ks) \, \xi(s_1, s, \mu) \, \phi(s_1) \, \phi(s_2) \,
-        \mathcal{L}_L(\mu) F\left(\frac{s}{s_1}, \mu \right) \\
-        &\mathrm{with} \; \;s_2 = s_2(s_1, s, μ) = \sqrt{s_1^2 + s^2 + 2s_1s\mu}
-        \; 
-        , \quad A(s_\mathrm{max}, s_\mathrm{min}, \theta_\mathrm{max}) 
-        = 2 \, \pi \, V
-\end{split}
+\\begin{split}
+    P_L(k) = &\\frac{2 L + 1}{A} (-i)^L \\, 
+        \\int_0^\\infty \\mathrm{d} s_1 \\; s_1^2 
+        \\int_0^\\infty \\mathrm{d} s \\; s^2 
+        \\int_{-1}^{+1} \\mathrm{d} \\mu \\;
+        j_L(ks) \\, \\xi(s_1, s, \\mu) \\, \\phi(s_1) \\, \\phi(s_2) \\,
+        \\mathcal{L}_L(\\mu) F\\left(\\frac{s}{s_1}, \\mu \\right) \\\\
+        &\\mathrm{with} \\; \\;s_2 = s_2(s_1, s, μ) = \\sqrt{s_1^2 + s^2 + 2s_1s\\mu}
+        \\; 
+        , \\quad A(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max}) 
+        \\frac{
+          V(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})
+          }{4 \\, \\pi^2}
+\\end{split}
 ```
 with the definition
 ```math
-f_\mathrm{in}(s_1, s) =  \int_{-1}^{+1} \mathrm{d} \mu \;
-        \xi(s_1, s, \mu) \, \phi(s_2) \,
-        \mathcal{L}_L(\mu) \, F\left(\frac{s}{s_1}, \mu \right)
+f_\\mathrm{in}(s_1, s) =  \\int_{-1}^{+1} \\mathrm{d} \\mu \\;
+        \\xi(s_1, s, \\mu) \\, \\phi(s_2) \\,
+        \\mathcal{L}_L(\\mu) \\, F\\left(\\frac{s}{s_1}, \\mu \\right)
 ```
 and the application of the effective redshift approximation.
 
@@ -155,7 +155,7 @@ function print_PS_multipole(in::String, out::String;
           println(io, "# \t #points used in Fourier transform N = $N")
           println(io, "# \t multipole degree in consideration L = $L")
           println(io, "# computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
-          print(io, "# kwards passed: ")
+          print(io, "# kwards passed to \"print_PS_multipole\": ")
 
           if isempty(kwargs)
                println(io, "none")
@@ -174,6 +174,7 @@ function print_PS_multipole(in::String, out::String;
 end
 
 
+#=
 function print_PS_multipole(
      effect::String, out::String,
      cosmo::Cosmology;
@@ -219,3 +220,4 @@ function print_PS_multipole(
           end
      end
 end
+=#
