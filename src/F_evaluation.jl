@@ -19,39 +19,39 @@
 
 
 
-@doc raw"""
+"""
     integrand_F(θ, θ_1, x, μ, θ_max; tolerance=1e-8) :: Float64
 
-Return the integrand of the function ``F(x,\mu; \theta_\mathrm{max})``, i.e the 
-function ``f(x,\mu, \theta, \theta_1; \theta_\mathrm{max})``:
+Return the integrand of the function ``F(x,\\mu; \\theta_\\mathrm{max})``, i.e the 
+function ``f(x,\\mu, \\theta, \\theta_1; \\theta_\\mathrm{max})``:
 
 ```math
-\begin{split}
-f(x,\mu, \theta, \theta_1; \theta_\mathrm{max}) = 
-    \; &\Theta\left( \frac
-        {x \cos \theta + \cos \theta_1}{\sqrt{x^1+2+2x\mu}} - 
-        \cos(\theta_\mathrm{max}) 
-        \right) 
-    \; \times \; \Theta(\mu-\cos(\theta+\theta_1)) \; \, \times \\
-    & \quad \Theta(\cos(\theta - \theta_1)-\mu) \; \times \;
-    \frac{4\pi \sin\theta\sin\theta_1}
-        {\sqrt{(\sin\theta\sin\theta_1)^2-(\cos\theta\cos\theta_1-\mu)^2}}
-\end{split}
+\\begin{split}
+f(x,\\mu, \\theta, \\theta_1; \\theta_\\mathrm{max}) = 
+    \\; &\\Theta\\left( \\frac
+        {x \\cos \\theta + \\cos \\theta_1}{\\sqrt{x^1+2+2x\\mu}} - 
+        \\cos(\\theta_\\mathrm{max}) 
+        \\right) 
+    \\; \\times \\; \\Theta(\\mu-\\cos(\\theta+\\theta_1)) \\; \\, \\times \\\\
+    & \\quad \\Theta(\\cos(\\theta - \\theta_1)-\\mu) \\; \\times \\;
+    \\frac{4\\pi \\sin\\theta\\sin\\theta_1}
+        {\\sqrt{(\\sin\\theta\\sin\\theta_1)^2-(\\cos\\theta\\cos\\theta_1-\\mu)^2}}
+\\end{split}
 ```
 ```math
-\begin{equation}
-F(x,\mu; \theta_\mathrm{max}) = \int_0^{\theta_\mathrm{max}} 
-        \mathrm{d}\theta_1 \int_0^\pi \mathrm{d} \theta 
-        \; f(x,\mu, \theta, \theta_1; \theta_\mathrm{max})
-\end{equation}
+\\begin{equation}
+F(x,\\mu; \\theta_\\mathrm{max}) = \\int_0^{\\theta_\\mathrm{max}} 
+        \\mathrm{d}\\theta_1 \\int_0^\\pi \\mathrm{d} \\theta 
+        \\; f(x,\\mu, \\theta, \\theta_1; \\theta_\\mathrm{max})
+\\end{equation}
 ```
 
 `tolerance` is a parameter needed in case of small negative denominator: the Heaviside
 theta function mathematically prevent that 
-``\mathrm{den}=(\sin\theta\sin\theta_1)^2-(\cos\theta\cos\theta_1-\mu)^2``
-becomes negative, but computationally might happen that ``\mathrm{den}`` results as a
+``\\mathrm{den}=(\\sin\\theta\\sin\\theta_1)^2-(\\cos\\theta\\cos\\theta_1-\\mu)^2``
+becomes negative, but computationally might happen that ``\\mathrm{den}`` results as a
 very small negative number (for instance `-1.2368946523-18`); in this case `tolerance`
-solve the problem, returning 0 if ``0<-\mathrm{den}< \mathrm{tolerance}``
+solve the problem, returning 0 if ``0<-\\mathrm{den}< \\mathrm{tolerance}``
 
 See also: [`F`](@ref), [`F_map`](@ref)
 """
@@ -78,33 +78,33 @@ end
 
 
 
-@doc raw"""
+"""
      F(x, μ, θ_max; tolerance=1e-8) :: Tuple{Float64, Float64}
 
-The function ``F(x,\mu; \theta_\mathrm{max})``, defined as
+The function ``F(x,\\mu; \\theta_\\mathrm{max})``, defined as
 follows:
 
 ```math
-\begin{split}
-F(x,\mu; \theta_\mathrm{max}) = & \;4\pi 
-    \int_0^{\theta_\mathrm{max}} \mathrm{d}\theta_1 \int_0^\pi \mathrm{d} \theta \; 
-    \, \Theta\left(\frac
-        {x \cos \theta + \cos \theta_1}{\sqrt{x^1+2+2x\mu}} - 
-        \cos(\theta_\mathrm{max}) 
-        \right) 
-    \, \Theta(\mu-\cos(\theta+\theta_1)) \\
-    &\Theta(\cos(\theta - \theta_1)-\mu) \;
-    \frac{\sin\theta\sin\theta_1}
-        {\sqrt{(\sin\theta\sin\theta_1)^2-(\cos\theta\cos\theta_1-\mu)^2}}
-\end{split}
+\\begin{split}
+F(x,\\mu; \\theta_\\mathrm{max}) = & \\;4\\pi 
+    \\int_0^{\\theta_\\mathrm{max}} \\mathrm{d}\\theta_1 \\int_0^\\pi \\mathrm{d} \\theta \\; 
+    \\, \\Theta\\left(\\frac
+        {x \\cos \\theta + \\cos \\theta_1}{\\sqrt{x^1+2+2x\\mu}} - 
+        \\cos(\\theta_\\mathrm{max}) 
+        \\right) 
+    \\, \\Theta(\\mu-\\cos(\\theta+\\theta_1)) \\\\
+    &\\Theta(\\cos(\\theta - \\theta_1)-\\mu) \\;
+    \\frac{\\sin\\theta\\sin\\theta_1}
+        {\\sqrt{(\\sin\\theta\\sin\\theta_1)^2-(\\cos\\theta\\cos\\theta_1-\\mu)^2}}
+\\end{split}
 ```
 
 `tolerance` is a parameter needed in case of small negative denominator: the Heaviside
 theta function mathematically prevent that 
-``\mathrm{den}=(\sin\theta\sin\theta_1)^2-(\cos\theta\cos\theta_1-\mu)^2``
-becomes negative, but computationally might happen that ``\mathrm{den}`` results as a
+``\\mathrm{den}=(\\sin\\theta\\sin\\theta_1)^2-(\\cos\\theta\\cos\\theta_1-\\mu)^2``
+becomes negative, but computationally might happen that ``\\mathrm{den}`` results as a
 very small negative number (for instance `-1.2368946523-18`); in this case `tolerance`
-solve the problem, returning 0 if ``0<-\mathrm{den}< \mathrm{tolerance}``.
+solve the problem, returning 0 if ``0<-\\mathrm{den}< \\mathrm{tolerance}``.
 
 The double integral is performed with [`hcubature`](@ref) function from the Julia
 Package [`HCubature`](@ref); `rtol`, `atol` and all the `kwargs` insert into `F` 
@@ -219,14 +219,14 @@ end
 
 
 
-@doc raw"""
+"""
      F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
           out = "data/F_map.txt", x1 = 0, x2 = 3, μ1 = -1, μ2 = 1, kwargs...)
      F_map(xs::Vector{Float64}, μs::Vector{Float64};
           out = "data/F_map.txt", kwargs...)
 
-Evaluate the window function ``F(x,\mu; \theta_\mathrm{max})`` in a rectangual grid 
-of ``\mu`` and ``x`` values.
+Evaluate the window function ``F(x,\\mu; \\theta_\\mathrm{max})`` in a rectangual grid 
+of ``\\mu`` and ``x`` values.
 
 In the first method you specify start, stop and step for `x` and `μ` manually, while
 with thr second one you pass the values (through a vector )you want to calculate 
