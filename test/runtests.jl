@@ -46,9 +46,12 @@ include("TEST_DATA.jl")
      include("test_OtherUtils.jl")
 end
 
-
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
+end
+
+@testset "test CosmoUtils" begin
+     include("test_CosmoUtils.jl")
 end
 
 @testset "test IPSTools" begin
@@ -59,12 +62,16 @@ end
      include("test_BackgroundData.jl")
 end
 
+@testset "test CosmoParams" begin
+     include("test_CosmoParams.jl")
+end
+
 @testset "test Cosmology" begin
      include("test_Cosmology.jl")
 end
 
-@testset "test F_evaluation" begin
-     include("test_F_evaluation.jl")
+@testset "test WindowF" begin
+     include("test_WindowF.jl")
 end
 
 

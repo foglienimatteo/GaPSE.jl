@@ -19,84 +19,6 @@
 
 
 """
-    WindowF(
-        xs::Vector{Float64}
-        μs::Vector{Float64}
-        Fs::Matrix{Float64}
-        )
-
-Struct containing xs, μs and Fs values of the window function ``F(x, μ)``.
-`xs` and `μs` are 1D vectors containing each value only once, while 
-Fs values are contained in a matrix of size `(length(xs), length(μs))`, so:
-- along a fixed column the changing value is `x`
-- along a fixed row the changing value is `μ`
-"""
-struct WindowF
-     xs::Vector{Float64}
-     μs::Vector{Float64}
-     Fs::Matrix{Float64}
-
-
-     function WindowF(file::String)
-          data = readdlm(file, comments = true)
-          xs, μs, Fs = data[:, 1], data[:, 2], data[:, 3]
-          @assert size(xs) == size(μs) == size(Fs) "xs, μs and Fs must have the same length!"
-
-          new_xs = unique(xs)
-          new_μs = unique(μs)
-          new_Fs =
-               if xs[2] == xs[1] && μs[2] ≠ μs[1]
-                    transpose(reshape(Fs, (length(new_μs), length(new_xs))))
-               elseif xs[2] ≠ xs[1] && μs[2] == μs[1]
-                    reshape(Fs, (length(new_xs), length(new_μs)))
-               else
-                    throw(ErrorException("What kind of convenction for the file $file" *
-                                         " are you using? I do not recognise it."))
-               end
-          new(new_xs, new_μs, new_Fs)
-     end
-end
-
-
-@doc raw"""
-     spline_F(x, μ, str::WindowF)) :: Float64
-
-Return the 2-dim spline value of ``F`` in the given `(x,μ)`, where
-``F`` is defined in the input `WindowF`.
-The spline is obtained through the `interpolate` function of the 
-[`GridInterpolations`](https://github.com/sisl/GridInterpolations.jl) Julia
-package.
-"""
-function spline_F(x, μ, str::WindowF)
-     grid = GridInterpolations.RectangleGrid(str.xs, str.μs)
-     GridInterpolations.interpolate(grid, reshape(str.Fs, (:, 1)), [x, μ])
-end
-
-#=
-F_map_data = readdlm(FILE_F_MAP, comments = true)
-F_map_data_dict = Dict([name => F_map_data[2:end, i] for (i, name) in enumerate(NAMES_F_MAP)]...)
-
-_xs = unique(F_map_data_dict["x"])
-_μs = unique(F_map_data_dict["mu"])
-_Fs = F_map_data_dict["F"]
-
-
-# for my F map convenction
-my_F_grid = GridInterpolations.RectangleGrid(_μs, _xs)
-spline_F(x, μ) = GridInterpolations.interpolate(my_F_grid, _Fs, [μ, x])
-
-# for the opposite convenction for F map
-#other_F_grid = GridInterpolations.RectangleGrid(_xs, _μs)
-#spline_F(x, μ) = GridInterpolations.interpolate(other_F_grid, _Fs, [x, μ])
-=#
-
-
-
-##########################################################################################92
-
-
-
-"""
      InputPS(
           l_si::Float64
           l_b::Float64
@@ -562,6 +484,11 @@ function (Iln::IntegralIPS)(x)
 end
 
 
+
+##########################################################################################92
+
+
+
 """
      IPSTools(
           I00::IntegralIPS
@@ -804,114 +731,4 @@ struct IPSTools
 end
 
 
-
-##########################################################################################92
-
-
-
-"""
-     ϕ(s, s_min, s_max) :: Float64
-
-Radial part of the survey window function. Return `1.0` if is true that
-``s_\\mathrm{min} < s < s_\\mathrm{max}`` and `0.0` otherwise.
-
-In this software we made the assuption that the survey window function can be
-separated into a radial and angular part, i.e.:
-
-```math
-     \\phi(\\mathbf{s}) = \\phi(s) \\, W(\\hat{s})
-```
-
-See also: [`W`](@ref)
-"""
-ϕ(s, s_min, s_max) = s_min < s < s_max ? 1.0 : 0.0
-
-
-
-"""
-     W(θ, θ_max) :: Float64
-
-Angular part of the survey window function. Return `1.0` if is true that
-``0.0 \\leq \\theta < \\theta_\\mathrm{max}`` and `0.0` otherwise. It is
-implicitly assumed an azimutal simmetry of the survey.
-
-In this software we made the assuption that the survey window function can be
-separated into a radial and angular part, i.e.:
-
-```math
-     \\phi(\\mathbf{s}) = \\phi(s) \\, W(\\hat{s})
-```
-
-See also: [`ϕ`](@ref)
-"""
-W(θ, θ_max) = 0.0 ≤ θ < θ_max ? 1.0 : 0.0
-
-
-"""
-     V_survey(s_min, s_max, θ_max) :: Float64
-
-Return the volume of a survey with azimutal simmetry, i.e.:
-
-```math
-\\begin{split}
-    V(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max}) &= \\; C_\\mathrm{up} - C_\\mathrm{down} + TC \\\\
-    &C_\\mathrm{up} = \\frac{\\pi}{3} s_\\mathrm{max}^3 \\, 
-        (1 - \\cos\\theta_\\mathrm{max})^2 \\, (2 + \\cos\\theta_\\mathrm{max}) \\\\
-    &C_\\mathrm{down} = \\frac{\\pi}{3} s_\\mathrm{min}^3 \\, 
-        (1 - \\cos\\theta_\\mathrm{max})^2 \\, (2 + \\cos\\theta_\\mathrm{max}) \\\\
-    &TC = \\frac{\\pi}{3} (s_\\mathrm{max}^2 + s_\\mathrm{min}^2 + 
-        s_\\mathrm{max} \\,s_\\mathrm{min}) \\,  (s_\\mathrm{max} - s_\\mathrm{min})\\, 
-        \\cos\\theta_\\mathrm{max}\\, \\sin^2\\theta_\\mathrm{max}
-\\end{split}
-```
-"""
-function V_survey(s_min, s_max, θ_max)
-     sin_θ, cos_θ = sin(θ_max), cos(θ_max)
-     diff_up_down = (s_max^3 - s_min^3) * (1 - cos_θ)^2 * (2 + cos_θ)
-     tr = (s_max^2 + s_min^2 + s_max * s_min) * (s_max - s_min) * cos_θ * sin_θ^2
-     #r1, r2 = s_min * sin(θ_max), s_max * sin(θ_max)
-     #d1, d2 = s_min * cos(θ_max), s_max * cos(θ_max)
-     #calotta_up = π / 3 * (s_max - d2)^2 * (2 * s_max + d2)
-     #calotta_down = π / 3 * (s_min - d1)^2 * (2 * s_min + d1)
-     #tronco_cono = π / 3 * (r1^2 + r1 * r2 + r2^2) * (s_max - s_min) * cos(θ_max)
-     return π / 3.0 * (diff_up_down + tr)
-end
-
-
-"""
-     A(s_min, s_max, θ_max) :: Float64
-
-Return the Power Spectrum multipole normalization coefficient `A`, i.e.:
-```math
-     A(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})= 
-     \\frac{
-          V(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})
-     }{4 \\, \\pi^2}
-```
-where ``V(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})`` is the 
-survey volume.
-
-Pay attention: this is NOT used for the normalization of [`PS`](@ref), see
-instead [`A_prime`](@ref)
-
-See also: [`V_survey`](@ref)
-"""
-function A(s_min, s_max, θ_max)
-     V_survey(s_min, s_max, θ_max) / (4.0 * π^2)
-end
-
-
-
-"""
-     A_prime :: Float64
-
-It's the Power Spectrum multipole normalization coefficient ``A^{'}``, i.e.:
-```math
-     A^{'} = \\frac{3 \\, A}{ (s_\\mathrm{max}^3 - s_\\mathrm{min}^3)} = 
-     \\frac{1}{4\\,\\pi}
-```
-
-See also: [`A`](@ref), [`V_survey`](@ref)
-"""
-const A_prime = 1.0 / (4.0 * π)
 

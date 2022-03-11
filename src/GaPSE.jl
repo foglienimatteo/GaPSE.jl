@@ -48,8 +48,10 @@ NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mpc]",
 
 include("OtherUtils.jl")
 include("MathUtils.jl")
-include("F_evaluation.jl")
+include("WindowF.jl")
 include("BackgroundData.jl")
+include("CosmoParams.jl")
+include("CosmoUtils.jl")
 include("IPSTools.jl")
 include("Cosmology.jl")
 
