@@ -19,31 +19,22 @@
 
 
 
-function sum_ξ_multipole(s1, s, cosmo::Cosmology;
-     all::Bool = false,
-     kwargs...)
-
+function sum_ξ_multipole(s1, s, cosmo::Cosmology; kwargs...)
      ALL = [ξ_multipole(s1, s, effect, cosmo; kwargs...)
             for effect in IMPLEMENTED_GR_EFFECTS]
 
-     if all
-          return sum(ALL), ALL
-     else
-          return sum(ALL)
-     end
+     return sum(ALL), ALL
 end
 
 
 
 function map_sum_ξ_multipole(
      cosmo::Cosmology,
-     v_ss::Union{Vector{Float64},Nothing} = nothing;
+     v_ss = nothing;
      N_log::Integer = 1000,
-     all::Bool = false,
      kwargs...)
 
      ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length = N_log) : v_ss
-
 
      ALL = [
           begin
@@ -52,21 +43,16 @@ function map_sum_ξ_multipole(
           end for effect in IMPLEMENTED_GR_EFFECTS
      ]
 
-     if all
-          return ss, sum(ALL), ALL
-     else
-          return ss, sum(ALL)
-     end
+     return ss, sum(ALL), ALL
 end
 
 
 function print_map_sum_ξ_multipole(
      cosmo::Cosmology,
      out::String,
-     v_ss::Union{Vector{Float64},Nothing} = nothing;
-     s_1::Union{Float64,Nothing} = nothing,
+     v_ss = nothing;
+     s_1 = nothing,
      L::Integer = 0,
-     all::Bool = true,
      single::Bool = true,
      kwargs...)
 
@@ -80,23 +66,20 @@ function print_map_sum_ξ_multipole(
      s1 = isnothing(s_1) ? cosmo.s_eff : s_1
      t1 = time()
      ss, xis, ALL = map_sum_ξ_multipole(cosmo, v_ss;
-          L = L, s_1 = s1, all = true, kwargs...)
+          L = L, s_1 = s1, kwargs...)
      t2 = time()
 
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
           println(io, "# This is an integration map on mu of the sum" *
                       " of all the ξ_L=$L multipole GR effects.")
-          !(all == true && single == true) ||
-               println(io, "# In input was set \"all = $all\" and \"single = $single\" \n" *
-                           "# so, together with their sum, all the CFs are here reported.\n#")
-          !(all == true && single == false) ||
-               println(io, "# In input was set \"all = $all\" and \"single = $single\" \n" *
-                           "# so here is showed only the sum of all the CFs, and them are\n" *
-                           "# saved separately in the directory: $dir \n#")
-          !(all == false) ||
-               println(io, "# In input was set \"all = $all\"" *
-                           "# so only the sum of all the CFs was saved in a file (this one).\n#")
+          !(single == true) ||
+               println(io, "# In input was set \"single = $single\", " *
+                           "so, together with their sum, all the CFs are here reported.\n#")
+          !(single == false) ||
+               println(io, "# In input was set \"single = $single\", so here is showed only \n" *
+                           "# the sum of all the CFs, and them are saved separately in the \n" *
+                           "# following directory: $dir \n#")
 
           parameters_used(io, cosmo)
           println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
@@ -110,17 +93,18 @@ function print_map_sum_ξ_multipole(
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
           end
-          isnothing(s_1) || println(io, "#\n# NOTE: the computation is done not in " *
-                                        "s1 = s_eff, because you specified in input s1 = $s_1 !")
+          isnothing(s_1) ||
+               println(io, "#\n# NOTE: the computation is done not in s1 = s_eff, \n" *
+                           "#\t because you specified in input s1 = $s_1 Mpc/h_0!")
           println(io, "# ")
 
-          if (all == false) || (all == true && single == false)
+          if (single == false)
                println(io, "# s [Mpc/h_0] \t \t xi_SUM")
                for (s, xi) in zip(ss, xis)
                     println(io, "$s \t $xi")
                end
 
-          elseif all == true && single == true
+          elseif single == true
                println(io, "# s [Mpc/h_0] \t xi_SUM \t " *
                            join("xi_" .* GaPSE.IMPLEMENTED_GR_EFFECTS .* " \t "))
                for (i, (s, xi)) in enumerate(zip(ss, xis))
@@ -132,7 +116,7 @@ function print_map_sum_ξ_multipole(
           end
      end
 
-     if all == true && single == false
+     if single == false
           for (effect, vec) in zip(IMPLEMENTED_GR_EFFECTS, ALL)
                open(dir * "xi_" * effect * "_L$L" * ".txt", "w") do io
                     println(io, "# This is an integration map on mu of the ξ multipole $effect GR effect.")

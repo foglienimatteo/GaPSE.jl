@@ -21,6 +21,26 @@ On such large scales, a Newtonian treatment of density of density perturbations 
 In this program, we compute, for a given input matter power spectum (obtained from [CLASS](https://github.com/lesgourg/class_public)), all the GR effects two point auto-correlation and cross-correlation functions, for an arbitrary multipole order.
 This project, and the analytical expressions used for the TPCFs, are based on the article of Emanuele Castorina and Enea Di Dio [[3]](#1). 
 
+## Installation
+
+The simplest way to install this software is cloning the repository where it is built in. Run in the command line
+```bash
+git clone https://github.com/cosmofico97/GaPSE
+```
+or download the source code from the github repository https://github.com/cosmofico97/GaPSE.
+
+## Execution
+
+The only mandatory instrument to run the code is a Julia REPL with version ≥ 1.7. 
+You can write whatever instructions inside the file `GaPSE-exe.jl` and then run it
+in the command line:
+
+```bash
+     $ julia GaPSE.jl
+```
+
+However, the most confortable way to use it is through the Jupyter Notebooks: some `.ipynb` is already provided in the same named directory, and we encourage you to follow the `TUTORIAL.ipynb` file first. The basic structure of the program and the most important functions are there presented.
+
 ## Licence
 
 This software is under the [GNU 3.0 General Public Licence](https://www.gnu.org/licenses/gpl-3.0.en.html). See the file [LICENCE.md](./LICENCE.md).
