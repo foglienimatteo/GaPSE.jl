@@ -273,8 +273,8 @@ end
 function map_integral_on_mu(
      cosmo::Cosmology,
      effect::Union{String,Function},
-     v_ss::Union{Vector{Float64},Nothing} = nothing;
-     s_1::Union{Float64,Nothing} = nothing,
+     v_ss = nothing;
+     s_1 = nothing,
      pr::Bool = true, 
      N_log::Integer = 1000,
      L::Integer = 0,
@@ -301,7 +301,7 @@ end
 function map_ξ_multipole(
      cosmo::Cosmology,
      effect::Union{String,Function},
-     v_ss::Union{Vector{Float64},Nothing} = nothing;
+     v_ss = nothing;
      L::Integer = 0, kwargs...)
 
      ss, xis = map_integral_on_mu(cosmo, effect, v_ss; L = L, kwargs...)
@@ -317,8 +317,8 @@ function print_map_int_on_mu(
      cosmo::Cosmology,
      out::String,
      effect::Union{String,Function},
-     v_ss::Union{Vector{Float64},Nothing} = nothing;
-     s_1::Union{Float64,Nothing} = nothing,
+     v_ss = nothing;
+     s_1 = nothing,
      kwargs...)
 
      s1 = isnothing(s_1) ? cosmo.s_eff : s_1
@@ -355,8 +355,8 @@ function print_map_ξ_multipole(
      cosmo::Cosmology,
      out::String,
      effect::Union{String,Function},
-     v_ss::Union{Vector{Float64},Nothing} = nothing;
-     s_1::Union{Float64,Nothing} = nothing,
+     v_ss = nothing;
+     s_1 = nothing,
      kwargs...)
 
      s1 = isnothing(s_1) ? cosmo.s_eff : s_1
