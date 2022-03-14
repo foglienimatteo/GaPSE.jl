@@ -88,7 +88,7 @@ name of the CF term among the following:
 
 to which correspond the following functions:
 
-`$(string(string.(GaPSE.IMPLEMENTED_INTEGRANDS) .* " , "...))`
+`$(string(string.(GaPSE.IMPLEMENTED_ξs) .* " , "...))`
 
 In case `use_windows` is set to `false`, the window functions ``\\phi`` and ``F``
 are removed, i.e is returned the following function ``f^{'}(s_1, s, \\mu)``:
@@ -236,7 +236,7 @@ name of the CF term among the following:
 
 to which correspond the following functions:
 
-`$(string(string.(GaPSE.IMPLEMENTED_INTEGRANDS) .* " , "...))`
+`$(string(string.(GaPSE.IMPLEMENTED_ξs) .* " , "...))`
 
 The integral evaluated is then the following:
 
@@ -341,7 +341,7 @@ name of the CF term among the following:
 
 to which correspond the following functions:
 
-`$(string(string.(GaPSE.IMPLEMENTED_INTEGRANDS) .* " , "...))`
+`$(string(string.(GaPSE.IMPLEMENTED_ξs) .* " , "...))`
 
 The function evaluated is then the following:
 
