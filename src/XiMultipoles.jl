@@ -18,72 +18,6 @@
 #
 
 
-
-@doc raw"""
-     integrand_on_mu_lensing(s1, s, μ, cosmo::Cosmology;
-          L::Integer = 0, 
-          use_windows::Bool = true, 
-          en::Float64 = 1e6,
-          Δχ_min::Float64 = 1e-4,
-          N_χs::Integer = 100) :: Float64
-
-Return the integrand on ``\mu = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}`` 
-of the lensing auto-correlation function, i.e.
-the following function ``f(s_1, s, \mu)``:
-
-```math
-     f(s_1, s, \mu) = \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) 
-          \, \mathcal{L}_L(\mu) \,  \phi(s_2) \, F\left(\frac{s}{s_1}, \mu \right)
-```
-where ``y =  \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2`` and
-``s = \sqrt{s_1^2 + s_2^2 - 2 \, s_1 \, s_2 \, y}``.
-
-In case `use_windows` is set to `false`, the window functions ``\phi`` and ``F``
-are removed, i.e is returned the following function ``f^{'}(s_1, s, \mu)``:
-
-```math
-     f^{'}(s_1, s, \mu) = \xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) 
-          \, \mathcal{L}_L(\mu) 
-```
-
-The function ``\xi^{\kappa\kappa}(s_1, s_2, \cos{\theta})`` is calculated
-from `ξ_lensing`; note that these is an internal conversion of coordiate sistems
-from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
-
-## Inputs
-
-- `s1`: the comoving distance where must be evaluated the integral
-
-- `s`: the comoving distance from `s1` where must be evaluated the integral
-
-- `μ`: the cosine between `s1` and `s` where must be evaluated the integral
-
-- `cosmo::Cosmology`: cosmology to be used in this computation
-
-
-## Optional arguments 
-
-- `L::Integer = 0`: order of the Legendre polynomial to be used
-
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
-  with small numbers;
-
-- `use_windows::Bool = false`: tells if the integrand must consider the two
-   window function ``\phi`` and ``F``
-
-- ` Δχ_min::Float64 = 1e-4` : parameter used inside `integrand_ξ_lensing` in order to
-  avoid computatinal divergences; it should be `0<Δχ_min<<1`, see the `integrand_ξ_lensing`
-  docstring for more informations.
-
-- `N_χs::Integer = 100`: number of points to be used for sampling the integral
-  along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
-  with `N_χs ≥ 50` the result is stable.
-
-See also: [`integrand_ξ_lensing`](@ref), [`ξ_lensing`](@ref),
-[`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
-[`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
-[`y`](@ref), [`s2`](@ref)
-"""
 function integrand_on_mu(s1, s, μ, integrand::Function, cosmo::Cosmology;
      L::Integer = 0, use_windows::Bool = true, kwargs...)
 
@@ -92,12 +26,12 @@ function integrand_on_mu(s1, s, μ, integrand::Function, cosmo::Cosmology;
      res = if use_windows == true
           ϕ_s2 = ϕ(s2_value, cosmo.s_min, cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
-          #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
+          #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
           int = integrand(s1, s2_value, y_value, cosmo; kwargs...)
           #println("int = $int")
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
-          #println("s1 = $s1 \t s2 = $(s2(s1, s, μ)) \t  y=$(y(s1, s, μ))")
+          #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
           int = integrand(s1, s2_value, y_value, cosmo; kwargs...)
           #println("int = $int")
           #println( "Pl(μ, L) = $(Pl(μ, L))")
@@ -120,7 +54,105 @@ end
 
 
 
+
+
+
+"""
+     integrand_on_mu(s1, s, μ, integrand::Function, cosmo::Cosmology;
+          L::Integer = 0, 
+          use_windows::Bool = true, 
+          kwargs...) ::Float64
+
+     integrand_on_mu(s1, s, μ, effect::String, cosmo::Cosmology; 
+          L::Integer = 0, 
+          use_windows::Bool = true, 
+          kwargs...) ::Float64
+
+Return the integrand on ``\\mu = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}`` 
+of the of the chosen correlation function term, i.e.
+the following function ``f(s_1, s, \\mu)``:
+
+```math
+     f(s_1, s, \\mu) = \\xi (s_1, s_2, \\cos{\\theta}) 
+          \\, \\mathcal{L}_L(\\mu) \\,  \\phi(s_2) \\, F\\left(\\frac{s}{s_1}, \\mu \\right)
+```
+where ``y =  \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``,
+``s = \\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}`` and ``\\xi`` is the corresponding
+CF effect.
+
+In the former method you have to pass as an input the `integrand` function you want 
+to integrate, while in the (recommended) latter one it's necessary to specify the
+name of the CF term among the following: 
+
+`$(string(IMPLEMENTED_GR_EFFECTS .* " , "...))`
+
+to which correspond the following functions:
+
+`$(string(string.(IMPLEMENTED_INTEGRANDS) .* " , "...))`
+
+In case `use_windows` is set to `false`, the window functions ``\\phi`` and ``F``
+are removed, i.e is returned the following function ``f^{'}(s_1, s, \\mu)``:
+
+```math
+     f^{'}(s_1, s, \\mu) = \\xi (s_1, s_2, \\cos{\\theta}) 
+          \\, \\mathcal{L}_L(\\mu) 
+```
+
+The function ``\\xi(s_1, s_2, \\cos{\\theta})`` is calculated
+from, depending on the value of `effect`:
+- `effect == auto_doppler` => [`ξ_Doppler`](@ref)
+- `effect == auto_lensing` => [`ξ_Lensing`](@ref)
+- `effect == auto_localgp` => [`ξ_LocalGP`](@ref)
+- `effect == auto_integratedgp` => [`ξ_IntegratedGP`](@ref)
+- `effect == doppler_lensing` => [`ξ_Doppler_lensing`](@ref)
+- `effect == lensing_doppler` => [`ξ_Lensing_Doppler`](@ref)
+- `effect == doppler_localgp` => [`ξ_Doppler_LocalGP`](@ref)
+- `effect == localgp_doppler` => [`ξ_LocalGP_Doppler`](@ref)
+- `effect == doppler_integratedgp` => [`ξ_Doppler_IntegratedGP`](@ref)
+- `effect == integratedgp_doppler` => [`ξ_IntegratedGP_Doppler`](@ref)
+- `effect == lensing_localgp` => [`ξ_Lensing_LocalGP`](@ref)
+- `effect == localgp_lensing` => [`ξ_LocalGP_Lensing`](@ref)
+- `effect == lensing_integratedgp` => [`ξ_Lensing_IntegratedGP`](@ref)
+- `effect == integratedgp_lensing` => [`ξ_IntegratedGP_Lensing`](@ref)
+- `effect == localgp_integratedgp` => [`ξ_LocalGP_IntegratedGP`](@ref)
+- `effect == integratedgp_localgp` => [`ξ_IntegratedGP_LocalGP`](@ref)
+
+Note that these is an internal conversion of coordiate sistems
+from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
+
+## Inputs
+
+- `s1`: the comoving distance where must be evaluated the integral
+
+- `s`: the comoving distance from `s1` where must be evaluated the integral
+
+- `μ`: the cosine between `s1` and `s` where must be evaluated the integral
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
+
+
+## Optional arguments 
+
+- `L::Integer = 0`: order of the Legendre polynomial to be used
+
+- `use_windows::Bool = false`: tells if the integrand must consider the two
+   window function ``\\phi`` and ``F``
+
+- `kwargs...` : other keyword arguments that will be passed to the selected 
+  GR TPCF effect (`ξ_Doppler`, `ξ_Lensing`, ...)
+
+
+See also: [`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
+[`ξ_multipole`](@ref), [`map_ξ_multipole`](@ref),
+[`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
+[`y`](@ref), [`s2`](@ref)
+"""
+integrand_on_mu
+
+
+
 ##########################################################################################92
+
 
 
 function integral_on_mu(
@@ -175,44 +207,52 @@ end
 
 
 
-@doc raw"""
+"""
      integral_on_mu(s1, s, integrand::Function, cosmo::Cosmology;
           L::Integer = 0,
           enhancer::Float64 = 1e6,
           use_windows::Bool = true,
           μ_atol::Float64 = 1e-4,
           μ_rtol::Float64 = 1e-1,
-          kwargs...
-          )
+          kwargs...) ::Float64
 
-     integral_on_mu(s1, s, effect::String, cosmo::Cosmology; kwargs...)
+     integral_on_mu(s1, s, effect::String, cosmo::Cosmology; 
+          L::Integer = 0, 
+          enhancer::Float64 = 1e6,
+          use_windows::Bool = true,
+          μ_atol::Float64 = 1e-4,
+          μ_rtol::Float64 = 1e-1, 
+          kwargs...) ::Float64
 
-Evaluate the integral on ``\mu`` of the chosen correlation function term, 
+Evaluate the integral on ``\\mu`` of the chosen correlation function term, 
 through the `quadgk` function (see the [QuadGK](https://github.com/JuliaMath/QuadGK.jl) 
 Julia package).
 
 In the former method you have to pass as an input the `integrand` function you want 
 to integrate, while in the (recommended) latter one it's necessary to specify the
-name of the CF term among the following 
+name of the CF term among the following: 
+
 `$(string(IMPLEMENTED_GR_EFFECTS .* " , "...))`
+
 to which correspond the following functions:
+
 `$(string(string.(IMPLEMENTED_INTEGRANDS) .* " , "...))`
 
 The integral evaluated is then the following:
 
 ```math
-     f(s_1, s, \mu) = \int_{-1}^{+1} \mathrm{d}\mu \; \xi (s_1, s_2, \cos{\theta}) 
-          \, \mathcal{L}_L(\mu) \,  \phi(s_2) \, F\left(\frac{s}{s_1}, \mu \right)
+     f(s_1, s, \\mu) = \\int_{-1}^{+1} \\mathrm{d}\\mu \\; \\xi (s_1, s_2, \\cos{\\theta}) 
+          \\, \\mathcal{L}_L(\\mu) \\,  \\phi(s_2) \\, F\\left(\\frac{s}{s_1}, \\mu \\right)
 ```
 for `use_windows==true` and 
 
 ```math
-     f^{'}(s_1, s, \mu) = \int_{-1}^{+1} \mathrm{d}\mu \;  
-          \xi^{v_{\parallel}v_{\parallel}} (s_1, s_2, \cos{\theta}) 
-          \, \mathcal{L}_L(\mu) 
+     f^{'}(s_1, s, \\mu) = \\int_{-1}^{+1} \\mathrm{d}\\mu \\;  
+          \\xi  (s_1, s_2, \\cos{\\theta}) 
+          \\, \\mathcal{L}_L(\\mu) 
 ```
-for `use_windows==false`, where ``y =  \cos{\theta} = \hat{\mathbf{s}}_1 \dot \hat{\mathbf{s}}_2``
-and ``\xi`` is the chosen CF effect. 
+for `use_windows==false`, where ``y =  \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``
+and ``\\xi`` is the chosen CF effect. 
 
 ## Inputs
 
@@ -232,12 +272,17 @@ and ``\xi`` is the chosen CF effect.
   the internal result is divided by `enhancer`.
 
 - `use_windows::Bool = false`: tells if the integrand must consider the two
-   window function ``\phi`` and ``F``
+   window function ``\\phi`` and ``F``
 
 - `μ_atol::Float64 = 1e-3` and `μ_rtol::Float64 = 1e-3`: absolute and relative tolerance
   to be passed to `quadgk`; it's recommended not to set `μ_rtol < 1e-2` because
   of long time for evaluations
 
+- `kwargs...` : other keyword arguments that will be passed to the selected 
+  GR TPCF effect (`ξ_Doppler`, `ξ_Lensing`, ...)
+
+See also: [`integrand_on_mu`](@ref),  [`map_integral_on_mu`](@ref),
+[`print_map_integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
 integral_on_mu
 
@@ -267,15 +312,107 @@ function ξ_multipole(s1, s, effect::String, cosmo::Cosmology; L::Integer = 0, k
 end
 
 
+
+"""
+     ξ_multipole(s1, s, effect::Function, cosmo::Cosmology; 
+          L::Integer = 0, 
+          enhancer::Float64 = 1e6,
+          use_windows::Bool = true,
+          μ_atol::Float64 = 1e-4,
+          μ_rtol::Float64 = 1e-1, 
+          kwargs...) ::Float64
+
+     ξ_multipole(s1, s, effect::String, cosmo::Cosmology; 
+          L::Integer = 0, 
+          enhancer::Float64 = 1e6,
+          use_windows::Bool = true,
+          μ_atol::Float64 = 1e-4,
+          μ_rtol::Float64 = 1e-1, 
+          kwargs...) ::Float64
+
+Evaluate the multipole of order `L` of the chosen correlation function term, 
+through the `integral_on_mu` function.
+
+In the former method you have to pass as an input the `integrand` function you want 
+to integrate, while in the (recommended) latter one it's necessary to specify the
+name of the CF term among the following:
+
+`$(string(IMPLEMENTED_GR_EFFECTS .* " , "...))`
+
+to which correspond the following functions:
+
+`$(string(string.(IMPLEMENTED_INTEGRANDS) .* " , "...))`
+
+The function evaluated is then the following:
+
+```math
+\\xi_L(s_1, s, \\mu) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
+    \\xi (s_1, s_2, \\cos{\\theta}) \\, \\mathcal{L}_L(\\mu) \\,  \\times
+\\begin{cases}  
+    \\phi(s_2) \\, F\\left(\\frac{s}{s_1}, \\mu \\right) \\;,
+        \\quad \\mathrm{use_windows == true}\\\\
+    1\\;, \\quad \\mathrm{use_windows == false}
+\\end{cases}
+```
+where ``y =  \\cos{\\theta} = \\hat{\\mathbf{s}}_1 
+\\cdot \\hat{\\mathbf{s}}_2`` and ``\\xi`` is the chosen CF effect. 
+
+## Inputs
+
+- `s1`: the comoving distance where must be evaluated the integral
+
+- `s`: the comoving distance from `s1` where must be evaluated the integral
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
+
+
+## Optional arguments
+
+- `L::Integer = 0`: order of the Legendre polynomial to be used
+
+- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+  the returned value is NOT modified by this value, because after a multiplication
+  the internal result is divided by `enhancer`.
+
+- `use_windows::Bool = false`: tells if the integrand must consider the two
+   window function ``\\phi`` and ``F``
+
+- `μ_atol::Float64 = 1e-3` and `μ_rtol::Float64 = 1e-3`: absolute and relative tolerance
+  to be passed to `quadgk`; it's recommended not to set `μ_rtol < 1e-2` because
+  of long time for evaluations
+
+- `kwargs...` : other keyword arguments that will be passed to the selected 
+  GR TPCF effect (`ξ_Doppler`, `ξ_Lensing`, ...)
+
+See also: [`integrand_on_mu`](@ref),  [`integral_on_mu`](@ref),
+[`map_ξ_multipole`](@ref), [`print_map_ξ_multipole`](@ref)
+"""
+ξ_multipole
+
+
 ##########################################################################################92
 
 
+
+"""
+     map_integral_on_mu(cosmo::Cosmology, 
+          effect::Union{String,Function},
+          v_ss = nothing;
+          s_1 = nothing,
+          pr::Bool = true,
+          N_log::Integer = 1000,
+          L::Integer = 0,
+          kwargs...
+          ) :: Tuple{Vector{Float64}, Vector{Float64}}
+
+Return
+"""
 function map_integral_on_mu(
      cosmo::Cosmology,
      effect::Union{String,Function},
      v_ss = nothing;
      s_1 = nothing,
-     pr::Bool = true, 
+     pr::Bool = true,
      N_log::Integer = 1000,
      L::Integer = 0,
      kwargs...)
@@ -283,13 +420,14 @@ function map_integral_on_mu(
      s1 = isnothing(s_1) ? cosmo.s_eff : s_1
 
      t1 = time()
-     ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length =  N_log) : v_ss
+     ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length = N_log) : v_ss
      xis = pr ? begin
           @showprogress "$effect, L=$L: " [
-          integral_on_mu(s1, s, effect, cosmo; L = L, kwargs...) for s in ss
-          ] end : [
-          integral_on_mu(s1, s, effect, cosmo; L = L, kwargs...) for s in ss
+               integral_on_mu(s1, s, effect, cosmo; L = L, kwargs...) for s in ss
           ]
+     end : [
+          integral_on_mu(s1, s, effect, cosmo; L = L, kwargs...) for s in ss
+     ]
 
      t2 = time()
      pr && println("\ntime needed for map_integral_on_mu for $effect " *

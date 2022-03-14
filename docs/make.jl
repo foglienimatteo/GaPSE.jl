@@ -9,14 +9,27 @@ Documenter.makedocs(
      sitename = "GaPSE.jl",
      pages = [
           "Introduction" => "index.md",
+          "The basic structure" => [
+               "Background Data" => "BackgroundData.md",
+               "Cosmology Parameters" => "CosmoParams.md",
+               "Cosmology Struct" => "Cosmology.md",
+          ],
           "The F window function" => "F_evaluation.md",
-          "Background Data" => "BackgroundData.md",
-          "Input Power Spectrum Tools" => "IPSTools.md",
-          "Cosmology Struct" => "Cosmology.md",
-          "Power Spectrum Multipoles" => "PowerSpectrum.md",
-          "Auto Correlations" => "AutoCorrelations.md",
-          "CrossCorrelations" => "CrossCorrelations.md",
-          "Mathematical Utilities" => "MathUtils.md",
+          "GR effect TPCFs" => [
+               "Auto Correlations" => "AutoCorrelations.md",
+               "CrossCorrelations" => "CrossCorrelations.md",
+          ],
+          "Calculating TPCFs and PSs" =>
+               [
+                    "Xi Multipoles" => "XiMultipoles.md",
+                    "Sum Xi Multipoles" => "SumXiMultipoles.md",
+                    "Power Spectrum Multipoles" => "PowerSpectrum.md",
+               ],
+          "Utilities" => [
+               "Mathematical Utilities" => "MathUtils.md",
+               "Cosmology Utilities" => "CosmoUtils.md",
+               "Input Power Spectrum Tools" => "IPSTools.md",
+          ],
      ],
 )
 
