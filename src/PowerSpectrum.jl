@@ -61,8 +61,8 @@ function PS_multipole(effect::String, cosmo::Cosmology;
 
      error = "$effect is not a valid GR effect name.\n" *
              "Valid GR effect names are the following:\n" *
-             string(IMPLEMENTED_GR_EFFECTS .* " , "...)
-     @assert (effect ∈ IMPLEMENTED_GR_EFFECTS) error
+             string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...)
+     @assert (effect ∈ GaPSE.IMPLEMENTED_GR_EFFECTS) error
 
      xs, ys = map_ξ_multipole(cosmo, effect, ss; L = L, pr = pr, kwargs...)
      f_in = Spline1D(xs, ys; bc = "error")
@@ -183,8 +183,8 @@ function print_PS_multipole(
 
      error = "$effect is not a valid GR effect name.\n" *
              "Valid GR effect names are the following:\n" *
-             string(IMPLEMENTED_GR_EFFECTS .* " , "...)
-     @assert (effect ∈ IMPLEMENTED_GR_EFFECTS) error
+             string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...)
+     @assert (effect ∈ GaPSE.IMPLEMENTED_GR_EFFECTS) error
 
      pr && println("\nI'm computiong the PS_multipole for the $effect GR effect.")
 

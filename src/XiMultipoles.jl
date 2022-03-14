@@ -46,8 +46,8 @@ end
 function integrand_on_mu(s1, s, μ, effect::String, cosmo::Cosmology; kwargs...)
      error = "$effect is not a valid GR effect name.\n" *
              "Valid GR effect names are the following:\n" *
-             string(IMPLEMENTED_GR_EFFECTS .* " , "...)
-     @assert (effect ∈ IMPLEMENTED_GR_EFFECTS) error
+             string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...)
+     @assert (effect ∈ GaPSE.IMPLEMENTED_GR_EFFECTS) error
 
      return integrand_on_mu(s1, s, μ, DICT_GR_ξs[effect], cosmo; kwargs...)
 end
@@ -84,11 +84,11 @@ In the former method you have to pass as an input the `integrand` function you w
 to integrate, while in the (recommended) latter one it's necessary to specify the
 name of the CF term among the following: 
 
-`$(string(IMPLEMENTED_GR_EFFECTS .* " , "...))`
+`$(string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...))`
 
 to which correspond the following functions:
 
-`$(string(string.(IMPLEMENTED_INTEGRANDS) .* " , "...))`
+`$(string(string.(GaPSE.IMPLEMENTED_INTEGRANDS) .* " , "...))`
 
 In case `use_windows` is set to `false`, the window functions ``\\phi`` and ``F``
 are removed, i.e is returned the following function ``f^{'}(s_1, s, \\mu)``:
@@ -199,9 +199,9 @@ end
 function integral_on_mu(s1, s, effect::String, cosmo::Cosmology; kwargs...)
      error = "$effect is not a valid GR effect name.\n" *
              "Valid GR effect names are the following:\n" *
-             string(IMPLEMENTED_GR_EFFECTS .* " , "...)
+             string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...)
 
-     @assert (effect ∈ IMPLEMENTED_GR_EFFECTS) error
+     @assert (effect ∈ GaPSE.IMPLEMENTED_GR_EFFECTS) error
      integral_on_mu(s1, s, DICT_GR_ξs[effect], cosmo; kwargs...)
 end
 
@@ -232,11 +232,11 @@ In the former method you have to pass as an input the `integrand` function you w
 to integrate, while in the (recommended) latter one it's necessary to specify the
 name of the CF term among the following: 
 
-`$(string(IMPLEMENTED_GR_EFFECTS .* " , "...))`
+`$(string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...))`
 
 to which correspond the following functions:
 
-`$(string(string.(IMPLEMENTED_INTEGRANDS) .* " , "...))`
+`$(string(string.(GaPSE.IMPLEMENTED_INTEGRANDS) .* " , "...))`
 
 The integral evaluated is then the following:
 
@@ -305,8 +305,8 @@ end
 function ξ_multipole(s1, s, effect::String, cosmo::Cosmology; L::Integer = 0, kwargs...)
      error = "$effect is not a valid GR effect name.\n" *
              "Valid GR effect names are the following:\n" *
-             string(IMPLEMENTED_GR_EFFECTS .* " , "...)
-     @assert (effect ∈ IMPLEMENTED_GR_EFFECTS) error
+             string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...)
+     @assert (effect ∈ GaPSE.IMPLEMENTED_GR_EFFECTS) error
 
      return (2L + 1) / 2 * integral_on_mu(s1, s, DICT_GR_ξs[effect], cosmo; L = L, kwargs...)
 end
@@ -337,11 +337,11 @@ In the former method you have to pass as an input the `integrand` function you w
 to integrate, while in the (recommended) latter one it's necessary to specify the
 name of the CF term among the following:
 
-`$(string(IMPLEMENTED_GR_EFFECTS .* " , "...))`
+`$(string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...))`
 
 to which correspond the following functions:
 
-`$(string(string.(IMPLEMENTED_INTEGRANDS) .* " , "...))`
+`$(string(string.(GaPSE.IMPLEMENTED_INTEGRANDS) .* " , "...))`
 
 The function evaluated is then the following:
 

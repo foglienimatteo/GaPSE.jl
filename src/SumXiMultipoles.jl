@@ -21,7 +21,7 @@
 
 function sum_ξ_multipole(s1, s, cosmo::Cosmology; kwargs...)
      ALL = [ξ_multipole(s1, s, effect, cosmo; kwargs...)
-            for effect in IMPLEMENTED_GR_EFFECTS]
+            for effect in GaPSE.IMPLEMENTED_GR_EFFECTS]
 
      return sum(ALL), ALL
 end
@@ -40,7 +40,7 @@ function map_sum_ξ_multipole(
           begin
                _, xis = map_ξ_multipole(cosmo, effect, ss; kwargs...)
                xis
-          end for effect in IMPLEMENTED_GR_EFFECTS
+          end for effect in GaPSE.IMPLEMENTED_GR_EFFECTS
      ]
 
      return ss, sum(ALL), ALL
@@ -117,7 +117,7 @@ function print_map_sum_ξ_multipole(
      end
 
      if single == false
-          for (effect, vec) in zip(IMPLEMENTED_GR_EFFECTS, ALL)
+          for (effect, vec) in zip(GaPSE.IMPLEMENTED_GR_EFFECTS, ALL)
                open(dir * "xi_" * effect * "_L$L" * ".txt", "w") do io
                     println(io, "# This is an integration map on mu of the ξ multipole $effect GR effect.")
                     parameters_used(io, cosmo)
