@@ -51,7 +51,7 @@ function print_map_sum_ξ_multipole(
      cosmo::Cosmology,
      out::String,
      v_ss = nothing;
-     s_1 = nothing,
+     s1 = nothing,
      L::Integer = 0,
      single::Bool = true,
      kwargs...)
@@ -63,10 +63,10 @@ function print_map_sum_ξ_multipole(
           isdir(dir) || mkdir(dir)
      end
 
-     s1 = isnothing(s_1) ? cosmo.s_eff : s_1
+     s_1 = isnothing(s1) ? cosmo.s_eff : s1
      t1 = time()
      ss, xis, ALL = map_sum_ξ_multipole(cosmo, v_ss;
-          L = L, s_1 = s1, kwargs...)
+          L = L, s1 = s_1, kwargs...)
      t2 = time()
 
      isfile(out) && run(`rm $out`)
@@ -93,9 +93,9 @@ function print_map_sum_ξ_multipole(
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
           end
-          isnothing(s_1) ||
+          isnothing(s1) ||
                println(io, "#\n# NOTE: the computation is done not in s1 = s_eff, \n" *
-                           "#\t because you specified in input s1 = $s_1 Mpc/h_0!")
+                           "#\t because you specified in input s1 = $s1 Mpc/h_0!")
           println(io, "# ")
 
           if (single == false)
@@ -132,8 +132,8 @@ function print_map_sum_ξ_multipole(
                               println(io, "# \t\t$(key) = $(kwargs[key])")
                          end
                     end
-                    isnothing(s_1) || println(io, "#\n# NOTE: the computation is done not in " *
-                                                  "s1 = s_eff, because you specified in input s1 = $s_1 !")
+                    isnothing(s1) || println(io, "#\n# NOTE: the computation is done not in " *
+                                                  "s1 = s_eff, because you specified in input s1 = $s1 !")
                     println(io, "# ")
                     println(io, "# s [Mpc/h_0] \t \t xi")
                     for (s, xi) in zip(ss, vec)

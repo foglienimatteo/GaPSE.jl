@@ -55,7 +55,7 @@ end
 
 
 """
-     integrand_ξ_multipole(s1, s, μ, integrand::Function, cosmo::Cosmology;
+     integrand_ξ_multipole(s1, s, μ, effect::Function, cosmo::Cosmology;
           L::Integer = 0, 
           use_windows::Bool = true, 
           kwargs...) ::Float64
@@ -77,7 +77,7 @@ where ``y =  \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``
 ``s = \\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}`` and ``\\xi`` is the corresponding
 CF effect.
 
-In the former method you have to pass as an input the `integrand` function you want 
+In the former method you have to pass as an input the `effect` function you want 
 to integrate, while in the (recommended) latter one it's necessary to specify the
 name of the CF term among the following: 
 
@@ -139,7 +139,7 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
   GR TPCF effect (`ξ_Doppler`, `ξ_Lensing`, ...)
 
 
-See also: [`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
+See also: [`ξ_multipole`](@ref), [`map_ξ_multipole`](@ref),
 [`ξ_multipole`](@ref), [`map_ξ_multipole`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
 [`y`](@ref), [`s2`](@ref)
@@ -222,9 +222,9 @@ end
           kwargs...) ::Float64
 
 Evaluate the multipole of order `L` of the chosen correlation function term, 
-through the `integral_on_mu` function.
+through the `integrand_ξ_multipole` function.
 
-In the former method you have to pass as an input the `integrand` function you want 
+In the former method you have to pass as an input the `effect` function you want 
 to integrate, while in the (recommended) latter one it's necessary to specify the
 name of the CF term among the following:
 
@@ -275,7 +275,7 @@ where ``y =  \\cos{\\theta} = \\hat{\\mathbf{s}}_1
 - `kwargs...` : other keyword arguments that will be passed to the selected 
   GR TPCF effect (`ξ_Doppler`, `ξ_Lensing`, ...)
 
-See also: [`integrand_on_mu`](@ref),  [`integral_on_mu`](@ref),
+See also: [`integrand_ξ_multipole`](@ref), 
 [`map_ξ_multipole`](@ref), [`print_map_ξ_multipole`](@ref)
 """
 ξ_multipole
@@ -284,25 +284,95 @@ See also: [`integrand_on_mu`](@ref),  [`integral_on_mu`](@ref),
 ##########################################################################################92
 
 
+"""
+     map_ξ_multipole(cosmo::Cosmology,
+          effect::Union{String,Function},
+          v_ss = nothing;
+          s1 = nothing,
+          pr::Bool = true,
+          N_log::Integer = 1000,
+          L::Integer = 0,
+          kwargs... ) ::Tuple{Vector{Float64}, Vector{Float64}}
+
+Evaluate the multipole of order `L` of the chosen correlation function term, 
+through the `ξ_multipole` function, for all the `s` values stored inside `v_ss`.
+If `v_ss = nothing`, it is set `v_ss = 10 .^ range(-1, 3, length = N_log)`.
+
+The function evaluated is then the following:
+
+```math
+\\xi_L(s_1, s, \\mu) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
+    \\xi (s_1, s_2, \\cos{\\theta}) \\, \\mathcal{L}_L(\\mu) \\,  \\times
+\\begin{cases}  
+    \\phi(s_2) \\, F\\left(\\frac{s}{s_1}, \\mu \\right) \\;,
+        \\quad \\mathrm{use_windows == true}\\\\
+    1\\;, \\quad \\mathrm{use_windows == false}
+\\end{cases}
+```
+where ``y =  \\cos{\\theta} = \\hat{\\mathbf{s}}_1 
+\\cdot \\hat{\\mathbf{s}}_2`` and ``\\xi`` is the chosen CF effect, for all the 
+comoving distances `s` inside `v_ss`. 
+
+## Inputs
+
+- `cosmo::Cosmology` : cosmology to be used in this computation
+
+- `effect::Union{String,Function}` : the GR effect TPCF you want to consider; you may
+  specify the name of the effect as one of the following strings (recommended):
+
+  `$(string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...))`
+  
+  or directly the name of the function among the following: 
+  
+  `$(string(string.(GaPSE.IMPLEMENTED_ξs) .* " , "...))`
+
+- ``v_ss` : vector/range of `s` values where the function must be evaluated; if `v_ss = nothing`, 
+  it is set `v_ss = 10 .^ range(-1, 3, length = N_log)`. This is why it is returned 
+  also the vector of the "input" values.
+
+
+## Optional arguments
+
+- `s1 = nothing` : comoving distance from the observer where the TPCF should be evaluated;
+  if `s1 = nothing`, it is automatically set `s1 = cosmo.s_eff` from the given input `Cosmology`.
+
+- `L::Integer = 0`: order of the Legendre polynomial to be used
+
+- `pr::Bool = true` : do you want the progress bar showed on screen, in order to 
+  check the time needed for the computation? (`true` recommended)
+
+- `N_log::Integer = 1000` : number of points to be used in the default logaritmically-spaced 
+  range for `v_ss`, i.e. `range(-1, 3, N_log)`; it is ignored if `v_ss ≠ nothing` 
+
+- `kwargs...` : other keyword arguments that will be passed to `ξ_multipole`
+
+# Returns
+
+A `Tuple{Vector{Float64}, Vector{Flaot64}}`, which has as first element the `v_ss` vector
+and as second one the corresponding ξ value evaluated.
+
+See also: [`integrand_ξ_multipole`](@ref), [`ξ_multipole`](@ref),
+[`print_map_ξ_multipole`](@ref)
+"""
 function map_ξ_multipole(cosmo::Cosmology,
      effect::Union{String,Function},
      v_ss = nothing;
-     s_1 = nothing,
+     s1 = nothing,
      pr::Bool = true,
      N_log::Integer = 1000,
      L::Integer = 0,
      kwargs...)
 
-     s1 = isnothing(s_1) ? cosmo.s_eff : s_1
+     s_1 = isnothing(s1) ? cosmo.s_eff : s1
 
      t1 = time()
      ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length = N_log) : v_ss
      xis = pr ? begin
           @showprogress "$effect, L=$L: " [
-               ξ_multipole(s1, s, effect, cosmo; L = L, kwargs...) for s in ss
+               ξ_multipole(s_1, s, effect, cosmo; L = L, kwargs...) for s in ss
           ]
      end : [
-          ξ_multipole(s1, s, effect, cosmo; L = L, kwargs...) for s in ss
+          ξ_multipole(s_1, s, effect, cosmo; L = L, kwargs...) for s in ss
      ]
 
      t2 = time()
@@ -315,18 +385,75 @@ end
 ##########################################################################################92
 
 
+"""
+     print_map_ξ_multipole(
+          cosmo::Cosmology,
+          out::String,
+          effect::Union{String,Function},
+          v_ss = nothing;
+          s1 = nothing,
+          kwargs...)
 
+Evaluate the multipole of order `L` of the chosen correlation function term, 
+through the `ξ_multipole` function, for all the `s` values stored inside `v_ss`, and
+print the results (with all the options used) in a file named `out`.
+If `v_ss = nothing`, it is set `v_ss = 10 .^ range(-1, 3, length = N_log)`.
+
+The function evaluated is then the following:
+
+```math
+\\xi_L(s_1, s, \\mu) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
+    \\xi (s_1, s_2, \\cos{\\theta}) \\, \\mathcal{L}_L(\\mu) \\,  \\times
+\\begin{cases}  
+    \\phi(s_2) \\, F\\left(\\frac{s}{s_1}, \\mu \\right) \\;,
+        \\quad \\mathrm{use_windows == true}\\\\
+    1\\;, \\quad \\mathrm{use_windows == false}
+\\end{cases}
+```
+where ``y =  \\cos{\\theta} = \\hat{\\mathbf{s}}_1 
+\\cdot \\hat{\\mathbf{s}}_2`` and ``\\xi`` is the chosen CF effect, for all the 
+comoving distances `s` inside `v_ss`. 
+
+## Inputs
+
+- `cosmo::Cosmology` : cosmology to be used in this computation
+
+- `effect::Union{String,Function}` : the GR effect TPCF you want to consider; you may
+  specify the name of the effect as one of the following strings (recommended):
+
+  `$(string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...))`
+  
+  or directly the name of the function among the following: 
+  
+  `$(string(string.(GaPSE.IMPLEMENTED_ξs) .* " , "...))`
+
+- `out::String` : name of the file where the results must be stored.
+
+- ``v_ss` : vector/range of `s` values where the function must be evaluated; if `v_ss = nothing`, 
+  it is set `v_ss = 10 .^ range(-1, 3, length = N_log)`.
+
+
+## Optional arguments
+
+- `s1 = nothing` : comoving distance from the observer where the TPCF should be evaluated;
+  if `s1 = nothing`, it is automatically set `s1 = cosmo.s_eff` from the given input `Cosmology`.
+
+- `kwargs...` : other keyword arguments that will be passed to `map_ξ_multipole`
+
+See also: [`integrand_ξ_multipole`](@ref), [`ξ_multipole`](@ref),
+[`map_ξ_multipole`](@ref)
+"""
 function print_map_ξ_multipole(
      cosmo::Cosmology,
      out::String,
      effect::Union{String,Function},
      v_ss = nothing;
-     s_1 = nothing,
+     s1 = nothing,
      kwargs...)
 
-     s1 = isnothing(s_1) ? cosmo.s_eff : s_1
+     s_1 = isnothing(s1) ? cosmo.s_eff : s1
      t1 = time()
-     vec = map_ξ_multipole(cosmo, effect, v_ss; s_1 = s1, kwargs...)
+     vec = map_ξ_multipole(cosmo, effect, v_ss; s1 = s_1, kwargs...)
      t2 = time()
 
      isfile(out) && run(`rm $out`)
@@ -344,8 +471,8 @@ function print_map_ξ_multipole(
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
           end
-          isnothing(s_1) || println(io, "#\n# NOTE: the computation is done not in " *
-                                        "s1 = s_eff, because you specified in input s1 = $s_1 !")
+          isnothing(s1) || println(io, "#\n# NOTE: the computation is done not in " *
+                                        "s1 = s_eff, because you specified in input s1 = $s1 !")
           println(io, "# ")
           println(io, "# s [Mpc/h_0] \t \t xi")
           for (s, xi) in zip(vec[1], vec[2])

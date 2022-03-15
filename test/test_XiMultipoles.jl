@@ -137,7 +137,7 @@ end
           name = "calc_xi_auto_doppler_L0_first.txt"
           isfile(name) && rm(name)
           GaPSE.print_map_ξ_multipole(COSMO, name, effect, nothing;
-               s_1 = nothing, L = 0, kwargs...)
+               s1 = nothing, L = 0, kwargs...)
 
           calc_table = readdlm(name; comments = true)
           calc_ss = convert(Vector{Float64}, calc_table[:, 1])
@@ -157,7 +157,7 @@ end
           name = "calc_xi_auto_doppler_L0_second.txt"
           isfile(name) && rm(name)
           GaPSE.print_map_ξ_multipole(COSMO, name, effect, 10 .^ range(0, 3, length = 344);
-               s_1 = nothing, L = 0, kwargs...)
+               s1 = nothing, L = 0, kwargs...)
 
           calc_table = readdlm(name; comments = true)
           calc_ss = convert(Vector{Float64}, calc_table[:, 1])
@@ -177,7 +177,7 @@ end
           name = "calc_xi_auto_doppler_L0_third.txt"
           isfile(name) && rm(name)
           GaPSE.print_map_ξ_multipole(COSMO, name, effect, 10 .^ range(0, 3, length = 344);
-               s_1 = COSMO.s_eff - 65.0, L = 0, kwargs...)
+               s1 = COSMO.s_eff - 65.0, L = 0, kwargs...)
 
           calc_table = readdlm(name; comments = true)
           calc_ss = convert(Vector{Float64}, calc_table[:, 1])
