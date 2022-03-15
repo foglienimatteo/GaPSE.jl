@@ -60,8 +60,6 @@ include("AutoCorrelations/AutoLensing.jl")
 include("AutoCorrelations/AutoLocalGP.jl")
 include("AutoCorrelations/AutoIntegratedGP.jl")
 
-include("Dicts.jl")
-
 include("CrossCorrelations/LensingDoppler.jl")
 include("CrossCorrelations/DopplerLocalGP.jl")
 include("CrossCorrelations/DopplerIntegratedGP.jl")
@@ -69,6 +67,7 @@ include("CrossCorrelations/LensingLocalGP.jl")
 include("CrossCorrelations/LensingIntegratedGP.jl")
 include("CrossCorrelations/LocalGPIntegratedGP.jl")
 
+include("Dicts.jl")
 
 include("PowerSpectrum.jl")
 include("XiMultipoles.jl")

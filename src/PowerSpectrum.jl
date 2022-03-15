@@ -53,16 +53,16 @@ end
 
 
 """
+     PS_multipole(input::String; N_left::Integer = 12, 
+          N_right::Integer = 12, kwargs...
+          ) ::Tuple{Vector{Float64}, Vector{Float64}}
+
      PS_multipole(f_in; int_s_min::Float64 = 1e-1, 
           int_s_max::Float64 = 1e3, L::Integer = 0, 
           N::Integer = 1024, pr::Bool = true
           ) ::Tuple{Vector{Float64}, Vector{Float64}}
 
-     PS_multipole(input::String; N_left::Integer = 12, 
-          N_right::Integer = 12, kwargs...
-          ) ::Tuple{Vector{Float64}, Vector{Float64}}
-
-Return the `L`-order PS multipole from the input function `f_in`, through the
+Return the `L`-order PS multipole through the
 following Fast Fourier Transform and the effective redshift approximation:
 
 ```math
@@ -71,7 +71,15 @@ P_L(k) = \\frac{2 L + 1}{A^{'}} (-i)^L \\, \\phi(s_\\mathrm{eff}) \\int_0^\\inft
         \\quad \\; A^{'} = \\frac{1}{4\\,\\pi}
 ```
 
-This expression can be easily obtained from the standard one:
+In the former method (recommended), you should pass the name of the file where the
+TPCF multipole in exam is saved in, while in the latter you have to give its
+function/spline `f_in`.
+Internally, the first method creates a spline of the considered ξ 
+and call the second with that spline as input; the `kwargs...` refers to the latter
+method ones infact.
+
+The analytical expression previously showed can be easily obtained from the 
+standard one:
 ```math
 \\begin{split}
     P_L(k) = &\\frac{2 L + 1}{A} (-i)^L \\, 
@@ -98,8 +106,40 @@ and the application of the effective redshift approximation.
 
 The computation is made through the `xicalc` function of the 
 [TwoFAST](https://github.com/hsgg/TwoFAST.jl) Julia package.
+Note that in the computation the integration range ``0\\leq s \\leq \\infty`` 
+is reduced to `int_s_min ≤ s ≤ int_s_max``
 
-See also: [`V_survey`](@ref), [`A`](@ref), [`A_prime`](@ref)
+## Optional arguments
+
+- `int_s_min::Float64 = 1e-1` and `int_s_max::Float64 = 1e3` : extremes of
+  integration. Do not worry if the input TPCF is not defined in all the 
+  integration range: it will be fitted with two power laws at its extremes, 
+  thanks to the function `EPLs`
+
+- `N_left::Integer = 12` and `N_right::Integer = 12` : number of points from left
+  right edges to be used for the power law fitting in `EPLs`. They matters only
+  if in the given input file ξ is not defined until the extremes of integration
+  `int_s_min` and `int_s_max`
+
+- `L::Integer = 0`: order of the Legendre polynomial to be used; note that 
+  the multipole order `L` must be the same of the input TPCF in exam! 
+  Otherwise, the results would have no sense at all!
+
+- `pr::Bool = true` : do you want the progress bar showed on screen, in order to 
+  check the time needed for the computation? (`true` recommended)
+
+- `N::Integer = 1024` : number of points to be returned by `xicalc`
+
+
+## Returns
+
+A `Tuple{Vector{Float64}, Vector{Float64}}` with:
+- the `k` values vector as first element;
+- the correspoding PS `pk` values vector as second one.
+
+
+See also: [`V_survey`](@ref), [`A`](@ref), [`A_prime`](@ref),
+[`EPLs`](@ref),  [`print_PS_multipole`](@ref)
 """
 PS_multipole
 
@@ -110,27 +150,53 @@ PS_multipole
 
 
 """
-     print_PS_multipole(in::String, out::String;
+     print_PS_multipole(input::String, out::String;
           L::Integer = 0, N::Integer = 1024,
           pr::Bool = true, kwargs...)
 
+Takes in input a filename `input` where is stored a TPCF multipole,
+calculate the `L`-order PS multipole through the
+following Fast Fourier Transform and the effective redshift approximation
 
+```math
+P_L(k) = \\frac{2 L + 1}{A^{'}} (-i)^L \\, \\phi(s_\\mathrm{eff}) \\int_0^\\infty 
+        \\mathrm{d} s \\; s^2 \\, j_L(ks) \\, f_\\mathrm{in}(s) \\; ,
+        \\quad \\; A^{'} = \\frac{1}{4\\,\\pi}
+```
+
+and save it in the file `out`, together with the options used for the computation.
+
+## Optional arguments
+
+- `L::Integer = 0`: order of the Legendre polynomial to be used; note that 
+  the multipole order `L` must be the same of the input TPCF in exam! 
+  Otherwise, the results would have no sense at all!
+
+- `pr::Bool = true` : do you want the progress bar showed on screen, in order to 
+  check the time needed for the computation? (`true` recommended)
+
+- `N::Integer = 1024` : number of points to be returned by `xicalc`
+
+- `kwargs...` : other keyword arguments that will be passed to `PS_multipole`
+
+See also: [`V_survey`](@ref), [`A`](@ref), [`A_prime`](@ref),
+[`EPLs`](@ref), [`PS_multipole`](@ref)
 """
-function print_PS_multipole(in::String, out::String;
+function print_PS_multipole(input::String, out::String;
      L::Integer = 0, N::Integer = 1024,
      pr::Bool = true, kwargs...)
 
-     pr && println("\nI'm computiong the PS_multipole from the file $in")
+     pr && println("\nI'm computiong the PS_multipole from the file $input")
 
      time_1 = time()
-     vec = PS_multipole(in; N = N, L = L, pr = pr, kwargs...)
+     vec = PS_multipole(input; N = N, L = L, pr = pr, kwargs...)
      time_2 = time()
 
      pr && println("\ntime needed for Power Spectrum  computation [in s] = $(time_2-time_1)\n")
 
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
-          println(io, "# Power Spectrum Multipole computation of the file: $in")
+          println(io, "# Power Spectrum Multipole computation of the file: $input")
           println(io, "#\n# For this PS_multipole computation we set: ")
           println(io, "# \t #points used in Fourier transform N = $N")
           println(io, "# \t multipole degree in consideration L = $L")

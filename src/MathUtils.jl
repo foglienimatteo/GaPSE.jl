@@ -580,7 +580,6 @@ julia> ys = [1.34e2 * x ^ 2.43 for x in xs];
 julia> A = EPLs(xs, ys, [1.0, 1.0], [1.0, 1.0]; N_left = 10, N_right = 10)
 ```
 
-
 See also: [`power_law_from_data`](@ref)
 """
 struct EPLs
