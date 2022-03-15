@@ -18,7 +18,7 @@
 #
 
 
-function integrand_on_mu(s1, s, μ, integrand::Function, cosmo::Cosmology;
+function integrand_ξ_multipole(s1, s, μ, effect::Function, cosmo::Cosmology;
      L::Integer = 0, use_windows::Bool = true, kwargs...)
 
      s2_value = s2(s1, s, μ)
@@ -27,43 +27,40 @@ function integrand_on_mu(s1, s, μ, integrand::Function, cosmo::Cosmology;
           ϕ_s2 = ϕ(s2_value, cosmo.s_min, cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
           #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
-          int = integrand(s1, s2_value, y_value, cosmo; kwargs...)
+          int = effect(s1, s2_value, y_value, cosmo; kwargs...)
           #println("int = $int")
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
      else
           #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
-          int = integrand(s1, s2_value, y_value, cosmo; kwargs...)
+          int = effect(s1, s2_value, y_value, cosmo; kwargs...)
           #println("int = $int")
           #println( "Pl(μ, L) = $(Pl(μ, L))")
           int .* Pl(μ, L)
      end
 
      #println("res = $res")
-     return res
+     return (2.0 * L + 1.0) / 2.0 * res
 end
 
 
-function integrand_on_mu(s1, s, μ, effect::String, cosmo::Cosmology; kwargs...)
+function integrand_ξ_multipole(s1, s, μ, effect::String, cosmo::Cosmology; kwargs...)
      error = "$effect is not a valid GR effect name.\n" *
              "Valid GR effect names are the following:\n" *
              string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...)
      @assert (effect ∈ GaPSE.IMPLEMENTED_GR_EFFECTS) error
 
-     return integrand_on_mu(s1, s, μ, DICT_GR_ξs[effect], cosmo; kwargs...)
+     return integrand_ξ_multipole(s1, s, μ, DICT_GR_ξs[effect], cosmo; kwargs...)
 end
 
 
 
-
-
-
 """
-     integrand_on_mu(s1, s, μ, integrand::Function, cosmo::Cosmology;
+     integrand_ξ_multipole(s1, s, μ, integrand::Function, cosmo::Cosmology;
           L::Integer = 0, 
           use_windows::Bool = true, 
           kwargs...) ::Float64
 
-     integrand_on_mu(s1, s, μ, effect::String, cosmo::Cosmology; 
+     integrand_ξ_multipole(s1, s, μ, effect::String, cosmo::Cosmology; 
           L::Integer = 0, 
           use_windows::Bool = true, 
           kwargs...) ::Float64
@@ -147,7 +144,7 @@ See also: [`integral_on_mu`](@ref), [`map_integral_on_mu`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
 [`y`](@ref), [`s2`](@ref)
 """
-integrand_on_mu
+integrand_ξ_multipole
 
 
 
@@ -155,8 +152,8 @@ integrand_on_mu
 
 
 
-function integral_on_mu(
-     s1, s, integrand::Function, cosmo::Cosmology;
+function ξ_multipole(
+     s1, s, effect::Function, cosmo::Cosmology;
      L::Integer = 0,
      use_windows::Bool = true,
      enhancer::Float64 = 1e6,
@@ -166,12 +163,12 @@ function integral_on_mu(
      SPLINE::Bool = false,
      kwargs...)
 
-     error = "$(string(integrand)) is not a valid GR effect function.\n" *
+     error = "$(string(effect)) is not a valid GR effect function.\n" *
              "Valid GR effect functions are the following:\n" *
              string(string.(IMPLEMENTED_ξs) .* " , "...)
-     @assert (integrand ∈ IMPLEMENTED_ξs) error
+     @assert (effect ∈ IMPLEMENTED_ξs) error
 
-     orig_f(μ) = enhancer * integrand_on_mu(s1, s, μ, integrand, cosmo;
+     orig_f(μ) = enhancer * integrand_ξ_multipole(s1, s, μ, effect, cosmo;
           L = L, use_windows = use_windows, kwargs...)
 
      μs = union(range(-1.0, -0.95, length = N_μs),
@@ -196,119 +193,13 @@ end
 
 
 
-function integral_on_mu(s1, s, effect::String, cosmo::Cosmology; kwargs...)
+function ξ_multipole(s1, s, effect::String, cosmo::Cosmology; kwargs...)
      error = "$effect is not a valid GR effect name.\n" *
              "Valid GR effect names are the following:\n" *
              string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...)
 
      @assert (effect ∈ GaPSE.IMPLEMENTED_GR_EFFECTS) error
-     integral_on_mu(s1, s, DICT_GR_ξs[effect], cosmo; kwargs...)
-end
-
-
-
-"""
-     integral_on_mu(s1, s, integrand::Function, cosmo::Cosmology;
-          L::Integer = 0,
-          enhancer::Float64 = 1e6,
-          use_windows::Bool = true,
-          μ_atol::Float64 = 1e-4,
-          μ_rtol::Float64 = 1e-1,
-          kwargs...) ::Float64
-
-     integral_on_mu(s1, s, effect::String, cosmo::Cosmology; 
-          L::Integer = 0, 
-          enhancer::Float64 = 1e6,
-          use_windows::Bool = true,
-          μ_atol::Float64 = 1e-4,
-          μ_rtol::Float64 = 1e-1, 
-          kwargs...) ::Float64
-
-Evaluate the integral on ``\\mu`` of the chosen correlation function term, 
-through the `quadgk` function (see the [QuadGK](https://github.com/JuliaMath/QuadGK.jl) 
-Julia package).
-
-In the former method you have to pass as an input the `integrand` function you want 
-to integrate, while in the (recommended) latter one it's necessary to specify the
-name of the CF term among the following: 
-
-`$(string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...))`
-
-to which correspond the following functions:
-
-`$(string(string.(GaPSE.IMPLEMENTED_ξs) .* " , "...))`
-
-The integral evaluated is then the following:
-
-```math
-     f(s_1, s, \\mu) = \\int_{-1}^{+1} \\mathrm{d}\\mu \\; \\xi (s_1, s_2, \\cos{\\theta}) 
-          \\, \\mathcal{L}_L(\\mu) \\,  \\phi(s_2) \\, F\\left(\\frac{s}{s_1}, \\mu \\right)
-```
-for `use_windows==true` and 
-
-```math
-     f^{'}(s_1, s, \\mu) = \\int_{-1}^{+1} \\mathrm{d}\\mu \\;  
-          \\xi  (s_1, s_2, \\cos{\\theta}) 
-          \\, \\mathcal{L}_L(\\mu) 
-```
-for `use_windows==false`, where ``y =  \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``
-and ``\\xi`` is the chosen CF effect. 
-
-## Inputs
-
-- `s1`: the comoving distance where must be evaluated the integral
-
-- `s`: the comoving distance from `s1` where must be evaluated the integral
-
-- `cosmo::Cosmology`: cosmology to be used in this computation
-
-
-## Optional arguments
-
-- `L::Integer = 0`: order of the Legendre polynomial to be used
-
-- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
-  the returned value is NOT modified by this value, because after a multiplication
-  the internal result is divided by `enhancer`.
-
-- `use_windows::Bool = false`: tells if the integrand must consider the two
-   window function ``\\phi`` and ``F``
-
-- `μ_atol::Float64 = 1e-3` and `μ_rtol::Float64 = 1e-3`: absolute and relative tolerance
-  to be passed to `quadgk`; it's recommended not to set `μ_rtol < 1e-2` because
-  of long time for evaluations
-
-- `kwargs...` : other keyword arguments that will be passed to the selected 
-  GR TPCF effect (`ξ_Doppler`, `ξ_Lensing`, ...)
-
-See also: [`integrand_on_mu`](@ref),  [`map_integral_on_mu`](@ref),
-[`print_map_integral_on_mu`](@ref), [`ξ_multipole`](@ref)
-"""
-integral_on_mu
-
-
-
-##########################################################################################92
-
-
-
-function ξ_multipole(s1, s, effect::Function, cosmo::Cosmology; L::Integer = 0, kwargs...)
-     error = "$(string(effect)) is not a valid GR effect function.\n" *
-             "Valid GR effect functions are the following:\n" *
-             string(string.(IMPLEMENTED_ξs) .* " , "...)
-     @assert (effect ∈ IMPLEMENTED_ξs) error
-
-     return (2.0 * L + 1.0) / 2.0 * integral_on_mu(s1, s, effect, cosmo; L = L, kwargs...)
-end
-
-
-function ξ_multipole(s1, s, effect::String, cosmo::Cosmology; L::Integer = 0, kwargs...)
-     error = "$effect is not a valid GR effect name.\n" *
-             "Valid GR effect names are the following:\n" *
-             string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...)
-     @assert (effect ∈ GaPSE.IMPLEMENTED_GR_EFFECTS) error
-
-     return (2L + 1) / 2 * integral_on_mu(s1, s, DICT_GR_ξs[effect], cosmo; L = L, kwargs...)
+     ξ_multipole(s1, s, DICT_GR_ξs[effect], cosmo; kwargs...)
 end
 
 
@@ -393,22 +284,7 @@ See also: [`integrand_on_mu`](@ref),  [`integral_on_mu`](@ref),
 ##########################################################################################92
 
 
-
-"""
-     map_integral_on_mu(cosmo::Cosmology, 
-          effect::Union{String,Function},
-          v_ss = nothing;
-          s_1 = nothing,
-          pr::Bool = true,
-          N_log::Integer = 1000,
-          L::Integer = 0,
-          kwargs...
-          ) :: Tuple{Vector{Float64}, Vector{Float64}}
-
-Return
-"""
-function map_integral_on_mu(
-     cosmo::Cosmology,
+function map_ξ_multipole(cosmo::Cosmology,
      effect::Union{String,Function},
      v_ss = nothing;
      s_1 = nothing,
@@ -423,71 +299,22 @@ function map_integral_on_mu(
      ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length = N_log) : v_ss
      xis = pr ? begin
           @showprogress "$effect, L=$L: " [
-               integral_on_mu(s1, s, effect, cosmo; L = L, kwargs...) for s in ss
+               ξ_multipole(s1, s, effect, cosmo; L = L, kwargs...) for s in ss
           ]
      end : [
-          integral_on_mu(s1, s, effect, cosmo; L = L, kwargs...) for s in ss
+          ξ_multipole(s1, s, effect, cosmo; L = L, kwargs...) for s in ss
      ]
 
      t2 = time()
-     pr && println("\ntime needed for map_integral_on_mu for $effect " *
+     pr && println("\ntime needed for map_ξ_multipole for $effect " *
                    "[in s] = $(@sprintf("%.5f", t2-t1)) ")
      return (ss, xis)
-end
-
-
-function map_ξ_multipole(
-     cosmo::Cosmology,
-     effect::Union{String,Function},
-     v_ss = nothing;
-     L::Integer = 0, kwargs...)
-
-     ss, xis = map_integral_on_mu(cosmo, effect, v_ss; L = L, kwargs...)
-
-     return (ss, (2.0 * L + 1.0) / 2.0 * xis)
 end
 
 
 ##########################################################################################92
 
 
-function print_map_int_on_mu(
-     cosmo::Cosmology,
-     out::String,
-     effect::Union{String,Function},
-     v_ss = nothing;
-     s_1 = nothing,
-     kwargs...)
-
-     s1 = isnothing(s_1) ? cosmo.s_eff : s_1
-     t1 = time()
-     vec = map_integral_on_mu(cosmo, effect, v_ss; s_1 = s1, kwargs...)
-     t2 = time()
-
-     isfile(out) && run(`rm $out`)
-     open(out, "w") do io
-          println(io, "# This is an integration map on mu of the $effect GR effect.")
-          parameters_used(io, cosmo)
-          println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
-          print(io, "# kwards passed: ")
-
-          if isempty(kwargs)
-               println(io, "none")
-          else
-               print(io, "\n")
-               for key in keys(kwargs)
-                    println(io, "# \t\t$(key) = $(kwargs[key])")
-               end
-          end
-          isnothing(s_1) || println(io, "#\n# NOTE: the computation is done not in " *
-                                        "s1 = s_eff, because you specified in input s1 = $s_1 !")
-          println(io, "# ")
-          println(io, "# s [Mpc/h_0] \t \t integral_on_mu")
-          for (s, xi) in zip(vec[1], vec[2])
-               println(io, "$s \t $xi")
-          end
-     end
-end
 
 function print_map_ξ_multipole(
      cosmo::Cosmology,
