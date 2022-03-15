@@ -19,6 +19,34 @@
 
 
 
+"""
+     sum_ξ_multipole(s1, s, cosmo::Cosmology; 
+          kwargs...) ::Tuple{Float64, Vector{Float64}}
+
+Evaluate the multipole of order `L` of all the GR effects TPCF multipoles and their sum
+in `s1` and a distance `s` from it for the input Cosmology `cosmo`.
+
+It makes a for-loop on the `GaPSE.IMPLEMENTED_GR_EFFECTS` strings, calling `ξ_multipole` for
+each of them. They are currently:
+
+`$(string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...))`
+
+## Optional arguments
+
+- `kwards...` : all these keyword arguments will be passed to `ξ_multipole`
+
+## Returns
+
+A tuple containing:
+- the sum of all the ξ multipoles as first element
+- a `Vector{Float64}` with all the values of each ξ; they are ordered
+  following `IMPLEMENTED_GR_EFFECTS`
+
+
+See also: [`integrand_ξ_multipole`](@ref), [`ξ_multipole`](@ref),
+[`map_sum_ξ_multipole`](@ref), [`print_map_sum_ξ_multipole`](@ref),
+[`Cosmology`](@ref), [`IMPLEMENTED_GR_EFFECTS`](@ref)
+"""
 function sum_ξ_multipole(s1, s, cosmo::Cosmology; kwargs...)
      ALL = [ξ_multipole(s1, s, effect, cosmo; kwargs...)
             for effect in GaPSE.IMPLEMENTED_GR_EFFECTS]
@@ -28,6 +56,51 @@ end
 
 
 
+##########################################################################################92
+
+
+
+"""
+     map_sum_ξ_multipole(
+          cosmo::Cosmology,
+          v_ss = nothing;
+          s1 = nothing,
+          N_log::Integer = 1000,
+          kwargs...) ::Tuple{Vector{Float64}, Vector{Float64}, Vector{Vector{Float64}}}
+
+Evaluate the multipole of order `L` of all the GR effects TPCF multipoles and their sum
+in `s1` , for all the `s` values stored inside `v_ss` and for the input Cosmology `cosmo`.
+If `v_ss = nothing`, it is set `v_ss = 10 .^ range(-1, 3, length = N_log)`.
+If `s1 = nothing`, it is set `s1 = cosmo.s_eff`.
+
+It makes a for-loop on the `GaPSE.IMPLEMENTED_GR_EFFECTS` strings, calling `map_ξ_multipole` for
+each of them. They are currently:
+
+`$(string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...))`
+
+## Optional arguments
+
+- `s1 = nothing` : comoving distance from the observer where the TPCF should be evaluated;
+  if `s1 = nothing`, it is automatically set `s1 = cosmo.s_eff` from the given input `Cosmology`.
+
+- `N_log::Integer = 1000` : number of points to be used in the default logaritmically-spaced 
+  range for `v_ss`, i.e. `range(-1, 3, N_log)`; it is ignored if `v_ss ≠ nothing` 
+
+- `kwards...` : all these keyword arguments will be passed to `map_ξ_multipole`
+
+## Returns
+
+A tuple containing:
+- the vector `v_ss` itself as first element;
+- the  `Vector{Float64}` of the sum of all the ξ multipoles as second one
+- a `Vector{Vector{Float64}}` with all the values of each ξ; they are ordered
+  following `IMPLEMENTED_GR_EFFECTS`
+
+
+See also: [`map_ξ_multipole`](@ref),
+[`sum_ξ_multipole`](@ref), [`print_map_sum_ξ_multipole`](@ref),
+[`Cosmology`](@ref), [`IMPLEMENTED_GR_EFFECTS`](@ref)
+"""
 function map_sum_ξ_multipole(
      cosmo::Cosmology,
      v_ss = nothing;
@@ -47,6 +120,55 @@ function map_sum_ξ_multipole(
 end
 
 
+
+##########################################################################################92
+
+
+
+"""
+     print_map_sum_ξ_multipole(
+          cosmo::Cosmology,
+          out::String,
+          v_ss = nothing;
+          s1 = nothing,
+          N_log::Integer = 1000,
+          L::Integer = 0,
+          single::Bool = true,
+          kwargs...) 
+
+Evaluate the multipole of order `L` of all the GR effects TPCF multipoles and their sum
+in `s1`, for all the `s` values stored inside `v_ss` and for the input Cosmology `cosmo`; 
+saves the results inside the file `out`.
+If `v_ss = nothing`, it is set `v_ss = 10 .^ range(-1, 3, length = N_log)`.
+If `s1 = nothing`, it is set `s1 = cosmo.s_eff`.
+
+It makes a for-loop on the `GaPSE.IMPLEMENTED_GR_EFFECTS` strings, calling `map_ξ_multipole` for
+each of them. They are currently:
+
+`$(string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...))`
+
+## Optional arguments
+
+- `s1 = nothing` : comoving distance from the observer where the TPCF should be evaluated;
+  if `s1 = nothing`, it is automatically set `s1 = cosmo.s_eff` from the given input `Cosmology`.
+
+- `N_log::Integer = 1000` : number of points to be used in the default logaritmically-spaced 
+  range for `v_ss`, i.e. `range(-1, 3, N_log)`; it is ignored if `v_ss ≠ nothing` 
+
+- `L::Integer = 0`: order of the Legendre polynomial to be used
+
+- `single::Bool = true` : if `true`, all the CFs are printed inside the file of the sum, in a 
+  table with 18 columns (first one for `v_ss`, second for their sum an the next 16 for each effect).
+  Otherwise, a new directory "all_standalones_CFs" is created (in the same path given in `out`) and 
+  they are separately saved in files there placed.
+
+- `kwards...` : all these keyword arguments will be passed to `map_ξ_multipole`
+
+
+See also: [`map_ξ_multipole`](@ref),
+[`sum_ξ_multipole`](@ref), [`map_sum_ξ_multipole`](@ref),
+[`Cosmology`](@ref), [`IMPLEMENTED_GR_EFFECTS`](@ref)
+"""
 function print_map_sum_ξ_multipole(
      cosmo::Cosmology,
      out::String,

@@ -8,6 +8,8 @@ end
 
 ```@docs
 GaPSE.F
-GaPSE.integrand_F
 GaPSE.F_map
+GaPSE.integrand_F
+GaPSE.WindowF
+GaPSE.spline_F
 ```

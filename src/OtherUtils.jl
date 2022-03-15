@@ -27,6 +27,22 @@ warning(msg::String) = warning(stdout, msg)
 
 
 
+"""
+    check_compatible_dicts(ref::Dict, b::Dict, name::String = "NO-NAME")
+
+Compare the field of two `Dict` and check if the second one (`b`) is "compatible"
+with the first one (`ref`), i.e.:
+- checks if each of the key in `b` is also a key of `ref`;
+- for each `key` of `b`:
+    - if `typeof(ref[key]) <: Real` and `!(typeof(ref[k]) <: Union{Bool, Integer})`,
+      checks that `typeof(b[k]) <: Real && typeof(b[k]) ≠ Bool`
+    - otherwise, checks that ` typeof(b[k]) == typeof(ref[k])`
+
+If someone of the check mentioned is `false`, raise an `AssertionError`, otherwise
+return `nothing`. 
+The string `name` is only used inside the AssertionError messages for the correct
+name of the input `b` dictionary.
+"""
 function check_compatible_dicts(ref::Dict, b::Dict, name::String = "NO-NAME")
     for k in keys(b)
         @assert haskey(ref, k) ((typeof(k) == Symbol ? ":$k" : "$k" ) * 

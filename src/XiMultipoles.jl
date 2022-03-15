@@ -87,6 +87,9 @@ to which correspond the following functions:
 
 `$(string(string.(GaPSE.IMPLEMENTED_ξs) .* " , "...))`
 
+The window functions ``F(x, \\mu)`` and ``\\phi(s)`` are calculated for the given
+Cosmology `cosmo` through the functions `spline_F` and `ϕ` respectivelly.
+
 In case `use_windows` is set to `false`, the window functions ``\\phi`` and ``F``
 are removed, i.e is returned the following function ``f^{'}(s_1, s, \\mu)``:
 
@@ -140,9 +143,9 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 
 
 See also: [`ξ_multipole`](@ref), [`map_ξ_multipole`](@ref),
-[`ξ_multipole`](@ref), [`map_ξ_multipole`](@ref),
+[`print_map_ξ_multipole`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
-[`y`](@ref), [`s2`](@ref)
+[`y`](@ref), [`s2`](@ref), [`IMPLEMENTED_GR_EFFECTS`](@ref)
 """
 integrand_ξ_multipole
 
@@ -248,6 +251,31 @@ The function evaluated is then the following:
 where ``y =  \\cos{\\theta} = \\hat{\\mathbf{s}}_1 
 \\cdot \\hat{\\mathbf{s}}_2`` and ``\\xi`` is the chosen CF effect. 
 
+The window functions ``F(x, \\mu)`` and ``\\phi(s)`` are calculated for the given
+Cosmology `cosmo` through the functions `spline_F` and `ϕ` respectivelly.
+
+The function ``\\xi(s_1, s_2, \\cos{\\theta})`` is calculated
+from, depending on the value of `effect`:
+- `effect == auto_doppler` => [`ξ_Doppler`](@ref)
+- `effect == auto_lensing` => [`ξ_Lensing`](@ref)
+- `effect == auto_localgp` => [`ξ_LocalGP`](@ref)
+- `effect == auto_integratedgp` => [`ξ_IntegratedGP`](@ref)
+- `effect == doppler_lensing` => [`ξ_Doppler_lensing`](@ref)
+- `effect == lensing_doppler` => [`ξ_Lensing_Doppler`](@ref)
+- `effect == doppler_localgp` => [`ξ_Doppler_LocalGP`](@ref)
+- `effect == localgp_doppler` => [`ξ_LocalGP_Doppler`](@ref)
+- `effect == doppler_integratedgp` => [`ξ_Doppler_IntegratedGP`](@ref)
+- `effect == integratedgp_doppler` => [`ξ_IntegratedGP_Doppler`](@ref)
+- `effect == lensing_localgp` => [`ξ_Lensing_LocalGP`](@ref)
+- `effect == localgp_lensing` => [`ξ_LocalGP_Lensing`](@ref)
+- `effect == lensing_integratedgp` => [`ξ_Lensing_IntegratedGP`](@ref)
+- `effect == integratedgp_lensing` => [`ξ_IntegratedGP_Lensing`](@ref)
+- `effect == localgp_integratedgp` => [`ξ_LocalGP_IntegratedGP`](@ref)
+- `effect == integratedgp_localgp` => [`ξ_IntegratedGP_LocalGP`](@ref)
+
+Note that these is an internal conversion of coordiate sistems
+from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
+
 ## Inputs
 
 - `s1`: the comoving distance where must be evaluated the integral
@@ -277,6 +305,8 @@ where ``y =  \\cos{\\theta} = \\hat{\\mathbf{s}}_1
 
 See also: [`integrand_ξ_multipole`](@ref), 
 [`map_ξ_multipole`](@ref), [`print_map_ξ_multipole`](@ref)
+[`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
+[`y`](@ref), [`s2`](@ref), [`IMPLEMENTED_GR_EFFECTS`](@ref)
 """
 ξ_multipole
 
@@ -297,6 +327,7 @@ See also: [`integrand_ξ_multipole`](@ref),
 Evaluate the multipole of order `L` of the chosen correlation function term, 
 through the `ξ_multipole` function, for all the `s` values stored inside `v_ss`.
 If `v_ss = nothing`, it is set `v_ss = 10 .^ range(-1, 3, length = N_log)`.
+If `s1 = nothing`, it is set `s1 = cosmo.s_eff`.
 
 The function evaluated is then the following:
 
@@ -312,6 +343,9 @@ The function evaluated is then the following:
 where ``y =  \\cos{\\theta} = \\hat{\\mathbf{s}}_1 
 \\cdot \\hat{\\mathbf{s}}_2`` and ``\\xi`` is the chosen CF effect, for all the 
 comoving distances `s` inside `v_ss`. 
+
+The window functions ``F(x, \\mu)`` and ``\\phi(s)`` are calculated for the given
+Cosmology `cosmo` through the functions `spline_F` and `ϕ` respectivelly.
 
 ## Inputs
 
@@ -352,7 +386,9 @@ A `Tuple{Vector{Float64}, Vector{Flaot64}}`, which has as first element the `v_s
 and as second one the corresponding ξ value evaluated.
 
 See also: [`integrand_ξ_multipole`](@ref), [`ξ_multipole`](@ref),
-[`print_map_ξ_multipole`](@ref)
+[`print_map_ξ_multipole`](@ref),
+[`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
+[`y`](@ref), [`s2`](@ref), [`IMPLEMENTED_GR_EFFECTS`](@ref)
 """
 function map_ξ_multipole(cosmo::Cosmology,
      effect::Union{String,Function},
@@ -398,6 +434,7 @@ Evaluate the multipole of order `L` of the chosen correlation function term,
 through the `ξ_multipole` function, for all the `s` values stored inside `v_ss`, and
 print the results (with all the options used) in a file named `out`.
 If `v_ss = nothing`, it is set `v_ss = 10 .^ range(-1, 3, length = N_log)`.
+If `s1 = nothing`, it is set `s1 = cosmo.s_eff`.
 
 The function evaluated is then the following:
 
@@ -413,6 +450,9 @@ The function evaluated is then the following:
 where ``y =  \\cos{\\theta} = \\hat{\\mathbf{s}}_1 
 \\cdot \\hat{\\mathbf{s}}_2`` and ``\\xi`` is the chosen CF effect, for all the 
 comoving distances `s` inside `v_ss`. 
+
+The window functions ``F(x, \\mu)`` and ``\\phi(s)`` are calculated for the given
+Cosmology `cosmo` through the functions `spline_F` and `ϕ` respectivelly.
 
 ## Inputs
 
@@ -441,7 +481,9 @@ comoving distances `s` inside `v_ss`.
 - `kwargs...` : other keyword arguments that will be passed to `map_ξ_multipole`
 
 See also: [`integrand_ξ_multipole`](@ref), [`ξ_multipole`](@ref),
-[`map_ξ_multipole`](@ref)
+[`map_ξ_multipole`](@ref), 
+[`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
+[`y`](@ref), [`s2`](@ref), [`IMPLEMENTED_GR_EFFECTS`](@ref)
 """
 function print_map_ξ_multipole(
      cosmo::Cosmology,

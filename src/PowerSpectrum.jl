@@ -52,47 +52,17 @@ function PS_multipole(input::String;
 end
 
 
-#=
-function PS_multipole(effect::String, cosmo::Cosmology;
-     int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3,
-     L::Integer = 0, N::Integer = 1024, 
-     ss::Vector{Float64} = 
-     pr::Bool = true, kwargs...)
-
-     error = "$effect is not a valid GR effect name.\n" *
-             "Valid GR effect names are the following:\n" *
-             string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...)
-     @assert (effect ∈ GaPSE.IMPLEMENTED_GR_EFFECTS) error
-
-     xs, ys = map_ξ_multipole(cosmo, effect, ss; L = L, pr = pr, kwargs...)
-     f_in = Spline1D(xs, ys; bc = "error")
-
-     t1 = time()
-     ks, pks = xicalc(s -> 2 * π^2 * f_in(s), L, 0;
-          N = N, kmin = int_s_min, kmax = int_s_max, r0 = 1 / int_s_max)
-     t2 = time()
-     pr && println("\ntime needed for Power Spectrum  computation [in s] = $(t2-t1)\n")
-
-     if iseven(L)
-          return ks, (1 / π * (-1)^(L / 2)) .* pks #(1 / A_prime * (-1)^(L / 2)) .* pks
-     else
-          return ks, (1 / π * (-im)^L) .* pks #(1 / A_prime * (-im)^L) .* pks
-     end
-end
-=#
-
-
 """
      PS_multipole(f_in; int_s_min::Float64 = 1e-1, 
           int_s_max::Float64 = 1e3, L::Integer = 0, 
           N::Integer = 1024, pr::Bool = true
-          ) :: Tuple{Vector{Float64}, Vector{Float64}}
+          ) ::Tuple{Vector{Float64}, Vector{Float64}}
 
      PS_multipole(input::String; N_left::Integer = 12, 
           N_right::Integer = 12, kwargs...
-          ) :: Tuple{Vector{Float64}, Vector{Float64}}
+          ) ::Tuple{Vector{Float64}, Vector{Float64}}
 
-Return the `L`-order multipole from the input function `f_in`, through the
+Return the `L`-order PS multipole from the input function `f_in`, through the
 following Fast Fourier Transform and the effective redshift approximation:
 
 ```math
@@ -126,6 +96,9 @@ f_\\mathrm{in}(s_1, s) =  \\int_{-1}^{+1} \\mathrm{d} \\mu \\;
 ```
 and the application of the effective redshift approximation.
 
+The computation is made through the `xicalc` function of the 
+[TwoFAST](https://github.com/hsgg/TwoFAST.jl) Julia package.
+
 See also: [`V_survey`](@ref), [`A`](@ref), [`A_prime`](@ref)
 """
 PS_multipole
@@ -136,6 +109,13 @@ PS_multipole
 
 
 
+"""
+     print_PS_multipole(in::String, out::String;
+          L::Integer = 0, N::Integer = 1024,
+          pr::Bool = true, kwargs...)
+
+
+"""
 function print_PS_multipole(in::String, out::String;
      L::Integer = 0, N::Integer = 1024,
      pr::Bool = true, kwargs...)
@@ -161,7 +141,7 @@ function print_PS_multipole(in::String, out::String;
                println(io, "none")
           else
                print(io, "\n")
-               for (i, key) in enumerate(keys(kwargs))
+               for key in keys(kwargs)
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
           end
@@ -174,50 +154,3 @@ function print_PS_multipole(in::String, out::String;
 end
 
 
-#=
-function print_PS_multipole(
-     effect::String, out::String,
-     cosmo::Cosmology;
-     L::Integer = 0, N::Integer = 1024,
-     pr::Bool = true, kwargs...)
-
-     error = "$effect is not a valid GR effect name.\n" *
-             "Valid GR effect names are the following:\n" *
-             string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...)
-     @assert (effect ∈ GaPSE.IMPLEMENTED_GR_EFFECTS) error
-
-     pr && println("\nI'm computiong the PS_multipole for the $effect GR effect.")
-
-     time_1 = time()
-     vec = PS_multipole(effect, cosmo; N = N, L = L, pr = pr, kwargs...)
-     time_2 = time()
-
-     pr && println("\ntime needed for Power Spectrum  computation [in s] = $(time_2-time_1)\n")
-
-     isfile(out) && run(`rm $out`)
-     open(out, "w") do io
-          println(io, "# Power Spectrum Multipole computation for the $effect GR effect.")
-          println(io, "# The following cosmology data were given:\n#")
-          parameters_used(io, cosmo)
-          println(io, "#\n# For this PS_multipole computation we set: ")
-          println(io, "# \t #points used in Fourier transform N = $N")
-          println(io, "# \t multipole degree in consideration L = $L")
-          println(io, "# computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
-          print(io, "# kwards passed: ")
-
-          if isempty(kwargs)
-               println(io, "none")
-          else
-               print(io, "\n")
-               for (i, key) in enumerate(keys(kwargs))
-                    println(io, "# \t\t$(key) = $(kwargs[key])")
-               end
-          end
-          println(io, "# ")
-          println(io, "# k [h_0/Mpc] \t \t  P [(Mpc/h_0)^3]")
-          for (k, pk) in zip(vec[1], vec[2])
-               println(io, "$k \t $pk")
-          end
-     end
-end
-=#
