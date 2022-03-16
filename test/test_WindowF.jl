@@ -17,21 +17,36 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
+kwargs_F = Dict(
+     :θ_max => π / 2.0, 
+     :tolerance => 1e-8, 
+     :rtol => 1e-2, 
+     :atol => 1e-3,
+)
+
+kwargs_F_map = Dict(
+     :θ_max => π / 2.0, 
+     :tolerance => 1e-8, 
+     :rtol => 1e-2, 
+     :atol => 1e-3,
+     :pr => true,
+)
+
 @testset "test F" begin
-     @test isapprox(GaPSE.F(0, 0)[1], 39.0406; rtol = 1e-2)
-     @test isapprox(GaPSE.F(1, 0)[1], 29.25801; rtol = 1e-2)
-     @test isapprox(GaPSE.F(2, 0)[1], 24.97067; rtol = 1e-2)
-     @test isapprox(GaPSE.F(3, 0)[1], 23.51367; rtol = 1e-2)
+     @test isapprox(GaPSE.F(0, 0; kwargs_F...)[1], 39.0406; rtol = 1e-2)
+     @test isapprox(GaPSE.F(1, 0; kwargs_F...)[1], 29.25801; rtol = 1e-2)
+     @test isapprox(GaPSE.F(2, 0; kwargs_F...)[1], 24.97067; rtol = 1e-2)
+     @test isapprox(GaPSE.F(3, 0; kwargs_F...)[1], 23.51367; rtol = 1e-2)
 
-     @test isapprox(GaPSE.F(0, -0.8)[1], 38.89266; rtol = 1e-2)
-     @test isapprox(GaPSE.F(1, -0.8)[1], 23.35162; rtol = 1e-2)
-     @test isapprox(GaPSE.F(2, -0.8)[1], 11.83636; rtol = 1e-2)
-     @test isapprox(GaPSE.F(3, -0.8)[1], 10.90119; rtol = 1e-2)
+     @test isapprox(GaPSE.F(0, -0.8; kwargs_F...)[1], 38.89266; rtol = 1e-2)
+     @test isapprox(GaPSE.F(1, -0.8; kwargs_F...)[1], 23.35162; rtol = 1e-2)
+     @test isapprox(GaPSE.F(2, -0.8; kwargs_F...)[1], 11.83636; rtol = 1e-2)
+     @test isapprox(GaPSE.F(3, -0.8; kwargs_F...)[1], 10.90119; rtol = 1e-2)
 
-     @test isapprox(GaPSE.F(0, 0.8)[1], 38.89261; rtol = 1e-2)
-     @test isapprox(GaPSE.F(1, 0.8)[1], 34.85789; rtol = 1e-2)
-     @test isapprox(GaPSE.F(2, 0.8)[1], 33.54063; rtol = 1e-2)
-     @test isapprox(GaPSE.F(3, 0.8)[1], 32.91128; rtol = 1e-2)
+     @test isapprox(GaPSE.F(0, 0.8; kwargs_F...)[1], 38.89261; rtol = 1e-2)
+     @test isapprox(GaPSE.F(1, 0.8; kwargs_F...)[1], 34.85789; rtol = 1e-2)
+     @test isapprox(GaPSE.F(2, 0.8; kwargs_F...)[1], 33.54063; rtol = 1e-2)
+     @test isapprox(GaPSE.F(3, 0.8; kwargs_F...)[1], 32.91128; rtol = 1e-2)
 end
 
 
@@ -57,7 +72,7 @@ end
 
      GaPSE.F_map(0.25, 0.25;
           out = output, x1 = 0, x2 = 3, μ1 = -1, μ2 = 1,
-          rtol = 5e-3, atol = 1e-2)
+          Fmap_opts = kwargs_F_map)
 
      @testset "first" begin
           table_output_F = readdlm(output, comments = true)
@@ -111,7 +126,7 @@ end
           @test_throws AssertionError GaPSE.F_map(calc_xs, reverse(calc_μs))
      end
 
-     GaPSE.F_map(calc_xs, calc_μs; out = output, rtol = 5e-3, atol = 1e-2)
+     GaPSE.F_map(calc_xs, calc_μs; out = output, Fmap_opts = kwargs_F_map)
 
      @testset "first" begin
           table_output_F = readdlm(output, comments = true)

@@ -70,7 +70,6 @@ function main()
      =#
 
      #=
-     xs = [x for x in 0:0.25:3]
      μs = vcat([-1.0, -0.98, -0.95], [μ for μ in -0.9:0.1:0.9], [0.95, 0.98, 1.0])
      #μs = vcat([μ for μ in -1:0.01:-0.91], [μ for μ in -0.9:0.1:0.9], [μ for μ in 0.91:0.01:1.0])
      GaPSE.F_map(xs, μs; out = "outputs/F.txt", rtol = 5e-3, atol = 1e-2)

@@ -8,6 +8,8 @@
 
 - Removed the functions `integrand_on_mu`, `integral_on_mu`, `map_integral_on_mu` and `print_map_integral_on_mu`; added `integrand_ξ_multipole`. This restructuration let the code more flexible.
 
+- Optimized `F_map` and re-written its keyword argument structure
+
 - Improved the documentation of the code, and the `README.md`
 
 
