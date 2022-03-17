@@ -1,0 +1,16 @@
+```@meta
+DocTestSetup = quote
+    using GaPSE
+end
+```
+
+# IMPLEMENTED_GR_EFFECTS and so on
+
+
+```@docs
+GaPSE.IMPLEMENTED_GR_EFFECTS
+GaPSE.IMPLEMENTED_ξs
+GaPSE.DICT_GR_ξs
+GaPSE.INDEX_GR_EFFECT
+GaPSE.GR_EFFECT_INDEXED
+```

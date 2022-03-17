@@ -19,39 +19,39 @@
 
 
 
-@doc raw"""
+"""
     integrand_F(θ, θ_1, x, μ, θ_max; tolerance=1e-8) :: Float64
 
-Return the integrand of the function ``F(x,\mu; \theta_\mathrm{max})``, i.e the 
-function ``f(x,\mu, \theta, \theta_1; \theta_\mathrm{max})``:
+Return the integrand of the function ``F(x,\\mu; \\theta_\\mathrm{max})``, i.e the 
+function ``f(x,\\mu, \\theta, \\theta_1; \\theta_\\mathrm{max})``:
 
 ```math
-\begin{split}
-f(x,\mu, \theta, \theta_1; \theta_\mathrm{max}) = 
-    \; &\Theta\left( \frac
-        {x \cos \theta + \cos \theta_1}{\sqrt{x^1+2+2x\mu}} - 
-        \cos(\theta_\mathrm{max}) 
-        \right) 
-    \; \times \; \Theta(\mu-\cos(\theta+\theta_1)) \; \, \times \\
-    & \quad \Theta(\cos(\theta - \theta_1)-\mu) \; \times \;
-    \frac{4\pi \sin\theta\sin\theta_1}
-        {\sqrt{(\sin\theta\sin\theta_1)^2-(\cos\theta\cos\theta_1-\mu)^2}}
-\end{split}
+\\begin{split}
+f(x,\\mu, \\theta, \\theta_1; \\theta_\\mathrm{max}) = 
+    \\; &\\Theta\\left( \\frac
+        {x \\cos \\theta + \\cos \\theta_1}{\\sqrt{x^1+2+2x\\mu}} - 
+        \\cos(\\theta_\\mathrm{max}) 
+        \\right) 
+    \\; \\times \\; \\Theta(\\mu-\\cos(\\theta+\\theta_1)) \\; \\, \\times \\\\
+    & \\quad \\Theta(\\cos(\\theta - \\theta_1)-\\mu) \\; \\times \\;
+    \\frac{4\\pi \\sin\\theta\\sin\\theta_1}
+        {\\sqrt{(\\sin\\theta\\sin\\theta_1)^2-(\\cos\\theta\\cos\\theta_1-\\mu)^2}}
+\\end{split}
 ```
 ```math
-\begin{equation}
-F(x,\mu; \theta_\mathrm{max}) = \int_0^{\theta_\mathrm{max}} 
-        \mathrm{d}\theta_1 \int_0^\pi \mathrm{d} \theta 
-        \; f(x,\mu, \theta, \theta_1; \theta_\mathrm{max})
-\end{equation}
+\\begin{equation}
+F(x,\\mu; \\theta_\\mathrm{max}) = \\int_0^{\\theta_\\mathrm{max}} 
+        \\mathrm{d}\\theta_1 \\int_0^\\pi \\mathrm{d} \\theta 
+        \\; f(x,\\mu, \\theta, \\theta_1; \\theta_\\mathrm{max})
+\\end{equation}
 ```
 
 `tolerance` is a parameter needed in case of small negative denominator: the Heaviside
 theta function mathematically prevent that 
-``\mathrm{den}=(\sin\theta\sin\theta_1)^2-(\cos\theta\cos\theta_1-\mu)^2``
-becomes negative, but computationally might happen that ``\mathrm{den}`` results as a
+``\\mathrm{den}=(\\sin\\theta\\sin\\theta_1)^2-(\\cos\\theta\\cos\\theta_1-\\mu)^2``
+becomes negative, but computationally might happen that ``\\mathrm{den}`` results as a
 very small negative number (for instance `-1.2368946523-18`); in this case `tolerance`
-solve the problem, returning 0 if ``0<-\mathrm{den}< \mathrm{tolerance}``
+solve the problem, returning 0 if ``0<-\\mathrm{den}< \\mathrm{tolerance}``
 
 See also: [`F`](@ref), [`F_map`](@ref)
 """
@@ -74,37 +74,33 @@ end
 
 
 
-##########################################################################################92
-
-
-
-@doc raw"""
+"""
      F(x, μ, θ_max; tolerance=1e-8) :: Tuple{Float64, Float64}
 
-The function ``F(x,\mu; \theta_\mathrm{max})``, defined as
+The function ``F(x,\\mu; \\theta_\\mathrm{max})``, defined as
 follows:
 
 ```math
-\begin{split}
-F(x,\mu; \theta_\mathrm{max}) = & \;4\pi 
-    \int_0^{\theta_\mathrm{max}} \mathrm{d}\theta_1 \int_0^\pi \mathrm{d} \theta \; 
-    \, \Theta\left(\frac
-        {x \cos \theta + \cos \theta_1}{\sqrt{x^1+2+2x\mu}} - 
-        \cos(\theta_\mathrm{max}) 
-        \right) 
-    \, \Theta(\mu-\cos(\theta+\theta_1)) \\
-    &\Theta(\cos(\theta - \theta_1)-\mu) \;
-    \frac{\sin\theta\sin\theta_1}
-        {\sqrt{(\sin\theta\sin\theta_1)^2-(\cos\theta\cos\theta_1-\mu)^2}}
-\end{split}
+\\begin{split}
+F(x,\\mu; \\theta_\\mathrm{max}) = & \\;4\\pi 
+    \\int_0^{\\theta_\\mathrm{max}} \\mathrm{d}\\theta_1 \\int_0^\\pi \\mathrm{d} \\theta \\; 
+    \\, \\Theta\\left(\\frac
+        {x \\cos \\theta + \\cos \\theta_1}{\\sqrt{x^1+2+2x\\mu}} - 
+        \\cos(\\theta_\\mathrm{max}) 
+        \\right) 
+    \\, \\Theta(\\mu-\\cos(\\theta+\\theta_1)) \\\\
+    &\\Theta(\\cos(\\theta - \\theta_1)-\\mu) \\;
+    \\frac{\\sin\\theta\\sin\\theta_1}
+        {\\sqrt{(\\sin\\theta\\sin\\theta_1)^2-(\\cos\\theta\\cos\\theta_1-\\mu)^2}}
+\\end{split}
 ```
 
 `tolerance` is a parameter needed in case of small negative denominator: the Heaviside
 theta function mathematically prevent that 
-``\mathrm{den}=(\sin\theta\sin\theta_1)^2-(\cos\theta\cos\theta_1-\mu)^2``
-becomes negative, but computationally might happen that ``\mathrm{den}`` results as a
+``\\mathrm{den}=(\\sin\\theta\\sin\\theta_1)^2-(\\cos\\theta\\cos\\theta_1-\\mu)^2``
+becomes negative, but computationally might happen that ``\\mathrm{den}`` results as a
 very small negative number (for instance `-1.2368946523-18`); in this case `tolerance`
-solve the problem, returning 0 if ``0<-\mathrm{den}< \mathrm{tolerance}``.
+solve the problem, returning 0 if ``0<-\\mathrm{den}< \\mathrm{tolerance}``.
 
 The double integral is performed with [`hcubature`](@ref) function from the Julia
 Package [`HCubature`](@ref); `rtol`, `atol` and all the `kwargs` insert into `F` 
@@ -123,9 +119,6 @@ function F(x, μ; θ_max = π / 2.0, tolerance = 1e-8, rtol = 1e-2, atol = 1e-3,
      return hcubature(my_int, a, b; rtol = rtol, atol = atol, kwargs...)
 end
 
-
-
-##########################################################################################92
 
 
 function F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
@@ -219,14 +212,14 @@ end
 
 
 
-@doc raw"""
+"""
      F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
           out = "data/F_map.txt", x1 = 0, x2 = 3, μ1 = -1, μ2 = 1, kwargs...)
      F_map(xs::Vector{Float64}, μs::Vector{Float64};
           out = "data/F_map.txt", kwargs...)
 
-Evaluate the window function ``F(x,\mu; \theta_\mathrm{max})`` in a rectangual grid 
-of ``\mu`` and ``x`` values.
+Evaluate the window function ``F(x,\\mu; \\theta_\\mathrm{max})`` in a rectangual grid 
+of ``\\mu`` and ``x`` values.
 
 In the first method you specify start, stop and step for `x` and `μ` manually, while
 with thr second one you pass the values (through a vector )you want to calculate 
@@ -235,4 +228,82 @@ the function in.
 See also: [`F_map`](@ref), [`integrand_F`](@ref)
 """
 F_map
+
+
+
+##########################################################################################92
+
+
+
+"""
+    WindowF(
+        xs::Vector{Float64}
+        μs::Vector{Float64}
+        Fs::Matrix{Float64}
+        )
+
+Struct containing xs, μs and Fs values of the window function ``F(x, μ)``.
+`xs` and `μs` are 1D vectors containing each value only once, while 
+Fs values are contained in a matrix of size `(length(xs), length(μs))`, so:
+- along a fixed column the changing value is `x`
+- along a fixed row the changing value is `μ`
+"""
+struct WindowF
+     xs::Vector{Float64}
+     μs::Vector{Float64}
+     Fs::Matrix{Float64}
+
+
+     function WindowF(file::String)
+          data = readdlm(file, comments = true)
+          xs, μs, Fs = data[:, 1], data[:, 2], data[:, 3]
+          @assert size(xs) == size(μs) == size(Fs) "xs, μs and Fs must have the same length!"
+
+          new_xs = unique(xs)
+          new_μs = unique(μs)
+          new_Fs =
+               if xs[2] == xs[1] && μs[2] ≠ μs[1]
+                    transpose(reshape(Fs, (length(new_μs), length(new_xs))))
+               elseif xs[2] ≠ xs[1] && μs[2] == μs[1]
+                    reshape(Fs, (length(new_xs), length(new_μs)))
+               else
+                    throw(ErrorException("What kind of convenction for the file $file" *
+                                         " are you using? I do not recognise it."))
+               end
+          new(new_xs, new_μs, new_Fs)
+     end
+end
+
+
+@doc raw"""
+     spline_F(x, μ, str::WindowF)) :: Float64
+
+Return the 2-dim spline value of ``F`` in the given `(x,μ)`, where
+``F`` is defined in the input `WindowF`.
+The spline is obtained through the `interpolate` function of the 
+[`GridInterpolations`](https://github.com/sisl/GridInterpolations.jl) Julia
+package.
+"""
+function spline_F(x, μ, str::WindowF)
+     grid = GridInterpolations.RectangleGrid(str.xs, str.μs)
+     GridInterpolations.interpolate(grid, reshape(str.Fs, (:, 1)), [x, μ])
+end
+
+#=
+F_map_data = readdlm(FILE_F_MAP, comments = true)
+F_map_data_dict = Dict([name => F_map_data[2:end, i] for (i, name) in enumerate(NAMES_F_MAP)]...)
+
+_xs = unique(F_map_data_dict["x"])
+_μs = unique(F_map_data_dict["mu"])
+_Fs = F_map_data_dict["F"]
+
+
+# for my F map convenction
+my_F_grid = GridInterpolations.RectangleGrid(_μs, _xs)
+spline_F(x, μ) = GridInterpolations.interpolate(my_F_grid, _Fs, [μ, x])
+
+# for the opposite convenction for F map
+#other_F_grid = GridInterpolations.RectangleGrid(_xs, _μs)
+#spline_F(x, μ) = GridInterpolations.interpolate(other_F_grid, _Fs, [x, μ])
+=#
 

@@ -46,9 +46,12 @@ NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mpc]",
      "(.)rho_g", "(.)rho_b", "(.)rho_cdm", "(.)rho_lambda", "(.)rho_ur",
      "(.)rho_crit", "gr.fac. D", "gr.fac. f"]
 
+include("OtherUtils.jl")
 include("MathUtils.jl")
-include("F_evaluation.jl")
+include("WindowF.jl")
 include("BackgroundData.jl")
+include("CosmoParams.jl")
+include("CosmoUtils.jl")
 include("IPSTools.jl")
 include("Cosmology.jl")
 
@@ -64,60 +67,73 @@ include("CrossCorrelations/LensingLocalGP.jl")
 include("CrossCorrelations/LensingIntegratedGP.jl")
 include("CrossCorrelations/LocalGPIntegratedGP.jl")
 
-
-IMPLEMENTED_GR_EFFECTS = [
-     "auto_doppler", "auto_lensing",
-     "auto_localgp", "auto_integratedgp", 
-     
-     "lensing_doppler", "doppler_lensing",
-     "doppler_localgp", "localgp_doppler",
-     "doppler_integratedgp", "integratedgp_doppler",
-     "lensing_localgp", "localgp_lensing",
-     "lensing_integratedgp", "integratedgp_lensing",
-     "localgp_integratedgp", "integratedgp_localgp",
-]
-
-IMPLEMENTED_ξs = [
-     ξ_Doppler, ξ_Lensing, ξ_LocalGP, ξ_IntegratedGP, ξ_Lensing_Doppler, ξ_Doppler_Lensing,
-     ξ_Doppler_LocalGP, ξ_LocalGP_Doppler,
-     ξ_Doppler_IntegratedGP, ξ_IntegratedGP_Doppler,
-     ξ_Lensing_LocalGP, ξ_LocalGP_Lensing,
-     ξ_Lensing_IntegratedGP, ξ_IntegratedGP_Lensing,
-     ξ_LocalGP_IntegratedGP, ξ_IntegratedGP_LocalGP
-]
-
-DICT_GR_ξs = Dict([k => v for (k, v) in zip(IMPLEMENTED_GR_EFFECTS, IMPLEMENTED_ξs)]...)
-INDEX_GR_EFFECT = Dict([name => i for (i, name) in
-                        enumerate(IMPLEMENTED_GR_EFFECTS)]...)
-GR_EFFECT_INDEXED = Dict([i => name for (i, name) in
-                          enumerate(IMPLEMENTED_GR_EFFECTS)]...)
-
+include("Dicts.jl")
 
 include("PowerSpectrum.jl")
 include("XiMultipoles.jl")
 include("SumXiMultipoles.jl")
 
 
+
+##########################################################################################92
+
+
+
+BRAND =
+"""
+###############
+#    GaPSE    #
+############### \n#"""
+
 function parameters_used(io::IO, cosmo::Cosmology)
-     println(io, "# The following parameters were used for this computation: ")
-     println(io, "# CLASS Power Spectrum input file : \"$(cosmo.file_ips)\"")
-     println(io, "# F window function input file : \"$(cosmo.file_windowF)\"")
-     println(io, "# CLASS Background input file: \"$(cosmo.file_data)\"")
-     println(io, "# \t z_min = $(cosmo.params.z_min) \t z_max = $(cosmo.params.z_max)")
-     println(io, "# \t k_min = $(cosmo.params.k_min) \t k_max = $(cosmo.params.k_max)")
-     println(io, "# \t h_0 = $(cosmo.params.h_0) \t Ω_b = $(cosmo.params.Ω_b) \t " *
+     println(io, BRAND)
+     println(io, "# The Cosmology considered had the following paremeters:\n# ")
+     println(io, "# - Matter Power Spectrum input file: \"$(cosmo.file_ips)\"")
+     println(io, "# - F window function input file: \"$(cosmo.file_windowF)\"")
+     println(io, "# - Background data input file: \"$(cosmo.file_data)\"")
+     println(io, "#")
+
+     println(io, "# - Basic CosmoParams considered: ")
+     println(io, "#\t z_min = $(cosmo.params.z_min) \t z_max = $(cosmo.params.z_max)")
+     println(io, "#\t θ_max = $(cosmo.params.θ_max) [rad] \t h_0 = $(cosmo.params.h_0)")
+     println(io, "#\t Ω_b = $(cosmo.params.Ω_b) \t " *
                  "Ω_cdm = $(cosmo.params.Ω_cdm) \t Ω_M0 = $(cosmo.params.Ω_M0)")
+     println(io, "#")
+    
+     println(io, "# - CosmoParams about the Input Power Spectrum: ")
+     my_println_dict(io, cosmo.params.IPS; pref ="#\t ", N = 2)
+     println(io, "#")
+    
+     println(io, "# - CosmoParams about the Input Power Spectrum Tools: ")
+     my_println_dict(io, cosmo.params.IPSTools; pref ="#\t ", N = 3)
+     println(io, "#") 
+
+     println(io, "# - Computed quantities: ")
+     println(io, "# \t effective redshift z_eff = $(cosmo.z_eff) ")
      println(io, "# \t comoving s_min = $(cosmo.s_min) Mpc/h_0")
      println(io, "# \t comoving s_max = $(cosmo.s_max) Mpc/h_0")
      println(io, "# \t comoving s_eff = $(cosmo.s_eff) Mpc/h_0")
-     println(io, "# \t comoving z_eff = $(cosmo.z_eff) ")
-     println(io, "# \t Volume of the survey V_survey = $(cosmo.volume)")
+     println(io, "# \t Volume of the survey V_survey = $(cosmo.volume) Mpc^3/h_0^3")
      println(io, "# \t σ_0 = $(cosmo.tools.σ_0)")
      println(io, "# \t σ_1 = $(cosmo.tools.σ_1)")
      println(io, "# \t σ_2 = $(cosmo.tools.σ_2)")
      println(io, "# \t σ_3 = $(cosmo.tools.σ_3)")
+     println(io, "# \t (where σ_i = \\int_{k_{min}}^{k_{max}}\\frac{dq}{2 π^2} q^{2-i} P(q))")
      println(io, "# ")
 end
+
+parameters_used(cosmo::Cosmology) = parameters_used(stdout, cosmo)
+
+
+"""
+     parameters_used(io::IO, cosmo::Cosmology)
+     parameters_used(cosmo::Cosmology) = parameters_used(stdout, cosmo)
+
+Writes in the `io` stream all the information concerning the input Cosmology `cosmo`.
+
+See also: [`Cosmology`](@ref)
+"""
+parameters_used
 
 
 end # module

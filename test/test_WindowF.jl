@@ -56,7 +56,7 @@ end
      end
 
      GaPSE.F_map(0.25, 0.25;
-          out = output, x1 = 0, x2 = 3, μ1 = -1, μ2 = 1, 
+          out = output, x1 = 0, x2 = 3, μ1 = -1, μ2 = 1,
           rtol = 5e-3, atol = 1e-2)
 
      @testset "first" begin
@@ -146,4 +146,67 @@ end
      end
 
      rm(output)
+end
+
+
+@testset "test WindowF: first convection" begin
+     xs = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3]
+     μs = [-1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1]
+     Fs = [0, 1, 2, 0, 2, 4, 0, 4, 8, 0, 8, 16]
+
+     unique_xs = [0, 1, 2, 3]
+     unique_μs = [-1, 0, 1]
+     table_Fs = [0 1 2; 0 2 4; 0 4 8; 0 8 16]
+
+     name = "test_WindowF_fc.txt"
+     isfile(name) && rm(name)
+     open(name, "w") do io
+          println(io, "# line of comment")
+          println(io, "# another one")
+          for (x, μ, F) in zip(xs, μs, Fs)
+               println(io, "$x \t $μ \t $F")
+          end
+     end
+
+     F_fc = GaPSE.WindowF(name)
+
+     @test size(F_fc.xs) == size(unique_xs)
+     @test size(F_fc.μs) == size(unique_μs)
+     @test size(F_fc.Fs) == size(table_Fs)
+     @test all(F_fc.xs .== unique_xs)
+     @test all(F_fc.μs .== unique_μs)
+     @test all(F_fc.Fs .== table_Fs)
+
+     rm(name)
+end
+
+@testset "test WindowF: second convection" begin
+     xs = [0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3]
+     μs = [-1, -1, -1, -1, 0, 0, 0, 0, 1, 1, 1, 1]
+     Fs = [0, 0, 0, 0, 1, 2, 4, 8, 2, 4, 8, 16]
+
+     unique_xs = [0, 1, 2, 3]
+     unique_μs = [-1, 0, 1]
+     table_Fs = [0 1 2; 0 2 4; 0 4 8; 0 8 16]
+
+     name = "test_WindowF_sc.txt"
+     isfile(name) && rm(name)
+     open(name, "w") do io
+          println(io, "# line of comment")
+          println(io, "# another one")
+          for (x, μ, F) in zip(xs, μs, Fs)
+               println(io, "$x \t $μ \t $F")
+          end
+     end
+
+     F_sc = GaPSE.WindowF(name)
+
+     @test size(F_sc.xs) == size(unique_xs)
+     @test size(F_sc.μs) == size(unique_μs)
+     @test size(F_sc.Fs) == size(table_Fs)
+     @test all(F_sc.xs .== unique_xs)
+     @test all(F_sc.μs .== unique_μs)
+     @test all(F_sc.Fs .== table_Fs)
+
+     rm(name)
 end

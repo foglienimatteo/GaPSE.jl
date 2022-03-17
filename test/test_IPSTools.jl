@@ -17,68 +17,6 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-@testset "test WindowF: first convection" begin
-     xs = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3]
-     μs = [-1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1]
-     Fs = [0, 1, 2, 0, 2, 4, 0, 4, 8, 0, 8, 16]
-
-     unique_xs = [0, 1, 2, 3]
-     unique_μs = [-1, 0, 1]
-     table_Fs = [0 1 2; 0 2 4; 0 4 8; 0 8 16]
-
-     name = "test_WindowF_fc.txt"
-     isfile(name) && rm(name)
-     open(name, "w") do io
-          println(io, "# line of comment")
-          println(io, "# another one")
-          for (x, μ, F) in zip(xs, μs, Fs)
-               println(io, "$x \t $μ \t $F")
-          end
-     end
-
-     F_fc = GaPSE.WindowF(name)
-
-     @test size(F_fc.xs) == size(unique_xs)
-     @test size(F_fc.μs) == size(unique_μs)
-     @test size(F_fc.Fs) == size(table_Fs)
-     @test all(F_fc.xs .== unique_xs)
-     @test all(F_fc.μs .== unique_μs)
-     @test all(F_fc.Fs .== table_Fs)
-
-     rm(name)
-end
-
-@testset "test WindowF: second convection" begin
-     xs = [0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3]
-     μs = [-1, -1, -1, -1, 0, 0, 0, 0, 1, 1, 1, 1]
-     Fs = [0, 0, 0, 0, 1, 2, 4, 8, 2, 4, 8, 16]
-
-     unique_xs = [0, 1, 2, 3]
-     unique_μs = [-1, 0, 1]
-     table_Fs = [0 1 2; 0 2 4; 0 4 8; 0 8 16]
-
-     name = "test_WindowF_sc.txt"
-     isfile(name) && rm(name)
-     open(name, "w") do io
-          println(io, "# line of comment")
-          println(io, "# another one")
-          for (x, μ, F) in zip(xs, μs, Fs)
-               println(io, "$x \t $μ \t $F")
-          end
-     end
-
-     F_sc = GaPSE.WindowF(name)
-
-     @test size(F_sc.xs) == size(unique_xs)
-     @test size(F_sc.μs) == size(unique_μs)
-     @test size(F_sc.Fs) == size(table_Fs)
-     @test all(F_sc.xs .== unique_xs)
-     @test all(F_sc.μs .== unique_μs)
-     @test all(F_sc.Fs .== table_Fs)
-
-     rm(name)
-end
-
 
 @testset "test InputPS" begin
      tab_pk = readdlm(FILE_PS, comments = true)
@@ -302,32 +240,4 @@ end
 end
 
 
-
-@testset "V_survey" begin
-     @test isapprox(GaPSE.V_survey(1, 2, π/2), 14.660765716752364, rtol=1e-4)
-     @test isapprox(GaPSE.V_survey(10, 20, π/2), 14660.765716752363, rtol=1e-4)
-     
-     @test isapprox(GaPSE.V_survey(1, 2, 0.0), 0.0, rtol=1e-4)
-     @test isapprox(GaPSE.V_survey(1, 2, π/6), 1.9641701671128426, rtol=1e-4)
-
-     @test isapprox(GaPSE.V_survey(S_MIN, S_MAX, π/2), 3.845366169354268e8, rtol=1e-4)
-end
-
-@testset "test ϕ" begin
-     @test GaPSE.ϕ(0, 1.0, 2.0) ≈ 0.0
-     @test GaPSE.ϕ(0.5, 1.0, 2.0) ≈ 0.0
-     @test GaPSE.ϕ(1.0, 1.0, 2.0) ≈ 0.0
-     @test GaPSE.ϕ(1.0 + 1e-5, 1.0, 2.0) ≈ 1.0
-     @test GaPSE.ϕ(1.5, 1.0, 2.0) ≈ 1.0
-     @test GaPSE.ϕ(2.0 - 1e-5, 1.0, 2.0) ≈ 1.0
-     @test GaPSE.ϕ(2.0, 1.0, 2.0) ≈ 0.0
-     @test GaPSE.ϕ(2.5, 1.0, 2.0) ≈ 0.0
-end
-
-@testset "test W" begin  
-     @test GaPSE.W(0, π/3) ≈ 1.0
-     @test GaPSE.W(1.0, π/3) ≈ 1.0
-     @test GaPSE.W(π/3, π/3) ≈ 0.0
-     @test GaPSE.W(π, π/3) ≈ 0.0
-end
 

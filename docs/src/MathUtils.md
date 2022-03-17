@@ -26,5 +26,5 @@ GaPSE.func_I04_tilde
 GaPSE.expanded_I04_tilde
 
 GaPSE.my_interpolation
-GaPSE.my_println_vec
+GaPSE.EPLs
 ```

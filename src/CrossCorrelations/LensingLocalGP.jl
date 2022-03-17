@@ -18,34 +18,34 @@
 #
 
 
-@doc raw"""
+"""
      integrand_ξ_Lensing_LocalGP(
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
 Return the integrand of the Lensing-LocalGP cross-correlation function 
-``\xi^{\kappa \phi} (s_1, s_2, \cos{\theta})``, i.e. the function 
-``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
+``\\xi^{\\kappa \\phi} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
+``f(s_1, s_2, y, \\chi_1, \\chi_2)`` defined as follows:  
 
 ```math
-f(s_1, s_2, y, \chi_1, \chi_2) = 
-     \frac{
-          9 \mathcal{H}_0^4 \Omega_{M0}^2 D(s_2) (1 + \mathcal{R}(s_2)) s_2
+f(s_1, s_2, y, \\chi_1, \\chi_2) = 
+     \\frac{
+          9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(s_2) (1 + \\mathcal{R}(s_2)) s_2
      }{4 a(s_2) s_1} 
-     \frac{D(\chi_1)(s_1 - \chi_1) }{a(\chi_1)}
-     \left( J_{31} I^3_1(\Delta\chi_1) +  J_{22} I^2_2(\Delta\chi_1) \right)
+     \\frac{D(\\chi_1)(s_1 - \\chi_1) }{a(\\chi_1)}
+     \\left( J_{31} I^3_1(\\Delta\\chi_1) +  J_{22} I^2_2(\\Delta\\chi_1) \\right)
 ```
 
-where ``\mathcal{H} = a H``, 
-``\Delta\chi_1 = \sqrt{\chi_1^2 + s_2^2 - 2 \chi_1 s_2\cos{\theta}}``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2``) 
+where ``\\mathcal{H} = a H``, 
+``\\Delta\\chi_1 = \\sqrt{\\chi_1^2 + s_2^2 - 2 \\chi_1 s_2\\cos{\\theta}}``, 
+``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``) 
 and the ``J`` coefficients are given by 
 
 ```math
-\begin{align*}
-     J_{31} & = -2 y \Delta\chi_1^2 \\
-     J_{22} & = \chi_1 s_2 (1 - y^2)
-\end{align*}
+\\begin{align*}
+     J_{31} & = -2 y \\Delta\\chi_1^2 \\\\
+     J_{22} & = \\chi_1 s_2 (1 - y^2)
+\\end{align*}
 ```
 
 ## Inputs
@@ -85,10 +85,10 @@ function integrand_ξ_Lensing_LocalGP(
      I13 = cosmo.tools.I13(Δχ1)
      I22 = cosmo.tools.I22(Δχ1)
 
-     #println("J00 = $new_J00, \t I00(Δχ1) = $(I00)")
-     #println("J02 = $new_J02, \t I20(Δχ1) = $(I20)")
-     #println("J31 = $new_J31, \t I13(Δχ1) = $(I13)")
-     #println("J22 = $new_J22, \t I22(Δχ1) = $(I22)")
+     #println("J00 = $new_J00, \\t I00(Δχ1) = $(I00)")
+     #println("J02 = $new_J02, \\t I20(Δχ1) = $(I20)")
+     #println("J31 = $new_J31, \\t I13(Δχ1) = $(I13)")
+     #println("J22 = $new_J22, \\t I22(Δχ1) = $(I22)")
 
      parenth = (new_J31 * I13 + new_J22 * I22)
 
@@ -108,32 +108,32 @@ function integrand_ξ_Lensing_LocalGP(
 end
 
 
-@doc raw"""
+"""
      ξ_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the Lensing-LocalGP cross-correlation function 
-``\xi^{\kappa \phi} (s_1, s_2, \cos{\theta})``, defined as follows:
+``\\xi^{\\kappa \\phi} (s_1, s_2, \\cos{\\theta})``, defined as follows:
     
 ```math
-\xi^{\kappa \phi} (s_1, s_2, \cos{\theta}) = 
-     \frac{
-          9 \mathcal{H}_0^4 \Omega_{M0}^2 D(s_2) (1 + \mathcal{R}(s_2)) s_2
+\\xi^{\\kappa \\phi} (s_1, s_2, \\cos{\\theta}) = 
+     \\frac{
+          9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(s_2) (1 + \\mathcal{R}(s_2)) s_2
      }{4 a(s_2) s_1} 
-     \int_0^{s_1} \mathrm{d}\chi_1 \frac{D(\chi_1)(s_1 - \chi_1) }{a(\chi_1)}
-     \left( J_{31} I^3_1(\Delta\chi_1) +  J_{22} I^2_2(\Delta\chi_1) \right)
+     \\int_0^{s_1} \\mathrm{d}\\chi_1 \\frac{D(\\chi_1)(s_1 - \\chi_1) }{a(\\chi_1)}
+     \\left( J_{31} I^3_1(\\Delta\\chi_1) +  J_{22} I^2_2(\\Delta\\chi_1) \\right)
 ```
 
-where ``\mathcal{H} = a H``, 
-``\Delta\chi_1 = \sqrt{\chi_1^2 + s_2^2 - 2 \chi_1 s_2\cos{\theta}}``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2``) 
+where ``\\mathcal{H} = a H``, 
+``\\Delta\\chi_1 = \\sqrt{\\chi_1^2 + s_2^2 - 2 \\chi_1 s_2\\cos{\\theta}}``, 
+``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``) 
 and the ``J`` coefficients are given by 
 
 ```math
-\begin{align*}
-     J_{31} & = -2 y \Delta\chi_1^2 \\
-     J_{22} & = \chi_1 s_2 (1 - y^2)
-\end{align*}
+\\begin{align*}
+     J_{31} & = -2 y \\Delta\\chi_1^2 \\\\
+     J_{22} & = \\chi_1 s_2 (1 - y^2)
+\\end{align*}
 ```
 
 The computation is made applying [`trapz`](@ref) (see the 

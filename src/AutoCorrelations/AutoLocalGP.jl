@@ -40,7 +40,7 @@ function ξ_LocalGP(s1, s2, y, cosmo::Cosmology)
 end
 
 
-@doc raw"""
+"""
      ξ_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
 
      ξ_LocalGP(s1, s2, y, cosmo::Cosmology) = 
@@ -49,16 +49,16 @@ end
 Return the local gravitational potential auto-correlation function, 
 defined as follows:
 ```math
-\xi^{\phi\phi} (s_1, s_2, \cos{\theta}) = 
-     \frac{9 \mathcal{H}_0^4 \Omega_{M0}^2 D(s_1) D(s_2)s^4}{4 a(s_1) a(s_2)}
-     (1 + \mathcal{R}_1 + \mathcal{R}_2 + \mathcal{R}_1\mathcal{R}_2)
-     \tilde{I}^4_0(s)
+\\xi^{\\phi\\phi} (s_1, s_2, \\cos{\\theta}) = 
+     \\frac{9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(s_1) D(s_2)s^4}{4 a(s_1) a(s_2)}
+     (1 + \\mathcal{R}_1 + \\mathcal{R}_2 + \\mathcal{R}_1\\mathcal{R}_2)
+     \\tilde{I}^4_0(s)
 ```
-where ``D_1 = D(s_1)``, ``D_2 = D(s_2)`` and so on, ``\mathcal{H} = a H``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2`` and:
+where ``D_1 = D(s_1)``, ``D_2 = D(s_2)`` and so on, ``\\mathcal{H} = a H``, 
+``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2`` and:
 ```math
-\tilde{I}^4_0 (s) &= \int_0^\infty \frac{\mathrm{d}q}{2\pi^2} 
-          q^2 \, P(q) \, \frac{j_0(q s) - 1}{(q s)^4}
+\\tilde{I}^4_0 (s) &= \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} 
+          q^2 \\, P(q) \\, \\frac{j_0(q s) - 1}{(q s)^4}
 ```
 
 ## Inputs

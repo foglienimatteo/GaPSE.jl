@@ -21,12 +21,9 @@
 
 @testset "test constant values" begin
      @test isapprox(GaPSE.ℋ0, HUBBLE_0; rtol = 1e-6)
-     z_of_s = Spline1D(COM_DIST, ZS)
-
-     @test isapprox(GaPSE.func_z_eff(S_MAX, S_MIN, z_of_s), Z_EFF; rtol = 1e-6)
 end
 
-@testset "test struct BackgroundData" begin
+@testset "test BackgroundData" begin
      BD = GaPSE.BackgroundData(FILE_BACKGROUND, 0.2)
      L = length(CONF_TIME)
 
@@ -40,6 +37,3 @@ end
      @test all(isapprox.(BD.ℋ[begin:L], COM_H, rtol = 1e-8))
      @test all(isapprox.(BD.ℋ_p[3:L], COM_H_P[3:end], rtol = 1e-4))
 end
-
-
-

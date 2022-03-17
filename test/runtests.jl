@@ -41,34 +41,53 @@ include("TEST_DATA.jl")
 
 ##########################################################################################92
 
+
+@testset "test OtherUtils" begin
+     include("test_OtherUtils.jl")
+end
+
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
+end
+
+@testset "test CosmoUtils" begin
+     include("test_CosmoUtils.jl")
 end
 
 @testset "test IPSTools" begin
      include("test_IPSTools.jl")
 end
 
-@testset "test F_evaluation" begin
-     include("test_F_evaluation.jl")
-end
-
 @testset "test BackgroundData" begin
      include("test_BackgroundData.jl")
+end
+
+@testset "test CosmoParams" begin
+     include("test_CosmoParams.jl")
 end
 
 @testset "test Cosmology" begin
      include("test_Cosmology.jl")
 end
 
+@testset "test WindowF" begin
+     include("test_WindowF.jl")
+end
+
 
 ##########################################################################################92
 
-const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
-     k_min = 1e-8, k_max = 10.0,
-     Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70,
-     N = 1024, fit_min = 0.05, fit_max = 0.5, con = true)
 
+const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
+     Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.7, s_lim = 1e-2,
+     IPS_opts = Dict(
+          :fit_left_min => 1e-6, :fit_left_max => 3e-6,
+          :fit_right_min => 1e1, :fit_right_max => 2e1,
+     ),
+     IPSTools_opts = Dict(
+          :N => 1024, :fit_min => 0.05, :fit_max => 0.5,
+          :con => true, :k_min => 1e-8, :k_max => 10.0)
+)
 const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP)
 
 

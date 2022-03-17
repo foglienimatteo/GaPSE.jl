@@ -18,31 +18,31 @@
 #
 
 
-@doc raw"""
+"""
      integrand_ξ_IntegratedGP(IP1::Point, IP2::Point,
           P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
 Return the integrand of the integrated gravitational potential 
-auto-correlation function ``\xi^{\int\phi\int\phi} (s_1, s_2, \cos{\theta})``, 
-i.e. the function ``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
+auto-correlation function ``\\xi^{\\int\\phi\\int\\phi} (s_1, s_2, \\cos{\\theta})``, 
+i.e. the function ``f(s_1, s_2, y, \\chi_1, \\chi_2)`` defined as follows:  
 
 ```math
-f(s_1, s_2, y, \chi_1, \chi_2) = J_{40}(s_1, s_2, y, \chi_1, \chi_2) \tilde{I}^4_0(\chi)
+f(s_1, s_2, y, \\chi_1, \\chi_2) = J_{40}(s_1, s_2, y, \\chi_1, \\chi_2) \\tilde{I}^4_0(\\chi)
 ```
-where ``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \, \chi_2 \, y} ``,
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2`` and:
+where ``\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\, \\chi_2 \\, y} ``,
+``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2`` and:
 ```math
-\begin{split}
-     &J_{40}(s_1, s_2, y, \chi_1, \chi_2)  = 
-          \frac{
-                    9 \mathcal{H}_0^4 \Omega_{M0}^2 D(\chi_1) D(\chi_2) \chi^4
-          }{    a(\chi_1) a(\chi_2) s_1 s_2} 
-          (s_2 \mathcal{H}(\chi_2) \mathcal{R}(s_2) (f(\chi_2)-1) - 1) 
-          (s_1 \mathcal{H}(\chi_1) \mathcal{R}(s_1) (f(\chi_1)-1) - 1)\\[5pt]
-     &\tilde{I}^4_0 (s) = \int_0^\infty \frac{\mathrm{d}q}{2\pi^2} 
-          q^2 \, P(q) \, \frac{j_0(q s) - 1}{(q s)^4}
-\end{split}
+\\begin{split}
+     &J_{40}(s_1, s_2, y, \\chi_1, \\chi_2)  = 
+          \\frac{
+                    9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(\\chi_1) D(\\chi_2) \\chi^4
+          }{    a(\\chi_1) a(\\chi_2) s_1 s_2} 
+          (s_2 \\mathcal{H}(\\chi_2) \\mathcal{R}(s_2) (f(\\chi_2)-1) - 1) 
+          (s_1 \\mathcal{H}(\\chi_1) \\mathcal{R}(s_1) (f(\\chi_1)-1) - 1)\\\\[5pt]
+     &\\tilde{I}^4_0 (s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} 
+          q^2 \\, P(q) \\, \\frac{j_0(q s) - 1}{(q s)^4}
+\\end{split}
 ```
 
 
@@ -138,7 +138,7 @@ end
 
 
 
-@doc raw"""
+"""
      ξ_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
           en::Float64 = 1e10,
           N_χs::Integer = 100) :: Float64
@@ -147,26 +147,26 @@ end
           ξ_IntegratedGP(Point(s1, cosmo), Point(s2, cosmo), y, cosmo; kwargs...)
 
 Return the integrated gravitational potential auto-correlation function 
-``\xi^{\int\phi\int\phi}(s_1, s_2, \cos{\theta})``, defined as follows:
+``\\xi^{\\int\\phi\\int\\phi}(s_1, s_2, \\cos{\\theta})``, defined as follows:
     
 ```math
-\xi^{\int\phi\int\phi} (s_1, s_2, \cos{\theta}) = 
-     \int_0^{s_1} \mathrm{d} \chi_1 \int_0^{s_2}\mathrm{d} \chi_2 \;
-     J_{40}(s_1, s_2, y, \chi_1, \chi_2) \, \tilde{I}^4_0(\chi)
+\\xi^{\\int\\phi\\int\\phi} (s_1, s_2, \\cos{\\theta}) = 
+     \\int_0^{s_1} \\mathrm{d} \\chi_1 \\int_0^{s_2}\\mathrm{d} \\chi_2 \\;
+     J_{40}(s_1, s_2, y, \\chi_1, \\chi_2) \\, \\tilde{I}^4_0(\\chi)
 ```
-where ``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \, \chi_2 \, y} ``,
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2`` and:
+where ``\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\, \\chi_2 \\, y} ``,
+``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2`` and:
 ```math
-\begin{split}
-     &J_{40}(s_1, s_2, y, \chi_1, \chi_2)  = 
-          \frac{
-               9 \mathcal{H}_0^4 \Omega_{M0}^2 D(\chi_1) D(\chi_2) \chi^4
-          }{    a(\chi_1) a(\chi_2) s_1 s_2} 
-          (s_2 \mathcal{H}(\chi_2) \mathcal{R}(s_2) (f(\chi_2)-1) - 1) 
-          (s_1 \mathcal{H}(\chi_1) \mathcal{R}(s_1) (f(\chi_1)-1) - 1)\\[5pt]
-     &\tilde{I}^4_0 (s) = \int_0^\infty \frac{\mathrm{d}q}{2\pi^2} 
-          q^2 \, P(q) \, \frac{j_0(q s) - 1}{(q s)^4}
-\end{split}
+\\begin{split}
+     &J_{40}(s_1, s_2, y, \\chi_1, \\chi_2)  = 
+          \\frac{
+               9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(\\chi_1) D(\\chi_2) \\chi^4
+          }{    a(\\chi_1) a(\\chi_2) s_1 s_2} 
+          (s_2 \\mathcal{H}(\\chi_2) \\mathcal{R}(s_2) (f(\\chi_2)-1) - 1) 
+          (s_1 \\mathcal{H}(\\chi_1) \\mathcal{R}(s_1) (f(\\chi_1)-1) - 1)\\\\[5pt]
+     &\\tilde{I}^4_0 (s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} 
+          q^2 \\, P(q) \\, \\frac{j_0(q s) - 1}{(q s)^4}
+\\end{split}
 ```
 and ``P(q)`` is the input power spectrum.
 

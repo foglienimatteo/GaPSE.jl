@@ -18,103 +18,6 @@
 #
 
 
-@testset "test integral_on_mu" begin
-     name_effect = "auto_doppler"
-     func_effect = GaPSE.ξ_Doppler
-     RTOL = 1e-2
-
-     kwargs = Dict(
-          :enhancer => 1e8, :N_μs => 30,
-          :μ_atol => 0.0, :μ_rtol => 1e-2,
-     )
-
-     ss = [10, 100, 300, 700, 1000]
-
-     @testset "zeros" begin
-          a_func(x) = x
-          @test_throws AssertionError GaPSE.integral_on_mu(COSMO.s_eff, 10, "strange", COSMO;
-               L = 0, use_windows = false, SPLINE = true, kwargs...)
-          @test_throws AssertionError GaPSE.integral_on_mu(COSMO.s_eff, 10, a_func, COSMO;
-               L = 0, use_windows = false, SPLINE = true, kwargs...)
-     end
-
-     @testset "L = 0, no_window, no_spline" begin
-          L, use_windows, SPLINE = 0, false, false
-          res = [6.216729464626079e-5, 1.204973036205085e-5, 1.7985341392845314e-6,
-               2.811035752494547e-7, 7.40858576296966e-8]
-
-          calc_ints_1 = [GaPSE.integral_on_mu(COSMO.s_eff, s, name_effect, COSMO;
-               L = L, use_windows = use_windows, SPLINE = SPLINE, kwargs...) for s in ss]
-          calc_ints_2 = [GaPSE.integral_on_mu(COSMO.s_eff, s, func_effect, COSMO;
-               L = L, use_windows = use_windows, SPLINE = SPLINE, kwargs...) for s in ss]
-
-          @test all([isapprox(a, r, rtol = RTOL) for (a, r) in zip(calc_ints_1, res)])
-          @test all([isapprox(a, r, rtol = RTOL) for (a, r) in zip(calc_ints_2, res)])
-     end
-
-     @testset "L = 1, no_window, no_spline" begin
-          L, use_windows, SPLINE = 1, false, false
-          res = [-5.311205477414576e-7, -1.159934989165109e-6, -6.334076305557245e-7,
-               -2.0381833943775459e-7, -6.206602978481535e-8]
-
-          calc_ints_1 = [GaPSE.integral_on_mu(COSMO.s_eff, s, name_effect, COSMO;
-               L = L, use_windows = use_windows, SPLINE = SPLINE, kwargs...) for s in ss]
-          calc_ints_2 = [GaPSE.integral_on_mu(COSMO.s_eff, s, func_effect, COSMO;
-               L = L, use_windows = use_windows, SPLINE = SPLINE, kwargs...) for s in ss]
-
-          @test all([isapprox(a, r, rtol = RTOL) for (a, r) in zip(calc_ints_1, res)])
-          @test all([isapprox(a, r, rtol = RTOL) for (a, r) in zip(calc_ints_2, res)])
-     end
-
-     @testset "L = 0, yes_window, no_spline" begin
-          L, use_windows, SPLINE = 0, true, false
-          res = [0.002406339467257516, 0.0004378931763537511, 5.214481768705607e-5,
-               2.2114227295248647e-6, 1.8237097173450833e-9]
-
-          calc_ints_1 = [GaPSE.integral_on_mu(COSMO.s_eff, s, name_effect, COSMO;
-               L = L, use_windows = use_windows, SPLINE = SPLINE, kwargs...) for s in ss]
-          calc_ints_2 = [GaPSE.integral_on_mu(COSMO.s_eff, s, func_effect, COSMO;
-               L = L, use_windows = use_windows, SPLINE = SPLINE, kwargs...) for s in ss]
-
-          @test all([isapprox(a, r, rtol = RTOL) for (a, r) in zip(calc_ints_1, res)])
-          @test all([isapprox(a, r, rtol = RTOL) for (a, r) in zip(calc_ints_2, res)])
-     end
-
-     @testset "L = 1, yes_window, no_spline" begin
-          L, use_windows, SPLINE = 1, true, false
-          res = [-2.02440383383452e-5, -4.1180157984924956e-5, -1.8920053056318384e-5,
-               -1.7050686653742866e-6, -1.8124991003555014e-9]
-
-          calc_ints_1 = [GaPSE.integral_on_mu(COSMO.s_eff, s, name_effect, COSMO;
-               L = L, use_windows = use_windows, SPLINE = SPLINE, kwargs...) for s in ss]
-          calc_ints_2 = [GaPSE.integral_on_mu(COSMO.s_eff, s, func_effect, COSMO;
-               L = L, use_windows = use_windows, SPLINE = SPLINE, kwargs...) for s in ss]
-
-          @test all([isapprox(a, r, rtol = RTOL) for (a, r) in zip(calc_ints_1, res)])
-          @test all([isapprox(a, r, rtol = RTOL) for (a, r) in zip(calc_ints_2, res)])
-     end
-
-     @testset "L = 0, no_window, yes_spline" begin
-          L, use_windows, SPLINE = 0, false, true
-          res = [6.216729467077863e-5, 1.2049734975168255e-5, 1.7982097197486115e-6,
-               2.811064352363306e-7, 7.408582429145476e-8]
-
-          calc_ints_1 = [GaPSE.integral_on_mu(COSMO.s_eff, s, name_effect, COSMO;
-               L = L, use_windows = use_windows, SPLINE = SPLINE, kwargs...) for s in ss]
-          calc_ints_2 = [GaPSE.integral_on_mu(COSMO.s_eff, s, func_effect, COSMO;
-               L = L, use_windows = use_windows, SPLINE = SPLINE, kwargs...) for s in ss]
-
-          @test all([isapprox(a, r, rtol = RTOL) for (a, r) in zip(calc_ints_1, res)])
-          @test all([isapprox(a, r, rtol = RTOL) for (a, r) in zip(calc_ints_2, res)])
-     end
-end
-
-
-
-
-##########################################################################################92
-
-
 
 @testset "test ξ_multipole" begin
      name_effect = "auto_doppler"
@@ -215,8 +118,7 @@ end
 
 
 
-
-@testset "test print_map_int_on_mu" begin
+@testset "test print_map_ξ_multipole" begin
      effect = "auto_doppler"
 
      kwargs = Dict(
@@ -228,14 +130,14 @@ end
      )
 
      @testset "first" begin
-          table = readdlm("datatest/int_on_mu/doppler_map_int_on_mu_first.txt"; comments = true)
+          table = readdlm("datatest/doppler_multipoles/xi_auto_doppler_L0_first.txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
-          name = "calc_doppler_int_on_mu_first.txt"
+          name = "calc_xi_auto_doppler_L0_first.txt"
           isfile(name) && rm(name)
-          GaPSE.print_map_int_on_mu(COSMO, name, effect, nothing;
-               s_1 = nothing, L = 0, kwargs...)
+          GaPSE.print_map_ξ_multipole(COSMO, name, effect, nothing;
+               s1 = nothing, L = 0, kwargs...)
 
           calc_table = readdlm(name; comments = true)
           calc_ss = convert(Vector{Float64}, calc_table[:, 1])
@@ -248,14 +150,14 @@ end
      end
 
      @testset "second" begin
-          table = readdlm("datatest/int_on_mu/doppler_map_int_on_mu_second.txt"; comments = true)
+          table = readdlm("datatest/doppler_multipoles/xi_auto_doppler_L0_second.txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
-          name = "calc_doppler_int_on_mu_second.txt"
+          name = "calc_xi_auto_doppler_L0_second.txt"
           isfile(name) && rm(name)
-          GaPSE.print_map_int_on_mu(COSMO, name, effect, 10 .^ range(0, 3, length = 344);
-               s_1 = nothing, L = 0, kwargs...)
+          GaPSE.print_map_ξ_multipole(COSMO, name, effect, 10 .^ range(0, 3, length = 344);
+               s1 = nothing, L = 0, kwargs...)
 
           calc_table = readdlm(name; comments = true)
           calc_ss = convert(Vector{Float64}, calc_table[:, 1])
@@ -268,14 +170,14 @@ end
      end
 
      @testset "third" begin
-          table = readdlm("datatest/int_on_mu/doppler_map_int_on_mu_third.txt"; comments = true)
+          table = readdlm("datatest/doppler_multipoles/xi_auto_doppler_L0_third.txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
-          name = "calc_doppler_int_on_mu_third.txt"
+          name = "calc_xi_auto_doppler_L0_third.txt"
           isfile(name) && rm(name)
-          GaPSE.print_map_int_on_mu(COSMO, name, effect, 10 .^ range(0, 3, length = 344);
-               s_1 = COSMO.s_eff - 65.0, L = 0, kwargs...)
+          GaPSE.print_map_ξ_multipole(COSMO, name, effect, 10 .^ range(0, 3, length = 344);
+               s1 = COSMO.s_eff - 65.0, L = 0, kwargs...)
 
           calc_table = readdlm(name; comments = true)
           calc_ss = convert(Vector{Float64}, calc_table[:, 1])
@@ -287,4 +189,3 @@ end
           rm(name)
      end
 end
-

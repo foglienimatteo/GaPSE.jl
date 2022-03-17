@@ -18,13 +18,6 @@
 #
 
 
-function warning(io::IO, msg::String)
-    red = "\033[1m\033[31m" 
-    printstyled(io, "WARNING: " * msg * "\n"; color=:red, bold=true)
-    return
-end
-warning(msg::String) = warning(stdout, msg)
-
 
 """
      derivate_point(xp, yp, x1, y1, x2, y2)
@@ -93,17 +86,17 @@ end
 
 
 
-@doc raw"""
+"""
      mean_spectral_index(xs, ys; N::Integer = 1, con = false)
 
 Assuming that the input `ys` follow a power law distribution, 
-return the mean spectral index ``\langle S \rangle`` of them.
+return the mean spectral index ``\\langle S \\rangle`` of them.
 
 The spectral index ``S`` of a generic function ``f = f(x)`` is
 defined as:
 ```math
-     S = \frac{\partial \log f(x)}{\partial \log x} 
-          = \frac{x}{f(x)} \frac{\partial f(x)}{\partial x} 
+     S = \\frac{\\partial \\log f(x)}{\\partial \\log x} 
+          = \\frac{x}{f(x)} \\frac{\\partial f(x)}{\\partial x} 
 ```
 """
 function mean_spectral_index(xs, ys; N::Integer = 1, con = false)
@@ -117,12 +110,12 @@ end
 ##########################################################################################92
 
 
-@doc raw"""
+"""
      power_law(x, si, b, a) ::Float64
 
 Return the following ``y = f(x)`` "spurious" power-law value:
 ```math
-y = f(x) = a + b \, x^s
+y = f(x) = a + b \\, x^s
 ```
 where `si` is the exponent (``s``), `b` the coefficient (``b``) and
 `a` is the added constant (``a``).
@@ -221,7 +214,7 @@ function power_law_from_data(xs, ys, p0::Vector{Float64}; con = false)
 end;
 
 
-@doc raw"""
+"""
      power_law_from_data(xs, ys, p0::Vector{Float64},
           fit_min::Number, fit_max::Number; con = false)
 
@@ -235,13 +228,17 @@ coefficients ``s``, ``b`` and ``a`` obtained from the fitting of the data vector
 If `con == false`, the returned `a` is always `0.0`, because it is considered the
 "pure" power-law fitting function:
 ```math
-     y = f(x) = b \, x^s
+     y = f(x) = b \\, x^s
 ```
 while if `con == false` it is used the spurious one:
 ```math
-     y = f(x) = a + b \, x^s
+     y = f(x) = a + b \\, x^s
 ```
 (and consequently ``a`` may be ≠0).
+
+The fitting is performed through the function `curve_fit` of the 
+[`LsqFit`](https://github.com/JuliaNLSolvers/LsqFit.jl) Julia package, which is based
+on the least-squares method.
  
 See also: [`power_law`](@ref)
 """
@@ -388,13 +385,13 @@ end
 
 
 
-@doc raw"""
+"""
      func_I04_tilde(PK, s, kmin, kmax; kwargs...)
 
 Return the following integral:
 ```math
-\tilde{I}^4_0 (s) = \int_0^\infty \frac{\mathrm{d}q}{2\pi^2} 
-     q^2 \, P(q) \, \frac{j_0(q s) - 1}{(q s)^4}
+\\tilde{I}^4_0 (s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} 
+     q^2 \\, P(q) \\, \\frac{j_0(q s) - 1}{(q s)^4}
 ```
 It is brute-force calcuated with `quadgk`.
 
@@ -500,24 +497,164 @@ function my_interpolation(x1, y1, x2, y2, x)
 end
 
 
-##########################################################################################92
 
+"""
+     EPLs(
+          l_si::Float64
+          l_b::Float64
+          l_a::Float64
+          left::Float64
 
+          spline::Dierckx.Spline1D
 
-function my_println_vec(io::IO, vec::Vector{T}, name::String; N::Integer = 5) where {T}
-     @assert N > 1 "N must be an integer >1, not $N !"
+          r_si::Float64
+          r_b::Float64
+          r_a::Float64
+          right::Float64
+     )
 
-     println(io, name * " = [")
-     for (i, el) in enumerate(vec)
-          print(io, string(el) * " , ")
-          (i % N ≠ 0) || print(io, "\n")
+Contains all the information useful in order to return the value of a spline inside
+the interval `left ≤ x ≤ right` and the associated power laws for the edges (with the "left"
+coefficients `l_si`, `l_b` and `l_a` for `x < left` and the "right" ones `r_si`, `r_b` and 
+`r_a` for `x > right`)
+
+## Arguments 
+
+- `l_si, l_b, l_a :: Float64` : coefficient for the spurious power-law 
+  ``y = f(x) = a + b \\, x^s`` for the LEFT edge; when an input value `x < left` is
+  given, the returned one is obtained from `power_law` with this coefficients (
+  where, of course, `l_si` is the exponent, `l_b` the coefficient and `l_a` the 
+  spurious adding constant). 
+
+- `left::Float64` : the break between the left power-law (for `x <left`) and the 
+  spline (for `x ≥ left`); its value is the `xs[begin]` one.
+
+- `spline::Dierckx.Spline1D` : spline that interpolates between the real values of the 
+  integral calculated inside the range `left ≤ x ≤ right`
+
+- `right::Float64` : the break between the right power-law (for `x ≥ left`) and the 
+  spline (for `x ≤ right`); its value is the `xs[end]` one.
+
+- `r_si, r_b, r_a :: Float64` : coefficient for the spurious power-law 
+  ``y = f(x) = a + b \\, x^s`` for the RIGHT edge; when an input value `x > right` is
+  given, the returned one is obtained from `power_law` with this coefficients (
+  where, of course, `r_si` is the exponent, `r_b`` the coefficient and `r_a` the 
+  spurious adding constant). 
+  NOTE: for numerical issues, the "pure" power-law ``y = f(x) = b + x^s`` should be used. 
+
+## Constructors
+
+`EPLs(xs, ys, p0_left::Vector{T1}, p0_right::Vector{T2}; 
+     N_left::Integer = 15, N_right::Integer = 15) where {T1<:Real, T2 <:Real}
+
+- `xs` and `ys`: the input vector of values. 
+
+- `N_left::Integer = 15` : number of points to be used from the left edge for the left power law-fitting.
+  It shouldn't be too low (< 4) or too high (>100).
+
+- `N_right::Integer = 15` : number of points to be used from the right edge for the right power law-fitting.
+  It shouldn't be too low (< 4) or too high (>100).
+
+- `p0_left::Vector{T1} where T1 <:Real` : vector with the initial values for the left power-law fitting; its length must
+     be 2 (if you want to fit with a pure power-law ``y = f(x) = b * x^s``, so only `l_si` and `l_b` 
+     are matter of concern) or 3 (if you want to fit with a spurious power-law ``y = f(x) = a + b * x^s``,
+     so you are also interested in `l_a`); in the first case, the considered `l_a` will be `0.0`.
+     Example: 
+
+- `p0_right::Vector{T1} where T1 <:Real` : vector with the initial values for the right power-law fitting; its length must
+     be 2 (if you want to fit with a pure power-law ``y = f(x) = b * x^s``, so only `r_si` and `r_b` 
+     are matter of concern) or 3 (if you want to fit with a spurious power-law ``y = f(x) = a + b * x^s``,
+     so you are also interested in `r_a`); in the first case, the considered `r_a` will be `0.0`.
+     It is recommended to 
+
+All the power-law fitting (both "pure" and spurious) are made through the 
+local function `power_law_from_data`.
+
+## Examples
+
+```julia
+julia> xs = 10 .^ range(0, 2, length=100);
+
+julia> ys = [1.34e2 * x ^ 2.43 for x in xs];
+
+julia> A = EPLs(xs, ys, [1.0, 1.0], [1.0, 1.0]; N_left = 10, N_right = 10)
+```
+
+See also: [`power_law_from_data`](@ref)
+"""
+struct EPLs
+     l_si::Float64
+     l_b::Float64
+     l_a::Float64
+     left::Float64
+
+     spline::Dierckx.Spline1D
+
+     r_si::Float64
+     r_b::Float64
+     r_a::Float64
+     right::Float64
+    
+
+    function EPLs(xs, ys, p0_left::Vector{T1}, p0_right::Vector{T2}; 
+            N_left::Integer = 15, N_right::Integer = 15,
+            ) where {T1<:Real, T2 <:Real}
+        
+          @assert length(xs) == length(ys) "xs and ys must have same length!"
+          @assert length(p0_left) ∈ [2, 3] "length of p0_left must be 2 or 3!"
+          @assert length(p0_right) ∈ [2, 3] "length of p0_right must be 2 or 3!"
+          @assert N_left > 3 "N_left must be > 3 !"
+          @assert N_right > 3 "N_right must be > 3 !"
+          @assert length(xs) > N_left + N_right "xs and ys are too short to be used!"
+        
+          con_left = length(p0_left) == 3 ? true : false
+          con_right = length(p0_right) == 3 ? true : false
+
+          l_si, l_b, l_a = power_law_from_data(
+               xs, ys, p0_left, xs[begin+1],  xs[begin+N_left]; con = con_left)
+
+          r_si, r_b, r_a = power_law_from_data(
+            xs, ys, p0_right, xs[end-1-N_right], xs[end-1]; con = con_right)
+
+          #println("\nLEFT = $l_si , $l_b , $l_a")
+          #println("RIGHT = $r_si , $r_b , $r_a")
+
+          spline = Spline1D(xs, ys; bc = "error")
+
+          new(l_si, l_b, l_a, xs[begin], spline, r_si, r_b, r_a, xs[end])
      end
-     (length(vec) % N ≠ 0) && print(io, "\n")
-     print(io, "];\n")
+end;
 
-     return nothing
-end
 
-function my_println_vec(vec::Vector{T}, name::String; N::Integer = 5) where {T}
-     my_println_vec(stdout, vec, name; N = N)
-end
+"""
+     (f::EPLs)(x)
+
+Return the value of the `f::EPLs` as follows:
+```math
+f(x)=
+\\begin{cases}
+a_\\mathrm{L} + b_\\mathrm{L} \\, x ^ {s_\\mathrm{L}} \\; ,
+    \\quad x < \\mathrm{left}\\\\
+\\mathrm{spline}(x) \\; , \\quad \\mathrm{left} \\leq x \\leq \\mathrm{right} \\\\
+a_\\mathrm{R} + b_\\mathrm{R} \\, x ^ {s_\\mathrm{R}} \\; , 
+\\quad x > \\mathrm{right}
+\\end{cases}
+```
+
+where ``a_\\mathrm{L}``, ``b_\\mathrm{L}``, ``s_\\mathrm{L}``, ``\\mathrm{left}``,
+``\\mathrm{spline}``, ``a_\\mathrm{R}``, ``b_\\mathrm{R}``, ``s_\\mathrm{R}`` and 
+``\\mathrm{right}`` are all stored inside the `EPLs` considered.
+
+See also: [`EPLs`](@ref)
+"""
+function (func::EPLs)(x)
+     if x < func.left
+          return power_law(x, func.l_si, func.l_b, func.l_a)
+     elseif x > func.right
+          #warning("i am going too right! ")
+          return power_law(x, func.r_si, func.r_b, func.r_a)
+     else
+          return func.spline(x)
+     end
+end;
+

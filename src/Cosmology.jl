@@ -18,18 +18,18 @@
 #
 
 
-@doc raw"""
+"""
      func_ℛ(s, ℋ; s_lim=0.01, ℋ_0 = ℋ0)
 
 Return the following value:
 ```math
-\mathrm{func_ℛ}(s, \scrH)=
-\begin{cases}
-1 - \frac{1}{\scrH \, s} \; ,
-    \quad s > s_\mathrm{lim}\\
-1 - \frac{1}{\scrH_0 \, s_\mathrm{lim}} \; , 
-     \quad \quad 0 \leq s \leq s_\mathrm{lim}
-\end{cases}
+\\mathrm{func_ℛ}(s, \\scrH)=
+\\begin{cases}
+1 - \\frac{1}{\\scrH \\, s} \\; ,
+    \\quad s > s_\\mathrm{lim}\\\\
+1 - \\frac{1}{\\scrH_0 \\, s_\\mathrm{lim}} \\; , 
+     \\quad \\quad 0 \\leq s \\leq s_\\mathrm{lim}
+\\end{cases}
 ```
 """
 function func_ℛ(s, ℋ; s_lim=0.01, ℋ_0 = ℋ0)
@@ -41,7 +41,7 @@ function func_ℛ(s, ℋ; s_lim=0.01, ℋ_0 = ℋ0)
 end
 
 
-@doc raw"""
+"""
      Cosmology(
           IPS::InputPS
           params::CosmoParams
@@ -81,18 +81,18 @@ Correlation Function computations.
 
 - `windowF::WindowF` : the window function `F`, defined as:
   ```math
-     \begin{split}
-     F(x,\mu; \theta_\mathrm{max}) = & \;4\pi 
-     \int_0^{\theta_\mathrm{max}} \mathrm{d}\theta_1 \int_0^\pi \mathrm{d} \theta \; 
-     \, \Theta\left(\frac
-          {x \cos \theta + \cos \theta_1}{\sqrt{x^1+2+2x\mu}} - 
-          \cos(\theta_\mathrm{max}) 
-          \right) 
-     \, \Theta(\mu-\cos(\theta+\theta_1)) \\
-     &\Theta(\cos(\theta - \theta_1)-\mu) \;
-     \frac{\sin\theta\sin\theta_1}
-          {\sqrt{(\sin\theta\sin\theta_1)^2-(\cos\theta\cos\theta_1-\mu)^2}}
-     \end{split}
+     \\begin{split}
+     F(x,\\mu; \\theta_\\mathrm{max}) = & \\;4\\pi 
+     \\int_0^{\\theta_\\mathrm{max}} \\mathrm{d}\\theta_1 \\int_0^\\pi \\mathrm{d} \\theta \\; 
+     \\, \\Theta\\left(\\frac
+          {x \\cos \\theta + \\cos \\theta_1}{\\sqrt{x^1+2+2x\\mu}} - 
+          \\cos(\\theta_\\mathrm{max}) 
+          \\right) 
+     \\, \\Theta(\\mu-\\cos(\\theta+\\theta_1)) \\\\
+     &\\Theta(\\cos(\\theta - \\theta_1)-\\mu) \\;
+     \\frac{\\sin\\theta\\sin\\theta_1}
+          {\\sqrt{(\\sin\\theta\\sin\\theta_1)^2-(\\cos\\theta\\cos\\theta_1-\\mu)^2}}
+     \\end{split}
   ```
 
 - `z_of_s, D_of_s, f_of_s, ℋ_of_s, ℛ_of_s ::Dierckx.Spline1D` : splines that returns the
@@ -145,7 +145,7 @@ Correlation Function computations.
   docstrings for more information.
 
 - `file_Is::Union{String,Nothing} = nothing` : if you want to given in input manually
-  all the ``I_\ell^n`` integrals, you can set as input the file containing them.
+  all the ``I_\\ell^n`` integrals, you can set as input the file containing them.
   It is expected that they are ordered in colums with the following order:
   `s  I00  I20  I40  I02  I22  I31  I11  I13  I04_tilde`.
   If nothing is passed (recommended), they are manually calculated from the Input Power Spectrum.
@@ -195,13 +195,10 @@ struct Cosmology
 
           BD = BackgroundData(file_data::String, params.z_max;
                names = names_bg, h = params.h_0)
-          IPS = InputPS(file_ips)
+          IPS = InputPS(file_ips; )
           windowF = WindowF(file_windowF)
           tools = isnothing(file_Is) ?
-               IPSTools(IPS; k_min = params.k_min, k_max = params.k_max,
-               N = params.N, fit_min = params.fit_min,
-               fit_max = params.fit_max, con = params.con) :
-               IPSTools(IPS, file_Is)
+               IPSTools(IPS; params.IPSTools...) : IPSTools(IPS, file_Is)
 
           #=
           z_of_s_lim = my_interpolation(BD.comdist[1], BD.z[1], BD.comdist[2], BD.z[2], s_lim)

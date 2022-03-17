@@ -19,34 +19,42 @@
 
 
 @testset "test_Cosmology" begin
-     z_min = 0.05
-     z_max = 0.20
-     θ_max = π / 2.0
-     params = GaPSE.CosmoParams(z_min, z_max, θ_max;
-          k_min = 1e-8, k_max = 10.0,
-          Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70)
-     cosmo = GaPSE.Cosmology(params,
-          FILE_BACKGROUND,
-          FILE_PS,
-          FILE_F_MAP)
+     z_min, z_max, θ_max = 0.05, 0.20, π / 2.0
+     params = GaPSE.CosmoParams(z_min, z_max, θ_max)
+     cosmo = GaPSE.Cosmology(params, FILE_BACKGROUND,
+          FILE_PS, FILE_F_MAP)
+
+     RTOL = 1e-6
+
+     @test isapprox(cosmo.params.Ω_b , 0.0489, rtol = RTOL)
+     @test isapprox(cosmo.params.Ω_cdm ,  0.251020, rtol = RTOL)
+     @test isapprox(cosmo.params.Ω_M0 , 0.29992, rtol = RTOL)
+     @test isapprox(cosmo.params.h_0, 0.7, rtol = RTOL)
+
+     for k in keys(GaPSE.DEFAULT_IPS_OPTS)
+          @test cosmo.params.IPS[k] ≈ GaPSE.DEFAULT_IPS_OPTS[k]
+     end
+     for k in keys(GaPSE.DEFAULT_IPSTOOLS_OPTS)
+          @test cosmo.params.IPSTools[k] ≈ GaPSE.DEFAULT_IPSTOOLS_OPTS[k]
+     end
 
 
-     @test isapprox(cosmo.z_eff, Z_EFF, rtol = 1e-8)
-     @test isapprox(cosmo.s_min, S_MIN, rtol = 1e-8)
-     @test isapprox(cosmo.s_max, S_MAX, rtol = 1e-8)
-     @test isapprox(cosmo.s_eff, S_EFF, rtol = 1e-8)
+     @test isapprox(cosmo.z_eff, Z_EFF, rtol = RTOL)
+     @test isapprox(cosmo.s_min, S_MIN, rtol = RTOL)
+     @test isapprox(cosmo.s_max, S_MAX, rtol = RTOL)
+     @test isapprox(cosmo.s_eff, S_EFF, rtol = RTOL)
 
-     @test isapprox(cosmo.volume, VOLUME, rtol = 1e-8)
+     @test isapprox(cosmo.volume, VOLUME, rtol = RTOL)
 
      @test cosmo.file_data == FILE_BACKGROUND
      @test cosmo.file_ips == FILE_PS
      @test cosmo.file_windowF == FILE_F_MAP
 
-     @test all(isapprox(cosmo.z_of_s.(COM_DIST), ZS, rtol = 1e-8))
-     @test all(isapprox(cosmo.s_of_z.(ZS), COM_DIST, rtol = 1e-8))
-     @test all(isapprox(cosmo.D_of_s.(COM_DIST), GROWTH_FACTOR_D, rtol = 1e-8))
-     @test all(isapprox(cosmo.f_of_s.(COM_DIST), GROWTH_FACTOR_F, rtol = 1e-8))
-     @test all(isapprox(cosmo.ℋ_of_s.(COM_DIST), COM_H, rtol = 1e-8))
+     @test all(isapprox(cosmo.z_of_s.(COM_DIST), ZS, rtol = RTOL))
+     @test all(isapprox(cosmo.s_of_z.(ZS), COM_DIST, rtol = RTOL))
+     @test all(isapprox(cosmo.D_of_s.(COM_DIST), GROWTH_FACTOR_D, rtol = RTOL))
+     @test all(isapprox(cosmo.f_of_s.(COM_DIST), GROWTH_FACTOR_F, rtol = RTOL))
+     @test all(isapprox(cosmo.ℋ_of_s.(COM_DIST), COM_H, rtol = RTOL))
 end
 
 

@@ -18,26 +18,26 @@
 #
 
 
-@doc raw"""
+"""
      integrand_ξ_LocalGP_IntegratedGP(
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
 Return the integrand of the LocalGP-IntegratedGP cross-correlation function 
-``\xi^{\phi\int\phi} (s_1, s_2, \cos{\theta})``, i.e. the function 
-``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
+``\\xi^{\\phi\\int\\phi} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
+``f(s_1, s_2, y, \\chi_1, \\chi_2)`` defined as follows:  
 
 ```math
-f(s_1, s_2, y, \chi_1, \chi_2) = 
-     \frac{9 \mathcal{H}_0^4 \Omega_{M0}^2 D(s_1) (\mathcal{R}(s_1) +1)}{2 a(s_1)} 
-     \frac{D(\chi_2) \Delta\chi_2^4}{ a(\chi_2)}
-     \left(
-          \mathcal{H}(\chi_2)( f(\chi_2) - 1) \mathcal{R}(s_2) - \frac{1}{s_2}
-     \right) \tilde{I}^4_0(\Delta\chi_2)
+f(s_1, s_2, y, \\chi_1, \\chi_2) = 
+     \\frac{9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(s_1) (\\mathcal{R}(s_1) +1)}{2 a(s_1)} 
+     \\frac{D(\\chi_2) \\Delta\\chi_2^4}{ a(\\chi_2)}
+     \\left(
+          \\mathcal{H}(\\chi_2)( f(\\chi_2) - 1) \\mathcal{R}(s_2) - \\frac{1}{s_2}
+     \\right) \\tilde{I}^4_0(\\Delta\\chi_2)
 ```
-where ``\mathcal{H} = a H``, 
-``\Delta\chi_2 = \sqrt{s_1^2 + \chi_2^2 - 2 s_1 \chi_2 \cos{\theta}}``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2``).
+where ``\\mathcal{H} = a H``, 
+``\\Delta\\chi_2 = \\sqrt{s_1^2 + \\chi_2^2 - 2 s_1 \\chi_2 \\cos{\\theta}}``, 
+``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``).
 
 ## Inputs
 
@@ -88,24 +88,24 @@ function integrand_ξ_LocalGP_IntegratedGP(
 end
 
 
-@doc raw"""
+"""
      ξ_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the LocalGP-IntegratedGP cross-correlation function 
-``\xi^{v_{\parallel}\int \phi} (s_1, s_2, \cos{\theta})``, defined as follows:
+``\\xi^{v_{\\parallel}\\int \\phi} (s_1, s_2, \\cos{\\theta})``, defined as follows:
     
 ```math
-\xi^{v_{\parallel}\int \phi} (s_1, s_2, \cos{\theta}) = 
-     \frac{9 \mathcal{H}_0^4 \Omega_{M0}^2 D(s_1) (\mathcal{R}(s_1) +1)}{2 a(s_1)} 
-     \int_0^{s_2} \mathrm{d}\chi_2 \frac{D(\chi_2) \Delta\chi_2^4}{ a(\chi_2)}
-     \left(
-          \mathcal{H}(\chi_2)( f(\chi_2) - 1) \mathcal{R}(s_2) - \frac{1}{s_2}
-     \right) \tilde{I}^4_0(\Delta\chi_2)
+\\xi^{v_{\\parallel}\\int \\phi} (s_1, s_2, \\cos{\\theta}) = 
+     \\frac{9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(s_1) (\\mathcal{R}(s_1) +1)}{2 a(s_1)} 
+     \\int_0^{s_2} \\mathrm{d}\\chi_2 \\frac{D(\\chi_2) \\Delta\\chi_2^4}{ a(\\chi_2)}
+     \\left(
+          \\mathcal{H}(\\chi_2)( f(\\chi_2) - 1) \\mathcal{R}(s_2) - \\frac{1}{s_2}
+     \\right) \\tilde{I}^4_0(\\Delta\\chi_2)
 ```
-where ``\mathcal{H} = a H``, 
-``\Delta\chi_2 = \sqrt{s_1^2 + \chi_2^2 - 2 s_1 \chi_2 \cos{\theta}}``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2``).
+where ``\\mathcal{H} = a H``, 
+``\\Delta\\chi_2 = \\sqrt{s_1^2 + \\chi_2^2 - 2 s_1 \\chi_2 \\cos{\\theta}}``, 
+``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``).
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to

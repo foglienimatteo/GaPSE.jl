@@ -19,7 +19,7 @@
 
 
 
-@doc raw"""
+"""
      integrand_ξ_Lensing(
           IP1::Point, IP2::Point,
           P1::Point, P2::Point,
@@ -27,37 +27,37 @@
           Δχ_min::Float64 = 1e-4) :: Float64
 
 Return the integrand of the Lensing auto-correlation function 
-``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, i.e. the function 
-``f(s_1, s_2, y, \chi_1, \chi_2)`` defined as follows:  
+``\\xi^{\\kappa\\kappa} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
+``f(s_1, s_2, y, \\chi_1, \\chi_2)`` defined as follows:  
 
 ```math
-f(s_1, s_2, y, \chi_1, \chi_2) = 
-\frac{1}{2}
-\frac{
-     \mathcal{H}_0^4 \Omega_{ \mathrm{M0}}^2 D_1 D_2 (\chi_1 - s_1)(\chi_2 - s_2)
+f(s_1, s_2, y, \\chi_1, \\chi_2) = 
+\\frac{1}{2}
+\\frac{
+     \\mathcal{H}_0^4 \\Omega_{ \\mathrm{M0}}^2 D_1 D_2 (\\chi_1 - s_1)(\\chi_2 - s_2)
 }{
-     s_1 s_2 a(\chi_1) a(\chi_2) }
-(J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
-     J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi))
+     s_1 s_2 a(\\chi_1) a(\\chi_2) }
+(J_{00} \\, I^0_0(\\chi) + J_{02} \\, I^0_2(\\chi) + 
+     J_{31} \\, I^3_1(\\chi) + J_{22} \\, I^2_2(\\chi))
 ```
 
-where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
-``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2\chi_1\chi_2\cos{\theta}}``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2``) 
+where ``D_1 = D(\\chi_1)``, ``D_2 = D(\\chi_2)`` and so on, ``\\mathcal{H} = a H``, 
+``\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2\\chi_1\\chi_2\\cos{\\theta}}``, 
+``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``) 
 and the ``J`` coefficients are given by 
 
 ```math
-\begin{align*}
-    J_{00} & = - \frac{3 \chi_1^2 \chi_2^2}{4 \chi^4} (y^2 - 1) 
-               (8 y (\chi_1^2 + \chi_2^2) - 9 \chi_1 \chi_2 y^2 - 7 \chi_1 \chi_2) \\
-    J_{02} & = - \frac{3 \chi_1^2 \chi_2^2}{2 \chi^4} (y^2 - 1)
-               (4 y (\chi_1^2 + \chi_2^2) - 3 \chi_1 \chi_2 y^2 - 5 \chi_1 \chi_2) \\
-    J_{31} & = 9 y \chi^2 \\
-    J_{22} & = \frac{9 \chi_1 \chi_2}{4 \chi^4}
-               [ 2 (\chi_1^4 + \chi_2^4) (7 y^2 - 3) 
-                 - 16 y \chi_1 \chi_2 (\chi_1^2 + \chi_2^2) (y^2+1) 
-               + \chi_1^2 \chi_2^2 (11 y^4 + 14 y^2 + 23)]
-\end{align*}
+\\begin{align*}
+    J_{00} & = - \\frac{3 \\chi_1^2 \\chi_2^2}{4 \\chi^4} (y^2 - 1) 
+               (8 y (\\chi_1^2 + \\chi_2^2) - 9 \\chi_1 \\chi_2 y^2 - 7 \\chi_1 \\chi_2) \\\\
+    J_{02} & = - \\frac{3 \\chi_1^2 \\chi_2^2}{2 \\chi^4} (y^2 - 1)
+               (4 y (\\chi_1^2 + \\chi_2^2) - 3 \\chi_1 \\chi_2 y^2 - 5 \\chi_1 \\chi_2) \\\\
+    J_{31} & = 9 y \\chi^2 \\\\
+    J_{22} & = \\frac{9 \\chi_1 \\chi_2}{4 \\chi^4}
+               [ 2 (\\chi_1^4 + \\chi_2^4) (7 y^2 - 3) 
+                 - 16 y \\chi_1 \\chi_2 (\\chi_1^2 + \\chi_2^2) (y^2+1) 
+               + \\chi_1^2 \\chi_2^2 (11 y^4 + 14 y^2 + 23)]
+\\end{align*}
 ```
 
 ## Inputs
@@ -75,16 +75,16 @@ and the ``J`` coefficients are given by
 
 ## Optional arguments
 
-- `Δχ_min::Float64 = 1e-6` : when ``\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}``,
-  some ``I_\ell^n`` term diverges, but the overall parenthesis has a known limit:
+- `Δχ_min::Float64 = 1e-6` : when ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
+  some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
-     \lim_{\chi\to0^{+}} (J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
-          J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi)) = 
-          \frac{4}{15} \, (5 \, \sigma_2 + \frac{2}{3} \, σ_0 \,s_1^2 \, \chi_2^2)
+     \\lim_{\\chi\\to0^{+}} (J_{00} \\, I^0_0(\\chi) + J_{02} \\, I^0_2(\\chi) + 
+          J_{31} \\, I^3_1(\\chi) + J_{22} \\, I^2_2(\\chi)) = 
+          \\frac{4}{15} \\, (5 \\, \\sigma_2 + \\frac{2}{3} \\, σ_0 \\,s_1^2 \\, \\chi_2^2)
   ```
 
-  So, when it happens that ``\chi < \Delta\chi_\mathrm{min}``, the function considers this limit
+  So, when it happens that ``\\chi < \\Delta\\chi_\\mathrm{min}``, the function considers this limit
   as the result of the parenthesis instead of calculating it in the normal way; it prevents
   computational divergences.
 
@@ -131,23 +131,6 @@ function integrand_ξ_Lensing(
                new_J00 * I00 + new_J02 * I20 +
                new_J31 * I13 + new_J22 * I22
           )
-
-          
-          resss >=0 || begin 
-               #println("resss = ", resss, "\n")
-               #println("χ1 = $χ1 \t χ2 = $χ2 \t y = $y")
-               #=
-               println("J00 = $new_J00, \t I00(Δχ) = $(I00)")
-               println("J02 = $new_J02, \t I20(Δχ) = $(I20)")
-               println("J31 = $new_J31, \t I13(Δχ) = $(I13)")
-               println("J22 = $new_J22, \t I22(Δχ) = $(I22)")
-               println("coef = $(2.25 * χ1χ2 / Δχ^4)")
-               println("a = $(2 * (χ1^4 + χ2^4) * (7 * y^2 - 3))")
-               println("b = $(- 16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2))")
-               println("c = $(χ1χ2^2 * (11y^4 + 14y^2 + 23))")
-               =#
-          end
-
 
           resss
      else
@@ -210,7 +193,7 @@ end
 
 
 
-@doc raw"""
+"""
      ξ_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
           en::Float64 = 1e6,
           Δχ_min::Float64 = 1e-3,
@@ -221,37 +204,37 @@ end
 
           
 Return the Lensing auto-correlation function 
-``\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta})``, defined as follows:
+``\\xi^{\\kappa\\kappa} (s_1, s_2, \\cos{\\theta})``, defined as follows:
     
 ```math
-\xi^{\kappa\kappa} (s_1, s_2, \cos{\theta}) = 
-\int_0^{s_1} \mathrm{d} \chi_1 \int_0^{s_2} \mathrm{d} \chi_2 
-\frac{1}{2}
-\frac{
-     \mathcal{H}_0^4 \Omega_{ \mathrm{M0}}^2 D_1 D_2 (\chi_1 - s_1)(\chi_2 - s_2)
+\\xi^{\\kappa\\kappa} (s_1, s_2, \\cos{\\theta}) = 
+\\int_0^{s_1} \\mathrm{d} \\chi_1 \\int_0^{s_2} \\mathrm{d} \\chi_2 
+\\frac{1}{2}
+\\frac{
+     \\mathcal{H}_0^4 \\Omega_{ \\mathrm{M0}}^2 D_1 D_2 (\\chi_1 - s_1)(\\chi_2 - s_2)
 }{
-     s_1 s_2 a(\chi_1) a(\chi_2) }
-(J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
-     J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi))
+     s_1 s_2 a(\\chi_1) a(\\chi_2) }
+(J_{00} \\, I^0_0(\\chi) + J_{02} \\, I^0_2(\\chi) + 
+     J_{31} \\, I^3_1(\\chi) + J_{22} \\, I^2_2(\\chi))
 ```
 
-where ``D_1 = D(\chi_1)``, ``D_2 = D(\chi_2)`` and so on, ``\mathcal{H} = a H``, 
-``\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2\chi_1\chi_2\cos{\theta}}``, 
-``y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2``) 
+where ``D_1 = D(\\chi_1)``, ``D_2 = D(\\chi_2)`` and so on, ``\\mathcal{H} = a H``, 
+``\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2\\chi_1\\chi_2\\cos{\\theta}}``, 
+``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``) 
 and the ``J`` coefficients are given by 
 
 ```math
-\begin{align*}
-    J_{00} & = - \frac{3 \chi_1^2 \chi_2^2}{4 \chi^4} (y^2 - 1) 
-               (8 y (\chi_1^2 + \chi_2^2) - 9 \chi_1 \chi_2 y^2 - 7 \chi_1 \chi_2) \\
-    J_{02} & = - \frac{3 \chi_1^2 \chi_2^2}{2 \chi^4} (y^2 - 1)
-               (4 y (\chi_1^2 + \chi_2^2) - 3 \chi_1 \chi_2 y^2 - 5 \chi_1 \chi_2) \\
-    J_{31} & = 9 y \chi^2 \\
-    J_{22} & = \frac{9 \chi_1 \chi_2}{4 \chi^4}
-               [ 2 (\chi_1^4 + \chi_2^4) (7 y^2 - 3) 
-                 - 16 y \chi_1 \chi_2 (\chi_1^2 + \chi_2^2) (y^2+1) 
-               + \chi_1^2 \chi_2^2 (11 y^4 + 14 y^2 + 23)]
-\end{align*}
+\\begin{align*}
+    J_{00} & = - \\frac{3 \\chi_1^2 \\chi_2^2}{4 \\chi^4} (y^2 - 1) 
+               (8 y (\\chi_1^2 + \\chi_2^2) - 9 \\chi_1 \\chi_2 y^2 - 7 \\chi_1 \\chi_2) \\\\
+    J_{02} & = - \\frac{3 \\chi_1^2 \\chi_2^2}{2 \\chi^4} (y^2 - 1)
+               (4 y (\\chi_1^2 + \\chi_2^2) - 3 \\chi_1 \\chi_2 y^2 - 5 \\chi_1 \\chi_2) \\\\
+    J_{31} & = 9 y \\chi^2 \\\\
+    J_{22} & = \\frac{9 \\chi_1 \\chi_2}{4 \\chi^4}
+               [ 2 (\\chi_1^4 + \\chi_2^4) (7 y^2 - 3) 
+                 - 16 y \\chi_1 \\chi_2 (\\chi_1^2 + \\chi_2^2) (y^2+1) 
+               + \\chi_1^2 \\chi_2^2 (11 y^4 + 14 y^2 + 23)]
+\\end{align*}
 ```
 
 The computation is made applying [`trapz`](@ref) (see the 
@@ -274,16 +257,16 @@ the integrand function `integrand_ξ_Lensing`.
 - `en::Float64 = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
-- `Δχ_min::Float64 = 1e-6` : when ``\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}``,
-  some ``I_\ell^n`` term diverges, but the overall parenthesis has a known limit:
+- `Δχ_min::Float64 = 1e-6` : when ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
+  some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
-     \lim_{\chi\to0^{+}} (J_{00} \, I^0_0(\chi) + J_{02} \, I^0_2(\chi) + 
-          J_{31} \, I^3_1(\chi) + J_{22} \, I^2_2(\chi)) = 
-          \frac{4}{15} \, (5 \, \sigma_2 + \frac{2}{3} \, σ_0 \,s_1^2 \, \chi_2^2)
+     \\lim_{\\chi\\to0^{+}} (J_{00} \\, I^0_0(\\chi) + J_{02} \\, I^0_2(\\chi) + 
+          J_{31} \\, I^3_1(\\chi) + J_{22} \\, I^2_2(\\chi)) = 
+          \\frac{4}{15} \\, (5 \\, \\sigma_2 + \\frac{2}{3} \\, σ_0 \\,s_1^2 \\, \\chi_2^2)
   ```
 
-  So, when it happens that ``\chi < \Delta\chi_\mathrm{min}``, the function considers this limit
+  So, when it happens that ``\\chi < \\Delta\\chi_\\mathrm{min}``, the function considers this limit
   as the result of the parenthesis instead of calculating it in the normal way; it prevents
   computational divergences.
 
