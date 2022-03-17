@@ -35,20 +35,27 @@ function PS_multipole(f_in;
 end
 
 
-function PS_multipole(input::String;
-     N_left::Integer = 12, N_right::Integer = 12, kwargs...)
+function PS_multipole(input::String; 
+     N_left::Integer = 12, N_right::Integer = 12, 
+     int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3, kwargs...)
 
      xi_table = readdlm(input, comments = true)
      ss = convert(Vector{Float64}, xi_table[:, 1])
      fs = convert(Vector{Float64}, xi_table[:, 2])
 
      #f_in = Spline1D(ss, fs; bc = "error")
-     f_in = EPLs(ss, fs, [-2.0, 1.0], [1.0, 1.0];
-          N_left = N_left, N_right = N_right)
+     f_in, INT_s_min, INT_s_max = 
+          try 
+               EPLs(ss, fs, [-2.0, 1.0], [1.0, 1.0];
+                    N_left = N_left, N_right = N_right), int_s_min, int_s_max
+          catch e
+               warning("it was not possible to fit with power laws at the edges")
+               Spline1D(ss, fs; bc = "error"), min(ss...), max(ss...)
+          end
 
      #intsmin = isnothing(int_s_min) ? min(ss...) : int_s_min
      #intsmax = isnothing(int_s_max) ? max(ss...) : int_s_max
-     return PS_multipole(f_in; kwargs...)
+     return PS_multipole(f_in; int_s_min = INT_s_min, int_s_max = INT_s_max, kwargs...)
 end
 
 

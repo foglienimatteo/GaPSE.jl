@@ -17,6 +17,27 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
+"""
+     DEFAULT_FMAP_OPTS = Dict(
+          :θ_max => π / 2.0::Float64, 
+          :tolerance => 1e-8::Float64, 
+          :rtol => 1e-2::Float64, 
+          :atol => 1e-3::Float64,
+          :pr => true::Bool,
+     )
+
+
+The default values to be used for the `F` function.
+
+See also: [`integrand_F`](@ref), [`F`](@ref), [`F_map`](@ref)
+"""
+const DEFAULT_FMAP_OPTS = Dict(
+     :θ_max => π / 2.0::Float64, 
+     :tolerance => 1e-8::Float64, 
+     :rtol => 1e-2::Float64, 
+     :atol => 1e-3::Float64,
+     :pr => true::Bool,
+)
 
 
 """
@@ -75,7 +96,9 @@ end
 
 
 """
-     F(x, μ, θ_max; tolerance=1e-8) :: Tuple{Float64, Float64}
+     F(x, μ; θ_max = π/2, tolerance = 1e-8, 
+          atol = 1e-2, rtol = 1e-5, 
+          kwargs...) ::Tuple{Float64, Float64}
 
 The function ``F(x,\\mu; \\theta_\\mathrm{max})``, defined as
 follows:
@@ -109,10 +132,10 @@ are directly transferred to `hcubature`.
 PAY ATTENTION: do not set too small `atol` and `rtol`, or the computation
 can easily become overwhelming! 
 
-See also: [`F_map`](@ref), [`integrand_F`](@ref)
+
+See also: [`F_map`](@ref), [`integrand_F`](@ref), [`check_compatible_dicts`](@ref)
 """
-function F(x, μ; θ_max = π / 2.0, tolerance = 1e-8, rtol = 1e-2, atol = 1e-3, kwargs...)
-     @assert 0 < tolerance < 1 "tolerance must be inside (0,1), not $(tolerance)  "
+function F(x, μ; θ_max = π/2, tolerance = 1e-8, atol = 1e-2, rtol = 1e-5, kwargs...)
      my_int(var) = integrand_F(var[1], var[2], x, μ, θ_max; tolerance = tolerance)
      a = [0.0, 0.0]
      b = [π, θ_max]
@@ -122,7 +145,8 @@ end
 
 
 function F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
-     out = "data/F_map.txt", x1 = 0, x2 = 3, μ1 = -1, μ2 = 1, kwargs...)
+     out = "data/F_map.txt", x1 = 0, x2 = 3, μ1 = -1, μ2 = 1,
+     Fmap_opts::Dict = Dict{Symbol,Any}(), kwargs...)
 
      @assert x1 >= 0.0 "The lower limit of x must be >0, not $(x1)!"
      @assert x2 > x1 "The upper limit of x must be > than the lower one, not $(x2)<=$(x1)!"
@@ -133,28 +157,44 @@ function F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
      @assert 0 < x_step < 1 "The integration step of x must be 0<x_step<1, not $(x_step)!"
      @assert 0 < μ_step < 1 "The integration step of μ must be 0<μ_step<1, not $(μ_step)!"
 
+     @assert typeof(Fmap_opts) <: Dict{Symbol,T1} where {T1}
+          "the keys of the Fmap_opts dict have to be Symbols (like :k_min, :N, ...)"
+     check_compatible_dicts(DEFAULT_FMAP_OPTS, Fmap_opts, "Fmap_opts")
+     Fmap_dict = merge(DEFAULT_FMAP_OPTS, Fmap_opts)
+
      μs = μ1:μ_step:μ2
      xs = x1:x_step:x2
      xs_grid = [x for x = xs for μ = μs]
      μs_grid = [μ for x = xs for μ = μs]
 
      time_1 = time()
-     new_F(x, μ) = F(x, μ; kwargs...)
-     Fs_grid = @showprogress "window F evaluation: " map(new_F, xs_grid, μs_grid)
+
+     new_F(x, μ) = F(x, μ; θ_max = Fmap_dict[:θ_max], 
+          tolerance = Fmap_dict[:tolerance], atol = Fmap_dict[:atol], 
+          rtol = Fmap_dict[:rtol], kwargs...)
+
+     Fs_grid = Fmap_dict[:pr] ? begin
+          @showprogress "window F evaluation: " map(new_F, xs_grid, μs_grid)
+     end : map(new_F, xs_grid, μs_grid)
+
      time_2 = time()
 
      #run(`rm $(out)`)
      open(out, "w") do io
+          println(io, BRAND)
+          println(io, "# This is an integration map on μ and x of the window function F(x, μ)")
+          println(io, "# For its analytical definition, check the code.\n#")
           println(io, "# Parameters used in this integration map:")
           println(io, "# x_min = $(x1) \t x_max = $(x2) \t x_step = $(x_step)")
           println(io, "# mu_min = $(μ1) \t mu_max = $(μ2) \t mu_step = $(μ_step)")
           println(io, "# computational time (in s) : $(@sprintf("%.3f", time_2-time_1))")
-          print(io, "# kwards passed: ")
+          println(io, "# kwards passed: ")
 
-          if isempty(kwargs)
-               println(io, "none")
-          else
-               print(io, "\n")
+          for key in keys(Fmap_dict)
+               println(io, "# \t\t$(key) = $(Fmap_dict[key])")
+          end
+
+          if !isempty(kwargs)
                for key in keys(kwargs)
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
@@ -170,7 +210,7 @@ end
 
 
 function F_map(xs::Vector{Float64}, μs::Vector{Float64};
-     out = "data/F_map.txt", kwargs...)
+     out = "data/F_map.txt", Fmap_opts::Dict = Dict{Symbol,Any}(), kwargs...)
 
      @assert all(xs .>= 0.0) "All xs must be >=0.0!"
      @assert all([xs[i+1] > xs[i] for i in 1:(length(xs)-1)]) "xs must be a float vector of increasing values!"
@@ -179,24 +219,40 @@ function F_map(xs::Vector{Float64}, μs::Vector{Float64};
      @assert all([μs[i+1] > μs[i] for i in 1:(length(μs)-1)]) "μs must be a float vector of increasing values!"
      @assert all(μs .<= 1.0) "All μs must be <=1.0!"
 
+     @assert typeof(Fmap_opts) <: Dict{Symbol,T1} where {T1}
+          "the keys of the Fmap_opts dict have to be Symbols (like :k_min, :N, ...)"
+     check_compatible_dicts(DEFAULT_FMAP_OPTS, Fmap_opts, "Fmap_opts")
+     Fmap_dict = merge(DEFAULT_FMAP_OPTS, Fmap_opts)
+
      xs_grid = [x for x = xs for μ = μs]
      μs_grid = [μ for x = xs for μ = μs]
 
      time_1 = time()
-     new_F(x, μ) = F(x, μ; kwargs...)
-     Fs_grid = @showprogress "window F evaluation: " map(new_F, xs_grid, μs_grid)
+
+     new_F(x, μ) = F(x, μ; θ_max = Fmap_dict[:θ_max], 
+          tolerance = Fmap_dict[:tolerance], atol = Fmap_dict[:atol], 
+          rtol = Fmap_dict[:rtol], kwargs...)
+
+     Fs_grid = Fmap_dict[:pr] ? begin
+          @showprogress "window F evaluation: " map(new_F, xs_grid, μs_grid)
+     end : map(new_F, xs_grid, μs_grid)
+
      time_2 = time()
 
      #run(`rm $(out)`)
      open(out, "w") do io
+          println(io, BRAND)
+          println(io, "# This is an integration map on μ and x of the window function F(x, μ)")
+          println(io, "# For its analytical definition, check the code.\n#")
           println(io, "# Parameters used in this integration map:")
           println(io, "# computational time (in s) : $(@sprintf("%.3f", time_2-time_1))")
-          print(io, "# kwards passed: ")
+          println(io, "# kwards passed: ")
 
-          if isempty(kwargs)
-               println(io, "none")
-          else
-               print(io, "\n")
+          for key in keys(Fmap_dict)
+               println(io, "# \t\t$(key) = $(Fmap_dict[key])")
+          end
+
+          if !isempty(kwargs)
                for key in keys(kwargs)
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
@@ -214,18 +270,39 @@ end
 
 """
      F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
-          out = "data/F_map.txt", x1 = 0, x2 = 3, μ1 = -1, μ2 = 1, kwargs...)
+          out = "data/F_map.txt", x1 = 0, x2 = 3, μ1 = -1, μ2 = 1, 
+          Fmap_opts::Dict = Dict{Symbol,Any}(), 
+          kwargs...)
+
      F_map(xs::Vector{Float64}, μs::Vector{Float64};
-          out = "data/F_map.txt", kwargs...)
+          out = "data/F_map.txt", Fmap_opts::Dict = Dict{Symbol,Any}(),
+          kwargs...)
 
 Evaluate the window function ``F(x,\\mu; \\theta_\\mathrm{max})`` in a rectangual grid 
-of ``\\mu`` and ``x`` values.
+of ``\\mu`` and ``x`` values, and print the results in the `out` file.
 
 In the first method you specify start, stop and step for `x` and `μ` manually, while
-with thr second one you pass the values (through a vector )you want to calculate 
+with the second one you pass the values (through a vector )you want to calculate 
 the function in.
 
-See also: [`F_map`](@ref), [`integrand_F`](@ref)
+Concerning how the dict works, you may pass only the key and the value you are interested in,
+and all the other default ones will be considered.
+For example, if you set:
+
+`Fmap_opts = Dict(:tolerance => 1e-5, :θ_max => 2.0)`
+
+then the dictionary with all the options that will be passed to `F` will be:
+
+`Fmap_dict = merge(DEFAULT_FMAP_OPTS, Fmap_opts) = 
+     :θ_max => 2.0,           # CHANGED VALUE
+     :tolerance => 1e-5,      # CHANGED VALUE
+     :rtol => 1e-2,           # default
+     :atol => 1e-3,           # default
+     :pr => true,             # default
+)`
+
+
+See also: [`F`](@ref), [`integrand_F`](@ref)
 """
 F_map
 
