@@ -35,8 +35,8 @@ function PS_multipole(f_in;
 end
 
 
-function PS_multipole(input::String; 
-     N_left::Integer = 12, N_right::Integer = 12, 
+function PS_multipole(input::String;
+     N_left::Integer = 12, N_right::Integer = 12,
      int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3, kwargs...)
 
      xi_table = readdlm(input, comments = true)
@@ -44,8 +44,8 @@ function PS_multipole(input::String;
      fs = convert(Vector{Float64}, xi_table[:, 2])
 
      #f_in = Spline1D(ss, fs; bc = "error")
-     f_in, INT_s_min, INT_s_max = 
-          try 
+     f_in, INT_s_min, INT_s_max =
+          try
                EPLs(ss, fs, [-2.0, 1.0], [1.0, 1.0];
                     N_left = N_left, N_right = N_right), int_s_min, int_s_max
           catch e
@@ -58,6 +58,27 @@ function PS_multipole(input::String;
      return PS_multipole(f_in; int_s_min = INT_s_min, int_s_max = INT_s_max, kwargs...)
 end
 
+
+
+function PS_multipole(ss, fs;
+     N_left::Integer = 12, N_right::Integer = 12,
+     int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3, kwargs...)
+
+     @assert length(ss) == length(fs) "xs and ys must have same length"
+     #f_in = Spline1D(ss, fs; bc = "error")
+     f_in, INT_s_min, INT_s_max =
+          try
+               EPLs(ss, fs, [-2.0, 1.0], [1.0, 1.0];
+                    N_left = N_left, N_right = N_right), int_s_min, int_s_max
+          catch e
+               warning("it was not possible to fit with power laws at the edges")
+               Spline1D(ss, fs; bc = "error"), min(ss...), max(ss...)
+          end
+
+     #intsmin = isnothing(int_s_min) ? min(ss...) : int_s_min
+     #intsmax = isnothing(int_s_max) ? max(ss...) : int_s_max
+     return PS_multipole(f_in; int_s_min = INT_s_min, int_s_max = INT_s_max, kwargs...)
+end
 
 """
      PS_multipole(input::String; N_left::Integer = 12, 
@@ -155,40 +176,6 @@ PS_multipole
 ##########################################################################################92
 
 
-
-"""
-     print_PS_multipole(input::String, out::String;
-          L::Integer = 0, N::Integer = 1024,
-          pr::Bool = true, kwargs...)
-
-Takes in input a filename `input` where is stored a TPCF multipole,
-calculate the `L`-order PS multipole through the
-following Fast Fourier Transform and the effective redshift approximation
-
-```math
-P_L(k) = \\frac{2 L + 1}{A^{'}} (-i)^L \\, \\phi(s_\\mathrm{eff}) \\int_0^\\infty 
-        \\mathrm{d} s \\; s^2 \\, j_L(ks) \\, f_\\mathrm{in}(s) \\; ,
-        \\quad \\; A^{'} = \\frac{1}{4\\,\\pi}
-```
-
-and save it in the file `out`, together with the options used for the computation.
-
-## Optional arguments
-
-- `L::Integer = 0`: order of the Legendre polynomial to be used; note that 
-  the multipole order `L` must be the same of the input TPCF in exam! 
-  Otherwise, the results would have no sense at all!
-
-- `pr::Bool = true` : do you want the progress bar showed on screen, in order to 
-  check the time needed for the computation? (`true` recommended)
-
-- `N::Integer = 1024` : number of points to be returned by `xicalc`
-
-- `kwargs...` : other keyword arguments that will be passed to `PS_multipole`
-
-See also: [`V_survey`](@ref), [`A`](@ref), [`A_prime`](@ref),
-[`EPLs`](@ref), [`PS_multipole`](@ref)
-"""
 function print_PS_multipole(input::String, out::String;
      L::Integer = 0, N::Integer = 1024,
      pr::Bool = true, kwargs...)
@@ -226,4 +213,75 @@ function print_PS_multipole(input::String, out::String;
      end
 end
 
+function print_PS_multipole(ss, fs, out::String;
+     L::Integer = 0, N::Integer = 1024,
+     pr::Bool = true, kwargs...)
 
+     pr && println("\nI'm computiong the PS_multipole from the two input vectors.")
+
+     time_1 = time()
+     vec = PS_multipole(ss, fs; N = N, L = L, pr = pr, kwargs...)
+     time_2 = time()
+
+     pr && println("\ntime needed for Power Spectrum  computation [in s] = $(time_2-time_1)\n")
+
+     isfile(out) && run(`rm $out`)
+     open(out, "w") do io
+          println(io, "# Power Spectrum Multipole computation from two input vectors.")
+          println(io, "#\n# For this PS_multipole computation we set: ")
+          println(io, "# \t #points used in Fourier transform N = $N")
+          println(io, "# \t multipole degree in consideration L = $L")
+          println(io, "# computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
+          print(io, "# kwards passed to \"print_PS_multipole\": ")
+
+          if isempty(kwargs)
+               println(io, "none")
+          else
+               print(io, "\n")
+               for key in keys(kwargs)
+                    println(io, "# \t\t$(key) = $(kwargs[key])")
+               end
+          end
+          println(io, "# ")
+          println(io, "# k [h_0/Mpc] \t \t  P [(Mpc/h_0)^3]")
+          for (k, pk) in zip(vec[1], vec[2])
+               println(io, "$k \t $pk")
+          end
+     end
+end
+
+
+"""
+     print_PS_multipole(input::String, out::String;
+          L::Integer = 0, N::Integer = 1024,
+          pr::Bool = true, kwargs...)
+
+Takes in input a filename `input` where is stored a TPCF multipole,
+calculate the `L`-order PS multipole through the
+following Fast Fourier Transform and the effective redshift approximation
+
+```math
+P_L(k) = \\frac{2 L + 1}{A^{'}} (-i)^L \\, \\phi(s_\\mathrm{eff}) \\int_0^\\infty 
+        \\mathrm{d} s \\; s^2 \\, j_L(ks) \\, f_\\mathrm{in}(s) \\; ,
+        \\quad \\; A^{'} = \\frac{1}{4\\,\\pi}
+```
+
+and save it in the file `out`, together with the options used for the computation.
+
+## Optional arguments
+
+- `L::Integer = 0`: order of the Legendre polynomial to be used; note that 
+  the multipole order `L` must be the same of the input TPCF in exam! 
+  Otherwise, the results would have no sense at all!
+
+- `pr::Bool = true` : do you want the progress bar showed on screen, in order to 
+  check the time needed for the computation? (`true` recommended)
+
+- `N::Integer = 1024` : number of points to be returned by `xicalc`
+
+- `kwargs...` : other keyword arguments that will be passed to `PS_multipole`
+
+See also: [`V_survey`](@ref), [`A`](@ref), [`A_prime`](@ref),
+[`EPLs`](@ref), [`PS_multipole`](@ref)
+"""
+print_PS_multipole
