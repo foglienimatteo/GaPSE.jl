@@ -21,18 +21,17 @@ module GaPSE
 
 using TwoFAST # Licence: MIT "Expat" (o GPL ?)
 using Dierckx # Licence: BSD
-using HCubature, QuadGK, LegendrePolynomials # Licence: MIT "Expat"
+using HCubature, QuadGK, LegendrePolynomials, AssociatedLegendrePolynomials # Licence: MIT "Expat"
 using SpecialFunctions, Trapz, LsqFit # Licence: MIT
 using GridInterpolations  # Licence: MIT "Expat"
 using ProgressMeter, Documenter  # Licence: MIT "Expat"
 using Test, Printf, DelimitedFiles  # Licence: MIT "Expat"
 
 
-BRAND =
-"""
-###############
-#    GaPSE    #
-############### \n#"""
+BRAND = """
+        ###############
+        #    GaPSE    #
+        ############### \n#"""
 
 NAMES_F_MAP = ["x", "mu", "F", "F_error"]
 NAMES_PS = ["k (h/Mpc)", "P (Mpc/h)^3"]
@@ -43,6 +42,7 @@ NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mpc]",
 
 include("OtherUtils.jl")
 include("MathUtils.jl")
+include("Wllnn.jl")
 include("WindowF.jl")
 include("BackgroundData.jl")
 include("CosmoParams.jl")
@@ -88,14 +88,14 @@ function parameters_used(io::IO, cosmo::Cosmology)
      println(io, "#\t Ω_b = $(cosmo.params.Ω_b) \t " *
                  "Ω_cdm = $(cosmo.params.Ω_cdm) \t Ω_M0 = $(cosmo.params.Ω_M0)")
      println(io, "#")
-    
+
      println(io, "# - CosmoParams about the Input Power Spectrum: ")
-     my_println_dict(io, cosmo.params.IPS; pref ="#\t ", N = 2)
+     my_println_dict(io, cosmo.params.IPS; pref="#\t ", N=2)
      println(io, "#")
-    
+
      println(io, "# - CosmoParams about the Input Power Spectrum Tools: ")
-     my_println_dict(io, cosmo.params.IPSTools; pref ="#\t ", N = 3)
-     println(io, "#") 
+     my_println_dict(io, cosmo.params.IPSTools; pref="#\t ", N=3)
+     println(io, "#")
 
      println(io, "# - Computed quantities: ")
      println(io, "# \t effective redshift z_eff = $(cosmo.z_eff) ")
