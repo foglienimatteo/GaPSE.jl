@@ -52,30 +52,28 @@ function PS_multipole(ss, fs;
      epl::Bool=true,
      N_left::Integer=12, N_right::Integer=12,
      p0_left=[-2.0, 1.0], p0_right=[-2.0, 1.0],
-     k0::Union{Nothing,Float64}=nothing,
      kwargs...)
 
      @assert length(ss) == length(fs) "xs and ys must have same length"
-     k_0 = isnothing(k0) ? 1.0 / ss[1] : k0
+     k_0 = 1.0 / max(ss...)
+     right = 1.0 / min(ss...)
 
      f_in, INT_s_min, INT_s_max =
           if epl == true
-               EPLs(ss, fs, p0_left, p0_right;
-                    N_left=N_left, N_right=N_right), int_s_min, int_s_max
+               if all(fs[begin:begin+5] .≈ 0.0) && all(fs[end-5:end] .≈ 0.0)
+                    spl = Spline1D(ss, fs; bc="error")
+                    f(x) = ((x ≤ ss[1]) || (x ≥ ss[end])) ? 0.0 : spl(x)
+                    f, int_s_min, int_s_max
+               else
+                    EPLs(ss, fs, p0_left, p0_right;
+                         N_left=N_left, N_right=N_right), int_s_min, int_s_max
+               end
           else
                Spline1D(ss, fs; bc="error"), min(ss...), max(ss...)
           end
-     #=
-     try
-          EPLs(ss, fs, [-2.0, 1.0], [-2.0, 1.0];
-               N_left=N_left, N_right=N_right), int_s_min, int_s_max
-     catch e
-          warning("it was not possible to fit with power laws at the edges")
-          Spline1D(ss, fs; bc="error"), min(ss...), max(ss...)
-     end
-     =#
+
      return PS_multipole(f_in; int_s_min=INT_s_min, int_s_max=INT_s_max, 
-          k0=k_0, right = right,kwargs...)
+          k0=k_0, right = right, kwargs...)
 end 
 
 
