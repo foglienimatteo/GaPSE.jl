@@ -19,66 +19,78 @@
 
 function PS_multipole(f_in;
      int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3,
-     L::Integer = 0, N::Integer = 1024, pr::Bool = true)
+     L::Integer = 0, N::Integer = 1024, pr::Bool = true, 
+     k0::Union{Nothing,Float64} = nothing,
+     right::Union{Float64, Nothing} = nothing)
+
+     k_0 = isnothing(k0) ? 1.0/int_s_max : k0 
 
      t1 = time()
      ks, pks = xicalc(s -> 2 * π^2 * f_in(s), L, 0;
-          N = N, kmin = int_s_min, kmax = int_s_max, r0 = 1 / int_s_max)
+          N = N, kmin = int_s_min, kmax = int_s_max, r0 = k_0)
      t2 = time()
      pr && println("\ntime needed for Power Spectrum  computation [in s] = $(t2-t1)\n")
 
-     if iseven(L)
-          return ks, (1 / A_prime * (-1)^(L / 2)) .* pks
+     if isnothing(right)
+          if iseven(L)
+               return ks, (1 / A_prime * (-1)^(L / 2)) .* pks
+          else
+               return ks, (1 / A_prime * (-im)^L) .* pks
+          end
      else
-          return ks, (1 / A_prime * (-im)^L) .* pks
+          if iseven(L)
+               return ks[ks.<right], (1 / A_prime * (-1)^(L / 2)) .* pks[ks.<right]
+          else
+               return ks[ks.<right], (1 / A_prime * (-im)^L) .* pks[ks.<right]
+          end
      end
 end
 
 
-function PS_multipole(input::String;
-     N_left::Integer = 12, N_right::Integer = 12,
-     int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3, kwargs...)
+function PS_multipole(ss, fs;
+     int_s_min::Float64=1e-1, int_s_max::Float64=1e3,
+     epl::Bool=true,
+     N_left::Integer=12, N_right::Integer=12,
+     p0_left=[-2.0, 1.0], p0_right=[-2.0, 1.0],
+     k0::Union{Nothing,Float64}=nothing,
+     kwargs...)
+
+     @assert length(ss) == length(fs) "xs and ys must have same length"
+     k_0 = isnothing(k0) ? 1.0 / ss[1] : k0
+
+     f_in, INT_s_min, INT_s_max =
+          if epl == true
+               EPLs(ss, fs, p0_left, p0_right;
+                    N_left=N_left, N_right=N_right), int_s_min, int_s_max
+          else
+               Spline1D(ss, fs; bc="error"), min(ss...), max(ss...)
+          end
+     #=
+     try
+          EPLs(ss, fs, [-2.0, 1.0], [-2.0, 1.0];
+               N_left=N_left, N_right=N_right), int_s_min, int_s_max
+     catch e
+          warning("it was not possible to fit with power laws at the edges")
+          Spline1D(ss, fs; bc="error"), min(ss...), max(ss...)
+     end
+     =#
+     return PS_multipole(f_in; int_s_min=INT_s_min, int_s_max=INT_s_max, 
+          k0=k_0, right = right,kwargs...)
+end 
+
+
+
+function PS_multipole(input::String; kwargs...)
 
      xi_table = readdlm(input, comments = true)
      ss = convert(Vector{Float64}, xi_table[:, 1])
      fs = convert(Vector{Float64}, xi_table[:, 2])
 
-     #f_in = Spline1D(ss, fs; bc = "error")
-     f_in, INT_s_min, INT_s_max =
-          try
-               EPLs(ss, fs, [-2.0, 1.0], [1.0, 1.0];
-                    N_left = N_left, N_right = N_right), int_s_min, int_s_max
-          catch e
-               warning("it was not possible to fit with power laws at the edges")
-               Spline1D(ss, fs; bc = "error"), min(ss...), max(ss...)
-          end
-
-     #intsmin = isnothing(int_s_min) ? min(ss...) : int_s_min
-     #intsmax = isnothing(int_s_max) ? max(ss...) : int_s_max
-     return PS_multipole(f_in; int_s_min = INT_s_min, int_s_max = INT_s_max, kwargs...)
+     return PS_multipole(ss, fs; kwargs...)
 end
 
 
 
-function PS_multipole(ss, fs;
-     N_left::Integer = 12, N_right::Integer = 12,
-     int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3, kwargs...)
-
-     @assert length(ss) == length(fs) "xs and ys must have same length"
-     #f_in = Spline1D(ss, fs; bc = "error")
-     f_in, INT_s_min, INT_s_max =
-          try
-               EPLs(ss, fs, [-2.0, 1.0], [1.0, 1.0];
-                    N_left = N_left, N_right = N_right), int_s_min, int_s_max
-          catch e
-               warning("it was not possible to fit with power laws at the edges")
-               Spline1D(ss, fs; bc = "error"), min(ss...), max(ss...)
-          end
-
-     #intsmin = isnothing(int_s_min) ? min(ss...) : int_s_min
-     #intsmax = isnothing(int_s_max) ? max(ss...) : int_s_max
-     return PS_multipole(f_in; int_s_min = INT_s_min, int_s_max = INT_s_max, kwargs...)
-end
 
 """
      PS_multipole(input::String; N_left::Integer = 12, 

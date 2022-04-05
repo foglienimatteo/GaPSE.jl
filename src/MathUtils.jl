@@ -34,7 +34,7 @@ function derivate_point(xp, yp, x1, y1, x2, y2)
      return res
 end
 
-function derivate_vector(XS, YS; N::Integer = 1)
+function derivate_vector(XS, YS; N::Integer=1)
      @assert length(XS) == length(YS) "xs and ys must have the same length!"
      @assert length(YS) > 2 * N "length of xs and ys must be > 2N !"
 
@@ -47,7 +47,7 @@ function derivate_vector(XS, YS; N::Integer = 1)
      ys = YS .* en_ys
 
      mean_ys = sum(ys) / length(ys)
-     @assert !all([isapprox(y / mean_ys, 1.0, rtol = 1e-6) for y in ys]) "DO NOT WORK!"
+     @assert !all([isapprox(y / mean_ys, 1.0, rtol=1e-6) for y in ys]) "DO NOT WORK!"
 
      if N == 1
           real_vec = [derivate_point(xs[i], ys[i], xs[i-1], ys[i-1], xs[i+1], ys[i+1])
@@ -63,8 +63,8 @@ function derivate_vector(XS, YS; N::Integer = 1)
 end
 
 
-function spectral_index(xs, ys; N::Integer = 1, con = false)
-     derivs = derivate_vector(xs, ys; N = N)
+function spectral_index(xs, ys; N::Integer=1, con=false)
+     derivs = derivate_vector(xs, ys; N=N)
 
      if con == false
           res = [x * d / y for (x, y, d) in zip(xs, ys, derivs)]
@@ -74,7 +74,7 @@ function spectral_index(xs, ys; N::Integer = 1, con = false)
                [res[end-N] for i in 1:N]
           )
      else
-          sec_derivs = derivate_vector(xs, derivs; N = N)
+          sec_derivs = derivate_vector(xs, derivs; N=N)
           res = [x * d2 / d for (x, d, d2) in zip(xs, derivs, sec_derivs)] .+ 1.0
           return vcat(
                [res[begin+N+1] for i in 1:N+1],
@@ -99,9 +99,9 @@ defined as:
           = \\frac{x}{f(x)} \\frac{\\partial f(x)}{\\partial x} 
 ```
 """
-function mean_spectral_index(xs, ys; N::Integer = 1, con = false)
+function mean_spectral_index(xs, ys; N::Integer=1, con=false)
      @assert length(xs) > 2 * N + 2 "length of xs and ys must be > 2N+2"
-     vec = spectral_index(xs, ys; N = N, con = con)[begin+N+1:end-N-1]
+     vec = spectral_index(xs, ys; N=N, con=con)[begin+N+1:end-N-1]
      return sum(vec) / length(vec)
 end
 
@@ -125,10 +125,10 @@ power_law(x, si, b, a) = a .+ b .* (x .^ si)
 
 function two_power_laws(x; switch=5.0, si_1=1.0, si_2=2.0, b=1.0, a=0.0)
      @assert switch > 0 "switch must be >0 !"
-     if x<=switch
+     if x <= switch
           return power_law(x, si_1, b, a)
      else
-          return power_law(x, si_2, b/(switch^(si_2-si_1)), a)
+          return power_law(x, si_2, b / (switch^(si_2 - si_1)), a)
      end
 end
 
@@ -137,7 +137,7 @@ end
 function power_law_from_data(
      xs, ys,
      P0::Vector{Float64},
-     fit_min::Number, fit_max::Number; con = false)
+     fit_min::Number, fit_max::Number; con=false)
 
      @assert length(xs) == length(ys) "xs and ys must have same length"
      @assert length(P0) ∈ [2, 3] "length of P0 must be 2 or 3!"
@@ -156,7 +156,7 @@ function power_law_from_data(
      new_ys = ys[fit_min.<xs.<fit_max] .* en_ys
 
      mean_ys = sum(new_ys) / length(new_ys)
-     @assert !all([isapprox(y / mean_ys, 1.0, rtol = 1e-6) for y in new_ys]) "DO NOT WORK!"
+     @assert !all([isapprox(y / mean_ys, 1.0, rtol=1e-6) for y in new_ys]) "DO NOT WORK!"
      #si = mean_spectral_index(xs, ys; N=N, con=con)
 
      if con == false
@@ -209,8 +209,8 @@ end;
 
 
 
-function power_law_from_data(xs, ys, p0::Vector{Float64}; con = false)
-     power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con = con)
+function power_law_from_data(xs, ys, p0::Vector{Float64}; con=false)
+     power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con=con)
 end;
 
 
@@ -249,9 +249,9 @@ power_law_from_data
 
 
 function expand_left_log(xs, ys;
-     lim = 1e-8, fit_min = 0.05, fit_max = 0.5,
-     p0::Union{Vector{Float64},Nothing} = nothing,
-     con::Bool = false)
+     lim=1e-8, fit_min=0.05, fit_max=0.5,
+     p0::Union{Vector{Float64},Nothing}=nothing,
+     con::Bool=false)
 
      @assert fit_min < fit_max "fit_min must be < fit_max !"
      @assert lim < fit_min "lim must be < fit_min !"
@@ -260,15 +260,15 @@ function expand_left_log(xs, ys;
 
      p_0 = isnothing(p0) ? (con == true ? [-1.0, 1.0, 0.0] : [-1.0, 1.0]) : p0
      si, b, a = power_law_from_data(
-          xs, ys, p_0, fit_min, fit_max; con = con)
+          xs, ys, p_0, fit_min, fit_max; con=con)
 
      i = findfirst(x -> x >= fit_min, xs) - 1
      f = xs[begin] / xs[begin+1]
 
-     new_left_xs = unique(10 .^ range(log10(lim), log10(xs[i]), step = -log10(f)))
+     new_left_xs = unique(10 .^ range(log10(lim), log10(xs[i]), step=-log10(f)))
      new_left_ys = [power_law(x, si, b, a) for x in new_left_xs]
 
-     if isapprox(new_left_xs[end] / xs[i], 1.0, rtol = 1e-6)
+     if isapprox(new_left_xs[end] / xs[i], 1.0, rtol=1e-6)
           return new_left_xs, new_left_ys
      else
           return vcat(new_left_xs, xs[i]), vcat(new_left_ys, power_law(xs[i], si, b, a))
@@ -276,9 +276,9 @@ function expand_left_log(xs, ys;
 end;
 
 function expand_right_log(xs, ys;
-     lim = 3e3, fit_min = 5.0, fit_max = 10.0,
-     p0::Union{Vector{Float64},Nothing} = nothing,
-     con::Bool = false)
+     lim=3e3, fit_min=5.0, fit_max=10.0,
+     p0::Union{Vector{Float64},Nothing}=nothing,
+     con::Bool=false)
 
      @assert fit_min < fit_max "fit_min must be < fit_max !"
      @assert lim > fit_max "lim must be > fit_max !"
@@ -287,15 +287,15 @@ function expand_right_log(xs, ys;
 
      p_0 = isnothing(p0) ? (con == true ? [-3.0, 1.0, 0.0] : [-3.0, 1.0]) : p0
      si, b, a = power_law_from_data(
-          xs, ys, p_0, fit_min, fit_max; con = con)
+          xs, ys, p_0, fit_min, fit_max; con=con)
 
      i = findfirst(x -> x > fit_max, xs)
      f = xs[end] / xs[end-1]
 
-     new_right_xs = unique(10 .^ range(log10(xs[i]), log10(lim), step = log10(f)))
+     new_right_xs = unique(10 .^ range(log10(xs[i]), log10(lim), step=log10(f)))
      new_right_ys = [power_law(x, si, b, a) for x in new_right_xs]
 
-     if isapprox(new_right_xs[begin] / xs[i], 1.0, rtol = 1e-6)
+     if isapprox(new_right_xs[begin] / xs[i], 1.0, rtol=1e-6)
           return new_right_xs, new_right_ys
      else
           return vcat(xs[i], new_right_xs), vcat(power_law(xs[i], si, b, a), new_right_ys)
@@ -312,8 +312,8 @@ Given the `ks` and `pks` of a chosen Power Spectrum, returns the same PS
 with "longer tails", i.e. it is prolonged for higher and lower `ks` than 
 the input ones.
 """
-function expanded_IPS(ks, pks; k_in = 1e-8, k_end = 3e3,
-     k1 = 1e-6, k2 = 3e-6, k3 = 1e1, k4 = 2e1)
+function expanded_IPS(ks, pks; k_in=1e-8, k_end=3e3,
+     k1=1e-6, k2=3e-6, k3=1e1, k4=2e1)
 
      @assert k1 < k2 "k1 must be < k2 !"
      @assert k3 < k4 "k3 must be < k4 !"
@@ -329,14 +329,14 @@ function expanded_IPS(ks, pks; k_in = 1e-8, k_end = 3e3,
 
      new_left_ks, new_left_pks =
           k_in < ks[begin] ?
-          expand_left_log(ks, pks; lim = k_in, fit_min = k1,
-               fit_max = k2, p0 = p0_beg, con = false) :
+          expand_left_log(ks, pks; lim=k_in, fit_min=k1,
+               fit_max=k2, p0=p0_beg, con=false) :
           (nothing, nothing)
 
      new_right_ks, new_right_pks =
           ks[end] < k_end ?
-          expand_right_log(ks, pks; lim = k_end, fit_min = k3,
-               fit_max = k4, p0 = p0_end, con = false) :
+          expand_right_log(ks, pks; lim=k_end, fit_min=k3,
+               fit_max=k4, p0=p0_end, con=false) :
           (nothing, nothing)
 
 
@@ -364,14 +364,14 @@ end
 
 
 """
-function expanded_Iln(PK, l, n; lim = 1e-4, N = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
-     fit_left_min = 2.0, fit_left_max = 10.0, p0_left = nothing, con = false)
+function expanded_Iln(PK, l, n; lim=1e-4, N=1024, kmin=1e-4, kmax=1e3, s0=1e-3,
+     fit_left_min=2.0, fit_left_max=10.0, p0_left=nothing, con=false)
 
-     rs, xis = xicalc(PK, l, n; N = N, kmin = kmin, kmax = kmax, r0 = s0)
+     rs, xis = xicalc(PK, l, n; N=N, kmin=kmin, kmax=kmax, r0=s0)
 
      p_0 = isnothing(p0_left) ? (con == true ? [-1.0, 1.0, 0.0] : [-1.0, 1.0]) : p0_left
-     new_left_rs, new_left_Is = expand_left_log(rs, xis; lim = lim, fit_min = fit_left_min,
-          fit_max = fit_left_max, p0 = p_0, con = con)
+     new_left_rs, new_left_Is = expand_left_log(rs, xis; lim=lim, fit_min=fit_left_min,
+          fit_max=fit_left_max, p0=p_0, con=con)
 
      new_rs = vcat(new_left_rs, rs[rs.>fit_left_min])
      new_Is = vcat(new_left_Is, xis[rs.>fit_left_min])
@@ -415,7 +415,7 @@ end
 
 
 function expanded_I04_tilde(PK, ss;
-     kmin = 1e-6, kmax = 1e3, kwargs...)
+     kmin=1e-6, kmax=1e3, kwargs...)
 
      fit_1, fit_2 = 0.1, 1.0
 
@@ -426,10 +426,10 @@ function expanded_I04_tilde(PK, ss;
           cutted_ss = ss[ind-1:end]
           cutted_I04_tildes = [func_I04_tilde(PK, s, kmin, kmax; kwargs...) for s in cutted_ss]
           l_si, l_b, l_a = GaPSE.power_law_from_data(cutted_ss, cutted_I04_tildes,
-               [-2.0, -1.0], fit_1, fit_2; con = false)
+               [-2.0, -1.0], fit_1, fit_2; con=false)
           #println("l_si, l_b, l_a = $l_si , $l_b , $l_a")
           left_I04_tildes = [GaPSE.power_law(s, l_si, l_b, l_a) for s in ss[ss.<=fit_1]]
-     
+
           return vcat(left_I04_tildes, cutted_I04_tildes[2:end])
      end
 end
@@ -495,6 +495,10 @@ function my_interpolation(x1, y1, x2, y2, x)
      y = m * x + q
      return y
 end
+
+
+
+##########################################################################################92
 
 
 
@@ -594,32 +598,32 @@ struct EPLs
      r_b::Float64
      r_a::Float64
      right::Float64
-    
 
-    function EPLs(xs, ys, p0_left::Vector{T1}, p0_right::Vector{T2}; 
-            N_left::Integer = 15, N_right::Integer = 15,
-            ) where {T1<:Real, T2 <:Real}
-        
+
+     function EPLs(xs, ys, p0_left::Vector{T1}, p0_right::Vector{T2};
+          N_left::Integer=15, N_right::Integer=15
+     ) where {T1<:Real,T2<:Real}
+
           @assert length(xs) == length(ys) "xs and ys must have same length!"
           @assert length(p0_left) ∈ [2, 3] "length of p0_left must be 2 or 3!"
           @assert length(p0_right) ∈ [2, 3] "length of p0_right must be 2 or 3!"
           @assert N_left > 3 "N_left must be > 3 !"
           @assert N_right > 3 "N_right must be > 3 !"
           @assert length(xs) > N_left + N_right "xs and ys are too short to be used!"
-        
+
           con_left = length(p0_left) == 3 ? true : false
           con_right = length(p0_right) == 3 ? true : false
 
           l_si, l_b, l_a = power_law_from_data(
-               xs, ys, p0_left, xs[begin+1],  xs[begin+N_left]; con = con_left)
+               xs, ys, p0_left, xs[begin+1], xs[begin+N_left]; con=con_left)
 
           r_si, r_b, r_a = power_law_from_data(
-            xs, ys, p0_right, xs[end-1-N_right], xs[end-1]; con = con_right)
+               xs, ys, p0_right, xs[end-1-N_right], xs[end-1]; con=con_right)
 
           #println("\nLEFT = $l_si , $l_b , $l_a")
           #println("RIGHT = $r_si , $r_b , $r_a")
 
-          spline = Spline1D(xs, ys; bc = "error")
+          spline = Spline1D(xs, ys; bc="error")
 
           new(l_si, l_b, l_a, xs[begin], spline, r_si, r_b, r_a, xs[end])
      end
@@ -658,3 +662,129 @@ function (func::EPLs)(x)
      end
 end;
 
+
+##########################################################################################92
+
+
+
+"""
+     LPLs(
+          l_si::Float64
+          l_b::Float64
+          l_a::Float64
+          left::Float64
+
+          spline::Dierckx.Spline1D
+     )
+
+Contains all the information useful in order to return the value of a spline inside
+the interval `left ≤ x ≤ right` and the associated power laws for the left edge (with the "left"
+coefficients `l_si`, `l_b` and `l_a` for `x < left`)
+
+## Arguments 
+
+- `l_si, l_b, l_a :: Float64` : coefficient for the spurious power-law 
+  ``y = f(x) = a + b \\, x^s`` for the LEFT edge; when an input value `x < left` is
+  given, the returned one is obtained from `power_law` with this coefficients (
+  where, of course, `l_si` is the exponent, `l_b` the coefficient and `l_a` the 
+  spurious adding constant). 
+
+- `left::Float64` : the break between the left power-law (for `x <left`) and the 
+  spline (for `x ≥ left`); its value is the `xs[begin]` one.
+
+- `spline::Dierckx.Spline1D` : spline that interpolates between the real values of the 
+  integral calculated inside the range `left ≤ x ≤ right`
+
+## Constructors
+
+`LPLs(xs, ys, p0_left::Vector{T1}, p0_right::Vector{T2}; 
+     N_left::Integer = 15, N_right::Integer = 15) where {T1<:Real, T2 <:Real}
+
+- `xs` and `ys`: the input vector of values. 
+
+- `N_left::Integer = 15` : number of points to be used from the left edge for the left power law-fitting.
+  It shouldn't be too low (< 4) or too high (>100).
+
+- `p0_left::Vector{T1} where T1 <:Real` : vector with the initial values for the left power-law fitting; its length must
+     be 2 (if you want to fit with a pure power-law ``y = f(x) = b * x^s``, so only `l_si` and `l_b` 
+     are matter of concern) or 3 (if you want to fit with a spurious power-law ``y = f(x) = a + b * x^s``,
+     so you are also interested in `l_a`); in the first case, the considered `l_a` will be `0.0`.
+     Example: 
+
+All the power-law fitting (both "pure" and spurious) are made through the 
+local function `power_law_from_data`.
+
+## Examples
+
+```julia
+julia> xs = 10 .^ range(0, 2, length=100);
+
+julia> ys = [1.34e2 * x ^ 2.43 for x in xs];
+
+julia> A = EPLs(xs, ys, [1.0, 1.0], [1.0, 1.0]; N_left = 10, N_right = 10)
+```
+
+See also: [`power_law_from_data`](@ref)
+"""
+struct LPLs
+     l_si::Float64
+     l_b::Float64
+     l_a::Float64
+     left::Float64
+
+     spline::Dierckx.Spline1D
+
+
+     function LPLs(xs, ys, p0_left::Vector{T1}; N_left::Integer=15) where {T1<:Real}
+
+          @assert length(xs) == length(ys) "xs and ys must have same length!"
+          @assert length(p0_left) ∈ [2, 3] "length of p0_left must be 2 or 3!"
+          @assert N_left > 3 "N_left must be > 3 !"
+          @assert length(xs) > N_left "xs and ys are too short to be used!"
+
+          con_left = length(p0_left) == 3 ? true : false
+
+          l_si, l_b, l_a = power_law_from_data(
+               xs, ys, p0_left, xs[begin+1], xs[begin+N_left]; con=con_left)
+
+          #println("\nLEFT = $l_si , $l_b , $l_a")
+          #println("RIGHT = $r_si , $r_b , $r_a")
+
+          spline = Spline1D(xs, ys; bc="error")
+
+          new(l_si, l_b, l_a, xs[begin], spline, r_si, r_b, r_a, xs[end])
+     end
+end;
+
+
+"""
+     (f::EPLs)(x)
+
+Return the value of the `f::EPLs` as follows:
+```math
+f(x)=
+\\begin{cases}
+a_\\mathrm{L} + b_\\mathrm{L} \\, x ^ {s_\\mathrm{L}} \\; ,
+    \\quad x < \\mathrm{left}\\\\
+\\mathrm{spline}(x) \\; , \\quad \\mathrm{left} \\leq x \\leq \\mathrm{right} \\\\
+a_\\mathrm{R} + b_\\mathrm{R} \\, x ^ {s_\\mathrm{R}} \\; , 
+\\quad x > \\mathrm{right}
+\\end{cases}
+```
+
+where ``a_\\mathrm{L}``, ``b_\\mathrm{L}``, ``s_\\mathrm{L}``, ``\\mathrm{left}``,
+``\\mathrm{spline}``, ``a_\\mathrm{R}``, ``b_\\mathrm{R}``, ``s_\\mathrm{R}`` and 
+``\\mathrm{right}`` are all stored inside the `EPLs` considered.
+
+See also: [`EPLs`](@ref)
+"""
+function (func::EPLs)(x)
+     if x < func.left
+          return power_law(x, func.l_si, func.l_b, func.l_a)
+     elseif x > func.right
+          #warning("i am going too right! ")
+          return power_law(x, func.r_si, func.r_b, func.r_a)
+     else
+          return func.spline(x)
+     end
+end;
