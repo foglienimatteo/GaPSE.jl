@@ -21,7 +21,7 @@ It's possible to:
 - read an arbitrary input matter power spectrum, produced by CLASS
 - read an arbitrary input background data file, produced by CLASS
 - write and read a map of the window F function
-- calculate all the GR effects two-point auto-correlation and cross-correlation multipole functions, for an arbitrary multipole order
+- calculate all the General Relativistic (GR) effects Two-Point Correlation Functions (TPCFs) multipole functions (both auto-correlation and cross-correlation) arising from the perturbed luminosity distance [[1]](#1) for an arbitrary multipole order 
 - calculate the sum of all these TPCFs
 
 Some notebook are already provided, inside the directory `ipynb`, such as:
@@ -30,3 +30,10 @@ Some notebook are already provided, inside the directory `ipynb`, such as:
 - `PS_Multipoles.ipynb`
 - `SUM_CF.ipynb`
   
+
+
+## References
+
+<a id="1">[1]</a> 
+See the equation (C.23) with ``s`` Dalal, Doré et al., _Imprints of primordial non-Gaussianities on large-scale structure_ (2008), American Physical Society, DOI: 10.1103/PhysRevD.77.123514, 
+url: https://journals.aps.org/prd/abstract/10.1103/PhysRevD.77.123514

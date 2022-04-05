@@ -19,7 +19,7 @@
 
 
 function integrand_ξ_multipole(s1, s, μ, effect::Function, cosmo::Cosmology;
-     L::Integer = 0, use_windows::Bool = true, kwargs...)
+     L::Integer=0, use_windows::Bool=true, kwargs...)
 
      s2_value = s2(s1, s, μ)
      y_value = y(s1, s, μ)
@@ -150,20 +150,19 @@ See also: [`ξ_multipole`](@ref), [`map_ξ_multipole`](@ref),
 integrand_ξ_multipole
 
 
-
 ##########################################################################################92
 
 
 
 function ξ_multipole(
      s1, s, effect::Function, cosmo::Cosmology;
-     L::Integer = 0,
-     use_windows::Bool = true,
-     enhancer::Float64 = 1e6,
-     N_μs::Integer = 50,
-     μ_atol::Float64 = 0.0,
-     μ_rtol::Float64 = 1e-2,
-     SPLINE::Bool = false,
+     L::Integer=0,
+     use_windows::Bool=true,
+     enhancer::Float64=1e6,
+     N_μs::Integer=50,
+     μ_atol::Float64=0.0,
+     μ_rtol::Float64=1e-2,
+     SPLINE::Bool=false,
      kwargs...)
 
      error = "$(string(effect)) is not a valid GR effect function.\n" *
@@ -172,19 +171,19 @@ function ξ_multipole(
      @assert (effect ∈ IMPLEMENTED_ξs) error
 
      orig_f(μ) = enhancer * integrand_ξ_multipole(s1, s, μ, effect, cosmo;
-          L = L, use_windows = use_windows, kwargs...)
+          L=L, use_windows=use_windows, kwargs...)
 
-     μs = union(range(-1.0, -0.95, length = N_μs),
-          range(-0.95, +0.95, length = N_μs),
-          range(+0.95, +1.0, length = N_μs))
+     μs = union(range(-1.0, -0.95, length=N_μs),
+          range(-0.95, +0.95, length=N_μs),
+          range(+0.95, +1.0, length=N_μs))
      int =
           if s > 1.0 && SPLINE == false
-               quadgk(μ -> orig_f(μ), -1.0, 1.0; atol = μ_atol, rtol = μ_rtol)[1]
+               quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=μ_atol, rtol=μ_rtol)[1]
 
           elseif s > 1.0 && SPLINE == true
                orig_fs = orig_f.(μs)
                spline_orig_f = Spline1D(μs, orig_fs)
-               quadgk(μ -> spline_orig_f(μ), -1.0, 1.0; atol = μ_atol, rtol = μ_rtol)[1]
+               quadgk(μ -> spline_orig_f(μ), -1.0, 1.0; atol=μ_atol, rtol=μ_rtol)[1]
 
           else
                orig_fs = orig_f.(μs)
@@ -392,23 +391,23 @@ See also: [`integrand_ξ_multipole`](@ref), [`ξ_multipole`](@ref),
 """
 function map_ξ_multipole(cosmo::Cosmology,
      effect::Union{String,Function},
-     v_ss = nothing;
-     s1 = nothing,
-     pr::Bool = true,
-     N_log::Integer = 1000,
-     L::Integer = 0,
+     v_ss=nothing;
+     s1=nothing,
+     pr::Bool=true,
+     N_log::Integer=1000,
+     L::Integer=0,
      kwargs...)
 
      s_1 = isnothing(s1) ? cosmo.s_eff : s1
 
      t1 = time()
-     ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length = N_log) : v_ss
+     ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length=N_log) : v_ss
      xis = pr ? begin
           @showprogress "$effect, L=$L: " [
-               ξ_multipole(s_1, s, effect, cosmo; L = L, kwargs...) for s in ss
+               ξ_multipole(s_1, s, effect, cosmo; L=L, kwargs...) for s in ss
           ]
      end : [
-          ξ_multipole(s_1, s, effect, cosmo; L = L, kwargs...) for s in ss
+          ξ_multipole(s_1, s, effect, cosmo; L=L, kwargs...) for s in ss
      ]
 
      t2 = time()
@@ -489,13 +488,13 @@ function print_map_ξ_multipole(
      cosmo::Cosmology,
      out::String,
      effect::Union{String,Function},
-     v_ss = nothing;
-     s1 = nothing,
+     v_ss=nothing;
+     s1=nothing,
      kwargs...)
 
      s_1 = isnothing(s1) ? cosmo.s_eff : s1
      t1 = time()
-     vec = map_ξ_multipole(cosmo, effect, v_ss; s1 = s_1, kwargs...)
+     vec = map_ξ_multipole(cosmo, effect, v_ss; s1=s_1, kwargs...)
      t2 = time()
 
      isfile(out) && run(`rm $out`)
@@ -514,7 +513,7 @@ function print_map_ξ_multipole(
                end
           end
           isnothing(s1) || println(io, "#\n# NOTE: the computation is done not in " *
-                                        "s1 = s_eff, because you specified in input s1 = $s1 !")
+                                       "s1 = s_eff, because you specified in input s1 = $s1 !")
           println(io, "# ")
           println(io, "# s [Mpc/h_0] \t \t xi")
           for (s, xi) in zip(vec[1], vec[2])

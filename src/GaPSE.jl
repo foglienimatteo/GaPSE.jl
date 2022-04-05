@@ -62,6 +62,8 @@ include("CrossCorrelations/LensingLocalGP.jl")
 include("CrossCorrelations/LensingIntegratedGP.jl")
 include("CrossCorrelations/LocalGPIntegratedGP.jl")
 
+include("PP_Doppler.jl")
+
 include("Dicts.jl")
 
 include("PowerSpectrum.jl")
