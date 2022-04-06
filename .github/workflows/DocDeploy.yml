@@ -28,6 +28,9 @@ name: Documentation
 #
 
 #=on: [push]
+on:
+  release:
+    types: [published, edited, prereleased, released]
 
 jobs:
   build:
