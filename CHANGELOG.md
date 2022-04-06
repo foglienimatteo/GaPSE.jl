@@ -1,5 +1,7 @@
 # HEAD
 
+# VERSION 0.3.0
+
 - added the functions for the evaluation of the Doppler auto-CF with the Plane-Parallel approximation and their tests
 
 - modified default range 10 .^ range(-1, 3, length= N_log) to  10 .^ range(0, 3, length= N_log) 
