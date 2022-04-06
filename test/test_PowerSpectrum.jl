@@ -138,7 +138,7 @@ GaPSE.print_PS_multipole(common*"/xi_auto_doppler_withF_L2.txt",
 end
 
 
-@testset "test print_PS_multipole" begin
+@testset "test print_PS_multipole first method" begin
      RTOL = 1e-3
      kwargs_ps = Dict(:epl => true, :pr => false,
           :N_left => 12, :N_right => 12,
@@ -243,4 +243,120 @@ end
      end
 end
 
+@testset "test print_PS_multipole second method" begin
+     RTOL = 1e-3
+     kwargs_ps = Dict(:epl => true, :pr => false,
+          :N_left => 12, :N_right => 12,
+          :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
+          :N => 300, :int_s_min => 1e-4, :int_s_max => 1e4)
 
+     @testset "with F" begin
+          @testset "monopole" begin
+               L = 0
+               input = "datatest/power_spectrum/xi_auto_doppler_withF_L$L" * ".txt"
+               true_pk = "datatest/power_spectrum/ps_auto_doppler_withF_L$L" * ".txt"
+               out_file = "calc_pk_auto_doppler_withF_L$L" * ".txt"
+
+               isfile(out_file) && rm(out_file)
+
+               table = readdlm(true_pk; comments=true)
+               ks = convert(Vector{Float64}, table[:, 1])
+               pks = convert(Vector{Float64}, table[:, 2])
+
+
+               in_table = readdlm(input; comments=true)
+               in_ss = convert(Vector{Float64}, in_table[:, 1])
+               in_xis = convert(Vector{Float64}, in_table[:, 2])
+               GaPSE.print_PS_multipole(in_ss, in_xis, out_file; L=L, kwargs_ps...)
+               calc_table = readdlm(out_file; comments=true)
+               calc_ks = convert(Vector{Float64}, calc_table[:, 1])
+               calc_pks = convert(Vector{Float64}, calc_table[:, 2])
+
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
+
+               rm(out_file)
+          end
+
+          @testset "quadrupole" begin
+               L = 2
+               input = "datatest/power_spectrum/xi_auto_doppler_withF_L$L" * ".txt"
+               true_pk = "datatest/power_spectrum/ps_auto_doppler_withF_L$L" * ".txt"
+               out_file = "calc_pk_auto_doppler_withF_L$L" * ".txt"
+
+               isfile(out_file) && rm(out_file)
+
+               table = readdlm(true_pk; comments=true)
+               ks = convert(Vector{Float64}, table[:, 1])
+               pks = convert(Vector{Float64}, table[:, 2])
+
+               in_table = readdlm(input; comments=true)
+               in_ss = convert(Vector{Float64}, in_table[:, 1])
+               in_xis = convert(Vector{Float64}, in_table[:, 2])
+               GaPSE.print_PS_multipole(in_ss, in_xis, out_file; L=L, kwargs_ps...)
+               calc_table = readdlm(out_file; comments=true)
+               calc_ks = convert(Vector{Float64}, calc_table[:, 1])
+               calc_pks = convert(Vector{Float64}, calc_table[:, 2])
+
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
+
+               rm(out_file)
+          end
+     end
+
+     @testset "without F" begin
+          @testset "monopole" begin
+               L = 0
+               input = "datatest/power_spectrum/xi_auto_doppler_noF_L$L" * ".txt"
+               true_pk = "datatest/power_spectrum/ps_auto_doppler_noF_L$L" * ".txt"
+               out_file = "calc_pk_auto_doppler_noF_L$L" * ".txt"
+
+               isfile(out_file) && rm(out_file)
+
+               table = readdlm(true_pk; comments=true)
+               ks = convert(Vector{Float64}, table[:, 1])
+               pks = convert(Vector{Float64}, table[:, 2])
+
+               in_table = readdlm(input; comments=true)
+               in_ss = convert(Vector{Float64}, in_table[:, 1])
+               in_xis = convert(Vector{Float64}, in_table[:, 2])
+               GaPSE.print_PS_multipole(in_ss, in_xis, out_file; L=L, kwargs_ps...)
+               calc_table = readdlm(out_file; comments=true)
+               calc_ks = convert(Vector{Float64}, calc_table[:, 1])
+               calc_pks = convert(Vector{Float64}, calc_table[:, 2])
+
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
+
+               rm(out_file)
+          end
+
+          @testset "quadrupole" begin
+               L = 2
+               input = "datatest/power_spectrum/xi_auto_doppler_noF_L$L" * ".txt"
+               true_pk = "datatest/power_spectrum/ps_auto_doppler_noF_L$L" * ".txt"
+               out_file = "calc_pk_auto_doppler_noF_L$L" * ".txt"
+
+               isfile(out_file) && rm(out_file)
+               "datatest/power_spectrum/x"
+
+               table = readdlm(true_pk; comments=true)
+               ks = convert(Vector{Float64}, table[:, 1])
+               pks = convert(Vector{Float64}, table[:, 2])
+
+               in_table = readdlm(input; comments=true)
+               in_ss = convert(Vector{Float64}, in_table[:, 1])
+               in_xis = convert(Vector{Float64}, in_table[:, 2])
+               GaPSE.print_PS_multipole(in_ss, in_xis, out_file; L=L, kwargs_ps...)
+               calc_table = readdlm(out_file; comments=true)
+               calc_ks = convert(Vector{Float64}, calc_table[:, 1])
+               calc_pks = convert(Vector{Float64}, calc_table[:, 2])
+
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
+
+               rm(out_file)
+          end
+     end
+end

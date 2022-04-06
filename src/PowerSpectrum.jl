@@ -18,16 +18,16 @@
 #
 
 function PS_multipole(f_in;
-     int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3,
-     L::Integer = 0, N::Integer = 1024, pr::Bool = true, 
-     k0::Union{Nothing,Float64} = nothing,
-     right::Union{Float64, Nothing} = nothing)
+     int_s_min::Float64=1e-1, int_s_max::Float64=1e3,
+     L::Integer=0, N::Integer=1024, pr::Bool=true,
+     k0::Union{Nothing,Float64}=nothing,
+     right::Union{Float64,Nothing}=nothing)
 
-     k_0 = isnothing(k0) ? 1.0/int_s_max : k0 
+     k_0 = isnothing(k0) ? 1.0 / int_s_max : k0
 
      t1 = time()
      ks, pks = xicalc(s -> 2 * π^2 * f_in(s), L, 0;
-          N = N, kmin = int_s_min, kmax = int_s_max, r0 = k_0)
+          N=N, kmin=int_s_min, kmax=int_s_max, r0=k_0)
      t2 = time()
      pr && println("\ntime needed for Power Spectrum  computation [in s] = $(t2-t1)\n")
 
@@ -72,15 +72,15 @@ function PS_multipole(ss, fs;
                Spline1D(ss, fs; bc="error"), min(ss...), max(ss...)
           end
 
-     return PS_multipole(f_in; int_s_min=INT_s_min, int_s_max=INT_s_max, 
-          k0=k_0, right = right, kwargs...)
-end 
+     return PS_multipole(f_in; int_s_min=INT_s_min, int_s_max=INT_s_max,
+          k0=k_0, right=right, kwargs...)
+end
 
 
 
 function PS_multipole(input::String; kwargs...)
 
-     xi_table = readdlm(input, comments = true)
+     xi_table = readdlm(input, comments=true)
      ss = convert(Vector{Float64}, xi_table[:, 1])
      fs = convert(Vector{Float64}, xi_table[:, 2])
 
@@ -91,14 +91,21 @@ end
 
 
 """
-     PS_multipole(input::String; N_left::Integer = 12, 
-          N_right::Integer = 12, kwargs...
+     PS_multipole(input::String; kwargs...
           ) ::Tuple{Vector{Float64}, Vector{Float64}}
 
-     PS_multipole(f_in; int_s_min::Float64 = 1e-1, 
-          int_s_max::Float64 = 1e3, L::Integer = 0, 
-          N::Integer = 1024, pr::Bool = true
-          ) ::Tuple{Vector{Float64}, Vector{Float64}}
+     PS_multipole(ss, fs;
+          int_s_min::Float64=1e-1, int_s_max::Float64=1e3,
+          epl::Bool=true,
+          N_left::Integer=12, N_right::Integer=12,
+          p0_left=[-2.0, 1.0], p0_right=[-2.0, 1.0],
+          kwargs...)
+
+     PS_multipole(f_in;
+          int_s_min::Float64=1e-1, int_s_max::Float64=1e3,
+          L::Integer=0, N::Integer=1024, pr::Bool=true,
+          k0::Union{Nothing,Float64}=nothing,
+          right::Union{Float64,Nothing}=nothing)
 
 Return the `L`-order PS multipole through the
 following Fast Fourier Transform and the effective redshift approximation:
@@ -109,12 +116,20 @@ P_L(k) = \\frac{2 L + 1}{A^{'}} (-i)^L \\, \\phi(s_\\mathrm{eff}) \\int_0^\\inft
         \\quad \\; A^{'} = \\frac{1}{4\\,\\pi}
 ```
 
-In the former method (recommended), you should pass the name of the file where the
-TPCF multipole in exam is saved in, while in the latter you have to give its
-function/spline `f_in`.
-Internally, the first method creates a spline of the considered ξ 
-and call the second with that spline as input; the `kwargs...` refers to the latter
-method ones infact.
+The former method takes the name of the file where the
+TPCF multipole in exam is saved in, opens that file and pass the `xs` and  `ys` vector
+of values to the second method. All the keyword- arguments given to the first method are directly
+transferred to the second one.
+
+In the second method, you have to pass the `xs` and `ys` values of the TPCF you want to
+exam. Internally, if `epl==true` the data are fitted with two power laws at the edges, creating a
+`EPLs` struct that is passed to the third method.
+The great advantage is that the integration can be extended over the limits imposed by the vector themself,
+increasing by far the precision of the PS computation.
+
+In the last method, you have to give its function/spline `f_in`.
+
+It's recommended to use either the first or the second method.
 
 The analytical expression previously showed can be easily obtained from the 
 standard one:
@@ -187,13 +202,13 @@ PS_multipole
 
 
 function print_PS_multipole(input::String, out::String;
-     L::Integer = 0, N::Integer = 1024,
-     pr::Bool = true, kwargs...)
+     L::Integer=0, N::Integer=1024,
+     pr::Bool=true, kwargs...)
 
      pr && println("\nI'm computiong the PS_multipole from the file $input")
 
      time_1 = time()
-     vec = PS_multipole(input; N = N, L = L, pr = pr, kwargs...)
+     vec = PS_multipole(input; N=N, L=L, pr=pr, kwargs...)
      time_2 = time()
 
      pr && println("\ntime needed for Power Spectrum  computation [in s] = $(time_2-time_1)\n")
@@ -224,13 +239,13 @@ function print_PS_multipole(input::String, out::String;
 end
 
 function print_PS_multipole(ss, fs, out::String;
-     L::Integer = 0, N::Integer = 1024,
-     pr::Bool = true, kwargs...)
+     L::Integer=0, N::Integer=1024,
+     pr::Bool=true, kwargs...)
 
      pr && println("\nI'm computiong the PS_multipole from the two input vectors.")
 
      time_1 = time()
-     vec = PS_multipole(ss, fs; N = N, L = L, pr = pr, kwargs...)
+     vec = PS_multipole(ss, fs; N=N, L=L, pr=pr, kwargs...)
      time_2 = time()
 
      pr && println("\ntime needed for Power Spectrum  computation [in s] = $(time_2-time_1)\n")
