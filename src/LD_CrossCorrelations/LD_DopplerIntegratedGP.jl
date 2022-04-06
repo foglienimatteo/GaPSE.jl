@@ -19,7 +19,7 @@
 
 
 @doc raw"""
-     integrand_ξ_Doppler_IntegratedGP(
+     integrand_ξ_LD_Doppler_IntegratedGP(
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
@@ -61,7 +61,7 @@ J_{31} =
 See also: [`ξ_Doppler_IntegratedGP`](@ref), [`int_on_mu_Doppler_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function integrand_ξ_Doppler_IntegratedGP(
+function integrand_ξ_LD_Doppler_IntegratedGP(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
@@ -98,14 +98,14 @@ function integrand_ξ_Doppler_IntegratedGP(
 end
 
 
-function integrand_ξ_Doppler_IntegratedGP(
+function integrand_ξ_LD_Doppler_IntegratedGP(
      χ2::Float64, s1::Float64, s2::Float64,
      y, cosmo::Cosmology;
      kwargs...)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ2, cosmo)
-     return integrand_ξ_Doppler_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
+     return integrand_ξ_LD_Doppler_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
@@ -137,7 +137,7 @@ J_{31} =
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_Doppler_IntegratedGP`.
+the integrand function `integrand_ξ_LD_Doppler_IntegratedGP`.
 
 
 ## Inputs
@@ -159,14 +159,14 @@ the integrand function `integrand_ξ_Doppler_IntegratedGP`.
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_Doppler_IntegratedGP`](@ref), [`int_on_mu_Doppler_IntegratedGP`](@ref)
+See also: [`integrand_ξ_LD_Doppler_IntegratedGP`](@ref), [`int_on_mu_Doppler_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
 function ξ_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
      #=
-     f(χ2) = en * integrand_ξ_Doppler_IntegratedGP(χ2, s1, s2, y, cosmo)
+     f(χ2) = en * integrand_ξ_LD_Doppler_IntegratedGP(χ2, s1, s2, y, cosmo)
 
      return quadgk(f, 1e-6, s2; rtol=1e-3)[1] / en
      =#
@@ -178,7 +178,7 @@ function ξ_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
      IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_Doppler_IntegratedGP(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_LD_Doppler_IntegratedGP(IP, P1, P2, y, cosmo)
           for IP in IPs
      ]
 

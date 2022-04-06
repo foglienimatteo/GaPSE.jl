@@ -27,7 +27,7 @@ name: Documentation
 #  pull_request:
 #
 
-on: [push]
+#=on: [push]
 
 jobs:
   build:

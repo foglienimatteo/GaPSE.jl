@@ -19,7 +19,7 @@
 
 
 """
-     integrand_ξ_IntegratedGP(IP1::Point, IP2::Point,
+     integrand_ξ_LD_IntegratedGP(IP1::Point, IP2::Point,
           P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
@@ -62,7 +62,7 @@ where ``\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\, \\chi_2 \\, y} 
 See also: [`ξ_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function integrand_ξ_IntegratedGP(IP1::Point, IP2::Point,
+function integrand_ξ_LD_IntegratedGP(IP1::Point, IP2::Point,
      P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
@@ -101,7 +101,7 @@ function ξ_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξ_igp = [
-          en * GaPSE.integrand_ξ_IntegratedGP(IP1, IP2, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_LD_IntegratedGP(IP1, IP2, P1, P2, y, cosmo)
           for IP1 in IP1s, IP2 in IP2s
      ]
 
@@ -120,7 +120,7 @@ function ξ_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
      matrix_IP2s = [[GaPSE.Point(x, cosmo) for x in y] for y in matrix_χ2s]
      matrix_int_ξs = [
-          [en * GaPSE.integrand_ξ_IntegratedGP(IP1, IP2, P1, P2, y, cosmo) 
+          [en * GaPSE.integrand_ξ_LD_IntegratedGP(IP1, IP2, P1, P2, y, cosmo) 
           for IP2 in matrix_IP2s[i]]
           for (i,IP1) in enumerate(IP1s)]
      
@@ -173,7 +173,7 @@ and ``P(q)`` is the input power spectrum.
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_Lensing`.
+the integrand function `integrand_ξ_LD_Lensing`.
 
 
 ## Inputs
@@ -194,7 +194,7 @@ the integrand function `integrand_ξ_Lensing`.
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
-See also: [`integrand_ξ_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
+See also: [`integrand_ξ_LD_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
 ξ_IntegratedGP

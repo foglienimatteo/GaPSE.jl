@@ -19,7 +19,7 @@
 
 
 """
-     integrand_ξ_LocalGP_IntegratedGP(
+     integrand_ξ_LD_LocalGP_IntegratedGP(
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
@@ -55,7 +55,7 @@ where ``\\mathcal{H} = a H``,
 See also: [`ξ_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function integrand_ξ_LocalGP_IntegratedGP(
+function integrand_ξ_LD_LocalGP_IntegratedGP(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
@@ -77,14 +77,14 @@ function integrand_ξ_LocalGP_IntegratedGP(
 end
 
 
-function integrand_ξ_LocalGP_IntegratedGP(
+function integrand_ξ_LD_LocalGP_IntegratedGP(
      χ2::Float64, s1::Float64, s2::Float64,
      y, cosmo::Cosmology;
      kwargs...)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ2, cosmo)
-     return integrand_ξ_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
+     return integrand_ξ_LD_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
@@ -109,7 +109,7 @@ where ``\\mathcal{H} = a H``,
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_LocalGP_IntegratedGP`.
+the integrand function `integrand_ξ_LD_LocalGP_IntegratedGP`.
 
 
 ## Inputs
@@ -131,14 +131,14 @@ the integrand function `integrand_ξ_LocalGP_IntegratedGP`.
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_IntegratedGP`](@ref)
+See also: [`integrand_ξ_LD_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
 function ξ_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
      #=
-     f(χ2) = en * integrand_ξ_LocalGP_IntegratedGP(χ2, s1, s2, y, cosmo)
+     f(χ2) = en * integrand_ξ_LD_LocalGP_IntegratedGP(χ2, s1, s2, y, cosmo)
 
      return quadgk(f, 1e-6, s2; rtol=1e-3)[1] / en
      =#
@@ -150,7 +150,7 @@ function ξ_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
      IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_LD_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo)
           for IP in IPs
      ]
 

@@ -19,7 +19,7 @@
 
 
 """
-     integrand_ξ_Lensing_LocalGP(
+     integrand_ξ_LD_Lensing_LocalGP(
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
@@ -64,7 +64,7 @@ and the ``J`` coefficients are given by
 See also: [`ξ_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_LocalGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
-function integrand_ξ_Lensing_LocalGP(
+function integrand_ξ_LD_Lensing_LocalGP(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
@@ -98,13 +98,13 @@ function integrand_ξ_Lensing_LocalGP(
 end
 
 
-function integrand_ξ_Lensing_LocalGP(
+function integrand_ξ_LD_Lensing_LocalGP(
      χ1::Float64, s1::Float64, s2::Float64,
      y, cosmo::Cosmology)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ1, cosmo)
-     return integrand_ξ_Lensing_LocalGP(IP, P1, P2, y, cosmo)
+     return integrand_ξ_LD_Lensing_LocalGP(IP, P1, P2, y, cosmo)
 end
 
 
@@ -138,7 +138,7 @@ and the ``J`` coefficients are given by
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_Lensing_LocalGP`.
+the integrand function `integrand_ξ_LD_Lensing_LocalGP`.
 
 
 ## Inputs
@@ -160,7 +160,7 @@ the integrand function `integrand_ξ_Lensing_LocalGP`.
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_LocalGP`](@ref)
+See also: [`integrand_ξ_LD_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_LocalGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
 """
 function ξ_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
@@ -173,7 +173,7 @@ function ξ_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
      IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_Lensing_LocalGP(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_LD_Lensing_LocalGP(IP, P1, P2, y, cosmo)
           for IP in IPs
      ]
 
