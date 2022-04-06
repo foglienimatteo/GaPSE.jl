@@ -27,10 +27,10 @@ kwargs_xis = Dict(
 );
 common = PATH_TO_GAPSE * "test/datatest/power_spectrum/"
 
-GaPSE.print_map_ξ_multipole(cosmo,  common*"xi_auto_doppler_withF_L0.txt", 
+GaPSE.print_map_ξ_multipole(cosmo,  common*"xi_auto_doppler_noF_L0.txt", 
     "auto_doppler", 10 .^ range(0,3,length=300); use_windows = false, 
     L = 0, kwargs_xis...);
-GaPSE.print_map_ξ_multipole(cosmo,  common*"xi_auto_doppler_withF_L0.txt", 
+GaPSE.print_map_ξ_multipole(cosmo,  common*"xi_auto_doppler_noF_L0.txt", 
     "auto_doppler", 10 .^ range(0,3,length=300); use_windows = false, 
     L = 2, kwargs_xis...);
 
@@ -42,6 +42,7 @@ GaPSE.print_map_ξ_multipole(cosmo,  common*"xi_auto_doppler_withF_L2.txt",
     L = 2, kwargs_xis...);
 =#
 
+
 #=
 # The Power Spectrum files in this tests were obtained with the following code lines: 
 
@@ -51,11 +52,15 @@ kwargs = Dict(:epl=>true, :pr=>false,
     :N => 300, :int_s_min => 1e-4, :int_s_max => 1e4)
 common = PATH_TO_GAPSE * "test/datatest/power_spectrum/"
 
-GaPSE.print_PS_multipole(ss, xis_L0, common*"ps_auto_doppler_noF_L0.txt"; L=0, kwargs...);
-GaPSE.print_PS_multipole(ss, xis_L2, common*"ps_auto_doppler_noF_L2.txt"; L=2, kwargs...);
+GaPSE.print_PS_multipole(common*"/xi_auto_doppler_noF_L0.txt", 
+    common*"ps_auto_doppler_noF_L0.txt"; L=0, kwargs...);
+GaPSE.print_PS_multipole(common*"/xi_auto_doppler_noF_L2.txt", 
+    common*"ps_auto_doppler_noF_L2.txt"; L=2, kwargs...);
 
-GaPSE.print_PS_multipole(ss, xis_L0_wF, common*"ps_auto_doppler_withF_L0.txt"; L=0, kwargs...);
-GaPSE.print_PS_multipole(ss, xis_L2_wF, common*"ps_auto_doppler_withF_L2.txt"; L=2, kwargs...);
+GaPSE.print_PS_multipole(common*"/xi_auto_doppler_withF_L0.txt",  
+    common*"ps_auto_doppler_withF_L0.txt"; L=0, kwargs...);
+GaPSE.print_PS_multipole(common*"/xi_auto_doppler_withF_L2.txt", 
+    common*"ps_auto_doppler_withF_L2.txt"; L=2, kwargs...);
 =#
 
 
@@ -78,10 +83,6 @@ GaPSE.print_PS_multipole(ss, xis_L2_wF, common*"ps_auto_doppler_withF_L2.txt"; L
                pks = convert(Vector{Float64}, table[:, 2])
 
                calc_ks, calc_pks = GaPSE.PS_multipole(input; L=L, kwargs_ps...)
-
-               println("calc_ks = $calc_ks ;")
-               println("calc_pks = $calc_pks ;")
-               println("pks = $pks ;")
 
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])

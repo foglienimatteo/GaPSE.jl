@@ -325,7 +325,7 @@ See also: [`integrand_ξ_multipole`](@ref),
 
 Evaluate the multipole of order `L` of the chosen correlation function term, 
 through the `ξ_multipole` function, for all the `s` values stored inside `v_ss`.
-If `v_ss = nothing`, it is set `v_ss = 10 .^ range(-1, 3, length = N_log)`.
+If `v_ss = nothing`, it is set `v_ss = 10 .^ range(0, 3, length = N_log)`.
 If `s1 = nothing`, it is set `s1 = cosmo.s_eff`.
 
 The function evaluated is then the following:
@@ -360,7 +360,7 @@ Cosmology `cosmo` through the functions `spline_F` and `ϕ` respectivelly.
   `$(string(string.(GaPSE.IMPLEMENTED_ξs) .* " , "...))`
 
 - ``v_ss` : vector/range of `s` values where the function must be evaluated; if `v_ss = nothing`, 
-  it is set `v_ss = 10 .^ range(-1, 3, length = N_log)`. This is why it is returned 
+  it is set `v_ss = 10 .^ range(0, 3, length = N_log)`. This is why it is returned 
   also the vector of the "input" values.
 
 
@@ -375,7 +375,7 @@ Cosmology `cosmo` through the functions `spline_F` and `ϕ` respectivelly.
   check the time needed for the computation? (`true` recommended)
 
 - `N_log::Integer = 1000` : number of points to be used in the default logaritmically-spaced 
-  range for `v_ss`, i.e. `range(-1, 3, N_log)`; it is ignored if `v_ss ≠ nothing` 
+  range for `v_ss`, i.e. `range(0, 3, N_log)`; it is ignored if `v_ss ≠ nothing` 
 
 - `kwargs...` : other keyword arguments that will be passed to `ξ_multipole`
 
@@ -401,7 +401,7 @@ function map_ξ_multipole(cosmo::Cosmology,
      s_1 = isnothing(s1) ? cosmo.s_eff : s1
 
      t1 = time()
-     ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length=N_log) : v_ss
+     ss = isnothing(v_ss) ? 10 .^ range(0, 3, length=N_log) : v_ss
      xis = pr ? begin
           @showprogress "$effect, L=$L: " [
                ξ_multipole(s_1, s, effect, cosmo; L=L, kwargs...) for s in ss
@@ -432,7 +432,7 @@ end
 Evaluate the multipole of order `L` of the chosen correlation function term, 
 through the `ξ_multipole` function, for all the `s` values stored inside `v_ss`, and
 print the results (with all the options used) in a file named `out`.
-If `v_ss = nothing`, it is set `v_ss = 10 .^ range(-1, 3, length = N_log)`.
+If `v_ss = nothing`, it is set `v_ss = 10 .^ range(0, 3, length = N_log)`.
 If `s1 = nothing`, it is set `s1 = cosmo.s_eff`.
 
 The function evaluated is then the following:
@@ -469,7 +469,7 @@ Cosmology `cosmo` through the functions `spline_F` and `ϕ` respectivelly.
 - `out::String` : name of the file where the results must be stored.
 
 - ``v_ss` : vector/range of `s` values where the function must be evaluated; if `v_ss = nothing`, 
-  it is set `v_ss = 10 .^ range(-1, 3, length = N_log)`.
+  it is set `v_ss = 10 .^ range(0, 3, length = N_log)`.
 
 
 ## Optional arguments

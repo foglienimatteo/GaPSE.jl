@@ -79,12 +79,12 @@ end
 
 
 const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
-     Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.7, s_lim = 1e-2,
-     IPS_opts = Dict(
+     Ω_b=0.0489, Ω_cdm=0.251020, h_0=0.7, s_lim=1e-2,
+     IPS_opts=Dict(
           :fit_left_min => 1e-6, :fit_left_max => 3e-6,
           :fit_right_min => 1e1, :fit_right_max => 2e1,
      ),
-     IPSTools_opts = Dict(
+     IPSTools_opts=Dict(
           :N => 1024, :fit_min => 0.05, :fit_max => 0.5,
           :con => true, :k_min => 1e-8, :k_max => 10.0)
 )
@@ -116,8 +116,6 @@ joint_kwargs = [isnothing(spec) ? common_kwargs : merge(common_kwargs, spec)
 
 dict_L_dir = Dict(0 => "monopoles", 1 => "dipoles", 2 => "tripoles",
      3 => "quadrupoles", 4 => "pentapoles")
-
-
 
 
 ##############################
@@ -184,3 +182,9 @@ end
 
 
 ##############################
+
+
+@testset "test PPDoppler" begin
+     include("test_PPDoppler.jl")
+end
+

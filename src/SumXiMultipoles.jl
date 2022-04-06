@@ -70,7 +70,7 @@ end
 
 Evaluate the multipole of order `L` of all the GR effects TPCF multipoles and their sum
 in `s1` , for all the `s` values stored inside `v_ss` and for the input Cosmology `cosmo`.
-If `v_ss = nothing`, it is set `v_ss = 10 .^ range(-1, 3, length = N_log)`.
+If `v_ss = nothing`, it is set `v_ss = 10 .^ range(0, 3, length = N_log)`.
 If `s1 = nothing`, it is set `s1 = cosmo.s_eff`.
 
 It makes a for-loop on the `GaPSE.IMPLEMENTED_GR_EFFECTS` strings, calling `map_ξ_multipole` for
@@ -84,7 +84,7 @@ each of them. They are currently:
   if `s1 = nothing`, it is automatically set `s1 = cosmo.s_eff` from the given input `Cosmology`.
 
 - `N_log::Integer = 1000` : number of points to be used in the default logaritmically-spaced 
-  range for `v_ss`, i.e. `range(-1, 3, N_log)`; it is ignored if `v_ss ≠ nothing` 
+  range for `v_ss`, i.e. `range(0, 3, N_log)`; it is ignored if `v_ss ≠ nothing` 
 
 - `kwards...` : all these keyword arguments will be passed to `map_ξ_multipole`
 
@@ -107,7 +107,7 @@ function map_sum_ξ_multipole(
      N_log::Integer = 1000,
      kwargs...)
 
-     ss = isnothing(v_ss) ? 10 .^ range(-1, 3, length = N_log) : v_ss
+     ss = isnothing(v_ss) ? 10 .^ range(0, 3, length = N_log) : v_ss
 
      ALL = [
           begin
@@ -139,7 +139,7 @@ end
 Evaluate the multipole of order `L` of all the GR effects TPCF multipoles and their sum
 in `s1`, for all the `s` values stored inside `v_ss` and for the input Cosmology `cosmo`; 
 saves the results inside the file `out`.
-If `v_ss = nothing`, it is set `v_ss = 10 .^ range(-1, 3, length = N_log)`.
+If `v_ss = nothing`, it is set `v_ss = 10 .^ range(0, 3, length = N_log)`.
 If `s1 = nothing`, it is set `s1 = cosmo.s_eff`.
 
 It makes a for-loop on the `GaPSE.IMPLEMENTED_GR_EFFECTS` strings, calling `map_ξ_multipole` for
@@ -153,7 +153,7 @@ each of them. They are currently:
   if `s1 = nothing`, it is automatically set `s1 = cosmo.s_eff` from the given input `Cosmology`.
 
 - `N_log::Integer = 1000` : number of points to be used in the default logaritmically-spaced 
-  range for `v_ss`, i.e. `range(-1, 3, N_log)`; it is ignored if `v_ss ≠ nothing` 
+  range for `v_ss`, i.e. `range(0, 3, N_log)`; it is ignored if `v_ss ≠ nothing` 
 
 - `L::Integer = 0`: order of the Legendre polynomial to be used
 
