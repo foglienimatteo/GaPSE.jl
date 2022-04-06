@@ -53,16 +53,14 @@ end
 
 
 
-function PP_integrand_ξ_multipole(s, μ, cosmo::Cosmology;
+function integrand_ξ_PPD_multipole(s, μ, cosmo::Cosmology;
      L::Integer=0, use_windows::Bool=true)
 
      res = if use_windows == true
-          ϕ_s = ϕ(s, cosmo.s_min, cosmo.s_max)
-          (ϕ_s > 0.0) || (return 0.0)
           #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
           int = ξ_PP_Doppler(s, μ, cosmo)
           #println("int = $int")
-          int .* (ϕ_s * spline_F(s / cosmo.s_eff, μ, cosmo.windowF) * Pl(μ, L))
+          int .* (spline_F(s / cosmo.s_eff, μ, cosmo.windowF) * Pl(μ, L))
      else
           #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
           int = ξ_PP_Doppler(s, μ, cosmo)
@@ -75,7 +73,7 @@ function PP_integrand_ξ_multipole(s, μ, cosmo::Cosmology;
      return (2.0 * L + 1.0) / 2.0 * res
 end
 
-function PP_ξ_multipole(
+function ξ_PPD_multipole(
      s, cosmo::Cosmology;
      L::Integer=0,
      use_windows::Bool=true,
@@ -84,11 +82,10 @@ function PP_ξ_multipole(
      μ_rtol::Float64=1e-2)
 
 
-     orig_f(μ) = enhancer * PP_integrand_ξ_multipole(s, μ, cosmo;
+     orig_f(μ) = enhancer * integrand_ξ_PPD_multipole(s, μ, cosmo;
           L=L, use_windows=use_windows)
 
      int = quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=μ_atol, rtol=μ_rtol)[1]
-
 
      return int / enhancer
 end
