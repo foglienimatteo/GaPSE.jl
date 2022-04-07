@@ -61,8 +61,8 @@ and the ``J`` coefficients are given by
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_LocalGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
+See also: [`ξ_LD_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_LocalGP`](@ref)
+[`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
 function integrand_ξ_LD_Lensing_LocalGP(
      IP::Point, P1::Point, P2::Point,
@@ -109,7 +109,7 @@ end
 
 
 """
-     ξ_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
+     ξ_LD_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the Lensing-LocalGP cross-correlation function 
@@ -161,9 +161,9 @@ the integrand function `integrand_ξ_LD_Lensing_LocalGP`.
 
 
 See also: [`integrand_ξ_LD_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_LocalGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
+[`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
-function ξ_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
+function ξ_LD_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
      adim_χs = range(1e-6, 1.0, N_χs)
@@ -193,7 +193,7 @@ end
 
 
 
-function ξ_LocalGP_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_Lensing_LocalGP(s2, s1, y, cosmo; kwargs...)
+function ξ_LD_LocalGP_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_LD_Lensing_LocalGP(s2, s1, y, cosmo; kwargs...)
 end
 

@@ -18,7 +18,7 @@
 #
 
 
-function ξ_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
+function ξ_LD_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
      s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ
      s2, D2, f2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ
 
@@ -39,18 +39,18 @@ function ξ_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
 end
 
 
-function ξ_Doppler(s1, s2, y, cosmo::Cosmology)
+function ξ_LD_Doppler(s1, s2, y, cosmo::Cosmology)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_Doppler(P1, P2, y, cosmo)
+     return ξ_LD_Doppler(P1, P2, y, cosmo)
 end
 
 
 
 """
-     ξ_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
+     ξ_LD_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
 
-     ξ_Doppler(s1, s2, y, cosmo::Cosmology) = 
-          ξ_Doppler(Point(s1, cosmo), Point(s2, cosmo), y, cosmo)
+     ξ_LD_Doppler(s1, s2, y, cosmo::Cosmology) = 
+          ξ_LD_Doppler(Point(s1, cosmo), Point(s2, cosmo), y, cosmo)
 
 Return the Doppler auto-correlation function, defined as follows:
 ```math
@@ -82,4 +82,4 @@ the J coefficients are given by:
 
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
-ξ_Doppler
+ξ_LD_Doppler

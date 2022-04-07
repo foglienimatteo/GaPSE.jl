@@ -52,8 +52,8 @@ where ``\\mathcal{H} = a H``,
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_IntegratedGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
+See also: [`ξ_LD_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_IntegratedGP`](@ref)
+[`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
 function integrand_ξ_LD_LocalGP_IntegratedGP(
      IP::Point, P1::Point, P2::Point,
@@ -89,7 +89,7 @@ end
 
 
 """
-     ξ_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
+     ξ_LD_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the LocalGP-IntegratedGP cross-correlation function 
@@ -132,9 +132,9 @@ the integrand function `integrand_ξ_LD_LocalGP_IntegratedGP`.
 
 
 See also: [`integrand_ξ_LD_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_IntegratedGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
+[`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
-function ξ_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
+function ξ_LD_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
      #=
@@ -170,7 +170,7 @@ end
 
 
 
-function ξ_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-    ξ_LocalGP_IntegratedGP(s2, s1, y, cosmo; kwargs...)
+function ξ_LD_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
+    ξ_LD_LocalGP_IntegratedGP(s2, s1, y, cosmo; kwargs...)
 end
 

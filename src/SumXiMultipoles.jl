@@ -20,36 +20,36 @@
 
 
 """
-     sum_ξ_multipole(s1, s, cosmo::Cosmology; 
+     sum_ξ_LD_multipole(s1, s, cosmo::Cosmology; 
           kwargs...) ::Tuple{Float64, Vector{Float64}}
 
 Evaluate the multipole of order `L` of all the GR effects TPCF multipoles and their sum
 in `s1` and a distance `s` from it for the input Cosmology `cosmo`.
 
-It makes a for-loop on the `GaPSE.IMPLEMENTED_GR_EFFECTS` strings, calling `ξ_multipole` for
+It makes a for-loop on the `GaPSE.GR_EFFECTS_LD` strings, calling `ξ_LD_multipole` for
 each of them. They are currently:
 
-`$(string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...))`
+`$(string(GaPSE.GR_EFFECTS_LD .* " , "...))`
 
 ## Optional arguments
 
-- `kwards...` : all these keyword arguments will be passed to `ξ_multipole`
+- `kwards...` : all these keyword arguments will be passed to `ξ_LD_multipole`
 
 ## Returns
 
 A tuple containing:
 - the sum of all the ξ multipoles as first element
 - a `Vector{Float64}` with all the values of each ξ; they are ordered
-  following `IMPLEMENTED_GR_EFFECTS`
+  following `GR_EFFECTS_LD`
 
 
-See also: [`integrand_ξ_multipole`](@ref), [`ξ_multipole`](@ref),
-[`map_sum_ξ_multipole`](@ref), [`print_map_sum_ξ_multipole`](@ref),
-[`Cosmology`](@ref), [`IMPLEMENTED_GR_EFFECTS`](@ref)
+See also: [`integrand_ξ_LD_multipole`](@ref), [`ξ_LD_multipole`](@ref),
+[`map_sum_ξ_LD_multipole`](@ref), [`print_map_sum_ξ_LD_multipole`](@ref),
+[`Cosmology`](@ref), [`GR_EFFECTS_LD`](@ref)
 """
-function sum_ξ_multipole(s1, s, cosmo::Cosmology; kwargs...)
-     ALL = [ξ_multipole(s1, s, effect, cosmo; kwargs...)
-            for effect in GaPSE.IMPLEMENTED_GR_EFFECTS]
+function sum_ξ_LD_multipole(s1, s, cosmo::Cosmology; kwargs...)
+     ALL = [ξ_LD_multipole(s1, s, effect, cosmo; kwargs...)
+            for effect in GaPSE.GR_EFFECTS_LD]
 
      return sum(ALL), ALL
 end
@@ -61,7 +61,7 @@ end
 
 
 """
-     map_sum_ξ_multipole(
+     map_sum_ξ_LD_multipole(
           cosmo::Cosmology,
           v_ss = nothing;
           s1 = nothing,
@@ -73,10 +73,10 @@ in `s1` , for all the `s` values stored inside `v_ss` and for the input Cosmolog
 If `v_ss = nothing`, it is set `v_ss = 10 .^ range(0, 3, length = N_log)`.
 If `s1 = nothing`, it is set `s1 = cosmo.s_eff`.
 
-It makes a for-loop on the `GaPSE.IMPLEMENTED_GR_EFFECTS` strings, calling `map_ξ_multipole` for
+It makes a for-loop on the `GaPSE.GR_EFFECTS_LD` strings, calling `map_ξ_LD_multipole` for
 each of them. They are currently:
 
-`$(string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...))`
+`$(string(GaPSE.GR_EFFECTS_LD .* " , "...))`
 
 ## Optional arguments
 
@@ -86,7 +86,7 @@ each of them. They are currently:
 - `N_log::Integer = 1000` : number of points to be used in the default logaritmically-spaced 
   range for `v_ss`, i.e. `range(0, 3, N_log)`; it is ignored if `v_ss ≠ nothing` 
 
-- `kwards...` : all these keyword arguments will be passed to `map_ξ_multipole`
+- `kwards...` : all these keyword arguments will be passed to `map_ξ_LD_multipole`
 
 ## Returns
 
@@ -94,14 +94,14 @@ A tuple containing:
 - the vector `v_ss` itself as first element;
 - the  `Vector{Float64}` of the sum of all the ξ multipoles as second one
 - a `Vector{Vector{Float64}}` with all the values of each ξ; they are ordered
-  following `IMPLEMENTED_GR_EFFECTS`
+  following `GR_EFFECTS_LD`
 
 
-See also: [`map_ξ_multipole`](@ref),
-[`sum_ξ_multipole`](@ref), [`print_map_sum_ξ_multipole`](@ref),
-[`Cosmology`](@ref), [`IMPLEMENTED_GR_EFFECTS`](@ref)
+See also: [`map_ξ_LD_multipole`](@ref),
+[`sum_ξ_LD_multipole`](@ref), [`print_map_sum_ξ_LD_multipole`](@ref),
+[`Cosmology`](@ref), [`GR_EFFECTS_LD`](@ref)
 """
-function map_sum_ξ_multipole(
+function map_sum_ξ_LD_multipole(
      cosmo::Cosmology,
      v_ss = nothing;
      N_log::Integer = 1000,
@@ -111,9 +111,9 @@ function map_sum_ξ_multipole(
 
      ALL = [
           begin
-               _, xis = map_ξ_multipole(cosmo, effect, ss; kwargs...)
+               _, xis = map_ξ_LD_multipole(cosmo, effect, ss; kwargs...)
                xis
-          end for effect in GaPSE.IMPLEMENTED_GR_EFFECTS
+          end for effect in GaPSE.GR_EFFECTS_LD
      ]
 
      return ss, sum(ALL), ALL
@@ -126,7 +126,7 @@ end
 
 
 """
-     print_map_sum_ξ_multipole(
+     print_map_sum_ξ_LD_multipole(
           cosmo::Cosmology,
           out::String,
           v_ss = nothing;
@@ -142,10 +142,10 @@ saves the results inside the file `out`.
 If `v_ss = nothing`, it is set `v_ss = 10 .^ range(0, 3, length = N_log)`.
 If `s1 = nothing`, it is set `s1 = cosmo.s_eff`.
 
-It makes a for-loop on the `GaPSE.IMPLEMENTED_GR_EFFECTS` strings, calling `map_ξ_multipole` for
+It makes a for-loop on the `GaPSE.GR_EFFECTS_LD` strings, calling `map_ξ_LD_multipole` for
 each of them. They are currently:
 
-`$(string(GaPSE.IMPLEMENTED_GR_EFFECTS .* " , "...))`
+`$(string(GaPSE.GR_EFFECTS_LD .* " , "...))`
 
 ## Optional arguments
 
@@ -162,14 +162,14 @@ each of them. They are currently:
   Otherwise, a new directory "all_standalones_CFs" is created (in the same path given in `out`) and 
   they are separately saved in files there placed.
 
-- `kwards...` : all these keyword arguments will be passed to `map_ξ_multipole`
+- `kwards...` : all these keyword arguments will be passed to `map_ξ_LD_multipole`
 
 
-See also: [`map_ξ_multipole`](@ref),
-[`sum_ξ_multipole`](@ref), [`map_sum_ξ_multipole`](@ref),
-[`Cosmology`](@ref), [`IMPLEMENTED_GR_EFFECTS`](@ref)
+See also: [`map_ξ_LD_multipole`](@ref),
+[`sum_ξ_LD_multipole`](@ref), [`map_sum_ξ_LD_multipole`](@ref),
+[`Cosmology`](@ref), [`GR_EFFECTS_LD`](@ref)
 """
-function print_map_sum_ξ_multipole(
+function print_map_sum_ξ_LD_multipole(
      cosmo::Cosmology,
      out::String,
      v_ss = nothing;
@@ -187,14 +187,14 @@ function print_map_sum_ξ_multipole(
 
      s_1 = isnothing(s1) ? cosmo.s_eff : s1
      t1 = time()
-     ss, xis, ALL = map_sum_ξ_multipole(cosmo, v_ss;
+     ss, xis, ALL = map_sum_ξ_LD_multipole(cosmo, v_ss;
           L = L, s1 = s_1, kwargs...)
      t2 = time()
 
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
           println(io, "# This is an integration map on mu of the sum" *
-                      " of all the ξ_L=$L multipole GR effects.")
+                      " of all the ξ_LD_L=$L multipole GR effects.")
           !(single == true) ||
                println(io, "# In input was set \"single = $single\", " *
                            "so, together with their sum, all the CFs are here reported.\n#")
@@ -228,7 +228,7 @@ function print_map_sum_ξ_multipole(
 
           elseif single == true
                println(io, "# s [Mpc/h_0] \t xi_SUM \t " *
-                           join("xi_" .* GaPSE.IMPLEMENTED_GR_EFFECTS .* " \t "))
+                           join("xi_" .* GaPSE.GR_EFFECTS_LD .* " \t "))
                for (i, (s, xi)) in enumerate(zip(ss, xis))
                     println(io, "$s \t $xi \t " *
                                 join(["$(v[i]) \t " for v in ALL]))
@@ -239,7 +239,7 @@ function print_map_sum_ξ_multipole(
      end
 
      if single == false
-          for (effect, vec) in zip(GaPSE.IMPLEMENTED_GR_EFFECTS, ALL)
+          for (effect, vec) in zip(GaPSE.GR_EFFECTS_LD, ALL)
                open(dir * "xi_" * effect * "_L$L" * ".txt", "w") do io
                     println(io, "# This is an integration map on mu of the ξ multipole $effect GR effect.")
                     parameters_used(io, cosmo)

@@ -59,8 +59,8 @@ where ``\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\, \\chi_2 \\, y} 
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
+See also: [`ξ_LD_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
+[`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
 function integrand_ξ_LD_IntegratedGP(IP1::Point, IP2::Point,
      P1::Point, P2::Point,
@@ -87,7 +87,7 @@ end
 
 
 
-function ξ_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
+function ξ_LD_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      en::Float64 = 1e10, N_χs::Integer = 100, focus::Float64 = 10.0)
 
      #adim_χs = range(1e-12, 1.0, N_χs)
@@ -131,20 +131,20 @@ function ξ_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
 end
 
 
-function ξ_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
+function ξ_LD_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_IntegratedGP(P1, P2, y, cosmo; kwargs...)
+     return ξ_LD_IntegratedGP(P1, P2, y, cosmo; kwargs...)
 end
 
 
 
 """
-     ξ_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
+     ξ_LD_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
           en::Float64 = 1e10,
           N_χs::Integer = 100) :: Float64
 
-     ξ_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...) = 
-          ξ_IntegratedGP(Point(s1, cosmo), Point(s2, cosmo), y, cosmo; kwargs...)
+     ξ_LD_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...) = 
+          ξ_LD_IntegratedGP(Point(s1, cosmo), Point(s2, cosmo), y, cosmo; kwargs...)
 
 Return the integrated gravitational potential auto-correlation function 
 ``\\xi^{\\int\\phi\\int\\phi}(s_1, s_2, \\cos{\\theta})``, defined as follows:
@@ -195,6 +195,6 @@ the integrand function `integrand_ξ_LD_Lensing`.
   with `N_χs ≥ 50` the result is stable.
 
 See also: [`integrand_ξ_LD_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
+[`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
-ξ_IntegratedGP
+ξ_LD_IntegratedGP

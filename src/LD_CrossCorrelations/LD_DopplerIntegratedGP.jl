@@ -58,8 +58,8 @@ J_{31} =
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_Doppler_IntegratedGP`](@ref), [`int_on_mu_Doppler_IntegratedGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
+See also: [`ξ_LD_Doppler_IntegratedGP`](@ref), [`int_on_mu_Doppler_IntegratedGP`](@ref)
+[`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
 function integrand_ξ_LD_Doppler_IntegratedGP(
      IP::Point, P1::Point, P2::Point,
@@ -110,7 +110,7 @@ end
 
 
 @doc raw"""
-     ξ_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
+     ξ_LD_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the Doppler-LocalGP cross-correlation function 
@@ -160,9 +160,9 @@ the integrand function `integrand_ξ_LD_Doppler_IntegratedGP`.
 
 
 See also: [`integrand_ξ_LD_Doppler_IntegratedGP`](@ref), [`int_on_mu_Doppler_IntegratedGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
+[`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
-function ξ_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
+function ξ_LD_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
      #=
@@ -198,7 +198,7 @@ end
 
 
 
-function ξ_IntegratedGP_Doppler(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_Doppler_IntegratedGP(s2, s1, y, cosmo; kwargs...)
+function ξ_LD_IntegratedGP_Doppler(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_LD_Doppler_IntegratedGP(s2, s1, y, cosmo; kwargs...)
 end
 

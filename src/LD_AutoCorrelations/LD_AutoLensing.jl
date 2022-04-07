@@ -89,8 +89,8 @@ and the ``J`` coefficients are given by
   computational divergences.
 
 
-See also: [`ξ_Lensing`](@ref), [`integrand_on_mu_Lensing`](@ref)
-[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
+See also: [`ξ_LD_Lensing`](@ref), [`integrand_on_mu_Lensing`](@ref)
+[`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
 function integrand_ξ_LD_Lensing(
      IP1::Point, IP2::Point,
@@ -162,7 +162,7 @@ function func_Δχ_min(s1, s2, y; frac = 1e-4)
 end
 =#
 
-function ξ_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
+function ξ_LD_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100, Δχ_min::Float64 = 1e-4)
 
      adim_1χs = range(1e-8, 1.0, length = N_χs)[begin:end]
@@ -186,21 +186,21 @@ function ξ_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
 end
 
 
-function ξ_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
+function ξ_LD_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_Lensing(P1, P2, y, cosmo; kwargs...)
+     return ξ_LD_Lensing(P1, P2, y, cosmo; kwargs...)
 end
 
 
 
 """
-     ξ_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
+     ξ_LD_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
           en::Float64 = 1e6,
           Δχ_min::Float64 = 1e-3,
           N_χs::Integer = 100) :: Float64
 
-     ξ_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...) = 
-          ξ_Lensing(Point(s1, cosmo), Point(s2, cosmo), y, cosmo; kwargs...)
+     ξ_LD_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...) = 
+          ξ_LD_Lensing(Point(s1, cosmo), Point(s2, cosmo), y, cosmo; kwargs...)
 
           
 Return the Lensing auto-correlation function 
@@ -276,6 +276,6 @@ the integrand function `integrand_ξ_LD_Lensing`.
 
 
 See also: [`integrand_ξ_LD_Lensing`](@ref), [`integrand_on_mu_Lensing`](@ref)
-[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
+[`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
-ξ_Lensing
+ξ_LD_Lensing

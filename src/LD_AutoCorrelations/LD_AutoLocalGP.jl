@@ -18,7 +18,7 @@
 #
 
 
-function ξ_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
+function ξ_LD_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      s1, D1, a1, ℛ1 = P1.comdist, P1.D, P1.a, P1.ℛ
      s2, D2, a2, ℛ2 = P2.comdist, P2.D, P2.a, P2.ℛ
 
@@ -34,17 +34,17 @@ function ξ_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
 end
 
 
-function ξ_LocalGP(s1, s2, y, cosmo::Cosmology)
+function ξ_LD_LocalGP(s1, s2, y, cosmo::Cosmology)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_LocalGP(P1, P2, y, cosmo)
+     return ξ_LD_LocalGP(P1, P2, y, cosmo)
 end
 
 
 """
-     ξ_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
+     ξ_LD_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
 
-     ξ_LocalGP(s1, s2, y, cosmo::Cosmology) = 
-          ξ_LocalGP(Point(s1, cosmo), Point(s2, cosmo), y, cosmo::Cosmology)
+     ξ_LD_LocalGP(s1, s2, y, cosmo::Cosmology) = 
+          ξ_LD_LocalGP(Point(s1, cosmo), Point(s2, cosmo), y, cosmo::Cosmology)
 
 Return the local gravitational potential auto-correlation function, 
 defined as follows:
@@ -72,4 +72,4 @@ where ``D_1 = D(s_1)``, ``D_2 = D(s_2)`` and so on, ``\\mathcal{H} = a H``,
 
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
-ξ_LocalGP
+ξ_LD_LocalGP

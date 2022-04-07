@@ -358,7 +358,7 @@ function print_all_PS_multipole(input::String, out::String;
           println(io, "# ")
           println(io, "# (all the following Power Spectra are measured in (Mpc/h_0)^3)")
           println(io, "# k [h_0/Mpc] \t \t  P_SUM " *
-                      join("P_" .* GaPSE.IMPLEMENTED_GR_EFFECTS .* " \t "))
+                      join("P_" .* GaPSE.GR_EFFECTS_LD .* " \t "))
           for (i, k) in enumerate(ks)
                println(io, "$k \t " *
                            join(["$(v[i]) \t " for v in VEC]))

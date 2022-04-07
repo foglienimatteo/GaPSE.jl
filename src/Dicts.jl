@@ -20,7 +20,7 @@
 
 
 """
-     const IMPLEMENTED_GR_EFFECTS = [
+     const GR_EFFECTS_LD = [
           "auto_doppler", "auto_lensing",
           "auto_localgp", "auto_integratedgp", 
           
@@ -33,12 +33,12 @@
      ]
 
 The names of the GR effects implemented.
-Their order is associated with the one in `IMPLEMENTED_ξs`, so be careful
+Their order is associated with the one in `VEC_ξs_LD`, so be careful
 to change it.
 
-See also: [`IMPLEMENTED_ξs`](@ref)
+See also: [`VEC_ξs_LD`](@ref)
 """
-const IMPLEMENTED_GR_EFFECTS = [
+const GR_EFFECTS_LD = [
      "auto_doppler", "auto_lensing",
      "auto_localgp", "auto_integratedgp", 
      
@@ -52,55 +52,55 @@ const IMPLEMENTED_GR_EFFECTS = [
 
 
 """
-     const IMPLEMENTED_ξs = [
-          ξ_Doppler, ξ_Lensing, ξ_LocalGP, ξ_IntegratedGP, 
-          ξ_Lensing_Doppler, ξ_Doppler_Lensing,
-          ξ_Doppler_LocalGP, ξ_LocalGP_Doppler,
-          ξ_Doppler_IntegratedGP, ξ_IntegratedGP_Doppler,
-          ξ_Lensing_LocalGP, ξ_LocalGP_Lensing,
-          ξ_Lensing_IntegratedGP, ξ_IntegratedGP_Lensing,
-          ξ_LocalGP_IntegratedGP, ξ_IntegratedGP_LocalGP
+     const VEC_ξs_LD = [
+          ξ_LD_Doppler, ξ_LD_Lensing, ξ_LD_LocalGP, ξ_LD_IntegratedGP, 
+          ξ_LD_Lensing_Doppler, ξ_LD_Doppler_Lensing,
+          ξ_LD_Doppler_LocalGP, ξ_LD_LocalGP_Doppler,
+          ξ_LD_Doppler_IntegratedGP, ξ_LD_IntegratedGP_Doppler,
+          ξ_LD_Lensing_LocalGP, ξ_LD_LocalGP_Lensing,
+          ξ_LD_Lensing_IntegratedGP, ξ_LD_IntegratedGP_Lensing,
+          ξ_LD_LocalGP_IntegratedGP, ξ_LD_IntegratedGP_LocalGP
      ]
 
 The names of the GR effect TPCFs implemented.
-Their order is associated with the one in `IMPLEMENTED_GR_EFFECTS`, so be careful
+Their order is associated with the one in `GR_EFFECTS_LD`, so be careful
 to change it.
 
-See also: [`IMPLEMENTED_GR_EFFECTS`](@ref)
+See also: [`GR_EFFECTS_LD`](@ref)
 """
-const IMPLEMENTED_ξs = [
-     ξ_Doppler, ξ_Lensing, ξ_LocalGP, ξ_IntegratedGP, 
-     ξ_Lensing_Doppler, ξ_Doppler_Lensing,
-     ξ_Doppler_LocalGP, ξ_LocalGP_Doppler,
-     ξ_Doppler_IntegratedGP, ξ_IntegratedGP_Doppler,
-     ξ_Lensing_LocalGP, ξ_LocalGP_Lensing,
-     ξ_Lensing_IntegratedGP, ξ_IntegratedGP_Lensing,
-     ξ_LocalGP_IntegratedGP, ξ_IntegratedGP_LocalGP
+const VEC_ξs_LD = [
+     ξ_LD_Doppler, ξ_LD_Lensing, ξ_LD_LocalGP, ξ_LD_IntegratedGP, 
+     ξ_LD_Lensing_Doppler, ξ_LD_Doppler_Lensing,
+     ξ_LD_Doppler_LocalGP, ξ_LD_LocalGP_Doppler,
+     ξ_LD_Doppler_IntegratedGP, ξ_LD_IntegratedGP_Doppler,
+     ξ_LD_Lensing_LocalGP, ξ_LD_LocalGP_Lensing,
+     ξ_LD_Lensing_IntegratedGP, ξ_LD_IntegratedGP_Lensing,
+     ξ_LD_LocalGP_IntegratedGP, ξ_LD_IntegratedGP_LocalGP
 ];
 
 
 """
      const DICT_GR_ξs::Dict{String,Function}
 
-For an input key string `effect` from `IMPLEMENTED_GR_EFFECTS`, return the 
-associated TPCF `DICT_GR_ξs[effect]` from `IMPLEMENTED_ξs`.
+For an input key string `effect` from `GR_EFFECTS_LD`, return the 
+associated TPCF `DICT_GR_ξs[effect]` from `VEC_ξs_LD`.
 
 ## Example
 
 ```jldoctest
 julia> GaPSE.DICT_GR_ξs["auto_doppler"]
-ξ_Doppler
+ξ_LD_Doppler
 ```
 
-See also: [`IMPLEMENTED_GR_EFFECTS`](@ref), [`IMPLEMENTED_ξs`](@ref)
+See also: [`GR_EFFECTS_LD`](@ref), [`VEC_ξs_LD`](@ref)
 """
-const DICT_GR_ξs = Dict([k => v for (k, v) in zip(IMPLEMENTED_GR_EFFECTS, IMPLEMENTED_ξs)]...)
+const DICT_GR_ξs = Dict([k => v for (k, v) in zip(GR_EFFECTS_LD, VEC_ξs_LD)]...)
 
 
 """
      const INDEX_GR_EFFECT::Dict{String,Integer}
 
-For an input key string `effect` from `IMPLEMENTED_GR_EFFECTS`, return the 
+For an input key string `effect` from `GR_EFFECTS_LD`, return the 
 associated index position in that vector.
 
 ## Example
@@ -110,16 +110,16 @@ julia> GaPSE.INDEX_GR_EFFECT["auto_doppler"]
 1
 ```
 
-See also: [`IMPLEMENTED_GR_EFFECTS`](@ref)
+See also: [`GR_EFFECTS_LD`](@ref)
 """
 const INDEX_GR_EFFECT = Dict([name => i for (i, name) in
-                        enumerate(IMPLEMENTED_GR_EFFECTS)]...)
+                        enumerate(GR_EFFECTS_LD)]...)
 
 
 """
      const GR_EFFECT_INDEXED::Dict{Integer,String}
 
-For an input index position `i` of `IMPLEMENTED_GR_EFFECTS`, return the 
+For an input index position `i` of `GR_EFFECTS_LD`, return the 
 associated key string `effect`.
 
 ## Example
@@ -129,8 +129,8 @@ julia> GaPSE.DICT_GR_ξs[1]
 "auto_doppler"
 ```
 
-See also: [`IMPLEMENTED_GR_EFFECTS`](@ref)
+See also: [`GR_EFFECTS_LD`](@ref)
 """
 const GR_EFFECT_INDEXED = Dict([i => name for (i, name) in
-                          enumerate(IMPLEMENTED_GR_EFFECTS)]...)
+                          enumerate(GR_EFFECTS_LD)]...)
 

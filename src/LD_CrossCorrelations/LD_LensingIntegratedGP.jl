@@ -62,8 +62,8 @@ and the ``J`` coefficients are given by
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_Lensing_IntegratedGP`](@ref), [`integrand_on_mu_Lensing_IntegratedGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
+See also: [`ξ_LD_Lensing_IntegratedGP`](@ref), [`integrand_on_mu_Lensing_IntegratedGP`](@ref)
+[`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
 function integrand_ξ_LD_Lensing_IntegratedGP(
      IP1::Point, IP2::Point,
@@ -115,7 +115,7 @@ end
 
 
 """
-     ξ_Lensing_IntegratedGP(s1, s2, y, cosmo::Cosmology;
+     ξ_LD_Lensing_IntegratedGP(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6,
           N_χs::Integer = 100) :: Float64
 
@@ -170,9 +170,9 @@ the integrand function `integrand_ξ_LD_Lensing_IntegratedGP`.
 
 
 See also: [`integrand_ξ_LD_Lensing_IntegratedGP`](@ref), [`integrand_on_mu_Lensing_IntegratedGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_multipole`](@ref)
+[`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
-function ξ_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
+function ξ_LD_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
      adim_χs = range(1.1e-8, 1.0, length = N_χs)[begin:end]
@@ -195,9 +195,9 @@ function ξ_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
 end
 
 
-function ξ_Lensing_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
+function ξ_LD_Lensing_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_Lensing_IntegratedGP(P1, P2, y, cosmo; kwargs...)
+     return ξ_LD_Lensing_IntegratedGP(P1, P2, y, cosmo; kwargs...)
 end
 
 
@@ -210,7 +210,7 @@ end
 
 
 
-function ξ_IntegratedGP_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_Lensing_IntegratedGP(s2, s1, y, cosmo; kwargs...)
+function ξ_LD_IntegratedGP_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_LD_Lensing_IntegratedGP(s2, s1, y, cosmo; kwargs...)
 end
 
