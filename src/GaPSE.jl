@@ -50,6 +50,11 @@ include("CosmoUtils.jl")
 include("IPSTools.jl")
 include("Cosmology.jl")
 
+
+
+##################### PERTURBED LUMINOSITY DISTANCE #############################
+
+
 include("LD_AutoCorrelations/LD_AutoDoppler.jl")
 include("LD_AutoCorrelations/LD_AutoLensing.jl")
 include("LD_AutoCorrelations/LD_AutoLocalGP.jl")
@@ -64,17 +69,41 @@ include("LD_CrossCorrelations/LD_LocalGPIntegratedGP.jl")
 
 include("PPDoppler.jl")
 
-include("Dicts.jl")
-
-include("PowerSpectrum.jl")
-
 include("LD_XiMultipoles.jl")
 include("LD_SumXiMultipoles.jl")
 
 
 
+##################### GALAXY NUMBER COUNTS #############################
+
+
+
+include("GNC_AutoCorrelations/GNC_AutoDoppler.jl")
+include("GNC_AutoCorrelations/GNC_AutoLensing.jl")
+include("GNC_AutoCorrelations/GNC_AutoLocalGP.jl")
+include("GNC_AutoCorrelations/GNC_AutoIntegratedGP.jl")
+
+include("GNC_CrossCorrelations/GNC_LensingDoppler.jl")
+include("GNC_CrossCorrelations/GNC_DopplerLocalGP.jl")
+include("GNC_CrossCorrelations/GNC_DopplerIntegratedGP.jl")
+include("GNC_CrossCorrelations/GNC_LensingLocalGP.jl")
+include("GNC_CrossCorrelations/GNC_LensingIntegratedGP.jl")
+include("GNC_CrossCorrelations/GNC_LocalGPIntegratedGP.jl")
+
+include("PPDoppler.jl")
+
+include("GNC_XiMultipoles.jl")
+include("GNC_SumXiMultipoles.jl")
+
+
+
+
 ##########################################################################################92
 
+
+include("Dicts.jl")
+
+include("PowerSpectrum.jl")
 
 
 function parameters_used(io::IO, cosmo::Cosmology)
