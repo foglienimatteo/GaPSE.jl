@@ -192,7 +192,7 @@ end
                     #calc_ss = convert(Vector{Float64}, calc_table[:, 1])
                     xis = convert(Vector{Float64}, calc_table[:, 2])
                     xis
-               end for effect in GaPSE.IMPLEMENTED_GR_EFFECTS
+               end for effect in GaPSE.GR_EFFECTS_LD
           ]
 
           @test all([isapprox(a, r, rtol = RTOL) for (a, r) in zip(ss, calc_ss)])
@@ -215,7 +215,7 @@ end
           @test all([isapprox(a, r, rtol = RTOL) for (a, r) in zip(res_xis[16], calc_xis[16])]) # integratedgp_localgp
 
           rm(name)
-          for effect in GaPSE.IMPLEMENTED_GR_EFFECTS
+          for effect in GaPSE.GR_EFFECTS_LD
                rm("all_standalones_CFs/xi_" * effect * "_L0" * ".txt")
           end
           rm("all_standalones_CFs")

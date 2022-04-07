@@ -109,7 +109,7 @@ spec_effect = [
 ];
 
 specific_kwargs = [effect ∈ spec_effect ? Dict(
-     :en => 1e12, :N_χs => 30) : nothing for effect in GaPSE.IMPLEMENTED_GR_EFFECTS]
+     :en => 1e12, :N_χs => 30) : nothing for effect in GaPSE.GR_EFFECTS_LD]
 
 joint_kwargs = [isnothing(spec) ? common_kwargs : merge(common_kwargs, spec)
                 for spec in specific_kwargs];
@@ -120,34 +120,33 @@ dict_L_dir = Dict(0 => "monopoles", 1 => "dipoles", 2 => "tripoles",
 
 ##############################
 
-
-@testset "test XiMultipoles" begin
-     include("test_LD_XiMultipoles.jl")
-end
-
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
 end
 
-@testset "test SumXiMultipoles" begin
+@testset "test LD_XiMultipoles" begin
+     include("test_LD_XiMultipoles.jl")
+end
+
+@testset "test LD_SumXiMultipoles" begin
      include("test_LD_SumXiMultipoles.jl")
 end
 
 ##############################
 
-@testset "test AutoDoppler" begin
+@testset "test LD_AutoDoppler" begin
      include("test_LD_AutoCorrelations/test_LD_AutoDoppler.jl")
 end
 
-@testset "test AutoIntegatedGP" begin
+@testset "test LD_AutoIntegratedGP" begin
      include("test_LD_AutoCorrelations/test_LD_AutoIntegratedGP.jl")
 end
 
-@testset "test AutoLocalGP" begin
+@testset "test LD_AutoLocalGP" begin
      include("test_LD_AutoCorrelations/test_LD_AutoLocalGP.jl")
 end
 
-@testset "test AutoLensing" begin
+@testset "test LD_AutoLensing" begin
      include("test_LD_AutoCorrelations/test_LD_AutoLensing.jl")
 end
 
@@ -156,27 +155,27 @@ end
 
 
 
-@testset "test DopplerLensing" begin
+@testset "test LD_DopplerLensing" begin
      include("test_LD_CrossCorrelations/test_LD_DopplerLensing.jl")
 end
 
-@testset "test DopplerLocalGP" begin
+@testset "test LD_DopplerLocalGP" begin
      include("test_LD_CrossCorrelations/test_LD_DopplerLocalGP.jl")
 end
 
-@testset "test DopplerIntegratedGP" begin
+@testset "test LD_DopplerIntegratedGP" begin
      include("test_LD_CrossCorrelations/test_LD_DopplerIntegratedGP.jl")
 end
 
-@testset "test LensingIntegratedGP" begin
+@testset "test LD_LensingIntegratedGP" begin
      include("test_LD_CrossCorrelations/test_LD_LensingIntegratedGP.jl")
 end
 
-@testset "test LensingLocalGP" begin
+@testset "test LD_LensingLocalGP" begin
      include("test_LD_CrossCorrelations/test_LD_LensingLocalGP.jl")
 end
 
-@testset "test LocalGPIntegratedGP" begin
+@testset "test LD_LocalGPIntegratedGP" begin
      include("test_LD_CrossCorrelations/test_LD_LocalGPIntegratedGP.jl")
 end
 
