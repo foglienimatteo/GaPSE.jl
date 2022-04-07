@@ -76,7 +76,7 @@ function integrand_ξ_GNC_Lensing_Doppler(
      y, cosmo::Cosmology)
 
      s1 = P1.comdist
-     s2, D_s2, f_s2, ℋ_s2, ℛ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ
+     s2, D_s2, f_s2, ℋ_s2, ℛ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_GNC
      χ1, D1, a1 = IP.comdist, IP.D, IP.a
      Ω_M0 = cosmo.params.Ω_M0
 
