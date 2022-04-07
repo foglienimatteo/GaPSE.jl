@@ -73,7 +73,7 @@ include("PPDoppler.jl")
 ##################### GALAXY NUMBER COUNTS #############################
 
 
-
+include("GNC_AutoCorrelations/GNC_AutoNewtonian.jl")
 include("GNC_AutoCorrelations/GNC_AutoDoppler.jl")
 include("GNC_AutoCorrelations/GNC_AutoLensing.jl")
 include("GNC_AutoCorrelations/GNC_AutoLocalGP.jl")
