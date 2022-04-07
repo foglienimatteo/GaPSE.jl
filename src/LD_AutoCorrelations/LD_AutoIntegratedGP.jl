@@ -66,8 +66,8 @@ function integrand_ξ_LD_IntegratedGP(IP1::Point, IP2::Point,
      P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
-     s1, ℛ_s1 = P1.comdist, P1.ℛ
-     s2, ℛ_s2 = P2.comdist, P2.ℛ
+     s1, ℛ_s1 = P1.comdist, P1.ℛ_LD
+     s2, ℛ_s2 = P2.comdist, P2.ℛ_LD
      χ1, D1, a1, ℋ1, f1 = IP1.comdist, IP1.D, IP1.a, IP1.ℋ, IP1.f
      χ2, D2, a2, ℋ2, f2 = IP2.comdist, IP2.D, IP2.a, IP2.ℋ, IP2.f
      Ω_M0 = cosmo.params.Ω_M0

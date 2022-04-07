@@ -28,7 +28,7 @@
      name = "calc_xi_" * effect * "_L$L" * ".txt"
      isfile(name) && rm(name)
      GaPSE.print_map_ξ_LD_multipole(COSMO, name, effect, 10 .^ range(-1,3,length=common_kwargs[:N_log]);
-          L = L, joint_kwargs[GaPSE.INDEX_GR_EFFECT[effect]]...)
+          L = L, joint_kwargs[GaPSE.INDEX_GR_EFFECT_LD[effect]]...)
 
      calc_table = readdlm(name; comments = true)
      calc_ss = convert(Vector{Float64}, calc_table[:, 1])

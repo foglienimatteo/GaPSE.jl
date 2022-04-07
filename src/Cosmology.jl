@@ -19,11 +19,11 @@
 
 
 """
-     func_ℛ(s, ℋ; s_lim=0.01, ℋ_0 = ℋ0)
+     func_ℛ_LD(s, ℋ; s_lim=0.01, ℋ_0 = ℋ0)
 
 Return the following value:
 ```math
-\\mathrm{func_ℛ}(s, \\scrH)=
+\\mathrm{func_ℛ_LD}(s, \\scrH)=
 \\begin{cases}
 1 - \\frac{1}{\\scrH \\, s} \\; ,
     \\quad s > s_\\mathrm{lim}\\\\
@@ -32,7 +32,7 @@ Return the following value:
 \\end{cases}
 ```
 """
-function func_ℛ(s, ℋ; s_lim=0.01, ℋ_0 = ℋ0)
+function func_ℛ_LD(s, ℋ; s_lim=0.01, ℋ_0 = ℋ0)
      if s > s_lim
           return 1.0 - 1.0/(s*ℋ)
      else
@@ -52,7 +52,7 @@ end
           D_of_s::Dierckx.Spline1D
           f_of_s::Dierckx.Spline1D
           ℋ_of_s::Dierckx.Spline1D
-          ℛ_of_s::Dierckx.Spline1D
+          ℛ_LD_of_s::Dierckx.Spline1D
 
           s_of_z::Dierckx.Spline1D
 
@@ -95,8 +95,8 @@ Correlation Function computations.
      \\end{split}
   ```
 
-- `z_of_s, D_of_s, f_of_s, ℋ_of_s, ℛ_of_s ::Dierckx.Spline1D` : splines that returns the
-  value of `z`, `D`, `f`, `ℋ` and `ℛ` (respectively) corresponding to an input comoving
+- `z_of_s, D_of_s, f_of_s, ℋ_of_s, ℛ_LD_of_s ::Dierckx.Spline1D` : splines that returns the
+  value of `z`, `D`, `f`, `ℋ` and `ℛ_LD` (respectively) corresponding to an input comoving
   distance `s`. These splines are obtained from the data stored by `BackgroundData` applied
   to the input background data file.
 
@@ -169,7 +169,7 @@ struct Cosmology
      D_of_s::Dierckx.Spline1D
      f_of_s::Dierckx.Spline1D
      ℋ_of_s::Dierckx.Spline1D
-     ℛ_of_s::Dierckx.Spline1D
+     ℛ_LD_of_s::Dierckx.Spline1D
 
      s_of_z::Dierckx.Spline1D
 
@@ -229,8 +229,8 @@ struct Cosmology
           ℋ_of_s = Spline1D(BD.comdist, BD.ℋ; bc = "error")
 
           ss = 10 .^ range(-4, log10(BD.comdist[end]), length = 1000)
-          ℛs = [func_ℛ(s, ℋ_of_s(s); s_lim =  params.s_lim) for s in ss]
-          ℛ_of_s = Spline1D(vcat(0.0, ss), vcat(ℛs[begin], ℛs); bc = "error")
+          ℛ_LDs = [func_ℛ_LD(s, ℋ_of_s(s); s_lim =  params.s_lim) for s in ss]
+          ℛ_LD_of_s = Spline1D(vcat(0.0, ss), vcat(ℛ_LDs[begin], ℛ_LDs); bc = "error")
 
           s_min = s_of_z(params.z_min)
           s_max = s_of_z(params.z_max)
@@ -243,7 +243,7 @@ struct Cosmology
                params,
                tools,
                windowF,
-               z_of_s, D_of_s, f_of_s, ℋ_of_s, ℛ_of_s,
+               z_of_s, D_of_s, f_of_s, ℋ_of_s, ℛ_LD_of_s,
                s_of_z,
                z_eff, s_min, s_max, s_eff,
                vol,
@@ -267,7 +267,7 @@ end
           f::Float64
           ℋ::Float64
           #ℋ_p::Float64
-          ℛ::Float64
+          ℛ_LD::Float64
           a::Float64)
      
 A point in the Universe, placed at redshift `z` from us.
@@ -290,13 +290,13 @@ struct Point
      f::Float64
      ℋ::Float64
      #ℋ_p::Float64
-     ℛ::Float64
+     ℛ_LD::Float64
      a::Float64
 
-     #Point(z, comdist, D, f, ℋ, ℛ) = new(z, comdist, D, f, ℋ, ℛ, 1.0/(1.0+z))
+     #Point(z, comdist, D, f, ℋ, ℛ_LD) = new(z, comdist, D, f, ℋ, ℛ_LD, 1.0/(1.0+z))
      function Point(s, cosmo::Cosmology)
           z = cosmo.z_of_s(s)
           new(z, s, cosmo.D_of_s(s), cosmo.f_of_s(s),
-               cosmo.ℋ_of_s(s), cosmo.ℛ_of_s(s), 1.0/(1.0+z))
+               cosmo.ℋ_of_s(s), cosmo.ℛ_LD_of_s(s), 1.0/(1.0+z))
      end
 end

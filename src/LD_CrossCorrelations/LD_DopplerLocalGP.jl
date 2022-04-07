@@ -50,8 +50,8 @@ I^n_l(s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} q^2 \\, P(q) \\, \\frac
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
 function ξ_LD_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
-     s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ
-     s2, D2, a2, ℛ2 = P2.comdist, P2.D, P2.a, P2.ℛ
+     s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_LD
+     s2, D2, a2, ℛ2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
 
      Ω_M0 = cosmo.params.Ω_M0
      Δs = s(s1, s2, y)

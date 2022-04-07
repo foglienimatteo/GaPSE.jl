@@ -49,7 +49,7 @@ function integrand_ξ_LD_multipole(s1, s, μ, effect::String, cosmo::Cosmology; 
              string(GaPSE.GR_EFFECTS_LD .* " , "...)
      @assert (effect ∈ GaPSE.GR_EFFECTS_LD) error
 
-     return integrand_ξ_LD_multipole(s1, s, μ, DICT_GR_ξs[effect], cosmo; kwargs...)
+     return integrand_ξ_LD_multipole(s1, s, μ, DICT_GR_ξs_LD[effect], cosmo; kwargs...)
 end
 
 
@@ -201,7 +201,7 @@ function ξ_LD_multipole(s1, s, effect::String, cosmo::Cosmology; kwargs...)
              string(GaPSE.GR_EFFECTS_LD .* " , "...)
 
      @assert (effect ∈ GaPSE.GR_EFFECTS_LD) error
-     ξ_LD_multipole(s1, s, DICT_GR_ξs[effect], cosmo; kwargs...)
+     ξ_LD_multipole(s1, s, DICT_GR_ξs_LD[effect], cosmo; kwargs...)
 end
 
 

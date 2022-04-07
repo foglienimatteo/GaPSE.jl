@@ -76,6 +76,9 @@ const DEFAULT_IPSTOOLS_OPTS = Dict(
           Ω_M0::Float64
           h_0::Float64
 
+          s_b::Float64
+          𝑓_evo::Float64
+
           s_lim::Float64
 
           IPS::Dict{Symbol,T1} where {T1}
@@ -99,9 +102,13 @@ matter of concerns for the `Cosmology` we are interested in.
 
 - `h_0::Float64` : today's Hubble adimensional parameter (`H_0 = h_0 * 100 km/(s * Mpc)`).
 
-- `s_lim::Float64` : the lower-bound value for the function `func_ℛ`; it is necessary, because
-  `ℛ` blows up for ``s \\rightarrow 0^{+}``. Consequently, if the `func_ℛ` input value is 
-  `0 ≤ s < s_lim`, the returned value is always `func_ℛ(s_lim)`.
+- `s_b::Float64` : magnification bias, i.e. the slope of the luminosity function at the luminosity threshold.
+
+- `𝑓_evo::Float64` : evolution bias.
+
+- `s_lim::Float64` : the lower-bound value for the function `func_ℛ_LD`; it is necessary, because
+  `ℛ_LD` blows up for ``s \\rightarrow 0^{+}``. Consequently, if the `func_ℛ_LD` input value is 
+  `0 ≤ s < s_lim`, the returned value is always `func_ℛ_LD(s_lim)`.
 
 - `IPS::Dict{Symbol,T1} where {T1}` : dictionary concerning all the options that should be 
   passed to `InputPS` in the contruction of a `Cosmology`. The allowed keys, with their default
@@ -158,7 +165,7 @@ and similar for `IPS_opts`.
 
 
 See also: [`Cosmology`](@ref), [`IPSTools`](@ref),  [`InputPS`](@ref), 
-[`func_ℛ`](@ref), [`DEFAULT_IPSTOOLS_OPTS`](@ref), [`DEFAULT_IPS_OPTS`](@ref),
+[`func_ℛ_LD`](@ref), [`DEFAULT_IPSTOOLS_OPTS`](@ref), [`DEFAULT_IPS_OPTS`](@ref),
 [`check_compatible_dicts`](@ref)
 """
 struct CosmoParams
@@ -171,15 +178,19 @@ struct CosmoParams
      Ω_M0::Float64
      h_0::Float64
 
+     s_b::Float64
+     𝑓_evo::Float64
+
      s_lim::Float64
 
      IPS::Dict{Symbol,T1} where {T1}
      IPSTools::Dict{Symbol,T2} where {T2}
 
      function CosmoParams(z_min, z_max, θ_max;
-          Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70, s_lim = 1e-2,
-          IPS_opts::Dict = Dict{Symbol,Any}(),
-          IPSTools_opts::Dict = Dict{Symbol,Any}()
+          Ω_b=0.0489, Ω_cdm=0.251020, h_0=0.70, s_lim=1e-2,
+          s_b=0.0, 𝑓_evo=0.0,
+          IPS_opts::Dict=Dict{Symbol,Any}(),
+          IPSTools_opts::Dict=Dict{Symbol,Any}()
      )
 
           @assert typeof(IPS_opts) <: Dict{Symbol,T1} where {T1}
@@ -211,7 +222,7 @@ struct CosmoParams
           @assert 1e-2 ≤ IPSTools[:fit_min] < IPSTools[:fit_max] < 10.0 " 1e-2 " *
                                                                         "≤ fit_min < fit_max < 10.0 must hold!"
 
-          new(z_min, z_max, θ_max, Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0, s_lim,
+          new(z_min, z_max, θ_max, Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0, s_b, 𝑓_evo, s_lim,
                IPS, IPSTools)
      end
 end

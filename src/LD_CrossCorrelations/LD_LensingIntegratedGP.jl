@@ -71,7 +71,7 @@ function integrand_ξ_LD_Lensing_IntegratedGP(
      y, cosmo::Cosmology)
 
      s1 = P1.comdist
-     s2, ℛ_s2 = P2.comdist, P2.ℛ
+     s2, ℛ_s2 = P2.comdist, P2.ℛ_LD
      χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
      χ2, D2, a2, f2, ℋ2 = IP2.comdist, IP2.D, IP2.a, IP2.f, IP2.ℋ
      Ω_M0 = cosmo.params.Ω_M0

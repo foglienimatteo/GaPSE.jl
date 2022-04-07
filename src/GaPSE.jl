@@ -69,10 +69,6 @@ include("LD_CrossCorrelations/LD_LocalGPIntegratedGP.jl")
 
 include("PPDoppler.jl")
 
-include("LD_XiMultipoles.jl")
-include("LD_SumXiMultipoles.jl")
-
-
 
 ##################### GALAXY NUMBER COUNTS #############################
 
@@ -92,10 +88,6 @@ include("GNC_CrossCorrelations/GNC_LocalGPIntegratedGP.jl")
 
 include("PPDoppler.jl")
 
-include("GNC_XiMultipoles.jl")
-include("GNC_SumXiMultipoles.jl")
-
-
 
 
 ##########################################################################################92
@@ -103,6 +95,11 @@ include("GNC_SumXiMultipoles.jl")
 
 include("Dicts.jl")
 
+
+include("LD_XiMultipoles.jl")
+include("LD_SumXiMultipoles.jl")
+include("GNC_XiMultipoles.jl")
+include("GNC_SumXiMultipoles.jl")
 include("PowerSpectrum.jl")
 
 

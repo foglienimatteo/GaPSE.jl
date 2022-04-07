@@ -19,7 +19,7 @@
 
 function ξ_PP_Doppler_L0(P::Point, cosmo::Cosmology)
      P1 = Point(cosmo.s_eff, cosmo)
-     D, f, ℋ, ℛ = P1.D, P1.f, P1.ℋ, P1.ℛ
+     D, f, ℋ, ℛ = P1.D, P1.f, P1.ℋ, P1.ℛ_LD
      s = P.comdist
 
      1.0 / 3.0 * f^2 * ℋ^2 * ℛ^2 * D^2 * s^2 * cosmo.tools.I02(s)
@@ -32,7 +32,7 @@ end
 
 function ξ_PP_Doppler_L2(P::Point, cosmo::Cosmology)
      P1 = Point(cosmo.s_eff, cosmo)
-     D, f, ℋ, ℛ = P1.D, P1.f, P1.ℋ, P1.ℛ
+     D, f, ℋ, ℛ = P1.D, P1.f, P1.ℋ, P1.ℛ_LD
      s = P.comdist
      -2.0 / 3.0 * f^2 * ℋ^2 * ℛ^2 * D^2 * s^2 * cosmo.tools.I22(s)
 end
