@@ -204,7 +204,8 @@ end
 
           
 Return the Lensing auto-correlation function 
-``\\xi^{\\kappa\\kappa} (s_1, s_2, \\cos{\\theta})``, defined as follows:
+``\\xi^{\\kappa\\kappa} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
+luminosity distance, defined as follows:
     
 ```math
 \\xi^{\\kappa\\kappa} (s_1, s_2, \\cos{\\theta}) = 

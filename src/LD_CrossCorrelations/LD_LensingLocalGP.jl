@@ -113,7 +113,8 @@ end
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the Lensing-LocalGP cross-correlation function 
-``\\xi^{\\kappa \\phi} (s_1, s_2, \\cos{\\theta})``, defined as follows:
+``\\xi^{\\kappa \\phi} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
+luminosity distance, defined as follows:
     
 ```math
 \\xi^{\\kappa \\phi} (s_1, s_2, \\cos{\\theta}) = 

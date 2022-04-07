@@ -21,7 +21,8 @@
 @doc raw"""
      ξ_LD_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
 
-Return the Doppler-LocalGP cross-correlation function, defined as follows:
+Return the Doppler-LocalGP cross-correlation function concerning the perturbed
+luminosity distance, defined as follows:
 
 ```math
 \\xi^{v_{\\parallel}\\phi} (s_1, s_2, \\cos{\\theta}) = 

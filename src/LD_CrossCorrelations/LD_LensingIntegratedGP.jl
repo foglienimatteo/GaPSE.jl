@@ -120,7 +120,8 @@ end
           N_χs::Integer = 100) :: Float64
 
 Return theLensing-IntegratedGP cross-correlation function 
-``\\xi^{\\kappa\\int\\phi} (s_1, s_2, \\cos{\\theta})``, defined as follows:
+``\\xi^{\\kappa\\int\\phi} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
+luminosity distance, defined as follows:
     
 ```math
 \\xi^{\\kappa\\int\\phi} (s_1, s_2, \\cos{\\theta}) = 

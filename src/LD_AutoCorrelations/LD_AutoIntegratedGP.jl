@@ -147,7 +147,8 @@ end
           ξ_LD_IntegratedGP(Point(s1, cosmo), Point(s2, cosmo), y, cosmo; kwargs...)
 
 Return the integrated gravitational potential auto-correlation function 
-``\\xi^{\\int\\phi\\int\\phi}(s_1, s_2, \\cos{\\theta})``, defined as follows:
+``\\xi^{\\int\\phi\\int\\phi}(s_1, s_2, \\cos{\\theta})`` concerning the perturbed
+luminosity distance, defined as follows:
     
 ```math
 \\xi^{\\int\\phi\\int\\phi} (s_1, s_2, \\cos{\\theta}) = 

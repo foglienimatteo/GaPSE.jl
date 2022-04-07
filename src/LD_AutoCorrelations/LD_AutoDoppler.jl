@@ -52,7 +52,8 @@ end
      ξ_LD_Doppler(s1, s2, y, cosmo::Cosmology) = 
           ξ_LD_Doppler(Point(s1, cosmo), Point(s2, cosmo), y, cosmo)
 
-Return the Doppler auto-correlation function, defined as follows:
+Return the Doppler auto-correlation function concerning the perturbed
+luminosity distance, defined as follows:
 ```math
 \\xi^{v_{\\parallel}v_{\\parallel}} (s_1, s_2, \\cos{\\theta}) 
 = D_1 D_2 f_1 f_2 \\mathcal{H}_1 \\mathcal{H}_2 \\mathcal{R}_1 \\mathcal{R}_2 

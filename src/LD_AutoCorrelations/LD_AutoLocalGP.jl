@@ -46,8 +46,8 @@ end
      ξ_LD_LocalGP(s1, s2, y, cosmo::Cosmology) = 
           ξ_LD_LocalGP(Point(s1, cosmo), Point(s2, cosmo), y, cosmo::Cosmology)
 
-Return the local gravitational potential auto-correlation function, 
-defined as follows:
+Return the local gravitational potential auto-correlation function concerning the perturbed
+luminosity distance, defined as follows:
 ```math
 \\xi^{\\phi\\phi} (s_1, s_2, \\cos{\\theta}) = 
      \\frac{9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(s_1) D(s_2)s^4}{4 a(s_1) a(s_2)}

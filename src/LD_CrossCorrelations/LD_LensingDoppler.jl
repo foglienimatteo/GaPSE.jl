@@ -140,7 +140,8 @@ end
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the Lensing-Doppler cross-correlation function 
-``\\xi^{v_{\\parallel}\\kappa} (s_1, s_2, \\cos{\\theta})``, defined as follows:
+``\\xi^{v_{\\parallel}\\kappa} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
+luminosity distance, defined as follows:
     
 ```math
 \\xi^{v_{\\parallel}\\kappa} (s_1, s_2, \\cos{\\theta}) = 
