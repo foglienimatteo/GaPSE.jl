@@ -17,7 +17,7 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-@testset "test sum_ξ_multipole" begin
+@testset "test sum_ξ_LD_multipole" begin
      table = readdlm("datatest/map_sum_xi_L0.txt", comments = true)
      ss = convert(Vector{Float64}, table[:, 1])
      all_res_sums = convert(Vector{Float64}, table[:, 2])
@@ -34,7 +34,7 @@
      #=
      @testset "zeros" begin
           a_func(x) = x
-          @test_throws AssertionError GaPSE.sum_ξ_multipole(COSMO.s_eff, 10, COSMO;
+          @test_throws AssertionError GaPSE.sum_ξ_LD_multipole(COSMO.s_eff, 10, COSMO;
                L = 0, use_windows = false, SPLINE = true, kwargs...)
           @test_throws AssertionError GaPSE.integral_on_mu(COSMO.s_eff, 10, a_func, COSMO;
                L = 0, use_windows = false, SPLINE = true, kwargs...)
@@ -48,7 +48,7 @@
           res_sum =  all_res_sums[ind]
           res_xis = [vec[ind] for vec in all_res_xis] 
 
-          calc_res_sum, calc_res_xis = GaPSE.sum_ξ_multipole(COSMO.s_eff, s, COSMO; kwargs...)
+          calc_res_sum, calc_res_xis = GaPSE.sum_ξ_LD_multipole(COSMO.s_eff, s, COSMO; kwargs...)
 
           @test isapprox(res_sum, calc_res_sum; rtol = RTOL)
           @test all([isapprox(a, r; rtol = RTOL) for (a, r) in zip(calc_res_xis, res_xis)])
@@ -61,7 +61,7 @@
           res_sum =  all_res_sums[ind]
           res_xis = [vec[ind] for vec in all_res_xis]
 
-          calc_res_sum, calc_res_xis = GaPSE.sum_ξ_multipole(COSMO.s_eff, s, COSMO; kwargs...)
+          calc_res_sum, calc_res_xis = GaPSE.sum_ξ_LD_multipole(COSMO.s_eff, s, COSMO; kwargs...)
 
           @test isapprox(res_sum, calc_res_sum; rtol = RTOL)
           @test all([isapprox(a, r; rtol = RTOL) for (a, r) in zip(calc_res_xis, res_xis)])
@@ -75,7 +75,7 @@
           res_sum =  all_res_sums[ind]
           res_xis = [vec[ind] for vec in all_res_xis]
 
-          calc_res_sum, calc_res_xis = GaPSE.sum_ξ_multipole(COSMO.s_eff, s, COSMO; kwargs...)
+          calc_res_sum, calc_res_xis = GaPSE.sum_ξ_LD_multipole(COSMO.s_eff, s, COSMO; kwargs...)
 
           @test isapprox(res_sum, calc_res_sum; rtol = RTOL)
           @test all([isapprox(a, r; rtol = RTOL) for (a, r) in zip(calc_res_xis, res_xis)])
@@ -83,7 +83,7 @@
 
 end
 
-@testset "test map_sum_ξ_multipole" begin
+@testset "test map_sum_ξ_LD_multipole" begin
      table = readdlm("datatest/map_sum_xi_L0.txt", comments = true)
      ss = convert(Vector{Float64}, table[:, 1])
      res_sums = convert(Vector{Float64}, table[:, 2])
@@ -100,7 +100,7 @@ end
      )
 
 
-     calc_ss, calc_sums, calc_xis = GaPSE.map_sum_ξ_multipole(COSMO, ss; kwargs...)
+     calc_ss, calc_sums, calc_xis = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss; kwargs...)
 
      @test all([isapprox(a, r, rtol = RTOL) for (a, r) in zip(ss, calc_ss)])
      @test all([isapprox(a, r, rtol = RTOL) for (a, r) in zip(res_sums, calc_sums)])
@@ -124,7 +124,7 @@ end
 
 
 
-@testset "test print_map_sum_ξ_multipole" begin
+@testset "test print_map_sum_ξ_LD_multipole" begin
      table = readdlm("datatest/map_sum_xi_L0.txt", comments = true)
      ss = convert(Vector{Float64}, table[:, 1])
      res_sums = convert(Vector{Float64}, table[:, 2])
@@ -143,7 +143,7 @@ end
           name = "first_map_sum_xi_L0.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_multipole(COSMO, name, ss;
+          GaPSE.print_map_sum_ξ_LD_multipole(COSMO, name, ss;
                single = true, kwargs...)
 
           calc_table = readdlm(name, comments = true)
@@ -177,7 +177,7 @@ end
           name = "second_map_sum_xi_L0.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_multipole(COSMO, name, ss;
+          GaPSE.print_map_sum_ξ_LD_multipole(COSMO, name, ss;
                single = false, kwargs...)
 
           calc_table_1 = readdlm(name, comments = true)

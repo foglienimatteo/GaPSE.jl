@@ -19,9 +19,9 @@
 
 
 
-@testset "test ξ_multipole" begin
+@testset "test ξ_LD_multipole" begin
      name_effect = "auto_doppler"
-     func_effect = GaPSE.ξ_Doppler
+     func_effect = GaPSE.ξ_LD_Doppler
      RTOL = 1e-2
 
      kwargs = Dict(
@@ -32,7 +32,7 @@
 
 
      @testset "zeros" begin
-          @test_throws AssertionError GaPSE.ξ_multipole(COSMO.s_eff, 10.0, "strange", COSMO;
+          @test_throws AssertionError GaPSE.ξ_LD_multipole(COSMO.s_eff, 10.0, "strange", COSMO;
                L = 0, kwargs...)
      end
 
@@ -42,9 +42,9 @@
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
-          calc_xis_1 = [GaPSE.ξ_multipole(COSMO.s_eff, s, name_effect, COSMO;
+          calc_xis_1 = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                L = L, kwargs...) for s in ss]
-          calc_xis_2 = [GaPSE.ξ_multipole(COSMO.s_eff, s, func_effect, COSMO;
+          calc_xis_2 = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, func_effect, COSMO;
                L = L, kwargs...) for s in ss]
 
           @test all([isapprox(xi, calc_xi, rtol = RTOL) for (xi, calc_xi) in zip(xis, calc_xis_1)])
@@ -57,9 +57,9 @@
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
-          calc_xis_1 = [GaPSE.ξ_multipole(COSMO.s_eff, s, name_effect, COSMO;
+          calc_xis_1 = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                L = L, kwargs...) for s in ss]
-          calc_xis_2 = [GaPSE.ξ_multipole(COSMO.s_eff, s, func_effect, COSMO;
+          calc_xis_2 = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, func_effect, COSMO;
                L = L, kwargs...) for s in ss]
 
           @test all([isapprox(xi, calc_xi, rtol = RTOL) for (xi, calc_xi) in zip(xis, calc_xis_1)])
@@ -72,9 +72,9 @@
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
-          calc_xis_1 = [GaPSE.ξ_multipole(COSMO.s_eff, s, name_effect, COSMO;
+          calc_xis_1 = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                L = L, kwargs...) for s in ss]
-          calc_xis_2 = [GaPSE.ξ_multipole(COSMO.s_eff, s, func_effect, COSMO;
+          calc_xis_2 = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, func_effect, COSMO;
                L = L, kwargs...) for s in ss]
 
           @test all([isapprox(xi, calc_xi, rtol = RTOL) for (xi, calc_xi) in zip(xis, calc_xis_1)])
@@ -87,9 +87,9 @@
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
-          calc_xis_1 = [GaPSE.ξ_multipole(COSMO.s_eff, s, name_effect, COSMO;
+          calc_xis_1 = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                L = L, kwargs...) for s in ss]
-          calc_xis_2 = [GaPSE.ξ_multipole(COSMO.s_eff, s, func_effect, COSMO;
+          calc_xis_2 = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, func_effect, COSMO;
                L = L, kwargs...) for s in ss]
 
           @test all([isapprox(xi, calc_xi, rtol = RTOL) for (xi, calc_xi) in zip(xis, calc_xis_1)])
@@ -102,9 +102,9 @@
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
-          calc_xis_1 = [GaPSE.ξ_multipole(COSMO.s_eff, s, name_effect, COSMO;
+          calc_xis_1 = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                L = L, kwargs...) for s in ss]
-          calc_xis_2 = [GaPSE.ξ_multipole(COSMO.s_eff, s, func_effect, COSMO;
+          calc_xis_2 = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, func_effect, COSMO;
                L = L, kwargs...) for s in ss]
 
           @test all([isapprox(xi, calc_xi, rtol = RTOL) for (xi, calc_xi) in zip(xis, calc_xis_1)])
@@ -118,7 +118,7 @@ end
 
 
 
-@testset "test print_map_ξ_multipole" begin
+@testset "test print_map_ξ_LD_multipole" begin
      effect = "auto_doppler"
 
      kwargs = Dict(
@@ -136,7 +136,7 @@ end
 
           name = "calc_xi_auto_doppler_L0_first.txt"
           isfile(name) && rm(name)
-          GaPSE.print_map_ξ_multipole(COSMO, name, effect, nothing;
+          GaPSE.print_map_ξ_LD_multipole(COSMO, name, effect, nothing;
                s1 = nothing, L = 0, kwargs...)
 
           calc_table = readdlm(name; comments = true)
@@ -156,7 +156,7 @@ end
 
           name = "calc_xi_auto_doppler_L0_second.txt"
           isfile(name) && rm(name)
-          GaPSE.print_map_ξ_multipole(COSMO, name, effect, 10 .^ range(0, 3, length = 344);
+          GaPSE.print_map_ξ_LD_multipole(COSMO, name, effect, 10 .^ range(0, 3, length = 344);
                s1 = nothing, L = 0, kwargs...)
 
           calc_table = readdlm(name; comments = true)
@@ -176,7 +176,7 @@ end
 
           name = "calc_xi_auto_doppler_L0_third.txt"
           isfile(name) && rm(name)
-          GaPSE.print_map_ξ_multipole(COSMO, name, effect, 10 .^ range(0, 3, length = 344);
+          GaPSE.print_map_ξ_LD_multipole(COSMO, name, effect, 10 .^ range(0, 3, length = 344);
                s1 = COSMO.s_eff - 65.0, L = 0, kwargs...)
 
           calc_table = readdlm(name; comments = true)

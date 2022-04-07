@@ -67,8 +67,9 @@ include("PPDoppler.jl")
 include("Dicts.jl")
 
 include("PowerSpectrum.jl")
-include("XiMultipoles.jl")
-include("SumXiMultipoles.jl")
+
+include("LD_XiMultipoles.jl")
+include("LD_SumXiMultipoles.jl")
 
 
 
