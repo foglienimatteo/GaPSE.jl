@@ -19,22 +19,21 @@
 
 
 function ξ_GNC_Newtonian(P1::Point, P2::Point, y, cosmo::Cosmology)
-     s1, D1, f1, a1, ℛ1, ℋ1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℛ_GNC, P1.ℋ
-     s2, D2, f2, a2, ℛ2, ℋ2 = P2.comdist, P2.D, P1.f, P2.a, P2.ℛ_GNC, P2.ℋ
-     s_b1, s_b2 = cosmo.params.s_b, cosmo.params.s_b
-     𝑓_evo1, 𝑓_evo2 = cosmo.params.𝑓_evo, cosmo.params.𝑓_evo
-     Ω_M0 = cosmo.params.Ω_M0
+     s1, D1, f1 = P1.comdist, P1.D, P1.f
+     s2, D2, f2 = P2.comdist, P2.D, P1.f
+     b1, b2 = cosmo.params.b, cosmo.params.b
 
      Δs = s(s1, s2, y)
-     prefac = 0.25 * Δs^4 * D1 * D2 / (a1 * a2)
-     parenth_1 = f2 * (2.0 * a2 * (𝑓_evo2 - 3.0) * ℋ2^2 + 3.0 * ℋ0^2 * Ω_M0) + 3.0 * ℋ0^2 * Ω_M0 * (ℛ2 - 5.0 * s_b2 - 2.0)
-     parenth_2 = f1 * (2.0 * a1 * (𝑓_evo1 - 3.0) * ℋ1^2 + 3.0 * ℋ0^2 * Ω_M0) + 3.0 * ℋ0^2 * Ω_M0 * (ℛ1 - 5.0 * s_b1 - 2.0)
+
+     J00 = 1.0/15.0 * (f1 * (5.0 * b1 + 2.0 * y^2 * f2 + f2) + 5.0 * b1 * (3.0*b2+ f2))
+     J02 = -1.0/(21.0*Δs^2)
+     J04 = f1 * f2/(560.0 * Δs^4 * s1^2 * s2^2)
 
      I00 = cosmo.tools.I00(Δs)
      I20 = cosmo.tools.I20(Δs)
      I40 = cosmo.tools.I40(Δs)
 
-     res = D1 * D2 * I04 * parenth_1 * parenth_2
+     res = D1 * D2 * (J00 * I00 + J02 * I20 + J04 * I40)
 
      return res
 end
