@@ -19,9 +19,9 @@
 
 
 @doc raw"""
-     ξ_GNC_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
+     ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
 
-Return the Doppler-LocalGP cross-correlation function concerning the perturbed
+Return the LocalGP-LocalGP cross-correlation function concerning the perturbed
 luminosity distance, defined as follows:
 
 ```math
@@ -49,43 +49,38 @@ I^n_l(s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} q^2 \\, P(q) \\, \\frac
 
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
-function ξ_GNC_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
+function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      s1, D1, f1 = P1.comdist, P1.D, P1.f
-     s2, D2, f2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℛ_LD
+     s2, D2, f2, a2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ, P2.ℛ_LD
      b1 = cosmo.params.b
+     𝑓_evo2 = cosmo.params.𝑓_evo
+     Ω_M0 = cosmo.params.Ω_M0
 
      Δs = s(s1, s2, y)
 
-     common = D1 * D2 * f2 * ℋ2 * ℛ2
+     common = 2.0 * f2 * a2 * ℋ2^2 * (𝑓_evo2 - 3.0) + 3.0 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5.0 * s_b2 - 2.0)
 
-     J00 = 1.0 / 15.0 * (5.0 * b1 * (s2 - y * s1) + f1 * (2.0 * y^2 * s2 - 3.0 * y * s1 + s2))
-     J02 = 1.0 / (21.0 * Δs^2) * (
-          7.0 * b1 * (y * s1 - s2) * (2.0 * y * s1 * s2 - s1^2 - s2^2) + 
-          f1 * (
-               (10.0 * y^2 - 1.0) * s1^2 * s2 
-               - y * (5.0 * y^2 + 4.0) * s1 * s2^2
-               + (y^2 + 2.0) * s2^3 - 3.0 * y * s1^3
-          )
-     )
-     J04 = 1.0 / (30.0 * Δs^2) * f1 * (
-          -2.0 * (y^2 + 2.0) * s1^2 * s2 
-          + y * (y^2 + 5.0) * s1 * s2^2
-          + (1.0 - 3.0 * y^2) * s2^3 + 2.0 * y * s1^3
-     )
+     factor = f1 * ((3.0 * y^2 - 1.0) * s2^2 - 4.0 * y * s1 * s2 + 2.0 * s1^2)
+
+     J20 = - 1.0 / 6.0 * (3.0 * b1 + f1) * (- 2.0 * y * s1 * s2 + s1^2 + s2^2)
 
      I00 = cosmo.tools.I00(Δs)
      I20 = cosmo.tools.I20(Δs)
      I40 = cosmo.tools.I40(Δs)
+     I02 = cosmo.tools.I02(Δs)
 
-     res = common * (J00 * I00 + J02 * I20 + J04 * I40)
+     res = D1 * D2 / a2 * common * (
+          factor * (1.0 / 90.0 * I00 + 1.0 / 63.0 * I20 + 1.0 / 210.0 * I40) 
+          + J20 * I02
+          )
 
      return res
 end
 
 
-function ξ_GNC_Newtonian_Doppler(s1, s2, y, cosmo::Cosmology)
+function ξ_GNC_Newtonian_LocalGP(s1, s2, y, cosmo::Cosmology)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_GNC_Newtonian_Doppler(P1, P2, y, cosmo)
+     return ξ_GNC_Newtonian_LocalGP(P1, P2, y, cosmo)
 end
 
 
@@ -99,7 +94,7 @@ end
 
 
 
-function ξ_GNC_Doppler_Newtonian(s1, s2, y, cosmo::Cosmology)
-     ξ_GNC_Newtonian_Doppler(s2, s1, y, cosmo)
+function ξ_GNC_LocalGP_Newtonian(s1, s2, y, cosmo::Cosmology)
+     ξ_GNC_Newtonian_LocalGP(s2, s1, y, cosmo)
 end
 
