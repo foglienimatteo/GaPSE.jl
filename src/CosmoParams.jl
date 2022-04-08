@@ -76,6 +76,7 @@ const DEFAULT_IPSTOOLS_OPTS = Dict(
           Ω_M0::Float64
           h_0::Float64
 
+          b::Float64
           s_b::Float64
           𝑓_evo::Float64
 
@@ -101,6 +102,8 @@ matter of concerns for the `Cosmology` we are interested in.
   total matter density parameters.
 
 - `h_0::Float64` : today's Hubble adimensional parameter (`H_0 = h_0 * 100 km/(s * Mpc)`).
+
+- `b::Float64` : galaxy bias.
 
 - `s_b::Float64` : magnification bias, i.e. the slope of the luminosity function at the luminosity threshold.
 
@@ -178,6 +181,7 @@ struct CosmoParams
      Ω_M0::Float64
      h_0::Float64
 
+     b::Float64
      s_b::Float64
      𝑓_evo::Float64
 
@@ -188,7 +192,7 @@ struct CosmoParams
 
      function CosmoParams(z_min, z_max, θ_max;
           Ω_b=0.0489, Ω_cdm=0.251020, h_0=0.70, s_lim=1e-2,
-          s_b=0.0, 𝑓_evo=0.0,
+          b=1.0, s_b=0.0, 𝑓_evo=0.0,
           IPS_opts::Dict=Dict{Symbol,Any}(),
           IPSTools_opts::Dict=Dict{Symbol,Any}()
      )
@@ -221,8 +225,13 @@ struct CosmoParams
           @assert IPSTools[:N] > 7 " N > 7 must hold!"
           @assert 1e-2 ≤ IPSTools[:fit_min] < IPSTools[:fit_max] < 10.0 " 1e-2 " *
                                                                         "≤ fit_min < fit_max < 10.0 must hold!"
+                                                            
+          @assert b > 0.0 " b > 0 must hold!"
 
-          new(z_min, z_max, θ_max, Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0, s_b, 𝑓_evo, s_lim,
+          new(z_min, z_max, θ_max, 
+               Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0, 
+               b, s_b, 𝑓_evo, 
+               s_lim,
                IPS, IPSTools)
      end
 end

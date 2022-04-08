@@ -71,30 +71,35 @@ function integrand_ξ_GNC_Lensing_LocalGP(
      s1 = P1.comdist
      s2, D_s2, a_s2, ℛ_s2 = P2.comdist, P2.D, P2.a, P2.ℛ_GNC
      χ1, D1, a1 = IP.comdist, IP.D, IP.a
+     s_b_s1 = cosmo.params.s_b
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
      Δχ1 = Δχ1_square > 0.0 ? √(Δχ1_square) : 0.0
 
-     common = 9 * ℋ0^4 * Ω_M0^2 * D_s2 * (1 + ℛ_s2) * s2 / (4 * a_s2 * s1)
-     factor = D1 * (s1 - χ1) / a1
+     common = D_s2 * ℋ0^2 * Ω_M0 * s2 * D1 * (χ1- s1) *  (5.0 * s_b_s1 - 2.0) * (
+                   2.0 * f_s2 * a_s2 * ℋ2^2 * (𝑓_evo2 - 3.0)
+                   +
+                   3.0 * ℋ0^2 * Ω_M0 * (f_s2 + ℛ_s2 + 5.0 * s_b2 - 2.0)
+              ) / (a1 * a_s2 * s1)
 
-     new_J31 = -2 * y * Δχ1^2
-     new_J22 = χ1 * s2 * (1 - y^2)
+     factor = 2.0 * y * χ1^2 * y - χ1 * s2 * (y^2 + 3.0) + 2.0 * y * s2^2
 
-     I13 = cosmo.tools.I13(Δχ1)
-     I22 = cosmo.tools.I22(Δχ1)
+     J20 = y * Δχ1^2 / 2.0
 
-     #println("J00 = $new_J00, \\t I00(Δχ1) = $(I00)")
-     #println("J02 = $new_J02, \\t I20(Δχ1) = $(I20)")
-     #println("J31 = $new_J31, \\t I13(Δχ1) = $(I13)")
-     #println("J22 = $new_J22, \\t I22(Δχ1) = $(I22)")
+     I00 = cosmo.tools.I00(Δχ1)
+     I20 = cosmo.tools.I20(Δχ1)
+     I40 = cosmo.tools.I40(Δχ1)
+     I02 = cosmo.tools.I02(Δχ1)
 
-     parenth = (new_J31 * I13 + new_J22 * I22)
+     res = D_s2 * common * (
+                factor * (1.0 / 60.0 * I00 + 1.0 / 42.0 * I20 + 1.0 / 140.0 * I40)
+                +
+                J20 * I02
+           )
 
-     first = common * factor * parenth
 
-     return first
+     return res
 end
 
 

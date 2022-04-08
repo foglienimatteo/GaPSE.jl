@@ -78,13 +78,14 @@ function integrand_ξ_GNC_Lensing_Doppler(
      s1 = P1.comdist
      s2, D_s2, f_s2, ℋ_s2, ℛ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_GNC
      χ1, D1, a1 = IP.comdist, IP.D, IP.a
+     s_b_s1 = cosmo.params.s_b
      Ω_M0 = cosmo.params.Ω_M0
 
 
      Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
      Δχ1 = Δχ1_square > 0.0 ? √(Δχ1_square) : 0.0
 
-     common = ℋ0^2 * Ω_M0 * D1 * (χ1 - s1) / (s1 * a1)
+     common = ℋ0^2 * Ω_M0 * D1 * (χ1 - s1) * (5.0 * s_b_s1 - 2.0)/ (s1 * a1)
      factor = D_s2 * f_s2 * ℋ_s2 * ℛ_s2
 
      new_J00 = 1.0 / 15.0 * (χ1^2 * y + χ1 * (4 * y^2 - 3) * s2 - 2 * y * s2^2)
@@ -110,12 +111,10 @@ function integrand_ξ_GNC_Lensing_Doppler(
      #println("J31 = $new_J31, \t I13(Δχ1) = $(I13)")
      #println("J22 = $new_J22, \t I22(Δχ1) = $(I22)")
 
-     parenth = (
-          new_J00 * I00 + new_J02 * I20 +
-          new_J04 * I40 + new_J20 * I02
-     )
-
-     first = common * factor * parenth
+     first = common * factor * (
+                  new_J00 * I00 + new_J02 * I20 +
+                  new_J04 * I40 + new_J20 * I02
+             )
 
      #new_J31 = -3 * χ1^2 * y * f0 * ℋ0
      #I13 = cosmo.tools.I13(χ1)

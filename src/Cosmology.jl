@@ -224,7 +224,9 @@ struct Cosmology
      D_of_s::Dierckx.Spline1D
      f_of_s::Dierckx.Spline1D
      ℋ_of_s::Dierckx.Spline1D
+     ℋ_p_of_s::Dierckx.Spline1D
      ℛ_LD_of_s::Dierckx.Spline1D
+     ℛ_GNC_of_s::Dierckx.Spline1D
 
      s_of_z::Dierckx.Spline1D
 
@@ -361,7 +363,7 @@ struct Point
      #Point(z, comdist, D, f, ℋ, ℛ_LD) = new(z, comdist, D, f, ℋ, ℛ_LD, 1.0/(1.0+z))
      function Point(s, cosmo::Cosmology)
           z = cosmo.z_of_s(s)
-          new(z, s, cosmo.D_of_s(s), cosmo.f_of_s(s), cosmo.ℋ_of_s(s), 
+          new(z, s, cosmo.D_of_s(s), cosmo.f_of_s(s), cosmo.ℋ_of_s(s),
                cosmo.ℋ_p_of_s(s), cosmo.ℛ_LD_of_s(s), cosmo.ℛ_GNC_of_s(s),
                1.0 / (1.0 + z))
      end
