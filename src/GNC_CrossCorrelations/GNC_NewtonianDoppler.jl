@@ -1,0 +1,105 @@
+# -*- encoding: utf-8 -*-
+#
+# This file is part of GaPSE
+# Copyright (C) 2022 Matteo Foglieni
+#
+# GaPSE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# GaPSE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
+#
+
+
+@doc raw"""
+     ξ_GNC_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
+
+Return the Doppler-LocalGP cross-correlation function concerning the perturbed
+luminosity distance, defined as follows:
+
+```math
+\\xi^{v_{\\parallel}\\phi} (s_1, s_2, \\cos{\\theta}) = 
+     \\frac{3}{2 a(s_2)} \\mathcal{H}(s_1) f(s_1) D(s_1)
+     \\mathcal{R}(s_1) \\mathcal{H}_0^2 \\Omega_{M0} D(s_2)
+     (1 + \\mathcal{R}(s_2)) (s_2\\cos{\\theta} - s_1) s^2 I^3_1(s)
+```
+where ``\\mathcal{H} = a H``,
+``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2`` and :
+
+```math
+I^n_l(s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} q^2 \\, P(q) \\, \\frac{j_l(qs)}{(q s)^n}
+```
+
+## Inputs
+
+- `P1::Point` and `P2::Point`: `Point` where the CF has to be calculated; they contain all the 
+  data of interest needed for this calculus (comoving distance, growth factor and so on)
+     
+- `y`: the cosine of the angle between the two points `P1` and `P2`
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
+
+
+See also: [`Point`](@ref), [`Cosmology`](@ref)
+"""
+function ξ_GNC_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
+     s1, D1, f1 = P1.comdist, P1.D, P1.f
+     s2, D2, f2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℛ_LD
+     b1 = cosmo.params.b
+
+     Δs = s(s1, s2, y)
+
+     common = D1 * D2 * f2 * ℋ2 * ℛ2
+
+     J00 = 1.0 / 15.0 * (5.0 * b1 * (s2 - y * s1) + f1 * (2.0 * y^2 * s2 - 3.0 * y * s1 + s2))
+     J02 = 1.0 / (21.0 * Δs^2) * (
+          7.0 * b1 * (y * s1 - s2) * (2.0 * y * s1 * s2 - s1^2 - s2^2) + 
+          f1 * (
+               (10.0 * y^2 - 1.0) * s1^2 * s2 
+               - y * (5.0 * y^2 + 4.0) * s1 * s2^2
+               + (y^2 + 2.0) * s2^3 - 3.0 * y * s1^3
+          )
+     )
+     J04 = 1.0 / (30.0 * Δs^2) * f1 * (
+          -2.0 * (y^2 + 2.0) * s1^2 * s2 
+          + y * (y^2 + 5.0) * s1 * s2^2
+          + (1.0 - 3.0 * y^2) * s2^3 + 2.0 * y * s1^3
+     )
+
+     I00 = cosmo.tools.I00(Δs)
+     I20 = cosmo.tools.I20(Δs)
+     I40 = cosmo.tools.I40(Δs)
+
+     res = common * (J00 * I00 + J02 * I20 + J04 * I40)
+
+     return res
+end
+
+
+function ξ_GNC_Newtonian_Doppler(s1, s2, y, cosmo::Cosmology)
+     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+     return ξ_GNC_Newtonian_Doppler(P1, P2, y, cosmo)
+end
+
+
+
+
+##########################################################################################92
+
+##########################################################################################92
+
+##########################################################################################92
+
+
+
+function ξ_GNC_Doppler_Newtonian(s1, s2, y, cosmo::Cosmology)
+     ξ_GNC_Newtonian_Doppler(s2, s1, y, cosmo)
+end
+
