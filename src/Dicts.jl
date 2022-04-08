@@ -145,9 +145,13 @@ const GR_EFFECT_INDEX_LD = Dict([i => name for (i, name) in
 
 """
      const GR_EFFECTS_GNC = [
-          "auto_doppler", "auto_lensing",
+          "auto_newton", "auto_doppler", "auto_lensing",
           "auto_localgp", "auto_integratedgp", 
           
+          "newton_doppler", "doppler_newton",
+          "newton_lensing", "lensing_newton",
+          "newton_localgp", "localgp_newton",
+          "newton_integratedgp", "integratedgp_newton",
           "lensing_doppler", "doppler_lensing",
           "doppler_localgp", "localgp_doppler",
           "doppler_integratedgp", "integratedgp_doppler",
@@ -163,8 +167,14 @@ to change it.
 See also: [`VEC_ξs_GNC`](@ref)
 """
 const GR_EFFECTS_GNC = [
-     "auto_doppler", "auto_lensing",
-     "auto_localgp", "auto_integratedgp", "lensing_doppler", "doppler_lensing",
+     "auto_newton", "auto_doppler", "auto_lensing",
+     "auto_localgp", "auto_integratedgp", 
+     
+     "newton_doppler", "doppler_newton",
+     "newton_lensing", "lensing_newton",
+     "newton_localgp", "localgp_newton",
+     "newton_integratedgp", "integratedgp_newton",
+     "lensing_doppler", "doppler_lensing",
      "doppler_localgp", "localgp_doppler",
      "doppler_integratedgp", "integratedgp_doppler",
      "lensing_localgp", "localgp_lensing",
@@ -175,7 +185,13 @@ const GR_EFFECTS_GNC = [
 
 """
      const VEC_ξs_GNC = [
-          ξ_GNC_Doppler, ξ_GNC_Lensing, ξ_GNC_LocalGP, ξ_GNC_IntegratedGP, 
+          ξ_GNC_Newtonian, ξ_GNC_Doppler, ξ_GNC_Lensing,
+          ξ_GNC_LocalGP, ξ_GNC_IntegratedGP, 
+          
+          ξ_GNC_Newtonian_Doppler, ξ_GNC_Doppler_Newtonian,
+          ξ_GNC_Newtonian_Lensing, ξ_GNC_Lensing_Newtonian,
+          ξ_GNC_Newtonian_LocalGP, ξ_GNC_LocalGP_Newtonian,
+          ξ_GNC_Newtonian_IntegratedGP, ξ_GNC_IntegratedGP_Newtonian,
           ξ_GNC_Lensing_Doppler, ξ_GNC_Doppler_Lensing,
           ξ_GNC_Doppler_LocalGP, ξ_GNC_LocalGP_Doppler,
           ξ_GNC_Doppler_IntegratedGP, ξ_GNC_IntegratedGP_Doppler,
@@ -191,7 +207,13 @@ to change it.
 See also: [`GR_EFFECTS_GNC`](@ref)
 """
 const VEC_ξs_GNC = [
-     ξ_GNC_Doppler, ξ_GNC_Lensing, ξ_GNC_LocalGP, ξ_GNC_IntegratedGP,
+     ξ_GNC_Newtonian, ξ_GNC_Doppler, ξ_GNC_Lensing,
+     ξ_GNC_LocalGP, ξ_GNC_IntegratedGP, 
+     
+     ξ_GNC_Newtonian_Doppler, ξ_GNC_Doppler_Newtonian,
+     ξ_GNC_Newtonian_Lensing, ξ_GNC_Lensing_Newtonian,
+     ξ_GNC_Newtonian_LocalGP, ξ_GNC_LocalGP_Newtonian,
+     ξ_GNC_Newtonian_IntegratedGP, ξ_GNC_IntegratedGP_Newtonian,
      ξ_GNC_Lensing_Doppler, ξ_GNC_Doppler_Lensing,
      ξ_GNC_Doppler_LocalGP, ξ_GNC_LocalGP_Doppler,
      ξ_GNC_Doppler_IntegratedGP, ξ_GNC_IntegratedGP_Doppler,
@@ -236,7 +258,7 @@ julia> GaPSE.INDEX_GR_EFFECT_GNC["auto_doppler"]
 See also: [`GR_EFFECTS_GNC`](@ref)
 """
 const INDEX_GR_EFFECT_GNC = Dict([name => i for (i, name) in
-                                 enumerate(GR_EFFECTS_GNC)]...)
+                                  enumerate(GR_EFFECTS_GNC)]...)
 
 
 """
@@ -255,5 +277,5 @@ julia> GaPSE.DICT_GR_ξs_GNC[1]
 See also: [`GR_EFFECTS_GNC`](@ref)
 """
 const GR_EFFECT_INDEX_GNC = Dict([i => name for (i, name) in
-                                 enumerate(GR_EFFECTS_GNC)]...)
+                                  enumerate(GR_EFFECTS_GNC)]...)
 
