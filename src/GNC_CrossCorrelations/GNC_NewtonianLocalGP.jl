@@ -51,30 +51,27 @@ See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
 function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      s1, D1, f1 = P1.comdist, P1.D, P1.f
-     s2, D2, f2, a2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ, P2.ℛ_LD
+     s2, D2, f2, a2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ, P2.ℛ_GNC
      b1 = cosmo.params.b
      𝑓_evo2 = cosmo.params.𝑓_evo
      Ω_M0 = cosmo.params.Ω_M0
 
      Δs = s(s1, s2, y)
 
-     common = 2.0 * f2 * a2 * ℋ2^2 * (𝑓_evo2 - 3.0) + 3.0 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5.0 * s_b2 - 2.0)
+     common = 2 * f2 * a2 * ℋ2^2 * (𝑓_evo2 - 3) + 3 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5 * s_b2 - 2)
+     factor = f1 * ((3 * y^2 - 1) * s2^2 - 4 * y * s1 * s2 + 2 * s1^2)
 
-     factor = f1 * ((3.0 * y^2 - 1.0) * s2^2 - 4.0 * y * s1 * s2 + 2.0 * s1^2)
-
-     J20 = - 1.0 / 6.0 * (3.0 * b1 + f1) * (- 2.0 * y * s1 * s2 + s1^2 + s2^2)
+     J20 = - 1 / 6 * (3 * b1 + f1) * (- 2 * y * s1 * s2 + s1^2 + s2^2)
 
      I00 = cosmo.tools.I00(Δs)
      I20 = cosmo.tools.I20(Δs)
      I40 = cosmo.tools.I40(Δs)
      I02 = cosmo.tools.I02(Δs)
 
-     res = D1 * D2 / a2 * common * (
-          factor * (1.0 / 90.0 * I00 + 1.0 / 63.0 * I20 + 1.0 / 210.0 * I40) 
+     return D1 * D2 / a2 * common * (
+          factor * (1 / 90 * I00 + 1 / 63 * I20 + 1 / 210 * I40) 
           + J20 * I02
           )
-
-     return res
 end
 
 

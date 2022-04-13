@@ -70,29 +70,28 @@ function integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
      s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
      χ1, D1, a1, ℋ1, f1 = IP1.comdist, IP1.D, IP1.a, IP1.ℋ, IP1.f
      χ2, D2, a2, ℋ2, f2 = IP2.comdist, IP2.D, IP2.a, IP2.ℋ, IP2.f
-     s_b1, s_b2 = cosmo.params.s_b, cosmo.params.s_b
+     s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b
      Ω_M0 = cosmo.params.Ω_M0
 
-     Δχ = √(χ1^2 + χ2^2 - 2 * χ1 * χ2 * y)
+     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
+     Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
 
-     factor = 9 * ℋ0^4 * Ω_M0^2 * D1 * D2 * Δχ^4 / (s1 * s2 * a1 * a2)
-     par_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1.0) - 5.0 * s_b1 + 2.0
-     par_2 = s2 * ℋ2 * ℛ_s2 * (f2 - 1.0) - 5.0 * s_b2 + 2.0
-     #println("factor = $factor")
-     #println("denomin = $denomin")
+     factor = 9 * Δχ^4 * ℋ0^4 * Ω_M0^2 * D1 * D2 / (s1 * s2 * a1 * a2)
+     parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2
+     parenth_2 = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2
 
-     I04_t = cosmo.tools.I04_tilde(Δχ)
+     I04_tilde = cosmo.tools.I04_tilde(Δχ)
 
-     return factor * par_1 * par_2 * I04_t
+     return factor * parenth_1 * parenth_2 * I04_tilde
 end
 
 
 
 function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e10, N_χs::Integer = 100, focus::Float64 = 10.0)
+     en::Float64 = 1e10, N_χs::Integer = 100, focus::Float64 = 10)
 
-     #adim_χs = range(1e-12, 1.0, N_χs)
-     adim_χs = range(1e-8, 1.0, length = N_χs)
+     #adim_χs = range(1e-12, 1, N_χs)
+     adim_χs = range(1e-8, 1, length = N_χs)
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
      χ1s = adim_χs .* P1.comdist
@@ -110,10 +109,10 @@ function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      #println("res = $res")
 
      #=
-     χ1s = [x for x in range(0.0, P1.comdist, length = N_χs)[begin+1:end]]
+     χ1s = [x for x in range(0, P1.comdist, length = N_χs)[begin+1:end]]
      l = Int(floor(N_χs/2))
      matrix_χ2s = [begin
-          a = [x for x in range(0.0, P2.comdist, length=l)[begin+1:end]];
+          a = [x for x in range(0, P2.comdist, length=l)[begin+1:end]];
           b = [x for x in range(x1-focus, x1+focus, length=l)];
           vcat(a[a.<x1-focus], b, a[a.>x1+focus])
           end for x1 in χ1s]

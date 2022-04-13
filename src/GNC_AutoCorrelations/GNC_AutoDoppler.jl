@@ -23,19 +23,17 @@ function ξ_GNC_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
      s2, D2, f2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_GNC
 
      Δs = s(P1.comdist, P2.comdist, y)
-     prefac = D1 * D2 * f1 * f2 * ℛ1 * ℛ2 * ℋ1 * ℋ2
-     c1 = 3 * s1 * s2 - 2 * y * (s1^2 + s2^2) + s1 * s2 * y^2
+     common = D1 * D2 * f1 * f2 * ℛ1 * ℛ2 * ℋ1 * ℋ2
+     factor = 3 * s1 * s2 - 2 * y * (s1^2 + s2^2) + s1 * s2 * y^2
 
      I00 = cosmo.tools.I00(Δs)
      I20 = cosmo.tools.I20(Δs)
      I40 = cosmo.tools.I40(Δs)
      I02 = cosmo.tools.I02(Δs)
 
-     parenth = I00 / 45.0 + I20 / 31.5 + I40 / 105.0
+     parenth = 1/45 * I00 + 2/63 * I20 + 1/105 * I40
 
-     first = prefac * (c1 * parenth + I02 * y * Δs^2 / 3.0)
-
-     return first
+     return  common * (factor * parenth + 1/3 * y * Δs^2 * I02)
 end
 
 

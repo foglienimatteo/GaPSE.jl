@@ -51,7 +51,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
 function ξ_GNC_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
      s1, D1, f1 = P1.comdist, P1.D, P1.f
-     s2, D2, f2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℛ_LD
+     s2, D2, f2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℛ_GNC
      b1 = cosmo.params.b
 
      Δs = s(s1, s2, y)

@@ -26,13 +26,14 @@ function ξ_GNC_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      Ω_M0 = cosmo.params.Ω_M0
 
      Δs = s(s1, s2, y)
-     prefac = 0.25 * Δs^4 * D1 * D2 / (a1 * a2)
-     parenth_1 = f2 * (2.0 * a2 * (𝑓_evo2 - 3.0) * ℋ2^2 + 3.0 * ℋ0^2 * Ω_M0) + 3.0 * ℋ0^2 * Ω_M0 * (ℛ2 - 5.0 * s_b2 - 2.0)
-     parenth_2 = f1 * (2.0 * a1 * (𝑓_evo1 - 3.0) * ℋ1^2 + 3.0 * ℋ0^2 * Ω_M0) + 3.0 * ℋ0^2 * Ω_M0 * (ℛ1 - 5.0 * s_b1 - 2.0)
+
+     factor = 1/4 * Δs^4 * D1 * D2 / (a1 * a2)
+     parenth_1 = 2 * f2 * ℋ2^2 * a2 * (𝑓_evo2 - 3) + 3 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5 * s_b2 - 2)
+     parenth_2 = 2 * f1 * ℋ1^2 * a1 * (𝑓_evo1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f1 + ℛ1 + 5 * s_b1 - 2)
 
      I04_tilde = cosmo.tools.I04_tilde(Δs)
 
-     res = prefac * I04_tilde * parenth_1 * parenth_2
+     res = factor * parenth_1 * parenth_2 * I04_tilde
 
      return res
 end

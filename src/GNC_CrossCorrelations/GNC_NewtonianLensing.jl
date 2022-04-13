@@ -73,36 +73,34 @@ function integrand_ξ_GNC_Newtonian_Lensing(
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-     Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0.0
+     Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
 
-     common = D_s1 * ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) * (5.0 * s_b_s2 - 2.0) / (a2 * s2)
+     common = D_s1 * ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) * (5 * s_b_s2 - 2) / (a2 * s2)
 
-     J00 = 1.0 / 5.0 * (f_s1 * χ2 * (3.0 * y^2 - 1.0) - 3.0 * y * s1 * f_s1 - 5.0 * y * s1 * b_s1)
-     J02 = 1.0 / (14.0 * Δχ2^2) * (
-          7.0 * s1 * b_s1 * (-2.0 * χ2^2 * y + χ2 * s1 * (y^2 + 3.0) - 2.0 * y * s1^2) +
+     new_J00 = 1 / 5 * (f_s1 * χ2 * (3 * y^2 - 1) - 3 * y * s1 * f_s1 - 5 * y * s1 * b_s1)
+     new_J02 = 1 / (14 * Δχ2^2) * (
+          7 * s1 * b_s1 * (-2 * χ2^2 * y + χ2 * s1 * (y^2 + 3) - 2 * y * s1^2) +
           f_s1 * (
-               4.0 * χ2^3 * (3.0 * y^2 - 1.0) - 2.0 * χ2^2 * y * s1 * (3.0 * y^2 + 8.0)
+               4 * χ2^3 * (3 * y^2 - 1) - 2 * χ2^2 * y * s1 * (3 * y^2 + 8)
                +
-               χ2 * s1^2 * (9.0 * y^2 + 11.0) - 6.0 * y * s1^3
+               χ2 * s1^2 * (9 * y^2 + 11) - 6 * y * s1^3
           )
      )
-     J04 = 3.0 / (70.0 * Δχ2^4) * f_s1 * (
-                χ2^5 * (6.0 * y^2 - 2.0) + 6.0 * χ2^4 * y * s1 * (y^2 - 3.0)
-                -
-                χ2^3 * s1^2 * (y^4 + 12.0 * y^2 - 21.0)
-                +
-                2.0 * χ2^2 * y * s1^3 * (y^2 + 3.0) - 12.0 * χ2 * s1^4
-                +
-                4.0 * y * s1^5
-           )
+     new_J04 = 3 / (70 * Δχ2^4) * f_s1 * (
+                    χ2^5 * (6 * y^2 - 2) + 6 * χ2^4 * y * s1 * (y^2 - 3)
+                    -
+                    χ2^3 * s1^2 * (y^4 + 12 * y^2 - 21)
+                    +
+                    2 * χ2^2 * y * s1^3 * (y^2 + 3) - 12 * χ2 * s1^4
+                    +
+                    4 * y * s1^5
+               )
 
      I00 = cosmo.tools.I00(Δχ2)
      I20 = cosmo.tools.I20(Δχ2)
      I40 = cosmo.tools.I40(Δχ2)
 
-     res = common * (J00 * I00 + J02 * I20 + J04 * I40)
-
-     return res
+     return common * (new_J00 * I00 + new_J02 * I20 + new_J04 * I40)
 end
 
 
@@ -180,7 +178,7 @@ function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
      return quadgk(f, 1e-6, s2; rtol=1e-3)[1] / en
      =#
 
-     adim_χs = range(1e-6, 1.0, N_χs)
+     adim_χs = range(1e-6, 1, N_χs)
      χ2s = adim_χs .* s2
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)

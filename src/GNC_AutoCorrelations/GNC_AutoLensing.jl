@@ -100,24 +100,24 @@ function integrand_ξ_GNC_Lensing(
 
      s1 = P1.comdist
      s2 = P2.comdist
-     χ1, D1, a_χ1 = IP1.comdist, IP1.D, IP1.a
-     χ2, D2, a_χ2 = IP2.comdist, IP2.D, IP2.a
-     s_b1, s_b2 = cosmo.params.s_b, cosmo.params.s_b
+     χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
+     χ2, D2, a2 = IP2.comdist, IP2.D, IP2.a
+     s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-     Δχ = Δχ_square > 0 ? √(Δχ_square) : 0.0
+     Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
 
-     denomin = s1 * s2 * a_χ1 * a_χ2
-     factor = ℋ0^4 * Ω_M0^2 * D1 * (s1 - χ1) * D2 * (s2 - χ2) * (5.0 * s_b1 - 2.0) * (5.0 * s_b2 - 2.0)
+     denomin = s1 * s2 * a1 * a2
+     factor = ℋ0^4 * Ω_M0^2 * D1 * (s1 - χ1) * D2 * (s2 - χ2) * (5 * s_b_s1 - 2) * (5 * s_b_s2 - 2)
 
      first_res = if Δχ > Δχ_min
           χ1χ2 = χ1 * χ2
 
-          new_J00 = 0.75 * χ1χ2^2 / Δχ^4 * abs(1.0 - y^2) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
-          new_J02 = 1.5 * χ1χ2^2 / Δχ^4 * abs(1.0 - y^2) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
+          new_J00 = - 3/4 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
+          new_J02 = - 3/2 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
           new_J31 = 9 * y * Δχ^2
-          new_J22 = 2.25 * χ1χ2 / Δχ^4 * (
+          new_J22 = 9/4 * χ1χ2 / Δχ^4 * (
                2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)
                - 16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
                + χ1χ2^2 * (11y^4 + 14y^2 + 23)
@@ -128,21 +128,18 @@ function integrand_ξ_GNC_Lensing(
           I13 = cosmo.tools.I13(Δχ)
           I22 = cosmo.tools.I22(Δχ)
 
-          resss = (
+          (
                new_J00 * I00 + new_J02 * I20 +
                new_J31 * I13 + new_J22 * I22
           )
 
-          resss
      else
 
-          lim = 4.0 / 15.0 * (5.0 * cosmo.tools.σ_2 + 6.0 * cosmo.tools.σ_0 * χ2^2)
-          9.0 / 4.0 * lim
+          lim = 4 / 15 * (5 * cosmo.tools.σ_2 + 6 * cosmo.tools.σ_0 * χ2^2)
+          9 / 4 * lim
      end
 
-     res = factor / denomin * first_res
-
-     return res
+     return factor / denomin * first_res
 end
 
 function integrand_ξ_GNC_Lensing(
@@ -166,8 +163,8 @@ end
 function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100, Δχ_min::Float64 = 1e-4)
 
-     adim_1χs = range(1e-8, 1.0, length = N_χs)[begin:end]
-     adim_2χs = range(1e-7, 1.0, length = N_χs)[begin:end]
+     adim_1χs = range(1e-8, 1, length = N_χs)[begin:end]
+     adim_2χs = range(1e-7, 1, length = N_χs)[begin:end]
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
      χ1s = P1.comdist .* adim_1χs
