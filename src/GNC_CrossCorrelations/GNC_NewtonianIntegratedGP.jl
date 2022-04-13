@@ -66,20 +66,19 @@ function integrand_ξ_GNC_Newtonian_IntegratedGP(
      y, cosmo::Cosmology)
 
      s1, D_s1, f_s1 = P1.comdist, P1.D, P1.f
-     s2, ℛ_s2 = P2.comdist, P2.ℛ
+     s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
      χ2, D2, f2, a2, ℋ2 = IP.comdist, IP.D, IP.f, IP.a, IP.ℋ
      s_b_s2 = cosmo.params.s_b
      b_s1 = cosmo.params.b
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-     Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0.0
+     Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
 
-     common = D_s1 * ℋ0^2 * Ω_M0 * D2 / (a2 * s2) * (s2 * ℋ2 * ℛ_s2 * (f2 - 1.0) - 5.0 * s_b_s2 + 2.0)
+     common = D_s1 * ℋ0^2 * Ω_M0 * D2 / (a2 * s2) * (s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2)
+     factor = f_s1 * ((3 * y^2 - 1) * χ2^2 - 4 * y * s1 * χ2 + 2 * s1^2)
 
-     factor = f_s1 * ((3.0 * y^2 - 1.0) * χ2^2 - 4.0 * y * s1 * χ2 + 2.0 * s1^2)
-
-     J20 = -Δχ2^2 * (3.0 * b_s1 + f_s1)
+     J20 = -Δχ2^2 * (3 * b_s1 + f_s1)
 
 
      I00 = cosmo.tools.I00(Δχ2)
@@ -87,13 +86,11 @@ function integrand_ξ_GNC_Newtonian_IntegratedGP(
      I40 = cosmo.tools.I40(Δχ2)
      I02 = cosmo.tools.I02(Δχ2)
 
-     res = common * (
-          factor * (1.0 / 15.0 * I00 + 2.0 / 21.0 * I20 + 1.0 / 35.0 * I40)
+     return common * (
+          factor * (1 / 15 * I00 + 2 / 21 * I20 + 1 / 35 * I40)
           +
           J20 * I02
      )
-
-     return res
 end
 
 
@@ -171,7 +168,7 @@ function ξ_GNC_Newtonian_IntegratedGP(s1, s2, y, cosmo::Cosmology;
      return quadgk(f, 1e-6, s2; rtol=1e-3)[1] / en
      =#
 
-     adim_χs = range(1e-6, 1.0, N_χs)
+     adim_χs = range(1e-6, 1, N_χs)
      χ2s = adim_χs .* s2
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)

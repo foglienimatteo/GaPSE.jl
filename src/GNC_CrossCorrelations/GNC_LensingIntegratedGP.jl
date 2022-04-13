@@ -78,23 +78,19 @@ function integrand_ξ_GNC_Lensing_IntegratedGP(
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-     Δχ = √(Δχ_square) > 1e-8 ? √(Δχ_square) : 1e-8
-
-     
+     Δχ = √(Δχ_square) > 0 ? √(Δχ_square) : 0
 
      denomin = a1 * a2 * s1 * s2
-     common = 9.0 * χ2 * ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (5.0 * s_b_s1 - 2.0)
-     parenth = ℋ2 * ℛ_s2 * s1 * (f2 - 1) - 5.0 * s_b_s1 + 2.0
+     common = 9 * χ2 * ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (5 * s_b_s1 - 2)
+     parenth = ℋ2 * ℛ_s2 * s1 * (f2 - 1) - 5 * s_b_s1 + 2
 
      new_J31 = y * Δχ^2
-     new_J22 = χ1 * χ2 * (y^2 - 1.0) / 2.0
+     new_J22 = χ1 * χ2 * (y^2 - 1) / 2
 
      I13 = cosmo.tools.I13(Δχ)
      I22 = cosmo.tools.I22(Δχ)
 
-     res = common * parenth * (new_J22 * I22 + new_J31 * I13) / denomin
-
-     return res
+     return common * parenth * (new_J22 * I22 + new_J31 * I13) / denomin
 end
 
 
@@ -179,7 +175,7 @@ See also: [`integrand_ξ_GNC_Lensing_IntegratedGP`](@ref), [`integrand_on_mu_Len
 function ξ_GNC_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
-     adim_χs = range(1.1e-8, 1.0, length = N_χs)[begin:end]
+     adim_χs = range(1.1e-8, 1, length = N_χs)[begin:end]
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
      χ1s = P1.comdist .* adim_χs

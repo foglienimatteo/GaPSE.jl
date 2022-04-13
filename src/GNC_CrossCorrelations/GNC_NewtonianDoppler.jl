@@ -51,35 +51,33 @@ See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
 function ξ_GNC_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
      s1, D1, f1 = P1.comdist, P1.D, P1.f
-     s2, D2, f2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℛ_GNC
+     s2, D2, f2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_GNC
      b1 = cosmo.params.b
 
      Δs = s(s1, s2, y)
 
      common = D1 * D2 * f2 * ℋ2 * ℛ2
 
-     J00 = 1.0 / 15.0 * (5.0 * b1 * (s2 - y * s1) + f1 * (2.0 * y^2 * s2 - 3.0 * y * s1 + s2))
-     J02 = 1.0 / (21.0 * Δs^2) * (
-          7.0 * b1 * (y * s1 - s2) * (2.0 * y * s1 * s2 - s1^2 - s2^2) + 
+     J00 = 1 / 15 * (5 * b1 * (s2 - y * s1) + f1 * (2 * y^2 * s2 - 3 * y * s1 + s2))
+     J02 = 1 / (21 * Δs^2) * (
+          7 * b1 * (y * s1 - s2) * (2 * y * s1 * s2 - s1^2 - s2^2) + 
           f1 * (
-               (10.0 * y^2 - 1.0) * s1^2 * s2 
-               - y * (5.0 * y^2 + 4.0) * s1 * s2^2
-               + (y^2 + 2.0) * s2^3 - 3.0 * y * s1^3
+               (10 * y^2 - 1) * s1^2 * s2 
+               - y * (5 * y^2 + 4) * s1 * s2^2
+               + (y^2 + 2) * s2^3 - 3 * y * s1^3
           )
      )
-     J04 = 1.0 / (30.0 * Δs^2) * f1 * (
-          -2.0 * (y^2 + 2.0) * s1^2 * s2 
-          + y * (y^2 + 5.0) * s1 * s2^2
-          + (1.0 - 3.0 * y^2) * s2^3 + 2.0 * y * s1^3
+     J04 = 1 / (35 * Δs^2) * f1 * (
+          -2 * (y^2 + 2) * s1^2 * s2 
+          + y * (y^2 + 5) * s1 * s2^2
+          + (1 - 3 * y^2) * s2^3 + 2 * y * s1^3
      )
 
      I00 = cosmo.tools.I00(Δs)
      I20 = cosmo.tools.I20(Δs)
      I40 = cosmo.tools.I40(Δs)
 
-     res = common * (J00 * I00 + J02 * I20 + J04 * I40)
-
-     return res
+     return common * (J00 * I00 + J02 * I20 + J04 * I40)
 end
 
 

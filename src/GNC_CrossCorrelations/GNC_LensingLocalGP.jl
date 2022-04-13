@@ -69,37 +69,32 @@ function integrand_ξ_GNC_Lensing_LocalGP(
      y, cosmo::Cosmology)
 
      s1 = P1.comdist
-     s2, D_s2, a_s2, ℛ_s2 = P2.comdist, P2.D, P2.a, P2.ℛ_GNC
+     s2, D_s2, f_s2, a_s2, ℋ_s2, ℛ_s2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ, P2.ℛ_GNC
      χ1, D1, a1 = IP.comdist, IP.D, IP.a
-     s_b_s1 = cosmo.params.s_b
+     s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b
+     𝑓_evo_s2 = cosmo.params.𝑓_evo
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
-     Δχ1 = Δχ1_square > 0.0 ? √(Δχ1_square) : 0.0
+     Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0
 
-     common = D_s2 * ℋ0^2 * Ω_M0 * s2 * D1 * (χ1- s1) *  (5.0 * s_b_s1 - 2.0) * (
-                   2.0 * f_s2 * a_s2 * ℋ2^2 * (𝑓_evo2 - 3.0)
-                   +
-                   3.0 * ℋ0^2 * Ω_M0 * (f_s2 + ℛ_s2 + 5.0 * s_b2 - 2.0)
+     common = D_s2 * ℋ0^2 * Ω_M0 * s2 * D1 * (χ1 - s1) *  (5 * s_b_s1 - 2) * (
+                   2 * f_s2 * a_s2 * ℋ_s2^2 * (𝑓_evo_s2 - 3)
+                   + 3 * ℋ0^2 * Ω_M0 * (f_s2 + ℛ_s2 + 5 * s_b_s2 - 2)
               ) / (a1 * a_s2 * s1)
+     factor = 2 * y * χ1^2 - χ1 * s2 * (y^2 + 3) + 2 * y * s2^2
 
-     factor = 2.0 * y * χ1^2 * y - χ1 * s2 * (y^2 + 3.0) + 2.0 * y * s2^2
-
-     J20 = y * Δχ1^2 / 2.0
+     J20 = 1/2 * y * Δχ1^2
 
      I00 = cosmo.tools.I00(Δχ1)
      I20 = cosmo.tools.I20(Δχ1)
      I40 = cosmo.tools.I40(Δχ1)
      I02 = cosmo.tools.I02(Δχ1)
 
-     res = D_s2 * common * (
-                factor * (1.0 / 60.0 * I00 + 1.0 / 42.0 * I20 + 1.0 / 140.0 * I40)
-                +
-                J20 * I02
+     return common * (
+                factor * (1 / 60 * I00 + 1 / 42 * I20 + 1 / 140 * I40)
+                + J20 * I02
            )
-
-
-     return res
 end
 
 
@@ -172,7 +167,7 @@ See also: [`integrand_ξ_GNC_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_LocalG
 function ξ_GNC_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
-     adim_χs = range(1e-6, 1.0, N_χs)
+     adim_χs = range(1e-6, 1, N_χs)
      χ1s = adim_χs .* s1
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)

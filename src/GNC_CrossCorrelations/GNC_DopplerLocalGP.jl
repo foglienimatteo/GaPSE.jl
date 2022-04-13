@@ -51,13 +51,14 @@ See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
 function ξ_GNC_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_GNC
-     s2, D2, f2, a2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ2, P2.a, P2.ℛ_GNC
-
+     s2, D2, f2, a2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ2,P2.ℛ_GNC
+     𝑓_evo2 = cosmo.params.𝑓_evo
      Ω_M0 = cosmo.params.Ω_M0
+
      Δs = s(s1, s2, y)
 
      common = Δs^2 * f1 * ℋ1 * ℛ1 * (s1 - y * s2) / a2
-     parenth = 2.0 * f2 * a2 * ℋ2^2 * (𝑓_evo2 - 3.0) + 3.0 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5.0 * s_b_s2 - 2.0)
+     parenth = 2 * f2 * a2 * ℋ2^2 * (𝑓_evo2 - 3) + 3 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5 * s_b_s2 - 2)
 
      I00 = cosmo.tools.I00(Δs)
      I20 = cosmo.tools.I20(Δs)
@@ -65,8 +66,8 @@ function ξ_GNC_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      I02 = cosmo.tools.I02(Δs)
 
      return D1 * D2 * common * parenth * (
-          -1.0 / 90.0 * I00 - 1.0 / 63.0 * I20 
-          - 1.0 / 210.0 * I40 - 1.0 / 6.0 * I02
+          -1 / 90 * I00 - 1 / 63 * I20 
+          - 1 / 210 * I40 - 1 / 6 * I02
           )
 end
 
