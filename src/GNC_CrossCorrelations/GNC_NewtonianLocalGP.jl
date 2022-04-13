@@ -53,6 +53,7 @@ function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      s1, D1, f1 = P1.comdist, P1.D, P1.f
      s2, D2, f2, a2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ, P2.ℛ_GNC
      b1 = cosmo.params.b
+     s_b2 = cosmo.params.s_b
      𝑓_evo2 = cosmo.params.𝑓_evo
      Ω_M0 = cosmo.params.Ω_M0
 

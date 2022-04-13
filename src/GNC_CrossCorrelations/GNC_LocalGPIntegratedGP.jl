@@ -59,7 +59,7 @@ function integrand_ξ_GNC_LocalGP_IntegratedGP(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
-     s1, a_s1, D_s1, ℋ_s1, ℛ_s1 = P1.comdist, P1.a, P1.D, P1.ℋ, P1.ℛ_GNC
+     s1, D_s1, f_s1, a_s1, ℋ_s1, ℛ_s1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ, P1.ℛ_GNC
      s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
      χ2, D2, a2, f2, ℋ2 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
      s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b

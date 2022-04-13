@@ -120,6 +120,8 @@ function parameters_used(io::IO, cosmo::Cosmology)
      println(io, "#\t θ_max = $(cosmo.params.θ_max) [rad] \t h_0 = $(cosmo.params.h_0)")
      println(io, "#\t Ω_b = $(cosmo.params.Ω_b) \t " *
                  "Ω_cdm = $(cosmo.params.Ω_cdm) \t Ω_M0 = $(cosmo.params.Ω_M0)")
+     println(io, "#\t b = $(cosmo.params.b) \t " *
+                 "𝑓_evo = $(cosmo.params.𝑓_evo) \t s_b = $(cosmo.params.s_b)")
      println(io, "#")
 
      println(io, "# - CosmoParams about the Input Power Spectrum: ")

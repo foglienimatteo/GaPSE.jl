@@ -227,8 +227,9 @@ function print_map_sum_ξ_LD_multipole(
                end
 
           elseif single == true
-               println(io, "# s [Mpc/h_0] \t xi_SUM \t " *
-                           join("xi_" .* GaPSE.GR_EFFECTS_LD .* " \t "))
+               println(io, "# 1: s [Mpc/h_0] \t 2: xi_SUM \t " *
+                    join([string(i) for i in 3:length(GR_EFFECTS_LD)+2] .*
+                         ": xi_" .* GR_EFFECTS_LD .* " \t "))
                for (i, (s, xi)) in enumerate(zip(ss, xis))
                     println(io, "$s \t $xi \t " *
                                 join(["$(v[i]) \t " for v in ALL]))

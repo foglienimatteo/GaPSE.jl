@@ -49,7 +49,7 @@ function integrand_ξ_GNC_multipole(s1, s, μ, effect::String, cosmo::Cosmology;
              string(GaPSE.GR_EFFECTS_GNC .* " , "...)
      @assert (effect ∈ GaPSE.GR_EFFECTS_GNC) error
 
-     return integrand_ξ_GNC_multipole(s1, s, μ, DICT_GR_ξs[effect], cosmo; kwargs...)
+     return integrand_ξ_GNC_multipole(s1, s, μ, DICT_GR_ξs_GNC[effect], cosmo; kwargs...)
 end
 
 
@@ -201,7 +201,7 @@ function ξ_GNC_multipole(s1, s, effect::String, cosmo::Cosmology; kwargs...)
              string(GaPSE.GR_EFFECTS_GNC .* " , "...)
 
      @assert (effect ∈ GaPSE.GR_EFFECTS_GNC) error
-     ξ_GNC_multipole(s1, s, DICT_GR_ξs[effect], cosmo; kwargs...)
+     ξ_GNC_multipole(s1, s, DICT_GR_ξs_GNC[effect], cosmo; kwargs...)
 end
 
 

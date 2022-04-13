@@ -87,7 +87,7 @@ end
 
 
 function ξ_LD_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e10, N_χs::Integer = 100, focus::Float64 = 10.0)
+     en::Float64 = 1e10, N_χs::Integer = 100)
 
      #adim_χs = range(1e-12, 1.0, N_χs)
      adim_χs = range(1e-8, 1.0, length = N_χs)
