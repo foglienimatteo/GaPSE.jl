@@ -70,31 +70,21 @@ function integrand_ξ_GNC_Doppler_IntegratedGP(
      χ2, D2, a2, f2, ℋ2 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
      Ω_M0 = cosmo.params.Ω_M0
 
-     Δχ2 = √(s1^2 + χ2^2 - 2 * s1 * χ2 * y)
+     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
+     Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0.0
 
-     common = 3 * ℋ_s1 * f_s1 * D_s1 * ℋ0^2 * Ω_M0 * ℛ_s1
-     #common = ℋ0^2 * Ω_M0 * D2 / (s2 * a2)
-     #factor = Δχ2^2 * (χ2 * y - s1) * (s2 * (f2 - 1) * ℋ2 * ℛ_s2 + 1)
+     common = ℋ0^2 * Ω_M0 * D2 / (s2 * a2)
+     factor = Δχ2^2 * f_s1 * ℋ_s1 * ℛ_s1 * (χ2 * y - s1) * (s2 * ℋ2 * ℛ_s2 * (f2 - 1.0) - 5.0 * s_b_s2 + 2.0)
 
-     #I00 = cosmo.tools.I00(Δχ2)
-     #I20 = cosmo.tools.I20(Δχ2)
-     #I40 = cosmo.tools.I40(Δχ2)
-     #I02 = cosmo.tools.I02(Δχ2)
+     I00 = cosmo.tools.I00(Δχ2)
+     I20 = cosmo.tools.I20(Δχ2)
+     I40 = cosmo.tools.I40(Δχ2)
+     I02 = cosmo.tools.I02(Δχ2)
 
-     #first = common * factor * (1 / 15 * I00 + 2 / 21 * I20 + 1 / 35 * I40 + I02)
-
-     #new_J31 = -3 * χ2^3 * y * f0 * ℋ0 * (ℛ_s1 + 1) * (s2 * (f2 - 1) * ℋ2 * ℛ_s2 + 1)
-     new_J31 = Δχ2^2 * D2 * (s1 - χ2 * y) / a2 * ( 1 / s2 - ℛ_s2 * ℋ2 * (f2 - 1))
-     I13 = cosmo.tools.I13(Δχ2)
-
-     second = common * new_J31 * I13
-
-     #println("J00 = $new_J00, \t I00(Δχ) = $(I00)")
-     #println("J02 = $new_J02, \t I20(Δχ) = $(I20)")
-     #println("J31 = $new_J31, \t I13(Δχ) = $(I13)")
-     #println("J22 = $new_J22, \t I22(Δχ) = $(I22)")
-
-     return second
+     return D_s1 * common * factor * (
+                 1.0 / 15.0 * I00 + 2.0 / 21.0 * I20
+                 + 1.0 / 35.0 * I40 + 1.0 * I02
+            )
 end
 
 

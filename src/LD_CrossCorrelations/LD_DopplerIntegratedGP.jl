@@ -70,7 +70,8 @@ function integrand_ξ_LD_Doppler_IntegratedGP(
      χ2, D2, a2, f2, ℋ2 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
      Ω_M0 = cosmo.params.Ω_M0
 
-     Δχ2 = √(s1^2 + χ2^2 - 2 * s1 * χ2 * y)
+     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
+     Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0.0
 
      common = 3 * ℋ_s1 * f_s1 * D_s1 * ℋ0^2 * Ω_M0 * ℛ_s1
      #common = ℋ0^2 * Ω_M0 * D2 / (s2 * a2)
@@ -84,7 +85,7 @@ function integrand_ξ_LD_Doppler_IntegratedGP(
      #first = common * factor * (1 / 15 * I00 + 2 / 21 * I20 + 1 / 35 * I40 + I02)
 
      #new_J31 = -3 * χ2^3 * y * f0 * ℋ0 * (ℛ_s1 + 1) * (s2 * (f2 - 1) * ℋ2 * ℛ_s2 + 1)
-     new_J31 = Δχ2^2 * D2 * (s1 - χ2 * y) / a2 * ( 1 / s2 - ℛ_s2 * ℋ2 * (f2 - 1))
+     new_J31 = Δχ2^2 * D2 * (s1 - χ2 * y) / a2 * (1 / s2 - ℛ_s2 * ℋ2 * (f2 - 1))
      I13 = cosmo.tools.I13(Δχ2)
 
      second = common * new_J31 * I13

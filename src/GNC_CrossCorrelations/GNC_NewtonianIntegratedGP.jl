@@ -72,7 +72,8 @@ function integrand_ξ_GNC_Newtonian_IntegratedGP(
      b_s1 = cosmo.params.b
      Ω_M0 = cosmo.params.Ω_M0
 
-     Δχ2 = √(s1^2 + χ2^2 - 2 * s1 * χ2 * y)
+     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
+     Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0.0
 
      common = D_s1 * ℋ0^2 * Ω_M0 * D2 / (a2 * s2) * (s2 * ℋ2 * ℛ_s2 * (f2 - 1.0) - 5.0 * s_b_s2 + 2.0)
 

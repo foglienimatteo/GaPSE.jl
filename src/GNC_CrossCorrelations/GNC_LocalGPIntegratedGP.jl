@@ -67,13 +67,12 @@ function integrand_ξ_GNC_LocalGP_IntegratedGP(
      Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
      Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0.0
 
-     prefactor = 9 * ℋ0^4 * Ω_M0^2 * D_s1 * (ℛ_s1 + 1) / (2 * a_s1)
-     factor = D2 * Δχ2^4 / a2 * (ℋ2 * ℛ_s2 * (f2 - 1) - 1 / s2)
+     factor = 3.0 / 2.0 * Δχ2^4 * ℋ0^2 * Ω_M0 * D2 * (s2 * ℋ2 * ℛ_s2 * (f2 - 1.0) - 5.0 * s_b_s2 + 2.0) / (s2 * a2 * a_s1)
+     parenth = 2.0 * f_s1 * ℋ1^2 * ℛ_s2 * a_s1 * (𝑓_evo_s1 - 3.0) + 3.0 * ℋ0^2 * Ω_M0 * (f_s1 + ℛ1 + 5.0 * s_b_s1 - 2.0)
+     
      I04_tilde = cosmo.tools.I04_tilde(Δχ2)
 
-     res = prefactor * factor * I04_tilde
-
-     return res
+     return D_s1 * factor * parenth * I04_tilde
 end
 
 
