@@ -24,7 +24,7 @@
           y, cosmo::Cosmology) :: Float64
 
 Return the integrand of the Lensing-Doppler cross-correlation function 
-``\\xi^{v_{\\parallel}\\kappa} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
+``\\xi^{\\kappa v_{\\parallel}} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
 ``f(s_1, s_2, y, \\chi_1, \\chi_2)`` defined as follows:  
 
 ```math
@@ -140,11 +140,11 @@ end
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the Lensing-Doppler cross-correlation function 
-``\\xi^{v_{\\parallel}\\kappa} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
+``\\xi^{\\kappa v_{\\parallel}} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
 luminosity distance, defined as follows:
     
 ```math
-\\xi^{v_{\\parallel}\\kappa} (s_1, s_2, \\cos{\\theta}) = 
+\\xi^{\\kappa v_{\\parallel}} (s_1, s_2, \\cos{\\theta}) = 
      \\mathcal{H}_0^2 \\Omega_{M0} D(s_2) f(s_2) \\mathcal{H}(s_2) \\mathcal{R}(s_2) 
      \\int_0^{s_1} \\mathrm{d} \\chi_1 
      \\frac{ D(\\chi_1) (\\chi_1 - s_1) }{a(\\chi_1) s_1} 
@@ -213,7 +213,7 @@ See also: [`integrand_ξ_LD_Lensing_Doppler`](@ref), [`int_on_mu_Lensing_Doppler
 [`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
 function ξ_LD_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Integer = 100)
+     en::Float64=1e6, N_χs::Integer=100)
 
      adim_χs = range(1e-6, 1.0, N_χs)
      χ1s = adim_χs .* s1
