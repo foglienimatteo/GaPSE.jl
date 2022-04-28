@@ -316,11 +316,12 @@ print_PS_multipole
 ##########################################################################################92
 
 
-function print_all_PS_multipole(input::String, out::String;
+function print_all_LD_PS_multipole(input::String, out::String;
      L::Integer=0, N::Integer=1024,
      pr::Bool=true, kwargs...)
 
-     pr && println("\nI'm computiong the PS_multipole from the file $input")
+     pr && println("\nI'm computiong the PS_multipole from the file $input"*
+                    "of the Luminosity Distance perturbations")
 
      time_1 = time()
      ks, VEC = begin
@@ -328,24 +329,26 @@ function print_all_PS_multipole(input::String, out::String;
           xs = convert(Vector{Float64}, table[:, 1])
           all_YS = [convert(Vector{Float64}, col)
                     for col in eachcol(table[:, 2:end])]
-          ys = @showprogress "$effect, L=$L: " [
+          res = @showprogress "LD GR effects, L=$L: " [
                PS_multipole(xs, ys; N=N, L=L, pr=false, kwargs...)
                for ys in all_YS
           ];
-          xs, ys
+          res[1][1], [res[i][2] for i in 1:length(res)]
      end
+
+
      time_2 = time()
 
-     pr && println("\ntime needed for all the Power Spectrum  computation [in s] = $(time_2-time_1)\n")
+     pr && println("\ntime needed for all the Luminosity Distance Power Spectra computation [in s] = $(time_2-time_1)\n")
 
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
-          println(io, "# Power Spectrum Multipole computation of the file: $input")
+          println(io, "# Power Spectra Multipole computation of the Luminosity Distance perturbations of the file: \n# $input")
           println(io, "#\n# For this PS_multipole computation we set: ")
           println(io, "# \t #points used in Fourier transform N = $N")
           println(io, "# \t multipole degree in consideration L = $L")
           println(io, "# overall computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
-          print(io, "# kwards passed to \"print_all_PS_multipole\": ")
+          print(io, "# kwards passed to \"print_all_LD_PS_multipole\": ")
 
           if isempty(kwargs)
                println(io, "none")
@@ -357,16 +360,71 @@ function print_all_PS_multipole(input::String, out::String;
           end
           println(io, "# ")
           println(io, "# (all the following Power Spectra are measured in (Mpc/h_0)^3)")
-          println(io, "# k [h_0/Mpc] \t \t  P_SUM " *
-                      join("P_" .* GaPSE.GR_EFFECTS_LD .* " \t "))
-          for (i, k) in enumerate(ks)
-               println(io, "$k \t " *
-                           join(["$(v[i]) \t " for v in VEC]))
+          println(io, "# 1: k [h_0/Mpc] \t 2: P_SUM \t " *
+                      join([string(i) for i in 3:length(GR_EFFECTS_LD)+2] .*
+                           ": P_" .* GR_EFFECTS_LD .* " \t "))
+          for (i, (k, pk)) in enumerate(zip(ks, VEC[1]))
+               println(io, "$k \t $pk \t " *
+                           join(["$(v[i]) \t " for v in VEC[2:end]]))
           end
      end
 end
 
+function print_all_GNC_PS_multipole(input::String, out::String;
+     L::Integer=0, N::Integer=1024,
+     pr::Bool=true, kwargs...)
 
+     pr && println("\nI'm computiong the PS_multipole from the file $input" *
+                   "of the Galaxy Number Counts")
+
+     time_1 = time()
+     
+     ks, VEC = begin
+          table = readdlm(input; comments=true)
+          xs = convert(Vector{Float64}, table[:, 1])
+          all_YS = [convert(Vector{Float64}, col)
+                    for col in eachcol(table[:, 2:end])]
+          res = @showprogress "LD GR effects, L=$L: " [
+               PS_multipole(xs, ys; N=N, L=L, pr=false, kwargs...)
+               for ys in all_YS
+          ]
+          res[1][1], [res[i][2] for i in 1:length(res)]
+     end
+
+     time_2 = time()
+
+     pr && println("\ntime needed for all the Galaxy Number Counts Power Spectra computation [in s] = $(time_2-time_1)\n")
+
+     isfile(out) && run(`rm $out`)
+     open(out, "w") do io
+          println(io, "# Power Spectra Multipole computation of the Galaxy Number Counts of the file: \n# $input")
+          println(io, "#\n# For this PS_multipole computation we set: ")
+          println(io, "# \t #points used in Fourier transform N = $N")
+          println(io, "# \t multipole degree in consideration L = $L")
+          println(io, "# overall computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
+          print(io, "# kwards passed to \"print_all_GNC_PS_multipole\": ")
+
+          if isempty(kwargs)
+               println(io, "none")
+          else
+               print(io, "\n")
+               for key in keys(kwargs)
+                    println(io, "# \t\t$(key) = $(kwargs[key])")
+               end
+          end
+          println(io, "# ")
+          println(io, "# (all the following Power Spectra are measured in (Mpc/h_0)^3)")
+          println(io, "# 1: k [h_0/Mpc] \t 2: P_SUM \t " *
+                      join([string(i) for i in 3:length(GR_EFFECTS_GNC)+2] .*
+                           ": P_" .* GR_EFFECTS_GNC .* " \t "))
+          for (i, (k, pk)) in enumerate(zip(ks, VEC[1]))
+               println(io, "$k \t $pk \t " *
+                           join(["$(v[i]) \t " for v in VEC[2:end]]))
+          end
+     end
+end
+
+#=
 function print_all_PS_multipole(ss, vec_fs, out::String;
      L::Integer=0, N::Integer=1024,
      pr::Bool=true, kwargs...)
@@ -375,7 +433,7 @@ function print_all_PS_multipole(ss, vec_fs, out::String;
 
      time_1 = time()
      ks, VEC = begin
-          ys = @showprogress "$effect, L=$L: " [
+          ys = @showprogress "PS computations, L=$L: " [
                PS_multipole(ss, fs; N=N, L=L, pr=false, kwargs...)
                for fs in vec_fs
           ]
@@ -412,4 +470,5 @@ function print_all_PS_multipole(ss, vec_fs, out::String;
           end
      end
 end
+=#
 
