@@ -18,7 +18,7 @@
 #
 
 """
-     DEFAULT_FMAP_OPTS = Dict(
+     DEFAULT_FMAP_OPTS_hcub = Dict(
           :θ_max => π / 2.0::Float64, 
           :tolerance => 1e-8::Float64, 
           :rtol => 1e-2::Float64, 
@@ -27,11 +27,12 @@
      )
 
 
-The default values to be used for the `F` function.
+The default values to be used for the `F` function when you
+want to perform the computation with `hcubature`.
 
-See also: [`integrand_F`](@ref), [`F`](@ref), [`F_map`](@ref)
+See also: [`integrand_F`](@ref), [`F_hcub`](@ref), [`F_map`](@ref)
 """
-const DEFAULT_FMAP_OPTS = Dict(
+const DEFAULT_FMAP_OPTS_hcub = Dict(
      :θ_max => π / 2.0::Float64, 
      :tolerance => 1e-8::Float64, 
      :rtol => 1e-2::Float64, 
@@ -41,7 +42,35 @@ const DEFAULT_FMAP_OPTS = Dict(
 
 
 """
-    integrand_F(θ, θ_1, x, μ, θ_max; tolerance=1e-8) :: Float64
+     DEFAULT_FMAP_OPTS_trapz = Dict(
+          :θ_max => π / 2.0::Float64, 
+          :tolerance => 1e-8::Float64, 
+          :N => 300::Int64, 
+          :en => 1.0::Float64,
+          :pr => true::Bool,
+     )
+
+
+The default values to be used for the `F` function when you
+want to perform the computation with `trapz`.
+
+See also: [`integrand_F`](@ref), [`F_trapz`](@ref), [`F_map`](@ref)
+"""
+const DEFAULT_FMAP_OPTS_trapz = Dict(
+     :θ_max => π / 2.0::Float64, 
+     :tolerance => 1e-8::Float64, 
+     :N => 300::Int64, 
+     :en => 1.0::Float64,
+     :pr => true::Bool,
+)
+
+
+##########################################################################################92
+
+
+
+"""
+    integrand_F(θ_1, θ, x, μ, θ_max; tolerance=1e-8) :: Float64
 
 Return the integrand of the function ``F(x,\\mu; \\theta_\\mathrm{max})``, i.e the 
 function ``f(x,\\mu, \\theta, \\theta_1; \\theta_\\mathrm{max})``:
@@ -76,7 +105,7 @@ solve the problem, returning 0 if ``0<-\\mathrm{den}< \\mathrm{tolerance}``
 
 See also: [`F`](@ref), [`F_map`](@ref)
 """
-function integrand_F(θ, θ_1, x, μ, θ_max; tolerance = 1e-8)
+function integrand_F(θ_1, θ, x, μ, θ_max; tolerance = 1e-8)
      if (x * cos(θ) + cos(θ_1)) / √(x^2 + 1 + 2 * x * μ) - cos(θ_max) > 0 &&
         (μ - cos(θ + θ_1)) > 0 &&
         (cos(θ - θ_1) - μ) > 0
@@ -91,17 +120,17 @@ function integrand_F(θ, θ_1, x, μ, θ_max; tolerance = 1e-8)
      else
           return 0.0
      end
-end
+end;
 
 
 
 """
-     F(x, μ; θ_max = π/2, tolerance = 1e-8, 
+     F_hcub(x, μ; θ_max = π/2, tolerance = 1e-8, 
           atol = 1e-2, rtol = 1e-5, 
           kwargs...) ::Tuple{Float64, Float64}
 
-The function ``F(x,\\mu; \\theta_\\mathrm{max})``, defined as
-follows:
+Computes with `hcubature` the value of ``F(x,\\mu; \\theta_\\mathrm{max})``, 
+defined as follows:
 
 ```math
 \\begin{split}
@@ -135,17 +164,73 @@ can easily become overwhelming!
 
 See also: [`F_map`](@ref), [`integrand_F`](@ref), [`check_compatible_dicts`](@ref)
 """
-function F(x, μ; θ_max = π/2, tolerance = 1e-8, atol = 1e-2, rtol = 1e-5, kwargs...)
+function F_hcub(x, μ; θ_max = π/2, tolerance = 1e-8, atol = 1e-2, rtol = 1e-5, kwargs...)
      my_int(var) = integrand_F(var[1], var[2], x, μ, θ_max; tolerance = tolerance)
      a = [0.0, 0.0]
-     b = [π, θ_max]
+     b = [θ_max, π]
      return hcubature(my_int, a, b; rtol = rtol, atol = atol, kwargs...)
-end
+end;
 
+
+
+"""
+     F_trapz(x, μ; θ_max = π/2, tolerance = 1e-8, 
+          atol = 1e-2, rtol = 1e-5, 
+          kwargs...) ::Tuple{Float64, Float64}
+
+Computes with `trapz` the value of ``F(x,\\mu; \\theta_\\mathrm{max})``, 
+defined as follows:
+
+```math
+\\begin{split}
+F(x,\\mu; \\theta_\\mathrm{max}) = & \\;4\\pi 
+    \\int_0^{\\theta_\\mathrm{max}} \\mathrm{d}\\theta_1 \\int_0^\\pi \\mathrm{d} \\theta \\; 
+    \\, \\Theta\\left(\\frac
+        {x \\cos \\theta + \\cos \\theta_1}{\\sqrt{x^1+2+2x\\mu}} - 
+        \\cos(\\theta_\\mathrm{max}) 
+        \\right) 
+    \\, \\Theta(\\mu-\\cos(\\theta+\\theta_1)) \\\\
+    &\\Theta(\\cos(\\theta - \\theta_1)-\\mu) \\;
+    \\frac{\\sin\\theta\\sin\\theta_1}
+        {\\sqrt{(\\sin\\theta\\sin\\theta_1)^2-(\\cos\\theta\\cos\\theta_1-\\mu)^2}}
+\\end{split}
+```
+
+`tolerance` is a parameter needed in case of small negative denominator: the Heaviside
+theta function mathematically prevent that 
+``\\mathrm{den}=(\\sin\\theta\\sin\\theta_1)^2-(\\cos\\theta\\cos\\theta_1-\\mu)^2``
+becomes negative, but computationally might happen that ``\\mathrm{den}`` results as a
+very small negative number (for instance `-1.2368946523-18`); in this case `tolerance`
+solve the problem, returning 0 if ``0<-\\mathrm{den}< \\mathrm{tolerance}``.
+
+The double integral is performed with [`trapz`](@ref) function from the Julia
+Package [`Trapz`](@ref), that is based on the trapezoidal rule. `N` is the number
+of point to be used to sample INDIPENDENTLY `θ_1` and `θ`, so consider that there
+is a `N^2` time dependence.
+It's recommended to set `100 < N < 1000`.
+
+See also: [`F_map`](@ref), [`integrand_F`](@ref), [`check_compatible_dicts`](@ref)
+"""
+function F_trapz(x, μ; θ_max = π/2, N::Integer=300, en=1.0, 
+        tolerance = 1e-13)
+    
+     χ1s = θ_max .* range(0.0, 1.0, length=N)
+     χ2s = π .* range(0.0, 1.0, length=N+7)
+
+     zs = [
+          en * integrand_F(χ1, χ2, x, μ, θ_max; tolerance = tolerance)
+          for χ1 in χ1s, χ2 in χ2s
+     ]
+
+     res = trapz((χ1s, χ2s), zs)
+    
+     return res / en
+end;
 
 
 function F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
      out = "data/F_map.txt", x1 = 0, x2 = 3, μ1 = -1, μ2 = 1,
+     trapz::Bool = true,
      Fmap_opts::Dict = Dict{Symbol,Any}(), kwargs...)
 
      @assert x1 >= 0.0 "The lower limit of x must be >0, not $(x1)!"
@@ -159,8 +244,9 @@ function F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
 
      @assert typeof(Fmap_opts) <: Dict{Symbol,T1} where {T1}
           "the keys of the Fmap_opts dict have to be Symbols (like :k_min, :N, ...)"
-     check_compatible_dicts(DEFAULT_FMAP_OPTS, Fmap_opts, "Fmap_opts")
-     Fmap_dict = merge(DEFAULT_FMAP_OPTS, Fmap_opts)
+     trapz ? check_compatible_dicts(DEFAULT_FMAP_OPTS_trapz, Fmap_opts, "Fmap_opts") :
+               check_compatible_dicts(DEFAULT_FMAP_OPTS_hcub, Fmap_opts, "Fmap_opts")
+     Fmap_dict = trapz ? merge(DEFAULT_FMAP_OPTS_trapz, Fmap_opts) : merge(DEFAULT_FMAP_OPTS_hcub, Fmap_opts)
 
      μs = μ1:μ_step:μ2
      xs = x1:x_step:x2
@@ -169,9 +255,13 @@ function F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
 
      time_1 = time()
 
-     new_F(x, μ) = F(x, μ; θ_max = Fmap_dict[:θ_max], 
+     new_F(x, μ) = trapz ?
+          F_trapz(x, μ; θ_max = Fmap_dict[:θ_max], 
+               tolerance = Fmap_dict[:tolerance], N = Fmap_dict[:N], 
+               en = Fmap_dict[:en]) :
+          F_hcub(x, μ; θ_max = Fmap_dict[:θ_max], 
           tolerance = Fmap_dict[:tolerance], atol = Fmap_dict[:atol], 
-          rtol = Fmap_dict[:rtol], kwargs...)
+          rtol = Fmap_dict[:rtol], kwargs...)    
 
      Fs_grid = Fmap_dict[:pr] ? begin
           @showprogress "window F evaluation: " map(new_F, xs_grid, μs_grid)
@@ -184,6 +274,8 @@ function F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
           println(io, BRAND)
           println(io, "# This is an integration map on μ and x of the window function F(x, μ)")
           println(io, "# For its analytical definition, check the code.\n#")
+          println(io, "# It was set trapz = $trapz, so the computation was performed with "*
+                         begin trapz ? "trapz()" : "hcubature()" end )
           println(io, "# Parameters used in this integration map:")
           println(io, "# x_min = $(x1) \t x_max = $(x2) \t x_step = $(x_step)")
           println(io, "# mu_min = $(μ1) \t mu_max = $(μ2) \t mu_step = $(μ_step)")
@@ -200,16 +292,23 @@ function F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
                end
           end
 
-          println(io, "#\n#x \t mu \t F \t F_error")
-          for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
-               println(io, "$x\t $μ \t $(F[1]) \t $(F[2])")
+          if trapz == true
+               println(io, "#\n# x \t mu \t F")
+               for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
+                    println(io, "$x\t $μ \t $F")
+               end
+          else
+               println(io, "#\n# x \t mu \t F \t F_error")
+               for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
+                    println(io, "$x\t $μ \t $(F[1]) \t $(F[2])")
+               end
           end
      end
 end
 
 
 
-function F_map(xs::Vector{Float64}, μs::Vector{Float64};
+function F_map(xs::Vector{Float64}, μs::Vector{Float64}; trapz::Bool = true,
      out = "data/F_map.txt", Fmap_opts::Dict = Dict{Symbol,Any}(), kwargs...)
 
      @assert all(xs .>= 0.0) "All xs must be >=0.0!"
@@ -221,17 +320,23 @@ function F_map(xs::Vector{Float64}, μs::Vector{Float64};
 
      @assert typeof(Fmap_opts) <: Dict{Symbol,T1} where {T1}
           "the keys of the Fmap_opts dict have to be Symbols (like :k_min, :N, ...)"
-     check_compatible_dicts(DEFAULT_FMAP_OPTS, Fmap_opts, "Fmap_opts")
-     Fmap_dict = merge(DEFAULT_FMAP_OPTS, Fmap_opts)
+     trapz ? check_compatible_dicts(DEFAULT_FMAP_OPTS_trapz, Fmap_opts, "Fmap_opts") :
+               check_compatible_dicts(DEFAULT_FMAP_OPTS_hcub, Fmap_opts, "Fmap_opts")
+     Fmap_dict = trapz ? merge(DEFAULT_FMAP_OPTS_trapz, Fmap_opts) : merge(DEFAULT_FMAP_OPTS_hcub, Fmap_opts)
+
 
      xs_grid = [x for x = xs for μ = μs]
      μs_grid = [μ for x = xs for μ = μs]
 
      time_1 = time()
 
-     new_F(x, μ) = F(x, μ; θ_max = Fmap_dict[:θ_max], 
+     new_F(x, μ) = trapz ?
+          F_trapz(x, μ; θ_max = Fmap_dict[:θ_max], 
+               tolerance = Fmap_dict[:tolerance], N = Fmap_dict[:N], 
+               en = Fmap_dict[:en]) :
+          F_hcub(x, μ; θ_max = Fmap_dict[:θ_max], 
           tolerance = Fmap_dict[:tolerance], atol = Fmap_dict[:atol], 
-          rtol = Fmap_dict[:rtol], kwargs...)
+          rtol = Fmap_dict[:rtol], kwargs...) 
 
      Fs_grid = Fmap_dict[:pr] ? begin
           @showprogress "window F evaluation: " map(new_F, xs_grid, μs_grid)
@@ -243,6 +348,8 @@ function F_map(xs::Vector{Float64}, μs::Vector{Float64};
      open(out, "w") do io
           println(io, BRAND)
           println(io, "# This is an integration map on μ and x of the window function F(x, μ)")
+          println(io, "# It was set trapz = $trapz, so the computation was performed with "*
+                         begin trapz ? "trapz()" : "hcubature()" end )
           println(io, "# For its analytical definition, check the code.\n#")
           println(io, "# Parameters used in this integration map:")
           println(io, "# computational time (in s) : $(@sprintf("%.3f", time_2-time_1))")
@@ -258,9 +365,16 @@ function F_map(xs::Vector{Float64}, μs::Vector{Float64};
                end
           end
 
-          println(io, "#\n# x \t mu \t F \t F_error")
-          for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
-               println(io, "$x\t $μ \t $(F[1]) \t $(F[2])")
+          if trapz == true
+               println(io, "#\n# x \t mu \t F")
+               for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
+                    println(io, "$x\t $μ \t $F")
+               end
+          else
+               println(io, "#\n# x \t mu \t F \t F_error")
+               for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
+                    println(io, "$x\t $μ \t $(F[1]) \t $(F[2])")
+               end
           end
      end
 end
@@ -287,13 +401,13 @@ the function in.
 
 Concerning how the dict works, you may pass only the key and the value you are interested in,
 and all the other default ones will be considered.
-For example, if you set:
+For example, if you set `trapz = false` and:
 
 `Fmap_opts = Dict(:tolerance => 1e-5, :θ_max => 2.0)`
 
 then the dictionary with all the options that will be passed to `F` will be:
 
-`Fmap_dict = merge(DEFAULT_FMAP_OPTS, Fmap_opts) = 
+`Fmap_dict = merge(DEFAULT_FMAP_OPTS_hcub, Fmap_opts) = 
      :θ_max => 2.0,           # CHANGED VALUE
      :tolerance => 1e-5,      # CHANGED VALUE
      :rtol => 1e-2,           # default

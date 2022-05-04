@@ -6,7 +6,7 @@
 # For its analytical definition, check the code.
 #
 # Parameters used in this integration map:
-# computational time (in s) : 7.994
+# computational time (in s) : 7.869
 # kwards passed: 
 # 		θ_max = 1.5707963267948966
 # 		atol = 0.001
