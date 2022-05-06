@@ -22,7 +22,7 @@ using GaPSE, Test
 using Dierckx, DelimitedFiles, QuadGK, Suppressor
 
 
-const FILE_F_MAP = "datatest/F_REFERENCE.txt"
+const FILE_F_MAP = "datatest/F_REFERENCE_pi2.txt"
 const FILE_PS = "datatest/file_pk.txt"
 #const FILE_ILN = "datatest/tab_xi.txt"
 const FILE_ILN = "datatest/table_Iln.txt"
