@@ -26,11 +26,10 @@
           :pr => true::Bool,
      )
 
-
 The default values to be used for the `F` function when you
 want to perform the computation with `hcubature`.
 
-See also: [`integrand_F`](@ref), [`F_hcub`](@ref), [`F_map`](@ref)
+See also: [`integrand_F`](@ref), [`F_hcub`](@ref), [`map_F`](@ref)
 """
 const DEFAULT_FMAP_OPTS_hcub = Dict(
      :θ_max => π / 2.0::Float64, 
@@ -54,7 +53,7 @@ const DEFAULT_FMAP_OPTS_hcub = Dict(
 The default values to be used for the `F` function when you
 want to perform the computation with `trapz`.
 
-See also: [`integrand_F`](@ref), [`F_trapz`](@ref), [`F_map`](@ref)
+See also: [`integrand_F`](@ref), [`F_trapz`](@ref), [`map_F`](@ref)
 """
 const DEFAULT_FMAP_OPTS_trapz = Dict(
      :θ_max => π / 2.0::Float64, 
@@ -103,7 +102,7 @@ becomes negative, but computationally might happen that ``\\mathrm{den}`` result
 very small negative number (for instance `-1.2368946523-18`); in this case `tolerance`
 solve the problem, returning 0 if ``0<-\\mathrm{den}< \\mathrm{tolerance}``
 
-See also: [`F`](@ref), [`F_map`](@ref)
+See also: [`F`](@ref), [`map_F`](@ref)
 """
 function integrand_F(θ_1, θ, x, μ, θ_max; tolerance = 1e-8)
      if (x * cos(θ) + cos(θ_1)) / √(x^2 + 1 + 2 * x * μ) - cos(θ_max) > 0 &&
@@ -158,11 +157,18 @@ The double integral is performed with [`hcubature`](@ref) function from the Juli
 Package [`HCubature`](@ref); `rtol`, `atol` and all the `kwargs` insert into `F` 
 are directly transferred to `hcubature`. 
 
+The output of this function is a `Tuple{Float64, Float64}`, containing respectively
+the value of the integral ad its error.
+
 PAY ATTENTION: do not set too small `atol` and `rtol`, or the computation
 can easily become overwhelming! 
 
+NOTE: for computational efficiency and stability, it is highly recommended to use 
+the other function`F_trapz`, based on the trapezoidal rule, in order to compute
+this function.
 
-See also: [`F_map`](@ref), [`integrand_F`](@ref), [`check_compatible_dicts`](@ref)
+See also:  [`F_trapz`](@ref), [`map_F`](@ref), [`integrand_F`](@ref), 
+[`check_compatible_dicts`](@ref)
 """
 function F_hcub(x, μ; θ_max = π/2, tolerance = 1e-8, atol = 1e-2, rtol = 1e-5, kwargs...)
      my_int(var) = integrand_F(var[1], var[2], x, μ, θ_max; tolerance = tolerance)
@@ -176,7 +182,7 @@ end;
 """
      F_trapz(x, μ; θ_max = π/2, tolerance = 1e-8, 
           atol = 1e-2, rtol = 1e-5, 
-          kwargs...) ::Tuple{Float64, Float64}
+          kwargs...) ::Float64
 
 Computes with `trapz` the value of ``F(x,\\mu; \\theta_\\mathrm{max})``, 
 defined as follows:
@@ -209,7 +215,12 @@ of point to be used to sample INDIPENDENTLY `θ_1` and `θ`, so consider that th
 is a `N^2` time dependence.
 It's recommended to set `100 < N < 1000`.
 
-See also: [`F_map`](@ref), [`integrand_F`](@ref), [`check_compatible_dicts`](@ref)
+NOTE: there is another function, called `F_hcub`, that performs this calculus. 
+Nevertheless, for computational efficiency and stability, it is highly recommended to use 
+to use this one.
+
+See also:  [`F_hcub`](@ref), [`map_F`](@ref), [`integrand_F`](@ref), 
+[`check_compatible_dicts`](@ref)
 """
 function F_trapz(x, μ; θ_max = π/2, N::Integer=300, en=1.0, 
         tolerance = 1e-13)
@@ -228,9 +239,8 @@ function F_trapz(x, μ; θ_max = π/2, N::Integer=300, en=1.0,
 end;
 
 
-function F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
-     out = "data/F_map.txt", x1 = 0, x2 = 3, μ1 = -1, μ2 = 1,
-     trapz::Bool = true,
+function print_map_F(out::String, x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
+     trapz::Bool = true, x1 = 0, x2 = 3, μ1 = -1, μ2 = 1,
      Fmap_opts::Dict = Dict{Symbol,Any}(), kwargs...)
 
      @assert x1 >= 0.0 "The lower limit of x must be >0, not $(x1)!"
@@ -308,8 +318,8 @@ end
 
 
 
-function F_map(xs::Vector{Float64}, μs::Vector{Float64}; trapz::Bool = true,
-     out = "data/F_map.txt", Fmap_opts::Dict = Dict{Symbol,Any}(), kwargs...)
+function print_map_F(out::String, xs::Vector{Float64}, μs::Vector{Float64}; 
+     trapz::Bool = true, Fmap_opts::Dict = Dict{Symbol,Any}(), kwargs...)
 
      @assert all(xs .>= 0.0) "All xs must be >=0.0!"
      @assert all([xs[i+1] > xs[i] for i in 1:(length(xs)-1)]) "xs must be a float vector of increasing values!"
@@ -383,25 +393,34 @@ end
 
 
 """
-     F_map(x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
-          out = "data/F_map.txt", x1 = 0, x2 = 3, μ1 = -1, μ2 = 1, 
+     print_map_F(out::String, x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
+          trapz::Bool = true, x1 = 0, x2 = 3, μ1 = -1, μ2 = 1, 
           Fmap_opts::Dict = Dict{Symbol,Any}(), 
           kwargs...)
 
-     F_map(xs::Vector{Float64}, μs::Vector{Float64};
-          out = "data/F_map.txt", Fmap_opts::Dict = Dict{Symbol,Any}(),
+     print_map_F(out::String, xs::Vector{Float64}, μs::Vector{Float64};
+          trapz::Bool = true, Fmap_opts::Dict = Dict{Symbol,Any}(),
           kwargs...)
 
 Evaluate the window function ``F(x,\\mu; \\theta_\\mathrm{max})`` in a rectangual grid 
 of ``\\mu`` and ``x`` values, and print the results in the `out` file.
 
-In the first method you specify start, stop and step for `x` and `μ` manually, while
-with the second one you pass the values (through a vector )you want to calculate 
-the function in.
+In the first method you have to specify manually, both for `x` and `μ`, start
+(`x1` and `μ1`), stop (`x2` and `μ2`), and step (`x_step` and `μ_step`).
+In the second one, you need to pass the values you want to calculate 
+the function in, through the vectors `xs` and `μs`.
 
-Concerning how the dict works, you may pass only the key and the value you are interested in,
+The bool variable `trapz` tells if you want to perform the computation of `F` with
+`F_trapz` (if `trapz==true`) or with `F_hcub` (if `trapz==false`).
+Both for computational efficiency and stability, it's highly recommended to use
+the former (i.e. the default one). 
+
+`Fmap_opts` is instead the way you should exploit in order to pass to `F_trapz`/`F_hcub`
+other options you are interested in.
+You may pass only the key and the value you are focused on,
 and all the other default ones will be considered.
-For example, if you set `trapz = false` and:
+
+For example, if you set `trapz == false` and:
 
 `Fmap_opts = Dict(:tolerance => 1e-5, :θ_max => 2.0)`
 
@@ -415,10 +434,14 @@ then the dictionary with all the options that will be passed to `F` will be:
      :pr => true,             # default
 )`
 
+Check the documentation of `DEFAULT_FMAP_OPTS_hcub` and `DEFAULT_FMAP_OPTS_trapz`
+for more information about these default values.
 
-See also: [`F`](@ref), [`integrand_F`](@ref)
+
+See also: [`DEFAULT_FMAP_OPTS_hcub`](@ref), [`DEFAULT_FMAP_OPTS_trapz`](@ref)
+[`F_trapz`](@ref), [`F_hcub`](@ref), [`integrand_F`](@ref)
 """
-F_map
+print_map_F
 
 
 
@@ -438,6 +461,36 @@ Struct containing xs, μs and Fs values of the window function ``F(x, μ)``.
 Fs values are contained in a matrix of size `(length(xs), length(μs))`, so:
 - along a fixed column the changing value is `x`
 - along a fixed row the changing value is `μ`
+
+## Constructors
+
+`WindowF(file::String)` : read the F map from the file `file`. Such a file might
+be produced by `print_map_F`, check its docstring. 
+
+It does not matter if the pattern is
+
+```data
+# xs      μs      Fs
+0.0       -1.0       ...
+0.0       -0.9       ...
+0.0       -0.8       ...
+...       ...      ...
+```
+
+or 
+
+```data
+# xs      μs      Fs
+0.0       -1.0       ...
+0.1       -1.0       ...
+0.2       -1.0       ...
+...       ...      ...
+```
+
+because the constructor will recognise it. What does matter is the columns order:
+`xs` first, then `μs` and finally `Fs`.
+
+See also: [`print_map_F`](@ref), [`F_trapz`](@ref)
 """
 struct WindowF
      xs::Vector{Float64}
@@ -467,13 +520,15 @@ end
 
 
 @doc raw"""
-     spline_F(x, μ, str::WindowF)) :: Float64
+     spline_F(x, μ, str::WindowF)) ::Float64
 
 Return the 2-dim spline value of ``F`` in the given `(x,μ)`, where
 ``F`` is defined in the input `WindowF`.
 The spline is obtained through the `interpolate` function of the 
 [`GridInterpolations`](https://github.com/sisl/GridInterpolations.jl) Julia
 package.
+
+See also: [`WindowF`](@ref)
 """
 function spline_F(x, μ, str::WindowF)
      grid = GridInterpolations.RectangleGrid(str.xs, str.μs)
@@ -481,12 +536,12 @@ function spline_F(x, μ, str::WindowF)
 end
 
 #=
-F_map_data = readdlm(FILE_F_MAP, comments = true)
-F_map_data_dict = Dict([name => F_map_data[2:end, i] for (i, name) in enumerate(NAMES_F_MAP)]...)
+map_F_data = readdlm(FILE_F_MAP, comments = true)
+map_F_data_dict = Dict([name => map_F_data[2:end, i] for (i, name) in enumerate(NAMES_F_MAP)]...)
 
-_xs = unique(F_map_data_dict["x"])
-_μs = unique(F_map_data_dict["mu"])
-_Fs = F_map_data_dict["F"]
+_xs = unique(map_F_data_dict["x"])
+_μs = unique(map_F_data_dict["mu"])
+_Fs = map_F_data_dict["F"]
 
 
 # for my F map convenction
