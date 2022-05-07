@@ -159,10 +159,10 @@ function ξ_LD_multipole(
      L::Integer=0,
      use_windows::Bool=true,
      enhancer::Float64=1e6,
-     N_μs::Integer=50,
+     N_μs::Integer=200,
      μ_atol::Float64=0.0,
      μ_rtol::Float64=1e-2,
-     SPLINE::Bool=false,
+     trap::Bool=false,
      kwargs...)
 
      error = "$(string(effect)) is not a valid GR effect function.\n" *
@@ -173,19 +173,15 @@ function ξ_LD_multipole(
      orig_f(μ) = enhancer * integrand_ξ_LD_multipole(s1, s, μ, effect, cosmo;
           L=L, use_windows=use_windows, kwargs...)
 
-     μs = union(range(-1.0, -0.95, length=N_μs),
-          range(-0.95, +0.95, length=N_μs),
-          range(+0.95, +1.0, length=N_μs))
      int =
-          if s > 1.0 && SPLINE == false
+          if s > 1.0 && trap == false
                quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=μ_atol, rtol=μ_rtol)[1]
-
-          elseif s > 1.0 && SPLINE == true
-               orig_fs = orig_f.(μs)
-               spline_orig_f = Spline1D(μs, orig_fs)
-               quadgk(μ -> spline_orig_f(μ), -1.0, 1.0; atol=μ_atol, rtol=μ_rtol)[1]
-
           else
+               μs = union(
+                    range(-1.0, -0.90, length=N_μs),
+                    range(-0.90, 0.90, length=N_μs),
+                    range(0.90, 1.0, length=N_μs)
+                    )
                orig_fs = orig_f.(μs)
                trapz(μs, orig_fs)
           end

@@ -24,10 +24,10 @@
      func_effect = GaPSE.ξ_LD_Doppler
      RTOL = 1e-2
 
-     kwargs = Dict(
+     kwargs =  Dict(
           :use_windows => false,
-          :enhancer => 1e8, :N_μs => 30,
-          :μ_atol => 0.0, :μ_rtol => 1e-2,
+          :enhancer => 1e8, :N_μs => 200,
+          :μ_atol => 0.0, :μ_rtol => 1e-2
      )
 
 

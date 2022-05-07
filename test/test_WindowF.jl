@@ -24,7 +24,7 @@ kwargs_F_hcub = Dict(
      :atol => 1e-3,
 )
 
-kwargs_F_trapz = Dict(
+kwargs_F_trap = Dict(
      :θ_max => π / 2.0::Float64, 
      :tolerance => 1e-8::Float64, 
      :N => 1000::Int64, 
@@ -58,23 +58,23 @@ kwargs_print_map_F = Dict(
      @test isapprox(GaPSE.F_hcub(3, 0.8; kwargs_F_hcub...)[1], 32.91128; rtol = RTOL)
 end
 
-@testset "test F_trapz" begin
+@testset "test F_trap" begin
      RTOL = 1e-4
 
-     @test isapprox(GaPSE.F_trapz(0, 0; kwargs_F_trapz...), 39.40821; rtol = RTOL)
-     @test isapprox(GaPSE.F_trapz(1, 0; kwargs_F_trapz...), 29.59887; rtol = RTOL)
-     @test isapprox(GaPSE.F_trapz(2, 0; kwargs_F_trapz...), 25.55135; rtol = RTOL)
-     @test isapprox(GaPSE.F_trapz(3, 0; kwargs_F_trapz...), 23.77376; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(0, 0; kwargs_F_trap...), 39.40821; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(1, 0; kwargs_F_trap...), 29.59887; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(2, 0; kwargs_F_trap...), 25.55135; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(3, 0; kwargs_F_trap...), 23.77376; rtol = RTOL)
 
-     @test isapprox(GaPSE.F_trapz(0, -0.8; kwargs_F_trapz...), 39.41779; rtol = RTOL)
-     @test isapprox(GaPSE.F_trapz(1, -0.8; kwargs_F_trapz...), 23.77100; rtol = RTOL)
-     @test isapprox(GaPSE.F_trapz(2, -0.8; kwargs_F_trapz...), 13.87924; rtol = RTOL)
-     @test isapprox(GaPSE.F_trapz(3, -0.8; kwargs_F_trapz...), 11.40667; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(0, -0.8; kwargs_F_trap...), 39.41779; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(1, -0.8; kwargs_F_trap...), 23.77100; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(2, -0.8; kwargs_F_trap...), 13.87924; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(3, -0.8; kwargs_F_trap...), 11.40667; rtol = RTOL)
 
-     @test isapprox(GaPSE.F_trapz(0, 0.8; kwargs_F_trapz...), 39.41779; rtol = RTOL)
-     @test isapprox(GaPSE.F_trapz(1, 0.8; kwargs_F_trapz...), 35.42117; rtol = RTOL)
-     @test isapprox(GaPSE.F_trapz(2, 0.8; kwargs_F_trapz...), 34.04887; rtol = RTOL)
-     @test isapprox(GaPSE.F_trapz(3, 0.8; kwargs_F_trapz...), 33.32257; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(0, 0.8; kwargs_F_trap...), 39.41779; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(1, 0.8; kwargs_F_trap...), 35.42117; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(2, 0.8; kwargs_F_trap...), 34.04887; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(3, 0.8; kwargs_F_trap...), 33.32257; rtol = RTOL)
 end
 
 
@@ -99,8 +99,8 @@ end
      end
 
      GaPSE.print_map_F(output, 0.25, 0.25;
-          trapz = true, x1 = 0, x2 = 3, μ1 = -1, μ2 = 1,
-          Fmap_opts = kwargs_F_trapz)
+          trap = true, x1 = 0, x2 = 3, μ1 = -1, μ2 = 1,
+          Fmap_opts = kwargs_F_trap)
 
      @testset "first" begin
           table_output_F = readdlm(output, comments = true)
@@ -155,7 +155,7 @@ end
      end
 
      GaPSE.print_map_F(output, calc_xs, calc_μs; 
-          trapz = true, Fmap_opts = kwargs_F_trapz)
+          trap = true, Fmap_opts = kwargs_F_trap)
 
      @testset "first" begin
           table_output_F = readdlm(output, comments = true)
