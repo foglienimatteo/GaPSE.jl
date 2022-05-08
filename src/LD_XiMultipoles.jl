@@ -19,22 +19,25 @@
 
 
 function integrand_ξ_LD_multipole(s1, s, μ, effect::Function, cosmo::Cosmology;
-     L::Integer=0, use_windows::Bool=true, kwargs...)
+     L::Integer=0, use_windows::Bool=true, N_s1::Integer = 30, kwargs...)
 
      s2_value = s2(s1, s, μ)
      y_value = y(s1, s, μ)
      res = if use_windows == true
+          int = effect(s1, s2_value, y_value, cosmo; kwargs...)
+          int_s1 = begin
+                    integrand_s1(p) =  ϕ(s2(p, s, μ)) * p^2 * spline_F(s / p, μ, cosmo.windowF)
+                    ps = range(cosmo.s_min, cosmo.s_max, length = 30)
+                    trapz(ps, integrand_s1.(ps))
+               end
+          #=
           ϕ_s2 = ϕ(s2_value, cosmo.s_min, cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
-          #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
           int = effect(s1, s2_value, y_value, cosmo; kwargs...)
-          #println("int = $int")
           int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
+          =#
      else
-          #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
           int = effect(s1, s2_value, y_value, cosmo; kwargs...)
-          #println("int = $int")
-          #println( "Pl(μ, L) = $(Pl(μ, L))")
           int .* Pl(μ, L)
      end
 
@@ -177,13 +180,18 @@ function ξ_LD_multipole(
           if s > 1.0 && trap == false
                quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=μ_atol, rtol=μ_rtol)[1]
           else
+               #=
                μs = union(
                     range(-1.0, -0.90, length=N_μs),
                     range(-0.90, 0.90, length=N_μs),
                     range(0.90, 1.0, length=N_μs)
                     )
+               =#
+               μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_μs)
                orig_fs = orig_f.(μs)
+               #orig_fs
                trapz(μs, orig_fs)
+          
           end
 
      return int / enhancer
