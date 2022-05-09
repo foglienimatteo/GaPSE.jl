@@ -18,20 +18,22 @@
 #
 
 
-function integrated_F_quadgk(s, μ, s_min, s_max, spline_F; 
+function integrated_F_quadgk(s, μ, s_min, s_max, windowF::WindowF; 
           llim = 0.0, rlim = Inf, rtol=1e-2, atol=0.0, kwargs...)
      RLIM = isinf(rlim) ? 3.0 * s_max : rlim 
-     f(p) = spline_F(s/p, μ) * ϕ(p, s_min, s_max) *
-               ϕ(s2(p, s, μ), s_min, s_max) * p^2
+     f(p) = ϕ(p, s_min, s_max) > 0 ? begin 
+          spline_F(s/p, μ, windowF) * ϕ(p, s_min, s_max) * ϕ(s2(p, s, μ), s_min, s_max) * p^2
+          end : 0.0
      quadgk(p->f(p), llim, RLIM; rtol=rtol, atol=atol, kwargs...)[1]
 end
 
 
-function integrated_F_trapz(s, μ, s_min, s_max, spline_F; 
+function integrated_F_trapz(s, μ, s_min, s_max, windowF::WindowF; 
           llim = 0.0, rlim = Inf, N::Integer = 1000)
      RLIM = isinf(rlim) ? 3.0 * s_max : rlim 
-     f(p) = spline_F(s/p, μ) * ϕ(p, s_min, s_max) *
-               ϕ(s2(p, s, μ), s_min, s_max) * p^2
+     f(p) = ϕ(p, s_min, s_max) > 0 ? begin 
+          spline_F(s/p, μ, windowF) * ϕ(p, s_min, s_max) * ϕ(s2(p, s, μ), s_min, s_max) * p^2
+          end : 0.0
      ps = range(llim, RLIM, length = N)
      trapz(ps, f.(ps))
 end
@@ -71,22 +73,21 @@ struct WindowFIntegrated
 
      function WindowFIntegrated(s_min, s_max, windowF::WindowF;
                ss_start = 0.0, ss_stop = 0.0, ss_step = 21.768735478453323,
-               trap::Bool = false, llim = 0.0, rlim = Inf, 
-               rtol = 1e-2, atol = 0.0, N::Integer = 200)
+               trap::Bool = true, llim = 0.0, rlim = Inf, 
+               rtol = 1e-2, atol = 0.0, N::Integer = 1000)
 
           SS_STOP = iszero(ss_stop) ? 3.0 * s_max : ss_stop 
           ss = [s for s in ss_start:ss_step:SS_STOP]
 
-          IFS = if trap==false
-               [integrated_F_quadgk(s, μ, s_min, s_max, windowF.spline_F; 
+          IFs = if trap==false
+               [integrated_F_quadgk(s, μ, s_min, s_max, windowF; 
                     llim = llim, rlim = rlim, rtol=rtol, atol=atol)
                     for s in ss, μ in windowF.μs]
           else
-               [integrated_F_trapz(s, μ, s_min, s_max, windowF.spline_F; 
+               [integrated_F_trapz(s, μ, s_min, s_max, windowF; 
                     llim = llim, rlim = rlim, N = N)
                     for s in ss, μ in windowF.μs]
           end
-
 
           new(ss, windowF.μs, IFs)
      end
@@ -119,7 +120,7 @@ function print_map_F(out::String, windowFint::WindowFIntegrated)
 
      ss_grid = [x for x in windowFint.ss for μ in windowFint.μs]
      μs_grid = [μ for x in windowFint.ss for μ in windowFint.μs]
-     IFS_grid = reshape(windowFint.IFs, (:,))
+     IFs_grid = reshape(transpose(windowFint.IFs), (:,))
 
      open(out, "w") do io
           println(io, BRAND)
