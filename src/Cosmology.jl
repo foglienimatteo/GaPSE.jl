@@ -219,6 +219,7 @@ struct Cosmology
      params::CosmoParams
      tools::IPSTools
      windowF::WindowF
+     windowFint::WindowFIntegrated
 
      z_of_s::Dierckx.Spline1D
      D_of_s::Dierckx.Spline1D
@@ -303,11 +304,14 @@ struct Cosmology
           s_eff = s_of_z(z_eff)
           vol = V_survey(s_min, s_max, params.θ_max)
 
+          windowFintegrated = WindowFIntegrated(s_min, s_max, s_eff, windowF)
+
           new(
                IPS,
                params,
                tools,
                windowF,
+               windowFintegrated,
                z_of_s, D_of_s, f_of_s, ℋ_of_s, ℋ_p_of_s, ℛ_LD_of_s, ℛ_GNC_of_s,
                s_of_z,
                z_eff, s_min, s_max, s_eff,
