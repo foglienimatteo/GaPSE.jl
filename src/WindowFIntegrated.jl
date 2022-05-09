@@ -108,3 +108,28 @@ function spline_integrF(s, μ, str::WindowFIntegrated)
      grid = GridInterpolations.RectangleGrid(str.ss, str.μs)
      GridInterpolations.interpolate(grid, reshape(str.IFs, (:, 1)), [s, μ])
 end
+
+
+##########################################################################################92
+
+
+
+function print_map_F(out::String, windowFint::WindowFIntegrated)
+     time_1 = time()
+
+     ss_grid = [x for x in windowFint.ss for μ in windowFint.μs]
+     μs_grid = [μ for x in windowFint.ss for μ in windowFint.μs]
+     IFS_grid = reshape(windowFint.IFs, (:,))
+
+     open(out, "w") do io
+          println(io, BRAND)
+          println(io, "# This is an integration map of the function \\mathcal{F}(s, \\mu), defined as:")
+          println(io, "# \\mathcal{F}(s, \\mu) = \\int_0^\\infty dp p^2 \\phi(p) \\phi(\\sqrt{p^2 + s^2 + 2 p s \\mu}) F(s/p, \\mu)")
+          println(io, "# where F(x, \\mu) is stored in a WindowF struct (for its analytical definition, check the code.\n#")
+
+          println(io, "#\n# s [h_0^{-1} Mpc] \t mu \t IF")
+          for (s, μ, F) in zip(ss_grid, μs_grid, IFs_grid)
+               println(io, "$s\t $μ \t $F")
+          end
+     end
+end
