@@ -458,7 +458,7 @@ print_map_F
 
 Struct containing xs, μs and Fs values of the window function ``F(x, μ)``.
 `xs` and `μs` are 1D vectors containing each value only once, while 
-Fs values are contained in a matrix of size `(length(xs), length(μs))`, so:
+`Fs` values are contained in a matrix of size `(length(xs), length(μs))`, so:
 - along a fixed column the changing value is `x`
 - along a fixed row the changing value is `μ`
 
@@ -490,7 +490,7 @@ or
 because the constructor will recognise it. What does matter is the columns order:
 `xs` first, then `μs` and finally `Fs`.
 
-See also: [`print_map_F`](@ref), [`F_trap`](@ref)
+See also: [`print_map_F`](@ref), [`F_trap`](@ref), [`spline_F`](@ref)
 """
 struct WindowF
      xs::Vector{Float64}
@@ -519,7 +519,7 @@ struct WindowF
 end
 
 
-@doc raw"""
+"""
      spline_F(x, μ, str::WindowF)) ::Float64
 
 Return the 2-dim spline value of ``F`` in the given `(x,μ)`, where

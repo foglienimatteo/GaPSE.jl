@@ -304,7 +304,7 @@ struct Cosmology
           s_eff = s_of_z(z_eff)
           vol = V_survey(s_min, s_max, params.θ_max)
 
-          windowFintegrated = WindowFIntegrated(s_min, s_max, s_eff, windowF)
+          windowFintegrated = WindowFIntegrated(s_min, s_max, windowF; params.WFI...)
 
           new(
                IPS,

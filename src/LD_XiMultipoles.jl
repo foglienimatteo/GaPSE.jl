@@ -24,12 +24,11 @@ function integrand_ξ_LD_multipole(s1, s, μ, effect::Function, cosmo::Cosmology
      s2_value = s2(s1, s, μ)
      y_value = y(s1, s, μ)
      res = if use_windows == true
+          #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
           int = effect(s1, s2_value, y_value, cosmo; kwargs...)
-          int_s1 = begin
-                    integrand_s1(p) =  ϕ(s2(p, s, μ)) * p^2 * spline_F(s / p, μ, cosmo.windowF)
-                    ps = range(cosmo.s_min, cosmo.s_max, length = 30)
-                    trapz(ps, integrand_s1.(ps))
-               end
+          #println("int = $int")
+          int .* (spline_integrF(s, μ, cosmo.windowFint) * Pl(μ, L))
+
           #=
           ϕ_s2 = ϕ(s2_value, cosmo.s_min, cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)

@@ -65,6 +65,45 @@ const DEFAULT_IPSTOOLS_OPTS = Dict(
      :k_max => 10.0::Float64,
 )
 
+
+
+"""
+     const DEFAULT_WFI_OPTS = Dict(
+          :llim=> 0.0::Float64,
+          :rlim=> Inf::Float64,
+          :N => 200::Int64,
+          :trap => false::Bool,
+          :rtol => 1e-2::Float64,
+          :atol => 0.0::Float64,
+          :ss_start => 0.0::Float64,
+          :ss_step => 21.768735478453323::Float64,
+          :ss_stop => 0.0::Float64,
+          )
+
+The default values to be stored in `CosmoParams` concerning the 
+Integrated Iwndow Function F. In the `Cosmology` that will have such `CosmoParams` as input,
+they will be used in its `WindowFIntegrated`.
+
+See also: [`CosmoParams`](@ref), [`Cosmology`](@ref), [`WindowFIntegrated`](@ref),
+"""
+const DEFAULT_WFI_OPTS = Dict(
+     :llim=> 0.0::Float64,
+     :rlim=> Inf::Float64,
+     :N => 200::Int64,
+     :trap => false::Bool,
+     :rtol => 1e-2::Float64,
+     :atol => 0.0::Float64,
+     :ss_start => 0.0::Float64,
+     :ss_step => 21.768735478453323::Float64,
+     :ss_stop => 0.0::Float64,
+)
+
+
+
+##########################################################################################92
+
+
+
 """
      CosmoParams(
           z_min::Float64
@@ -84,6 +123,7 @@ const DEFAULT_IPSTOOLS_OPTS = Dict(
 
           IPS::Dict{Symbol,T1} where {T1}
           IPSTools::Dict{Symbol,T2} where {T2}
+          WFI::Dict{Symbol,T3} where {T3}
      )
 
 
@@ -169,7 +209,7 @@ and similar for `IPS_opts`.
 
 See also: [`Cosmology`](@ref), [`IPSTools`](@ref),  [`InputPS`](@ref), 
 [`func_ℛ_LD`](@ref), [`DEFAULT_IPSTOOLS_OPTS`](@ref), [`DEFAULT_IPS_OPTS`](@ref),
-[`check_compatible_dicts`](@ref)
+[`DEFAULT_WFI_OPTS`](@ref), [`check_compatible_dicts`](@ref)
 """
 struct CosmoParams
      z_min::Float64
@@ -189,12 +229,14 @@ struct CosmoParams
 
      IPS::Dict{Symbol,T1} where {T1}
      IPSTools::Dict{Symbol,T2} where {T2}
+     WFI::Dict{Symbol,T3} where {T3}
 
      function CosmoParams(z_min, z_max, θ_max;
           Ω_b=0.0489, Ω_cdm=0.251020, h_0=0.70, s_lim=1e-2,
           b=1.0, s_b=0.0, 𝑓_evo=0.0,
           IPS_opts::Dict=Dict{Symbol,Any}(),
-          IPSTools_opts::Dict=Dict{Symbol,Any}()
+          IPSTools_opts::Dict=Dict{Symbol,Any}(),
+          WFI_opts::Dict=Dict{Symbol,Any}(),
      )
 
           @assert typeof(IPS_opts) <: Dict{Symbol,T1} where {T1}
@@ -203,11 +245,16 @@ struct CosmoParams
           @assert typeof(IPSTools_opts) <: Dict{Symbol,T2} where {T2}
           "the keys of the IPSTools_opts dict have to be Symbols (like :k_min, :N, ...)"
 
+          @assert typeof(WFI_opts) <: Dict{Symbol,T3} where {T3}
+          "the keys of the WFI_opts dict have to be Symbols (like :rlim, :N, ...)"
+
           check_compatible_dicts(DEFAULT_IPS_OPTS, IPS_opts, "IPS_opts")
           check_compatible_dicts(DEFAULT_IPSTOOLS_OPTS, IPSTools_opts, "IPSTools_opts")
+          check_compatible_dicts(DEFAULT_WFI_OPTS, WFI_opts, "WFI_opts")
 
           IPS = merge(DEFAULT_IPS_OPTS, IPS_opts)
           IPSTools = merge(DEFAULT_IPSTOOLS_OPTS, IPSTools_opts)
+          WFI = merge(DEFAULT_WFI_OPTS, WFI_opts)
 
           @assert 0.0 < z_min < z_max " 0.0 < z_min < z_max must hold!"
           @assert 0.0 ≤ θ_max ≤ π / 2.0 " 0.0 ≤ θ_max ≤ π/2.0 must hold!"
@@ -228,11 +275,19 @@ struct CosmoParams
                                                             
           @assert b > 0.0 " b > 0 must hold!"
 
+          @assert 0.0 ≤ WFI[:llim] < WFI[:rlim] " 0.0 ≤ llim < rlim must hold!"
+          @assert WFI[:N] > 10 " N > 10 must hold!"
+          @assert 0 < WFI[:rtol] < 1 " 0 < rtol < 1 must hold!" 
+          @assert 0 ≤ WFI[:atol] < 1 " 0 ≤ atol < 1 must hold!" 
+          @assert WFI[:ss_start] ≥ 0.0 " ss_start ≥ 0.0 must hold!"
+          @assert WFI[:ss_step] > 0 " ss_step > 0 must hold!"
+          @assert iszero(WFI[:ss_stop]) || WFI[:ss_stop] > WFI[:ss_start] "ss_stop == 0 or ss_stop > ss_start must hold!"
+
           new(z_min, z_max, θ_max, 
                Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0, 
                b, s_b, 𝑓_evo, 
                s_lim,
-               IPS, IPSTools)
+               IPS, IPSTools, WFI)
      end
 end
 
