@@ -74,22 +74,55 @@ struct WindowFIntegrated
      function WindowFIntegrated(s_min, s_max, windowF::WindowF;
                ss_start = 0.0, ss_stop = 0.0, ss_step = 21.768735478453323,
                trap::Bool = true, llim = 0.0, rlim = Inf, 
-               rtol = 1e-2, atol = 0.0, N::Integer = 1000)
+               rtol = 1e-2, atol = 0.0, N::Integer = 1000, pr::Bool = true)
 
           SS_STOP = iszero(ss_stop) ? 3.0 * s_max : ss_stop 
           ss = [s for s in ss_start:ss_step:SS_STOP]
 
           IFs = if trap==false
-               [integrated_F_quadgk(s, μ, s_min, s_max, windowF; 
-                    llim = llim, rlim = rlim, rtol=rtol, atol=atol)
-                    for s in ss, μ in windowF.μs]
+               pr ? begin 
+                    @showprogress "calculating intF: " [
+                         integrated_F_quadgk(s, μ, s_min, s_max, windowF; 
+                              llim = llim, rlim = rlim, rtol=rtol, atol=atol)
+                              for s in ss, μ in windowF.μs]
+                    end : begin
+                         [integrated_F_quadgk(s, μ, s_min, s_max, windowF; 
+                              llim = llim, rlim = rlim, rtol=rtol, atol=atol)
+                              for s in ss, μ in windowF.μs]
+                    end
           else
-               [integrated_F_trapz(s, μ, s_min, s_max, windowF; 
-                    llim = llim, rlim = rlim, N = N)
-                    for s in ss, μ in windowF.μs]
+               pr ? begin
+                    @showprogress "calculating intF: " [
+                         integrated_F_trapz(s, μ, s_min, s_max, windowF; 
+                              llim = llim, rlim = rlim, N = N)
+                              for s in ss, μ in windowF.μs]
+               end : begin
+                    [integrated_F_trapz(s, μ, s_min, s_max, windowF; 
+                         llim = llim, rlim = rlim, N = N)
+                         for s in ss, μ in windowF.μs]
+               end
           end
 
           new(ss, windowF.μs, IFs)
+     end
+
+     function WindowFIntegrated(file::String)
+          data = readdlm(file, comments=true)
+          ss, μs, IFs = data[:, 1], data[:, 2], data[:, 3]
+          @assert size(ss) == size(μs) == size(IFs) "ss, μs and IFs must have the same length!"
+     
+          new_ss = unique(ss)
+          new_μs = unique(μs)
+          new_IFs =
+               if ss[2] == ss[1] && μs[2] ≠ μs[1]
+                    transpose(reshape(IFs, (length(new_μs), length(new_ss))))
+               elseif ss[2] ≠ ss[1] && μs[2] == μs[1]
+                    reshape(IFs, (length(new_ss), length(new_μs)))
+               else
+                    throw(ErrorException("What kind of convenction for the file $file" *
+                                         " are you using? I do not recognise it."))
+               end
+          new(new_ss, new_μs, new_IFs)
      end
 end
 
@@ -115,11 +148,10 @@ end
 
 
 
-function print_map_F(out::String, windowFint::WindowFIntegrated)
-     time_1 = time()
+function print_map_IntegratedF(out::String, windowFint::WindowFIntegrated)
 
-     ss_grid = [x for x in windowFint.ss for μ in windowFint.μs]
-     μs_grid = [μ for x in windowFint.ss for μ in windowFint.μs]
+     ss_grid = [s for s in windowFint.ss for μ in windowFint.μs]
+     μs_grid = [μ for s in windowFint.ss for μ in windowFint.μs]
      IFs_grid = reshape(transpose(windowFint.IFs), (:,))
 
      open(out, "w") do io
@@ -133,4 +165,11 @@ function print_map_F(out::String, windowFint::WindowFIntegrated)
                println(io, "$s\t $μ \t $F")
           end
      end
+end
+
+
+function print_map_IntegratedF(in::String, out::String, s_min, s_max; kwargs...)
+     windowF = WindowF(in)
+     windowFint = WindowFIntegrated(s_min, s_max, windowF; kwargs...)
+     print_map_IntegratedF(out, windowFint)
 end

@@ -247,7 +247,7 @@ struct Cosmology
           file_data::String,
           file_ips::String,
           file_windowF::String,
-          file_Is::Union{String,Nothing}=nothing;
+          file_IntwindowF::Union{String,Nothing}=nothing;
           names_bg=NAMES_BACKGROUND
      )
 
@@ -255,8 +255,7 @@ struct Cosmology
                names=names_bg, h=params.h_0)
           IPS = InputPS(file_ips;)
           windowF = WindowF(file_windowF)
-          tools = isnothing(file_Is) ?
-                  IPSTools(IPS; params.IPSTools...) : IPSTools(IPS, file_Is)
+          tools = IPSTools(IPS; params.IPSTools...) 
 
           #=
           z_of_s_lim = my_interpolation(BD.comdist[1], BD.z[1], BD.comdist[2], BD.z[2], s_lim)
@@ -304,7 +303,9 @@ struct Cosmology
           s_eff = s_of_z(z_eff)
           vol = V_survey(s_min, s_max, params.θ_max)
 
-          windowFintegrated = WindowFIntegrated(s_min, s_max, windowF; params.WFI...)
+          windowFintegrated = isnothing(file_IntwindowF) ? 
+               WindowFIntegrated(s_min, s_max, windowF; params.WFI...) :
+               WindowFIntegrated(file_IntwindowF)
 
           new(
                IPS,
