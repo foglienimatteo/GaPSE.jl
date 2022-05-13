@@ -18,12 +18,12 @@
 #
 
 
-function ξ_LD_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
-     s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_LD
-     s2, D2, f2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
+function ξ_GNCxLD_Doppler_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
+     s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_GNC
+     s2, D2, f2, ℋ2, ℜ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
 
      Δs = s(P1.comdist, P2.comdist, y)
-     prefac = D1 * D2 * f1 * f2 * ℛ1 * ℛ2 * ℋ1 * ℋ2
+     prefac = D1 * D2 * f1 * f2 * ℛ1 * ℜ2 * ℋ1 * ℋ2
      c1 = 3 * s1 * s2 - 2 * y * (s1^2 + s2^2) + s1 * s2 * y^2
 
      I00 = cosmo.tools.I00(Δs)
@@ -39,18 +39,18 @@ function ξ_LD_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
 end
 
 
-function ξ_LD_Doppler(s1, s2, y, cosmo::Cosmology)
+function ξ_GNCxLD_Doppler_Doppler(s1, s2, y, cosmo::Cosmology)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_LD_Doppler(P1, P2, y, cosmo)
+     return ξ_GNCxLD_Doppler_Doppler(P1, P2, y, cosmo)
 end
 
 
 
 """
-     ξ_LD_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
+     ξ_GNCxLD_Doppler_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
 
-     ξ_LD_Doppler(s1, s2, y, cosmo::Cosmology) = 
-          ξ_LD_Doppler(Point(s1, cosmo), Point(s2, cosmo), y, cosmo)
+     ξ_GNCxLD_Doppler_Doppler(s1, s2, y, cosmo::Cosmology) = 
+          ξ_GNCxLD_Doppler_Doppler(Point(s1, cosmo), Point(s2, cosmo), y, cosmo)
 
 Return the Doppler auto-correlation function concerning the perturbed
 luminosity distance, defined as follows:
@@ -83,4 +83,4 @@ the J coefficients are given by:
 
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
-ξ_LD_Doppler
+ξ_GNCxLD_Doppler_Doppler

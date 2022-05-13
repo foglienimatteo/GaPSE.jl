@@ -19,7 +19,7 @@
 
 
 @doc raw"""
-     integrand_ξ_LD_Lensing_Doppler(
+     integrand_ξ_GNCxLD_Doppler_Lensing(
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
@@ -58,7 +58,7 @@ and the ``J`` coefficients are given by
 ## Inputs
 
 - `IP::Point`: `Point` inside the integration limits, placed 
-  at comoving distance `χ1`.
+  at comoving distance `χ2`.
 
 - `P1::Point` and `P2::Point`: extreme `Point` of the integration, placed 
   at comoving distance `s1` and `s2` respectively.
@@ -68,47 +68,47 @@ and the ``J`` coefficients are given by
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_LD_Lensing_Doppler`](@ref), [`int_on_mu_Lensing_Doppler`](@ref)
+See also: [`ξ_GNCxLD_Doppler_Lensing`](@ref), [`int_on_mu_Lensing_Doppler`](@ref)
 [`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
-function integrand_ξ_LD_Lensing_Doppler(
+function integrand_ξ_GNCxLD_Doppler_Lensing(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
-     s1 = P1.comdist
-     s2, D_s2, f_s2, ℋ_s2, ℛ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
-     χ1, D1, a1 = IP.comdist, IP.D, IP.a
+     s1, D_s1, f_s1, ℋ_s1, ℛ_s1 = P1.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_GNC
+     s2 = P2.comdist
+     χ2, D2, a2 = IP.comdist, IP.D, IP.a
      Ω_M0 = cosmo.params.Ω_M0
 
 
-     Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
-     Δχ1 = Δχ1_square > 0.0 ? √(Δχ1_square) : 0.0
+     Δχ2_square = χ2^2 + s1^2 - 2 * χ2 * s1 * y
+     Δχ2 = Δχ2_square > 0.0 ? √(Δχ2_square) : 0.0
 
-     common = ℋ0^2 * Ω_M0 * D1 * (χ1 - s1) / (s1 * a1)
-     factor = D_s2 * f_s2 * ℋ_s2 * ℛ_s2
+     common = ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) / (s2 * a2)
+     factor = D_s1 * f_s1 * ℋ_s1 * ℛ_s1
 
-     new_J00 = 1.0 / 15.0 * (χ1^2 * y + χ1 * (4 * y^2 - 3) * s2 - 2 * y * s2^2)
-     new_J02 = 1.0 / (42 * Δχ1^2) * (
-          4 * χ1^4 * y + 4 * χ1^3 * (2 * y^2 - 3) * s2
-          + χ1^2 * y * (11 - 23 * y^2) * s2^2
-          + χ1 * (23 * y^2 - 3) * s2^3 - 8 * y * s2^4)
-     new_J04 = 1.0 / (70 * Δχ1^2) * (
-          2 * χ1^4 * y + 2 * χ1^3 * (2 * y^2 - 3) * s2
+     new_J00 = 1.0 / 15.0 * (χ2^2 * y + χ2 * (4 * y^2 - 3) * s1 - 2 * y * s1^2)
+     new_J02 = 1.0 / (42 * Δχ2^2) * (
+          4 * χ2^4 * y + 4 * χ2^3 * (2 * y^2 - 3) * s1
+          + χ2^2 * y * (11 - 23 * y^2) * s1^2
+          + χ2 * (23 * y^2 - 3) * s1^3 - 8 * y * s1^4)
+     new_J04 = 1.0 / (70 * Δχ2^2) * (
+          2 * χ2^4 * y + 2 * χ2^3 * (2 * y^2 - 3) * s1
           -
-          χ1^2 * y * (y^2 + 5) * s2^2
+          χ2^2 * y * (y^2 + 5) * s1^2
           +
-          χ1 * (y^2 + 9) * s2^3 - 4 * y * s2^4)
-     new_J20 = y * Δχ1^2
+          χ2 * (y^2 + 9) * s1^3 - 4 * y * s1^4)
+     new_J20 = y * Δχ2^2
 
-     I00 = cosmo.tools.I00(Δχ1)
-     I20 = cosmo.tools.I20(Δχ1)
-     I40 = cosmo.tools.I40(Δχ1)
-     I02 = cosmo.tools.I02(Δχ1)
+     I00 = cosmo.tools.I00(Δχ2)
+     I20 = cosmo.tools.I20(Δχ2)
+     I40 = cosmo.tools.I40(Δχ2)
+     I02 = cosmo.tools.I02(Δχ2)
 
-     #println("J00 = $new_J00, \t I00(Δχ1) = $(I00)")
-     #println("J02 = $new_J02, \t I20(Δχ1) = $(I20)")
-     #println("J31 = $new_J31, \t I13(Δχ1) = $(I13)")
-     #println("J22 = $new_J22, \t I22(Δχ1) = $(I22)")
+     #println("J00 = $new_J00, \t I00(Δχ2) = $(I00)")
+     #println("J02 = $new_J02, \t I20(Δχ2) = $(I20)")
+     #println("J31 = $new_J31, \t I13(Δχ2) = $(I13)")
+     #println("J22 = $new_J22, \t I22(Δχ2) = $(I22)")
 
      parenth = (
           new_J00 * I00 + new_J02 * I20 +
@@ -117,26 +117,26 @@ function integrand_ξ_LD_Lensing_Doppler(
 
      first = common * factor * parenth
 
-     #new_J31 = -3 * χ1^2 * y * f0 * ℋ0
-     #I13 = cosmo.tools.I13(χ1)
+     #new_J31 = -3 * χ2^2 * y * f0 * ℋ0
+     #I13 = cosmo.tools.I13(χ2)
      #second = new_J31 * I13 * common
 
      return first
 end
 
 
-function integrand_ξ_LD_Lensing_Doppler(
-     χ1::Float64, s1::Float64, s2::Float64,
+function integrand_ξ_GNCxLD_Doppler_Lensing(
+     χ2::Float64, s1::Float64, s2::Float64,
      y, cosmo::Cosmology)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP = Point(χ1, cosmo)
-     return integrand_ξ_LD_Lensing_Doppler(IP, P1, P2, y, cosmo)
+     IP = Point(χ2, cosmo)
+     return integrand_ξ_GNCxLD_Doppler_Lensing(IP, P1, P2, y, cosmo)
 end
 
 
 """
-     ξ_LD_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
+     ξ_GNCxLD_Doppler_Lensing(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the Lensing-Doppler cross-correlation function 
@@ -174,7 +174,7 @@ and the ``J`` coefficients are given by:
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_LD_LD_Lensing_Doppler`.
+the integrand function `integrand_ξ_LD_GNC-LD_Doppler_Lensing`.
 
 
 ## Inputs
@@ -205,45 +205,32 @@ the integrand function `integrand_ξ_LD_LD_Lensing_Doppler`.
   computational divergences.
 
 - `N_χs::Integer = 100`: number of points to be used for sampling the integral
-  along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
+  along the ranges `(0, s1)` (for `χ2`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_LD_Lensing_Doppler`](@ref), [`int_on_mu_Lensing_Doppler`](@ref)
+See also: [`integrand_ξ_GNCxLD_Doppler_Lensing`](@ref), [`int_on_mu_Lensing_Doppler`](@ref)
 [`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
-function ξ_LD_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
+function ξ_GNCxLD_Doppler_Lensing(s1, s2, y, cosmo::Cosmology;
      en::Float64=1e6, N_χs::Integer=100)
 
      adim_χs = range(1e-6, 1.0, N_χs)
-     χ1s = adim_χs .* s1
+     χ2s = adim_χs .* s2
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-     IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
+     IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_LD_Lensing_Doppler(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNCxLD_Doppler_Lensing(IP, P1, P2, y, cosmo)
           for IP in IPs
      ]
 
-     res = trapz(χ1s, int_ξs)
+     res = trapz(χ2s, int_ξs)
      #println("res = $res")
      return res / en
 end
 
 
 
-
-
-##########################################################################################92
-
-##########################################################################################92
-
-##########################################################################################92
-
-
-
-function ξ_LD_Doppler_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_LD_Lensing_Doppler(s2, s1, y, cosmo; kwargs...)
-end
 

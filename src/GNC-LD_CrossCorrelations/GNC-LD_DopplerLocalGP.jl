@@ -19,7 +19,7 @@
 
 
 @doc raw"""
-     ξ_LD_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
+     ξ_GNCxLD_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
 
 Return the Doppler-LocalGP cross-correlation function concerning the perturbed
 luminosity distance, defined as follows:
@@ -49,14 +49,14 @@ I^n_l(s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} q^2 \\, P(q) \\, \\frac
 
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
-function ξ_LD_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
-     s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_LD
-     s2, D2, a2, ℛ2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
+function ξ_GNCxLD_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
+     s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_GNC
+     s2, D2, a2, ℜ2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
 
      Ω_M0 = cosmo.params.Ω_M0
      Δs = s(s1, s2, y)
 
-     prefac = 1.5 / a2 * ℋ1 * f1 * D1 * ℛ1 * ℋ0^2 * Ω_M0 * D2 * (1 + ℛ2)
+     prefac = 1.5 / a2 * ℋ1 * f1 * D1 * ℛ1 * ℋ0^2 * Ω_M0 * D2 * (1 + ℜ2)
      factor = (s2 * y - s1) * Δs^2
 
      I13 = cosmo.tools.I13(Δs)
@@ -65,23 +65,9 @@ function ξ_LD_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
 end
 
 
-function ξ_LD_Doppler_LocalGP(s1, s2, y, cosmo::Cosmology)
+function ξ_GNCxLD_Doppler_LocalGP(s1, s2, y, cosmo::Cosmology)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_LD_Doppler_LocalGP(P1, P2, y, cosmo)
+     return ξ_GNCxLD_Doppler_LocalGP(P1, P2, y, cosmo)
 end
 
-
-
-
-##########################################################################################92
-
-##########################################################################################92
-
-##########################################################################################92
-
-
-
-function ξ_LD_LocalGP_Doppler(s1, s2, y, cosmo::Cosmology)
-     ξ_LD_Doppler_LocalGP(s2, s1, y, cosmo)
-end
 
