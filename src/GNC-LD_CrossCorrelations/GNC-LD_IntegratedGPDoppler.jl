@@ -19,7 +19,7 @@
 
 
 @doc raw"""
-     integrand_ξ_LD_Doppler_IntegratedGP(
+     integrand_ξ_GNCxLD_IntegratedGP_Doppler(
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
@@ -58,60 +58,46 @@ J_{31} =
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_LD_Doppler_IntegratedGP`](@ref), [`int_on_mu_Doppler_IntegratedGP`](@ref)
+See also: [`ξ_GNCxLD_IntegratedGP_Doppler`](@ref), [`int_on_mu_Doppler_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
-function integrand_ξ_LD_Doppler_IntegratedGP(
+function integrand_ξ_GNCxLD_IntegratedGP_Doppler(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
-     s1, D_s1, f_s1, ℋ_s1, ℛ_s1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_LD
-     s2, ℛ_s2 = P2.comdist, P2.ℛ_LD
-     χ2, D2, a2, f2, ℋ2 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
+     s1, ℛ_s1 = P1.comdist, P1.ℛ_GNC
+     s2, D_s2, f_s2, ℋ_s2, ℜ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
+     χ1, D1, a1, f1, ℋ1 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
+     s_b_s1 = comso.params.s_b
      Ω_M0 = cosmo.params.Ω_M0
 
-     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-     Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0.0
+     Δχ1_square = s2^2 + χ1^2 - 2 * s2 * χ1 * y
+     Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0.0
 
-     common = 3 * ℋ_s1 * f_s1 * D_s1 * ℋ0^2 * Ω_M0 * ℛ_s1
-     #common = ℋ0^2 * Ω_M0 * D2 / (s2 * a2)
-     #factor = Δχ2^2 * (χ2 * y - s1) * (s2 * (f2 - 1) * ℋ2 * ℛ_s2 + 1)
+     common = 3 * ℋ_s2 * f_s2 * D_s2 * ℋ0^2 * Ω_M0 * ℜ_s2
 
-     #I00 = cosmo.tools.I00(Δχ2)
-     #I20 = cosmo.tools.I20(Δχ2)
-     #I40 = cosmo.tools.I40(Δχ2)
-     #I02 = cosmo.tools.I02(Δχ2)
+     new_J31 = Δχ1^2 * D1 * (s2 - χ1 * y) / (a1 * s1) * (s1 * ℛ_s1 * ℋ1 * (f1 - 1) - 5 * s_b_s1 + 2)
+     I13 = cosmo.tools.I13(Δχ1)
 
-     #first = common * factor * (1 / 15 * I00 + 2 / 21 * I20 + 1 / 35 * I40 + I02)
+     res = common * new_J31 * I13
 
-     #new_J31 = -3 * χ2^3 * y * f0 * ℋ0 * (ℛ_s1 + 1) * (s2 * (f2 - 1) * ℋ2 * ℛ_s2 + 1)
-     new_J31 = Δχ2^2 * D2 * (s1 - χ2 * y) / a2 * (1 / s2 - ℛ_s2 * ℋ2 * (f2 - 1))
-     I13 = cosmo.tools.I13(Δχ2)
-
-     second = common * new_J31 * I13
-
-     #println("J00 = $new_J00, \t I00(Δχ) = $(I00)")
-     #println("J02 = $new_J02, \t I20(Δχ) = $(I20)")
-     #println("J31 = $new_J31, \t I13(Δχ) = $(I13)")
-     #println("J22 = $new_J22, \t I22(Δχ) = $(I22)")
-
-     return second
+     return res
 end
 
 
-function integrand_ξ_LD_Doppler_IntegratedGP(
-     χ2::Float64, s1::Float64, s2::Float64,
+function integrand_ξ_GNCxLD_IntegratedGP_Doppler(
+     χ1::Float64, s1::Float64, s2::Float64,
      y, cosmo::Cosmology;
      kwargs...)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP = Point(χ2, cosmo)
-     return integrand_ξ_LD_Doppler_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
+     IP = Point(χ1, cosmo)
+     return integrand_ξ_GNCxLD_IntegratedGP_Doppler(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
 @doc raw"""
-     ξ_LD_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
+     ξ_GNCxLD_IntegratedGP_Doppler(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the Doppler-LocalGP cross-correlation function 
@@ -139,7 +125,7 @@ J_{31} =
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_LD_Doppler_IntegratedGP`.
+the integrand function `integrand_ξ_GNCxLD_IntegratedGP_Doppler`.
 
 
 ## Inputs
@@ -157,34 +143,34 @@ the integrand function `integrand_ξ_LD_Doppler_IntegratedGP`.
   with small numbers;
 
 - `N_χs::Integer = 100`: number of points to be used for sampling the integral
-  along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
+  along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ1`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_LD_Doppler_IntegratedGP`](@ref), [`int_on_mu_Doppler_IntegratedGP`](@ref)
+See also: [`integrand_ξ_GNCxLD_IntegratedGP_Doppler`](@ref), [`int_on_mu_Doppler_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
-function ξ_LD_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
+function ξ_GNCxLD_IntegratedGP_Doppler(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
      #=
-     f(χ2) = en * integrand_ξ_LD_Doppler_IntegratedGP(χ2, s1, s2, y, cosmo)
+     f(χ1) = en * integrand_ξ_GNCxLD_IntegratedGP_Doppler(χ1, s1, s2, y, cosmo)
 
      return quadgk(f, 1e-6, s2; rtol=1e-3)[1] / en
      =#
 
      adim_χs = range(1e-6, 1.0, N_χs)
-     χ2s = adim_χs .* s2
+     χ1s = adim_χs .* s1
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-     IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
+     IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_LD_Doppler_IntegratedGP(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNCxLD_IntegratedGP_Doppler(IP, P1, P2, y, cosmo)
           for IP in IPs
      ]
 
-     res = trapz(χ2s, int_ξs)
+     res = trapz(χ1s, int_ξs)
      #println("res = $res")
      return res / en
 end
@@ -192,15 +178,4 @@ end
 
 
 
-##########################################################################################92
-
-##########################################################################################92
-
-##########################################################################################92
-
-
-
-function ξ_LD_IntegratedGP_Doppler(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_LD_Doppler_IntegratedGP(s2, s1, y, cosmo; kwargs...)
-end
 

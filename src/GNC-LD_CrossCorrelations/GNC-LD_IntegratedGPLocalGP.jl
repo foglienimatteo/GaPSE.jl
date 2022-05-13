@@ -19,7 +19,7 @@
 
 
 """
-     integrand_ξ_GNC_LocalGP_IntegratedGP(
+     integrand_ξ_GNCxLD_IntegratedGP_LocalGP(
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
@@ -45,52 +45,51 @@ where ``\\mathcal{H} = a H``,
   at comoving distance `χ1`.
 
 - `P1::Point` and `P2::Point`: extreme `Point` of the integration, placed 
-  at comoving distance `s1` and `s2` respectively.
+  at comoving distance `s2` and `s1` respectively.
 
 - `y`: the cosine of the angle between the two points `P1` and `P2`
 
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_GNC_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_IntegratedGP`](@ref)
+See also: [`ξ_GNCxLD_IntegratedGP_LocalGP`](@ref), [`int_on_mu_LocalGP_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
-function integrand_ξ_GNC_LocalGP_IntegratedGP(
+function integrand_ξ_GNCxLD_IntegratedGP_LocalGP(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
-     s1, D_s1, f_s1, a_s1, ℋ_s1, ℛ_s1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ, P1.ℛ_GNC
-     s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
-     χ2, D2, a2, f2, ℋ2 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
-     s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b
-     𝑓_evo_s1 = cosmo.params.𝑓_evo
+     s1, ℛ_s1 = P1.comdist, P1.ℛ_GNC
+     s2, D_s2, a_s2, ℜ_s2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
+     χ1, D1, a1, f1, ℋ1 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
+     s_b_s1 = cosmo.params.s_b
      Ω_M0 = cosmo.params.Ω_M0
 
-     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-     Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
+     Δχ1_square = s2^2 + χ1^2 - 2 * s2 * χ1 * y
+     Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0
 
-     factor = 3 / 2 * D_s1 * Δχ2^4 * ℋ0^2 * Ω_M0 * D2 * (s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2) / (s2 * a2 * a_s1)
-     parenth = 2 * f_s1 * ℋ_s1^2 * a_s1 * (𝑓_evo_s1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f_s1 + ℛ_s1 + 5 * s_b_s1 - 2)
-     
-     I04_tilde = cosmo.tools.I04_tilde(Δχ2)
+     factor = 9 / 4 * D_s2 * Δχ1^4 * ℋ0^4 * Ω_M0^2 * D1 * (1 + ℜ_s2) / (s1 * a1 * a_s2)
+     parenth = (s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2) 
+
+     I04_tilde = cosmo.tools.I04_tilde(Δχ1)
 
      return factor * parenth * I04_tilde
 end
 
 
-function integrand_ξ_GNC_LocalGP_IntegratedGP(
-     χ2::Float64, s1::Float64, s2::Float64,
+function integrand_ξ_GNCxLD_IntegratedGP_LocalGP(
+     χ1::Float64, s1::Float64, s2::Float64,
      y, cosmo::Cosmology;
      kwargs...)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP = Point(χ2, cosmo)
-     return integrand_ξ_GNC_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
+     IP = Point(χ1, cosmo)
+     return integrand_ξ_GNCxLD_IntegratedGP_LocalGP(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
 """
-     ξ_GNC_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
+     ξ_GNCxLD_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the LocalGP-IntegratedGP cross-correlation function 
@@ -111,12 +110,12 @@ where ``\\mathcal{H} = a H``,
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_GNC_LocalGP_IntegratedGP`.
+the integrand function `integrand_ξ_GNCxLD_IntegratedGP_LocalGP`.
 
 
 ## Inputs
 
-- `s1` and `s2`: comovign distances where the function must be evaluated
+- `s2` and `s1`: comovign distances where the function must be evaluated
 
 - `y`: the cosine of the angle between the two points `P1` and `P2`
 
@@ -129,34 +128,34 @@ the integrand function `integrand_ξ_GNC_LocalGP_IntegratedGP`.
   with small numbers;
 
 - `N_χs::Integer = 100`: number of points to be used for sampling the integral
-  along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
+  along the ranges `(0, s2)` (for `χ1`) and `(0, s2)` (for `χ1`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_GNC_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_IntegratedGP`](@ref)
+See also: [`integrand_ξ_GNCxLD_IntegratedGP_LocalGP`](@ref), [`int_on_mu_LocalGP_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
-function ξ_GNC_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
+function ξ_GNCxLD_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
      #=
-     f(χ2) = en * integrand_ξ_GNC_LocalGP_IntegratedGP(χ2, s1, s2, y, cosmo)
+     f(χ1) = en * integrand_ξ_GNCxLD_IntegratedGP_LocalGP(χ1, s2, s1, y, cosmo)
 
-     return quadgk(f, 1e-6, s2; rtol=1e-3)[1] / en
+     return quadgk(f, 1e-6, s1; rtol=1e-3)[1] / en
      =#
 
      adim_χs = range(1e-6, 1, N_χs)
-     χ2s = adim_χs .* s2
+     χ1s = adim_χs .* s1
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-     IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
+     IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNCxLD_IntegratedGP_LocalGP(IP, P1, P2, y, cosmo)
           for IP in IPs
      ]
 
-     res = trapz(χ2s, int_ξs)
+     res = trapz(χ1s, int_ξs)
      #println("res = $res")
      return res / en
 end
@@ -164,15 +163,4 @@ end
 
 
 
-##########################################################################################92
-
-##########################################################################################92
-
-##########################################################################################92
-
-
-
-function ξ_GNC_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-    ξ_GNC_LocalGP_IntegratedGP(s2, s1, y, cosmo; kwargs...)
-end
 

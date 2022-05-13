@@ -20,7 +20,7 @@
 
 
 """
-     integrand_ξ_LD_Lensing_IntegratedGP(
+     integrand_ξ_GNCxLD_IntegratedGP_Lensing(
           IP1::Point, IP2::Point,
           P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
@@ -62,29 +62,30 @@ and the ``J`` coefficients are given by
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_LD_Lensing_IntegratedGP`](@ref), [`integrand_on_mu_Lensing_IntegratedGP`](@ref)
+See also: [`ξ_GNCxLD_IntegratedGP_Lensing`](@ref), [`integrand_on_mu_Lensing_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
-function integrand_ξ_LD_Lensing_IntegratedGP(
+function integrand_ξ_GNCxLD_IntegratedGP_Lensing(
      IP1::Point, IP2::Point,
      P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
-     s1 = P1.comdist
-     s2, ℛ_s2 = P2.comdist, P2.ℛ_LD
-     χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
-     χ2, D2, a2, f2, ℋ2 = IP2.comdist, IP2.D, IP2.a, IP2.f, IP2.ℋ
+     s1, ℛ_s1 = P1.comdist, P2.ℛ_LD
+     s2 = P2.comdist
+     χ1, D1, a1, f1, ℋ1 = IP1.comdist, IP1.D, IP1.a, IP1.f, IP1.ℋ
+     χ2, D2, a2 = IP2.comdist, IP2.D, IP2.a
+     s_b_s1 = cosmo.params.s_b
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
      Δχ = √(Δχ_square) > 1e-8 ? √(Δχ_square) : 1e-8
 
      prefactor = 9 / 2 * ℋ0^4 * Ω_M0^2
-     factor = D1 * D2 * χ2 * (s1 - χ1) / (s1 * a1 * a2)
-     parenth = ℋ2 * ℛ_s2 * (f2 - 1) - 1 / s2
+     factor = D1 * D2 * χ1 * (χ2 - s2) / (s1 * s2 * a1 * a2)
+     parenth = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2 
 
-     new_J31 = -2 * y * Δχ^2
-     new_J22 = χ1 * χ2 * (1 - y^2)
+     new_J31 = 2 * y * Δχ^2
+     new_J22 = χ1 * χ2 * (y^2 - 1)
 
      I13 = cosmo.tools.I13(Δχ)
      I22 = cosmo.tools.I22(Δχ)
@@ -95,7 +96,7 @@ function integrand_ξ_LD_Lensing_IntegratedGP(
 end
 
 
-function integrand_ξ_LD_Lensing_IntegratedGP(
+function integrand_ξ_GNCxLD_IntegratedGP_Lensing(
      χ1::Float64, χ2::Float64,
      s1::Float64, s2::Float64,
      y, cosmo::Cosmology;
@@ -103,7 +104,7 @@ function integrand_ξ_LD_Lensing_IntegratedGP(
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
-     return integrand_ξ_LD_Lensing_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+     return integrand_ξ_GNCxLD_IntegratedGP_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
 end
 
 #=
@@ -115,7 +116,7 @@ end
 
 
 """
-     ξ_LD_Lensing_IntegratedGP(s1, s2, y, cosmo::Cosmology;
+     ξ_GNCxLD_IntegratedGP_Lensing(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6,
           N_χs::Integer = 100) :: Float64
 
@@ -147,7 +148,7 @@ and the ``J`` coefficients are given by
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_LD_Lensing_IntegratedGP`.
+the integrand function `integrand_ξ_GNCxLD_IntegratedGP_Lensing`.
 
 
 
@@ -170,10 +171,10 @@ the integrand function `integrand_ξ_LD_Lensing_IntegratedGP`.
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_LD_Lensing_IntegratedGP`](@ref), [`integrand_on_mu_Lensing_IntegratedGP`](@ref)
+See also: [`integrand_ξ_GNCxLD_IntegratedGP_Lensing`](@ref), [`integrand_on_mu_Lensing_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
-function ξ_LD_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
+function ξ_GNCxLD_IntegratedGP_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
      adim_χs = range(1.1e-8, 1.0, length = N_χs)[begin:end]
@@ -186,7 +187,7 @@ function ξ_LD_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_LD_Lensing_IntegratedGP(IP1, IP2, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNCxLD_IntegratedGP_Lensing(IP1, IP2, P1, P2, y, cosmo)
           for IP1 in IP1s, IP2 in IP2s
      ]
 
@@ -196,22 +197,10 @@ function ξ_LD_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
 end
 
 
-function ξ_LD_Lensing_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
+function ξ_GNCxLD_IntegratedGP_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_LD_Lensing_IntegratedGP(P1, P2, y, cosmo; kwargs...)
+     return ξ_GNCxLD_IntegratedGP_Lensing(P1, P2, y, cosmo; kwargs...)
 end
 
 
-
-##########################################################################################92
-
-##########################################################################################92
-
-##########################################################################################92
-
-
-
-function ξ_LD_IntegratedGP_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_LD_Lensing_IntegratedGP(s2, s1, y, cosmo; kwargs...)
-end
 

@@ -19,7 +19,7 @@
 
 
 """
-     integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
+     integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1::Point, IP2::Point,
           P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
@@ -59,18 +59,18 @@ where ``\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\, \\chi_2 \\, y} 
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_GNC_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
+See also: [`ξ_GNCxLD_IntegratedGP_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
-function integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
+function integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1::Point, IP2::Point,
      P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
      s1, ℛ_s1 = P1.comdist, P1.ℛ_GNC
-     s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
+     s2, ℜ_s2 = P2.comdist, P2.ℛ_LD 
      χ1, D1, a1, ℋ1, f1 = IP1.comdist, IP1.D, IP1.a, IP1.ℋ, IP1.f
      χ2, D2, a2, ℋ2, f2 = IP2.comdist, IP2.D, IP2.a, IP2.ℋ, IP2.f
-     s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b
+     s_b_s1 = cosmo.params.s_b
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
@@ -78,7 +78,7 @@ function integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
 
      factor = 9 * Δχ^4 * ℋ0^4 * Ω_M0^2 * D1 * D2 / (s1 * s2 * a1 * a2)
      parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2
-     parenth_2 = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2
+     parenth_2 = s2 * ℋ2 * ℜ_s2 * (f2 - 1) - 1
 
      I04_tilde = cosmo.tools.I04_tilde(Δχ)
 
@@ -87,7 +87,7 @@ end
 
 
 
-function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
+function ξ_GNCxLD_IntegratedGP_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      en::Float64 = 1e10, N_χs::Integer = 100)
 
      #adim_χs = range(1e-12, 1, N_χs)
@@ -101,7 +101,7 @@ function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξ_igp = [
-          en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1, IP2, P1, P2, y, cosmo)
           for IP1 in IP1s, IP2 in IP2s
      ]
 
@@ -120,7 +120,7 @@ function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
      matrix_IP2s = [[GaPSE.Point(x, cosmo) for x in y] for y in matrix_χ2s]
      matrix_int_ξs = [
-          [en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo) 
+          [en * GaPSE.integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1, IP2, P1, P2, y, cosmo) 
           for IP2 in matrix_IP2s[i]]
           for (i,IP1) in enumerate(IP1s)]
      
@@ -131,20 +131,20 @@ function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
 end
 
 
-function ξ_GNC_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
+function ξ_GNCxLD_IntegratedGP_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_GNC_IntegratedGP(P1, P2, y, cosmo; kwargs...)
+     return ξ_GNCxLD_IntegratedGP_IntegratedGP(P1, P2, y, cosmo; kwargs...)
 end
 
 
 
 """
-     ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
+     ξ_GNCxLD_IntegratedGP_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
           en::Float64 = 1e10,
           N_χs::Integer = 100) :: Float64
 
-     ξ_GNC_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...) = 
-          ξ_GNC_IntegratedGP(Point(s1, cosmo), Point(s2, cosmo), y, cosmo; kwargs...)
+     ξ_GNCxLD_IntegratedGP_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...) = 
+          ξ_GNCxLD_IntegratedGP_IntegratedGP(Point(s1, cosmo), Point(s2, cosmo), y, cosmo; kwargs...)
 
 Return the integrated gravitational potential auto-correlation function 
 ``\\xi^{\\int\\phi\\int\\phi}(s_1, s_2, \\cos{\\theta})`` concerning the perturbed
@@ -195,7 +195,7 @@ the integrand function `integrand_ξ_GNC_Lensing`.
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
-See also: [`integrand_ξ_GNC_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
+See also: [`integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
-ξ_GNC_IntegratedGP
+ξ_GNCxLD_IntegratedGP_IntegratedGP
