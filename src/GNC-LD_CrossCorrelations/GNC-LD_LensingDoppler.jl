@@ -19,7 +19,7 @@
 
 
 @doc raw"""
-     integrand_ξ_LD_Lensing_Doppler(
+     integrand_ξ_GNCxLD_Lensing_Doppler(
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
@@ -68,24 +68,25 @@ and the ``J`` coefficients are given by
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_LD_Lensing_Doppler`](@ref), [`int_on_mu_Lensing_Doppler`](@ref)
+See also: [`ξ_GNCxLD_Lensing_Doppler`](@ref), [`int_on_mu_Lensing_Doppler`](@ref)
 [`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
-function integrand_ξ_LD_Lensing_Doppler(
+function integrand_ξ_GNCxLD_Lensing_Doppler(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
      s1 = P1.comdist
-     s2, D_s2, f_s2, ℋ_s2, ℛ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
+     s2, D_s2, f_s2, ℋ_s2, ℜ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
      χ1, D1, a1 = IP.comdist, IP.D, IP.a
+     s_b_s1 = cosmo.params.s_b
      Ω_M0 = cosmo.params.Ω_M0
 
 
      Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
      Δχ1 = Δχ1_square > 0.0 ? √(Δχ1_square) : 0.0
 
-     common = ℋ0^2 * Ω_M0 * D1 * (χ1 - s1) / (s1 * a1)
-     factor = D_s2 * f_s2 * ℋ_s2 * ℛ_s2
+     common = ℋ0^2 * Ω_M0 * D1 * (χ1 - s1) / (s1 * a1) * (5 * s_b_s1 - 2)
+     factor = D_s2 * f_s2 * ℋ_s2 * ℜ_s2
 
      new_J00 = 1.0 / 15.0 * (χ1^2 * y + χ1 * (4 * y^2 - 3) * s2 - 2 * y * s2^2)
      new_J02 = 1.0 / (42 * Δχ1^2) * (
@@ -125,18 +126,18 @@ function integrand_ξ_LD_Lensing_Doppler(
 end
 
 
-function integrand_ξ_LD_Lensing_Doppler(
+function integrand_ξ_GNCxLD_Lensing_Doppler(
      χ1::Float64, s1::Float64, s2::Float64,
      y, cosmo::Cosmology)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ1, cosmo)
-     return integrand_ξ_LD_Lensing_Doppler(IP, P1, P2, y, cosmo)
+     return integrand_ξ_GNCxLD_Lensing_Doppler(IP, P1, P2, y, cosmo)
 end
 
 
 """
-     ξ_LD_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
+     ξ_GNCxLD_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the Lensing-Doppler cross-correlation function 
@@ -209,10 +210,10 @@ the integrand function `integrand_ξ_LD_LD_Lensing_Doppler`.
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_LD_Lensing_Doppler`](@ref), [`int_on_mu_Lensing_Doppler`](@ref)
+See also: [`integrand_ξ_GNCxLD_Lensing_Doppler`](@ref), [`int_on_mu_Lensing_Doppler`](@ref)
 [`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
-function ξ_LD_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
+function ξ_GNCxLD_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
      en::Float64=1e6, N_χs::Integer=100)
 
      adim_χs = range(1e-6, 1.0, N_χs)
@@ -222,7 +223,7 @@ function ξ_LD_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
      IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_LD_Lensing_Doppler(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNCxLD_Lensing_Doppler(IP, P1, P2, y, cosmo)
           for IP in IPs
      ]
 
@@ -244,6 +245,6 @@ end
 
 
 function ξ_LD_Doppler_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_LD_Lensing_Doppler(s2, s1, y, cosmo; kwargs...)
+     ξ_GNCxLD_Lensing_Doppler(s2, s1, y, cosmo; kwargs...)
 end
 

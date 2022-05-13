@@ -19,7 +19,7 @@
 
 
 """
-     integrand_ξ_GNC_Lensing_LocalGP(
+     integrand_ξ_GNCxLD_Lensing_LocalGP(
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
@@ -61,55 +61,56 @@ and the ``J`` coefficients are given by
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_GNC_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_LocalGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
+See also: [`ξ_GNCxLD_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_LocalGP`](@ref)
+[`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
-function integrand_ξ_GNC_Lensing_LocalGP(
+function integrand_ξ_GNCxLD_Lensing_LocalGP(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
      s1 = P1.comdist
-     s2, D_s2, f_s2, a_s2, ℋ_s2, ℛ_s2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ, P2.ℛ_GNC
+     s2, D_s2, a_s2, ℜ_s2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
      χ1, D1, a1 = IP.comdist, IP.D, IP.a
-     s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b
-     𝑓_evo_s2 = cosmo.params.𝑓_evo
+     s_b_s1 = cosmo.params.s_b
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
-     Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0
+     Δχ1 = Δχ1_square > 0.0 ? √(Δχ1_square) : 0.0
 
-     common = D_s2 * ℋ0^2 * Ω_M0 * s2 * D1 * (χ1 - s1) *  (5 * s_b_s1 - 2) * (
-                   2 * f_s2 * a_s2 * ℋ_s2^2 * (𝑓_evo_s2 - 3)
-                   + 3 * ℋ0^2 * Ω_M0 * (f_s2 + ℛ_s2 + 5 * s_b_s2 - 2)
-              ) / (a1 * a_s2 * s1)
-     factor = 2 * y * χ1^2 - χ1 * s2 * (y^2 + 3) + 2 * y * s2^2
+     common = 9 * ℋ0^4 * Ω_M0^2 * D_s2 * (1 + ℜ_s2) * s2 * (5 * s_b_s1 - 2) / (4 * a_s2 * s1)
+     factor = D1 * (s1 - χ1) / a1
 
-     J20 = 1/2 * y * Δχ1^2
+     new_J31 = -2 * y * Δχ1^2
+     new_J22 = χ1 * s2 * (1 - y^2)
 
-     I00 = cosmo.tools.I00(Δχ1)
-     I20 = cosmo.tools.I20(Δχ1)
-     I40 = cosmo.tools.I40(Δχ1)
-     I02 = cosmo.tools.I02(Δχ1)
+     I13 = cosmo.tools.I13(Δχ1)
+     I22 = cosmo.tools.I22(Δχ1)
 
-     return common * (
-                factor * (1 / 60 * I00 + 1 / 42 * I20 + 1 / 140 * I40)
-                + J20 * I02
-           )
+     #println("J00 = $new_J00, \\t I00(Δχ1) = $(I00)")
+     #println("J02 = $new_J02, \\t I20(Δχ1) = $(I20)")
+     #println("J31 = $new_J31, \\t I13(Δχ1) = $(I13)")
+     #println("J22 = $new_J22, \\t I22(Δχ1) = $(I22)")
+
+     parenth = (new_J31 * I13 + new_J22 * I22)
+
+     first = common * factor * parenth
+
+     return first
 end
 
 
-function integrand_ξ_GNC_Lensing_LocalGP(
+function integrand_ξ_GNCxLD_Lensing_LocalGP(
      χ1::Float64, s1::Float64, s2::Float64,
      y, cosmo::Cosmology)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ1, cosmo)
-     return integrand_ξ_GNC_Lensing_LocalGP(IP, P1, P2, y, cosmo)
+     return integrand_ξ_GNCxLD_Lensing_LocalGP(IP, P1, P2, y, cosmo)
 end
 
 
 """
-     ξ_GNC_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
+     ξ_GNCxLD_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the Lensing-LocalGP cross-correlation function 
@@ -139,7 +140,7 @@ and the ``J`` coefficients are given by
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_GNC_Lensing_LocalGP`.
+the integrand function `integrand_ξ_GNCxLD_Lensing_LocalGP`.
 
 
 ## Inputs
@@ -161,20 +162,20 @@ the integrand function `integrand_ξ_GNC_Lensing_LocalGP`.
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_GNC_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_LocalGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
+See also: [`integrand_ξ_GNCxLD_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_LocalGP`](@ref)
+[`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
-function ξ_GNC_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
+function ξ_GNCxLD_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
-     adim_χs = range(1e-6, 1, N_χs)
+     adim_χs = range(1e-6, 1.0, N_χs)
      χ1s = adim_χs .* s1
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
      IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_Lensing_LocalGP(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNCxLD_Lensing_LocalGP(IP, P1, P2, y, cosmo)
           for IP in IPs
      ]
 
@@ -183,18 +184,4 @@ function ξ_GNC_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
      return res / en
 end
 
-
-
-
-##########################################################################################92
-
-##########################################################################################92
-
-##########################################################################################92
-
-
-
-function ξ_GNC_LocalGP_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_GNC_Lensing_LocalGP(s2, s1, y, cosmo; kwargs...)
-end
 
