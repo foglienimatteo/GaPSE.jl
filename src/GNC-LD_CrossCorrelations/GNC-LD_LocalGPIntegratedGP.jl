@@ -19,7 +19,7 @@
 
 
 """
-     integrand_ξ_GNC_LocalGP_IntegratedGP(
+     integrand_ξ_GNCxLD_LocalGP_IntegratedGP(
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
@@ -52,24 +52,24 @@ where ``\\mathcal{H} = a H``,
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_GNC_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_IntegratedGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
+See also: [`ξ_GNCxLD_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_IntegratedGP`](@ref)
+[`integral_on_mu`](@ref), [`ξ_GNCxLD_multipole`](@ref)
 """
-function integrand_ξ_GNC_LocalGP_IntegratedGP(
+function integrand_ξ_GNCxLD_LocalGP_IntegratedGP(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
      s1, D_s1, f_s1, a_s1, ℋ_s1, ℛ_s1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ, P1.ℛ_GNC
-     s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
+     s2, ℜ_s2 = P2.comdist, P2.ℛ_LD
      χ2, D2, a2, f2, ℋ2 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
-     s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b
+     s_b_s1  = cosmo.params.s_b
      𝑓_evo_s1 = cosmo.params.𝑓_evo
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
      Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
 
-     factor = 3 / 2 * D_s1 * Δχ2^4 * ℋ0^2 * Ω_M0 * D2 * (s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2) / (s2 * a2 * a_s1)
+     factor = 3 / 2 * D_s1 * Δχ2^4 * ℋ0^2 * Ω_M0 * D2 * (s2 * ℋ2 * ℜ_s2 * (f2 - 1) - 1) / (s2 * a2 * a_s1)
      parenth = 2 * f_s1 * ℋ_s1^2 * a_s1 * (𝑓_evo_s1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f_s1 + ℛ_s1 + 5 * s_b_s1 - 2)
      
      I04_tilde = cosmo.tools.I04_tilde(Δχ2)
@@ -78,19 +78,19 @@ function integrand_ξ_GNC_LocalGP_IntegratedGP(
 end
 
 
-function integrand_ξ_GNC_LocalGP_IntegratedGP(
+function integrand_ξ_GNCxLD_LocalGP_IntegratedGP(
      χ2::Float64, s1::Float64, s2::Float64,
      y, cosmo::Cosmology;
      kwargs...)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ2, cosmo)
-     return integrand_ξ_GNC_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
+     return integrand_ξ_GNCxLD_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
 """
-     ξ_GNC_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
+     ξ_GNCxLD_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the LocalGP-IntegratedGP cross-correlation function 
@@ -111,7 +111,7 @@ where ``\\mathcal{H} = a H``,
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_GNC_LocalGP_IntegratedGP`.
+the integrand function `integrand_ξ_GNCxLD_LocalGP_IntegratedGP`.
 
 
 ## Inputs
@@ -133,14 +133,14 @@ the integrand function `integrand_ξ_GNC_LocalGP_IntegratedGP`.
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_GNC_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_IntegratedGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
+See also: [`integrand_ξ_GNCxLD_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_IntegratedGP`](@ref)
+[`integral_on_mu`](@ref), [`ξ_GNCxLD_multipole`](@ref)
 """
-function ξ_GNC_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
+function ξ_GNCxLD_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
      #=
-     f(χ2) = en * integrand_ξ_GNC_LocalGP_IntegratedGP(χ2, s1, s2, y, cosmo)
+     f(χ2) = en * integrand_ξ_GNCxLD_LocalGP_IntegratedGP(χ2, s1, s2, y, cosmo)
 
      return quadgk(f, 1e-6, s2; rtol=1e-3)[1] / en
      =#
@@ -152,7 +152,7 @@ function ξ_GNC_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
      IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNCxLD_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo)
           for IP in IPs
      ]
 
@@ -161,18 +161,4 @@ function ξ_GNC_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
      return res / en
 end
 
-
-
-
-##########################################################################################92
-
-##########################################################################################92
-
-##########################################################################################92
-
-
-
-function ξ_GNC_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-    ξ_GNC_LocalGP_IntegratedGP(s2, s1, y, cosmo; kwargs...)
-end
 
