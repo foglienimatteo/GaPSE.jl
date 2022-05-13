@@ -74,15 +74,15 @@ function integrand_ξ_GNC_Lensing_IntegratedGP(
      s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
      χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
      χ2, D2, a2, f2, ℋ2 = IP2.comdist, IP2.D, IP2.a, IP2.f, IP2.ℋ
-     s_b_s1 = cosmo.params.s_b
+     s_b_s2 = cosmo.params.s_b
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
      Δχ = √(Δχ_square) > 0 ? √(Δχ_square) : 0
 
      denomin = a1 * a2 * s1 * s2
-     common = 9 * χ2 * ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (5 * s_b_s1 - 2)
-     parenth = ℋ2 * ℛ_s2 * s1 * (f2 - 1) - 5 * s_b_s1 + 2
+     common = 9 * χ2 * ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (5 * s_b_s2 - 2)
+     parenth = ℋ2 * ℛ_s2 * s2 * (f2 - 1) - 5 * s_b_s2 + 2
 
      new_J31 = y * Δχ^2
      new_J22 = χ1 * χ2 * (y^2 - 1) / 2

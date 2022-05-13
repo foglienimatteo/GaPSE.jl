@@ -20,7 +20,7 @@
 
 function ξ_GNC_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      s1, D1, f1, a1, ℛ1, ℋ1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℛ_GNC, P1.ℋ
-     s2, D2, f2, a2, ℛ2, ℋ2 = P2.comdist, P2.D, P1.f, P2.a, P2.ℛ_GNC, P2.ℋ
+     s2, D2, f2, a2, ℛ2, ℋ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℛ_GNC, P2.ℋ
      s_b1, s_b2 = cosmo.params.s_b, cosmo.params.s_b
      𝑓_evo1, 𝑓_evo2 = cosmo.params.𝑓_evo, cosmo.params.𝑓_evo
      Ω_M0 = cosmo.params.Ω_M0
