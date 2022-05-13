@@ -51,15 +51,13 @@ See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
 function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      s1, D1, f1 = P1.comdist, P1.D, P1.f
-     s2, D2, f2, a2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ, P2.ℛ_GNC
+     s2, D2, a2, ℜ2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
      b1 = cosmo.params.b
-     s_b2 = cosmo.params.s_b
-     𝑓_evo2 = cosmo.params.𝑓_evo
      Ω_M0 = cosmo.params.Ω_M0
 
      Δs = s(s1, s2, y)
 
-     common = 2 * f2 * a2 * ℋ2^2 * (𝑓_evo2 - 3) + 3 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5 * s_b2 - 2)
+     common = ℋ0^2 * Ω_M0 * (1 + ℜ2) / (2 * a2)
      factor = f1 * ((3 * y^2 - 1) * s2^2 - 4 * y * s1 * s2 + 2 * s1^2)
 
      J20 = - 1 / 6 * (3 * b1 + f1) * (- 2 * y * s1 * s2 + s1^2 + s2^2)
@@ -69,7 +67,7 @@ function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      I40 = cosmo.tools.I40(Δs)
      I02 = cosmo.tools.I02(Δs)
 
-     return D1 * D2 / a2 * common * (
+     return D1 * D2 * common * (
           factor * (1 / 90 * I00 + 1 / 63 * I20 + 1 / 210 * I40) 
           + J20 * I02
           )
@@ -82,17 +80,4 @@ function ξ_GNC_Newtonian_LocalGP(s1, s2, y, cosmo::Cosmology)
 end
 
 
-
-
-##########################################################################################92
-
-##########################################################################################92
-
-##########################################################################################92
-
-
-
-function ξ_GNC_LocalGP_Newtonian(s1, s2, y, cosmo::Cosmology)
-     ξ_GNC_Newtonian_LocalGP(s2, s1, y, cosmo)
-end
 

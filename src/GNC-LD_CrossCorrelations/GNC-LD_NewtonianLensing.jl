@@ -19,7 +19,7 @@
 
 
 @doc raw"""
-     integrand_ξ_GNC_Newtonian_Lensing(
+     integrand_ξ_GNCxLD_Newtonian_Lensing(
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
@@ -58,24 +58,23 @@ J_{31} =
 - `cosmo::Cosmology`: cosmology to be used in this computation
 
 
-See also: [`ξ_GNC_Newtonian_Lensing`](@ref), [`int_on_mu_Newtonian_Lensing`](@ref)
+See also: [`ξ_GNCxLD_Newtonian_Lensing`](@ref), [`int_on_mu_Newtonian_Lensing`](@ref)
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
-function integrand_ξ_GNC_Newtonian_Lensing(
+function integrand_ξ_GNCxLD_Newtonian_Lensing(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
      s1, D_s1, f_s1 = P1.comdist, P1.D, P1.f
      s2 = P2.comdist
      χ2, D2, a2 = IP.comdist, IP.D, IP.a
-     s_b_s2 = cosmo.params.s_b
      b_s1 = cosmo.params.b
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
      Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
 
-     common = D_s1 * ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) * (5 * s_b_s2 - 2) / (a2 * s2)
+     common = D_s1 * ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) / (a2 * s2)
 
      new_J00 = 1 / 5 * (f_s1 * χ2 * (3 * y^2 - 1) - 3 * y * s1 * f_s1 - 5 * y * s1 * b_s1)
      new_J02 = 1 / (14 * Δχ2^2) * (
@@ -104,19 +103,19 @@ function integrand_ξ_GNC_Newtonian_Lensing(
 end
 
 
-function integrand_ξ_GNC_Newtonian_Lensing(
+function integrand_ξ_GNCxLD_Newtonian_Lensing(
      χ2::Float64, s1::Float64, s2::Float64,
      y, cosmo::Cosmology;
      kwargs...)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ2, cosmo)
-     return integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; kwargs...)
+     return integrand_ξ_GNCxLD_Newtonian_Lensing(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
 @doc raw"""
-     ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
+     ξ_GNCxLD_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Integer = 100):: Float64
 
 Return the Doppler-LocalGP cross-correlation function 
@@ -144,7 +143,7 @@ J_{31} =
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_GNC_Newtonian_Lensing`.
+the integrand function `integrand_ξ_GNCxLD_Newtonian_Lensing`.
 
 
 ## Inputs
@@ -166,14 +165,14 @@ the integrand function `integrand_ξ_GNC_Newtonian_Lensing`.
   with `N_χs ≥ 50` the result is stable.
 
 
-See also: [`integrand_ξ_GNC_Newtonian_Lensing`](@ref), [`int_on_mu_Newtonian_Lensing`](@ref)
+See also: [`integrand_ξ_GNCxLD_Newtonian_Lensing`](@ref), [`int_on_mu_Newtonian_Lensing`](@ref)
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
-function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
+function ξ_GNCxLD_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
      #=
-     f(χ2) = en * integrand_ξ_GNC_Newtonian_Lensing(χ2, s1, s2, y, cosmo)
+     f(χ2) = en * integrand_ξ_GNCxLD_Newtonian_Lensing(χ2, s1, s2, y, cosmo)
 
      return quadgk(f, 1e-6, s2; rtol=1e-3)[1] / en
      =#
@@ -185,7 +184,7 @@ function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
      IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNCxLD_Newtonian_Lensing(IP, P1, P2, y, cosmo)
           for IP in IPs
      ]
 
@@ -195,17 +194,4 @@ function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
 end
 
 
-
-
-##########################################################################################92
-
-##########################################################################################92
-
-##########################################################################################92
-
-
-
-function ξ_GNC_Lensing_Newtonian(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_GNC_Newtonian_Lensing(s2, s1, y, cosmo; kwargs...)
-end
 
