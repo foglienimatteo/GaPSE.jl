@@ -97,6 +97,34 @@ include("GNC_CrossCorrelations/GNC_LocalGPIntegratedGP.jl")
 include("PPDoppler.jl")
 
 
+##################### GALAXY NUMBER COUNTS x LUMINOSITY DISTANCE #############################
+
+
+include("GNCxLD_CrossCorrelations/GNCxLD_NewtonianDoppler.jl")
+include("GNCxLD_CrossCorrelations/GNCxLD_NewtonianLensing.jl")
+include("GNCxLD_CrossCorrelations/GNCxLD_NewtonianLocalGP.jl")
+include("GNCxLD_CrossCorrelations/GNCxLD_NewtonianIntegratedGP.jl")
+
+include("GNCxLD_CrossCorrelations/GNCxLD_DopplerDoppler.jl")
+include("GNCxLD_CrossCorrelations/GNCxLD_DopplerLensing.jl")
+include("GNCxLD_CrossCorrelations/GNCxLD_DopplerLocalGP.jl")
+include("GNCxLD_CrossCorrelations/GNCxLD_DopplerIntegratedGP.jl")
+
+include("GNCxLD_CrossCorrelations/GNCxLD_LensingDoppler.jl")
+include("GNCxLD_CrossCorrelations/GNCxLD_LensingLensing.jl")
+include("GNCxLD_CrossCorrelations/GNCxLD_LensingLocalGP.jl")
+include("GNCxLD_CrossCorrelations/GNCxLD_LensingIntegratedGP.jl")
+
+include("GNCxLD_CrossCorrelations/GNCxLD_LocalGPDoppler.jl")
+include("GNCxLD_CrossCorrelations/GNCxLD_LocalGPLensing.jl")
+include("GNCxLD_CrossCorrelations/GNCxLD_LocalGPLocalGP.jl")
+include("GNCxLD_CrossCorrelations/GNCxLD_LocalGPIntegratedGP.jl")
+
+include("GNCxLD_CrossCorrelations/GNCxLD_IntegratedGPDoppler.jl")
+include("GNCxLD_CrossCorrelations/GNCxLD_IntegratedGPLensing.jl")
+include("GNCxLD_CrossCorrelations/GNCxLD_IntegratedGPLocalGP.jl")
+include("GNCxLD_CrossCorrelations/GNCxLD_IntegratedGPIntegratedGP.jl")
+
 
 ##########################################################################################92
 
@@ -108,6 +136,8 @@ include("LD_XiMultipoles.jl")
 include("LD_SumXiMultipoles.jl")
 include("GNC_XiMultipoles.jl")
 include("GNC_SumXiMultipoles.jl")
+include("GNCxLD_XiMultipoles.jl")
+include("GNCxLD_SumXiMultipoles.jl")
 include("PowerSpectrum.jl")
 
 

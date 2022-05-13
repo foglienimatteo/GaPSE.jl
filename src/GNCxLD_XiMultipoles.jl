@@ -18,7 +18,7 @@
 #
 
 
-function integrand_ξ_GNC_multipole(s1, s, μ, effect::Function, cosmo::Cosmology;
+function integrand_ξ_GNCxLD_multipole(s1, s, μ, effect::Function, cosmo::Cosmology;
      L::Integer=0, use_windows::Bool=true, kwargs...)
 
      s2_value = s2(s1, s, μ)
@@ -45,24 +45,24 @@ function integrand_ξ_GNC_multipole(s1, s, μ, effect::Function, cosmo::Cosmolog
 end
 
 
-function integrand_ξ_GNC_multipole(s1, s, μ, effect::String, cosmo::Cosmology; kwargs...)
+function integrand_ξ_GNCxLD_multipole(s1, s, μ, effect::String, cosmo::Cosmology; kwargs...)
      error = "$effect is not a valid GR effect name.\n" *
              "Valid GR effect names are the following:\n" *
-             string(GaPSE.GR_EFFECTS_GNC .* " , "...)
-     @assert (effect ∈ GaPSE.GR_EFFECTS_GNC) error
+             string(GaPSE.GR_EFFECTS_GNCxLD .* " , "...)
+     @assert (effect ∈ GaPSE.GR_EFFECTS_GNCxLD) error
 
-     return integrand_ξ_GNC_multipole(s1, s, μ, DICT_GR_ξs_GNC[effect], cosmo; kwargs...)
+     return integrand_ξ_GNCxLD_multipole(s1, s, μ, DICT_GR_ξs_GNCxLD[effect], cosmo; kwargs...)
 end
 
 
 
 """
-     integrand_ξ_GNC_multipole(s1, s, μ, effect::Function, cosmo::Cosmology;
+     integrand_ξ_GNCxLD_multipole(s1, s, μ, effect::Function, cosmo::Cosmology;
           L::Integer = 0, 
           use_windows::Bool = true, 
           kwargs...) ::Float64
 
-     integrand_ξ_GNC_multipole(s1, s, μ, effect::String, cosmo::Cosmology; 
+     integrand_ξ_GNCxLD_multipole(s1, s, μ, effect::String, cosmo::Cosmology; 
           L::Integer = 0, 
           use_windows::Bool = true, 
           kwargs...) ::Float64
@@ -83,11 +83,11 @@ In the former method you have to pass as an input the `effect` function you want
 to integrate, while in the (recommended) latter one it's necessary to specify the
 name of the CF term among the following: 
 
-`$(string(GaPSE.GR_EFFECTS_GNC .* " , "...))`
+`$(string(GaPSE.GR_EFFECTS_GNCxLD .* " , "...))`
 
 to which correspond the following functions:
 
-`$(string(string.(GaPSE.VEC_ξs_GNC) .* " , "...))`
+`$(string(string.(GaPSE.VEC_ξs_GNCxLD) .* " , "...))`
 
 The window functions ``F(x, \\mu)`` and ``\\phi(s)`` are calculated for the given
 Cosmology `cosmo` through the functions `spline_F` and `ϕ` respectivelly.
@@ -102,22 +102,22 @@ are removed, i.e is returned the following function ``f^{'}(s_1, s, \\mu)``:
 
 The function ``\\xi(s_1, s_2, \\cos{\\theta})`` is calculated
 from, depending on the value of `effect`:
-- `effect == auto_doppler` => [`ξ_GNC_Doppler`](@ref)
-- `effect == auto_lensing` => [`ξ_GNC_Lensing`](@ref)
-- `effect == auto_localgp` => [`ξ_GNC_LocalGP`](@ref)
-- `effect == auto_integratedgp` => [`ξ_GNC_IntegratedGP`](@ref)
-- `effect == doppler_lensing` => [`ξ_GNC_Doppler_lensing`](@ref)
-- `effect == lensing_doppler` => [`ξ_GNC_Lensing_Doppler`](@ref)
-- `effect == doppler_localgp` => [`ξ_GNC_Doppler_LocalGP`](@ref)
-- `effect == localgp_doppler` => [`ξ_GNC_LocalGP_Doppler`](@ref)
-- `effect == doppler_integratedgp` => [`ξ_GNC_Doppler_IntegratedGP`](@ref)
-- `effect == integratedgp_doppler` => [`ξ_GNC_IntegratedGP_Doppler`](@ref)
-- `effect == lensing_localgp` => [`ξ_GNC_Lensing_LocalGP`](@ref)
-- `effect == localgp_lensing` => [`ξ_GNC_LocalGP_Lensing`](@ref)
-- `effect == lensing_integratedgp` => [`ξ_GNC_Lensing_IntegratedGP`](@ref)
-- `effect == integratedgp_lensing` => [`ξ_GNC_IntegratedGP_Lensing`](@ref)
-- `effect == localgp_integratedgp` => [`ξ_GNC_LocalGP_IntegratedGP`](@ref)
-- `effect == integratedgp_localgp` => [`ξ_GNC_IntegratedGP_LocalGP`](@ref)
+- `effect == auto_doppler` => [`ξ_GNCxLD_Doppler`](@ref)
+- `effect == auto_lensing` => [`ξ_GNCxLD_Lensing`](@ref)
+- `effect == auto_localgp` => [`ξ_GNCxLD_LocalGP`](@ref)
+- `effect == auto_integratedgp` => [`ξ_GNCxLD_IntegratedGP`](@ref)
+- `effect == doppler_lensing` => [`ξ_GNCxLD_Doppler_lensing`](@ref)
+- `effect == lensing_doppler` => [`ξ_GNCxLD_Lensing_Doppler`](@ref)
+- `effect == doppler_localgp` => [`ξ_GNCxLD_Doppler_LocalGP`](@ref)
+- `effect == localgp_doppler` => [`ξ_GNCxLD_LocalGP_Doppler`](@ref)
+- `effect == doppler_integratedgp` => [`ξ_GNCxLD_Doppler_IntegratedGP`](@ref)
+- `effect == integratedgp_doppler` => [`ξ_GNCxLD_IntegratedGP_Doppler`](@ref)
+- `effect == lensing_localgp` => [`ξ_GNCxLD_Lensing_LocalGP`](@ref)
+- `effect == localgp_lensing` => [`ξ_GNCxLD_LocalGP_Lensing`](@ref)
+- `effect == lensing_integratedgp` => [`ξ_GNCxLD_Lensing_IntegratedGP`](@ref)
+- `effect == integratedgp_lensing` => [`ξ_GNCxLD_IntegratedGP_Lensing`](@ref)
+- `effect == localgp_integratedgp` => [`ξ_GNCxLD_LocalGP_IntegratedGP`](@ref)
+- `effect == integratedgp_localgp` => [`ξ_GNCxLD_IntegratedGP_LocalGP`](@ref)
 
 Note that these is an internal conversion of coordiate sistems
 from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
@@ -141,22 +141,22 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
    window function ``\\phi`` and ``F``
 
 - `kwargs...` : other keyword arguments that will be passed to the selected 
-  GR TPCF effect (`ξ_GNC_Doppler`, `ξ_GNC_Lensing`, ...)
+  GR TPCF effect (`ξ_GNCxLD_Doppler`, `ξ_GNCxLD_Lensing`, ...)
 
 
-See also: [`ξ_GNC_multipole`](@ref), [`map_ξ_GNC_multipole`](@ref),
-[`print_map_ξ_GNC_multipole`](@ref),
+See also: [`ξ_GNCxLD_multipole`](@ref), [`map_ξ_GNCxLD_multipole`](@ref),
+[`print_map_ξ_GNCxLD_multipole`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
-[`y`](@ref), [`s2`](@ref), [`GR_EFFECTS_GNC`](@ref)
+[`y`](@ref), [`s2`](@ref), [`GR_EFFECTS_GNCxLD`](@ref)
 """
-integrand_ξ_GNC_multipole
+integrand_ξ_GNCxLD_multipole
 
 
 ##########################################################################################92
 
 
 
-function ξ_GNC_multipole(
+function ξ_GNCxLD_multipole(
      s1, s, effect::Function, cosmo::Cosmology;
      L::Integer=0,
      use_windows::Bool=true,
@@ -169,10 +169,10 @@ function ξ_GNC_multipole(
 
      error = "$(string(effect)) is not a valid GR effect function.\n" *
              "Valid GR effect functions are the following:\n" *
-             string(string.(VEC_ξs_GNC) .* " , "...)
-     @assert (effect ∈ VEC_ξs_GNC) error
+             string(string.(VEC_ξs_GNCxLD) .* " , "...)
+     @assert (effect ∈ VEC_ξs_GNCxLD) error
 
-     orig_f(μ) = enhancer * integrand_ξ_GNC_multipole(s1, s, μ, effect, cosmo;
+     orig_f(μ) = enhancer * integrand_ξ_GNCxLD_multipole(s1, s, μ, effect, cosmo;
           L=L, use_windows=use_windows, kwargs...)
 
      μs = union(range(-1.0, -0.95, length=N_μs),
@@ -197,19 +197,19 @@ end
 
 
 
-function ξ_GNC_multipole(s1, s, effect::String, cosmo::Cosmology; kwargs...)
+function ξ_GNCxLD_multipole(s1, s, effect::String, cosmo::Cosmology; kwargs...)
      error = "$effect is not a valid GR effect name.\n" *
              "Valid GR effect names are the following:\n" *
-             string(GaPSE.GR_EFFECTS_GNC .* " , "...)
+             string(GaPSE.GR_EFFECTS_GNCxLD .* " , "...)
 
-     @assert (effect ∈ GaPSE.GR_EFFECTS_GNC) error
-     ξ_GNC_multipole(s1, s, DICT_GR_ξs_GNC[effect], cosmo; kwargs...)
+     @assert (effect ∈ GaPSE.GR_EFFECTS_GNCxLD) error
+     ξ_GNCxLD_multipole(s1, s, DICT_GR_ξs_GNCxLD[effect], cosmo; kwargs...)
 end
 
 
 
 """
-     ξ_GNC_multipole(s1, s, effect::Function, cosmo::Cosmology; 
+     ξ_GNCxLD_multipole(s1, s, effect::Function, cosmo::Cosmology; 
           L::Integer = 0, 
           enhancer::Float64 = 1e6,
           use_windows::Bool = true,
@@ -217,7 +217,7 @@ end
           μ_rtol::Float64 = 1e-1, 
           kwargs...) ::Float64
 
-     ξ_GNC_multipole(s1, s, effect::String, cosmo::Cosmology; 
+     ξ_GNCxLD_multipole(s1, s, effect::String, cosmo::Cosmology; 
           L::Integer = 0, 
           enhancer::Float64 = 1e6,
           use_windows::Bool = true,
@@ -226,17 +226,17 @@ end
           kwargs...) ::Float64
 
 Evaluate the multipole of order `L` of the chosen correlation function term, 
-through the `integrand_ξ_GNC_multipole` function.
+through the `integrand_ξ_GNCxLD_multipole` function.
 
 In the former method you have to pass as an input the `effect` function you want 
 to integrate, while in the (recommended) latter one it's necessary to specify the
 name of the CF term among the following:
 
-`$(string(GaPSE.GR_EFFECTS_GNC .* " , "...))`
+`$(string(GaPSE.GR_EFFECTS_GNCxLD .* " , "...))`
 
 to which correspond the following functions:
 
-`$(string(string.(GaPSE.VEC_ξs_GNC) .* " , "...))`
+`$(string(string.(GaPSE.VEC_ξs_GNCxLD) .* " , "...))`
 
 The function evaluated is then the following:
 
@@ -257,22 +257,22 @@ Cosmology `cosmo` through the functions `spline_F` and `ϕ` respectivelly.
 
 The function ``\\xi(s_1, s_2, \\cos{\\theta})`` is calculated
 from, depending on the value of `effect`:
-- `effect == auto_doppler` => [`ξ_GNC_Doppler`](@ref)
-- `effect == auto_lensing` => [`ξ_GNC_Lensing`](@ref)
-- `effect == auto_localgp` => [`ξ_GNC_LocalGP`](@ref)
-- `effect == auto_integratedgp` => [`ξ_GNC_IntegratedGP`](@ref)
-- `effect == doppler_lensing` => [`ξ_GNC_Doppler_lensing`](@ref)
-- `effect == lensing_doppler` => [`ξ_GNC_Lensing_Doppler`](@ref)
-- `effect == doppler_localgp` => [`ξ_GNC_Doppler_LocalGP`](@ref)
-- `effect == localgp_doppler` => [`ξ_GNC_LocalGP_Doppler`](@ref)
-- `effect == doppler_integratedgp` => [`ξ_GNC_Doppler_IntegratedGP`](@ref)
-- `effect == integratedgp_doppler` => [`ξ_GNC_IntegratedGP_Doppler`](@ref)
-- `effect == lensing_localgp` => [`ξ_GNC_Lensing_LocalGP`](@ref)
-- `effect == localgp_lensing` => [`ξ_GNC_LocalGP_Lensing`](@ref)
-- `effect == lensing_integratedgp` => [`ξ_GNC_Lensing_IntegratedGP`](@ref)
-- `effect == integratedgp_lensing` => [`ξ_GNC_IntegratedGP_Lensing`](@ref)
-- `effect == localgp_integratedgp` => [`ξ_GNC_LocalGP_IntegratedGP`](@ref)
-- `effect == integratedgp_localgp` => [`ξ_GNC_IntegratedGP_LocalGP`](@ref)
+- `effect == auto_doppler` => [`ξ_GNCxLD_Doppler`](@ref)
+- `effect == auto_lensing` => [`ξ_GNCxLD_Lensing`](@ref)
+- `effect == auto_localgp` => [`ξ_GNCxLD_LocalGP`](@ref)
+- `effect == auto_integratedgp` => [`ξ_GNCxLD_IntegratedGP`](@ref)
+- `effect == doppler_lensing` => [`ξ_GNCxLD_Doppler_lensing`](@ref)
+- `effect == lensing_doppler` => [`ξ_GNCxLD_Lensing_Doppler`](@ref)
+- `effect == doppler_localgp` => [`ξ_GNCxLD_Doppler_LocalGP`](@ref)
+- `effect == localgp_doppler` => [`ξ_GNCxLD_LocalGP_Doppler`](@ref)
+- `effect == doppler_integratedgp` => [`ξ_GNCxLD_Doppler_IntegratedGP`](@ref)
+- `effect == integratedgp_doppler` => [`ξ_GNCxLD_IntegratedGP_Doppler`](@ref)
+- `effect == lensing_localgp` => [`ξ_GNCxLD_Lensing_LocalGP`](@ref)
+- `effect == localgp_lensing` => [`ξ_GNCxLD_LocalGP_Lensing`](@ref)
+- `effect == lensing_integratedgp` => [`ξ_GNCxLD_Lensing_IntegratedGP`](@ref)
+- `effect == integratedgp_lensing` => [`ξ_GNCxLD_IntegratedGP_Lensing`](@ref)
+- `effect == localgp_integratedgp` => [`ξ_GNCxLD_LocalGP_IntegratedGP`](@ref)
+- `effect == integratedgp_localgp` => [`ξ_GNCxLD_IntegratedGP_LocalGP`](@ref)
 
 Note that these is an internal conversion of coordiate sistems
 from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
@@ -302,21 +302,21 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
   of long time for evaluations
 
 - `kwargs...` : other keyword arguments that will be passed to the selected 
-  GR TPCF effect (`ξ_GNC_Doppler`, `ξ_GNC_Lensing`, ...)
+  GR TPCF effect (`ξ_GNCxLD_Doppler`, `ξ_GNCxLD_Lensing`, ...)
 
-See also: [`integrand_ξ_GNC_multipole`](@ref), 
-[`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref)
+See also: [`integrand_ξ_GNCxLD_multipole`](@ref), 
+[`map_ξ_GNCxLD_multipole`](@ref), [`print_map_ξ_GNCxLD_multipole`](@ref)
 [`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
-[`y`](@ref), [`s2`](@ref), [`GR_EFFECTS_GNC`](@ref)
+[`y`](@ref), [`s2`](@ref), [`GR_EFFECTS_GNCxLD`](@ref)
 """
-ξ_GNC_multipole
+ξ_GNCxLD_multipole
 
 
 ##########################################################################################92
 
 
 """
-     map_ξ_GNC_multipole(cosmo::Cosmology,
+     map_ξ_GNCxLD_multipole(cosmo::Cosmology,
           effect::Union{String,Function},
           v_ss = nothing;
           s1 = nothing,
@@ -326,7 +326,7 @@ See also: [`integrand_ξ_GNC_multipole`](@ref),
           kwargs... ) ::Tuple{Vector{Float64}, Vector{Float64}}
 
 Evaluate the multipole of order `L` of the chosen correlation function term, 
-through the `ξ_GNC_multipole` function, for all the `s` values stored inside `v_ss`.
+through the `ξ_GNCxLD_multipole` function, for all the `s` values stored inside `v_ss`.
 If `v_ss = nothing`, it is set `v_ss = 10 .^ range(0, 3, length = N_log)`.
 If `s1 = nothing`, it is set `s1 = cosmo.s_eff`.
 
@@ -355,11 +355,11 @@ Cosmology `cosmo` through the functions `spline_F` and `ϕ` respectivelly.
 - `effect::Union{String,Function}` : the GR effect TPCF you want to consider; you may
   specify the name of the effect as one of the following strings (recommended):
 
-  `$(string(GaPSE.GR_EFFECTS_GNC .* " , "...))`
+  `$(string(GaPSE.GR_EFFECTS_GNCxLD .* " , "...))`
   
   or directly the name of the function among the following: 
   
-  `$(string(string.(GaPSE.VEC_ξs_GNC) .* " , "...))`
+  `$(string(string.(GaPSE.VEC_ξs_GNCxLD) .* " , "...))`
 
 - ``v_ss` : vector/range of `s` values where the function must be evaluated; if `v_ss = nothing`, 
   it is set `v_ss = 10 .^ range(0, 3, length = N_log)`. This is why it is returned 
@@ -379,19 +379,19 @@ Cosmology `cosmo` through the functions `spline_F` and `ϕ` respectivelly.
 - `N_log::Integer = 1000` : number of points to be used in the default logaritmically-spaced 
   range for `v_ss`, i.e. `range(0, 3, N_log)`; it is ignored if `v_ss ≠ nothing` 
 
-- `kwargs...` : other keyword arguments that will be passed to `ξ_GNC_multipole`
+- `kwargs...` : other keyword arguments that will be passed to `ξ_GNCxLD_multipole`
 
 # Returns
 
 A `Tuple{Vector{Float64}, Vector{Flaot64}}`, which has as first element the `v_ss` vector
 and as second one the corresponding ξ value evaluated.
 
-See also: [`integrand_ξ_GNC_multipole`](@ref), [`ξ_GNC_multipole`](@ref),
-[`print_map_ξ_GNC_multipole`](@ref),
+See also: [`integrand_ξ_GNCxLD_multipole`](@ref), [`ξ_GNCxLD_multipole`](@ref),
+[`print_map_ξ_GNCxLD_multipole`](@ref),
 [`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
-[`y`](@ref), [`s2`](@ref), [`GR_EFFECTS_GNC`](@ref)
+[`y`](@ref), [`s2`](@ref), [`GR_EFFECTS_GNCxLD`](@ref)
 """
-function map_ξ_GNC_multipole(cosmo::Cosmology,
+function map_ξ_GNCxLD_multipole(cosmo::Cosmology,
      effect::Union{String,Function},
      v_ss=nothing;
      s1=nothing,
@@ -406,14 +406,14 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
      ss = isnothing(v_ss) ? 10 .^ range(0, 3, length=N_log) : v_ss
      xis = pr ? begin
           @showprogress "$effect, L=$L: " [
-               ξ_GNC_multipole(s_1, s, effect, cosmo; L=L, kwargs...) for s in ss
+               ξ_GNCxLD_multipole(s_1, s, effect, cosmo; L=L, kwargs...) for s in ss
           ]
      end : [
-          ξ_GNC_multipole(s_1, s, effect, cosmo; L=L, kwargs...) for s in ss
+          ξ_GNCxLD_multipole(s_1, s, effect, cosmo; L=L, kwargs...) for s in ss
      ]
 
      t2 = time()
-     pr && println("\ntime needed for map_ξ_GNC_multipole for $effect " *
+     pr && println("\ntime needed for map_ξ_GNCxLD_multipole for $effect " *
                    "[in s] = $(@sprintf("%.5f", t2-t1)) ")
      return (ss, xis)
 end
@@ -423,7 +423,7 @@ end
 
 
 """
-     print_map_ξ_GNC_multipole(
+     print_map_ξ_GNCxLD_multipole(
           cosmo::Cosmology,
           out::String,
           effect::Union{String,Function},
@@ -432,7 +432,7 @@ end
           kwargs...)
 
 Evaluate the multipole of order `L` of the chosen correlation function term, 
-through the `ξ_GNC_multipole` function, for all the `s` values stored inside `v_ss`, and
+through the `ξ_GNCxLD_multipole` function, for all the `s` values stored inside `v_ss`, and
 print the results (with all the options used) in a file named `out`.
 If `v_ss = nothing`, it is set `v_ss = 10 .^ range(0, 3, length = N_log)`.
 If `s1 = nothing`, it is set `s1 = cosmo.s_eff`.
@@ -462,11 +462,11 @@ Cosmology `cosmo` through the functions `spline_F` and `ϕ` respectivelly.
 - `effect::Union{String,Function}` : the GR effect TPCF you want to consider; you may
   specify the name of the effect as one of the following strings (recommended):
 
-  `$(string(GaPSE.GR_EFFECTS_GNC .* " , "...))`
+  `$(string(GaPSE.GR_EFFECTS_GNCxLD .* " , "...))`
   
   or directly the name of the function among the following: 
   
-  `$(string(string.(GaPSE.VEC_ξs_GNC) .* " , "...))`
+  `$(string(string.(GaPSE.VEC_ξs_GNCxLD) .* " , "...))`
 
 - `out::String` : name of the file where the results must be stored.
 
@@ -479,14 +479,14 @@ Cosmology `cosmo` through the functions `spline_F` and `ϕ` respectivelly.
 - `s1 = nothing` : comoving distance from the observer where the TPCF should be evaluated;
   if `s1 = nothing`, it is automatically set `s1 = cosmo.s_eff` from the given input `Cosmology`.
 
-- `kwargs...` : other keyword arguments that will be passed to `map_ξ_GNC_multipole`
+- `kwargs...` : other keyword arguments that will be passed to `map_ξ_GNCxLD_multipole`
 
-See also: [`integrand_ξ_GNC_multipole`](@ref), [`ξ_GNC_multipole`](@ref),
-[`map_ξ_GNC_multipole`](@ref), 
+See also: [`integrand_ξ_GNCxLD_multipole`](@ref), [`ξ_GNCxLD_multipole`](@ref),
+[`map_ξ_GNCxLD_multipole`](@ref), 
 [`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
-[`y`](@ref), [`s2`](@ref), [`GR_EFFECTS_GNC`](@ref)
+[`y`](@ref), [`s2`](@ref), [`GR_EFFECTS_GNCxLD`](@ref)
 """
-function print_map_ξ_GNC_multipole(
+function print_map_ξ_GNCxLD_multipole(
      cosmo::Cosmology,
      out::String,
      effect::Union{String,Function},
@@ -496,7 +496,7 @@ function print_map_ξ_GNC_multipole(
 
      s_1 = isnothing(s1) ? cosmo.s_eff : s1
      t1 = time()
-     vec = map_ξ_GNC_multipole(cosmo, effect, v_ss; s1=s_1, kwargs...)
+     vec = map_ξ_GNCxLD_multipole(cosmo, effect, v_ss; s1=s_1, kwargs...)
      t2 = time()
 
      isfile(out) && run(`rm $out`)

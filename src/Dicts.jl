@@ -168,9 +168,7 @@ See also: [`VEC_ξs_GNC`](@ref)
 """
 const GR_EFFECTS_GNC = [
      "auto_newton", "auto_doppler", "auto_lensing",
-     "auto_localgp", "auto_integratedgp", 
-     
-     "newton_doppler", "doppler_newton",
+     "auto_localgp", "auto_integratedgp", "newton_doppler", "doppler_newton",
      "newton_lensing", "lensing_newton",
      "newton_localgp", "localgp_newton",
      "newton_integratedgp", "integratedgp_newton",
@@ -208,9 +206,7 @@ See also: [`GR_EFFECTS_GNC`](@ref)
 """
 const VEC_ξs_GNC = [
      ξ_GNC_Newtonian, ξ_GNC_Doppler, ξ_GNC_Lensing,
-     ξ_GNC_LocalGP, ξ_GNC_IntegratedGP, 
-     
-     ξ_GNC_Newtonian_Doppler, ξ_GNC_Doppler_Newtonian,
+     ξ_GNC_LocalGP, ξ_GNC_IntegratedGP, ξ_GNC_Newtonian_Doppler, ξ_GNC_Doppler_Newtonian,
      ξ_GNC_Newtonian_Lensing, ξ_GNC_Lensing_Newtonian,
      ξ_GNC_Newtonian_LocalGP, ξ_GNC_LocalGP_Newtonian,
      ξ_GNC_Newtonian_IntegratedGP, ξ_GNC_IntegratedGP_Newtonian,
@@ -278,4 +274,141 @@ See also: [`GR_EFFECTS_GNC`](@ref)
 """
 const GR_EFFECT_INDEX_GNC = Dict([i => name for (i, name) in
                                   enumerate(GR_EFFECTS_GNC)]...)
+
+
+
+##################### GALAXY NUMBER COUNTS x LUMINOSITY DISTANCE #############################
+
+
+
+
+"""
+     const GR_EFFECTS_GNCxLD = [
+          "auto_newton", "auto_doppler", "auto_lensing",
+          "auto_localgp", "auto_integratedgp", 
+          
+          "newton_doppler", "doppler_newton",
+          "newton_lensing", "lensing_newton",
+          "newton_localgp", "localgp_newton",
+          "newton_integratedgp", "integratedgp_newton",
+          "lensing_doppler", "doppler_lensing",
+          "doppler_localgp", "localgp_doppler",
+          "doppler_integratedgp", "integratedgp_doppler",
+          "lensing_localgp", "localgp_lensing",
+          "lensing_integratedgp", "integratedgp_lensing",
+          "localgp_integratedgp", "integratedgp_localgp",
+     ]
+
+The names of the GR effects implemented.
+Their order is associated with the one in `VEC_ξs_GNC`, so be careful
+to change it.
+
+See also: [`VEC_ξs_GNCxLD`](@ref)
+"""
+const GR_EFFECTS_GNCxLD = [
+     "newton_doppler", "doppler_newton",
+     "newton_lensing", "lensing_newton",
+     "newton_localgp", "localgp_newton",
+     "newton_integratedgp", "integratedgp_newton",
+     "lensing_doppler", "doppler_lensing",
+     "doppler_localgp", "localgp_doppler",
+     "doppler_integratedgp", "integratedgp_doppler",
+     "lensing_localgp", "localgp_lensing",
+     "lensing_integratedgp", "integratedgp_lensing",
+     "localgp_integratedgp", "integratedgp_localgp",
+];
+
+
+"""
+     const VEC_ξs_GNCxLD = [
+          ξ_GNC_Newtonian, ξ_GNC_Doppler, ξ_GNC_Lensing,
+          ξ_GNC_LocalGP, ξ_GNC_IntegratedGP, 
+          
+          ξ_GNC_Newtonian_Doppler, ξ_GNC_Doppler_Newtonian,
+          ξ_GNC_Newtonian_Lensing, ξ_GNC_Lensing_Newtonian,
+          ξ_GNC_Newtonian_LocalGP, ξ_GNC_LocalGP_Newtonian,
+          ξ_GNC_Newtonian_IntegratedGP, ξ_GNC_IntegratedGP_Newtonian,
+          ξ_GNC_Lensing_Doppler, ξ_GNC_Doppler_Lensing,
+          ξ_GNC_Doppler_LocalGP, ξ_GNC_LocalGP_Doppler,
+          ξ_GNC_Doppler_IntegratedGP, ξ_GNC_IntegratedGP_Doppler,
+          ξ_GNC_Lensing_LocalGP, ξ_GNC_LocalGP_Lensing,
+          ξ_GNC_Lensing_IntegratedGP, ξ_GNC_IntegratedGP_Lensing,
+          ξ_GNC_LocalGP_IntegratedGP, ξ_GNC_IntegratedGP_LocalGP
+     ]
+
+The names of the GR effect TPCFs implemented.
+Their order is associated with the one in `GR_EFFECTS_GNC`, so be careful
+to change it.
+
+See also: [`GR_EFFECTS_GNCxLD`](@ref)
+"""
+const VEC_ξs_GNCxLD = [
+     ξ_GNCxLD_Newtonian_Doppler, ξ_GNCxLD_Doppler_Newtonian,
+     ξ_GNCxLD_Newtonian_Lensing, ξ_GNCxLD_Lensing_Newtonian,
+     ξ_GNCxLD_Newtonian_LocalGP, ξ_GNCxLD_LocalGP_Newtonian,
+     ξ_GNCxLD_Newtonian_IntegratedGP, ξ_GNCxLD_IntegratedGP_Newtonian,
+     ξ_GNCxLD_Lensing_Doppler, ξ_GNCxLD_Doppler_Lensing,
+     ξ_GNCxLD_Doppler_LocalGP, ξ_GNCxLD_LocalGP_Doppler,
+     ξ_GNCxLD_Doppler_IntegratedGP, ξ_GNCxLD_IntegratedGP_Doppler,
+     ξ_GNCxLD_Lensing_LocalGP, ξ_GNCxLD_LocalGP_Lensing,
+     ξ_GNCxLD_Lensing_IntegratedGP, ξ_GNCxLD_IntegratedGP_Lensing,
+     ξ_GNCxLD_LocalGP_IntegratedGP, ξ_GNCxLD_IntegratedGP_LocalGP
+];
+
+
+
+"""
+     const DICT_GR_ξs_GNCxLD::Dict{String,Function}
+
+For an input key string `effect` from `GR_EFFECTS_GNCxLD`, return the 
+associated TPCF `DICT_GR_ξs_GNCxLD[effect]` from `VEC_ξs_GNCxLD`.
+
+## Example
+
+```jldoctest
+julia> GaPSE.DICT_GR_ξs_GNCxLD["auto_doppler"]
+ξ_GNC_Doppler
+```
+
+See also: [`GR_EFFECTS_GNCxLD`](@ref), [`VEC_ξs_GNCxLD`](@ref)
+"""
+const DICT_GR_ξs_GNCxLD = Dict([k => v for (k, v) in zip(GR_EFFECTS_GNCxLD, VEC_ξs_GNCxLD)]...)
+
+
+"""
+     const INDEX_GR_EFFECT_GNCxLD::Dict{String,Integer}
+
+For an input key string `effect` from `GR_EFFECTS_GNC`, return the 
+associated index position in that vector.
+
+## Example
+
+```jldoctest
+julia> GaPSE.INDEX_GR_EFFECT_GNCxLD["auto_doppler"]
+1
+```
+
+See also: [`GR_EFFECTS_GNCxLD`](@ref)
+"""
+const INDEX_GR_EFFECT_GNCxLD = Dict([name => i for (i, name) in
+                                  enumerate(GR_EFFECTS_GNCxLD)]...)
+
+
+"""
+     const GR_EFFECT_INDEX_GNC::Dict{Integer,String}
+
+For an input index position `i` of `GR_EFFECTS_GNC`, return the 
+associated key string `effect`.
+
+## Example
+
+```jldoctest
+julia> GaPSE.DICT_GR_ξs_GNC[1]
+"auto_doppler"
+```
+
+See also: [`GR_EFFECTS_GNC`](@ref)
+"""
+const GR_EFFECT_INDEX_GNCxLD = Dict([i => name for (i, name) in
+                                  enumerate(GR_EFFECTS_GNCxLD)]...)
 
