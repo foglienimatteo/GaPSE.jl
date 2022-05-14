@@ -76,3 +76,15 @@ end
           "4.0 , \n"*
           "];\n"
 end
+
+@testset "test parent_directory" begin
+     @test GaPSE.parent_directory("/Users/matteofoglieni/Downloads/file.txt") == "/Users/matteofoglieni/Downloads/"
+     @test GaPSE.parent_directory("/Users/matteofoglieni/Downloads/") == "/Users/matteofoglieni/"
+     @test GaPSE.parent_directory("/Users/matteofoglieni/Downloads") == "/Users/matteofoglieni/"
+     @test GaPSE.parent_directory("matteofoglieni/Downloads/file.txt") == "matteofoglieni/Downloads/"
+     @test GaPSE.parent_directory("matteofoglieni/Downloads/") == "matteofoglieni/"
+     @test GaPSE.parent_directory("matteofoglieni/Downloads") == "matteofoglieni/"
+     @test GaPSE.parent_directory("matteofoglieni/") == "./"
+     @test GaPSE.parent_directory("matteofoglieni") == "./"
+     @test GaPSE.parent_directory("file.txt") == "./"
+end

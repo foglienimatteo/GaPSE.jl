@@ -113,3 +113,20 @@ end
 function my_println_dict(dict::Dict; pref::String="", N::Integer = 3)
      my_println_dict(stdout, dict; pref = pref,  N = N)
 end;
+
+
+function parent_directory(s::String)
+    splitted = split(s, "/")
+    
+    if length(splitted) == 1 || splitted[end] == ""
+        return "./"
+    end
+
+    ss = string(split(s, "/")[begin:end-1] .* "/" ...)
+    
+    if ss == s
+        return string(split(ss, "/")[begin:end-2] .* "/" ...)
+    else
+        return ss
+    end
+end
