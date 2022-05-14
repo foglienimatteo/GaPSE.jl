@@ -244,7 +244,7 @@ end
 
 
 
-function ξ_LD_Doppler_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
+function ξ_LDxGNC_Doppler_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
      ξ_GNCxLD_Lensing_Doppler(s2, s1, y, cosmo; kwargs...)
 end
 

@@ -190,3 +190,15 @@ function ξ_LD_IntegratedGP_Doppler(s1, s2, y, cosmo::Cosmology; kwargs...)
      ξ_GNCxLD_Doppler_IntegratedGP(s2, s1, y, cosmo; kwargs...)
 end
 
+
+##########################################################################################92
+
+##########################################################################################92
+
+##########################################################################################92
+
+
+
+function ξ_LDxGNC_IntegratedGP_Doppler(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_GNCxLD_Doppler_IntegratedGP(s2, s1, y, cosmo; kwargs...)
+end

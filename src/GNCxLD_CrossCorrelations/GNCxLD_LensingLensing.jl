@@ -265,3 +265,18 @@ See also: [`integrand_ξ_GNCxLD_Lensing_Lensing`](@ref), [`integrand_on_mu_Lensi
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 ξ_GNCxLD_Lensing_Lensing
+
+
+
+##########################################################################################92
+
+##########################################################################################92
+
+##########################################################################################92
+
+
+
+function ξ_LDxGNC_Lensing_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_GNCxLD_Lensing_Lensing(s2, s1, y, cosmo; kwargs...)
+end
+

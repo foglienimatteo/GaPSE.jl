@@ -84,3 +84,17 @@ the J coefficients are given by:
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
 ξ_GNCxLD_Doppler_Doppler
+
+
+
+##########################################################################################92
+
+##########################################################################################92
+
+##########################################################################################92
+
+
+
+function ξ_LDxGNC_Doppler_Doppler(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_GNCxLD_Doppler_Doppler(s2, s1, y, cosmo; kwargs...)
+end

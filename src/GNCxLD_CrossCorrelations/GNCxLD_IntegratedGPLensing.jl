@@ -203,4 +203,14 @@ function ξ_GNCxLD_IntegratedGP_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
 end
 
 
+##########################################################################################92
 
+##########################################################################################92
+
+##########################################################################################92
+
+
+
+function ξ_LDxGNC_Lensing_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_GNCxLD_IntegratedGP_Lensing(s2, s1, y, cosmo; kwargs...)
+end
