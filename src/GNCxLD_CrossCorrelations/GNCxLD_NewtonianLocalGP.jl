@@ -19,7 +19,7 @@
 
 
 @doc raw"""
-     ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
+     ξ_GNCxLD_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
 
 Return the LocalGP-LocalGP cross-correlation function concerning the perturbed
 luminosity distance, defined as follows:
@@ -49,7 +49,7 @@ I^n_l(s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} q^2 \\, P(q) \\, \\frac
 
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
-function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
+function ξ_GNCxLD_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      s1, D1, f1 = P1.comdist, P1.D, P1.f
      s2, D2, a2, ℜ2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
      b1 = cosmo.params.b
@@ -74,9 +74,9 @@ function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
 end
 
 
-function ξ_GNC_Newtonian_LocalGP(s1, s2, y, cosmo::Cosmology)
+function ξ_GNCxLD_Newtonian_LocalGP(s1, s2, y, cosmo::Cosmology)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_GNC_Newtonian_LocalGP(P1, P2, y, cosmo)
+     return ξ_GNCxLD_Newtonian_LocalGP(P1, P2, y, cosmo)
 end
 
 
