@@ -138,6 +138,8 @@ include("GNC_XiMultipoles.jl")
 include("GNC_SumXiMultipoles.jl")
 include("GNCxLD_XiMultipoles.jl")
 include("GNCxLD_SumXiMultipoles.jl")
+include("LDxGNC_XiMultipoles.jl")
+include("LdxGNC_SumXiMultipoles.jl")
 include("PowerSpectrum.jl")
 
 

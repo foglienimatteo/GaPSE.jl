@@ -111,7 +111,8 @@ function map_sum_ξ_GNCxLD_multipole(
 
      ALL = [
           begin
-               _, xis = map_ξ_GNCxLD_multipole(cosmo, effect, ss; kwargs...)
+               _, xis = map_ξ_GNCxLD_multipole(cosmo, effect, ss; 
+                    specif_kwargs_GNCxLD(effect, kwargs)...)
                xis
           end for effect in GaPSE.GR_EFFECTS_GNCxLD
      ]

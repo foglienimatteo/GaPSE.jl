@@ -153,18 +153,24 @@ const GR_EFFECTS_chi_integrated_LD = vcat(GR_EFFECTS_chi_si_LD, GR_EFFECTS_chi_d
 
 const chi_si_LD_kwargs = [:N_χs, :en]
 const chi_di_LD_kwargs = [:N_χs_2, :en]
-
+const chi_integrated_LD_kwargs = union(chi_si_LD_kwargs, chi_di_LD_kwargs)
 
 function specif_kwargs_LD(name::String, kwargs)
-    if name ∈  GR_EFFECTS_chi_integrated_LD
-        if name ∈ GR_EFFECTS_chi_si_LD
-            return filter(p->!(first(p) ∈ chi_di_LD_kwargs && first(p) ∉ chi_si_LD_kwargs), kwargs)
-        else
-            return filter(p->!(first(p) ∈ chi_si_LD_kwargs && first(p) ∉ chi_di_LD_kwargs), kwargs)
-        end
-    else
-        return filter(p->(first(p) ∉ chi_integrated_LD_kwargs), kwargs)
-    end
+     error = "$name is not a valid GR effect name for luminosity distance.\n" *
+             "Valid GR effect names for luminosity distance are the following:\n" *
+             string(GaPSE.GR_EFFECTS_LD .* " , "...)
+
+     @assert (name ∈ GaPSE.GR_EFFECTS_LD) error
+
+     if name ∈  GR_EFFECTS_chi_integrated_LD
+          if name ∈ GR_EFFECTS_chi_si_LD
+               return filter(p->!(first(p) ∈ chi_di_LD_kwargs && first(p) ∉ chi_si_LD_kwargs), kwargs)
+          else
+               return filter(p->!(first(p) ∈ chi_si_LD_kwargs && first(p) ∉ chi_di_LD_kwargs), kwargs)
+          end
+     else
+          return filter(p->(first(p) ∉ chi_integrated_LD_kwargs), kwargs)
+     end
 end
 
 
@@ -304,6 +310,45 @@ See also: [`GR_EFFECTS_GNC`](@ref)
 """
 const GR_EFFECT_INDEX_GNC = Dict([i => name for (i, name) in
                                   enumerate(GR_EFFECTS_GNC)]...)
+
+
+const GR_EFFECTS_chi_si_GNC = [
+     "newton_lensing", "lensing_newton",
+     "newton_integratedgp", "integratedgp_newton",
+     "lensing_doppler", "doppler_lensing",
+     "doppler_integratedgp", "integratedgp_doppler",
+     "lensing_localgp", "localgp_lensing",
+     "localgp_integratedgp", "integratedgp_localgp",
+];
+
+const GR_EFFECTS_chi_di_GNC = [
+     "auto_lensing", "auto_integratedgp",
+     "lensing_integratedgp", "integratedgp_lensing",
+];
+
+const GR_EFFECTS_chi_integrated_GNC = vcat(GR_EFFECTS_chi_si_GNC, GR_EFFECTS_chi_di_GNC)
+
+const chi_si_GNC_kwargs = [:N_χs, :en]
+const chi_di_GNC_kwargs = [:N_χs_2, :en]
+const chi_integrated_GNC_kwargs = union(chi_si_GNC_kwargs, chi_di_GNC_kwargs)
+
+function specif_kwargs_GNC(name::String, kwargs)
+     error = "$name is not a valid GR effect name for galaxy number counts.\n" *
+             "Valid GR effect names for galaxy number counts are the following:\n" *
+             string(GaPSE.GR_EFFECTS_GNC .* " , "...)
+
+     @assert (name ∈ GaPSE.GR_EFFECTS_GNC) error
+
+     if name ∈  GR_EFFECTS_chi_integrated_GNC
+          if name ∈ GR_EFFECTS_chi_si_GNC
+               return filter(p->!(first(p) ∈ chi_di_GNC_kwargs && first(p) ∉ chi_si_GNC_kwargs), kwargs)
+          else
+               return filter(p->!(first(p) ∈ chi_si_GNC_kwargs && first(p) ∉ chi_di_GNC_kwargs), kwargs)
+          end
+     else
+          return filter(p->(first(p) ∉ chi_integrated_GNC_kwargs), kwargs)
+     end
+end
 
 
 
@@ -684,3 +729,107 @@ See also: [`GR_EFFECTS_LDxGNC`](@ref)
 const GR_EFFECT_INDEX_LDxGNC = Dict([i => name for (i, name) in
                                   enumerate(GR_EFFECTS_LDxGNC)]...)
 
+
+###########################################
+
+
+
+const GR_EFFECTS_chi_si_GNCxLD = [
+     "newton_lensing", 
+     "newton_integratedgp",
+
+     "doppler_lensing",
+     "doppler_integratedgp",
+
+     "lensing_doppler",
+     "lensing_localgp",
+     
+     "localgp_lensing",
+     "localgp_integratedgp",
+
+     "integratedgp_doppler",
+     "integratedgp_localgp",
+];
+
+const GR_EFFECTS_chi_di_GNCxLD = [
+     "lensing_lensing",
+     "lensing_integratedgp",
+     "integratedgp_lensing",
+     "integratedgp_integratedgp",
+];
+
+const GR_EFFECTS_chi_integrated_GNCxLD = vcat(GR_EFFECTS_chi_si_GNCxLD, GR_EFFECTS_chi_di_GNCxLD)
+
+const chi_si_GNCxLD_kwargs = [:N_χs, :en]
+const chi_di_GNCxLD_kwargs = [:N_χs_2, :en]
+const chi_integrated_GNCxLD_kwargs = union(chi_si_GNCxLD_kwargs, chi_di_GNCxLD_kwargs)
+
+function specif_kwargs_GNCxLD(name::String, kwargs)
+     error = "$name is not a valid GR effect name for GNC x LD.\n" *
+             "Valid GR effect names for GNC x LD are the following:\n" *
+             string(GaPSE.GR_EFFECTS_GNCxLD .* " , "...)
+
+     @assert (name ∈ GaPSE.GR_EFFECTS_GNCxLD) error
+
+     if name ∈  GR_EFFECTS_chi_integrated_GNCxLD
+          if name ∈ GR_EFFECTS_chi_si_GNCxLD
+               return filter(p->!(first(p) ∈ chi_di_GNCxLD_kwargs && first(p) ∉ chi_si_GNCxLD_kwargs), kwargs)
+          else
+               return filter(p->!(first(p) ∈ chi_si_GNCxLD_kwargs && first(p) ∉ chi_di_GNCxLD_kwargs), kwargs)
+          end
+     else
+          return filter(p->(first(p) ∉ chi_integrated_GNCxLD_kwargs), kwargs)
+     end
+end
+
+
+
+
+
+const GR_EFFECTS_chi_si_LDxGNC = [
+     "lensing_newton", 
+     "integratedgp_newton",
+
+     "lensing_doppler",
+     "integratedgp_doppler",
+
+     "doppler_lensing",
+     "localgp_lensing",
+     
+     "lensing_localgp",
+     "integratedgp_localgp",
+
+     "doppler_integratedgp",
+     "localgp_integratedgp",
+];
+
+const GR_EFFECTS_chi_di_LDxGNC = [
+     "lensing_lensing",
+     "lensing_integratedgp",
+     "integratedgp_lensing",
+     "integratedgp_integratedgp",
+];
+
+const GR_EFFECTS_chi_integrated_LDxGNC = vcat(GR_EFFECTS_chi_si_LDxGNC, GR_EFFECTS_chi_di_LDxGNC)
+
+const chi_si_LDxGNC_kwargs = [:N_χs, :en]
+const chi_di_LDxGNC_kwargs = [:N_χs_2, :en]
+const chi_integrated_LDxGNC_kwargs = union(chi_si_LDxGNC_kwargs, chi_di_LDxGNC_kwargs)
+
+function specif_kwargs_LDxGNC(name::String, kwargs)
+     error = "$name is not a valid GR effect name for LD x GNC.\n" *
+             "Valid GR effect names for LD x GNC are the following:\n" *
+             string(GaPSE.GR_EFFECTS_LDxGNC .* " , "...)
+
+     @assert (name ∈ GaPSE.GR_EFFECTS_LDxGNC) error
+
+     if name ∈  GR_EFFECTS_chi_integrated_LDxGNC
+          if name ∈ GR_EFFECTS_chi_si_LDxGNC
+               return filter(p->!(first(p) ∈ chi_di_LDxGNC_kwargs && first(p) ∉ chi_si_LDxGNC_kwargs), kwargs)
+          else
+               return filter(p->!(first(p) ∈ chi_si_LDxGNC_kwargs && first(p) ∉ chi_di_LDxGNC_kwargs), kwargs)
+          end
+     else
+          return filter(p->(first(p) ∉ chi_integrated_GNCxLD_kwargs), kwargs)
+     end
+end

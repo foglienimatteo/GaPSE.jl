@@ -167,8 +167,8 @@ function ξ_LD_multipole(
      trap::Bool=false,
      kwargs...)
 
-     error = "$(string(effect)) is not a valid GR effect function.\n" *
-             "Valid GR effect functions are the following:\n" *
+     error = "$(string(effect)) is not a valid GR effect function for luminosity distance.\n" *
+             "Valid GR effect functions for luminosity distance are the following:\n" *
              string(string.(VEC_ξs_LD) .* " , "...)
      @assert (effect ∈ VEC_ξs_LD) error
 
@@ -199,8 +199,8 @@ end
 
 
 function ξ_LD_multipole(s1, s, effect::String, cosmo::Cosmology; kwargs...)
-     error = "$effect is not a valid GR effect name.\n" *
-             "Valid GR effect names are the following:\n" *
+     error = "$effect is not a valid GR effect name for luminosity distance.\n" *
+             "Valid GR effect names for luminosity distance are the following:\n" *
              string(GaPSE.GR_EFFECTS_LD .* " , "...)
 
      @assert (effect ∈ GaPSE.GR_EFFECTS_LD) error
