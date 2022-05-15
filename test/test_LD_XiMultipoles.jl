@@ -129,6 +129,14 @@ end
           :N_log => 1000
      )
 
+     @testset "zero" begin
+          @test_throws AssertionError GaPSE.print_map_ξ_LD_multipole(COSMO, "/Users/matteofoglieni/nonexistingdir/file.txt", effect)
+          @test_throws AssertionError GaPSE.print_map_ξ_LD_multipole(COSMO, "/nonexistingdir/here.txt", effect)
+          @test_throws AssertionError GaPSE.print_map_ξ_LD_multipole(COSMO, "/nonexistingdir/", effect)
+          @test_throws AssertionError GaPSE.print_map_ξ_LD_multipole(COSMO, "file", effect)
+          @test_throws AssertionError GaPSE.print_map_ξ_LD_multipole(COSMO, "file.boh", effect)
+     end
+
      @testset "first" begin
           table = readdlm("datatest/doppler_multipoles/xi_auto_doppler_L0_first.txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])

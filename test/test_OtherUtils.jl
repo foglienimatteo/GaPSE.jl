@@ -81,6 +81,11 @@ end
      @test GaPSE.parent_directory("/Users/matteofoglieni/Downloads/file.txt") == "/Users/matteofoglieni/Downloads/"
      @test GaPSE.parent_directory("/Users/matteofoglieni/Downloads/") == "/Users/matteofoglieni/"
      @test GaPSE.parent_directory("/Users/matteofoglieni/Downloads") == "/Users/matteofoglieni/"
+     @test GaPSE.parent_directory("/Users/matteofoglieni/") == "/Users/"
+     @test GaPSE.parent_directory("/Users/matteofoglieni") == "/Users/"
+     @test GaPSE.parent_directory("/Users/") == "/"
+     @test GaPSE.parent_directory("/Users") == "/"
+
      @test GaPSE.parent_directory("matteofoglieni/Downloads/file.txt") == "matteofoglieni/Downloads/"
      @test GaPSE.parent_directory("matteofoglieni/Downloads/") == "matteofoglieni/"
      @test GaPSE.parent_directory("matteofoglieni/Downloads") == "matteofoglieni/"
@@ -88,3 +93,48 @@ end
      @test GaPSE.parent_directory("matteofoglieni") == "./"
      @test GaPSE.parent_directory("file.txt") == "./"
 end
+
+@testset "test check_parent_directory" begin
+     @test_throws AssertionError GaPSE.check_parent_directory("/Users/matteofoglieni/notadirectory/file.txt")
+     @test_throws AssertionError GaPSE.check_parent_directory("notadirectory/file.txt")
+     
+     @test isnothing(GaPSE.check_parent_directory("/Users/matteofoglieni/notadirectory/"))
+     @test isnothing(GaPSE.check_parent_directory("notadirectory/"))
+     @test isnothing(GaPSE.check_parent_directory("/Users/"))
+     @test isnothing(GaPSE.check_parent_directory("/"))
+end
+
+@testset "test return_namefile" begin
+     @test_throws AssertionError GaPSE.return_namefile("/Users/matteofoglieni/Downloads/")
+     @test_throws AssertionError GaPSE.return_namefile("Downloads/")
+     @test_throws AssertionError GaPSE.return_namefile("./Downloads/")
+
+     @test GaPSE.return_namefile("file") == "file"
+     @test GaPSE.return_namefile("file.boh") == "file.boh"
+     @test GaPSE.return_namefile("/Users/matteo.foglieni/ciao.file") == "ciao.file"
+     @test GaPSE.return_namefile("matteo.foglieni/ciao.file.boh") == "ciao.file.boh"
+     @test GaPSE.return_namefile("/Users/matteofoglieni/Downloads/file.txt") == "file.txt"
+     @test GaPSE.return_namefile("./file.txt") == "file.txt"
+     @test GaPSE.return_namefile("./file.dat") == "file.dat"
+     @test GaPSE.return_namefile("file.txt") == "file.txt"
+     @test GaPSE.return_namefile("file.dat") == "file.dat"
+end
+
+
+@testset "test check_namefile" begin
+     @test_throws AssertionError GaPSE.check_namefile("/Users/matteofoglieni/Downloads/file")
+     @test_throws AssertionError GaPSE.check_namefile("/Users/matteofoglieni/Downloads/file.boh")
+     @test_throws AssertionError GaPSE.check_namefile("/Users/matteo.foglieni/ciao.file")
+     @test_throws AssertionError GaPSE.check_namefile("matteo.foglieni/ciao.file.boh")
+     @test_throws AssertionError GaPSE.check_namefile("file")
+     @test_throws AssertionError GaPSE.check_namefile("file.boh")
+     @test_throws AssertionError GaPSE.check_namefile("./file")
+     @test_throws AssertionError GaPSE.check_namefile("./file.boh")
+
+     @test isnothing(GaPSE.check_namefile("/Users/matteofoglieni/Downloads/file.txt"))
+     @test isnothing(GaPSE.check_namefile("./file.txt"))
+     @test isnothing(GaPSE.check_namefile("./file.dat"))
+     @test isnothing(GaPSE.check_namefile("file.txt"))
+     @test isnothing(GaPSE.check_namefile("file.dat"))
+end
+

@@ -115,18 +115,49 @@ function my_println_dict(dict::Dict; pref::String="", N::Integer = 3)
 end;
 
 
+
+##########################################################################################92
+
+
+
 function parent_directory(s::String)
     splitted = split(s, "/")
     
-    if length(splitted) == 1 || splitted[end] == ""
+    if length(splitted) == 1 || (splitted[end] == "" && length(splitted) == 2)
         return "./"
     end
 
     ss = string(split(s, "/")[begin:end-1] .* "/" ...)
-    
+
     if ss == s
         return string(split(ss, "/")[begin:end-2] .* "/" ...)
     else
         return ss
     end
 end
+
+function check_parent_directory(s::String)
+    pd = parent_directory(s)
+
+    pd == "./" && (return nothing)
+
+    @assert isdir(pd) "$pd is not an existing directory!"
+end
+
+
+function return_namefile(s::String)
+    splitted = split(s, "/")
+    @assert splitted[end] ≠ "" "$s is a valid name for a directory, not for a file!"
+    name =  string(splitted[end])
+    return name
+end
+
+function check_namefile(s::String)
+    name =  return_namefile(s)
+    splitted_2 = split(name, ".")
+    @assert splitted_2[end] ≠ name "$name has no extension (like .txt, .dat, ...)!"
+    ve = ["txt", "dat"]
+    @assert splitted_2[end] ∈ ve "$(splitted_2[end]) is not a valid extrension; they are: \n $(ve)"
+end
+
+

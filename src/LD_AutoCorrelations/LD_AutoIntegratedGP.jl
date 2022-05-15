@@ -87,14 +87,11 @@ end
 
 
 function ξ_LD_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e10, N_χs::Integer = 100)
+     en::Float64 = 1e10, N_χs_2::Integer = 100)
 
-     #adim_χs = range(1e-12, 1.0, N_χs)
-     adim_χs = range(1e-8, 1.0, length = N_χs)
-     #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
-     χ1s = adim_χs .* P1.comdist
-     χ2s = adim_χs .* P2.comdist
+     χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
+     χ2s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2 + 7)
 
      IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
@@ -108,8 +105,8 @@ function ξ_LD_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      #println("res = $res")
 
      #=
-     χ1s = [x for x in range(0.0, P1.comdist, length = N_χs)[begin+1:end]]
-     l = Int(floor(N_χs/2))
+     χ1s = [x for x in range(0.0, P1.comdist, length = N_χs_2)[begin+1:end]]
+     l = Int(floor(N_χs_2/2))
      matrix_χ2s = [begin
           a = [x for x in range(0.0, P2.comdist, length=l)[begin+1:end]];
           b = [x for x in range(x1-focus, x1+focus, length=l)];
@@ -140,7 +137,7 @@ end
 """
      ξ_LD_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
           en::Float64 = 1e10,
-          N_χs::Integer = 100) :: Float64
+          N_χs_2::Integer = 100) :: Float64
 
      ξ_LD_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...) = 
           ξ_LD_IntegratedGP(Point(s1, cosmo), Point(s2, cosmo), y, cosmo; kwargs...)
@@ -190,9 +187,9 @@ the integrand function `integrand_ξ_LD_Lensing`.
 - `en::Float64 = 1e10`: just a float number used in order to deal better 
   with small numbers.
 
-- `N_χs::Integer = 100`: number of points to be used for sampling the integral
+- `N_χs_2::Integer = 100`: number of points to be used for sampling the integral
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
-  with `N_χs ≥ 50` the result is stable.
+  with `N_χs_2 ≥ 50` the result is stable.
 
 See also: [`integrand_ξ_LD_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
 [`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)

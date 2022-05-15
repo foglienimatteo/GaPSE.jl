@@ -22,7 +22,7 @@
      z_min, z_max, θ_max = 0.05, 0.20, π / 2.0
      params = GaPSE.CosmoParams(z_min, z_max, θ_max)
      cosmo = GaPSE.Cosmology(params, FILE_BACKGROUND,
-          FILE_PS, FILE_F_MAP)
+          FILE_PS, FILE_F_MAP, FILE_IF_MAP)
 
      RTOL = 1e-6
 

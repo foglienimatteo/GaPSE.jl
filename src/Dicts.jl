@@ -137,6 +137,36 @@ const GR_EFFECT_INDEX_LD = Dict([i => name for (i, name) in
                                  enumerate(GR_EFFECTS_LD)]...)
 
 
+const GR_EFFECTS_chi_si_LD = [
+     "lensing_doppler", "doppler_lensing",
+     "doppler_integratedgp", "integratedgp_doppler",
+     "lensing_localgp", "localgp_lensing",
+     "localgp_integratedgp", "integratedgp_localgp",
+];
+
+const GR_EFFECTS_chi_di_LD = [
+     "auto_lensing", "auto_integratedgp", 
+     "lensing_integratedgp", "integratedgp_lensing",
+];
+
+const GR_EFFECTS_chi_integrated_LD = vcat(GR_EFFECTS_chi_si_LD, GR_EFFECTS_chi_di_LD)
+
+const chi_si_LD_kwargs = [:N_χs, :en]
+const chi_di_LD_kwargs = [:N_χs_2, :en]
+
+
+function specif_kwargs_LD(name::String, kwargs)
+    if name ∈  GR_EFFECTS_chi_integrated_LD
+        if name ∈ GR_EFFECTS_chi_si_LD
+            return filter(p->!(first(p) ∈ chi_di_LD_kwargs && first(p) ∉ chi_si_LD_kwargs), kwargs)
+        else
+            return filter(p->!(first(p) ∈ chi_si_LD_kwargs && first(p) ∉ chi_di_LD_kwargs), kwargs)
+        end
+    else
+        return filter(p->(first(p) ∉ chi_integrated_LD_kwargs), kwargs)
+    end
+end
+
 
 ##################### GALAXY NUMBER COUNTS #############################
 

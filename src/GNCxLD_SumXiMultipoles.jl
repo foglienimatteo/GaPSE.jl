@@ -178,6 +178,9 @@ function print_map_sum_ξ_GNCxLD_multipole(
      single::Bool = true,
      kwargs...)
 
+     check_parent_directory(out)
+     check_namefile(out)
+
      dir = length(split(out, "/")) == 1 ? "all_standalones_CFs/" :
            join(split(out, "/")[begin:end-1] .* "/") * "all_standalones_CFs/"
 

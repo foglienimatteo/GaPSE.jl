@@ -495,6 +495,9 @@ function print_map_ξ_LD_multipole(
      s1=nothing,
      kwargs...)
 
+     check_parent_directory(out)
+     check_namefile(out)
+
      s_1 = isnothing(s1) ? cosmo.s_eff : s1
      t1 = time()
      vec = map_ξ_LD_multipole(cosmo, effect, v_ss; s1=s_1, kwargs...)

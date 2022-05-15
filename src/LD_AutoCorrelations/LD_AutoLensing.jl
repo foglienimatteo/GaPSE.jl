@@ -163,14 +163,10 @@ end
 =#
 
 function ξ_LD_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Integer = 100, Δχ_min::Float64 = 1e-4)
+     en::Float64 = 1e6, N_χs_2::Integer = 100, Δχ_min::Float64 = 1e-4)
 
-     adim_1χs = range(1e-8, 1.0, length = N_χs)[begin:end]
-     adim_2χs = range(1e-7, 1.0, length = N_χs)[begin:end]
-     #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
-
-     χ1s = P1.comdist .* adim_1χs
-     χ2s = P2.comdist .* adim_2χs
+     χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
+     χ2s = P2.comdist .* range(1e-6, 1.0, length = N_χs_2 + 7)
 
      IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
@@ -197,7 +193,7 @@ end
      ξ_LD_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
           en::Float64 = 1e6,
           Δχ_min::Float64 = 1e-3,
-          N_χs::Integer = 100) :: Float64
+          N_χs_2::Integer = 100) :: Float64
 
      ξ_LD_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...) = 
           ξ_LD_Lensing(Point(s1, cosmo), Point(s2, cosmo), y, cosmo; kwargs...)
@@ -271,9 +267,9 @@ the integrand function `integrand_ξ_LD_Lensing`.
   as the result of the parenthesis instead of calculating it in the normal way; it prevents
   computational divergences.
 
-- `N_χs::Integer = 100`: number of points to be used for sampling the integral
+- `N_χs_2::Integer = 100`: number of points to be used for sampling the integral
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
-  with `N_χs ≥ 50` the result is stable.
+  with `N_χs_2 ≥ 50` the result is stable.
 
 
 See also: [`integrand_ξ_LD_Lensing`](@ref), [`integrand_on_mu_Lensing`](@ref)

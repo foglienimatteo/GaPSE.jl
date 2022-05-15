@@ -24,7 +24,7 @@ using Dierckx, DelimitedFiles, QuadGK, Suppressor
 
 const FILE_F_MAP = "datatest/F_REFERENCE_pi2.txt"
 const FILE_PS = "datatest/file_pk.txt"
-#const FILE_ILN = "datatest/tab_xi.txt"
+const FILE_IF_MAP = "datatest/IntegrF_REFERENCE_pi2.txt"
 const FILE_ILN = "datatest/table_Iln.txt"
 const FILE_BACKGROUND = "datatest/WideA_ZA_background.dat"
 
@@ -41,6 +41,7 @@ include("TEST_DATA.jl")
 
 ##########################################################################################92
 
+#=
 @testset "test OtherUtils" begin
      include("test_OtherUtils.jl")
 end
@@ -72,7 +73,11 @@ end
 @testset "test WindowF" begin
      include("test_WindowF.jl")
 end
+=#
 
+@testset "test Dicts" begin
+     include("test_Dicts.jl")
+end
 
 ##########################################################################################92
 
@@ -85,9 +90,15 @@ const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
      ),
      IPSTools_opts=Dict(
           :N => 1024, :fit_min => 0.05, :fit_max => 0.5,
-          :con => true, :k_min => 1e-8, :k_max => 10.0)
+          :con => true, :k_min => 1e-8, :k_max => 10.0,
+     ),
+     WFI_opts = Dict(:llim => 0.0, :rlim => Inf, :N => 1000,
+          :trap => true, :rtol => 1e-2, :atol => 0.0,
+          :ss_start => 0.0, :ss_step => 21.768735478453323,
+          :ss_stop => 0.0)
 )
-const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP)
+
+const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP, FILE_IF_MAP)
 
 
 common_kwargs = Dict(

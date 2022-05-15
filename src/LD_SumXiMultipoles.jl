@@ -111,7 +111,8 @@ function map_sum_ξ_LD_multipole(
 
      ALL = [
           begin
-               _, xis = map_ξ_LD_multipole(cosmo, effect, ss; kwargs...)
+               _, xis = map_ξ_LD_multipole(cosmo, effect, ss; 
+                    specif_kwargs_LD(effect, kwargs)...)
                xis
           end for effect in GaPSE.GR_EFFECTS_LD
      ]
@@ -177,6 +178,9 @@ function print_map_sum_ξ_LD_multipole(
      L::Integer = 0,
      single::Bool = true,
      kwargs...)
+
+     check_parent_directory(out)
+     check_namefile(out)
 
      dir = length(split(out, "/")) == 1 ? "all_standalones_CFs/" :
            join(split(out, "/")[begin:end-1] .* "/") * "all_standalones_CFs/"
