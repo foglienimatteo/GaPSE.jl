@@ -241,6 +241,7 @@ struct Cosmology
      file_data::String
      file_ips::String
      file_windowF::String
+     file_IWF::Union{String, Nothing}
 
      function Cosmology(
           params::CosmoParams,
@@ -319,7 +320,8 @@ struct Cosmology
                vol,
                file_data,
                file_ips,
-               file_windowF
+               file_windowF,
+               file_IntwindowF,
           )
      end
 end

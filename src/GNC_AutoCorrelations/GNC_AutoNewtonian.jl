@@ -20,7 +20,7 @@
 
 function ξ_GNC_Newtonian(P1::Point, P2::Point, y, cosmo::Cosmology)
      s1, D1, f1 = P1.comdist, P1.D, P1.f
-     s2, D2, f2 = P2.comdist, P2.D, P1.f
+     s2, D2, f2 = P2.comdist, P2.D, P2.f
      b1, b2 = cosmo.params.b, cosmo.params.b
 
      Δs = s(s1, s2, y)
