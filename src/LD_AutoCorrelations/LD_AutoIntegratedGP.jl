@@ -91,7 +91,7 @@ function ξ_LD_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
 
 
      χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
-     χ2s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2 + 7)
+     χ2s = P2.comdist .* range(1e-6, 1.0, length = N_χs_2 + 7)
 
      IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]

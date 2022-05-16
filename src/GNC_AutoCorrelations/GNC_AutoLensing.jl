@@ -153,22 +153,13 @@ function integrand_ξ_GNC_Lensing(
      return integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
 end
 
-#=
-function func_Δχ_min(s1, s2, y; frac = 1e-4)
-     Δs = s(s1, s2, y)
-     return frac * Δs
-end
-=#
+
 
 function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Integer = 100, Δχ_min::Float64 = 1e-4)
+     en::Float64 = 1e6, N_χs_2::Integer = 100, Δχ_min::Float64 = 1e-4)
 
-     adim_1χs = range(1e-8, 1, length = N_χs)[begin:end]
-     adim_2χs = range(1e-7, 1, length = N_χs)[begin:end]
-     #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
-
-     χ1s = P1.comdist .* adim_1χs
-     χ2s = P2.comdist .* adim_2χs
+     χ1s = P1.comdist .* range(1e-6, 1, length = N_χs_2)
+     χ2s = P2.comdist .* range(1e-6, 1, length = N_χs_2 + 7)
 
      IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]

@@ -85,7 +85,7 @@ function integrand_ξ_LD_Doppler_IntegratedGP(
      #first = common * factor * (1 / 15 * I00 + 2 / 21 * I20 + 1 / 35 * I40 + I02)
 
      #new_J31 = -3 * χ2^3 * y * f0 * ℋ0 * (ℛ_s1 + 1) * (s2 * (f2 - 1) * ℋ2 * ℛ_s2 + 1)
-     new_J31 = Δχ2^2 * D2 * (s1 - χ2 * y) / a2 * (1 / s2 - ℛ_s2 * ℋ2 * (f2 - 1))
+     new_J31 = Δχ2^2 * D2 * (χ2 * y - s1) / (a2 * s2)  * (s2 * ℛ_s2 * ℋ2 * (f2 - 1) - 1)
      I13 = cosmo.tools.I13(Δχ2)
 
      second = common * new_J31 * I13
@@ -167,14 +167,7 @@ See also: [`integrand_ξ_LD_Doppler_IntegratedGP`](@ref), [`int_on_mu_Doppler_In
 function ξ_LD_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
-     #=
-     f(χ2) = en * integrand_ξ_LD_Doppler_IntegratedGP(χ2, s1, s2, y, cosmo)
-
-     return quadgk(f, 1e-6, s2; rtol=1e-3)[1] / en
-     =#
-
-     adim_χs = range(1e-6, 1.0, N_χs)
-     χ2s = adim_χs .* s2
+     χ2s = range(1e-6, 1.0, length = N_χs) .* s2
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
      IPs = [GaPSE.Point(x, cosmo) for x in χ2s]

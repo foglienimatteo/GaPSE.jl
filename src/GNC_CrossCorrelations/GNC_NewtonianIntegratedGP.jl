@@ -162,14 +162,7 @@ See also: [`integrand_ξ_GNC_Newtonian_IntegratedGP`](@ref), [`int_on_mu_Newtoni
 function ξ_GNC_Newtonian_IntegratedGP(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
-     #=
-     f(χ2) = en * integrand_ξ_GNC_Newtonian_IntegratedGP(χ2, s1, s2, y, cosmo)
-
-     return quadgk(f, 1e-6, s2; rtol=1e-3)[1] / en
-     =#
-
-     adim_χs = range(1e-6, 1, N_χs)
-     χ2s = adim_χs .* s2
+     χ2s = s2 .* range(1e-6, 1, length = N_χs)
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
      IPs = [GaPSE.Point(x, cosmo) for x in χ2s]

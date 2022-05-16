@@ -88,14 +88,13 @@ end
 
 
 function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e10, N_χs::Integer = 100)
+     en::Float64 = 1e10, N_χs_2::Integer = 100)
 
      #adim_χs = range(1e-12, 1, N_χs)
-     adim_χs = range(1e-8, 1, length = N_χs)
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
-     χ1s = adim_χs .* P1.comdist
-     χ2s = adim_χs .* P2.comdist
+     χ1s = P1.comdist .* range(1e-6, 1, length = N_χs_2)
+     χ2s = P2.comdist .* range(1e-6, 1, length = N_χs_2 + 7)
 
      IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
