@@ -169,8 +169,7 @@ See also: [`integrand_ξ_GNCxLD_LocalGP_Lensing`](@ref), [`int_on_mu_Lensing_Loc
 function ξ_GNCxLD_LocalGP_Lensing(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
-     adim_χs = range(1e-6, 1, N_χs)
-     χ2s = adim_χs .* s2
+     χ2s = s2 .* range(1e-6, 1.0, length = N_χs)
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
      IPs = [GaPSE.Point(x, cosmo) for x in χ2s]

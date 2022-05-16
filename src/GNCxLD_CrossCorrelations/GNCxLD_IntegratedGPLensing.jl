@@ -175,13 +175,10 @@ See also: [`integrand_ξ_GNCxLD_IntegratedGP_Lensing`](@ref), [`integrand_on_mu_
 [`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
 function ξ_GNCxLD_IntegratedGP_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Integer = 100)
+     en::Float64 = 1e6, N_χs_2::Integer = 100)
 
-     adim_χs = range(1.1e-8, 1.0, length = N_χs)[begin:end]
-     #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
-
-     χ1s = P1.comdist .* adim_χs
-     χ2s = P2.comdist .* adim_χs
+     χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
+     χ2s = P2.comdist .* range(1e-6, 1.0, length = N_χs_2 + 7)
 
      IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
