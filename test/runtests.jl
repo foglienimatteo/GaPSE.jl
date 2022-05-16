@@ -100,7 +100,7 @@ const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
 
 const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP, FILE_IF_MAP)
 
-
+#=
 common_kwargs = Dict(
      :pr => false,
      :use_windows => false,
@@ -123,13 +123,22 @@ specific_kwargs = [effect ∈ spec_effect ? Dict(
 
 joint_kwargs = [isnothing(spec) ? common_kwargs : merge(common_kwargs, spec)
                 for spec in specific_kwargs];
+=#
 
 dict_L_dir = Dict(0 => "monopoles", 1 => "dipoles", 2 => "tripoles",
      3 => "quadrupoles", 4 => "pentapoles")
 
+KWARGS_LD = Dict(
+     :pr => true,
+     :use_windows => false,
+     :enhancer => 1e8, :N_μs => 30,
+     :μ_atol => 0.0, :μ_rtol => 1e-2,
+     :N_χs => 100, :N_χs_2 => 30,
+     :N_log => 100,
+);
 
 ##############################
-
+#=
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
 end
@@ -141,8 +150,14 @@ end
 @testset "test LD_SumXiMultipoles" begin
      include("test_LD_SumXiMultipoles.jl")
 end
-
+=#
 ##############################
+
+table_xis_LD_L0_noF = readdlm("datatest/LD_SumXiMultipoles/map_sum_xi_LD_L0_noF.txt", 
+    comments = true);
+ss_LD_L0_noF = convert(Vector{Float64}, table_xis_LD_L0_noF[:, 1]);
+xis_sum_LD_L0_noF = convert(Vector{Float64}, table_xis_LD_L0_noF[:, 2]);
+all_xis_LD_L0_noF = [convert(Vector{Float64}, table_xis_LD_L0_noF[:, i]) for i in 3:18];
 
 @testset "test LD_AutoDoppler" begin
      include("test_LD_AutoCorrelations/test_LD_AutoDoppler.jl")

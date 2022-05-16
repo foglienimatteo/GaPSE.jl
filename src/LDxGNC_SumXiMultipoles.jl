@@ -48,7 +48,7 @@ See also: [`integrand_ξ_LDxGNC_multipole`](@ref), [`ξ_LDxGNC_multipole`](@ref)
 [`Cosmology`](@ref), [`GR_EFFECTS_LDxGNC`](@ref)
 """
 function sum_ξ_LDxGNC_multipole(s1, s, cosmo::Cosmology; kwargs...)
-     ALL = [ξ_LDxGNC_multipole(s1, s, effect, cosmo; kwargs...)
+     ALL = [ξ_LDxGNC_multipole(s1, s, effect, cosmo; specif_kwargs_LDxGNC(effect, kwargs)...)
             for effect in GaPSE.GR_EFFECTS_LDxGNC]
 
      return sum(ALL), ALL

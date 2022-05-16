@@ -38,7 +38,7 @@
 
      @testset "L = 0" begin
           L = 0
-          table = readdlm("datatest/doppler_multipoles/xi_" * name_effect * "_L$L" * ".txt"; comments = true)
+          table = readdlm("datatest/LD_doppler_multipoles/xi_" * name_effect * "_L$L" * ".txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
@@ -53,7 +53,7 @@
 
      @testset "L = 1" begin
           L = 1
-          table = readdlm("datatest/doppler_multipoles/xi_" * name_effect * "_L$L" * ".txt"; comments = true)
+          table = readdlm("datatest/LD_doppler_multipoles/xi_" * name_effect * "_L$L" * ".txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
@@ -68,7 +68,7 @@
 
      @testset "L = 2" begin
           L = 2
-          table = readdlm("datatest/doppler_multipoles/xi_" * name_effect * "_L$L" * ".txt"; comments = true)
+          table = readdlm("datatest/LD_doppler_multipoles/xi_" * name_effect * "_L$L" * ".txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
@@ -83,7 +83,7 @@
 
      @testset "L = 3" begin
           L = 3
-          table = readdlm("datatest/doppler_multipoles/xi_" * name_effect * "_L$L" * ".txt"; comments = true)
+          table = readdlm("datatest/LD_doppler_multipoles/xi_" * name_effect * "_L$L" * ".txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
@@ -98,7 +98,7 @@
 
      @testset "L = 4" begin
           L = 4
-          table = readdlm("datatest/doppler_multipoles/xi_" * name_effect * "_L$L" * ".txt"; comments = true)
+          table = readdlm("datatest/LD_doppler_multipoles/xi_" * name_effect * "_L$L" * ".txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
@@ -138,7 +138,7 @@ end
      end
 
      @testset "first" begin
-          table = readdlm("datatest/doppler_multipoles/xi_auto_doppler_L0_first.txt"; comments = true)
+          table = readdlm("datatest/LD_doppler_multipoles/xi_auto_doppler_L0_first.txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
@@ -158,7 +158,7 @@ end
      end
 
      @testset "second" begin
-          table = readdlm("datatest/doppler_multipoles/xi_auto_doppler_L0_second.txt"; comments = true)
+          table = readdlm("datatest/LD_doppler_multipoles/xi_auto_doppler_L0_second.txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
@@ -178,7 +178,7 @@ end
      end
 
      @testset "third" begin
-          table = readdlm("datatest/doppler_multipoles/xi_auto_doppler_L0_third.txt"; comments = true)
+          table = readdlm("datatest/LD_doppler_multipoles/xi_auto_doppler_L0_third.txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 

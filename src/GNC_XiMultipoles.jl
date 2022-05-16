@@ -504,7 +504,8 @@ function print_map_ξ_GNC_multipole(
 
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
-          println(io, "# This is an integration map on mu of the ξ multipole $effect GR effect.")
+          println(io, "# This is an integration map on mu of the ξ multipole $effect GR effect")
+          println(io, "# concerning the relativistic galaxy number counts.")
           parameters_used(io, cosmo)
           println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
           print(io, "# kwards passed: ")

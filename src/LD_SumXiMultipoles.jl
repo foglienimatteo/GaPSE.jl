@@ -48,7 +48,7 @@ See also: [`integrand_ξ_LD_multipole`](@ref), [`ξ_LD_multipole`](@ref),
 [`Cosmology`](@ref), [`GR_EFFECTS_LD`](@ref)
 """
 function sum_ξ_LD_multipole(s1, s, cosmo::Cosmology; kwargs...)
-     ALL = [ξ_LD_multipole(s1, s, effect, cosmo; kwargs...)
+     ALL = [ξ_LD_multipole(s1, s, effect, cosmo; specif_kwargs_LD(effect, kwargs)...)
             for effect in GaPSE.GR_EFFECTS_LD]
 
      return sum(ALL), ALL
@@ -198,7 +198,8 @@ function print_map_sum_ξ_LD_multipole(
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
           println(io, "# This is an integration map on mu of the sum" *
-                      " of all the ξ_LD_L=$L multipole GR effects.")
+                      " of all the ξ_LD_L=$L multipole GR effects")
+           println(io, "# concerning the luminosity distance perturbations.")
           !(single == true) ||
                println(io, "# In input was set \"single = $single\", " *
                            "so, together with their sum, all the CFs are here reported.\n#")
@@ -246,7 +247,8 @@ function print_map_sum_ξ_LD_multipole(
      if single == false
           for (effect, vec) in zip(GaPSE.GR_EFFECTS_LD, ALL)
                open(dir * "xi_" * effect * "_L$L" * ".txt", "w") do io
-                    println(io, "# This is an integration map on mu of the ξ multipole $effect GR effect.")
+                    println(io, "# This is an integration map on mu of the ξ multipole $effect GR effect")
+                    println(io, "# concerning the luminosity distance perturbations.")
                     parameters_used(io, cosmo)
                     #println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
                     print(io, "# kwards passed: ")
