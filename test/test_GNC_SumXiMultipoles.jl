@@ -115,7 +115,7 @@ end
      table = readdlm("datatest/GNC_SumXiMultipoles/map_sum_xi_GNC_L0_withF_specific_ss.txt", comments = true)
      ss = convert(Vector{Float64}, table[:, 1])
      all_res_sums = convert(Vector{Float64}, table[:, 2])
-     all_res_xis = [convert(Vector{Float64}, table[:, i]) for i in 3:18]
+     all_res_xis = [convert(Vector{Float64}, table[:, i]) for i in 3:27]
      RTOL = 1e-2
 
      kwargs = Dict(

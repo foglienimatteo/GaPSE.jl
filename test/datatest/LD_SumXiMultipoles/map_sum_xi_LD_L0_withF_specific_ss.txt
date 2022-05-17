@@ -1,0 +1,61 @@
+# This is an integration map on mu of the sum of all the ξ_LD_L=0 multipole GR effects
+# concerning the luminosity distance perturbations.
+# In input was set "single = true", so, together with their sum, all the CFs are here reported.
+#
+###############
+#    GaPSE    #
+############### 
+#
+# The Cosmology considered had the following paremeters:
+# 
+# - Matter Power Spectrum input file: "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/file_pk.txt"
+# - F window function input file: "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/F_REFERENCE_pi2.txt"
+# - Background data input file: "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/WideA_ZA_background.dat"
+#
+# - Basic CosmoParams considered: 
+#	 z_min = 0.05 	 z_max = 0.2
+#	 θ_max = 1.5707963267948966 [rad] 	 h_0 = 0.7
+#	 Ω_b = 0.0489 	 Ω_cdm = 0.25102 	 Ω_M0 = 0.29992
+#	 b = 1.0 	 𝑓_evo = 0.0 	 s_b = 0.0
+#
+# - CosmoParams about the Input Power Spectrum: 
+#	 fit_left_min = 1.0e-6 	 fit_right_min = 10.0 	 
+#	 fit_left_max = 3.0e-6 	 fit_right_max = 20.0 	 
+#
+# - CosmoParams about the Input Power Spectrum Tools: 
+#	 k_max = 10.0 	 fit_max = 0.5 	 N = 1024 	 
+#	 con = true 	 k_min = 1.0e-8 	 fit_min = 0.05 	 
+#
+# - CosmoParams about the Integrated Window Function F: 
+#	 ss_step = 21.768735478453323 	 N = 1000 	 rtol = 0.01 	 
+#	 llim = 0.0 	 atol = 0.0 	 rlim = Inf 	 
+#	 ss_stop = 0.0 	 trap = true 	 ss_start = 0.0 	 
+#
+# - Computed quantities: 
+# 	 effective redshift z_eff = 0.15045636096023224 
+# 	 comoving s_min = 148.1920001465757 Mpc/h_0
+# 	 comoving s_max = 571.7022420258767 Mpc/h_0
+# 	 comoving s_eff = 435.3747095690664 Mpc/h_0
+# 	 Volume of the survey V_survey = 3.845366167995967e8 Mpc^3/h_0^3
+# 	 σ_0 = 15.593462966741178
+# 	 σ_1 = 15.074895881392285
+# 	 σ_2 = 100.85852368830226
+# 	 σ_3 = 3735.1226181519773
+# 	 (where σ_i = \int_{k_{min}}^{k_{max}}\frac{dq}{2 π^2} q^{2-i} P(q))
+# 
+# computational time needed (in s) : 6.4214
+# kwards passed: 
+# 		N_χs = 100
+# 		μ_atol = 0.0
+# 		enhancer = 1.0e8
+# 		use_windows = true
+# 		N_μs = 30
+# 		N_χs_2 = 50
+# 		μ_rtol = 0.01
+# 
+# 1: s [Mpc/h_0] 	 2: xi_SUM 	 3: xi_auto_doppler 	 4: xi_auto_lensing 	 5: xi_auto_localgp 	 6: xi_auto_integratedgp 	 7: xi_lensing_doppler 	 8: xi_doppler_lensing 	 9: xi_doppler_localgp 	 10: xi_localgp_doppler 	 11: xi_doppler_integratedgp 	 12: xi_integratedgp_doppler 	 13: xi_lensing_localgp 	 14: xi_localgp_lensing 	 15: xi_lensing_integratedgp 	 16: xi_integratedgp_lensing 	 17: xi_localgp_integratedgp 	 18: xi_integratedgp_localgp 	 
+10 	 73025.13857448718 	 73285.63491947016 	 380.29873661457873 	 -0.2860636943067363 	 -0.8230994698533054 	 -398.57965082424585 	 -398.3316059784397 	 -3.527812182227622 	 0.12508897433002303 	 -92.05860825122879 	 218.89986104415783 	 17.146666304587672 	 17.137055973517295 	 5.14933284051659 	 5.1499047425327245 	 -5.398718579382758 	 -5.397432497510329 	 
+100 	 12002.526864839087 	 12235.795007830811 	 34.33789842845885 	 -9.80889437705014 	 -0.7409731375686046 	 -140.9725737864638 	 -139.8228555353512 	 -82.57240568341749 	 1.5753666270648194 	 -63.639424212094355 	 149.4284639479771 	 11.59460920970161 	 11.129583012494203 	 2.9386655832525586 	 2.9667350725192345 	 -4.872683970308537 	 -4.809654170941006 	 
+500 	 335.02016459637326 	 408.83572029402825 	 -0.2477374136510621 	 -13.241454156342389 	 -0.3492512073226291 	 1.3772982639897755 	 0.9836534690612756 	 -42.62051795661324 	 -35.55455968513844 	 -10.79846687567554 	 31.245731727738313 	 -0.10682817210032695 	 0.12106111603850056 	 0.015392981412990437 	 0.02324817488579315 	 -2.1790325484879474 	 -2.484093415449979 	 
+700 	 48.60794690993552 	 73.07493777622675 	 -0.14073069257809717 	 -4.914176831395784 	 -0.15676016631321868 	 0.9487586703892213 	 0.9505849032843002 	 -11.807855147277648 	 -12.219884371201783 	 -3.680337917099562 	 8.830543229818607 	 -0.16801377741992518 	 -0.1527162334486104 	 -0.03833527254845853 	 -0.038753995318852076 	 -0.9454100808146966 	 -0.9339031843667183 	 
+1000 	 0.4901590035521034 	 1.463073196527428 	 -0.010122807736508432 	 -0.21540762076167497 	 -0.011555828028916363 	 0.03195144813282881 	 0.068119719356484 	 -0.3731544468194428 	 -0.4122277710472274 	 -0.19361215448505373 	 0.2850481148327004 	 -0.007847984520294999 	 -0.018329854924261695 	 -0.0036170321544917194 	 -0.004297135892353373 	 -0.06572191875371147 	 -0.04213892017340107 	 
