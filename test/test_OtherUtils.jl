@@ -98,9 +98,9 @@ end
      @test_throws AssertionError GaPSE.check_parent_directory("/Users/matteofoglieni/notadirectory/file.txt")
      @test_throws AssertionError GaPSE.check_parent_directory("notadirectory/file.txt")
      
-     @test isnothing(GaPSE.check_parent_directory("/Users/matteofoglieni/notadirectory/"))
+     #@test isnothing(GaPSE.check_parent_directory("/Users/matteofoglieni/notadirectory/"))
      @test isnothing(GaPSE.check_parent_directory("notadirectory/"))
-     @test isnothing(GaPSE.check_parent_directory("/Users/"))
+     #@test isnothing(GaPSE.check_parent_directory("/Users/"))
      @test isnothing(GaPSE.check_parent_directory("/"))
 end
 
