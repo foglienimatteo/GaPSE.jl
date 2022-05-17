@@ -41,7 +41,7 @@ include("TEST_DATA.jl")
 
 ##########################################################################################92
 
-#=
+
 @testset "test OtherUtils" begin
      include("test_OtherUtils.jl")
 end
@@ -73,7 +73,7 @@ end
 @testset "test WindowF" begin
      include("test_WindowF.jl")
 end
-=#
+
 
 @testset "test Dicts" begin
      include("test_Dicts.jl")
@@ -152,7 +152,7 @@ KWARGS_GNC = Dict(
 
 
 ################################### TEST LUMINOSITY DISTANCE PERTURBATIONS ###############92
-#=
+
 
 @testset "test LD_XiMultipoles" begin
      include("test_LD_XiMultipoles.jl")
@@ -161,11 +161,11 @@ end
 @testset "test LD_SumXiMultipoles" begin
      include("test_LD_SumXiMultipoles.jl")
 end
-=#
+
 
 ##############################
 
-#=
+
 table_xis_LD_L0_noF = readdlm("datatest/LD_SumXiMultipoles/map_sum_xi_LD_L0_noF.txt", 
     comments = true);
 ss_LD_L0_noF = convert(Vector{Float64}, table_xis_LD_L0_noF[:, 1]);
@@ -224,7 +224,7 @@ end
 @testset "test PPDoppler" begin
      include("test_PPDoppler.jl")
 end
-=#
+
 
 ################################### TEST RELATIVISTIC GALAXY NUMBER COUNTS ###############92
 
