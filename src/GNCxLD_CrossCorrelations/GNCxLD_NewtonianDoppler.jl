@@ -56,7 +56,7 @@ function ξ_GNCxLD_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
 
      Δs = s(s1, s2, y)
 
-     common = D1 * D2 * f2 * ℋ2 * ℜ2
+     common = - D1 * D2 * f2 * ℋ2 * ℜ2
 
      J00 = 1 / 15 * (5 * b1 * (s2 - y * s1) + f1 * (2 * y^2 * s2 - 3 * y * s1 + s2))
      J02 = 1 / (21 * Δs^2) * (
