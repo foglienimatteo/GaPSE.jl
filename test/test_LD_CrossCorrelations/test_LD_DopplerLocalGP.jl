@@ -24,7 +24,7 @@
      ss = ss_LD_L0_noF
      xis = all_xis_LD_L0_noF[GaPSE.INDEX_GR_EFFECT_LD[effect]]
 
-     name = "calc_xi_" * effect * "_LD_L$L" * ".txt"
+     name = "calc_xi_LD_" * effect * "_LD_L$L" * ".txt"
      isfile(name) && rm(name)
      GaPSE.print_map_ξ_LD_multipole(COSMO, name, effect, 10 .^ range(-1, 3, length=KWARGS_LD[:N_log]);
           L = L, GaPSE.specif_kwargs_LD(effect, KWARGS_LD)...)
@@ -47,7 +47,7 @@ end
      ss = ss_LD_L0_noF
      xis = all_xis_LD_L0_noF[GaPSE.INDEX_GR_EFFECT_LD[effect]]
 
-     name = "calc_xi_" * effect * "_LD_L$L" * ".txt"
+     name = "calc_xi_LD_" * effect * "_LD_L$L" * ".txt"
      isfile(name) && rm(name)
      GaPSE.print_map_ξ_LD_multipole(COSMO, name, effect, 10 .^ range(-1, 3, length=KWARGS_LD[:N_log]);
           L = L, GaPSE.specif_kwargs_LD(effect, KWARGS_LD)...)

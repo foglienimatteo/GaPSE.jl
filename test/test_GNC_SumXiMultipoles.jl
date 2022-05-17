@@ -309,7 +309,7 @@ end
 
           calc_xis = [
                begin
-                    a_name = "all_standalones_CFs/xi_" * effect * "_L0" * ".txt"
+                    a_name = "all_GNC_standalones_CFs/xi_GNC_" * effect * "_L0" * ".txt"
                     calc_table = readdlm(a_name, comments = true)
                     #calc_ss = convert(Vector{Float64}, calc_table[:, 1])
                     xis = convert(Vector{Float64}, calc_table[:, 2])
@@ -338,9 +338,9 @@ end
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNC
-               rm("all_standalones_CFs/xi_" * effect * "_L0" * ".txt")
+               rm("all_GNC_standalones_CFs/xi_GNC_" * effect * "_L0" * ".txt")
           end
-          rm("all_standalones_CFs")
+          rm("all_GNC_standalones_CFs")
      end
 end
 

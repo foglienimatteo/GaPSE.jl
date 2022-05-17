@@ -38,7 +38,7 @@
 
      @testset "L = 0" begin
           L = 0
-          table = readdlm("datatest/GNC_doppler_multipoles/xi_" * name_effect * "_L$L" * "_GNC.txt"; comments = true)
+          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_" * name_effect * "_L$L" * ".txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
@@ -53,7 +53,7 @@
 
      @testset "L = 1" begin
           L = 1
-          table = readdlm("datatest/GNC_doppler_multipoles/xi_" * name_effect * "_L$L" * "_GNC.txt"; comments = true)
+          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_" * name_effect * "_L$L" * ".txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
@@ -68,7 +68,7 @@
 
      @testset "L = 2" begin
           L = 2
-          table = readdlm("datatest/GNC_doppler_multipoles/xi_" * name_effect * "_L$L" * "_GNC.txt"; comments = true)
+          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_" * name_effect * "_L$L" * ".txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
@@ -83,7 +83,7 @@
 
      @testset "L = 3" begin
           L = 3
-          table = readdlm("datatest/GNC_doppler_multipoles/xi_" * name_effect * "_L$L" * "_GNC.txt"; comments = true)
+          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_" * name_effect * "_L$L" * ".txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
@@ -98,7 +98,7 @@
 
      @testset "L = 4" begin
           L = 4
-          table = readdlm("datatest/GNC_doppler_multipoles/xi_" * name_effect * "_L$L" * "_GNC.txt"; comments = true)
+          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_" * name_effect * "_L$L" * ".txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
@@ -138,11 +138,11 @@ end
      end
 
      @testset "first" begin
-          table = readdlm("datatest/GNC_doppler_multipoles/xi_auto_doppler_L0_GNC_first.txt"; comments = true)
+          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_auto_doppler_L0_first.txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
-          name = "calc_xi_auto_doppler_L0_GNC_first.txt"
+          name = "calc_xi_GNC_auto_doppler_L0_first.txt"
           isfile(name) && rm(name)
           GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, nothing;
                s1 = nothing, L = 0, kwargs...)
@@ -158,11 +158,11 @@ end
      end
 
      @testset "second" begin
-          table = readdlm("datatest/GNC_doppler_multipoles/xi_auto_doppler_L0_GNC_second.txt"; comments = true)
+          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_auto_doppler_L0_second.txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
-          name = "calc_xi_auto_doppler_L0_GNC_second.txt"
+          name = "calc_xi_GNC_auto_doppler_L0_second.txt"
           isfile(name) && rm(name)
           GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, 10 .^ range(0, 3, length = 344);
                s1 = nothing, L = 0, kwargs...)
@@ -178,11 +178,11 @@ end
      end
 
      @testset "third" begin
-          table = readdlm("datatest/GNC_doppler_multipoles/xi_auto_doppler_L0_GNC_third.txt"; comments = true)
+          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_auto_doppler_L0_third.txt"; comments = true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
-          name = "calc_xi_auto_doppler_L0_GNC_third.txt"
+          name = "calc_xi_GNC_auto_doppler_L0_third.txt"
           isfile(name) && rm(name)
           GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, 10 .^ range(0, 3, length = 344);
                s1 = COSMO.s_eff - 65.0, L = 0, kwargs...)
