@@ -94,8 +94,6 @@ include("GNC_CrossCorrelations/GNC_LensingLocalGP.jl")
 include("GNC_CrossCorrelations/GNC_LensingIntegratedGP.jl")
 include("GNC_CrossCorrelations/GNC_LocalGPIntegratedGP.jl")
 
-include("PPDoppler.jl")
-
 
 ##################### GALAXY NUMBER COUNTS x LUMINOSITY DISTANCE #############################
 
@@ -139,7 +137,7 @@ include("GNC_SumXiMultipoles.jl")
 include("GNCxLD_XiMultipoles.jl")
 include("GNCxLD_SumXiMultipoles.jl")
 include("LDxGNC_XiMultipoles.jl")
-include("LdxGNC_SumXiMultipoles.jl")
+include("LDxGNC_SumXiMultipoles.jl")
 include("PowerSpectrum.jl")
 
 
