@@ -79,7 +79,11 @@ end
      include("test_Dicts.jl")
 end
 
-##########################################################################################92
+@testset "test PowerSpectrum" begin
+     include("test_PowerSpectrum.jl")
+end
+
+################################### COSMOLOGY IMPLEMENTATION #############################92
 
 
 const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
@@ -137,11 +141,18 @@ KWARGS_LD = Dict(
      :N_log => 100,
 );
 
-##############################
+KWARGS_GNC = Dict(
+     :pr => true,
+     :use_windows => false,
+     :enhancer => 1e8, :N_μs => 30,
+     :μ_atol => 0.0, :μ_rtol => 1e-2,
+     :N_χs => 100, :N_χs_2 => 30,
+     :N_log => 100,
+);
+
+
+################################### TEST LUMINOSITY DISTANCE PERTURBATIONS ###############92
 #=
-@testset "test PowerSpectrum" begin
-     include("test_PowerSpectrum.jl")
-end
 
 @testset "test LD_XiMultipoles" begin
      include("test_LD_XiMultipoles.jl")
@@ -151,8 +162,10 @@ end
      include("test_LD_SumXiMultipoles.jl")
 end
 =#
+
 ##############################
 
+#=
 table_xis_LD_L0_noF = readdlm("datatest/LD_SumXiMultipoles/map_sum_xi_LD_L0_noF.txt", 
     comments = true);
 ss_LD_L0_noF = convert(Vector{Float64}, table_xis_LD_L0_noF[:, 1]);
@@ -210,5 +223,71 @@ end
 
 @testset "test PPDoppler" begin
      include("test_PPDoppler.jl")
+end
+=#
+
+################################### TEST RELATIVISTIC GALAXY NUMBER COUNTS ###############92
+
+
+@testset "test GNC_XiMultipoles" begin
+     include("test_GNC_XiMultipoles.jl")
+end
+
+@testset "test GNC_SumXiMultipoles" begin
+     include("test_GNC_SumXiMultipoles.jl")
+end
+
+
+##############################
+
+table_xis_GNC_L0_noF = readdlm("datatest/GNC_SumXiMultipoles/map_sum_xi_GNC_L0_noF.txt", 
+    comments = true);
+ss_GNC_L0_noF = convert(Vector{Float64}, table_xis_GNC_L0_noF[:, 1]);
+xis_sum_GNC_L0_noF = convert(Vector{Float64}, table_xis_GNC_L0_noF[:, 2]);
+all_xis_GNC_L0_noF = [convert(Vector{Float64}, table_xis_GNC_L0_noF[:, i]) for i in 3:27];
+
+@testset "test GNC_AutoDoppler" begin
+     include("test_GNC_AutoCorrelations/test_GNC_AutoDoppler.jl")
+end
+
+@testset "test GNC_AutoIntegratedGP" begin
+     include("test_GNC_AutoCorrelations/test_GNC_AutoIntegratedGP.jl")
+end
+
+@testset "test GNC_AutoLocalGP" begin
+     include("test_GNC_AutoCorrelations/test_GNC_AutoLocalGP.jl")
+end
+
+@testset "test GNC_AutoLensing" begin
+     include("test_GNC_AutoCorrelations/test_GNC_AutoLensing.jl")
+end
+
+
+##############################
+
+
+
+@testset "test GNC_DopplerLensing" begin
+     include("test_GNC_CrossCorrelations/test_GNC_DopplerLensing.jl")
+end
+
+@testset "test GNC_DopplerLocalGP" begin
+     include("test_GNC_CrossCorrelations/test_GNC_DopplerLocalGP.jl")
+end
+
+@testset "test GNC_DopplerIntegratedGP" begin
+     include("test_GNC_CrossCorrelations/test_GNC_DopplerIntegratedGP.jl")
+end
+
+@testset "test GNC_LensingIntegratedGP" begin
+     include("test_GNC_CrossCorrelations/test_GNC_LensingIntegratedGP.jl")
+end
+
+@testset "test GNC_LensingLocalGP" begin
+     include("test_GNC_CrossCorrelations/test_GNC_LensingLocalGP.jl")
+end
+
+@testset "test GNC_LocalGPIntegratedGP" begin
+     include("test_GNC_CrossCorrelations/test_GNC_LocalGPIntegratedGP.jl")
 end
 
