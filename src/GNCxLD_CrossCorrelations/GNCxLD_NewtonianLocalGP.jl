@@ -89,8 +89,8 @@ end
 
 
 
-function ξ_LDxGNC_LocalGP_Newtonian(s1, s2, y, cosmo::Cosmology)
-     ξ_GNCxLD_Newtonian_LocalGP(s2, s1, y, cosmo)
+function ξ_LDxGNC_LocalGP_Newtonian(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_GNCxLD_Newtonian_LocalGP(s2, s1, y, cosmo; kwargs...)
 end
 
 

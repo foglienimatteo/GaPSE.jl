@@ -163,7 +163,7 @@ end
 
 
 
-function ξ_LDxGNC_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology)
-     ξ_GNCxLD_LocalGP_IntegratedGP(s2, s1, y, cosmo)
+function ξ_LDxGNC_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_GNCxLD_LocalGP_IntegratedGP(s2, s1, y, cosmo; kwargs...)
 end
 

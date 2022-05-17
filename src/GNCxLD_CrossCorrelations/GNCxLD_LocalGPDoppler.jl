@@ -58,7 +58,7 @@ function ξ_GNCxLD_LocalGP_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
 
      Δs = s(s1, s2, y)
 
-     common = Δs^2 * f2 * ℋ2 * ℜ2 * (y * s1 - s2) / a2
+     common = Δs^2 * f2 * ℋ2 * ℜ2 * (y * s1 - s2) / a1
      parenth = 2 * f1 * a1 * ℋ1^2 * (𝑓_evo1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f1 + ℛ1 + 5 * s_b_s1 - 2)
 
      I00 = cosmo.tools.I00(Δs)
@@ -89,7 +89,7 @@ end
 
 
 
-function ξ_LDxGNC_Doppler_LocalGP(s1, s2, y, cosmo::Cosmology)
-     ξ_GNCxLD_LocalGP_Doppler(s2, s1, y, cosmo)
+function ξ_LDxGNC_Doppler_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_GNCxLD_LocalGP_Doppler(s2, s1, y, cosmo; kwargs...)
 end
 

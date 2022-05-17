@@ -87,6 +87,6 @@ See also: [`Point`](@ref), [`Cosmology`](@ref)
 
 
 
-function ξ_LDxGNC_LocalGP_LocalGP(s1, s2, y, cosmo::Cosmology)
-     ξ_GNCxLD_LocalGP_LocalGP(s2, s1, y, cosmo)
+function ξ_LDxGNC_LocalGP_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_GNCxLD_LocalGP_LocalGP(s2, s1, y, cosmo; kwargs...)
 end

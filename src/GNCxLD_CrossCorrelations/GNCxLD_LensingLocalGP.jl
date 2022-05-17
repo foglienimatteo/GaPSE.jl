@@ -168,7 +168,7 @@ See also: [`integrand_ξ_GNCxLD_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_Loc
 function ξ_GNCxLD_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Integer = 100)
 
-     χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs)
+     χ1s = s1 .* range(1e-6, 1.0, length = N_χs)
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
      IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
