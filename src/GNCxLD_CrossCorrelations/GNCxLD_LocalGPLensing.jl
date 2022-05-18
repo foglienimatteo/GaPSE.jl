@@ -78,7 +78,7 @@ function integrand_ξ_GNCxLD_LocalGP_Lensing(
      Δχ2_square = χ2^2 + s1^2 - 2 * χ2 * s1 * y
      Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
 
-     common = D_s1 * ℋ0^2 * Ω_M0 * s1 * D2 * (χ2 - s2) * (
+     common = - D_s1 * ℋ0^2 * Ω_M0 * s1 * D2 * (χ2 - s2) * (
                    2 * f_s1 * a_s1 * ℋ_s1^2 * (𝑓_evo_s1 - 3)
                    +
                    3 * ℋ0^2 * Ω_M0 * (f_s1 + ℛ_s1 + 5 * s_b_s1 - 2)
