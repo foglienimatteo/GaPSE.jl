@@ -85,7 +85,7 @@ function integrand_ξ_GNCxLD_Lensing_Doppler(
      Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
      Δχ1 = Δχ1_square > 0.0 ? √(Δχ1_square) : 0.0
 
-     common = ℋ0^2 * Ω_M0 * D1 * (χ1 - s1) / (s1 * a1) * (5 * s_b_s1 - 2)
+     common = - ℋ0^2 * Ω_M0 * D1 * (χ1 - s1) / (s1 * a1) * (5 * s_b_s1 - 2)
      factor = D_s2 * f_s2 * ℋ_s2 * ℜ_s2
 
      new_J00 = 1.0 / 15.0 * (χ1^2 * y + χ1 * (4 * y^2 - 3) * s2 - 2 * y * s2^2)

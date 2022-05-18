@@ -77,7 +77,7 @@ function integrand_ξ_GNCxLD_Lensing_LocalGP(
      Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
      Δχ1 = Δχ1_square > 0.0 ? √(Δχ1_square) : 0.0
 
-     common = 9 * ℋ0^4 * Ω_M0^2 * D_s2 * (1 + ℜ_s2) * s2 * (5 * s_b_s1 - 2) / (4 * a_s2 * s1)
+     common = - 9 * ℋ0^4 * Ω_M0^2 * D_s2 * (1 + ℜ_s2) * s2 * (5 * s_b_s1 - 2) / (4 * a_s2 * s1)
      factor = D1 * (s1 - χ1) / a1
 
      new_J31 = -2 * y * Δχ1^2
