@@ -56,8 +56,8 @@ function ξ_GNCxLD_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      Ω_M0 = cosmo.params.Ω_M0
      Δs = s(s1, s2, y)
 
-     prefac = 1.5 / a2 * ℋ1 * f1 * D1 * ℛ1 * ℋ0^2 * Ω_M0 * D2 * (1 + ℜ2)
-     factor = (s2 * y - s1) * Δs^2
+     prefac = - (3 * ℋ0^2 * Ω_M0) / (2 * a2) * ℋ1 * f1 * ℛ1 * (1 + ℜ2)
+     factor = D1 * D2 * (s2 * y - s1) * Δs^2
 
      I13 = cosmo.tools.I13(Δs)
 

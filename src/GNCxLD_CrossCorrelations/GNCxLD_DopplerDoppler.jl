@@ -23,7 +23,7 @@ function ξ_GNCxLD_Doppler_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
      s2, D2, f2, ℋ2, ℜ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
 
      Δs = s(P1.comdist, P2.comdist, y)
-     prefac = D1 * D2 * f1 * f2 * ℛ1 * ℜ2 * ℋ1 * ℋ2
+     prefac = - D1 * D2 * f1 * f2 * ℛ1 * ℜ2 * ℋ1 * ℋ2
      c1 = 3 * s1 * s2 - 2 * y * (s1^2 + s2^2) + s1 * s2 * y^2
 
      I00 = cosmo.tools.I00(Δs)
