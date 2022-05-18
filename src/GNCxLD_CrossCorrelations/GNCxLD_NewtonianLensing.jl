@@ -74,7 +74,7 @@ function integrand_ξ_GNCxLD_Newtonian_Lensing(
      Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
      Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
 
-     common = D_s1 * ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) / (a2 * s2)
+     common = - D_s1 * ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) / (a2 * s2)
 
      new_J00 = 1 / 5 * (f_s1 * χ2 * (3 * y^2 - 1) - 3 * y * s1 * f_s1 - 5 * y * s1 * b_s1)
      new_J02 = 1 / (14 * Δχ2^2) * (

@@ -57,10 +57,10 @@ function ξ_GNCxLD_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
 
      Δs = s(s1, s2, y)
 
-     common = ℋ0^2 * Ω_M0 * (1 + ℜ2) / (2 * a2)
+     common = - ℋ0^2 * Ω_M0 * (1 + ℜ2) / a2
      factor = f1 * ((3 * y^2 - 1) * s2^2 - 4 * y * s1 * s2 + 2 * s1^2)
 
-     J20 = - 1 / 6 * (3 * b1 + f1) * (- 2 * y * s1 * s2 + s1^2 + s2^2)
+     J20 = - 1 / 2 * (3 * b1 + f1) * (- 2 * y * s1 * s2 + s1^2 + s2^2)
 
      I00 = cosmo.tools.I00(Δs)
      I20 = cosmo.tools.I20(Δs)
