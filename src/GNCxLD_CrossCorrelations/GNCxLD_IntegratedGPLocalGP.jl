@@ -68,7 +68,7 @@ function integrand_ξ_GNCxLD_IntegratedGP_LocalGP(
      Δχ1_square = s2^2 + χ1^2 - 2 * s2 * χ1 * y
      Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0
 
-     factor = 9 / 4 * D_s2 * Δχ1^4 * ℋ0^4 * Ω_M0^2 * D1 * (1 + ℜ_s2) / (s1 * a1 * a_s2)
+     factor = - 9 / 2 * D_s2 * Δχ1^4 * ℋ0^4 * Ω_M0^2 * D1 * (1 + ℜ_s2) / (s1 * a1 * a_s2)
      parenth = (s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2) 
 
      I04_tilde = cosmo.tools.I04_tilde(Δχ1)

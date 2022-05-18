@@ -81,7 +81,7 @@ function integrand_ξ_GNCxLD_IntegratedGP_Lensing(
      Δχ = √(Δχ_square) > 1e-8 ? √(Δχ_square) : 1e-8
 
      prefactor = 9 / 2 * ℋ0^4 * Ω_M0^2
-     factor = D1 * D2 * χ1 * (χ2 - s2) / (s1 * s2 * a1 * a2)
+     factor =  - D1 * D2 * χ1 * (χ2 - s2) / (s1 * s2 * a1 * a2)
      parenth = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2 
 
      new_J31 = 2 * y * Δχ^2
