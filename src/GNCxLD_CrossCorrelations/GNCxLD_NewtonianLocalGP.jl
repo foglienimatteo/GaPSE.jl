@@ -68,7 +68,7 @@ function ξ_GNCxLD_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      I02 = cosmo.tools.I02(Δs)
 
      return D1 * D2 * common * (
-          factor * (1 / 90 * I00 + 1 / 63 * I20 + 1 / 210 * I40) 
+          factor * (1 / 30 * I00 + 1 / 21 * I20 + 1 / 70 * I40) 
           + J20 * I02
           )
 end

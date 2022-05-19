@@ -74,17 +74,18 @@ function integrand_ξ_GNCxLD_Lensing_IntegratedGP(
      s2, ℜ_s2 = P2.comdist, P2.ℛ_LD
      χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
      χ2, D2, a2, f2, ℋ2 = IP2.comdist, IP2.D, IP2.a, IP2.f, IP2.ℋ
+     s_b_s1 = cosmo.params.s_b
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
      Δχ = √(Δχ_square) > 1e-8 ? √(Δχ_square) : 1e-8
 
      prefactor = 9 / 2 * ℋ0^4 * Ω_M0^2
-     factor = D1 * D2 * χ2 * (s1 - χ1) / (s1 * s2 * a1 * a2)
+     factor = D1 * D2 * χ2 * (s1 - χ1) * (5 * s_b_s1 - 2)/ (s1 * s2 * a1 * a2)
      parenth = s2 * ℋ2 * ℜ_s2 * (f2 - 1) - 1 
 
-     new_J31 = -2 * y * Δχ^2
-     new_J22 = χ1 * χ2 * (1 - y^2)
+     new_J31 = 2 * y * Δχ^2
+     new_J22 = χ1 * χ2 * (y^2 - 1)
 
      I13 = cosmo.tools.I13(Δχ)
      I22 = cosmo.tools.I22(Δχ)

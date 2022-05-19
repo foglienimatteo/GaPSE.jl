@@ -70,7 +70,7 @@ function integrand_ξ_GNCxLD_IntegratedGP_Lensing(
      P1::Point, P2::Point,
      y, cosmo::Cosmology)
 
-     s1, ℛ_s1 = P1.comdist, P2.ℛ_LD
+     s1, ℛ_s1 = P1.comdist, P1.ℛ_GNC
      s2 = P2.comdist
      χ1, D1, a1, f1, ℋ1 = IP1.comdist, IP1.D, IP1.a, IP1.f, IP1.ℋ
      χ2, D2, a2 = IP2.comdist, IP2.D, IP2.a

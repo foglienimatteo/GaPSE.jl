@@ -27,7 +27,7 @@ function ξ_GNCxLD_LocalGP_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
 
      Δs = s(s1, s2, y)
 
-     factor = - 3 * Δs^4 * D1 * D2 * (1 + ℜ2) / (4 * a1 * a2)
+     factor = - 3 * Δs^4 * ℋ0^2 * Ω_M0 * D1 * D2 * (1 + ℜ2) / (4 * a1 * a2)
      parenth = 2 * f1 * ℋ1^2 * a1 * (𝑓_evo1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f1 + ℛ1 + 5 * s_b1 - 2)
 
      I04_tilde = cosmo.tools.I04_tilde(Δs)
