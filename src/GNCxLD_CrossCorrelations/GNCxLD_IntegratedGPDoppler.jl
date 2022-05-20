@@ -74,7 +74,7 @@ function integrand_ξ_GNCxLD_IntegratedGP_Doppler(
      Δχ1_square = s2^2 + χ1^2 - 2 * s2 * χ1 * y
      Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0.0
 
-     common = - 3 * ℋ_s2 * f_s2 * D_s2 * ℋ0^2 * Ω_M0 * ℜ_s2
+     common = 3 * ℋ_s2 * f_s2 * D_s2 * ℋ0^2 * Ω_M0 * ℜ_s2
 
      new_J31 = Δχ1^2 * D1 * (s2 - χ1 * y) / (a1 * s1) * (s1 * ℛ_s1 * ℋ1 * (f1 - 1) - 5 * s_b_s1 + 2)
      I13 = cosmo.tools.I13(Δχ1)

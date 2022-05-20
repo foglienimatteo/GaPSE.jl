@@ -76,7 +76,7 @@ function integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1::Point, IP2::Point,
      Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
      Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
 
-     factor = 9 * Δχ^4 * ℋ0^4 * Ω_M0^2 * D1 * D2 / (s1 * s2 * a1 * a2)
+     factor = - 9 * Δχ^4 * ℋ0^4 * Ω_M0^2 * D1 * D2 / (s1 * s2 * a1 * a2)
      parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2
      parenth_2 = s2 * ℋ2 * ℜ_s2 * (f2 - 1) - 1
 
