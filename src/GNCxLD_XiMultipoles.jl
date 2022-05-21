@@ -398,6 +398,7 @@ function map_ξ_GNCxLD_multipole(cosmo::Cosmology,
      pr::Bool=true,
      N_log::Integer=1000,
      L::Integer=0,
+     sum_xi::Bool=false,
      kwargs...)
 
      s_1 = isnothing(s1) ? cosmo.s_eff : s1
@@ -413,7 +414,7 @@ function map_ξ_GNCxLD_multipole(cosmo::Cosmology,
      ]
 
      t2 = time()
-     pr && println("\ntime needed for map_ξ_GNCxLD_multipole for $effect " *
+     (!sum_xi) && (pr) && println("\ntime needed for map_ξ_GNCxLD_multipole for $effect " *
                    "[in s] = $(@sprintf("%.5f", t2-t1)) \n")
      return (ss, xis)
 end

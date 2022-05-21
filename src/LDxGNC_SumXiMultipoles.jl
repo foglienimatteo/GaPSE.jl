@@ -105,6 +105,7 @@ function map_sum_ξ_LDxGNC_multipole(
      cosmo::Cosmology,
      v_ss = nothing;
      N_log::Integer = 1000,
+     sum_xi::Bool = true,
      kwargs...)
 
      ss = isnothing(v_ss) ? 10 .^ range(0, 3, length = N_log) : v_ss
@@ -112,7 +113,7 @@ function map_sum_ξ_LDxGNC_multipole(
      ALL = [
           begin
                _, xis = map_ξ_LDxGNC_multipole(cosmo, effect, ss; 
-                    specif_kwargs_LDxGNC(effect, kwargs)...)
+                    sum_xi = sum_xi, specif_kwargs_LDxGNC(effect, kwargs)...)
                xis
           end for effect in GaPSE.GR_EFFECTS_LDxGNC
      ]
@@ -177,6 +178,8 @@ function print_map_sum_ξ_LDxGNC_multipole(
      s1 = nothing,
      L::Integer = 0,
      single::Bool = true,
+     sum_xi::Bool = true,
+     pr::Bool = true,
      kwargs...)
 
      check_parent_directory(out)
@@ -192,8 +195,11 @@ function print_map_sum_ξ_LDxGNC_multipole(
      s_1 = isnothing(s1) ? cosmo.s_eff : s1
      t1 = time()
      ss, xis, ALL = map_sum_ξ_LDxGNC_multipole(cosmo, v_ss;
-          L = L, s1 = s_1, kwargs...)
+          L = L, s1 = s_1, pr = pr, sum_xi = sum_xi, kwargs...)
      t2 = time()
+
+     (pr) && println("\ntime needed for map_sum_ξ_LDxGNC_multipole " *
+                   "[in s] = $(@sprintf("%.5f", t2-t1)) \n")
 
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
