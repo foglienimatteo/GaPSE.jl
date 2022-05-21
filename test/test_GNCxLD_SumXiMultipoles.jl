@@ -123,7 +123,7 @@ end
           :enhancer => 1e8, :N_μs => 30,
           :μ_atol => 0.0, :μ_rtol => 1e-2,
           :N_χs => 100, :N_χs_2 => 50,
-          :pr => true,
+          #:pr => true,
      )
 
      #=
