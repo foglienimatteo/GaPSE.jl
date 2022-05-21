@@ -41,7 +41,7 @@ include("TEST_DATA.jl")
 
 ##########################################################################################92
 
-#=
+
 @testset "test OtherUtils" begin
      include("test_OtherUtils.jl")
 end
@@ -82,7 +82,7 @@ end
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
 end
-=#
+
 
 ################################### COSMOLOGY IMPLEMENTATION #############################92
 
@@ -171,7 +171,7 @@ KWARGS_LDxGNC = Dict(
 
 
 ################################### TEST LUMINOSITY DISTANCE PERTURBATIONS ###############92
-#=
+
 
 @testset "test LD_XiMultipoles" begin
      include("test_LD_XiMultipoles.jl")
@@ -328,11 +328,11 @@ end
 @testset "test GNC_LocalGPIntegratedGP" begin
      include("test_GNC_CrossCorrelations/test_GNC_LocalGPIntegratedGP.jl")
 end
-=#
+
 
 ##### TEST RELATIVISTIC GALAXY NUMBER COUNTS X LUMINOSITY DISTANCE PERT. and viceversa ###92
 
-#=
+
 @testset "test GNCxLD_XiMultipoles" begin
      include("test_GNCxLD_XiMultipoles.jl")
 end
@@ -348,7 +348,7 @@ end
 @testset "test LDxGNC_SumXiMultipoles" begin
      include("test_LDxGNC_SumXiMultipoles.jl")
 end
-=#
+
 ##############################
 
 table_xis_GNCxLD_L0_noF = readdlm("datatest/GNCxLD_SumXiMultipoles/map_sum_xi_GNCxLD_L0_noF.txt", 
