@@ -1,0 +1,60 @@
+# This is an integration map on mu of the sum of all the ξ_LDxGNC_L=0 multipole GR effects.
+# In input was set "single = true", so, together with their sum, all the CFs are here reported.
+#
+###############
+#    GaPSE    #
+############### 
+#
+# The Cosmology considered had the following paremeters:
+# 
+# - Matter Power Spectrum input file: "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/file_pk.txt"
+# - F window function input file: "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/F_REFERENCE_pi2.txt"
+# - Background data input file: "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/WideA_ZA_background.dat"
+#
+# - Basic CosmoParams considered: 
+#	 z_min = 0.05 	 z_max = 0.2
+#	 θ_max = 1.5707963267948966 [rad] 	 h_0 = 0.7
+#	 Ω_b = 0.0489 	 Ω_cdm = 0.25102 	 Ω_M0 = 0.29992
+#	 b = 1.0 	 𝑓_evo = 0.0 	 s_b = 0.0
+#
+# - CosmoParams about the Input Power Spectrum: 
+#	 fit_left_min = 1.0e-6 	 fit_right_min = 10.0 	 
+#	 fit_left_max = 3.0e-6 	 fit_right_max = 20.0 	 
+#
+# - CosmoParams about the Input Power Spectrum Tools: 
+#	 k_max = 10.0 	 fit_max = 0.5 	 N = 1024 	 
+#	 con = true 	 k_min = 1.0e-8 	 fit_min = 0.05 	 
+#
+# - CosmoParams about the Integrated Window Function F: 
+#	 ss_step = 21.768735478453323 	 N = 1000 	 rtol = 0.01 	 
+#	 llim = 0.0 	 atol = 0.0 	 rlim = Inf 	 
+#	 ss_stop = 0.0 	 trap = true 	 ss_start = 0.0 	 
+#
+# - Computed quantities: 
+# 	 effective redshift z_eff = 0.15045636096023224 
+# 	 comoving s_min = 148.1920001465757 Mpc/h_0
+# 	 comoving s_max = 571.7022420258767 Mpc/h_0
+# 	 comoving s_eff = 435.3747095690664 Mpc/h_0
+# 	 Volume of the survey V_survey = 3.845366167995967e8 Mpc^3/h_0^3
+# 	 σ_0 = 15.593462966741178
+# 	 σ_1 = 15.074895881392285
+# 	 σ_2 = 100.85852368830226
+# 	 σ_3 = 3735.1226181519773
+# 	 (where σ_i = \int_{k_{min}}^{k_{max}}\frac{dq}{2 π^2} q^{2-i} P(q))
+# 
+# computational time needed (in s) : 7.2879
+# kwards passed: 
+# 		N_χs = 100
+# 		μ_atol = 0.0
+# 		enhancer = 1.0e8
+# 		use_windows = true
+# 		N_μs = 30
+# 		N_χs_2 = 50
+# 		μ_rtol = 0.01
+# 
+# 1: s [Mpc/h_0] 	 2: xi_SUM 	 3: xi_doppler_newton 	 4: xi_lensing_newton 	 5: xi_localgp_newton 	 6: xi_integratedgp_newton 	 7: xi_doppler_doppler 	 8: xi_lensing_doppler 	 9: xi_localgp_doppler 	 10: xi_integratedgp_doppler 	 11: xi_doppler_lensing 	 12: xi_lensing_lensing 	 13: xi_localgp_lensing 	 14: xi_integratedgp_lensing 	 15: xi_doppler_localgp 	 16: xi_lensing_localgp 	 17: xi_localgp_localgp 	 18: xi_integratedgp_localgp 	 19: xi_doppler_integratedgp 	 20: xi_lensing_integratedgp 	 21: xi_localgp_integratedgp 	 22: xi_integratedgp_integratedgp 	 
+10 	 135234.20466504953 	 37384.09091196194 	 -15561.962520682564 	 -57735.512266490354 	 -1831.7620476407524 	 174285.32221156036 	 -947.7555635671332 	 -0.30948795805894097 	 -218.89986104415783 	 -796.6632119568794 	 760.5921602261225 	 34.27411194703459 	 10.300595257731748 	 -6.971453786514542 	 34.211824569704135 	 -0.57077335630615 	 -10.769388314881404 	 -161.66659427429477 	 9.05826992724468 	 -9.361315809309176 	 -1.4409355194279683 	 
+100 	 46848.138009506096 	 31553.63685897039 	 -2604.0413090375787 	 -9333.853387454774 	 -856.9699033886118 	 29048.788485883517 	 -332.86028718840333 	 -9.24949591926237 	 -149.4284639479771 	 -279.6457110707024 	 69.1404001973707 	 22.259166024988406 	 5.9341022252502915 	 -163.32857801115077 	 23.120571408313843 	 -19.570483864142222 	 -9.601213695797114 	 -111.57544509597933 	 5.165579820273214 	 -8.484176498709886 	 -1.298699850925793 	 
+500 	 1168.4533307987338 	 593.8231889758737 	 33.35960151744717 	 -129.64990849390406 	 -32.575595874350626 	 952.6673278472857 	 3.132412458006785 	 -83.00251530937129 	 -31.245731727738313 	 1.9673069381225512 	 -0.49553798197543636 	 0.24212223207700112 	 0.04655531337340677 	 -84.84700921321321 	 -0.20982825634171937 	 -26.40659895078087 	 -4.956388640375346 	 -18.964092124333085 	 0.024063699327155876 	 -3.839858511353511 	 -0.6161830990422059 	 
+700 	 172.78449881435415 	 94.2278829329144 	 6.442334110616348 	 -18.180592298074952 	 -5.311842124738068 	 173.97637708102303 	 2.2403964543749804 	 -29.033056352308197 	 -8.830543229818607 	 1.9011698065686005 	 -0.2814087606556519 	 -0.3054324668972208 	 -0.07752256787894723 	 -23.565910003121267 	 -0.3349822252216976 	 -9.81299477768384 	 -1.8651703335269565 	 -6.40745547440353 	 -0.06742408214411112 	 -1.6544491919466697 	 -0.2748776827234813 	 
+1000 	 2.5101080487544096 	 2.008308089221366 	 0.13912995977604767 	 -0.3087420090169271 	 -0.10696851994057231 	 3.711753397321888 	 0.08101576857033885 	 -1.0456763304346266 	 -0.2850481148327004 	 0.136239438712968 	 -0.020258507611941427 	 -0.03665970984852339 	 -0.008598267828284203 	 -0.7542071451825904 	 -0.015860477973020332 	 -0.4354086360883617 	 -0.08517769602946308 	 -0.32603625025931104 	 -0.00612639113459288 	 -0.11184554815227635 	 -0.019725000515007717 	 

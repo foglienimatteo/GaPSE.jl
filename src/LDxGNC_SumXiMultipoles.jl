@@ -182,8 +182,8 @@ function print_map_sum_ξ_LDxGNC_multipole(
      check_parent_directory(out)
      check_namefile(out)
 
-     dir = length(split(out, "/")) == 1 ? "all_standalones_CFs/" :
-           join(split(out, "/")[begin:end-1] .* "/") * "all_standalones_CFs/"
+     dir = length(split(out, "/")) == 1 ? "all_LDxGNC_standalones_CFs/" :
+           join(split(out, "/")[begin:end-1] .* "/") * "all_LDxGNC_standalones_CFs/"
 
      if single == false
           isdir(dir) || mkdir(dir)
@@ -245,7 +245,7 @@ function print_map_sum_ξ_LDxGNC_multipole(
 
      if single == false
           for (effect, vec) in zip(GaPSE.GR_EFFECTS_LDxGNC, ALL)
-               open(dir * "xi_" * effect * "_L$L" * ".txt", "w") do io
+               open(dir * "xi_LDxGNC_" * effect * "_L$L" * ".txt", "w") do io
                     println(io, "# This is an integration map on mu of the ξ multipole $effect GR effect.")
                     parameters_used(io, cosmo)
                     #println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
