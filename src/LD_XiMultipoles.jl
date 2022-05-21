@@ -416,7 +416,7 @@ function map_ξ_LD_multipole(cosmo::Cosmology,
 
      t2 = time()
      (!sum_xi) && (pr) && println("\ntime needed for map_ξ_LD_multipole for $effect " *
-                   "[in s] = $(@sprintf("%.5f", t2-t1)) ")
+                   "[in s] = $(@sprintf("%.5f", t2-t1)) \n")
      return (ss, xis)
 end
 
