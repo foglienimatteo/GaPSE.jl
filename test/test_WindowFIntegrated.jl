@@ -23,49 +23,90 @@ kwargs_map_F_int = Dict(
     :rtol => 5e-2, :atol => 0.0, :N => 300, :pr => true,
 );
 
+kwargs_F_int_quad = Dict(
+    :llim => kwargs_map_F_int[:llim], 
+    :rlim => kwargs_map_F_int[:rlim], 
+    :rtol => kwargs_map_F_int[:rtol], 
+    :atol => kwargs_map_F_int[:atol],
+)
+
+kwargs_F_int_trap = Dict(
+    :llim => kwargs_map_F_int[:llim], 
+    :rlim => kwargs_map_F_int[:rlim], 
+    :N => kwargs_map_F_int[:N], 
+)
+
 calc_μs = vcat([-1.0, -0.98, -0.95], 
     [μ for μ in -0.9:0.3:0.9], 
     [0.95, 0.98, 1.0]);
-#=
+
+windF = GaPSE.WindowF(FILE_F_MAP); 
+
 @testset "test integrated_F_quadgk" begin
      RTOL = 1e-2
      s_min, s_max = 148.1920001465757, 571.7022420258767
+     z_min, z_max = 0.05, 0.20
 
-     @test isapprox(GaPSE.integrated_F_quadgk(0, 0; kwargs_map_F_int...)[1], 39.0406; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_quadgk(1, 0; kwargs_map_F_int...)[1], 29.25801; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_quadgk(2, 0; kwargs_map_F_int...)[1], 25.28027; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_quadgk(3, 0; kwargs_map_F_int...)[1], 23.51367; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_quadgk(100, 0, s_min, s_max, windF; 
+          kwargs_F_int_quad...), 2.12335e+09; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_quadgk(150, 0, s_min, s_max, windF; 
+          kwargs_F_int_quad...), 1.93936e+09; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_quadgk(200, 0, s_min, s_max, windF; 
+          kwargs_F_int_quad...), 1.68321e+09; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_quadgk(250, 0, s_min, s_max, windF; 
+          kwargs_F_int_quad...), 1.45684e+09; rtol = RTOL)
 
-     @test isapprox(GaPSE.integrated_F_quadgk(0, -0.8; kwargs_map_F_int...)[1], 38.89266; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_quadgk(1, -0.8; kwargs_map_F_int...)[1], 23.35162; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_quadgk(2, -0.8; kwargs_map_F_int...)[1], 11.83636; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_quadgk(3, -0.8; kwargs_map_F_int...)[1], 10.90119; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_quadgk(100, 0.8, s_min, s_max, windF; 
+          kwargs_F_int_quad...), 1.42493e+09; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_quadgk(150, 0.8, s_min, s_max, windF; 
+          kwargs_F_int_quad...), 1.06046e+09; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_quadgk(200, 0.8, s_min, s_max, windF; 
+          kwargs_F_int_quad...), 7.53131e+08; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_quadgk(250, 0.8, s_min, s_max, windF; 
+          kwargs_F_int_quad...), 4.82146e+08; rtol = RTOL)
 
-     @test isapprox(GaPSE.integrated_F_quadgk(0, 0.8; kwargs_map_F_int...)[1], 38.89261; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_quadgk(1, 0.8; kwargs_map_F_int...)[1], 34.85789; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_quadgk(2, 0.8; kwargs_map_F_int...)[1], 33.54063; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_quadgk(3, 0.8; kwargs_map_F_int...)[1], 32.91128; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_quadgk(100, -0.8, s_min, s_max, windF; 
+          kwargs_F_int_quad...), 2.14873e+09; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_quadgk(150, -0.8, s_min, s_max, windF;  
+          kwargs_F_int_quad...), 2.08741e+09; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_quadgk(200, -0.8, s_min, s_max, windF;  
+          kwargs_F_int_quad...), 1.98355e+09; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_quadgk(250, -0.8, s_min, s_max, windF; 
+          kwargs_F_int_quad...), 1.93041e+09; rtol = RTOL)
 end
 
-@testset "test integrated_F_trap" begin
-     RTOL = 1e-4
+@testset "test integrated_F_trapz" begin
+     RTOL = 1e-2
+     s_min, s_max = 148.1920001465757, 571.7022420258767
+     z_min, z_max = 0.05, 0.20
 
-     @test isapprox(GaPSE.integrated_F_trap(0, 0; kwargs_map_F_int...), 39.40821; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_trap(1, 0; kwargs_map_F_int...), 29.59887; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_trap(2, 0; kwargs_map_F_int...), 25.55135; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_trap(3, 0; kwargs_map_F_int...), 23.77376; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_trapz(100, 0, s_min, s_max, windF; 
+          kwargs_F_int_trap...), 2.15022e+09; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_trapz(150, 0, s_min, s_max, windF; 
+          kwargs_F_int_trap...), 1.93769e+09; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_trapz(200, 0, s_min, s_max, windF; 
+          kwargs_F_int_trap...), 1.68718e+09; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_trapz(250, 0, s_min, s_max, windF; 
+          kwargs_F_int_trap...), 1.41394e+09; rtol = RTOL)
 
-     @test isapprox(GaPSE.integrated_F_trap(0, -0.8; kwargs_map_F_int...), 39.41779; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_trap(1, -0.8; kwargs_map_F_int...), 23.77100; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_trap(2, -0.8; kwargs_map_F_int...), 13.87924; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_trap(3, -0.8; kwargs_map_F_int...), 11.40667; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_trapz(100, 0.8, s_min, s_max, windF; 
+          kwargs_F_int_trap...), 1.44814e+09; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_trapz(150, 0.8, s_min, s_max, windF; 
+          kwargs_F_int_trap...), 1.04627e+09; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_trapz(200, 0.8, s_min, s_max, windF; 
+          kwargs_F_int_trap...), 7.29342e+08; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_trapz(250, 0.8, s_min, s_max, windF; 
+          kwargs_F_int_trap...), 4.84891e+08; rtol = RTOL)
 
-     @test isapprox(GaPSE.integrated_F_trap(0, 0.8; kwargs_map_F_int...), 39.41779; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_trap(1, 0.8; kwargs_map_F_int...), 35.42117; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_trap(2, 0.8; kwargs_map_F_int...), 34.04887; rtol = RTOL)
-     @test isapprox(GaPSE.integrated_F_trap(3, 0.8; kwargs_map_F_int...), 33.32257; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_trapz(100, -0.8, s_min, s_max, windF; 
+          kwargs_F_int_trap...), 2.18180e+09; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_trapz(150, -0.8, s_min, s_max, windF;  
+          kwargs_F_int_trap...), 2.05673e+09; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_trapz(200, -0.8, s_min, s_max, windF;  
+          kwargs_F_int_trap...), 1.93539e+09; rtol = RTOL)
+     @test isapprox(GaPSE.integrated_F_trapz(250, -0.8, s_min, s_max, windF; 
+          kwargs_F_int_trap...), 1.90523e+09; rtol = RTOL)
 end
-=#
 
 
 @testset "test print_map_IntegratedF trap" begin
@@ -194,66 +235,66 @@ end
 end
 
 
-#@test 1==2
-
-@testset "test WindowF: first convection" begin
-     xs = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3]
+@testset "test WindowFIntegrated: first convection" begin
+     ss = 100 .* [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3] .+ 30
      μs = [-1, 0, 1, -1, 0, 1, -1, 0, 1, -1, 0, 1]
-     Fs = [0, 1, 2, 0, 2, 4, 0, 4, 8, 0, 8, 16]
+     IFs = [0, 1, 2, 0, 2, 4, 0, 4, 8, 0, 8, 16]
 
-     unique_xs = [0, 1, 2, 3]
+     unique_ss = 100 .* [0, 1, 2, 3] .+ 30
      unique_μs = [-1, 0, 1]
-     table_Fs = [0 1 2; 0 2 4; 0 4 8; 0 8 16]
+     table_IFs = [0 1 2; 0 2 4; 0 4 8; 0 8 16]
 
-     name = "test_WindowF_fc.txt"
+     name = "test_WindowFIntegrated_fc.txt"
      isfile(name) && rm(name)
      open(name, "w") do io
           println(io, "# line of comment")
           println(io, "# another one")
-          for (x, μ, F) in zip(xs, μs, Fs)
-               println(io, "$x \t $μ \t $F")
+          for (s, μ, IF) in zip(ss, μs, IFs)
+               println(io, "$s \t $μ \t $IF")
           end
      end
 
-     F_fc = GaPSE.WindowF(name)
+     F_fc = GaPSE.WindowFIntegrated(name)
 
-     @test size(F_fc.xs) == size(unique_xs)
+     @test size(F_fc.ss) == size(unique_ss)
      @test size(F_fc.μs) == size(unique_μs)
-     @test size(F_fc.Fs) == size(table_Fs)
-     @test all(F_fc.xs .== unique_xs)
+     @test size(F_fc.IFs) == size(table_IFs)
+     @test all(F_fc.ss .== unique_ss)
      @test all(F_fc.μs .== unique_μs)
-     @test all(F_fc.Fs .== table_Fs)
+     @test all(F_fc.IFs .== table_IFs)
 
      rm(name)
 end
 
-@testset "test WindowF: second convection" begin
-     xs = [0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3]
+@testset "test WindowFIntegrated: second convection" begin
+     ss = 100 .* [0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3] .+ 30 
      μs = [-1, -1, -1, -1, 0, 0, 0, 0, 1, 1, 1, 1]
-     Fs = [0, 0, 0, 0, 1, 2, 4, 8, 2, 4, 8, 16]
+     IFs = [0, 0, 0, 0, 1, 2, 4, 8, 2, 4, 8, 16]
 
-     unique_xs = [0, 1, 2, 3]
+     unique_ss = 100 .* [0, 1, 2, 3] .+ 30
      unique_μs = [-1, 0, 1]
-     table_Fs = [0 1 2; 0 2 4; 0 4 8; 0 8 16]
+     table_IFs = [0 1 2; 0 2 4; 0 4 8; 0 8 16]
 
-     name = "test_WindowF_sc.txt"
+     name = "test_WindowFIntegrated_sc.txt"
      isfile(name) && rm(name)
      open(name, "w") do io
           println(io, "# line of comment")
           println(io, "# another one")
-          for (x, μ, F) in zip(xs, μs, Fs)
-               println(io, "$x \t $μ \t $F")
+          for (s, μ, IF) in zip(ss, μs, IFs)
+               println(io, "$s \t $μ \t $IF")
           end
      end
 
-     F_sc = GaPSE.WindowF(name)
+     F_sc = GaPSE.WindowFIntegrated(name)
 
-     @test size(F_sc.xs) == size(unique_xs)
+     @test size(F_sc.ss) == size(unique_ss)
      @test size(F_sc.μs) == size(unique_μs)
-     @test size(F_sc.Fs) == size(table_Fs)
-     @test all(F_sc.xs .== unique_xs)
+     @test size(F_sc.IFs) == size(table_IFs)
+     @test all(F_sc.ss .== unique_ss)
      @test all(F_sc.μs .== unique_μs)
-     @test all(F_sc.Fs .== table_Fs)
+     @test all(F_sc.IFs .== table_IFs)
 
      rm(name)
 end
+
+
