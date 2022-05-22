@@ -41,6 +41,9 @@ include("TEST_DATA.jl")
 
 ##########################################################################################92
 
+@testset "test WindowFIntegrated" begin
+     include("test_WindowFIntegrated.jl")
+end
 
 @testset "test OtherUtils" begin
      include("test_OtherUtils.jl")

@@ -243,6 +243,9 @@ function print_map_F(out::String, x_step::Float64 = 0.01, μ_step::Float64 = 0.0
      trap::Bool = true, x1 = 0, x2 = 3, μ1 = -1, μ2 = 1,
      Fmap_opts::Dict = Dict{Symbol,Any}(), kwargs...)
 
+     check_parent_directory(out)
+     check_namefile(out)
+
      @assert x1 >= 0.0 "The lower limit of x must be >0, not $(x1)!"
      @assert x2 > x1 "The upper limit of x must be > than the lower one, not $(x2)<=$(x1)!"
      @assert x2 <= 10.0 "The upper limit of x must be <10, not $(x2)!"
@@ -320,6 +323,9 @@ end
 
 function print_map_F(out::String, xs::Vector{Float64}, μs::Vector{Float64}; 
      trap::Bool = true, Fmap_opts::Dict = Dict{Symbol,Any}(), kwargs...)
+
+     check_parent_directory(out)
+     check_namefile(out)
 
      @assert all(xs .>= 0.0) "All xs must be >=0.0!"
      @assert all([xs[i+1] > xs[i] for i in 1:(length(xs)-1)]) "xs must be a float vector of increasing values!"

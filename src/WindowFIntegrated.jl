@@ -27,6 +27,13 @@ function integrated_F_quadgk(s, μ, s_min, s_max, windowF::WindowF;
      quadgk(p->f(p), llim, RLIM; rtol=rtol, atol=atol, kwargs...)[1]
 end
 
+function integrated_F_quadgk(s, μ, z_min, z_max, windowF::WindowF, file_data::String; 
+          names_bg = NAMES_BACKGROUND, h_0 = 0.7, kwargs...)
+     BD = BackgroundData(file_data, z_max; names = names_bg, h = h_0)
+     s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+     integrated_F_quadgk(s, μ, s_of_z(z_min), s_of_z(z_max), windowF::WindowF; kwargs...)
+end
+
 
 function integrated_F_trapz(s, μ, s_min, s_max, windowF::WindowF; 
           llim = 0.0, rlim = Inf, N::Integer = 1000)
@@ -37,6 +44,16 @@ function integrated_F_trapz(s, μ, s_min, s_max, windowF::WindowF;
      ps = range(llim, RLIM, length = N)
      trapz(ps, f.(ps))
 end
+
+function integrated_F_trapz(s, μ, z_min, z_max, windowF::WindowF, file_data::String; 
+          names_bg = NAMES_BACKGROUND, h_0 = 0.7, kwargs...)
+     BD = BackgroundData(file_data, z_max; names = names_bg, h = h_0)
+     s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+     integrated_F_trapz(s, μ, s_of_z(z_min), s_of_z(z_max), windowF::WindowF; kwargs...)
+end
+
+
+##########################################################################################92
 
 
 
@@ -71,10 +88,20 @@ struct WindowFIntegrated
      μs::Vector{Float64}
      IFs::Matrix{Float64}
 
-     function WindowFIntegrated(s_min, s_max, windowF::WindowF;
+     function WindowFIntegrated(s_min, s_max, μs::Vector{Float64}, windowF::WindowF;
                ss_start = 0.0, ss_stop = 0.0, ss_step = 21.768735478453323,
                trap::Bool = true, llim = 0.0, rlim = Inf, 
                rtol = 1e-2, atol = 0.0, N::Integer = 1000, pr::Bool = true)
+
+          @assert 0 < s_min < s_max " 0 < s_min < s_max must hold!"
+          @assert ss_start ≥ 0.0 " ss_start ≥ 0.0 must hold!"
+          @assert 9 < N < 10001 " 10 < N < 10001 must hold!"
+          @assert 0.0 ≤ llim < rlim " 0.0 ≤ llim < rlim must hold!"
+          @assert (iszero(ss_stop) && s_max ≥ ss_start + 3 * ss_step) || (ss_stop ≥ ss_start + 3 * ss_step) 
+               " (ss_stop == 0 && s_max ≥ ss_start + 3 * ss_step) || ss_stop ≥ ss_start + 3 * ss_step musty hold!"
+          @assert all(μs .>= -1.0) "All μs must be >=-1.0!"
+          @assert all([μs[i+1] > μs[i] for i in 1:(length(μs)-1)]) "μs must be a float vector of increasing values!"
+          @assert all(μs .<= 1.0) "All μs must be <=1.0!"
 
           SS_STOP = iszero(ss_stop) ? 3.0 * s_max : ss_stop 
           ss = [s for s in ss_start:ss_step:SS_STOP]
@@ -84,28 +111,42 @@ struct WindowFIntegrated
                     @showprogress "calculating intF: " [
                          integrated_F_quadgk(s, μ, s_min, s_max, windowF; 
                               llim = llim, rlim = rlim, rtol=rtol, atol=atol)
-                              for s in ss, μ in windowF.μs]
+                              for s in ss, μ in μs]
                     end : begin
                          [integrated_F_quadgk(s, μ, s_min, s_max, windowF; 
                               llim = llim, rlim = rlim, rtol=rtol, atol=atol)
-                              for s in ss, μ in windowF.μs]
+                              for s in ss, μ in μs]
                     end
           else
                pr ? begin
                     @showprogress "calculating intF: " [
                          integrated_F_trapz(s, μ, s_min, s_max, windowF; 
                               llim = llim, rlim = rlim, N = N)
-                              for s in ss, μ in windowF.μs]
+                              for s in ss, μ in μs]
                end : begin
                     [integrated_F_trapz(s, μ, s_min, s_max, windowF; 
                          llim = llim, rlim = rlim, N = N)
-                         for s in ss, μ in windowF.μs]
+                         for s in ss, μ in μs]
                end
           end
 
-          new(ss, windowF.μs, IFs)
+          new(ss, μs, IFs)
      end
 
+     #=
+     function WindowFIntegrated(s_min, s_max, windowF::WindowF; kwargs...)
+          WindowFIntegrated(s_min, s_max, windowF.μs, windowF; kwargs...)
+     end
+     =#
+
+     function WindowFIntegrated(z_min, z_max, μs::Vector{Float64}, windowF::WindowF, 
+               file_data::String; names_bg = NAMES_BACKGROUND, h_0 = 0.7, kwargs...)
+
+          BD = BackgroundData(file_data, z_max; names = names_bg, h = h_0)
+          s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+          WindowFIntegrated(s_of_z(z_min), s_of_z(z_max), μs, windowF; kwargs...)
+     end
+     
      function WindowFIntegrated(file::String)
           data = readdlm(file, comments=true)
           ss, μs, IFs = data[:, 1], data[:, 2], data[:, 3]
@@ -150,6 +191,9 @@ end
 
 function print_map_IntegratedF(out::String, windowFint::WindowFIntegrated)
 
+     check_parent_directory(out)
+     check_namefile(out)
+
      ss_grid = [s for s in windowFint.ss for μ in windowFint.μs]
      μs_grid = [μ for s in windowFint.ss for μ in windowFint.μs]
      IFs_grid = reshape(transpose(windowFint.IFs), (:,))
@@ -168,8 +212,24 @@ function print_map_IntegratedF(out::String, windowFint::WindowFIntegrated)
 end
 
 
-function print_map_IntegratedF(in::String, out::String, s_min, s_max; kwargs...)
+function print_map_IntegratedF(in::String, out::String, s_min, s_max, 
+          μs::Vector{Float64}; kwargs...)
+
+     check_parent_directory(out)
+     check_namefile(out)
+
      windowF = WindowF(in)
-     windowFint = WindowFIntegrated(s_min, s_max, windowF; kwargs...)
+     windowFint = WindowFIntegrated(s_min, s_max, μs, windowF; kwargs...)
+     print_map_IntegratedF(out, windowFint)
+end
+
+function print_map_IntegratedF(in::String, out::String, z_min, z_max, 
+          μs::Vector{Float64}, file_data::String; kwargs...)
+
+     check_parent_directory(out)
+     check_namefile(out)
+
+     windowF = WindowF(in)
+     windowFint = WindowFIntegrated(z_min, z_max, μs, windowF, file_data; kwargs...)
      print_map_IntegratedF(out, windowFint)
 end
