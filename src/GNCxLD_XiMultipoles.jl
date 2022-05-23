@@ -505,8 +505,10 @@ function print_map_ξ_GNCxLD_multipole(
 
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
-          println(io, "# This is an integration map on mu of the ξ multipole $effect GR effect.")
-          parameters_used(io, cosmo)
+          println(io, BRAND)
+
+          println(io, "#\n# This is an integration map on mu of the ξ multipole $effect GR effect.")
+          parameters_used(io, cosmo; logo = false)
           println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
           print(io, "# kwards passed: ")
 

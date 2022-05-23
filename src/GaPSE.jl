@@ -141,8 +141,8 @@ include("LDxGNC_SumXiMultipoles.jl")
 include("PowerSpectrum.jl")
 
 
-function parameters_used(io::IO, cosmo::Cosmology)
-     println(io, BRAND)
+function parameters_used(io::IO, cosmo::Cosmology; logo::Bool = true)
+     logo && println(io, BRAND)
      println(io, "# The Cosmology considered had the following paremeters:\n# ")
      println(io, "# - Matter Power Spectrum input file: \"$(cosmo.file_ips)\"")
      println(io, "# - Background data input file: \"$(cosmo.file_data)\"")

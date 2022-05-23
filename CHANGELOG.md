@@ -1,5 +1,24 @@
 # HEAD
 
+- Added the file `WindowFIntegrated.jl`: now the computation of the TPCFs with the window function is correct.
+
+- added the functions `ξ_GNCxLD_multipole`, `map_ξ_GNCxLD_multipole`, `print_map_ξ_GNCxLD_multipole`, their `sum_` extensions and their `LDxGNC` counterparts for the computations of the relativistic GNC effects.
+
+- implemented all the `GNCxLD` and `LDxGNC` TPCFs.
+  
+- added the functions `ξ_GNC_multipole`, `map_ξ_GNC_multipole`, `print_map_ξ_GNC_multipole` ant their `sum_` extensions for the computations of the relativistic GNC effects.
+
+- implemented all the `GNC` TPCFs.
+  
+- changed the name of the following functions (because they refer to the LD perturbations):
+  -  `ξ_multipole` in `ξ_LD_multipole`;
+  -  `map_ξ_multipole` in `map_ξ_LD_multipole`;
+  -  `print_map_ξ_multipole` in `print_map_ξ_LD_multipole`;
+  -  `sum_ξ_multipole` in `sum_ξ_LD_multipole`;
+  -  `map_sum_ξ_multipole` in `map_sum_ξ_LD_multipole`;
+  -  `print_map_sum_ξ_multipole` in `print_map_sum_ξ_LD_multipole`;
+
+
 # VERSION 0.3.0
 
 - added the functions for the evaluation of the Doppler auto-CF with the Plane-Parallel approximation and their tests

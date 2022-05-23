@@ -203,7 +203,9 @@ function print_map_sum_ξ_LD_multipole(
 
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
-          println(io, "# This is an integration map on mu of the sum" *
+          println(io, BRAND)
+
+          println(io, "#\n# This is an integration map on mu of the sum" *
                       " of all the ξ_LD_L=$L multipole GR effects")
            println(io, "# concerning the luminosity distance perturbations.")
           !(single == true) ||
@@ -214,7 +216,7 @@ function print_map_sum_ξ_LD_multipole(
                            "# the sum of all the CFs, and them are saved separately in the \n" *
                            "# following directory: $dir \n#")
 
-          parameters_used(io, cosmo)
+          parameters_used(io, cosmo; logo = false)
           println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
           print(io, "# kwards passed: ")
 
