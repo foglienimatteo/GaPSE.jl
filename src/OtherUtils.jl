@@ -164,3 +164,31 @@ function check_group(s::String; valid_groups::Vector{String} = VALID_GROUPS)
     error = """ "$s" is not a valid group name; they are the following:\n$(valid_groups)"""
     @assert s ∈ valid_groups error
 end
+
+function check_fileisingroup(input::String, group::String; valid_groups::Vector{String}=VALID_GROUPS)
+    check_group(group; valid_groups=valid_groups)
+    l = LENGTH_VALID_GROUPS[findfirst(x->x==group, valid_groups)]
+    try
+        table = readdlm(input, comments=true)
+        xs = convert(Vector{Float64}, table[:, 1])
+        all_YS = [convert(Vector{Float64}, col)
+                  for col in eachcol(table[:, 2:end])]
+        if !isnothing(l)
+            er = "the column numbers inside $input, which is $(length(all_YS) + 1), " *
+                 "does not match with the length of the " *
+                 "chosen group $group, which is $l."
+            @assert (length(all_YS) + 1 == l) er 
+        end
+        for (i, ys) in enumerate(all_YS)
+            err = "the column number $i has length = $(length(ys)) instead of "
+            "$(length(xs)) (which is the length of the first column, the x-axis one). "
+            @assert length(ys) == length(xs) err
+        end
+    catch e
+        if isa(e, AssertionError)
+            throw(e)
+        else
+            throw(ErrorException("the file is not written in a readable format"))
+        end
+    end
+end

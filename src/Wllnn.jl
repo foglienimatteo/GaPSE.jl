@@ -17,7 +17,7 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-
+#=
 function my_Plm(l::Integer, m::Integer, x)
      @assert l ≥ 0 " l ≥ 0 must hold, while $l does not!"
      @assert l ≥ abs(m) " l ≥ |m| must hold, while $l and $m do not!"
@@ -211,3 +211,4 @@ The ``A_{a b}^{c d}`` are computed through `Aabcd`.
 See also: [`Aabcd`](@ref)
 """
 Wnnll
+=#

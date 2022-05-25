@@ -29,7 +29,7 @@ function PS_multipole(f_in;
      ks, pks = xicalc(s -> 2 * π^2 * f_in(s), L, 0;
           N=N, kmin=int_s_min, kmax=int_s_max, r0=k_0)
      t2 = time()
-     pr && println("\ntime needed for Power Spectrum  computation [in s] = $(t2-t1)\n")
+     pr && println("\ntime needed for this Power Spectrum computation [in s] = $(t2-t1)\n")
 
      if isnothing(right)
           if iseven(L)
@@ -205,17 +205,17 @@ function print_PS_multipole(input::String, out::String;
      L::Integer=0, N::Integer=1024,
      pr::Bool=true, kwargs...)
 
-     pr && println("\nI'm computiong the PS_multipole from the file $input")
+     pr && println("""\nI'm computing the PS_multipole from the file "$input" """)
 
      time_1 = time()
      vec = PS_multipole(input; N=N, L=L, pr=pr, kwargs...)
      time_2 = time()
 
-     pr && println("\ntime needed for Power Spectrum  computation [in s] = $(time_2-time_1)\n")
-
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
-          println(io, "# Power Spectrum Multipole computation of the file: $input")
+          println(io, BRAND)
+
+          println(io, "# Power Spectrum Multipole computation of the file: \"$input\"")
           println(io, "#\n# For this PS_multipole computation we set: ")
           println(io, "# \t #points used in Fourier transform N = $N")
           println(io, "# \t multipole degree in consideration L = $L")
@@ -242,16 +242,16 @@ function print_PS_multipole(ss, fs, out::String;
      L::Integer=0, N::Integer=1024,
      pr::Bool=true, kwargs...)
 
-     pr && println("\nI'm computiong the PS_multipole from the two input vectors.")
+     pr && println("""\nI'm computing the PS_multipole from the two input vectors.""")
 
      time_1 = time()
      vec = PS_multipole(ss, fs; N=N, L=L, pr=pr, kwargs...)
      time_2 = time()
 
-     pr && println("\ntime needed for Power Spectrum  computation [in s] = $(time_2-time_1)\n")
-
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
+          println(io, BRAND)
+
           println(io, "# Power Spectrum Multipole computation from two input vectors.")
           println(io, "#\n# For this PS_multipole computation we set: ")
           println(io, "# \t #points used in Fourier transform N = $N")
@@ -315,7 +315,7 @@ print_PS_multipole
 
 ##########################################################################################92
 
-
+#=
 function print_all_LD_PS_multipole(input::String, out::String;
      L::Integer=0, N::Integer=1024,
      pr::Bool=true, kwargs...)
@@ -323,7 +323,7 @@ function print_all_LD_PS_multipole(input::String, out::String;
      check_parent_directory(out)
      check_namefile(out)
 
-     pr && println("\nI'm computiong the PS_multipole from the file $input" *
+     pr && println("\nI'm computing the PS_multipole from the file $input" *
                    "of the Luminosity Distance perturbations")
 
      time_1 = time()
@@ -381,7 +381,7 @@ function print_all_GNC_PS_multipole(input::String, out::String;
 
      check_parent_directory(out)
      check_namefile(out)
-     pr && println("\nI'm computiong the PS_multipole from the file $input" *
+     pr && println("\nI'm computing the PS_multipole from the file $input" *
                    "of the Galaxy Number Counts")
 
      time_1 = time()
@@ -432,7 +432,7 @@ function print_all_GNC_PS_multipole(input::String, out::String;
           end
      end
 end
-
+=#
 
 function print_all_PS_multipole(input::String, out::String,
      group::String=VALID_GROUPS[end];
@@ -442,9 +442,10 @@ function print_all_PS_multipole(input::String, out::String,
      check_parent_directory(out)
      check_namefile(out)
      check_group(group; valid_groups=VALID_GROUPS)
+     check_fileisingroup(input, group)
 
      pr && begin
-          println("\nI'm computiong the PS_multipole from the file $input")
+          print("\nI'm computing the PS_multipole from the file \"$input\"")
           if group == "GNC" 
                println("for the Galaxy Number Counts.")
           elseif group == "LD" 
@@ -553,52 +554,3 @@ function print_all_PS_multipole(input::String, out::String,
           end
      end
 end
-
-#=
-function print_all_PS_multipole(ss, vec_fs, out::String;
-     L::Integer=0, N::Integer=1024,
-     pr::Bool=true, kwargs...)
-
-     pr && println("\nI'm computiong the PS_multipole from the two input vectors.")
-
-     time_1 = time()
-     ks, VEC = begin
-          ys = @showprogress "PS computations, L=$L: " [
-               PS_multipole(ss, fs; N=N, L=L, pr=false, kwargs...)
-               for fs in vec_fs
-          ]
-          xs, ys
-     end
-     time_2 = time()
-
-     pr && println("\ntime needed for overall Power Spectrum  computation [in s] = $(time_2-time_1)\n")
-
-     isfile(out) && run(`rm $out`)
-     open(out, "w") do io
-          println(io, "# Power Spectrum Multipole computation from two input vectors.")
-          println(io, "#\n# For this PS_multipole computation we set: ")
-          println(io, "# \t #points used in Fourier transform N = $N")
-          println(io, "# \t multipole degree in consideration L = $L")
-          println(io, "# computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
-          print(io, "# kwards passed to \"print_all_PS_multipole\": ")
-
-          if isempty(kwargs)
-               println(io, "none")
-          else
-               print(io, "\n")
-               for key in keys(kwargs)
-                    println(io, "# \t\t$(key) = $(kwargs[key])")
-               end
-          end
-          println(io, "# ")
-          println(io, "# (all the following Power Spectra are measured in (Mpc/h_0)^3)")
-          println("# k [h_0/Mpc] \t " *
-                  join("P_" .* string.(1:length(VEC)) .* " \t "))
-          for (i, k) in enumerate(ks)
-               println(io, "$k \t " *
-                           join(["$(v[i]) \t " for v in VEC]))
-          end
-     end
-end
-=#
-

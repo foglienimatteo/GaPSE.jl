@@ -45,10 +45,11 @@ const NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mp
      "(.)rho_g", "(.)rho_b", "(.)rho_cdm", "(.)rho_lambda", "(.)rho_ur",
      "(.)rho_crit", "gr.fac. D", "gr.fac. f"]
 const VALID_GROUPS = ["LD", "GNC", "GNCxLD", "LDxGNC", "generic"]
+const LENGTH_VALID_GROUPS = [18, 27, 20, 20, nothing]
 
 include("OtherUtils.jl")
 include("MathUtils.jl")
-#include("Wllnn.jl")
+include("Wllnn.jl")
 include("WindowF.jl")
 include("WindowFIntegrated.jl")
 include("BackgroundData.jl")

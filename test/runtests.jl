@@ -46,6 +46,11 @@ include("TEST_DATA.jl")
      include("test_OtherUtils.jl")
 end
 
+@testset "test PowerSpectrum" begin
+     include("test_PowerSpectrum.jl")
+end
+
+
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
@@ -82,9 +87,7 @@ end
      include("test_Dicts.jl")
 end
 
-@testset "test PowerSpectrum" begin
-     include("test_PowerSpectrum.jl")
-end
+
 
 
 ################################### COSMOLOGY IMPLEMENTATION #############################92
@@ -100,7 +103,7 @@ const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
           :N => 1024, :fit_min => 0.05, :fit_max => 0.5,
           :con => true, :k_min => 1e-8, :k_max => 10.0,
      ),
-     WFI_opts = Dict(:llim => 0.0, :rlim => Inf, :N => 1000,
+     WFI_opts=Dict(:llim => 0.0, :rlim => Inf, :N => 1000,
           :trap => true, :rtol => 1e-2, :atol => 0.0,
           :ss_start => 0.0, :ss_step => 21.768735478453323,
           :ss_stop => 0.0)
@@ -188,8 +191,8 @@ end
 ##############################
 
 
-table_xis_LD_L0_noF = readdlm("datatest/LD_SumXiMultipoles/map_sum_xi_LD_L0_noF.txt", 
-    comments = true);
+table_xis_LD_L0_noF = readdlm("datatest/LD_SumXiMultipoles/map_sum_xi_LD_L0_noF.txt",
+     comments=true);
 ss_LD_L0_noF = convert(Vector{Float64}, table_xis_LD_L0_noF[:, 1]);
 xis_sum_LD_L0_noF = convert(Vector{Float64}, table_xis_LD_L0_noF[:, 2]);
 all_xis_LD_L0_noF = [convert(Vector{Float64}, table_xis_LD_L0_noF[:, i]) for i in 3:18];
@@ -262,8 +265,8 @@ end
 
 ##############################
 
-table_xis_GNC_L0_noF = readdlm("datatest/GNC_SumXiMultipoles/map_sum_xi_GNC_L0_noF.txt", 
-    comments = true);
+table_xis_GNC_L0_noF = readdlm("datatest/GNC_SumXiMultipoles/map_sum_xi_GNC_L0_noF.txt",
+     comments=true);
 ss_GNC_L0_noF = convert(Vector{Float64}, table_xis_GNC_L0_noF[:, 1]);
 xis_sum_GNC_L0_noF = convert(Vector{Float64}, table_xis_GNC_L0_noF[:, 2]);
 all_xis_GNC_L0_noF = [convert(Vector{Float64}, table_xis_GNC_L0_noF[:, i]) for i in 3:27];
@@ -354,14 +357,14 @@ end
 
 ##############################
 
-table_xis_GNCxLD_L0_noF = readdlm("datatest/GNCxLD_SumXiMultipoles/map_sum_xi_GNCxLD_L0_noF.txt", 
-    comments = true);
+table_xis_GNCxLD_L0_noF = readdlm("datatest/GNCxLD_SumXiMultipoles/map_sum_xi_GNCxLD_L0_noF.txt",
+     comments=true);
 ss_GNCxLD_L0_noF = convert(Vector{Float64}, table_xis_GNCxLD_L0_noF[:, 1]);
 xis_sum_GNCxLD_L0_noF = convert(Vector{Float64}, table_xis_GNCxLD_L0_noF[:, 2]);
 all_xis_GNCxLD_L0_noF = [convert(Vector{Float64}, table_xis_GNCxLD_L0_noF[:, i]) for i in 3:22];
 
-table_xis_LDxGNC_L0_noF = readdlm("datatest/GNCxLD_SumXiMultipoles/map_sum_xi_LDxGNC_L0_noF.txt", 
-    comments = true);
+table_xis_LDxGNC_L0_noF = readdlm("datatest/GNCxLD_SumXiMultipoles/map_sum_xi_LDxGNC_L0_noF.txt",
+     comments=true);
 ss_LDxGNC_L0_noF = convert(Vector{Float64}, table_xis_LDxGNC_L0_noF[:, 1]);
 xis_sum_LDxGNC_L0_noF = convert(Vector{Float64}, table_xis_LDxGNC_L0_noF[:, 2]);
 all_xis_LDxGNC_L0_noF = [convert(Vector{Float64}, table_xis_LDxGNC_L0_noF[:, i]) for i in 3:22];
