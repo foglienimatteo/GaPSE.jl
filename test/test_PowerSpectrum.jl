@@ -317,7 +317,7 @@ end
 
 @testset "test print_all_PS_multipole" begin
      RTOL = 1e-2
-     
+
      @testset "zeros" begin
           name = "test_check_fileisingroup.txt"
           isfile(name) && rm(name)
@@ -360,7 +360,131 @@ end
           table = readdlm(true_pk; comments=true)
           ks = convert(Vector{Float64}, table[:, 1])
           all_pks = [convert(Vector{Float64}, col)
-                 for col in eachcol(table[:, 2:end])]
+                     for col in eachcol(table[:, 2:end])]
+
+
+          in_table = readdlm(input; comments=true)
+          in_ss = convert(Vector{Float64}, in_table[:, 1])
+          in_xis = convert(Vector{Float64}, in_table[:, 2])
+          GaPSE.print_all_PS_multipole(input, out_file, group; L=L, kwargs_ps...)
+          calc_table = readdlm(out_file; comments=true)
+          calc_ks = convert(Vector{Float64}, calc_table[:, 1])
+          calc_all_pks = [convert(Vector{Float64}, col)
+                          for col in eachcol(calc_table[:, 2:end])]
+
+          @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
+          for (calc_pks, pks) in zip(all_pks, calc_all_pks)
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
+          end
+          rm(out_file)
+     end
+
+     @testset "test PS GNC" begin
+          L = 0
+          group = "GNC"
+          input = "datatest/Power_Spectrum/map_sum_xi_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/Power_Spectrum/map_sum_ps_$group" * "_L$L" * "_noF.txt"
+          out_file = "calc_pk_L$L" * ".txt"
+
+          isfile(out_file) && rm(out_file)
+
+          table = readdlm(true_pk; comments=true)
+          ks = convert(Vector{Float64}, table[:, 1])
+          all_pks = [convert(Vector{Float64}, col)
+                     for col in eachcol(table[:, 2:end])]
+
+
+          in_table = readdlm(input; comments=true)
+          in_ss = convert(Vector{Float64}, in_table[:, 1])
+          in_xis = convert(Vector{Float64}, in_table[:, 2])
+          GaPSE.print_all_PS_multipole(input, out_file, group; L=L, kwargs_ps...)
+          calc_table = readdlm(out_file; comments=true)
+          calc_ks = convert(Vector{Float64}, calc_table[:, 1])
+          calc_all_pks = [convert(Vector{Float64}, col)
+                          for col in eachcol(calc_table[:, 2:end])]
+
+          @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
+          for (calc_pks, pks) in zip(all_pks, calc_all_pks)
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
+          end
+          rm(out_file)
+     end
+
+     @testset "test PS GNCxLD" begin
+          L = 0
+          group = "GNCxLD"
+          input = "datatest/Power_Spectrum/map_sum_xi_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/Power_Spectrum/map_sum_ps_$group" * "_L$L" * "_noF.txt"
+          out_file = "calc_pk_L$L" * ".txt"
+
+          isfile(out_file) && rm(out_file)
+
+          table = readdlm(true_pk; comments=true)
+          ks = convert(Vector{Float64}, table[:, 1])
+          all_pks = [convert(Vector{Float64}, col)
+                     for col in eachcol(table[:, 2:end])]
+
+
+          in_table = readdlm(input; comments=true)
+          in_ss = convert(Vector{Float64}, in_table[:, 1])
+          in_xis = convert(Vector{Float64}, in_table[:, 2])
+          GaPSE.print_all_PS_multipole(input, out_file, group; L=L, kwargs_ps...)
+          calc_table = readdlm(out_file; comments=true)
+          calc_ks = convert(Vector{Float64}, calc_table[:, 1])
+          calc_all_pks = [convert(Vector{Float64}, col)
+                          for col in eachcol(calc_table[:, 2:end])]
+
+          @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
+          for (calc_pks, pks) in zip(all_pks, calc_all_pks)
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
+          end
+          rm(out_file)
+     end
+
+     @testset "test PS LDxGNC" begin
+          L = 0
+          group = "LDxGNC"
+          input = "datatest/Power_Spectrum/map_sum_xi_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/Power_Spectrum/map_sum_ps_$group" * "_L$L" * "_noF.txt"
+          out_file = "calc_pk_L$L" * ".txt"
+
+          isfile(out_file) && rm(out_file)
+
+          table = readdlm(true_pk; comments=true)
+          ks = convert(Vector{Float64}, table[:, 1])
+          all_pks = [convert(Vector{Float64}, col)
+                     for col in eachcol(table[:, 2:end])]
+
+
+          in_table = readdlm(input; comments=true)
+          in_ss = convert(Vector{Float64}, in_table[:, 1])
+          in_xis = convert(Vector{Float64}, in_table[:, 2])
+          GaPSE.print_all_PS_multipole(input, out_file, group; L=L, kwargs_ps...)
+          calc_table = readdlm(out_file; comments=true)
+          calc_ks = convert(Vector{Float64}, calc_table[:, 1])
+          calc_all_pks = [convert(Vector{Float64}, col)
+                          for col in eachcol(calc_table[:, 2:end])]
+
+          @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
+          for (calc_pks, pks) in zip(all_pks, calc_all_pks)
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
+          end
+          rm(out_file)
+     end
+
+     @testset "test PS generic" begin
+          L = 0
+          group = "generic"
+          input = "datatest/Power_Spectrum/map_sum_xi_LD" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/Power_Spectrum/map_sum_ps_LD" * "_L$L" * "_noF.txt"
+          out_file = "calc_pk_L$L" * ".txt"
+
+          isfile(out_file) && rm(out_file)
+
+          table = readdlm(true_pk; comments=true)
+          ks = convert(Vector{Float64}, table[:, 1])
+          all_pks = [convert(Vector{Float64}, col)
+                     for col in eachcol(table[:, 2:end])]
 
 
           in_table = readdlm(input; comments=true)

@@ -46,11 +46,6 @@ include("TEST_DATA.jl")
      include("test_OtherUtils.jl")
 end
 
-@testset "test PowerSpectrum" begin
-     include("test_PowerSpectrum.jl")
-end
-
-
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
@@ -87,7 +82,9 @@ end
      include("test_Dicts.jl")
 end
 
-
+@testset "test PowerSpectrum" begin
+     include("test_PowerSpectrum.jl")
+end
 
 
 ################################### COSMOLOGY IMPLEMENTATION #############################92

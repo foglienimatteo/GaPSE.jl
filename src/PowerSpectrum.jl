@@ -502,11 +502,11 @@ function print_all_PS_multipole(input::String, out::String,
                println(io, "for the Luminosity Distance perturbations GR effect" *
                     "\n# from the file: $input")
           elseif group == "GNCxLD"
-               println(io, "for the cross correlations between\n" *
+               println(io, "for the cross correlations between \n#" *
                     "Galaxy Number Counts and Luminosity Distance perturbations "*
                     "from the file:\n# $input")
           elseif group == "LDxGNC" 
-               println(io, "for the cross correlations between " *
+               println(io, "for the cross correlations between \n#" *
                          "Luminosity Distance perturbations and Galaxy Number Counts " *
                          "from the file:\n# $input")
           else 
