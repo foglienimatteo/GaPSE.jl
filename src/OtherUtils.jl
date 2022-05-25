@@ -160,4 +160,7 @@ function check_namefile(s::String)
     @assert splitted_2[end] ∈ ve "$(splitted_2[end]) is not a valid extrension; they are: \n $(ve)"
 end
 
-
+function check_group(s::String; valid_groups::Vector{String} = VALID_GROUPS)
+    error = """ "$s" is not a valid group name; they are the following:\n$(valid_groups)"""
+    @assert s ∈ valid_groups error
+end

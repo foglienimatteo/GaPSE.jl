@@ -31,21 +31,24 @@ using ProgressMeter, Printf  # Licence: MIT "Expat"
 using Test, Documenter, DelimitedFiles  # Licence: MIT "Expat"
 
 
-BRAND = """
+const BRAND = """
         ###############
         #    GaPSE    #
         ############### \n#"""
 
-NAMES_F_MAP = ["x", "mu", "F", "F_error"]
-NAMES_PS = ["k (h/Mpc)", "P (Mpc/h)^3"]
-NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mpc]",
+####### DO NOT MODIFY THESE NAMES AND/OR THEIR ORDER IF YOU ARE NOT SURE! ###############92
+
+const NAMES_F_MAP = ["x", "mu", "F", "F_error"]
+const NAMES_PS = ["k (h/Mpc)", "P (Mpc/h)^3"]
+const NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mpc]",
      "comov. dist.", "ang.diam.dist.", "lum. dist.", "comov.snd.hrz.",
      "(.)rho_g", "(.)rho_b", "(.)rho_cdm", "(.)rho_lambda", "(.)rho_ur",
      "(.)rho_crit", "gr.fac. D", "gr.fac. f"]
+const VALID_GROUPS = ["LD", "GNC", "GNCxLD", "LDxGNC", "generic"]
 
 include("OtherUtils.jl")
 include("MathUtils.jl")
-include("Wllnn.jl")
+#include("Wllnn.jl")
 include("WindowF.jl")
 include("WindowFIntegrated.jl")
 include("BackgroundData.jl")
@@ -74,7 +77,7 @@ include("LD_CrossCorrelations/LD_LocalGPIntegratedGP.jl")
 include("PPDoppler.jl")
 
 
-##################### GALAXY NUMBER COUNTS #############################
+####################################### GALAXY NUMBER COUNTS #############################92
 
 
 include("GNC_AutoCorrelations/GNC_AutoNewtonian.jl")
@@ -95,7 +98,7 @@ include("GNC_CrossCorrelations/GNC_LensingIntegratedGP.jl")
 include("GNC_CrossCorrelations/GNC_LocalGPIntegratedGP.jl")
 
 
-##################### GALAXY NUMBER COUNTS x LUMINOSITY DISTANCE #############################
+##################### GALAXY NUMBER COUNTS x LUMINOSITY DISTANCE #########################92
 
 
 include("GNCxLD_CrossCorrelations/GNCxLD_NewtonianDoppler.jl")
@@ -141,7 +144,7 @@ include("LDxGNC_SumXiMultipoles.jl")
 include("PowerSpectrum.jl")
 
 
-function parameters_used(io::IO, cosmo::Cosmology; logo::Bool = true)
+function parameters_used(io::IO, cosmo::Cosmology; logo::Bool=true)
      logo && println(io, BRAND)
      println(io, "# The Cosmology considered had the following paremeters:\n# ")
      println(io, "# - Matter Power Spectrum input file: \"$(cosmo.file_ips)\"")
@@ -156,7 +159,7 @@ function parameters_used(io::IO, cosmo::Cosmology; logo::Bool = true)
      println(io, "#\t Ω_b = $(cosmo.params.Ω_b) \t " *
                  "Ω_cdm = $(cosmo.params.Ω_cdm) \t Ω_M0 = $(cosmo.params.Ω_M0)")
      println(io, "#\t b = $(cosmo.params.b) \t " *
-                 "𝑓_evo = $(cosmo.params.𝑓_evo) \t s_b = $(cosmo.params.s_b)")
+                 "f_evo = $(cosmo.params.𝑓_evo) \t s_b = $(cosmo.params.s_b)")
      println(io, "#")
 
      println(io, "# - CosmoParams about the Input Power Spectrum: ")
