@@ -28,7 +28,7 @@ function integrand_ξ_PPMatter_multipole(s, μ, cosmo::Cosmology;
           #println("int = $int")
           coef = (cosmo.params.b + cosmo.f_of_s(s) * μ^2)^2
           #println("coef = $coef")
-          int .* (coef * spline_integrF(s, μ, cosmo.windowFint)/cosmo.WFI_norm * Pl(μ, L))
+          int .* (coef * spline_integrF(s, μ, cosmo.windowFint) / cosmo.WFI_norm * Pl(μ, L))
      else
           int = cosmo.ξ_matter(s)
           coef = (cosmo.params.b + cosmo.f_of_s(s) * μ^2)^2
@@ -78,6 +78,74 @@ function ξ_PPMatter_multipole(
 
      return int / enhancer
 end
+
+
+##########################################################################################92
+
+
+
+function map_ξ_PPMatter_multipole(cosmo::Cosmology,
+     v_ss=nothing;
+     pr::Bool=true,
+     N_log::Integer=1000,
+     L::Integer=0,
+     kwargs...)
+
+     t1 = time()
+     ss = isnothing(v_ss) ? 10 .^ range(0, 3, length=N_log) : v_ss
+     xis = pr ? begin
+          @showprogress "PP Matter, L=$L: " [
+               ξ_PPMatter_multipole(s, cosmo; L=L, kwargs...) for s in ss
+          ]
+     end : [
+          ξ_PPMatter_multipole(s, cosmo; L=L, kwargs...) for s in ss
+     ]
+
+     t2 = time()
+     pr && println("\ntime needed for map_ξ_PPMatter_multipole " *
+                   "[in s] = $(@sprintf("%.5f", t2-t1)) ")
+     return (ss, xis)
+end
+
+
+##########################################################################################92
+
+
+
+function print_map_ξ_PPMatter_multipole(
+     cosmo::Cosmology,
+     out::String,
+     v_ss=nothing;
+     kwargs...)
+
+     t1 = time()
+     vec = map_ξ_PPMatter_multipole(cosmo, v_ss; kwargs...)
+     t2 = time()
+
+     isfile(out) && run(`rm $out`)
+     open(out, "w") do io
+          println(io, "# This is an integration map on mu of the ξ multipole concerning the PP Matter.")
+          parameters_used(io, cosmo)
+          println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
+          print(io, "# kwards passed: ")
+
+          if isempty(kwargs)
+               println(io, "none")
+          else
+               print(io, "\n")
+               for key in keys(kwargs)
+                    println(io, "# \t\t$(key) = $(kwargs[key])")
+               end
+          end
+
+          println(io, "# ")
+          println(io, "# s [Mpc/h_0] \t \t xi")
+          for (s, xi) in zip(vec[1], vec[2])
+               println(io, "$s \t $xi")
+          end
+     end
+end
+
 
 
 
