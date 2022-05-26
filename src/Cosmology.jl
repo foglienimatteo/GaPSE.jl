@@ -221,6 +221,7 @@ struct Cosmology
      tools::IPSTools
      windowF::WindowF
      windowFint::WindowFIntegrated
+     WFI_norm::Float64
 
      z_of_s::Dierckx.Spline1D
      D_of_s::Dierckx.Spline1D
@@ -310,7 +311,9 @@ struct Cosmology
           windowFintegrated = isnothing(file_IntwindowF) ?
                               WindowFIntegrated(s_min, s_max, windowF; params.WFI...) :
                               WindowFIntegrated(file_IntwindowF)
-     
+          WFI_norm = sum([spline_integrF(0, μ, windowFintegrated) 
+               for μ in range(-0.90, 0.90, length=100)]) / 100
+
           new(
                IPS,
                ξ_matter,
@@ -318,6 +321,7 @@ struct Cosmology
                tools,
                windowF,
                windowFintegrated,
+               WFI_norm,
                z_of_s, D_of_s, f_of_s, ℋ_of_s, ℋ_p_of_s, ℛ_LD_of_s, ℛ_GNC_of_s,
                s_of_z,
                z_eff, s_min, s_max, s_eff,

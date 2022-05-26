@@ -19,7 +19,7 @@
 
 
 function integrand_ξ_LD_multipole(s1, s, μ, effect::Function, cosmo::Cosmology;
-     L::Integer=0, use_windows::Bool=true, N_s1::Integer = 30, kwargs...)
+     L::Integer=0, use_windows::Bool=true, kwargs...)
 
      s2_value = s2(s1, s, μ)
      y_value = y(s1, s, μ)
@@ -27,7 +27,7 @@ function integrand_ξ_LD_multipole(s1, s, μ, effect::Function, cosmo::Cosmology
           #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
           int = effect(s1, s2_value, y_value, cosmo; kwargs...)
           #println("int = $int")
-          int .* (spline_integrF(s, μ, cosmo.windowFint) * Pl(μ, L))
+          int .* (spline_integrF(s, μ, cosmo.windowFint)/cosmo.WFI_norm * Pl(μ, L))
 
           #=
           ϕ_s2 = ϕ(s2_value, cosmo.s_min, cosmo.s_max)

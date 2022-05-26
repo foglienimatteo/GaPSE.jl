@@ -27,7 +27,7 @@ function integrand_ξ_GNCxLD_multipole(s1, s, μ, effect::Function, cosmo::Cosmo
           #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
           int = effect(s1, s2_value, y_value, cosmo; kwargs...)
           #println("int = $int")
-          int .* (spline_integrF(s, μ, cosmo.windowFint) * Pl(μ, L))
+          int .* (spline_integrF(s, μ, cosmo.windowFint)/cosmo.WFI_norm * Pl(μ, L))
 
           #=
           ϕ_s2 = ϕ(s2_value, cosmo.s_min, cosmo.s_max)
@@ -164,7 +164,7 @@ function ξ_GNCxLD_multipole(
      N_μs::Integer=50,
      μ_atol::Float64=0.0,
      μ_rtol::Float64=1e-2,
-     SPLINE::Bool=false,
+     trap::Bool=false,
      kwargs...)
 
      error = "$(string(effect)) is not a valid GR effect function.\n" *
@@ -175,21 +175,22 @@ function ξ_GNCxLD_multipole(
      orig_f(μ) = enhancer * integrand_ξ_GNCxLD_multipole(s1, s, μ, effect, cosmo;
           L=L, use_windows=use_windows, kwargs...)
 
-     μs = union(range(-1.0, -0.95, length=N_μs),
-          range(-0.95, +0.95, length=N_μs),
-          range(+0.95, +1.0, length=N_μs))
      int =
-          if s > 1.0 && SPLINE == false
+          if s > 1.0 && trap == false
                quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=μ_atol, rtol=μ_rtol)[1]
-
-          elseif s > 1.0 && SPLINE == true
-               orig_fs = orig_f.(μs)
-               spline_orig_f = Spline1D(μs, orig_fs)
-               quadgk(μ -> spline_orig_f(μ), -1.0, 1.0; atol=μ_atol, rtol=μ_rtol)[1]
-
           else
+               #=
+               μs = union(
+                    range(-1.0, -0.90, length=N_μs),
+                    range(-0.90, 0.90, length=N_μs),
+                    range(0.90, 1.0, length=N_μs)
+                    )
+               =#
+               μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_μs)
                orig_fs = orig_f.(μs)
+               #orig_fs
                trapz(μs, orig_fs)
+
           end
 
      return int / enhancer

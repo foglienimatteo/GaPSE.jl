@@ -57,9 +57,8 @@ include("CosmoParams.jl")
 include("CosmoUtils.jl")
 include("IPSTools.jl")
 include("XiMatter.jl")
-include("PPXiMatter.jl")
 include("Cosmology.jl")
-
+include("PPXiMatter.jl")
 
 
 ##################### PERTURBED LUMINOSITY DISTANCE #############################

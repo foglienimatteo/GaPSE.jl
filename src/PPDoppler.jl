@@ -59,7 +59,7 @@ function integrand_ξ_PPD_multipole(s, μ, cosmo::Cosmology;
           #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
           int = ξ_PP_Doppler(s, μ, cosmo)
           #println("int = $int")
-          int .* (spline_F(s / cosmo.s_eff, μ, cosmo.windowF) * Pl(μ, L))
+          int .* (spline_integrF(s, μ, cosmo.windowFint)/cosmo.WFI_norm * Pl(μ, L))
      else
           #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
           int = ξ_PP_Doppler(s, μ, cosmo)
