@@ -238,15 +238,13 @@ struct CosmoParams
           IPSTools_opts::Dict=Dict{Symbol,Any}(),
           WFI_opts::Dict=Dict{Symbol,Any}(),
      )
+          str(n, a, b) = "the keys of the $n dict have to be Symbols (like :$a, :$b, ...)"
+          
+          @assert typeof(IPS_opts) <: Dict{Symbol,T1} where {T1} str("IPS_opts", "k_min", "N")
 
-          @assert typeof(IPS_opts) <: Dict{Symbol,T1} where {T1}
-          "the keys of the IPS_opts dict have to be Symbols (like :k_min, :N, ...)"
+          @assert typeof(IPSTools_opts) <: Dict{Symbol,T2} where {T2} str("IPSTools_opts", "k_min", "N")
 
-          @assert typeof(IPSTools_opts) <: Dict{Symbol,T2} where {T2}
-          "the keys of the IPSTools_opts dict have to be Symbols (like :k_min, :N, ...)"
-
-          @assert typeof(WFI_opts) <: Dict{Symbol,T3} where {T3}
-          "the keys of the WFI_opts dict have to be Symbols (like :rlim, :N, ...)"
+          @assert typeof(WFI_opts) <: Dict{Symbol,T3} where {T3} str("WFI_opts", "r_lim", "N")
 
           check_compatible_dicts(DEFAULT_IPS_OPTS, IPS_opts, "IPS_opts")
           check_compatible_dicts(DEFAULT_IPSTOOLS_OPTS, IPSTools_opts, "IPSTools_opts")

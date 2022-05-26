@@ -56,6 +56,8 @@ include("BackgroundData.jl")
 include("CosmoParams.jl")
 include("CosmoUtils.jl")
 include("IPSTools.jl")
+include("XiMatter.jl")
+include("PPXiMatter.jl")
 include("Cosmology.jl")
 
 

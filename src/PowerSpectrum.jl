@@ -205,6 +205,9 @@ function print_PS_multipole(input::String, out::String;
      L::Integer=0, N::Integer=1024,
      pr::Bool=true, kwargs...)
 
+     check_parent_directory(out)
+     check_namefile(out)
+
      pr && println("""\nI'm computing the PS_multipole from the file "$input" """)
 
      time_1 = time()
@@ -241,6 +244,9 @@ end
 function print_PS_multipole(ss, fs, out::String;
      L::Integer=0, N::Integer=1024,
      pr::Bool=true, kwargs...)
+
+     check_parent_directory(out)
+     check_namefile(out)
 
      pr && println("""\nI'm computing the PS_multipole from the two input vectors.""")
 
