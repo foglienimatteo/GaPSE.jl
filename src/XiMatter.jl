@@ -70,9 +70,9 @@ function ξ_from_PS(ks, pks;
 end
 
 
-function ξ_from_PS(input::String; kwargs...)
+function ξ_from_PS(input::String; comments = false, kwargs...)
 
-     pk_table = readdlm(input, comments=true)
+     pk_table = readdlm(input, comments=comments)
      ks = convert(Vector{Float64}, pk_table[:, 1])
      pks = convert(Vector{Float64}, pk_table[:, 2])
 

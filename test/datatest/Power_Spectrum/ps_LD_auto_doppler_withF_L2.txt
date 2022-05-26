@@ -7,7 +7,7 @@
 # For this PS_multipole computation we set: 
 # 	 #points used in Fourier transform N = 300
 # 	 multipole degree in consideration L = 2
-# computational time needed (in s) : 0.0078
+# computational time needed (in s) : 0.0114
 # kwards passed to "print_PS_multipole": 
 # 		p0_right = [-2.0, 1.0]
 # 		int_s_max = 10000.0
