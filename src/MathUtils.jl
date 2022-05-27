@@ -789,3 +789,163 @@ function (func::EPLs)(x)
      end
 end;
 =#
+
+
+##########################################################################################92
+
+
+
+polynomial(x, c, b, a) = a .+ b .* x .+ c .* x^2
+
+
+
+function polynomial_from_data(
+     xs, ys,
+     P0::Vector{Float64},
+     fit_min::Number, fit_max::Number)
+
+     @assert length(xs) == length(ys) "xs and ys must have same length"
+     @assert length(P0) ∈ [1, 2, 3] "length of P0 must be 1, 2 or 3!"
+     @assert min(xs...) <= fit_min "fit_min must be > min(xs...) !"
+     @assert max(xs...) >= fit_max "fit_max must be < max(xs...) !"
+
+     #p0 = abs(P0[1]) < 1.5 ? P0 : [ P0[1] - floor() , P0[2:end]...]
+     p0 = P0
+
+     mean_exp_xs = sum([log10(abs(x)) for x in xs[fit_min.<xs.<fit_max]]) / length(xs[fit_min.<xs.<fit_max])
+     en_xs = 10.0^(-mean_exp_xs)
+     new_xs = xs[fit_min.<xs.<fit_max] .* en_xs
+
+     mean_exp_ys = sum([log10(abs(y)) for y in ys[fit_min.<xs.<fit_max]]) / length(ys[fit_min.<xs.<fit_max])
+     en_ys = 10.0^(-mean_exp_ys)
+     new_ys = ys[fit_min.<xs.<fit_max] .* en_ys
+
+     mean_ys = sum(new_ys) / length(new_ys)
+     @assert !all([isapprox(y / mean_ys, 1.0, rtol=1e-6) for y in new_ys]) "DO NOT WORK!"
+     #si = mean_spectral_index(xs, ys; N=N, con=con)
+
+     if length(P0) == 1
+          vec = coef(curve_fit((x, p) -> polynomial(x, p[1], 0.0, 0.0),
+               new_xs, new_ys, p0))
+          c, b, a = vcat(vec, 0.0, 0.0)
+          return c * (en_xs^2) / en_ys, b * en_xs / en_ys, a / en_ys
+     
+     elseif length(p0) == 2
+     
+          try
+               fit_1 = curve_fit((x, p) -> polynomial(x, p[1], p[2], 0.0),
+                    new_xs, new_ys, p0)
+               vals_1 = coef(fit_1)[begin:end-1]
+               stds_1 = stderror(fit_1)[begin:end-1]
+               pers_1 = [s / v for (s, v) in zip(stds_1, vals_1)] # ratio error/value for each param
+     
+               c, b, a =
+                    if all(x -> x < 0.05, pers_1) # if all the relative errors on the parameters are < 0.05
+                         vals_1
+                    elseif pers_1[2] < 0.05  # if relative errors on "a" and "b" are too large, but on "c" is ok
+                         fit_2 = curve_fit((x, p) -> power_law(x, p[1], vals_1[2], 0.0),
+                              new_xs, new_ys, p0)
+                         vals_2 = coef(fit_2)
+                         vcat(vals_2, vals_1[2])
+                    else
+                         fit_3 = curve_fit((x, p) -> power_law(x, p[1], 0.0, 0.0),
+                              new_xs, new_ys, p0)
+                         vals_3 = coef(fit_3)
+                         fit_4 = curve_fit((x, p) -> power_law(x, vals_3[1], p[2], 0.0),
+                              new_xs, new_ys, p0)
+                         vals_4 = coef(fit_4)
+     
+                         vcat(vals_3, vals_4)
+                    end
+     
+               return c * (en_xs^2) / en_ys, b * en_xs / en_ys, a / en_ys
+     
+          catch e
+               fit_3 = curve_fit((x, p) -> polynomial(x, p[1], 0.0, 0.0),
+                    new_xs, new_ys, [p0[1]])
+               c, b, a = vcat(coef(fit_3), 0.0, 0.0)
+     
+               return c * (en_xs^2) / en_ys, b * en_xs / en_ys, a / en_ys
+          end
+     
+     else
+          try
+               fit_1 = curve_fit((x, p) -> polynomial(x, p[1], p[2], p[3]),
+                    new_xs, new_ys, p0)
+               vals_1 = coef(fit_1)
+               stds_1 = stderror(fit_1)
+               pers_1 = [s / v for (s, v) in zip(stds_1, vals_1)] # ratio error/value for each param
+     
+               c, b, a =
+                    if all(x -> x < 0.05, pers_1) # if all the relative errors on the parameters are < 0.05
+                         vals_1
+                    elseif pers_1[3] < 0.05  # if relative errors on "a" and "b" are too large, but on "c" is ok
+                         fit_2 = curve_fit((x, p) -> power_law(x, p[1], p[2], vals_1[3]),
+                              new_xs, new_ys, p0)
+                         vals_2 = coef(fit_2)
+                         vcat(vals_2, vals_1[3])
+     
+                    elseif pers_1[2] < 0.05  # if relative errors on "a" and "c" are too large, but on "b" is ok
+                         fit_2 = curve_fit((x, p) -> power_law(x, p[1], vals_1[3], p[2]),
+                              new_xs, new_ys, p0)
+                         vals_2 = coef(fit_2)
+                         vcat(vals_2[1], vals_1[3], vals_2[2])
+                    else
+                         fit_3 = curve_fit((x, p) -> power_law(x, p[1], p[2], 0.0),
+                              new_xs, new_ys, p0)
+                         vals_3 = coef(fit_3)
+                         fit_4 = curve_fit((x, p) -> power_law(x, vals_3[1], vals_3[2], p[3]),
+                              new_xs, new_ys, p0)
+                         vals_4 = coef(fit_4)
+     
+                         vcat(vals_3, vals_4)
+                    end
+     
+               return c * (en_xs^2) / en_ys, b * en_xs / en_ys, a / en_ys
+     
+          catch e
+               try
+                    fit_1 = curve_fit((x, p) -> polynomial(x, p[1], p[2], 0.0),
+                         new_xs, new_ys, p0)
+                    vals_1 = coef(fit_1)[begin:end-1]
+                    stds_1 = stderror(fit_1)[begin:end-1]
+                    pers_1 = [s / v for (s, v) in zip(stds_1, vals_1)] # ratio error/value for each param
+     
+                    c, b, a =
+                         if all(x -> x < 0.05, pers_1) # if all the relative errors on the parameters are < 0.05
+                              vals_1
+                         elseif pers_1[2] < 0.05  # if relative errors on "a" and "b" are too large, but on "c" is ok
+                              fit_2 = curve_fit((x, p) -> power_law(x, p[1], vals_1[2], 0.0),
+                                   new_xs, new_ys, p0)
+                              vals_2 = coef(fit_2)
+                              vcat(vals_2, vals_1[2])
+                         else
+                              fit_3 = curve_fit((x, p) -> power_law(x, p[1], 0.0, 0.0),
+                                   new_xs, new_ys, p0)
+                              vals_3 = coef(fit_3)
+                              fit_4 = curve_fit((x, p) -> power_law(x, vals_3[1], p[2], 0.0),
+                                   new_xs, new_ys, p0)
+                              vals_4 = coef(fit_4)
+     
+                              vcat(vals_3, vals_4)
+                         end
+     
+                    return c * (en_xs^2) / en_ys, b * en_xs / en_ys, a / en_ys
+     
+               catch er
+                    fit_3 = curve_fit((x, p) -> polynomial(x, p[1], 0.0, 0.0),
+                         new_xs, new_ys, [p0[1]])
+                    c, b, a = vcat(coef(fit_3), 0.0, 0.0)
+     
+                    return c * (en_xs^2) / en_ys, b * en_xs / en_ys, a / en_ys
+               end
+          end
+     
+     end
+end;
+
+
+
+function polynomial_from_data(xs, ys, p0::Vector{Float64})
+     polynomial_from_data(xs, ys, p0, xs[begin], xs[end])
+end;
