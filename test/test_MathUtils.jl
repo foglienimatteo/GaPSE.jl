@@ -37,6 +37,8 @@ end
 
 
 @testset "test derivate_vector" begin
+     RTOL = 1e-2
+     
      @testset "zeros" begin
           xs = 1:0.1:2
           ys = [2.5 + 3.65 * x^(-3.5) for x in xs]
@@ -72,7 +74,7 @@ end
           xs = 1:0.01:2
           ys = [2.5 + 3.65 * x^(-3.5) for x in xs]
           calc = GaPSE.derivate_vector(xs, ys)
-          @test all([isapprox(1.0, -3.65 * 3.5 * x^(-4.5) / c; rtol=1e-2)
+          @test all([isapprox(1.0, -3.65 * 3.5 * x^(-4.5) / c; rtol=RTOL)
                      for (x, c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
      end
 
@@ -87,7 +89,7 @@ end
           xs = 10 .^ range(4, 6, length=100)
           ys = [2.5e23 + 3.65 * x^(3.5) for x in xs]
           calc = GaPSE.derivate_vector(xs, ys)
-          @test all([isapprox(1.0, 3.65 * 3.5 * x^(2.5) / c; rtol=1e-2)
+          @test all([isapprox(1.0, 3.65 * 3.5 * x^(2.5) / c; rtol=RTOL)
                      for (x, c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
      end
 
@@ -95,7 +97,7 @@ end
           xs = 10 .^ range(-6, -4, length=100)
           ys = [3.6e-22 + 3.65 * x^(3.5) for x in xs]
           calc = GaPSE.derivate_vector(xs, ys)
-          @test all([isapprox(1.0, 3.65 * 3.5 * x^(2.5) / c; rtol=1e-2)
+          @test all([isapprox(1.0, 3.65 * 3.5 * x^(2.5) / c; rtol=RTOL)
                      for (x, c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
      end
 
@@ -103,7 +105,7 @@ end
           xs = 10 .^ range(-6, -4, length=100)
           ys = [3.6e-22 + 3.65 * x^(-3.5) for x in xs]
           calc = GaPSE.derivate_vector(xs, ys)
-          @test all([isapprox(1.0, -3.65 * 3.5 * x^(-4.5) / c; rtol=1e-2)
+          @test all([isapprox(1.0, -3.65 * 3.5 * x^(-4.5) / c; rtol=RTOL)
                      for (x, c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
      end
 end
@@ -111,6 +113,8 @@ end
 
 
 @testset "test spectral_index" begin
+     RTOL = 1e-2
+
      @testset "zeros" begin
           xs = 1:0.1:2
           ys = [2.5 + 3.65 * x^(-3.5) for x in xs]
@@ -152,7 +156,7 @@ end
           xs = 10 .^ range(-6, -4, length=100)
           ys = [3.65 * x^(3.5) for x in xs]
           calc = GaPSE.spectral_index(xs, ys; N=1, con=false)
-          @test all([isapprox(1.0, 3.5 / c; rtol=1e-2)
+          @test all([isapprox(1.0, 3.5 / c; rtol=RTOL)
                      for (x, c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
      end
 
@@ -160,7 +164,7 @@ end
           xs = 10 .^ range(-6, -4, length=100)
           ys = [3.6e-22 + 3.65 * x^(3.5) for x in xs]
           calc = GaPSE.spectral_index(xs, ys; N=1, con=true)
-          @test all([isapprox(1.0, 3.5 / c; rtol=1e-2)
+          @test all([isapprox(1.0, 3.5 / c; rtol=RTOL)
                      for (x, c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
      end
 
@@ -168,7 +172,7 @@ end
           xs = 10 .^ range(-6, -4, length=100)
           ys = [3.65 * x^(-3.5) for x in xs]
           calc = GaPSE.spectral_index(xs, ys; N=1, con=false)
-          @test all([isapprox(1.0, -3.5 / c; rtol=1e-2)
+          @test all([isapprox(1.0, -3.5 / c; rtol=RTOL)
                      for (x, c) in zip(xs[begin+1:end-1], calc[begin+1:end-1])])
      end
 
@@ -273,6 +277,8 @@ end
 end
 
 @testset "test power_law_from_data" begin
+     RTOL = 1e-2
+
      @testset "zeros" begin
           si, b, a = 2.69, 3.45, 0.0
           xs = 1:0.1:10
@@ -292,9 +298,9 @@ end
           ys = [a + b * x^(si) for x in xs]
           p0 = [1.0, 1.0]
           c_si, c_b, c_a = GaPSE.power_law_from_data(xs, ys, p0; con=false)
-          @test isapprox(si, c_si, rtol=1e-2)
-          @test isapprox(b, c_b, rtol=1e-2)
-          @test isapprox(a, c_a, rtol=1e-2)
+          @test isapprox(si, c_si, rtol=RTOL)
+          @test isapprox(b, c_b, rtol=RTOL)
+          @test isapprox(a, c_a, rtol=RTOL)
      end
 
      @testset "second" begin
@@ -303,9 +309,9 @@ end
           ys = [a + b * x^(si) for x in xs]
           p0 = [-1.0, 1.0]
           c_si, c_b, c_a = GaPSE.power_law_from_data(xs, ys, p0; con=false)
-          @test isapprox(si, c_si, rtol=1e-2)
-          @test isapprox(b, c_b, rtol=1e-2)
-          @test isapprox(a, c_a, rtol=1e-2)
+          @test isapprox(si, c_si, rtol=RTOL)
+          @test isapprox(b, c_b, rtol=RTOL)
+          @test isapprox(a, c_a, rtol=RTOL)
      end
 
      @testset "third" begin
@@ -322,9 +328,9 @@ end
           ys = [a + b * x^(si) for x in xs]
           p0 = [-1.0, 1.0, 1.0]
           c_si, c_b, c_a = GaPSE.power_law_from_data(xs, ys, p0; con=true)
-          @test isapprox(si, c_si, rtol=1e-2)
-          @test isapprox(b, c_b, rtol=1e-2)
-          @test isapprox(a, c_a, rtol=1e-2)
+          @test isapprox(si, c_si, rtol=RTOL)
+          @test isapprox(b, c_b, rtol=RTOL)
+          @test isapprox(a, c_a, rtol=RTOL)
      end
 end
 
@@ -716,6 +722,7 @@ end
 end
 
 @testset "test EPLs" begin
+     RTOL = 1e-2
 
      @testset "zeros" begin
           xs = 10 .^ range(1, 2, length=100)
@@ -745,7 +752,7 @@ end
 
           @test all([isapprox(
                GaPSE.two_power_laws(x; switch=switch, si_1=si_1, si_2=si_2, b=b, a=a),
-               y; rtol=1e-2)
+               y; rtol=RTOL)
                      for (x, y) in zip(new_xs, new_ys)])
      end
 
@@ -762,6 +769,7 @@ end
 end
 
 @testset "test polynomial_from_data" begin
+     RTOL = 2e-2
      @testset "zeros" begin
           c, b, a = 2.69, 3.45, 0.0
           xs = 1:0.1:10
@@ -780,9 +788,9 @@ end
           ys = [a + b * x + c * x^2 for x in xs]
           p0 = [1.0]
           c_si, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
-          @test isapprox(c, c_si, rtol=1e-2)
-          @test isapprox(b, c_b, rtol=1e-2)
-          @test isapprox(a, c_a, rtol=1e-2)
+          @test isapprox(c, c_si, rtol=RTOL)
+          @test isapprox(b, c_b, rtol=RTOL)
+          @test isapprox(a, c_a, rtol=RTOL)
      end
 
      @testset "one param: second" begin
@@ -791,9 +799,9 @@ end
           ys = [a + b * x + c * x^2 for x in xs]
           p0 = [1.0]
           c_si, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
-          @test isapprox(c, c_si, rtol=1e-2)
-          @test isapprox(b, c_b, rtol=1e-2)
-          @test isapprox(a, c_a, rtol=1e-2)
+          @test isapprox(c, c_si, rtol=RTOL)
+          @test isapprox(b, c_b, rtol=RTOL)
+          @test isapprox(a, c_a, rtol=RTOL)
      end
 
      @testset "two params: first" begin
@@ -802,9 +810,9 @@ end
           ys = [a + b * x + c * x^2 for x in xs]
           p0 = [1.0, 1.0]
           c_si, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
-          @test isapprox(c, c_si, rtol=1e-2)
-          @test isapprox(b, c_b, rtol=1e-2)
-          @test isapprox(a, c_a, rtol=1e-2)
+          @test isapprox(c, c_si, rtol=RTOL)
+          @test isapprox(b, c_b, rtol=RTOL)
+          @test isapprox(a, c_a, rtol=RTOL)
      end
 
      @testset "two params: second" begin
@@ -813,9 +821,9 @@ end
           ys = [a + b * x + c * x^2 for x in xs]
           p0 = [-1.0, 1.0]
           c_si, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
-          @test isapprox(c, c_si, rtol=1e-2)
-          @test isapprox(b, c_b, rtol=1e-2)
-          @test isapprox(a, c_a, rtol=1e-2)
+          @test isapprox(c, c_si, rtol=RTOL)
+          @test isapprox(b, c_b, rtol=RTOL)
+          @test isapprox(a, c_a, rtol=RTOL)
      end
 
      @testset "two params: third" begin
@@ -824,9 +832,9 @@ end
           ys = [a + b * x + c * x^2 for x in xs]
           p0 = [1.0, 1.0]
           c_si, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
-          @test isapprox(c, c_si, rtol=1e-2)
-          @test isapprox(b, c_b, rtol=1e-2)
-          @test isapprox(a, c_a, rtol=1e-2)
+          @test isapprox(c, c_si, rtol=RTOL)
+          @test isapprox(b, c_b, rtol=RTOL)
+          @test isapprox(a, c_a, rtol=RTOL)
      end
 
      @testset "two params: fourth" begin
@@ -835,9 +843,9 @@ end
           ys = [a + b * x + c * x^2 for x in xs]
           p0 = [1.0, 1.0]
           c_si, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
-          @test isapprox(c, c_si, rtol=1e-2)
-          @test isapprox(b, c_b, rtol=1e-2)
-          @test isapprox(a, c_a, rtol=1e-2)
+          @test isapprox(c, c_si, rtol=RTOL)
+          @test isapprox(b, c_b, rtol=RTOL)
+          @test isapprox(a, c_a, rtol=RTOL)
      end
 
      @testset "three params: first" begin
@@ -854,9 +862,9 @@ end
           ys = [a + b * x + c * x^2 for x in xs]
           p0 = [1.0, 1.0, 1.0]
           c_c, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
-          @test isapprox(c, c_c, rtol=1e-2)
-          @test isapprox(b, c_b, rtol=1e-2)
-          @test isapprox(a, c_a, rtol=1e-2)
+          @test isapprox(c, c_c, rtol=RTOL)
+          @test isapprox(b, c_b, rtol=RTOL)
+          @test isapprox(a, c_a, rtol=RTOL)
      end
 
      @testset "three params: third" begin
@@ -865,11 +873,11 @@ end
           ys = [a + b * x + c * x^2 for x in xs]
           p0 = [1.0, 1.0, 1.0]
 
-          c_c, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0; err=1e-2)
+          c_c, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0; err=RTOL)
 
-          @test isapprox(c, c_c, rtol=1e-2)
-          @test isapprox(b, c_b, rtol=1e-2)
-          @test isapprox(a, c_a, rtol=1e-2)
+          @test isapprox(c, c_c, rtol=RTOL)
+          @test isapprox(b, c_b, rtol=RTOL)
+          @test isapprox(a, c_a, rtol=RTOL)
      end
 
      @testset "three params: fourth" begin
@@ -880,9 +888,9 @@ end
 
           c_c, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
 
-          @test isapprox(c, c_c, rtol=1e-2)
-          @test isapprox(b, c_b, rtol=1e-2)
-          @test isapprox(a, c_a, rtol=1e-2)
+          @test isapprox(c, c_c, rtol=RTOL)
+          @test isapprox(b, c_b, rtol=RTOL)
+          @test isapprox(a, c_a, rtol=RTOL)
      end
 
 
@@ -894,9 +902,9 @@ end
 
           c_c, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
 
-          @test isapprox(c, c_c, rtol=1e-2)
+          @test isapprox(c, c_c, rtol=RTOL)
           @test isapprox(b, c_b, rtol=1e-1)
-          @test isapprox(a, c_a, rtol=1e-2)
+          @test isapprox(a, c_a, rtol=RTOL)
      end
 
      @testset "three params: sixth" begin
@@ -907,8 +915,8 @@ end
 
           c_c, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
 
-          @test isapprox(c, c_c, rtol=1e-2)
-          @test isapprox(b, c_b, rtol=1e-2)
-          @test isapprox(a, c_a, rtol=1e-2)
+          @test isapprox(c, c_c, rtol=RTOL)
+          @test isapprox(b, c_b, rtol=RTOL)
+          @test isapprox(a, c_a, rtol=RTOL)
      end
 end
