@@ -896,12 +896,12 @@ end
           c_c, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
 
           @test isapprox(c, c_c, rtol=1e-2)
-          @test isapprox(b, c_b, rtol=1e-2)
+          @test isapprox(b, c_b, rtol=1e-1)
           @test isapprox(a, c_a, rtol=1e-2)
      end
 
      @testset "three params: sixth" begin
-          c, b, a = 2.69e-4, 3.45e3, 1e5
+          c, b, a = 2.69e-6, 3.45e3, 1e5
           xs = 10 .^ range(4, 6, length=100)
           ys = [a + b * x + c * x^2 for x in xs]
           p0 = [1.0, 1.0, 1.0]
