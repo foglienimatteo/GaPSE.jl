@@ -42,12 +42,12 @@ include("TEST_DATA.jl")
 ##########################################################################################92
 
 
-@testset "test OtherUtils" begin
-     include("test_OtherUtils.jl")
-end
-
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
+end
+
+@testset "test OtherUtils" begin
+     include("test_OtherUtils.jl")
 end
 
 @testset "test CosmoUtils" begin

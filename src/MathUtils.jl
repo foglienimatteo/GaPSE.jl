@@ -804,7 +804,7 @@ y = f(x) = a + b \\, x + c \\, x^2
 where `c` is the 2-degree coefficient (``c``), `b` the 1-degree coefficient (``b``) and
 `a` is the added constant (``a``).
 """
-polynomial(x, c, b, a) = a .+ b .* x .+ c .* x^2
+polynomial(x, c, b, a) = a .+ b .* x .+ c .* x .^ 2
 
 
 function curve_fit_polyn(xs, ys, known::Vector, p0::Vector)
@@ -907,7 +907,7 @@ function curve_fit_polyn_onthree(xs, ys, p0; en_xs=1, en_ys=1, err=0.05)
 
           c, b, a =
                if all(x -> x < err, sigmas_r_1) # if all the relative errors on the parameters are < err
-                    println("3 params, al sigmas_r ok")
+                    println("3 params, all sigmas_r ok")
                     coefs_1
 
                elseif sigmas_r_1[1] < err && sigmas_r_1[2] < err # rel. errors on "c" and "b" ok

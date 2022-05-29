@@ -767,54 +767,149 @@ end
           xs = 1:0.1:10
           ys = [a + b * x + c * x^2 for x in xs]
           p0 = [1.0, 1.0]
-          @test_throws AssertionError GaPSE.polynomial_from_data(xs[begin:end-1], ys, p0; con=false)
-          @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys[begin:end-1], p0; con=false)
-          @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys, [1.0, 1.0, 1.0]; con=false)
-          @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys, [1.0, 1.0]; con=true)
-          @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys, [1.0, 1.0], 0.0, 2.0; con=true)
-          @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys, [1.0, 1.0], 1.0, 111.0; con=true)
+          @test_throws AssertionError GaPSE.polynomial_from_data(xs[begin:end-1], ys, p0)
+          @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys[begin:end-1], p0)
+          @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys, [1.0, 1, 1.0])
+          @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys, [1.0, 1.0, 1.0, 1.0])
+          @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys, [1.0, 1.0], 0.0, 2.0)
+          @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys, [1.0, 1.0], 1.0, 111.0)
      end
 
-     @testset "first" begin
+     @testset "one param: first" begin
+          c, b, a = 2.69, 0.0, 0.0
+          xs = 1:0.1:10
+          ys = [a + b * x + c * x^2 for x in xs]
+          p0 = [1.0]
+          c_si, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
+          @test isapprox(c, c_si, rtol=1e-2)
+          @test isapprox(b, c_b, rtol=1e-2)
+          @test isapprox(a, c_a, rtol=1e-2)
+     end
+
+     @testset "one param: second" begin
+          c, b, a = 2.696, 0.0, 0.0
+          xs = 10 .^ range(4, 6, length=100)
+          ys = [a + b * x + c * x^2 for x in xs]
+          p0 = [1.0]
+          c_si, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
+          @test isapprox(c, c_si, rtol=1e-2)
+          @test isapprox(b, c_b, rtol=1e-2)
+          @test isapprox(a, c_a, rtol=1e-2)
+     end
+
+     @testset "two params: first" begin
           c, b, a = 2.69, 3.45, 0.0
           xs = 1:0.1:10
           ys = [a + b * x + c * x^2 for x in xs]
           p0 = [1.0, 1.0]
-          c_si, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0; con=false)
+          c_si, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
           @test isapprox(c, c_si, rtol=1e-2)
           @test isapprox(b, c_b, rtol=1e-2)
           @test isapprox(a, c_a, rtol=1e-2)
      end
 
-     @testset "second" begin
+     @testset "two params: second" begin
           c, b, a = -2.69, 3.45, 0.0
           xs = 10 .^ range(4, 6, length=100)
           ys = [a + b * x + c * x^2 for x in xs]
           p0 = [-1.0, 1.0]
-          c_si, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0; con=false)
+          c_si, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
           @test isapprox(c, c_si, rtol=1e-2)
           @test isapprox(b, c_b, rtol=1e-2)
           @test isapprox(a, c_a, rtol=1e-2)
      end
 
-     @testset "third" begin
-          c, b, a = -2.69, 3.45, 13245.23
+     @testset "two params: third" begin
+          c, b, a = 2.69e-6, 3.45, 0.0
           xs = 10 .^ range(4, 6, length=100)
           ys = [a + b * x + c * x^2 for x in xs]
-          p0 = [-1.0, 1.0, 1.0]
-          @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys, p0; con=true)
+          p0 = [1.0, 1.0]
+          c_si, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
+          @test isapprox(c, c_si, rtol=1e-2)
+          @test isapprox(b, c_b, rtol=1e-2)
+          @test isapprox(a, c_a, rtol=1e-2)
      end
 
-     @testset "fourth" begin
-          c, b, a = -2.65, 1.54e3, 2.34563e-15
+     @testset "two params: fourth" begin
+          c, b, a = 2.69, 3.45e-4, 0.0
           xs = 10 .^ range(4, 6, length=100)
           ys = [a + b * x + c * x^2 for x in xs]
-          p0 = [-1.0, 1.0, 1.0]
-          c_si, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0; con=true)
+          p0 = [1.0, 1.0]
+          c_si, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
           @test isapprox(c, c_si, rtol=1e-2)
+          @test isapprox(b, c_b, rtol=1e-2)
+          @test isapprox(a, c_a, rtol=1e-2)
+     end
+
+     @testset "three params: first" begin
+          c, b, a = -2.69, 3.45, 1e40
+          xs = 10 .^ range(4, 6, length=100)
+          ys = [a + b * x + c * x^2 for x in xs]
+          p0 = [1.0, 1.0, 1.0]
+          @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys, p0)
+     end
+
+     @testset "three params: second" begin
+          c, b, a = 2.65, 1.54, 2.34563
+          xs = range(4, 6, length=100)
+          ys = [a + b * x + c * x^2 for x in xs]
+          p0 = [1.0, 1.0, 1.0]
+          c_c, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
+          @test isapprox(c, c_c, rtol=1e-2)
+          @test isapprox(b, c_b, rtol=1e-2)
+          @test isapprox(a, c_a, rtol=1e-2)
+     end
+
+     @testset "three params: third" begin
+          c, b, a = -2.69, 3.45, 1e-3
+          xs = 10 .^ range(4, 6, length=100)
+          ys = [a + b * x + c * x^2 for x in xs]
+          p0 = [1.0, 1.0, 1.0]
+
+          c_c, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0; err=1e-2)
+
+          @test isapprox(c, c_c, rtol=1e-2)
+          @test isapprox(b, c_b, rtol=1e-2)
+          @test isapprox(a, c_a, rtol=1e-2)
+     end
+
+     @testset "three params: fourth" begin
+          c, b, a = 2.69e4, 3.45e3, 1e5
+          xs = 10 .^ range(4, 6, length=100)
+          ys = [a + b * x + c * x^2 for x in xs]
+          p0 = [1.0, 1.0, 1.0]
+
+          c_c, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
+
+          @test isapprox(c, c_c, rtol=1e-2)
+          @test isapprox(b, c_b, rtol=1e-2)
+          @test isapprox(a, c_a, rtol=1e-2)
+     end
+
+
+     @testset "three params: fifth" begin
+          c, b, a = 2.69e4, 3.45e-3, 1e5
+          xs = 10 .^ range(4, 6, length=100)
+          ys = [a + b * x + c * x^2 for x in xs]
+          p0 = [1.0, 1.0, 1.0]
+
+          c_c, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
+
+          @test isapprox(c, c_c, rtol=1e-2)
+          @test isapprox(b, c_b, rtol=1e-2)
+          @test isapprox(a, c_a, rtol=1e-2)
+     end
+
+     @testset "three params: sixth" begin
+          c, b, a = 2.69e-4, 3.45e3, 1e5
+          xs = 10 .^ range(4, 6, length=100)
+          ys = [a + b * x + c * x^2 for x in xs]
+          p0 = [1.0, 1.0, 1.0]
+
+          c_c, c_b, c_a = GaPSE.polynomial_from_data(xs, ys, p0)
+
+          @test isapprox(c, c_c, rtol=1e-2)
           @test isapprox(b, c_b, rtol=1e-2)
           @test isapprox(a, c_a, rtol=1e-2)
      end
 end
-
-@test 1==2
