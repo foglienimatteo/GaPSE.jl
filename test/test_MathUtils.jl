@@ -769,7 +769,6 @@ end
           p0 = [1.0, 1.0]
           @test_throws AssertionError GaPSE.polynomial_from_data(xs[begin:end-1], ys, p0)
           @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys[begin:end-1], p0)
-          @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys, [1.0, 1, 1.0])
           @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys, [1.0, 1.0, 1.0, 1.0])
           @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys, [1.0, 1.0], 0.0, 2.0)
           @test_throws AssertionError GaPSE.polynomial_from_data(xs, ys, [1.0, 1.0], 1.0, 111.0)
