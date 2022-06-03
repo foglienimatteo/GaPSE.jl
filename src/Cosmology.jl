@@ -19,11 +19,11 @@
 
 
 """
-     func_ℛ(s, ℋ; s_lim=0.01, ℋ_0 = ℋ0)
+     func_ℛ_LD(s, ℋ; s_lim=0.01, ℋ_0 = ℋ0)
 
 Return the following value:
 ```math
-\\mathrm{func_ℛ}(s, \\scrH)=
+\\mathrm{func_ℛ_LD}(s, \\scrH)=
 \\begin{cases}
 1 - \\frac{1}{\\scrH \\, s} \\; ,
     \\quad s > s_\\mathrm{lim}\\\\
@@ -31,14 +31,53 @@ Return the following value:
      \\quad \\quad 0 \\leq s \\leq s_\\mathrm{lim}
 \\end{cases}
 ```
+
+It's used inside the TPCFs concerning the perturbed luminosity distance.
 """
-function func_ℛ(s, ℋ; s_lim=0.01, ℋ_0 = ℋ0)
+function func_ℛ_LD(s, ℋ; s_lim=0.01, ℋ_0=ℋ0)
      if s > s_lim
-          return 1.0 - 1.0/(s*ℋ)
+          return 1.0 - 1.0 / (s * ℋ)
      else
-          return 1.0 - 1.0/(s_lim*ℋ_0)
+          return 1.0 - 1.0 / (s_lim * ℋ_0)
      end
 end
+
+
+
+"""
+     func_ℛ_GNC(s, ℋ, ℋ_p; s_b=0.0, 𝑓_evo=0.0, s_lim=0.01, ℋ_0 = ℋ0)
+
+Return the following value:
+```math
+\\mathrm{func_ℛ_LD}(s, \\scrH)=
+\\begin{cases}
+5 s_b + \\frac{2 - 5 s_b}{\\scrH \\, s} +  
+     \\frac{\\dot{\\scrH}}{\\scrH^2} - \\itf_{\\mathrm{evo}}\\; ,
+    \\quad s > s_\\mathrm{lim}\\\\
+1 - \\frac{1}{\\scrH_0 \\, s_\\mathrm{lim}} 
+5 s_b + \\frac{2 - 5 s_b}{\\scrH_0 \\, s_\\mathrm{lim}} +  
+     \\frac{\\dot{\\scrH}}{\\scrH_0^2} - \\itf_{\\mathrm{evo}}\\; , 
+     \\quad \\quad 0 \\leq s \\leq s_\\mathrm{lim}
+\\end{cases}
+```
+
+It's used inside the TPCFs concerning the galaxy number counts.
+"""
+function func_ℛ_GNC(s, ℋ, ℋ_p; s_b=0.0, 𝑓_evo=0.0, s_lim=0.01, ℋ_0=ℋ0)
+     if s_b ≈ 2.0 / 5.0
+          2.0 + ℋ_p / ℋ^2 - 𝑓_evo
+     elseif s > s_lim
+          return 5.0 * s_b + (2.0 - 5.0 * s_b) / (s * ℋ) + ℋ_p / ℋ^2 - 𝑓_evo
+     else
+          return 5.0 * s_b + (2.0 - 5.0 * s_b) / (s_lim * ℋ_0) + ℋ_p / ℋ_0^2 - 𝑓_evo
+     end
+end
+
+
+
+##########################################################################################92
+
+
 
 
 """
@@ -52,7 +91,9 @@ end
           D_of_s::Dierckx.Spline1D
           f_of_s::Dierckx.Spline1D
           ℋ_of_s::Dierckx.Spline1D
-          ℛ_of_s::Dierckx.Spline1D
+          ℋ_p_of_s::Dierckx.Spline1D
+          ℛ_LD_of_s::Dierckx.Spline1D
+          ℛ_GNC_of_s::Dierckx.Spline1D
 
           s_of_z::Dierckx.Spline1D
 
@@ -95,12 +136,26 @@ Correlation Function computations.
      \\end{split}
   ```
 
-- `z_of_s, D_of_s, f_of_s, ℋ_of_s, ℛ_of_s ::Dierckx.Spline1D` : splines that returns the
-  value of `z`, `D`, `f`, `ℋ` and `ℛ` (respectively) corresponding to an input comoving
-  distance `s`. These splines are obtained from the data stored by `BackgroundData` applied
-  to the input background data file.
+- `z_of_s, D_of_s, f_of_s, ℋ_of_s, ℋ_p_of_s, ℛ_LD_of_s, ℛ_GNC_of_s ::Dierckx.Spline1D` :
+  splines obtained from the data stored by `BackgroundData` applied to the input background 
+  data file. Given an input comoving distance `s`, they return the corresponding value of,
+  respectivelly:
+  - the redshift `z`;
+  - the growth factor `D`;
+  - the growth rate `f`;
+  - the comoving Hubble parameter `ℋ`;
+  - the derivative of the comoving Hubble parameter wrt the comoving time `ℋ_p`; 
+  - `ℛ_LD`, obtained from `func_ℛ_LD` anddefined as:
+  ```math
+     \\scrR_{\\mathrm{LD}} = 1 - \\frac{1}{\\scrH \\, s}
+  ```
+  - `ℛ_GNC`, obtained from `func_ℛ_GNC` and defined as:
+  ```math
+     \\scrR_{\\mathrm{GNC}} = 5 s_b + \\frac{2 - 5 s_b}{\\scrH \\, s} +  
+     \\frac{\\dot{\\scrH}}{\\scrH^2} - \\itf_{\\mathrm{evo}}
+  ```
 
-- `s_of_z ::Dierckx.Spline1D` : splines that returns the value of the comoving distance `s`
+- `s_of_z ::Dierckx.Spline1D` : spline that returns the value of the comoving distance `s`
   corresponding to an input redshift `z`. Also this spline is obtained from the data stored by 
   `BackgroundData` applied to the input background data file.
 
@@ -157,19 +212,24 @@ Correlation Function computations.
 
 See also:  [`InputPS`](@ref), [`CosmoParams`](@ref), [`IPSTools`](@ref),
 [`BackgroundData`](@ref), [`WindowF`](@ref), [`F_map`](@ref), [`func_z_eff`](@ref),
-[`V_survey`](@ref)
+[`V_survey`](@ref), [`func_ℛ_LD`](@ref), [`func_ℛ_GNC`](@ref), 
 """
 struct Cosmology
      IPS::InputPS
+     ξ_matter::EPLs
      params::CosmoParams
      tools::IPSTools
      windowF::WindowF
-     
+     windowFint::WindowFIntegrated
+     WFI_norm::Float64
+
      z_of_s::Dierckx.Spline1D
      D_of_s::Dierckx.Spline1D
      f_of_s::Dierckx.Spline1D
      ℋ_of_s::Dierckx.Spline1D
-     ℛ_of_s::Dierckx.Spline1D
+     ℋ_p_of_s::Dierckx.Spline1D
+     ℛ_LD_of_s::Dierckx.Spline1D
+     ℛ_GNC_of_s::Dierckx.Spline1D
 
      s_of_z::Dierckx.Spline1D
 
@@ -183,73 +243,93 @@ struct Cosmology
      file_data::String
      file_ips::String
      file_windowF::String
+     file_IWF::Union{String,Nothing}
 
      function Cosmology(
-               params::CosmoParams,
-               file_data::String,
-               file_ips::String,
-               file_windowF::String,
-               file_Is::Union{String,Nothing} = nothing;
-               names_bg = NAMES_BACKGROUND
-          )
-
-          BD = BackgroundData(file_data::String, params.z_max;
-               names = names_bg, h = params.h_0)
-          IPS = InputPS(file_ips; )
+          params::CosmoParams,
+          file_data::String,
+          file_ips::String,
+          file_windowF::String,
+          file_IntwindowF::Union{String,Nothing}=nothing;
+          names_bg=NAMES_BACKGROUND
+     )
+     
+          BD = BackgroundData(file_data, params.z_max; names=names_bg, h=params.h_0)
+          IPS = InputPS(file_ips;)
           windowF = WindowF(file_windowF)
-          tools = isnothing(file_Is) ?
-               IPSTools(IPS; params.IPSTools...) : IPSTools(IPS, file_Is)
-
+          tools = IPSTools(IPS; params.IPSTools...)
+     
+          ss_m, xis_m = ξ_from_PS(IPS; int_k_min=1e-6, int_k_max=1e3,
+               L=0, N=1024, pr=false, s0=nothing, right=nothing)
+          ξ_matter = EPLs(ss_m, xis_m, [1.0, 1.0], [-1.0, 1.0])
           #=
           z_of_s_lim = my_interpolation(BD.comdist[1], BD.z[1], BD.comdist[2], BD.z[2], s_lim)
           D_of_s_lim = my_interpolation(BD.comdist[1], BD.D[1], BD.comdist[2], BD.D[2], s_lim)
           f_of_s_lim = my_interpolation(BD.comdist[1], BD.f[1], BD.comdist[2], BD.f[2], s_lim)
           ℋ_of_s_lim = my_interpolation(BD.comdist[1], BD.ℋ[1], BD.comdist[2], BD.ℋ[2], s_lim)
-
+     
           new_BD_comdist = vcat(0.0, s_lim, BD.comdist[2:end])
           new_BD_z = vcat(0.0, z_of_s_lim, BD.z[2:end])
           new_BD_D = vcat(D_of_s_lim, D_of_s_lim, BD.D[2:end])
           new_BD_f = vcat(f_of_s_lim, f_of_s_lim, BD.f[2:end])
           new_BD_ℋ = vcat(ℋ_of_s_lim, ℋ_of_s_lim, BD.ℋ[2:end])
-
+     
           another_BD_comdist = vcat(s_lim, s_lim, BD.comdist[2:end])
           another_BD_z = vcat(z_of_s_lim, z_of_s_lim, BD.z[2:end])
-
+     
           z_of_s = Spline1D(new_BD_comdist, another_BD_z; bc = "error")
           s_of_z = Spline1D(new_BD_z, another_BD_comdist; bc = "error")
           D_of_s = Spline1D(new_BD_comdist, new_BD_D; bc = "error")
           f_of_s = Spline1D(new_BD_comdist, new_BD_f; bc = "error")
           ℋ_of_s = Spline1D(new_BD_comdist, new_BD_ℋ; bc = "error")
           =#
-
-          z_of_s = Spline1D(BD.comdist, BD.z; bc = "error")
-          s_of_z = Spline1D(BD.z, BD.comdist; bc = "error")
-          D_of_s = Spline1D(BD.comdist, BD.D; bc = "error")
-          f_of_s = Spline1D(BD.comdist, BD.f; bc = "error")
-          ℋ_of_s = Spline1D(BD.comdist, BD.ℋ; bc = "error")
-
-          ss = 10 .^ range(-4, log10(BD.comdist[end]), length = 1000)
-          ℛs = [func_ℛ(s, ℋ_of_s(s); s_lim =  params.s_lim) for s in ss]
-          ℛ_of_s = Spline1D(vcat(0.0, ss), vcat(ℛs[begin], ℛs); bc = "error")
-
+     
+          z_of_s = Spline1D(BD.comdist, BD.z; bc="error")
+          s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+          D_of_s = Spline1D(BD.comdist, BD.D; bc="error")
+          f_of_s = Spline1D(BD.comdist, BD.f; bc="error")
+          ℋ_of_s = Spline1D(BD.comdist, BD.ℋ; bc="error")
+     
+          ℋ_of_τ = Spline1D(reverse(BD.conftime), reverse(BD.ℋ); bc="error")
+          vec_ℋs_p = [derivative(ℋ_of_τ, t) for t in BD.conftime]
+          ℋ_p_of_s = Spline1D(BD.comdist, vec_ℋs_p; bc="error")
+     
+          ss = 10 .^ range(-4, log10(BD.comdist[end]), length=1000)
+          ℛ_LDs = [func_ℛ_LD(s, ℋ_of_s(s); s_lim=params.s_lim) for s in ss]
+          ℛ_LD_of_s = Spline1D(vcat(0.0, ss), vcat(ℛ_LDs[begin], ℛ_LDs); bc="error")
+     
+          ℛ_GNCs = [func_ℛ_GNC(s, ℋ_of_s(s), ℋ_p_of_s(s);
+               s_b=params.s_b, 𝑓_evo=params.𝑓_evo, s_lim=params.s_lim) for s in ss]
+          ℛ_GNC_of_s = Spline1D(vcat(0.0, ss), vcat(ℛ_GNCs[begin], ℛ_GNCs); bc="error")
+     
           s_min = s_of_z(params.z_min)
           s_max = s_of_z(params.z_max)
           z_eff = func_z_eff(s_min, s_max, z_of_s)
           s_eff = s_of_z(z_eff)
           vol = V_survey(s_min, s_max, params.θ_max)
+     
+          windowFintegrated = isnothing(file_IntwindowF) ?
+                              WindowFIntegrated(s_min, s_max, windowF; params.WFI...) :
+                              WindowFIntegrated(file_IntwindowF)
+          WFI_norm = sum([spline_integrF(0, μ, windowFintegrated) 
+               for μ in range(-0.90, 0.90, length=100)]) / 100
 
           new(
                IPS,
+               ξ_matter,
                params,
                tools,
                windowF,
-               z_of_s, D_of_s, f_of_s, ℋ_of_s, ℛ_of_s,
+               windowFintegrated,
+               WFI_norm,
+               z_of_s, D_of_s, f_of_s, ℋ_of_s, ℋ_p_of_s, ℛ_LD_of_s, ℛ_GNC_of_s,
                s_of_z,
                z_eff, s_min, s_max, s_eff,
                vol,
                file_data,
                file_ips,
-               file_windowF
+               file_windowF,
+               file_IntwindowF,
           )
      end
 end
@@ -266,8 +346,9 @@ end
           D::Float64
           f::Float64
           ℋ::Float64
-          #ℋ_p::Float64
-          ℛ::Float64
+          ℋ_p::Float64
+          ℛ_LD::Float64
+          ℛ_GNC::Float64
           a::Float64)
      
 A point in the Universe, placed at redshift `z` from us.
@@ -289,14 +370,16 @@ struct Point
      D::Float64
      f::Float64
      ℋ::Float64
-     #ℋ_p::Float64
-     ℛ::Float64
+     ℋ_p::Float64
+     ℛ_LD::Float64
+     ℛ_GNC::Float64
      a::Float64
 
-     #Point(z, comdist, D, f, ℋ, ℛ) = new(z, comdist, D, f, ℋ, ℛ, 1.0/(1.0+z))
+     #Point(z, comdist, D, f, ℋ, ℛ_LD) = new(z, comdist, D, f, ℋ, ℛ_LD, 1.0/(1.0+z))
      function Point(s, cosmo::Cosmology)
           z = cosmo.z_of_s(s)
-          new(z, s, cosmo.D_of_s(s), cosmo.f_of_s(s),
-               cosmo.ℋ_of_s(s), cosmo.ℛ_of_s(s), 1.0/(1.0+z))
+          new(z, s, cosmo.D_of_s(s), cosmo.f_of_s(s), cosmo.ℋ_of_s(s),
+               cosmo.ℋ_p_of_s(s), cosmo.ℛ_LD_of_s(s), cosmo.ℛ_GNC_of_s(s),
+               1.0 / (1.0 + z))
      end
 end

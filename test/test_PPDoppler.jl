@@ -20,9 +20,6 @@
 
 
 
-
-
-
 @testset "test map_ξ_PPD_multipole" begin
      RTOL = 1e-3
      kwargs_xis_PP = Dict(

@@ -113,3 +113,82 @@ end
 function my_println_dict(dict::Dict; pref::String="", N::Integer = 3)
      my_println_dict(stdout, dict; pref = pref,  N = N)
 end;
+
+
+
+##########################################################################################92
+
+
+
+function parent_directory(s::String)
+    splitted = split(s, "/")
+    
+    if length(splitted) == 1 || (splitted[end] == "" && length(splitted) == 2)
+        return "./"
+    end
+
+    ss = string(split(s, "/")[begin:end-1] .* "/" ...)
+
+    if ss == s
+        return string(split(ss, "/")[begin:end-2] .* "/" ...)
+    else
+        return ss
+    end
+end
+
+function check_parent_directory(s::String)
+    pd = parent_directory(s)
+
+    pd == "./" && (return nothing)
+
+    @assert isdir(pd) "$pd is not an existing directory!"
+end
+
+
+function return_namefile(s::String)
+    splitted = split(s, "/")
+    @assert splitted[end] ≠ "" "$s is a valid name for a directory, not for a file!"
+    name =  string(splitted[end])
+    return name
+end
+
+function check_namefile(s::String)
+    name =  return_namefile(s)
+    splitted_2 = split(name, ".")
+    @assert splitted_2[end] ≠ name "$name has no extension (like .txt, .dat, ...)!"
+    ve = ["txt", "dat"]
+    @assert splitted_2[end] ∈ ve "$(splitted_2[end]) is not a valid extrension; they are: \n $(ve)"
+end
+
+function check_group(s::String; valid_groups::Vector{String} = VALID_GROUPS)
+    error = """ "$s" is not a valid group name; they are the following:\n$(valid_groups)"""
+    @assert s ∈ valid_groups error
+end
+
+function check_fileisingroup(input::String, group::String; valid_groups::Vector{String}=VALID_GROUPS)
+    check_group(group; valid_groups=valid_groups)
+    l = LENGTH_VALID_GROUPS[findfirst(x->x==group, valid_groups)]
+    try
+        table = readdlm(input, comments=true)
+        xs = convert(Vector{Float64}, table[:, 1])
+        all_YS = [convert(Vector{Float64}, col)
+                  for col in eachcol(table[:, 2:end])]
+        if !isnothing(l)
+            er = "the column numbers inside $input, which is $(length(all_YS) + 1), " *
+                 "does not match with the length of the " *
+                 "chosen group $group, which is $l."
+            @assert (length(all_YS) + 1 == l) er 
+        end
+        for (i, ys) in enumerate(all_YS)
+            err = "the column number $i has length = $(length(ys)) instead of "
+            "$(length(xs)) (which is the length of the first column, the x-axis one). "
+            @assert length(ys) == length(xs) err
+        end
+    catch e
+        if isa(e, AssertionError)
+            throw(e)
+        else
+            throw(ErrorException("the file is not written in a readable format"))
+        end
+    end
+end

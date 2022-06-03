@@ -22,7 +22,7 @@
      z_min, z_max, θ_max = 0.05, 0.20, π / 2.0
      params = GaPSE.CosmoParams(z_min, z_max, θ_max)
      cosmo = GaPSE.Cosmology(params, FILE_BACKGROUND,
-          FILE_PS, FILE_F_MAP)
+          FILE_PS, FILE_F_MAP, FILE_IF_MAP)
 
      RTOL = 1e-6
 
@@ -31,11 +31,18 @@
      @test isapprox(cosmo.params.Ω_M0 , 0.29992, rtol = RTOL)
      @test isapprox(cosmo.params.h_0, 0.7, rtol = RTOL)
 
+     @test isapprox(cosmo.params.b , 1.0, rtol = RTOL)
+     @test isapprox(cosmo.params.s_b, 0.0, rtol = RTOL)
+     @test isapprox(cosmo.params.𝑓_evo , 0.0, rtol = RTOL)
+
      for k in keys(GaPSE.DEFAULT_IPS_OPTS)
           @test cosmo.params.IPS[k] ≈ GaPSE.DEFAULT_IPS_OPTS[k]
      end
      for k in keys(GaPSE.DEFAULT_IPSTOOLS_OPTS)
           @test cosmo.params.IPSTools[k] ≈ GaPSE.DEFAULT_IPSTOOLS_OPTS[k]
+     end
+     for k in keys(GaPSE.DEFAULT_WFI_OPTS)
+          @test cosmo.params.WFI[k] ≈ GaPSE.DEFAULT_WFI_OPTS[k]
      end
 
 
@@ -49,6 +56,7 @@
      @test cosmo.file_data == FILE_BACKGROUND
      @test cosmo.file_ips == FILE_PS
      @test cosmo.file_windowF == FILE_F_MAP
+     @test cosmo.file_IWF == FILE_IF_MAP
 
      @test all(isapprox(cosmo.z_of_s.(COM_DIST), ZS, rtol = RTOL))
      @test all(isapprox(cosmo.s_of_z.(ZS), COM_DIST, rtol = RTOL))
@@ -56,5 +64,4 @@
      @test all(isapprox(cosmo.f_of_s.(COM_DIST), GROWTH_FACTOR_F, rtol = RTOL))
      @test all(isapprox(cosmo.ℋ_of_s.(COM_DIST), COM_H, rtol = RTOL))
 end
-
 

@@ -18,10 +18,10 @@
 #
 
 function PS_multipole(f_in;
-     int_s_min::Float64=1e-1, int_s_max::Float64=1e3,
-     L::Integer=0, N::Integer=1024, pr::Bool=true,
-     k0::Union{Nothing,Float64}=nothing,
-     right::Union{Float64,Nothing}=nothing)
+     int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3,
+     L::Integer = 0, N::Integer = 1024, pr::Bool = true,
+     k0::Union{Nothing,Float64} = nothing,
+     right::Union{Float64,Nothing} = nothing)
 
      k_0 = isnothing(k0) ? 1.0 / int_s_max : k0
 
@@ -29,7 +29,7 @@ function PS_multipole(f_in;
      ks, pks = xicalc(s -> 2 * π^2 * f_in(s), L, 0;
           N=N, kmin=int_s_min, kmax=int_s_max, r0=k_0)
      t2 = time()
-     pr && println("\ntime needed for Power Spectrum  computation [in s] = $(t2-t1)\n")
+     pr && println("\ntime needed for this Power Spectrum computation [in s] = $(t2-t1)\n")
 
      if isnothing(right)
           if iseven(L)
@@ -48,10 +48,10 @@ end
 
 
 function PS_multipole(ss, fs;
-     int_s_min::Float64=1e-1, int_s_max::Float64=1e3,
-     epl::Bool=true,
-     N_left::Integer=12, N_right::Integer=12,
-     p0_left=[-2.0, 1.0], p0_right=[-2.0, 1.0],
+     int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3,
+     epl::Bool = true,
+     N_left::Integer = 12, N_right::Integer = 12,
+     p0_left=[-2.0, 1.0], p0_right = [-2.0, 1.0],
      kwargs...)
 
      @assert length(ss) == length(fs) "xs and ys must have same length"
@@ -205,17 +205,20 @@ function print_PS_multipole(input::String, out::String;
      L::Integer=0, N::Integer=1024,
      pr::Bool=true, kwargs...)
 
-     pr && println("\nI'm computiong the PS_multipole from the file $input")
+     check_parent_directory(out)
+     check_namefile(out)
+
+     pr && println("""\nI'm computing the PS_multipole from the file "$input" """)
 
      time_1 = time()
      vec = PS_multipole(input; N=N, L=L, pr=pr, kwargs...)
      time_2 = time()
 
-     pr && println("\ntime needed for Power Spectrum  computation [in s] = $(time_2-time_1)\n")
-
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
-          println(io, "# Power Spectrum Multipole computation of the file: $input")
+          println(io, BRAND)
+
+          println(io, "# Power Spectrum Multipole computation of the file: \"$input\"")
           println(io, "#\n# For this PS_multipole computation we set: ")
           println(io, "# \t #points used in Fourier transform N = $N")
           println(io, "# \t multipole degree in consideration L = $L")
@@ -242,16 +245,19 @@ function print_PS_multipole(ss, fs, out::String;
      L::Integer=0, N::Integer=1024,
      pr::Bool=true, kwargs...)
 
-     pr && println("\nI'm computiong the PS_multipole from the two input vectors.")
+     check_parent_directory(out)
+     check_namefile(out)
+
+     pr && println("""\nI'm computing the PS_multipole from the two input vectors.""")
 
      time_1 = time()
      vec = PS_multipole(ss, fs; N=N, L=L, pr=pr, kwargs...)
      time_2 = time()
 
-     pr && println("\ntime needed for Power Spectrum  computation [in s] = $(time_2-time_1)\n")
-
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
+          println(io, BRAND)
+
           println(io, "# Power Spectrum Multipole computation from two input vectors.")
           println(io, "#\n# For this PS_multipole computation we set: ")
           println(io, "# \t #points used in Fourier transform N = $N")
@@ -310,3 +316,247 @@ See also: [`V_survey`](@ref), [`A`](@ref), [`A_prime`](@ref),
 [`EPLs`](@ref), [`PS_multipole`](@ref)
 """
 print_PS_multipole
+
+
+
+##########################################################################################92
+
+#=
+function print_all_LD_PS_multipole(input::String, out::String;
+     L::Integer=0, N::Integer=1024,
+     pr::Bool=true, kwargs...)
+
+     check_parent_directory(out)
+     check_namefile(out)
+
+     pr && println("\nI'm computing the PS_multipole from the file $input" *
+                   "of the Luminosity Distance perturbations")
+
+     time_1 = time()
+     ks, VEC = begin
+          table = readdlm(input; comments=true)
+          xs = convert(Vector{Float64}, table[:, 1])
+          all_YS = [convert(Vector{Float64}, col)
+                    for col in eachcol(table[:, 2:end])]
+          res = @showprogress "LD GR effects, L=$L: " [
+               PS_multipole(xs, ys; N=N, L=L, pr=false, kwargs...)
+               for ys in all_YS
+          ]
+          res[1][1], [res[i][2] for i in 1:length(res)]
+     end
+
+
+     time_2 = time()
+
+     pr && println("\ntime needed for all the Luminosity Distance Power Spectra computation [in s] = $(time_2-time_1)\n")
+
+     isfile(out) && run(`rm $out`)
+     open(out, "w") do io
+          println(io, BRAND)
+
+          println(io, "#\n# Power Spectra Multipole computation of the Luminosity Distance perturbations of the file: \n# $input")
+          println(io, "#\n# For this PS_multipole computation we set: ")
+          println(io, "# \t #points used in Fourier transform N = $N")
+          println(io, "# \t multipole degree in consideration L = $L")
+          println(io, "# overall computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
+          print(io, "# kwards passed to \"print_all_LD_PS_multipole\": ")
+
+          if isempty(kwargs)
+               println(io, "none")
+          else
+               print(io, "\n")
+               for key in keys(kwargs)
+                    println(io, "# \t\t$(key) = $(kwargs[key])")
+               end
+          end
+          println(io, "# ")
+          println(io, "# (all the following Power Spectra are measured in (Mpc/h_0)^3)")
+          println(io, "# 1: k [h_0/Mpc] \t 2: P_SUM \t " *
+                      join([string(i) for i in 3:length(GR_EFFECTS_LD)+2] .*
+                           ": P_" .* GR_EFFECTS_LD .* " \t "))
+          for (i, (k, pk)) in enumerate(zip(ks, VEC[1]))
+               println(io, "$k \t $pk \t " *
+                           join(["$(v[i]) \t " for v in VEC[2:end]]))
+          end
+     end
+end
+
+function print_all_GNC_PS_multipole(input::String, out::String;
+     L::Integer=0, N::Integer=1024,
+     pr::Bool=true, kwargs...)
+
+     check_parent_directory(out)
+     check_namefile(out)
+     pr && println("\nI'm computing the PS_multipole from the file $input" *
+                   "of the Galaxy Number Counts")
+
+     time_1 = time()
+
+     ks, VEC = begin
+          table = readdlm(input; comments=true)
+          xs = convert(Vector{Float64}, table[:, 1])
+          all_YS = [convert(Vector{Float64}, col)
+                    for col in eachcol(table[:, 2:end])]
+          res = @showprogress "LD GR effects, L=$L: " [
+               PS_multipole(xs, ys; N=N, L=L, pr=false, kwargs...)
+               for ys in all_YS
+          ]
+          res[1][1], [res[i][2] for i in 1:length(res)]
+     end
+
+     time_2 = time()
+
+     pr && println("\ntime needed for all the Galaxy Number Counts Power Spectra computation [in s] = $(time_2-time_1)\n")
+
+     isfile(out) && run(`rm $out`)
+     open(out, "w") do io
+          println(io, BRAND)
+
+          println(io, "#\n# Power Spectra Multipole computation of the Galaxy Number Counts of the file: \n# $input")
+          println(io, "#\n# For this PS_multipole computation we set: ")
+          println(io, "# \t #points used in Fourier transform N = $N")
+          println(io, "# \t multipole degree in consideration L = $L")
+          println(io, "# overall computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
+          print(io, "# kwards passed to \"print_all_GNC_PS_multipole\": ")
+
+          if isempty(kwargs)
+               println(io, "none")
+          else
+               print(io, "\n")
+               for key in keys(kwargs)
+                    println(io, "# \t\t$(key) = $(kwargs[key])")
+               end
+          end
+          println(io, "# ")
+          println(io, "# (all the following Power Spectra are measured in (Mpc/h_0)^3)")
+          println(io, "# 1: k [h_0/Mpc] \t 2: P_SUM \t " *
+                      join([string(i) for i in 3:length(GR_EFFECTS_GNC)+2] .*
+                           ": P_" .* GR_EFFECTS_GNC .* " \t "))
+          for (i, (k, pk)) in enumerate(zip(ks, VEC[1]))
+               println(io, "$k \t $pk \t " *
+                           join(["$(v[i]) \t " for v in VEC[2:end]]))
+          end
+     end
+end
+=#
+
+function print_all_PS_multipole(input::String, out::String,
+     group::String=VALID_GROUPS[end];
+     L::Integer=0, N::Integer=1024,
+     pr::Bool=true, kwargs...)
+
+     check_parent_directory(out)
+     check_namefile(out)
+     check_group(group; valid_groups=VALID_GROUPS)
+     check_fileisingroup(input, group)
+
+     pr && begin
+          print("\nI'm computing the PS_multipole from the file \"$input\"")
+          if group == "GNC" 
+               println("for the Galaxy Number Counts.")
+          elseif group == "LD" 
+               println("for the Luminosity Distance perturbations.")
+          elseif group == "GNCxLD" 
+               println("for the cross correlations between " *
+               "Galaxy Number Counts and Luminosity Distance perturbations.")
+          elseif group == "LDxGNC" 
+               println("for the cross correlations between " *
+                    "Luminosity Distance perturbations and Galaxy Number Counts.")
+          else 
+               println("(no specific group considered).")
+          end
+     end
+
+     sps = group == "GNC" ? "GNC GR effects" :
+           group == "LD" ? "LD GR effects" :
+           group == "GNCxLD" ? "GNCxLD GR effects" :
+           group == "LDxGNC" ? "LDxGNC GR effects" :
+           "generic file"
+
+     time_1 = time()
+
+     ks, VEC = begin
+          table = readdlm(input; comments=true)
+          xs = convert(Vector{Float64}, table[:, 1])
+          all_YS = [convert(Vector{Float64}, col)
+                    for col in eachcol(table[:, 2:end])]
+          res = pr ? begin
+               @showprogress sps * ", L=$L: " [
+                    PS_multipole(xs, ys; N=N, L=L, pr=false, kwargs...)
+                    for ys in all_YS]
+          end : begin
+               [PS_multipole(xs, ys; N=N, L=L, pr=false, kwargs...)
+                for ys in all_YS]
+          end
+
+          res[1][1], [res[i][2] for i in 1:length(res)]
+     end
+
+     time_2 = time()
+
+     pr && println("\ntime needed for all the Power Spectra computation [in s] = $(time_2-time_1)\n")
+
+     isfile(out) && run(`rm $out`)
+     open(out, "w") do io
+          println(io, BRAND)
+
+          print(io, "#\n# Power Spectra Multipole computation ")
+          if group == "GNC" 
+               println(io, "for the Galaxy Number Counts GR effect"*
+                    "\n# from the file: $input")
+          elseif group == "LD" 
+               println(io, "for the Luminosity Distance perturbations GR effect" *
+                    "\n# from the file: $input")
+          elseif group == "GNCxLD"
+               println(io, "for the cross correlations between \n#" *
+                    "Galaxy Number Counts and Luminosity Distance perturbations "*
+                    "from the file:\n# $input")
+          elseif group == "LDxGNC" 
+               println(io, "for the cross correlations between \n#" *
+                         "Luminosity Distance perturbations and Galaxy Number Counts " *
+                         "from the file:\n# $input")
+          else 
+               println(io, "without any specific group considered" *
+                    "\n# from the file: $input")
+          end
+
+          println(io, "#\n# For this PS_multipole computation we set: ")
+          println(io, "# \t #points used in Fourier transform N = $N")
+          println(io, "# \t multipole degree in consideration L = $L")
+          println(io, "# overall computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
+          print(io, "# kwards passed to \"print_all_PS_multipole\": ")
+
+          if isempty(kwargs)
+               println(io, "none")
+          else
+               print(io, "\n")
+               for key in keys(kwargs)
+                    println(io, "# \t\t$(key) = $(kwargs[key])")
+               end
+          end
+          println(io, "# ")
+          println(io, "# (all the following Power Spectra are measured in (Mpc/h_0)^3)")
+
+          if group ≠ VALID_GROUPS[end]
+               effs = group == "GNC" ? GR_EFFECTS_GNC :
+                      group == "LD" ? GR_EFFECTS_LD :
+                      group == "GNCxLD" ? GR_EFFECTS_GNCxLD :
+                      group == "LDxGNC" ? GR_EFFECTS_LDxGNC :
+                      throw(ErrorException("how did you arrive here???"))
+
+               println(io, "# 1: k [h_0/Mpc] \t 2: P_SUM \t " *
+                      join([string(i) for i in 3:length(effs)+2] .*
+                           ": P_" .* effs .* " \t "))
+          else
+               println(io, "# 1: k [h_0/Mpc] \t" *
+                    join([string(i) for i in 2:length(VEC)+1] .*
+                           ": P_" .* 
+                         [string(i) for i in 2:length(VEC)+1] .* " \t ")
+               )
+          end
+
+          for (i, k) in enumerate(ks)
+               println(io, "$k \t" * join(["$(v[i]) \t " for v in VEC]))
+          end
+     end
+end

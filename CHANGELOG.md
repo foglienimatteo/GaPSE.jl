@@ -1,12 +1,39 @@
 # HEAD
 
+# VERSION 0.4.0
+
+- Added tests for all the previous features.
+
+- Added `PPXiMatter.jl` for calculating the multipoles (with and without window function) of the matter TPCF.
+
+- Added `XiMatter.jl` in order to compute a TPCF from a PS; the case of particular interests concerns the computation of the matter TPCF from the PS deriving from CLASS code.
+
+- Added the file `WindowFIntegrated.jl`: now the computation of the TPCFs with the window function is correct.
+
+- Added the functions `ξ_GNCxLD_multipole`, `map_ξ_GNCxLD_multipole`, `print_map_ξ_GNCxLD_multipole`, their `sum_` extensions and their `LDxGNC` counterparts for the computations of the relativistic GNC effects.
+
+- Implemented all the `GNCxLD` and `LDxGNC` TPCFs.
+  
+- Added the functions `ξ_GNC_multipole`, `map_ξ_GNC_multipole`, `print_map_ξ_GNC_multipole` ant their `sum_` extensions for the computations of the relativistic GNC effects.
+
+- Implemented all the `GNC` TPCFs.
+  
+- Changed the name of the following functions (because they refer to the LD perturbations):
+  -  `ξ_multipole` in `ξ_LD_multipole`;
+  -  `map_ξ_multipole` in `map_ξ_LD_multipole`;
+  -  `print_map_ξ_multipole` in `print_map_ξ_LD_multipole`;
+  -  `sum_ξ_multipole` in `sum_ξ_LD_multipole`;
+  -  `map_sum_ξ_multipole` in `map_sum_ξ_LD_multipole`;
+  -  `print_map_sum_ξ_multipole` in `print_map_sum_ξ_LD_multipole`;
+
+
 # VERSION 0.3.0
 
-- added the functions for the evaluation of the Doppler auto-CF with the Plane-Parallel approximation and their tests
+- Added the functions for the evaluation of the Doppler auto-CF with the Plane-Parallel approximation and their tests
 
-- modified default range 10 .^ range(-1, 3, length= N_log) to  10 .^ range(0, 3, length= N_log) 
+- Modified default range 10 .^ range(-1, 3, length= N_log) to  10 .^ range(0, 3, length= N_log) 
 
-- added tests for PS evaluation
+- Added tests for PS evaluation
 
 
 # VERSION 0.2.0

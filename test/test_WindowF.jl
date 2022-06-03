@@ -17,14 +17,21 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-kwargs_F = Dict(
+kwargs_F_hcub = Dict(
      :θ_max => π / 2.0, 
      :tolerance => 1e-8, 
      :rtol => 1e-2, 
      :atol => 1e-3,
 )
 
-kwargs_F_map = Dict(
+kwargs_F_trap = Dict(
+     :θ_max => π / 2.0::Float64, 
+     :tolerance => 1e-8::Float64, 
+     :N => 1000::Int64, 
+     :en => 1.0::Float64,
+)
+
+kwargs_print_map_F = Dict(
      :θ_max => π / 2.0, 
      :tolerance => 1e-8, 
      :rtol => 1e-2, 
@@ -32,47 +39,68 @@ kwargs_F_map = Dict(
      :pr => true,
 )
 
-@testset "test F" begin
-     @test isapprox(GaPSE.F(0, 0; kwargs_F...)[1], 39.0406; rtol = 1e-2)
-     @test isapprox(GaPSE.F(1, 0; kwargs_F...)[1], 29.25801; rtol = 1e-2)
-     @test isapprox(GaPSE.F(2, 0; kwargs_F...)[1], 24.97067; rtol = 1e-2)
-     @test isapprox(GaPSE.F(3, 0; kwargs_F...)[1], 23.51367; rtol = 1e-2)
+@testset "test F_hcub" begin
+     RTOL = 1e-2
 
-     @test isapprox(GaPSE.F(0, -0.8; kwargs_F...)[1], 38.89266; rtol = 1e-2)
-     @test isapprox(GaPSE.F(1, -0.8; kwargs_F...)[1], 23.35162; rtol = 1e-2)
-     @test isapprox(GaPSE.F(2, -0.8; kwargs_F...)[1], 11.83636; rtol = 1e-2)
-     @test isapprox(GaPSE.F(3, -0.8; kwargs_F...)[1], 10.90119; rtol = 1e-2)
+     @test isapprox(GaPSE.F_hcub(0, 0; kwargs_F_hcub...)[1], 39.0406; rtol = RTOL)
+     @test isapprox(GaPSE.F_hcub(1, 0; kwargs_F_hcub...)[1], 29.25801; rtol = RTOL)
+     @test isapprox(GaPSE.F_hcub(2, 0; kwargs_F_hcub...)[1], 25.28027; rtol = RTOL)
+     @test isapprox(GaPSE.F_hcub(3, 0; kwargs_F_hcub...)[1], 23.51367; rtol = RTOL)
 
-     @test isapprox(GaPSE.F(0, 0.8; kwargs_F...)[1], 38.89261; rtol = 1e-2)
-     @test isapprox(GaPSE.F(1, 0.8; kwargs_F...)[1], 34.85789; rtol = 1e-2)
-     @test isapprox(GaPSE.F(2, 0.8; kwargs_F...)[1], 33.54063; rtol = 1e-2)
-     @test isapprox(GaPSE.F(3, 0.8; kwargs_F...)[1], 32.91128; rtol = 1e-2)
+     @test isapprox(GaPSE.F_hcub(0, -0.8; kwargs_F_hcub...)[1], 38.89266; rtol = RTOL)
+     @test isapprox(GaPSE.F_hcub(1, -0.8; kwargs_F_hcub...)[1], 23.35162; rtol = RTOL)
+     @test isapprox(GaPSE.F_hcub(2, -0.8; kwargs_F_hcub...)[1], 11.83636; rtol = RTOL)
+     @test isapprox(GaPSE.F_hcub(3, -0.8; kwargs_F_hcub...)[1], 10.90119; rtol = RTOL)
+
+     @test isapprox(GaPSE.F_hcub(0, 0.8; kwargs_F_hcub...)[1], 38.89261; rtol = RTOL)
+     @test isapprox(GaPSE.F_hcub(1, 0.8; kwargs_F_hcub...)[1], 34.85789; rtol = RTOL)
+     @test isapprox(GaPSE.F_hcub(2, 0.8; kwargs_F_hcub...)[1], 33.54063; rtol = RTOL)
+     @test isapprox(GaPSE.F_hcub(3, 0.8; kwargs_F_hcub...)[1], 32.91128; rtol = RTOL)
+end
+
+@testset "test F_trap" begin
+     RTOL = 1e-4
+
+     @test isapprox(GaPSE.F_trap(0, 0; kwargs_F_trap...), 39.40821; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(1, 0; kwargs_F_trap...), 29.59887; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(2, 0; kwargs_F_trap...), 25.55135; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(3, 0; kwargs_F_trap...), 23.77376; rtol = RTOL)
+
+     @test isapprox(GaPSE.F_trap(0, -0.8; kwargs_F_trap...), 39.41779; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(1, -0.8; kwargs_F_trap...), 23.77100; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(2, -0.8; kwargs_F_trap...), 13.87924; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(3, -0.8; kwargs_F_trap...), 11.40667; rtol = RTOL)
+
+     @test isapprox(GaPSE.F_trap(0, 0.8; kwargs_F_trap...), 39.41779; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(1, 0.8; kwargs_F_trap...), 35.42117; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(2, 0.8; kwargs_F_trap...), 34.04887; rtol = RTOL)
+     @test isapprox(GaPSE.F_trap(3, 0.8; kwargs_F_trap...), 33.32257; rtol = RTOL)
 end
 
 
-@testset "test F_map first method" begin
+@testset "test print_map_F first method" begin
      name = "datatest/F_first_method.txt"
      output = "F_first_output.txt"
 
      @testset "zeros" begin
-          @test_throws AssertionError GaPSE.F_map(0.25, 0.25; x1 = -0.5)
-          @test_throws AssertionError GaPSE.F_map(0.25, 0.25; x1 = 1.0, x2 = 0.5)
-          @test_throws AssertionError GaPSE.F_map(0.25, 0.25; x2 = 11.0)
-          @test_throws AssertionError GaPSE.F_map(0.25, 0.25; μ1 = -1.5)
-          @test_throws AssertionError GaPSE.F_map(0.25, 0.25; μ1 = -0.9, μ2 = -0.95)
-          @test_throws AssertionError GaPSE.F_map(0.25, 0.25; μ2 = 1.5)
+          @test_throws AssertionError GaPSE.print_map_F(output, 0.25, 0.25; x1 = -0.5)
+          @test_throws AssertionError GaPSE.print_map_F(output, 0.25, 0.25; x1 = 1.0, x2 = 0.5)
+          @test_throws AssertionError GaPSE.print_map_F(output, 0.25, 0.25; x2 = 11.0)
+          @test_throws AssertionError GaPSE.print_map_F(output, 0.25, 0.25; μ1 = -1.5)
+          @test_throws AssertionError GaPSE.print_map_F(output, 0.25, 0.25; μ1 = -0.9, μ2 = -0.95)
+          @test_throws AssertionError GaPSE.print_map_F(output, 0.25, 0.25; μ2 = 1.5)
 
-          @test_throws AssertionError GaPSE.F_map(0.0, 0.25)
-          @test_throws AssertionError GaPSE.F_map(-1.0, 0.25)
-          @test_throws AssertionError GaPSE.F_map(2.0, 0.25)
-          @test_throws AssertionError GaPSE.F_map(0.25, 0.0)
-          @test_throws AssertionError GaPSE.F_map(0.25, -1.0)
-          @test_throws AssertionError GaPSE.F_map(0.25, 2.0)
+          @test_throws AssertionError GaPSE.print_map_F(output, 0.0, 0.25)
+          @test_throws AssertionError GaPSE.print_map_F(output, -1.0, 0.25)
+          @test_throws AssertionError GaPSE.print_map_F(output, 2.0, 0.25)
+          @test_throws AssertionError GaPSE.print_map_F(output, 0.25, 0.0)
+          @test_throws AssertionError GaPSE.print_map_F(output, 0.25, -1.0)
+          @test_throws AssertionError GaPSE.print_map_F(output, 0.25, 2.0)
      end
 
-     GaPSE.F_map(0.25, 0.25;
-          out = output, x1 = 0, x2 = 3, μ1 = -1, μ2 = 1,
-          Fmap_opts = kwargs_F_map)
+     GaPSE.print_map_F(output, 0.25, 0.25;
+          trap = true, x1 = 0, x2 = 3, μ1 = -1, μ2 = 1,
+          Fmap_opts = kwargs_F_trap)
 
      @testset "first" begin
           table_output_F = readdlm(output, comments = true)
@@ -110,7 +138,7 @@ end
 end
 
 
-@testset "test F_map second method" begin
+@testset "test print_map_F second method" begin
      name = "datatest/F_second_method.txt"
      output = "F_second_output.txt"
 
@@ -118,15 +146,16 @@ end
      calc_μs = vcat([-1.0, -0.98, -0.95], [μ for μ in -0.9:0.1:0.9], [0.95, 0.98, 1.0])
 
      @testset "zeros" begin
-          @test_throws AssertionError GaPSE.F_map([1.0 for i in 1:10], calc_μs)
-          @test_throws AssertionError GaPSE.F_map(calc_xs, [0.5 for i in 1:10])
-          @test_throws AssertionError GaPSE.F_map([1.0, 2.0, 100.0], calc_μs)
-          @test_throws AssertionError GaPSE.F_map(calc_xs, [-1.5, -0.99, 0.0, 0.99, 1.5])
-          @test_throws AssertionError GaPSE.F_map(reverse(calc_xs), calc_μs)
-          @test_throws AssertionError GaPSE.F_map(calc_xs, reverse(calc_μs))
+          @test_throws AssertionError GaPSE.print_map_F(output, [1.0 for i in 1:10], calc_μs)
+          @test_throws AssertionError GaPSE.print_map_F(output, calc_xs, [0.5 for i in 1:10])
+          @test_throws AssertionError GaPSE.print_map_F(output, [1.0, 2.0, 100.0], calc_μs)
+          @test_throws AssertionError GaPSE.print_map_F(output, calc_xs, [-1.5, -0.99, 0.0, 0.99, 1.5])
+          @test_throws AssertionError GaPSE.print_map_F(output, reverse(calc_xs), calc_μs)
+          @test_throws AssertionError GaPSE.print_map_F(output, calc_xs, reverse(calc_μs))
      end
 
-     GaPSE.F_map(calc_xs, calc_μs; out = output, Fmap_opts = kwargs_F_map)
+     GaPSE.print_map_F(output, calc_xs, calc_μs; 
+          trap = true, Fmap_opts = kwargs_F_trap)
 
      @testset "first" begin
           table_output_F = readdlm(output, comments = true)

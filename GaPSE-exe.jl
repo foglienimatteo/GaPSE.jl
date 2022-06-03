@@ -35,6 +35,7 @@ function main()
      #
      # Have a nice day!
 
+     #=
      FILE_F_MAP = "data/F_REFERENCE.txt"
      FILE_PS = "data/WideA_ZA_pk.dat"
      FILE_BACKGROUND = "data/WideA_ZA_background.dat"
@@ -63,6 +64,7 @@ function main()
      GaPSE.print_PS_multipole("my_first_doppler.txt",
           "my_first_ps_doppler.txt";
           L = 0, N = 1024, int_s_min = 1e-3, int_s_max = 1e3)
+     =#
 
      #=
      GaPSE.print_map_sum_ξ_multipole(cosmo, "my_first_all_xis.txt",
@@ -75,6 +77,19 @@ function main()
      GaPSE.F_map(xs, μs; out = "outputs/F.txt", rtol = 5e-3, atol = 1e-2)
      =#
 
+     PATH_TO_GAPSE = "./"
+     reference_output =  "data/F_REFERENCE_pi2.txt"
+
+     xs = [x for x in 0:0.05:5]
+     μs = vcat([μ for μ in -1:0.01:-0.91], [μ for μ in -0.9:0.1:0.9], [μ for μ in 0.91:0.01:1.0])
+     GaPSE.F_map(xs, μs; out = PATH_TO_GAPSE * reference_output,
+          trapz = true,
+          Fmap_opts = Dict(
+               :θ_max => π / 2.0, :tolerance => 1e-8, 
+               #:rtol => 5e-3, :atol => 0.0, :pr => true,
+               :N => 500,  :pr => true,
+          )
+     )
 end
 
 if (ARGS == String[])

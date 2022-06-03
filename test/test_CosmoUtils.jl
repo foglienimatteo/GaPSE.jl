@@ -19,18 +19,23 @@
 
 @testset "test func_z_eff" begin
      z_of_s = Spline1D(COM_DIST, ZS)
-     @test isapprox(GaPSE.func_z_eff(S_MAX, S_MIN, z_of_s), Z_EFF; rtol = 1e-6)
+     @test isapprox(GaPSE.func_z_eff(S_MAX, S_MIN, z_of_s), Z_EFF; rtol=1e-6)
 end
 
+@testset "test s-mu-s2-y" begin
+     RTOL = 1e-6
 
-@testset "V_survey" begin
-     @test isapprox(GaPSE.V_survey(1, 2, π / 2), 14.660765716752364, rtol = 1e-4)
-     @test isapprox(GaPSE.V_survey(10, 20, π / 2), 14660.765716752363, rtol = 1e-4)
+     @test isapprox(GaPSE.s(1.2, 3.5, 0.73), 2.749181696432595; rtol=RTOL)
+     @test isapprox(GaPSE.s(3.5, 1.2, 0.73), 2.749181696432595; rtol=RTOL)
 
-     @test isapprox(GaPSE.V_survey(1, 2, 0.0), 0.0, rtol = 1e-4)
-     @test isapprox(GaPSE.V_survey(1, 2, π / 6), 1.9641701671128426, rtol = 1e-4)
+     @test isapprox(GaPSE.μ(1.2, 3.5, 0.73), 0.49287393472693375; rtol=RTOL)
+     @test isapprox(GaPSE.μ(3.5, 1.2, 0.73), -0.9544658337442616; rtol=RTOL)
 
-     @test isapprox(GaPSE.V_survey(S_MIN, S_MAX, π / 2), 3.845366169354268e8, rtol = 1e-4)
+     @test isapprox(GaPSE.s2(1.2, 3.5, 0.73), 4.452190472115944; rtol=RTOL)
+     @test isapprox(GaPSE.s2(3.5, 1.2, 0.73), 4.452190472115944; rtol=RTOL)
+
+     @test isapprox(GaPSE.y(1.2, 3.5, 0.73), 0.8434050662292086; rtol=RTOL)
+     @test isapprox(GaPSE.y(3.5, 1.2, 0.73), 0.9828869693259701; rtol=RTOL)
 end
 
 @testset "test ϕ" begin
@@ -49,4 +54,15 @@ end
      @test GaPSE.W(1.0, π / 3) ≈ 1.0
      @test GaPSE.W(π / 3, π / 3) ≈ 0.0
      @test GaPSE.W(π, π / 3) ≈ 0.0
+end
+
+@testset "test A" begin
+     RTOL = 1e-4
+     @test isapprox(GaPSE.A(150, 500, π / 2), 6.452406651183921e6, rtol=RTOL)
+     @test isapprox(GaPSE.A(1, 2, π / 2), 0.371361533881089, rtol=RTOL)
+
+     @test isapprox(GaPSE.A(1, 2, 0.0), 0.0, rtol=RTOL)
+     @test isapprox(GaPSE.A(1, 2, π / 6), 0.049753011551710406, rtol=RTOL)
+
+     @test isapprox(GaPSE.A(S_MIN, S_MAX, π / 2), 9.740426295429418e6, rtol=RTOL)
 end
