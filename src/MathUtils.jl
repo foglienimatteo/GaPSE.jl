@@ -850,36 +850,36 @@ function curve_fit_polyn(xs, ys, known::Vector, p0::Vector)
      return (vals, pers)
 end;
 
-function curve_fit_polyn_onone(xs, ys, p0; en_xs=1, en_ys=1)
+function curve_fit_polyn_onone(xs, ys, p0; en_xs=1, en_ys=1, pr::Bool = true)
      @assert length(p0) == 1 "secure"
-     println("1 param")
+     pr && println("1 param")
      coefs_1, sigmas_r_1 = curve_fit_polyn(xs, ys, [nothing, 0.0, 0.0], p0)
      c, b, a = vcat(coefs_1[1], 0.0, 0.0)
      return c * (en_xs^2) / en_ys, b * en_xs / en_ys, a / en_ys
 end;
 
-function curve_fit_polyn_ontwo(xs, ys, p0; en_xs=1, en_ys=1, err=0.05)
+function curve_fit_polyn_ontwo(xs, ys, p0; en_xs=1, en_ys=1, err=0.05, pr::Bool = true)
      @assert length(p0) == 2 "secure"
      try
           coefs_1, sigmas_r_1 = curve_fit_polyn(xs, ys, [nothing, nothing, 0.0], p0)
 
           c, b, a =
-               if all(x -> x < err, sigmas_r_1) # if all the relative errors on the parameters are < err
-                    println("2 params, all sigmas ok")
+               if all(x -> abs.(x) < err, sigmas_r_1) # if all the relative errors on the parameters are < err
+                    pr && println("2 params, all sigmas ok")
                     coefs_1[1], coefs_1[2], 0.0
 
-               elseif sigmas_r_1[2] < err  # rel. error on "a" is too large, but on "b" is ok
-                    println("2 params, sigma_b ok")
+               elseif abs(sigmas_r_1[2]) < err  # rel. error on "a" is too large, but on "b" is ok
+                    pr && println("2 params, sigma_b ok")
                     coefs_2, _ = curve_fit_polyn(xs, ys, [nothing, coefs_1[2], 0.0], [coefs_1[1]])
                     coefs_2[1], coefs_1[2], 0.0
 
-               elseif sigmas_r_1[1] < err  # rel. error on "b" is too large, but on "a" is ok
-                    println("2 params, sigma_c ok")
+               elseif abs(sigmas_r_1[1]) < err  # rel. error on "b" is too large, but on "a" is ok
+                    pr && println("2 params, sigma_c ok")
                     coefs_2, _ = curve_fit_polyn(xs, ys, [coefs_1[1], nothing, 0.0], [coefs_1[2]])
                     coefs_1[1], coefs_2[1], 0.0
 
                else
-                    println("2 params, both sigmas too high")
+                    pr && println("2 params, both sigmas too high")
                     coefs_3, _ = curve_fit_polyn(xs, ys, [nothing, 0.0, 0.0], [coefs_1[1]])
                     coefs_4, _ = curve_fit_polyn(xs, ys, [coefs_3[1], nothing, 0.0], [coefs_1[2]])
 
@@ -896,42 +896,42 @@ function curve_fit_polyn_ontwo(xs, ys, p0; en_xs=1, en_ys=1, err=0.05)
                     "WARNING: there was an exception, so I am trying to fit with one parameter. " *
                     "Try to change the input starting points."
                )
-               return curve_fit_polyn_onone(xs, ys, [p0[1]]; en_xs=en_xs, en_ys=en_ys)
+               return curve_fit_polyn_onone(xs, ys, [p0[1]]; en_xs=en_xs, en_ys=en_ys, pr=pr)
           end
      end
 end;
 
-function curve_fit_polyn_onthree(xs, ys, p0; en_xs=1, en_ys=1, err=0.05)
+function curve_fit_polyn_onthree(xs, ys, p0; en_xs=1, en_ys=1, err=0.05, pr::Bool = true)
      try
           coefs_1, sigmas_r_1 = curve_fit_polyn(xs, ys, [nothing, nothing, nothing], p0)
 
           c, b, a =
-               if all(x -> x < err, sigmas_r_1) # if all the relative errors on the parameters are < err
-                    println("3 params, all sigmas_r ok")
+               if all(x -> abs.(x) < err, sigmas_r_1) # if all the relative errors on the parameters are < err
+                    pr && println("3 params, all sigmas_r ok")
                     coefs_1
 
-               elseif sigmas_r_1[1] < err && sigmas_r_1[2] < err # rel. errors on "c" and "b" ok
-                    println("3 params, sigma_c and sigma_b ok")
+               elseif abs(sigmas_r_1[1]) < err && abs(sigmas_r_1[2]) < err # rel. errors on "c" and "b" ok
+                    pr && println("3 params, sigma_c and sigma_b ok")
                     coefs_2, _ = curve_fit_polyn(xs, ys, [coefs_1[1], coefs_1[2], nothing], [coefs_1[3]])
                     coefs_1[1], coefs_1[2], coefs_2[1]
 
-               elseif sigmas_r_1[1] < err && sigmas_r_1[3] < err # rel. errors on "c" and "a" ok
-                    println("3 params, sigma_c and sigma_a ok")
+               elseif abs(sigmas_r_1[1]) < err && abs(sigmas_r_1[3]) < err # rel. errors on "c" and "a" ok
+                    pr && println("3 params, sigma_c and sigma_a ok")
                     coefs_2, _ = curve_fit_polyn(xs, ys, [coefs_1[1], nothing, coefs_1[3]], [coefs_1[2]])
                     coefs_1[1], coefs_2[1], coefs_1[3]
 
-               elseif sigmas_r_1[2] < err && sigmas_r_1[3] < err # rel. errors on "b" and "a" ok
-                    println("3 params, sigma_b and sigma_a ok")
+               elseif abs(sigmas_r_1[2]) < err && abs(sigmas_r_1[3]) < err # rel. errors on "b" and "a" ok
+                    pr && println("3 params, sigma_b and sigma_a ok")
                     coefs_2, _ = curve_fit_polyn(xs, ys, [nothing, coefs_1[2], coefs_1[3]], [coefs_1[1]])
                     coefs_2[1], coefs_1[2], coefs_1[3]
 
-               elseif sigmas_r_1[1] < err  # rel. errors on "b" and "c" are too large, but on "a" is ok
-                    println("3 params, only sigma_c ok")
+               elseif abs(sigmas_r_1[1]) < err  # rel. errors on "b" and "c" are too large, but on "a" is ok
+                    pr && println("3 params, only sigma_c ok")
                     coefs_2, sigmas_r_2 = curve_fit_polyn(xs, ys, [coefs_1[1], nothing, nothing], [coefs_1[2], coefs_1[3]])
 
-                    if all(x -> x < err, sigmas_r_2)
+                    if all(x -> abs.(x) < err, sigmas_r_2)
                          coefs_1[1], coefs_2[1], coefs_2[2]
-                    elseif sigmas_r_2[1] < err
+                    elseif abs(sigmas_r_2[1]) < err
                          coefs_3, _ = curve_fit_polyn(xs, ys, [coefs_1[1], coefs_2[1], nothing], [coefs_2[2]])
                          coefs_1[1], coefs_2[1], coefs_3[1]
                     else
@@ -939,13 +939,13 @@ function curve_fit_polyn_onthree(xs, ys, p0; en_xs=1, en_ys=1, err=0.05)
                          coefs_1[1], coefs_3[1], coefs_2[2]
                     end
 
-               elseif sigmas_r_1[2] < err  # rel. errors on "a" and "c" are too large, but on "b" is ok
-                    println("3 params, only sigma_b ok")
+               elseif abs(sigmas_r_1[2]) < err  # rel. errors on "a" and "c" are too large, but on "b" is ok
+                    pr && println("3 params, only sigma_b ok")
                     coefs_2, sigmas_r_2 = curve_fit_polyn(xs, ys, [nothing, coefs_1[2], nothing], [coefs_1[1], coefs_1[3]])
 
-                    if all(x -> x < err, sigmas_r_2)
+                    if all(x -> abs.(x) < err, sigmas_r_2)
                          coefs_2[1], coefs_1[2], coefs_2[2]
-                    elseif sigmas_r_2[1] < err
+                    elseif abs(sigmas_r_2[1]) < err
                          coefs_3, _ = curve_fit_polyn(xs, ys, [coefs_2[1], coefs_1[2], nothing], [coefs_2[2]])
                          coefs_2[1], coefs_1[2], coefs_3[1]
                     else
@@ -953,13 +953,13 @@ function curve_fit_polyn_onthree(xs, ys, p0; en_xs=1, en_ys=1, err=0.05)
                          coefs_3[1], coefs_1[2], coefs_2[2]
                     end
 
-               elseif sigmas_r_1[3] < err  # rel. errors on "a" and "b" are too large, but on "c" is ok
-                    println("3 params, only sigma_a ok")
+               elseif abs(sigmas_r_1[3]) < err  # rel. errors on "a" and "b" are too large, but on "c" is ok
+                    pr && println("3 params, only sigma_a ok")
                     coefs_2, sigmas_r_2 = curve_fit_polyn(xs, ys, [nothing, nothing, coefs_1[3]], [coefs_1[1], coefs_1[2]])
 
-                    if all(x -> x < err, sigmas_r_2)
+                    if all(x -> abs.(x) < err, sigmas_r_2)
                          coefs_2[1], coefs_2[2], coefs_1[3]
-                    elseif sigmas_r_2[1] < err
+                    elseif abs(sigmas_r_2[1]) < err
                          coefs_3, _ = curve_fit_polyn(xs, ys, [coefs_2[1], nothing, coefs_1[3]], [coefs_2[2]])
                          coefs_2[1], coefs_3[2], coefs_1[3]
                     else
@@ -968,7 +968,7 @@ function curve_fit_polyn_onthree(xs, ys, p0; en_xs=1, en_ys=1, err=0.05)
                     end
 
                else
-                    println("3 params, none sigma ok")
+                    pr && println("3 params, none sigma ok")
                     coefs_2, _ = curve_fit_polyn(xs, ys, [nothing, 0.0, 0.0], [coefs_1[1]])
                     coefs_3, _ = curve_fit_polyn(xs, ys, [coefs_2[1], nothing, 0.0], [coefs_1[2]])
                     coefs_4, _ = curve_fit_polyn(xs, ys, [coefs_2[1], coefs_3[1], nothing], [coefs_1[3]])
@@ -985,7 +985,7 @@ function curve_fit_polyn_onthree(xs, ys, p0; en_xs=1, en_ys=1, err=0.05)
                     "WARNING: there was an exception, so I am trying to fit with two parameters. " *
                     "Try to change the input starting points."
                )
-               return curve_fit_polyn_ontwo(xs, ys, [p0[1], p0[2]]; en_xs=en_xs, en_ys=en_ys)
+               return curve_fit_polyn_ontwo(xs, ys, [p0[1], p0[2]]; en_xs=en_xs, en_ys=en_ys, pr=pr)
           end
      end
 end;
@@ -993,7 +993,7 @@ end;
 function polynomial_from_data(
      xs, ys,
      P0::Vector{Float64},
-     fit_min::Number, fit_max::Number; err::Float64=0.05)
+     fit_min::Number, fit_max::Number; err::Float64=0.05, pr::Bool = true)
 
      @assert length(xs) == length(ys) "xs and ys must have same length"
      @assert length(P0) ∈ [1, 2, 3] "length of P0 must be 1, 2 or 3!"
@@ -1017,11 +1017,11 @@ function polynomial_from_data(
      #si = mean_spectral_index(xs, ys; N=N, con=con)
 
      if length(p0) == 1
-          return curve_fit_polyn_onone(new_xs, new_ys, p0; en_xs=en_xs, en_ys=en_ys)
+          return curve_fit_polyn_onone(new_xs, new_ys, p0; en_xs=en_xs, en_ys=en_ys, pr=pr)
      elseif length(p0) == 2
-          return curve_fit_polyn_ontwo(new_xs, new_ys, p0; en_xs=en_xs, en_ys=en_ys, err=err)
+          return curve_fit_polyn_ontwo(new_xs, new_ys, p0; en_xs=en_xs, en_ys=en_ys, err=err, pr=pr)
      else
-          return curve_fit_polyn_onthree(new_xs, new_ys, p0; en_xs=en_xs, en_ys=en_ys, err=err)
+          return curve_fit_polyn_onthree(new_xs, new_ys, p0; en_xs=en_xs, en_ys=en_ys, err=err, pr=pr)
      end
 end;
 
