@@ -42,6 +42,7 @@ include("TEST_DATA.jl")
 ##########################################################################################92
 
 
+
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
@@ -173,6 +174,21 @@ KWARGS_LDxGNC = Dict(
 );
 
 
+################################### TEST PLANE-PARALLEL APPROXIMATIONS#### ###############92
+
+@testset "test PPDoppler" begin
+     include("test_PPDoppler.jl")
+end
+
+@testset "test XiMatter" begin
+     include("test_XiMatter.jl")
+end
+
+@testset "test PPXiMatter" begin
+     include("test_PPXiMatter.jl")
+end
+
+
 ################################### TEST LUMINOSITY DISTANCE PERTURBATIONS ###############92
 
 
@@ -237,14 +253,6 @@ end
 
 @testset "test LD_LocalGPIntegratedGP" begin
      include("test_LD_CrossCorrelations/test_LD_LocalGPIntegratedGP.jl")
-end
-
-
-##############################
-
-
-@testset "test PPDoppler" begin
-     include("test_PPDoppler.jl")
 end
 
 
