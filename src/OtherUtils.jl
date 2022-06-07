@@ -34,7 +34,7 @@ Compare the field of two `Dict` and check if the second one (`b`) is "compatible
 with the first one (`ref`), i.e.:
 - checks if each of the key in `b` is also a key of `ref`;
 - for each `key` of `b`:
-    - if `typeof(ref[key]) <: Real` and `!(typeof(ref[k]) <: Union{Bool, Integer})`,
+    - if `typeof(ref[key]) <: Real` and `!(typeof(ref[k]) <: Union{Bool, Int})`,
       checks that `typeof(b[k]) <: Real && typeof(b[k]) ≠ Bool`
     - otherwise, checks that ` typeof(b[k]) == typeof(ref[k])`
 
@@ -49,7 +49,7 @@ function check_compatible_dicts(ref::Dict, b::Dict, name::String = "NO-NAME")
                 " is not a valid key for the Dict $(name)!\n"*
                 "the allowed ones are the following:\n $(keys(ref))")
 
-        if (typeof(ref[k]) <: Real) && !(typeof(ref[k]) <: Union{Bool, Integer})
+        if (typeof(ref[k]) <: Real) && !(typeof(ref[k]) <: Union{Bool, Int})
             @assert typeof(b[k]) <: Real && typeof(b[k]) ≠ Bool
                 "the value associated with the (valid) key $k the Dict $(name) "*
                     "must be of type T<:Real (not Bool) !"*
@@ -73,7 +73,7 @@ end
 
 
 
-function my_println_vec(io::IO, vec::Vector{T}, name::String; N::Integer = 5) where {T}
+function my_println_vec(io::IO, vec::Vector{T}, name::String; N::Int = 5) where {T}
      @assert N > 1 "N must be an integer >1, not $N !"
 
      println(io, name * " = [")
@@ -87,7 +87,7 @@ function my_println_vec(io::IO, vec::Vector{T}, name::String; N::Integer = 5) wh
      return nothing
 end
 
-function my_println_vec(vec::Vector{T}, name::String; N::Integer = 5) where {T}
+function my_println_vec(vec::Vector{T}, name::String; N::Int = 5) where {T}
      my_println_vec(stdout, vec, name; N = N)
 end
 
@@ -97,7 +97,7 @@ end
 
 
 
-function my_println_dict(io::IO, dict::Dict; pref::String="", N::Integer = 3)
+function my_println_dict(io::IO, dict::Dict; pref::String="", N::Int = 3)
      @assert N > 1 "N must be an integer >1, not $N !"
 
      print(io, pref)
@@ -110,7 +110,7 @@ function my_println_dict(io::IO, dict::Dict; pref::String="", N::Integer = 3)
      return nothing
 end
 
-function my_println_dict(dict::Dict; pref::String="", N::Integer = 3)
+function my_println_dict(dict::Dict; pref::String="", N::Int = 3)
      my_println_dict(stdout, dict; pref = pref,  N = N)
 end;
 

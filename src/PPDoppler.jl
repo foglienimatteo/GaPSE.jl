@@ -53,7 +53,7 @@ end
 
 
 function integrand_ξ_PPD_multipole(s, μ, cosmo::Cosmology;
-     L::Integer=0, use_windows::Bool=true)
+     L::Int=0, use_windows::Bool=true)
 
      res = if use_windows == true
           #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
@@ -74,7 +74,7 @@ end
 
 function ξ_PPD_multipole(
      s, cosmo::Cosmology;
-     L::Integer=0,
+     L::Int=0,
      use_windows::Bool=true,
      enhancer::Float64=1e6,
      μ_atol::Float64=0.0,
@@ -97,8 +97,8 @@ end
 function map_ξ_PPD_multipole(cosmo::Cosmology,
      v_ss=nothing;
      pr::Bool=true,
-     N_log::Integer=1000,
-     L::Integer=0,
+     N_log::Int=1000,
+     L::Int=0,
      kwargs...)
 
      t1 = time()
