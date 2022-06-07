@@ -19,7 +19,7 @@
 
 
 function warning(io::IO, msg::String)
-    red = "\033[1m\033[31m" 
+    red = "\033[1m\033[31m"
     printstyled(io, "WARNING: " * msg * "\n"; color=:red, bold=true)
     return
 end
@@ -43,24 +43,24 @@ return `nothing`.
 The string `name` is only used inside the AssertionError messages for the correct
 name of the input `b` dictionary.
 """
-function check_compatible_dicts(ref::Dict, b::Dict, name::String = "NO-NAME")
+function check_compatible_dicts(ref::Dict, b::Dict, name::String="NO-NAME")
     for k in keys(b)
-        @assert haskey(ref, k) ((typeof(k) == Symbol ? ":$k" : "$k" ) * 
-                " is not a valid key for the Dict $(name)!\n"*
-                "the allowed ones are the following:\n $(keys(ref))")
+        @assert haskey(ref, k) ((typeof(k) == Symbol ? ":$k" : "$k") *
+                                " is not a valid key for the Dict $(name)!\n" *
+                                "the allowed ones are the following:\n $(keys(ref))")
 
-        if (typeof(ref[k]) <: Real) && !(typeof(ref[k]) <: Union{Bool, Int})
+        if (typeof(ref[k]) <: Real) && !(typeof(ref[k]) <: Union{Bool,Int})
             @assert typeof(b[k]) <: Real && typeof(b[k]) ≠ Bool
-                "the value associated with the (valid) key $k the Dict $(name) "*
-                    "must be of type T<:Real (not Bool) !"*
-                "\n The type of the input value $(b[k]) is instead "* 
-                "$(typeof(b[k]))"
-        else
-            @assert typeof(b[k]) == typeof(ref[k]) "the value associated"*
-            " with the (valid) key $k for the Dict $(name) "*
-                "must be of type $(typeof(ref[k]))!"*
-            "\n The type of the input value $(b[k]) is instead "* 
+            "the value associated with the (valid) key $k the Dict $(name) " *
+            "must be of type T<:Real (not Bool) !" *
+            "\n The type of the input value $(b[k]) is instead " *
             "$(typeof(b[k]))"
+        else
+            @assert typeof(b[k]) == typeof(ref[k]) "the value associated" *
+                                                   " with the (valid) key $k for the Dict $(name) " *
+                                                   "must be of type $(typeof(ref[k]))!" *
+                                                   "\n The type of the input value $(b[k]) is instead " *
+                                                   "$(typeof(b[k]))"
         end
     end
 
@@ -73,22 +73,22 @@ end
 
 
 
-function my_println_vec(io::IO, vec::Vector{T}, name::String; N::Int = 5) where {T}
-     @assert N > 1 "N must be an integer >1, not $N !"
+function my_println_vec(io::IO, vec::Vector{T}, name::String; N::Int=5) where {T}
+    @assert N > 1 "N must be an integer >1, not $N !"
 
-     println(io, name * " = [")
-     for (i, el) in enumerate(vec)
-          print(io, string(el) * " , ")
-          (i % N ≠ 0) || print(io, "\n")
-     end
-     (length(vec) % N ≠ 0) && print(io, "\n")
-     print(io, "];\n")
+    println(io, name * " = [")
+    for (i, el) in enumerate(vec)
+        print(io, string(el) * " , ")
+        (i % N ≠ 0) || print(io, "\n")
+    end
+    (length(vec) % N ≠ 0) && print(io, "\n")
+    print(io, "];\n")
 
-     return nothing
+    return nothing
 end
 
-function my_println_vec(vec::Vector{T}, name::String; N::Int = 5) where {T}
-     my_println_vec(stdout, vec, name; N = N)
+function my_println_vec(vec::Vector{T}, name::String; N::Int=5) where {T}
+    my_println_vec(stdout, vec, name; N=N)
 end
 
 
@@ -97,21 +97,21 @@ end
 
 
 
-function my_println_dict(io::IO, dict::Dict; pref::String="", N::Int = 3)
-     @assert N > 1 "N must be an integer >1, not $N !"
+function my_println_dict(io::IO, dict::Dict; pref::String="", N::Int=3)
+    @assert N > 1 "N must be an integer >1, not $N !"
 
-     print(io, pref)
-     for (i, key) in enumerate(keys(dict))
-          print(io, "$key = $(dict[key]) \t ")
-          (i % N ≠ 0)  || (length(keys(dict)) ≠ i  && print(io, "\n"*pref))
-     end
-     (length(keys(dict)) % N ≠ 0) || print(io, "\n")
+    print(io, pref)
+    for (i, key) in enumerate(keys(dict))
+        print(io, "$key = $(dict[key]) \t ")
+        (i % N ≠ 0) || (length(keys(dict)) ≠ i && print(io, "\n" * pref))
+    end
+    (length(keys(dict)) % N ≠ 0) || print(io, "\n")
 
-     return nothing
+    return nothing
 end
 
-function my_println_dict(dict::Dict; pref::String="", N::Int = 3)
-     my_println_dict(stdout, dict; pref = pref,  N = N)
+function my_println_dict(dict::Dict; pref::String="", N::Int=3)
+    my_println_dict(stdout, dict; pref=pref, N=N)
 end;
 
 
@@ -122,15 +122,15 @@ end;
 
 function parent_directory(s::String)
     splitted = split(s, "/")
-    
+
     if length(splitted) == 1 || (splitted[end] == "" && length(splitted) == 2)
         return "./"
     end
 
-    ss = string(split(s, "/")[begin:end-1] .* "/" ...)
+    ss = string(split(s, "/")[begin:end-1] .* "/"...)
 
     if ss == s
-        return string(split(ss, "/")[begin:end-2] .* "/" ...)
+        return string(split(ss, "/")[begin:end-2] .* "/"...)
     else
         return ss
     end
@@ -148,26 +148,26 @@ end
 function return_namefile(s::String)
     splitted = split(s, "/")
     @assert splitted[end] ≠ "" "$s is a valid name for a directory, not for a file!"
-    name =  string(splitted[end])
+    name = string(splitted[end])
     return name
 end
 
 function check_namefile(s::String)
-    name =  return_namefile(s)
+    name = return_namefile(s)
     splitted_2 = split(name, ".")
     @assert splitted_2[end] ≠ name "$name has no extension (like .txt, .dat, ...)!"
     ve = ["txt", "dat"]
     @assert splitted_2[end] ∈ ve "$(splitted_2[end]) is not a valid extrension; they are: \n $(ve)"
 end
 
-function check_group(s::String; valid_groups::Vector{String} = VALID_GROUPS)
+function check_group(s::String; valid_groups::Vector{String}=VALID_GROUPS)
     error = """ "$s" is not a valid group name; they are the following:\n$(valid_groups)"""
     @assert s ∈ valid_groups error
 end
 
 function check_fileisingroup(input::String, group::String; valid_groups::Vector{String}=VALID_GROUPS)
     check_group(group; valid_groups=valid_groups)
-    l = LENGTH_VALID_GROUPS[findfirst(x->x==group, valid_groups)]
+    l = LENGTH_VALID_GROUPS[findfirst(x -> x == group, valid_groups)]
     try
         table = readdlm(input, comments=true)
         xs = convert(Vector{Float64}, table[:, 1])
@@ -177,7 +177,7 @@ function check_fileisingroup(input::String, group::String; valid_groups::Vector{
             er = "the column numbers inside $input, which is $(length(all_YS) + 1), " *
                  "does not match with the length of the " *
                  "chosen group $group, which is $l."
-            @assert (length(all_YS) + 1 == l) er 
+            @assert (length(all_YS) + 1 == l) er
         end
         for (i, ys) in enumerate(all_YS)
             err = "the column number $i has length = $(length(ys)) instead of "
@@ -192,3 +192,31 @@ function check_fileisingroup(input::String, group::String; valid_groups::Vector{
         end
     end
 end
+
+
+##########################################################################################92
+
+
+function readxy(input::String; comments::Bool=true)
+    table = readdlm(input, comments=comments)
+    xs = convert(Vector{Float64}, table[:, 1])
+    ys = convert(Vector{Float64}, table[:, 2])
+    return (xs, ys)
+end;
+
+function readxall(input::String; comments::Bool=true)
+    table = readdlm(input, comments=comments)
+    xs = convert(Vector{Float64}, table[:, 1])
+    all = [convert(Vector{Float64}, col)
+           for col in eachcol(table[:, 2:end])]
+    return (xs, all)
+end;
+
+function readxyall(input::String; comments::Bool=true)
+    table = readdlm(input, comments=comments)
+    xs = convert(Vector{Float64}, table[:, 1])
+    ys = convert(Vector{Float64}, table[:, 2])
+    all = [convert(Vector{Float64}, col)
+           for col in eachcol(table[:, 3:end])]
+    return (xs, ys, all)
+end;

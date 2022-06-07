@@ -19,17 +19,22 @@
 
 
 function FFTLog_PS_multipole(ss, xis;
+     pr::Bool=true,
      L::Int=0, ν::Float64=1.5, n_extrap_low::Int=500,
      n_extrap_high::Int=500, n_pad::Int=500)
 
-     XIS = xis .* ss .^ 3 
+     XIS = xis .* ss .^ 3
 
+     t1 = time()
      plan = FFTLog.SingleBesselPlan(x=ss,
           n_extrap_low=n_extrap_low, ν=ν,
           n_extrap_high=n_extrap_high, n_pad=n_pad)
      FFTLog.prepare_FFTLog!(plan, [L])
      pks = reshape(FFTLog.evaluate_FFTLog(plan, XIS), (:,))
      ks = reshape(FFTLog.get_y(plan), (:,))
+     t2 = time()
+     pr && println("\ntime needed for this Power Spectrum computation [in s] = $(t2-t1)\n")
+
 
      if iseven(L)
           return ks, (1 / A_prime * (-1)^(L / 2)) .* pks
