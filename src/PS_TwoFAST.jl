@@ -49,21 +49,28 @@ function TwoFAST_PS_multipole(f_in;
 end
 
 
-function TwoFAST_PS_multipole(ss, fs;
+function TwoFAST_PS_multipole(SS, FS;
      int_s_min::Float64=1e-1, int_s_max::Float64=1e3,
-     epl::Bool=true,
+     epl::Bool=true, pr::Bool=true, L::Int=0,
      N_left::Int=12, N_right::Int=12,
      p0_left=[-2.0, 1.0], p0_right=[-2.0, 1.0],
-     kwargs...)
+     cut_first_n::Int = 0, cut_last_n::Int=0)
 
-     @assert length(ss) == length(fs) "xs and ys must have same length"
+     @assert length(SS) == length(FS) "length(SS) == length(FS) must hold!"
+     @assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
+     @assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
+     @assert cut_first_n + cut_last_n < length() "cut_first_n + cut_last_n < length(ss) must hold!"
+
+     a, b = 1 + cut_first_n, length(ss) - cut_last_n
+     ss, fs = SS[a:b], FS[a:b]
+
      N = length(ss)
      k_0 = 1.0 / max(ss...)
      right = 1.0 / min(ss...)
 
      f_in, INT_s_min, INT_s_max =
           if epl == true
-               if all(fs[begin:begin+5] .≈ 0.0) && all(fs[end-5:end] .≈ 0.0)
+               if all(fs[begin:begin+5] .≈ 0.0) || all(fs[end-5:end] .≈ 0.0)
                     spl = Spline1D(ss, fs; bc="error")
                     f(x) = ((x ≤ ss[1]) || (x ≥ ss[end])) ? 0.0 : spl(x)
                     f, int_s_min, int_s_max
@@ -76,7 +83,7 @@ function TwoFAST_PS_multipole(ss, fs;
           end
 
      return TwoFAST_PS_multipole(f_in; int_s_min=INT_s_min, int_s_max=INT_s_max,
-          k0=k_0, right=right, N=N, kwargs...)
+          k0=k_0, right=right, N=N, pr=pr, L=L)
 end
 
 

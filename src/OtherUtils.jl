@@ -168,28 +168,20 @@ end
 function check_fileisingroup(input::String, group::String; valid_groups::Vector{String}=VALID_GROUPS)
     check_group(group; valid_groups=valid_groups)
     l = LENGTH_VALID_GROUPS[findfirst(x -> x == group, valid_groups)]
-    try
-        table = readdlm(input, comments=true)
-        xs = convert(Vector{Float64}, table[:, 1])
-        all_YS = [convert(Vector{Float64}, col)
-                  for col in eachcol(table[:, 2:end])]
-        if !isnothing(l)
-            er = "the column numbers inside $input, which is $(length(all_YS) + 1), " *
-                 "does not match with the length of the " *
-                 "chosen group $group, which is $l."
-            @assert (length(all_YS) + 1 == l) er
-        end
-        for (i, ys) in enumerate(all_YS)
-            err = "the column number $i has length = $(length(ys)) instead of "
-            "$(length(xs)) (which is the length of the first column, the x-axis one). "
-            @assert length(ys) == length(xs) err
-        end
-    catch e
-        if isa(e, AssertionError)
-            throw(e)
-        else
-            throw(ErrorException("the file is not written in a readable format"))
-        end
+    table = readdlm(input, comments=true)
+    xs = convert(Vector{Float64}, table[:, 1])
+    all_YS = [convert(Vector{Float64}, col)
+                for col in eachcol(table[:, 2:end])]
+    if !isnothing(l)
+        er = "the column numbers inside $input, which is $(length(all_YS) + 1), " *
+                "does not match with the length of the " *
+                "chosen group $group, which is $l."
+        @assert (length(all_YS) + 1 == l) er
+    end
+    for (i, ys) in enumerate(all_YS)
+        err = "the column number $i has length = $(length(ys)) instead of "
+        "$(length(xs)) (which is the length of the first column, the x-axis one). "
+        @assert length(ys) == length(xs) err
     end
 end
 
@@ -197,26 +189,52 @@ end
 ##########################################################################################92
 
 
-function readxy(input::String; comments::Bool=true)
+function readxy(input::String; comments::Bool=true, dt::DataType = Float64)
     table = readdlm(input, comments=comments)
-    xs = convert(Vector{Float64}, table[:, 1])
-    ys = convert(Vector{Float64}, table[:, 2])
+    xs = vecstring_to_vecnumbers(table[:, 1]; dt = dt)
+    ys = vecstring_to_vecnumbers(table[:, 2]; dt = dt)    
     return (xs, ys)
 end;
 
-function readxall(input::String; comments::Bool=true)
+function readxall(input::String; comments::Bool=true, dt::DataType = Float64)
     table = readdlm(input, comments=comments)
-    xs = convert(Vector{Float64}, table[:, 1])
-    all = [convert(Vector{Float64}, col)
+    xs =  vecstring_to_vecnumbers(table[:, 1]; dt = dt)
+    all = [vecstring_to_vecnumbers(col; dt = dt)
            for col in eachcol(table[:, 2:end])]
     return (xs, all)
 end;
 
-function readxyall(input::String; comments::Bool=true)
+function readxyall(input::String; comments::Bool=true, dt::DataType = Float64)
     table = readdlm(input, comments=comments)
-    xs = convert(Vector{Float64}, table[:, 1])
-    ys = convert(Vector{Float64}, table[:, 2])
-    all = [convert(Vector{Float64}, col)
+    xs =  vecstring_to_vecnumbers(table[:, 1]; dt = dt)
+    ys = vecstring_to_vecnumbers(table[:, 2]; dt = dt)
+    all = [vecstring_to_vecnumbers(col; dt = dt)
            for col in eachcol(table[:, 3:end])]
     return (xs, ys, all)
 end;
+
+
+##########################################################################################92
+
+function number_to_string(x::Number)
+    if iszero(imag(x))
+        return "$(real(x))"
+    elseif iszero(real(x))
+        return "$(imag(x))im"
+    else
+        if imag(x) > 0
+            return "$(real(x))+$(imag(x))im"
+        else
+            return "$(real(x))-$(abs(imag(x)))im"
+        end
+    end
+end
+
+
+function vecstring_to_vecnumbers(v; dt::DataType = Float64)
+    try 
+        return convert(Vector{dt}, v) 
+    catch e 
+        [parse(dt, el) for el in v]
+    end
+end

@@ -21,12 +21,21 @@
 function FFTLog_PS_multipole(ss, xis;
      pr::Bool=true,
      L::Int=0, ν::Float64=1.5, n_extrap_low::Int=500,
-     n_extrap_high::Int=500, n_pad::Int=500)
+     n_extrap_high::Int=500, n_pad::Int=500, 
+     cut_first_n::Int = 0, cut_last_n::Int=0)
 
-     XIS = xis .* ss .^ 3
+     @assert length(ss) == length(xis) "length(ss) == length(xis) must hold!"
+     @assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
+     @assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
+     @assert cut_first_n + cut_last_n < length(ss) "cut_first_n + cut_last_n < length(ss) must hold!"
+
+     a, b = 1 + cut_first_n, length(ss) - cut_last_n
+     
+     SS = ss[a:b]
+     XIS = xis[a:b] .* SS .^ 3
 
      t1 = time()
-     plan = FFTLog.SingleBesselPlan(x=ss,
+     plan = FFTLog.SingleBesselPlan(x=SS,
           n_extrap_low=n_extrap_low, ν=ν,
           n_extrap_high=n_extrap_high, n_pad=n_pad)
      FFTLog.prepare_FFTLog!(plan, [L])
@@ -48,7 +57,12 @@ end
 function FFTLog_all_PS_multipole(input::String,
      group::String=VALID_GROUPS[end];
      L::Int=0, pr::Bool=true, ν::Float64=1.5, n_extrap_low::Int=500,
-     n_extrap_high::Int=500, n_pad::Int=500)
+     n_extrap_high::Int=500, n_pad::Int=500, 
+     cut_first_n::Int = 0, cut_last_n::Int=0)
+
+     @assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
+     @assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
+     
 
      check_group(group; valid_groups=VALID_GROUPS)
      check_fileisingroup(input, group)
@@ -81,9 +95,12 @@ function FFTLog_all_PS_multipole(input::String,
      all_xis = [convert(Vector{Float64}, col)
                 for col in eachcol(table[:, 2:end])]
 
-     ALL_XIS = [xis .* ss .^ 3 for xis in all_xis]
+     a, b = 1 + cut_first_n, length(ss) - cut_last_n
+     
+     SS = ss[a:b]
+     ALL_XIS = [xis[a:b] .* SS .^ 3 for xis in all_xis]
 
-     plan = FFTLog.SingleBesselPlan(x=ss,
+     plan = FFTLog.SingleBesselPlan(x=SS,
           n_extrap_low=n_extrap_low, ν=ν,
           n_extrap_high=n_extrap_high, n_pad=n_pad)
      FFTLog.prepare_FFTLog!(plan, [L])

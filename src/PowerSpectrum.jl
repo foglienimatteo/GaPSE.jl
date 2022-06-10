@@ -17,11 +17,20 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-function PS_multipole(ss, fs; twofast::Bool = false, kwargs...)
+function PS_multipole(ss, fs; twofast::Bool = false, 
+     cut_first_n::Int = 0, cut_last_n::Int=0, kwargs...)
+
+     @assert length(ss) == length(fs) "length(ss) == length(fs) must hold!"
+     @assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
+     @assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
+     @assert cut_first_n + cut_last_n < length(ss) "cut_first_n + cut_last_n < length(ss) must hold!"
+
+     a, b = 1 + cut_first_n, length(ss) - cut_last_n
+
      if twofast == true
-          return TwoFAST_PS_multipole(ss, fs; kwargs...)
+          return TwoFAST_PS_multipole(ss[a:b], fs[a:b]; kwargs...)
      else
-          return FFTLog_PS_multipole(ss, fs; kwargs...)
+          return FFTLog_PS_multipole(ss[a:b], fs[a:b]; kwargs...)
      end
 end
 
@@ -226,7 +235,7 @@ function print_PS_multipole(ss, fs, out::String;
           println(io, "# ")
           println(io, "# k [h_0/Mpc] \t \t  P [(Mpc/h_0)^3]")
           for (k, pk) in zip(vec[1], vec[2])
-               println(io, "$k \t $pk")
+               println(io, "$k \t " * GaPSE.number_to_string(pk))
           end
      end
 end
@@ -409,7 +418,7 @@ function print_all_PS_multipole(input::String, out::String,
           end
 
           for (i, k) in enumerate(ks)
-               println(io, "$k \t" * join(["$(v[i]) \t " for v in VEC]))
+               println(io, "$k \t" * join([GaPSE.number_to_string(v[i])*" \t " for v in VEC]))
           end
      end
 end
