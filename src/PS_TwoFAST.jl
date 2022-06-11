@@ -59,9 +59,9 @@ function TwoFAST_PS_multipole(SS, FS;
      @assert length(SS) == length(FS) "length(SS) == length(FS) must hold!"
      @assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
      @assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
-     @assert cut_first_n + cut_last_n < length() "cut_first_n + cut_last_n < length(ss) must hold!"
+     @assert cut_first_n + cut_last_n < length(FS) "cut_first_n + cut_last_n < length(ss) must hold!"
 
-     a, b = 1 + cut_first_n, length(ss) - cut_last_n
+     a, b = 1 + cut_first_n, length(SS) - cut_last_n
      ss, fs = SS[a:b], FS[a:b]
 
      N = length(ss)

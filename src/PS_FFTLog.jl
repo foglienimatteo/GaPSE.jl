@@ -20,9 +20,10 @@
 
 function FFTLog_PS_multipole(ss, xis;
      pr::Bool=true,
-     L::Int=0, ν::Float64=1.5, n_extrap_low::Int=500,
-     n_extrap_high::Int=500, n_pad::Int=500, 
-     cut_first_n::Int = 0, cut_last_n::Int=0)
+     L::Int=0, ν::Union{Float64,Nothing}=nothing,
+     n_extrap_low::Int=500,
+     n_extrap_high::Int=500, n_pad::Int=500,
+     cut_first_n::Int=0, cut_last_n::Int=0)
 
      @assert length(ss) == length(xis) "length(ss) == length(xis) must hold!"
      @assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
@@ -30,17 +31,26 @@ function FFTLog_PS_multipole(ss, xis;
      @assert cut_first_n + cut_last_n < length(ss) "cut_first_n + cut_last_n < length(ss) must hold!"
 
      a, b = 1 + cut_first_n, length(ss) - cut_last_n
-     
+
      SS = ss[a:b]
      XIS = xis[a:b] .* SS .^ 3
 
+     new_ν = if isnothing(ν)
+          l_si, l_b, l_a = GaPSE.power_law_from_data(SS, XIS, [1.0, 1.0], SS[begin], SS[begin+10])
+          r_si, r_b, r_a = GaPSE.power_law_from_data(SS, XIS, [1.0, 1.0], SS[end-10], SS[end])
+          (l_si + r_si)/2
+     else
+          ν
+     end
+     #NEW_SS, NEW_XIS = 
+
      t1 = time()
-     plan = FFTLog.SingleBesselPlan(x=SS,
-          n_extrap_low=n_extrap_low, ν=ν,
+     plan = SingleBesselPlan(x=SS,
+          n_extrap_low=n_extrap_low, ν=new_ν,
           n_extrap_high=n_extrap_high, n_pad=n_pad)
-     FFTLog.prepare_FFTLog!(plan, [L])
-     pks = reshape(FFTLog.evaluate_FFTLog(plan, XIS), (:,))
-     ks = reshape(FFTLog.get_y(plan), (:,))
+     prepare_FFTLog!(plan, [L])
+     pks = reshape(evaluate_FFTLog(plan, XIS), (:,))
+     ks = reshape(get_y(plan), (:,))
      t2 = time()
      pr && println("\ntime needed for this Power Spectrum computation [in s] = $(t2-t1)\n")
 
@@ -56,16 +66,19 @@ end
 
 function FFTLog_all_PS_multipole(input::String,
      group::String=VALID_GROUPS[end];
-     L::Int=0, pr::Bool=true, ν::Float64=1.5, n_extrap_low::Int=500,
-     n_extrap_high::Int=500, n_pad::Int=500, 
-     cut_first_n::Int = 0, cut_last_n::Int=0)
+     L::Int=0, pr::Bool=true,
+     ν::Union{Float64,Nothing,Vector{Float64}}=nothing,
+     n_extrap_low::Int=500,
+     n_extrap_high::Int=500, n_pad::Int=500,
+     cut_first_n::Int=0, cut_last_n::Int=0)
 
      @assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
      @assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
-     
+
 
      check_group(group; valid_groups=VALID_GROUPS)
      check_fileisingroup(input, group)
+
 
      pr && begin
           print("\nI'm computing the PS_multipole from the file \"$input\"")
@@ -95,24 +108,66 @@ function FFTLog_all_PS_multipole(input::String,
      all_xis = [convert(Vector{Float64}, col)
                 for col in eachcol(table[:, 2:end])]
 
+     used_νs = if typeof(ν) == Vector{Float64}
+          @assert length(ν) == length(all_xis) "length(ν) == length(all_xis) must hold!"
+          ν
+     else
+          [ν for i in 1:length(all_xis)]
+     end
+
+
+
+
      a, b = 1 + cut_first_n, length(ss) - cut_last_n
-     
+     #=
+
      SS = ss[a:b]
      ALL_XIS = [xis[a:b] .* SS .^ 3 for xis in all_xis]
 
-     plan = FFTLog.SingleBesselPlan(x=SS,
-          n_extrap_low=n_extrap_low, ν=ν,
-          n_extrap_high=n_extrap_high, n_pad=n_pad)
-     FFTLog.prepare_FFTLog!(plan, [L])
-     ALL_pks = pr ? begin
-          @showprogress sps * ", L=$L: " [reshape(FFTLog.evaluate_FFTLog(plan, XIS), (:,))
-               for XIS in ALL_XIS] 
-          end : begin
-               [reshape(FFTLog.evaluate_FFTLog(plan, XIS), (:,))
-               for XIS in ALL_XIS] 
-          end
 
-     ks = reshape(FFTLog.get_y(plan), (:,))
+     plan = SingleBesselPlan(x=SS,
+     n_extrap_low=n_extrap_low, ν=ν,
+     n_extrap_high=n_extrap_high, n_pad=n_pad)
+     prepare_FFTLog!(plan, [L])
+     ALL_pks = pr ? begin
+     @showprogress sps * ", L=$L: " [reshape(evaluate_FFTLog(plan, XIS), (:,))
+     for XIS in ALL_XIS] 
+     end : begin
+     [reshape(evaluate_FFTLog(plan, XIS), (:,))
+     for XIS in ALL_XIS] 
+     end
+     =#
+
+     plan = SingleBesselPlan(x=ss[a:b],
+          n_extrap_low=n_extrap_low, ν=1.1,
+          n_extrap_high=n_extrap_high, n_pad=n_pad)
+     prepare_FFTLog!(plan, [L])
+     ALL_pks = pr ? begin
+          @showprogress sps * ", L=$L: " [
+               begin
+                    _, pks = FFTLog_PS_multipole(ss, xis;
+                         pr=false, L=L, ν=specific_ν,
+                         n_extrap_low=n_extrap_low,
+                         n_extrap_high=n_extrap_high, n_pad=n_pad,
+                         cut_first_n=cut_first_n, cut_last_n=cut_last_n)
+                    pks
+               end
+               for (xis, specific_ν) in zip(all_xis, used_νs)]
+     end : begin
+          [
+               begin
+                    _, pks = FFTLog_PS_multipole(ss, xis;
+                         pr=false, L=L, ν=specific_ν,
+                         n_extrap_low=n_extrap_low,
+                         n_extrap_high=n_extrap_high, n_pad=n_pad,
+                         cut_first_n=cut_first_n, cut_last_n=cut_last_n)
+                    pks
+               end
+               for (xis, specific_ν) in zip(all_xis, used_νs)
+          ]
+     end
+
+     ks = reshape(get_y(plan), (:,))
 
      if iseven(L)
           return ks, [(1 / A_prime * (-1)^(L / 2)) .* pks for pks in ALL_pks]

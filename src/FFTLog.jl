@@ -127,17 +127,42 @@ function _eval_gl(ell, z::Vector, n::Int)
      return gl
 end
 
+
 function _logextrap(x::Vector, n_extrap_low::Int, n_extrap_high::Int)
      d_ln_x_low = log(x[2] / x[1])
      d_ln_x_high = log(reverse(x)[1] / reverse(x)[2])
+     X = x
      if n_extrap_low != 0
-          X = vcat(x[1] .* exp.(d_ln_x_low .* Array(-n_extrap_low:-1)), x)
+          X = vcat(x[1] .* exp.(d_ln_x_low .* Array(-n_extrap_low:-1)), X)
      end
      if n_extrap_high != 0
-          X = vcat(X, last(X) .* exp.(d_ln_x_high .* Array(1:n_extrap_high)))
+          X = vcat(X, last(x) .* exp.(d_ln_x_high .* Array(1:n_extrap_high)))
      end
      return X
 end
+
+#=
+function _logextrap(x::Vector, n_extrap_low::Int, n_extrap_high::Int; LIM::Float64=5e-4)
+     d_ln_x_low = log(x[2] / x[1])
+     d_ln_x_high = log(reverse(x)[1] / reverse(x)[2])
+     X = x
+     if n_extrap_low != 0
+          if abs(d_ln_x_low - 1) > LIM
+               X = vcat(x[1] .* exp.(d_ln_x_low .* Array(-n_extrap_low:-1)), X)
+          else
+               X = vcat([x[1] for i in 1:n_extrap_low], X)
+          end
+     end
+     if n_extrap_high != 0
+          if abs(d_ln_x_high - 1) > LIM
+               X = vcat(X, last(x) .* exp.(d_ln_x_high .* Array(1:n_extrap_high)))
+          else
+               X = vcat(X, [x[end] for x in 1:n_extrap_high])
+          end
+     end
+     return X
+end
+=#
 
 function _zeropad(x::Vector, n_pad::Int)
      return vcat(zeros(n_pad), x, zeros(n_pad))

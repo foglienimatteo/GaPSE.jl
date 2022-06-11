@@ -21,7 +21,11 @@ module GaPSE
 
 
 using TwoFAST # Licence: MIT "Expat" (o GPL ?)
-include("FFTLog.jl")
+using FFTW
+using Base: @kwdef
+using SpecialFunctions: gamma
+import Base: *
+
 using .FFTLog
 
 using Dierckx # Licence: BSD
@@ -52,6 +56,7 @@ const LENGTH_VALID_GROUPS = [18, 27, 22, 22, nothing]
 
 include("OtherUtils.jl")
 include("MathUtils.jl")
+include("FFTLog.jl")
 include("Wllnn.jl")
 include("WindowF.jl")
 include("WindowFIntegrated.jl")
