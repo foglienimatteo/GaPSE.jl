@@ -36,9 +36,10 @@ function FFTLog_PS_multipole(ss, xis;
      XIS = xis[a:b] .* SS .^ 3
 
      new_ν = if isnothing(ν)
-          l_si, l_b, l_a = GaPSE.power_law_from_data(SS, XIS, [1.0, 1.0], SS[begin], SS[begin+10])
-          r_si, r_b, r_a = GaPSE.power_law_from_data(SS, XIS, [1.0, 1.0], SS[end-10], SS[end])
-          (l_si + r_si)/2
+          #l_si, l_b, l_a = GaPSE.power_law_from_data(SS, XIS, [1.0, 1.0], SS[begin], SS[begin+10])
+          #r_si, r_b, r_a = GaPSE.power_law_from_data(SS, XIS, [1.0, 1.0], SS[end-10], SS[end])
+          #1.9 + (l_si + r_si)/2
+          1.5
      else
           ν
      end
@@ -115,9 +116,6 @@ function FFTLog_all_PS_multipole(input::String,
           [ν for i in 1:length(all_xis)]
      end
 
-
-
-
      a, b = 1 + cut_first_n, length(ss) - cut_last_n
      #=
 
@@ -169,10 +167,15 @@ function FFTLog_all_PS_multipole(input::String,
 
      ks = reshape(get_y(plan), (:,))
 
+     return ks, ALL_pks
+
+
+     #=
      if iseven(L)
           return ks, [(1 / A_prime * (-1)^(L / 2)) .* pks for pks in ALL_pks]
      else
           return ks, [(1 / A_prime * (-im)^L) .* pks for pks in ALL_pks]
      end
+     =#
 end
 

@@ -26,6 +26,7 @@ using Base: @kwdef
 using SpecialFunctions: gamma
 import Base: *
 
+include("FFTLog.jl")
 using .FFTLog
 
 using Dierckx # Licence: BSD
@@ -56,7 +57,7 @@ const LENGTH_VALID_GROUPS = [18, 27, 22, 22, nothing]
 
 include("OtherUtils.jl")
 include("MathUtils.jl")
-include("FFTLog.jl")
+#include("FFTLog.jl")
 include("Wllnn.jl")
 include("WindowF.jl")
 include("WindowFIntegrated.jl")

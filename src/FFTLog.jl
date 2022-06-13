@@ -24,10 +24,10 @@ using Base: @kwdef
 using SpecialFunctions: gamma
 import Base: *
 
+export SingleBesselPlan, HankelPlan
 export prepare_FFTLog!, evaluate_FFTLog, evaluate_FFTLog!
 export prepare_Hankel!, evaluate_Hankel, evaluate_Hankel!
-export mul!
-export get_y
+export mul!, get_y
 
 abstract type AbstractPlan end
 

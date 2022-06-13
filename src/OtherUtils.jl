@@ -189,26 +189,29 @@ end
 ##########################################################################################92
 
 
-function readxy(input::String; comments::Bool=true, dt::DataType = Float64)
+function readxy(input::String; comments::Bool=true, 
+        xdt::DataType = Float64, ydt::DataType = Float64)
     table = readdlm(input, comments=comments)
-    xs = vecstring_to_vecnumbers(table[:, 1]; dt = dt)
-    ys = vecstring_to_vecnumbers(table[:, 2]; dt = dt)    
+    xs = vecstring_to_vecnumbers(table[:, 1]; dt = xdt)
+    ys = vecstring_to_vecnumbers(table[:, 2]; dt = ydt)    
     return (xs, ys)
 end;
 
-function readxall(input::String; comments::Bool=true, dt::DataType = Float64)
+function readxall(input::String; comments::Bool=true, 
+        xdt::DataType = Float64, ydt::DataType = Float64)
     table = readdlm(input, comments=comments)
-    xs =  vecstring_to_vecnumbers(table[:, 1]; dt = dt)
-    all = [vecstring_to_vecnumbers(col; dt = dt)
+    xs =  vecstring_to_vecnumbers(table[:, 1]; dt = xdt)
+    all = [vecstring_to_vecnumbers(col; dt = ydt)
            for col in eachcol(table[:, 2:end])]
     return (xs, all)
 end;
 
-function readxyall(input::String; comments::Bool=true, dt::DataType = Float64)
+function readxyall(input::String; comments::Bool=true, 
+        xdt::DataType = Float64, ydt::DataType = Float64, zdt::DataType = Float64)
     table = readdlm(input, comments=comments)
-    xs =  vecstring_to_vecnumbers(table[:, 1]; dt = dt)
-    ys = vecstring_to_vecnumbers(table[:, 2]; dt = dt)
-    all = [vecstring_to_vecnumbers(col; dt = dt)
+    xs =  vecstring_to_vecnumbers(table[:, 1]; dt = xdt)
+    ys = vecstring_to_vecnumbers(table[:, 2]; dt = ydt)
+    all = [vecstring_to_vecnumbers(col; dt = zdt)
            for col in eachcol(table[:, 3:end])]
     return (xs, ys, all)
 end;
