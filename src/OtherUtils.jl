@@ -165,13 +165,20 @@ function check_group(s::String; valid_groups::Vector{String}=VALID_GROUPS)
     @assert s ∈ valid_groups error
 end
 
-function check_fileisingroup(input::String, group::String; valid_groups::Vector{String}=VALID_GROUPS)
+function check_fileisingroup(input::String, group::String; 
+        valid_groups::Vector{String}=VALID_GROUPS, comments::Bool=true)
+
     check_group(group; valid_groups=valid_groups)
     l = LENGTH_VALID_GROUPS[findfirst(x -> x == group, valid_groups)]
-    table = readdlm(input, comments=true)
+    table = readdlm(input, comments=comments)
     xs = convert(Vector{Float64}, table[:, 1])
-    all_YS = [convert(Vector{Float64}, col)
-                for col in eachcol(table[:, 2:end])]
+    all_YS = [begin
+        @assert length(col) == length(xs) "mismatch in length of the columns." 
+        @assert col[end] ≠ "" "mismatch in length of the columns." 
+        convert(Vector{Float64}, col)
+        end
+        for col in eachcol(table[:, 2:end])]
+
     if !isnothing(l)
         er = "the column numbers inside $input, which is $(length(all_YS) + 1), " *
                 "does not match with the length of the " *

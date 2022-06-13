@@ -24,7 +24,7 @@
      kwargs_ps = Dict(:epl => true, :pr => false, :twofast => true,
           :N_left => 12, :N_right => 12,
           :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
-          :N => 300, :int_s_min => 1e-4, :int_s_max => 1e4)
+          :int_s_min => 1e-4, :int_s_max => 1e4)
 
      @testset "with F" begin
           @testset "monopole" begin
@@ -97,7 +97,7 @@ end
      kwargs_ps = Dict(:epl => true, :pr => false, :twofast => true,
           :N_left => 12, :N_right => 12,
           :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
-          :N => 300, :int_s_min => 1e-4, :int_s_max => 1e4)
+          :int_s_min => 1e-4, :int_s_max => 1e4)
 
      @testset "with F" begin
           @testset "monopole" begin
@@ -202,7 +202,7 @@ end
      kwargs_ps = Dict(:epl => true, :pr => false, :twofast => true,
           :N_left => 12, :N_right => 12,
           :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
-          :N => 300, :int_s_min => 1e-4, :int_s_max => 1e4)
+          :int_s_min => 1e-4, :int_s_max => 1e4)
 
      @testset "with F" begin
           @testset "monopole" begin
@@ -339,14 +339,14 @@ end
                end
                println(io, "13 14 ")
           end
-          @test_throws ErrorException GaPSE.check_fileisingroup(name, "generic")
+          @test_throws AssertionError GaPSE.check_fileisingroup(name, "generic")
           rm(name)
      end
 
      kwargs_ps = Dict(:epl => true, :pr => false, :twofast => true,
           :N_left => 12, :N_right => 12,
           :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
-          :N => 300, :int_s_min => 1e-4, :int_s_max => 1e4)
+          :int_s_min => 1e-4, :int_s_max => 1e4)
 
      @testset "test PS LD" begin
           L = 0
@@ -826,7 +826,7 @@ end
                end
                println(io, "13 14 ")
           end
-          @test_throws ErrorException GaPSE.check_fileisingroup(name, "generic")
+          @test_throws AssertionError GaPSE.check_fileisingroup(name, "generic")
           rm(name)
      end
 

@@ -172,7 +172,8 @@ end
           end
           println(io, "13 14 ")
      end
-     @test_throws ErrorException GaPSE.check_fileisingroup(name, "generic")
+
+     @test_throws AssertionError GaPSE.check_fileisingroup(name, "generic")
      rm(name)
 end
 
