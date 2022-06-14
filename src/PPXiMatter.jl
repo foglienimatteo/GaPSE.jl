@@ -17,6 +17,60 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
+function ξ_PP_Matter_L0(P::Point, cosmo::Cosmology)
+     b = cosmo.params.b
+     s = P.comdist
+     
+     P1 = Point(cosmo.s_eff, cosmo)
+     D, f, ℋ, ℛ = P1.D, P1.f, P1.ℋ, P1.ℛ_LD
+
+     (b^2 + 2 * b * f / 3 + f^2 / 5) * D^2 * cosmo.tools.I00(s)
+end
+
+function ξ_PP_Matter_L0(s1, cosmo::Cosmology)
+     P1 = Point(s1, cosmo)
+     return ξ_PP_Matter_L0(P1, cosmo)
+end
+
+function ξ_PP_Matter_L2(P::Point, cosmo::Cosmology)
+     b = cosmo.params.b
+     s = P.comdist
+     
+     P1 = Point(cosmo.s_eff, cosmo)
+     D, f, ℋ, ℛ = P1.D, P1.f, P1.ℋ, P1.ℛ_LD
+
+     - (4 * b * f / 3 + 4 * f^2 / 7) * D^2 * cosmo.tools.I20(s)
+end
+
+function ξ_PP_Matter_L2(s1, cosmo::Cosmology)
+     P1 = Point(s1, cosmo)
+     return ξ_PP_Matter_L2(P1, cosmo)
+end
+
+function ξ_PP_Matter_L4(P::Point, cosmo::Cosmology)
+     b = cosmo.params.b
+     s = P.comdist
+     
+     P1 = Point(cosmo.s_eff, cosmo)
+     D, f, ℋ, ℛ = P1.D, P1.f, P1.ℋ, P1.ℛ_LD
+
+     8 * f^2 / 35 * D^2 * cosmo.tools.I40(s)
+end
+
+function ξ_PP_Matter_L4(s1, cosmo::Cosmology)
+     P1 = Point(s1, cosmo)
+     return ξ_PP_Matter_L4(P1, cosmo)
+end
+
+function ξ_PP_Matter(s1, y, cosmo::Cosmology)
+     return ξ_PP_Matter_L0(s1, cosmo) + ξ_PP_Matter_L2(s1, cosmo) * Pl(y, 2) + 
+          ξ_PP_Matter_L4(s1, cosmo) * Pl(y, 4)
+end
+
+
+
+##########################################################################################92
+
 
 
 function integrand_ξ_PPMatter_multipole(s, μ, cosmo::Cosmology;
@@ -24,15 +78,17 @@ function integrand_ξ_PPMatter_multipole(s, μ, cosmo::Cosmology;
 
      res = if use_windows == true
           #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
-          int = cosmo.ξ_matter(s)
+          #int = cosmo.ξ_matter(s)
+          int = ξ_PP_Matter(s, μ, cosmo)
           #println("int = $int")
-          coef = (cosmo.params.b + cosmo.f_of_s(s) * μ^2)^2 * cosmo.D_of_s(s)
+          #coef = (cosmo.params.b + cosmo.f_of_s(s) * μ^2)^2 * cosmo.D_of_s(s)
           #println("coef = $coef")
-          int .* (coef * spline_integrF(s, μ, cosmo.windowFint) / cosmo.WFI_norm * Pl(μ, L))
+          int .* (spline_integrF(s, μ, cosmo.windowFint) / cosmo.WFI_norm)
      else
-          int = cosmo.ξ_matter(s)
-          coef = (cosmo.params.b + cosmo.f_of_s(s) * μ^2)^2
-          int .* coef .* Pl(μ, L)
+          #int = cosmo.ξ_matter(s)
+          int = ξ_PP_Matter(s, μ, cosmo)
+          #coef = (cosmo.params.b + cosmo.f_of_s(s) * μ^2)^2
+          int #.* coef .* Pl(μ, L)
      end
 
      #println("res = $res")
