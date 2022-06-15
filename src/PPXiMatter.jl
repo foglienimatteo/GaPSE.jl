@@ -105,31 +105,13 @@ function ξ_PPMatter_multipole(
      L::Int=0,
      use_windows::Bool=true,
      enhancer::Float64=1e6,
-     N_μs::Int=200,
      μ_atol::Float64=0.0,
-     μ_rtol::Float64=1e-2,
-     trap::Bool=false)
+     μ_rtol::Float64=1e-2)
 
      orig_f(μ) = enhancer * integrand_ξ_PPMatter_multipole(s, μ, cosmo;
           L=L, use_windows=use_windows)
 
-     int =
-          if s > 1.0 && trap == false
-               quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=μ_atol, rtol=μ_rtol)[1]
-          else
-               #=
-               μs = union(
-                    range(-1.0, -0.90, length=N_μs),
-                    range(-0.90, 0.90, length=N_μs),
-                    range(0.90, 1.0, length=N_μs)
-                    )
-               =#
-               μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_μs)
-               orig_fs = orig_f.(μs)
-               #orig_fs
-               trapz(μs, orig_fs)
-
-          end
+     int = quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=μ_atol, rtol=μ_rtol)[1]
 
      return int / enhancer
 end

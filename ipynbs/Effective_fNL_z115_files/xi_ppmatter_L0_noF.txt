@@ -41,19 +41,17 @@
 # 	 σ_3 = 3735.1226181519773
 # 	 (where σ_i = \int_{k_{min}}^{k_{max}}\frac{dq}{2 π^2} q^{2-i} P(q))
 # 
-# computational time needed (in s) : 1.0852
+# computational time needed (in s) : 0.1913
 # kwards passed: 
 # 		L = 0
 # 		use_windows = false
 # 		pr = true
 # 		enhancer = 1.0e6
-# 		N_μs = 200
 # 		μ_atol = 0.0
 # 		μ_rtol = 0.01
-# 		trap = false
 # 
 # s [Mpc/h_0] 	 	 xi
-1.0 	 2.721139344227386
+1.0 	 2.721156811203887
 1.0087644236652376 	 2.7029234828780098
 1.0176056624526588 	 2.6847548602853837
 1.0265243896025387 	 2.666650849346668
