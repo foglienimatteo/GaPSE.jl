@@ -83,12 +83,12 @@ function integrand_ξ_PPMatter_multipole(s, μ, cosmo::Cosmology;
           #println("int = $int")
           #coef = (cosmo.params.b + cosmo.f_of_s(s) * μ^2)^2 * cosmo.D_of_s(s)
           #println("coef = $coef")
-          int .* (spline_integrF(s, μ, cosmo.windowFint) / cosmo.WFI_norm)
+          int .* (spline_integrF(s, μ, cosmo.windowFint) / cosmo.WFI_norm * Pl(μ, L))
      else
           #int = cosmo.ξ_matter(s)
           int = ξ_PP_Matter(s, μ, cosmo)
           #coef = (cosmo.params.b + cosmo.f_of_s(s) * μ^2)^2
-          int #.* coef .* Pl(μ, L)
+          int .* Pl(μ, L)
      end
 
      #println("res = $res")

@@ -60,6 +60,22 @@
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
           end
+
+          @testset "hexadecapole" begin
+               L = 4
+               true_xi = "datatest/pp_matter/xi_ppmatter_withF_L$L" * ".txt"
+
+               table = readdlm(true_xi; comments=true)
+               ss = convert(Vector{Float64}, table[:, 1])
+               xis = convert(Vector{Float64}, table[:, 2])
+
+               calc_ss, calc_xis = GaPSE.map_ξ_PPMatter_multipole(COSMO,
+                    10 .^ range(0, 3, length=300); use_windows=true,
+                    L=L, kwargs_xis_PP...)
+
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
+          end
      end
 
      @testset "without F" begin
@@ -81,6 +97,22 @@
 
           @testset "quadrupole" begin
                L = 2
+               true_xi = "datatest/pp_matter/xi_ppmatter_noF_L$L" * ".txt"
+
+               table = readdlm(true_xi; comments=true)
+               ss = convert(Vector{Float64}, table[:, 1])
+               xis = convert(Vector{Float64}, table[:, 2])
+
+               calc_ss, calc_xis = GaPSE.map_ξ_PPMatter_multipole(COSMO,
+                    10 .^ range(0, 3, length=300); use_windows=false,
+                    L=L, kwargs_xis_PP...)
+
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
+          end
+
+          @testset "hexadecapole" begin
+               L = 4
                true_xi = "datatest/pp_matter/xi_ppmatter_noF_L$L" * ".txt"
 
                table = readdlm(true_xi; comments=true)
@@ -157,6 +189,33 @@ end
                calc_ss = convert(Vector{Float64}, calc_table[:, 1])
                calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
+               println()
+
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
+
+               rm(name)
+          end
+
+          @testset "hexadecapole" begin
+               L = 4
+               name = "calc_xi_ppmatter_withF_L$L" * ".txt"
+               true_xi = "datatest/pp_matter/xi_ppmatter_withF_L$L" * ".txt"
+
+               isfile(name) && rm(name)
+
+               table = readdlm(true_xi; comments=true)
+               ss = convert(Vector{Float64}, table[:, 1])
+               xis = convert(Vector{Float64}, table[:, 2])
+
+               GaPSE.print_map_ξ_PPMatter_multipole(COSMO, name,
+                    10 .^ range(0, 3, length=300); use_windows=true,
+                    L=L, kwargs_xis_PP...)
+
+               calc_table = readdlm(true_xi; comments=true)
+               calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+               calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
 
@@ -192,6 +251,31 @@ end
 
           @testset "quadrupole" begin
                L = 2
+               name = "calc_xi_ppmatter_noF_L$L" * ".txt"
+               true_xi = "datatest/pp_matter/xi_ppmatter_noF_L$L" * ".txt"
+
+               isfile(name) && rm(name)
+
+               table = readdlm(true_xi; comments=true)
+               ss = convert(Vector{Float64}, table[:, 1])
+               xis = convert(Vector{Float64}, table[:, 2])
+
+               GaPSE.print_map_ξ_PPMatter_multipole(COSMO, name,
+                    10 .^ range(0, 3, length=300); use_windows=false,
+                    L=L, kwargs_xis_PP...)
+
+               calc_table = readdlm(true_xi; comments=true)
+               calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+               calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
+
+               rm(name)
+          end
+
+          @testset "hexadecapole" begin
+               L = 4
                name = "calc_xi_ppmatter_noF_L$L" * ".txt"
                true_xi = "datatest/pp_matter/xi_ppmatter_noF_L$L" * ".txt"
 
