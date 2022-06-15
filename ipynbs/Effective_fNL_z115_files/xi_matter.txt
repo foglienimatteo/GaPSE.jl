@@ -7,7 +7,7 @@
 # For this TPCF computation we set: 
 # 	 #points used in Fourier transform N = 1024
 # 	 multipole degree in consideration L = 0
-# computational time needed (in s) : 0.9966
+# computational time needed (in s) : 0.8748
 # kwards passed to "print_ξ_from_PS": 
 # 		int_k_min = 0.00016369382206909112
 # 		int_k_max = 10.0

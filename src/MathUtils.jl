@@ -797,7 +797,7 @@ end;
 """
      polynomia(x, c, b, a) ::Float64
 
-Return the following ``y = f(x)`` 2-degree polynomial value:
+Return the following ``y = f(x)`` 2-degree `polynomi`al value:
 ```math
 y = f(x) = a + b \\, x + c \\, x^2
 ```
@@ -978,7 +978,9 @@ function curve_fit_polyn_onthree(xs, ys, p0; en_xs=1, en_ys=1, err=0.05, pr::Boo
           return c * (en_xs^2) / en_ys, b * en_xs / en_ys, a / en_ys
 
      catch e
-          if isa(AssertionError, e)
+          if e==BoundsError
+               e
+          elseif isa(AssertionError, e)
                throw(e)
           else
                println(

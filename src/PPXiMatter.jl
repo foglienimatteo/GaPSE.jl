@@ -21,8 +21,8 @@ function ξ_PP_Matter_L0(P::Point, cosmo::Cosmology)
      b = cosmo.params.b
      s = P.comdist
      
-     P1 = Point(cosmo.s_eff, cosmo)
-     D, f, ℋ, ℛ = P1.D, P1.f, P1.ℋ, P1.ℛ_LD
+     Peff = Point(cosmo.s_eff, cosmo)
+     D, f = Peff.D, Peff.f
 
      (b^2 + 2 * b * f / 3 + f^2 / 5) * D^2 * cosmo.tools.I00(s)
 end
@@ -35,11 +35,11 @@ end
 function ξ_PP_Matter_L2(P::Point, cosmo::Cosmology)
      b = cosmo.params.b
      s = P.comdist
-     
-     P1 = Point(cosmo.s_eff, cosmo)
-     D, f, ℋ, ℛ = P1.D, P1.f, P1.ℋ, P1.ℛ_LD
 
-     - (4 * b * f / 3 + 4 * f^2 / 7) * D^2 * cosmo.tools.I20(s)
+     Peff = Point(cosmo.s_eff, cosmo)
+     D, f = Peff.D, Peff.f
+
+     -(4 * b * f / 3 + 4 * f^2 / 7) * D^2 * cosmo.tools.I20(s)
 end
 
 function ξ_PP_Matter_L2(s1, cosmo::Cosmology)
@@ -48,11 +48,10 @@ function ξ_PP_Matter_L2(s1, cosmo::Cosmology)
 end
 
 function ξ_PP_Matter_L4(P::Point, cosmo::Cosmology)
-     b = cosmo.params.b
      s = P.comdist
-     
-     P1 = Point(cosmo.s_eff, cosmo)
-     D, f, ℋ, ℛ = P1.D, P1.f, P1.ℋ, P1.ℛ_LD
+
+     Peff = Point(cosmo.s_eff, cosmo)
+     D, f = Peff.D, Peff.f
 
      8 * f^2 / 35 * D^2 * cosmo.tools.I40(s)
 end
