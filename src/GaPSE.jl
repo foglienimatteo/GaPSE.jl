@@ -55,6 +55,8 @@ const NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mp
 const VALID_GROUPS = ["LD", "GNC", "GNCxLD", "LDxGNC", "generic"]
 const LENGTH_VALID_GROUPS = [18, 27, 22, 22, nothing]
 
+const HUBBLE_0 = 1e5 / 299792458.0
+
 include("OtherUtils.jl")
 include("MathUtils.jl")
 #include("FFTLog.jl")
@@ -68,6 +70,7 @@ include("IPSTools.jl")
 include("XiMatter.jl")
 include("Cosmology.jl")
 include("PPXiMatter.jl")
+include("f_NL.jl")
 
 
 ##################### PERTURBED LUMINOSITY DISTANCE #############################
