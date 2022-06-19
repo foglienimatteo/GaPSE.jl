@@ -70,7 +70,7 @@ include("IPSTools.jl")
 include("XiMatter.jl")
 include("Cosmology.jl")
 include("PPXiMatter.jl")
-include("f_NL.jl")
+include("PNG.jl")
 
 
 ##################### PERTURBED LUMINOSITY DISTANCE #############################
