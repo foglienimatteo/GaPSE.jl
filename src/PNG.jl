@@ -80,7 +80,7 @@ struct IntegralIPSalpha
           fit_left_min=nothing, fit_left_max=nothing, p0_left=nothing,
           fit_right_min=nothing, fit_right_max=nothing, p0_right=nothing)
 
-          DD = isnothing(D) ? 1.0 : D
+          DD = isnothing(D) ? cosmo.D_of_s(cosmo.s_eff) : D
           Ω_M00 = cosmo.params.Ω_M0
 
           rs, xis = xicalc(k -> cosmo.IPS(k) * α_bias(k, tf; bf=bf, D=DD, Ω_M0=Ω_M00), l, n;
@@ -154,7 +154,7 @@ struct CosmoPNG
           ks_tf = convert(Vector{Float64}, table[:, 1])
           pks_tf = convert(Vector{Float64}, table[:, 2])
 
-          DD = isnothing(D) ? 1.0 : D
+          DD = isnothing(D) ? cosmo.D_of_s(cosmo.s_eff) : D
           tf = TF(ks_tf, pks_tf)
      
           J0 = IntegralIPSalpha(tf, cosmo, 0, 0; D=DD, bf=bf, kmin=kmin, kmax=kmax,
