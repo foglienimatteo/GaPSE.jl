@@ -1,8 +1,8 @@
-# This is an integration map on mu of the ξ multipole concerning the PP Matter.
 ###############
 #    GaPSE    #
 ############### 
 #
+# This is an integration map on mu of the ξ multipole concerning the PP Matter.
 # The Cosmology considered had the following paremeters:
 # 
 # - Matter Power Spectrum input file: "../test/datatest/file_pk.txt"
@@ -41,7 +41,7 @@
 # 	 σ_3 = 3735.1226181519773
 # 	 (where σ_i = \int_{k_{min}}^{k_{max}}\frac{dq}{2 π^2} q^{2-i} P(q))
 # 
-# computational time needed (in s) : 4.7772
+# computational time needed (in s) : 3.6796
 # kwards passed: 
 # 		L = 0
 # 		use_windows = true
