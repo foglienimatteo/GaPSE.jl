@@ -61,7 +61,7 @@ function α_bias(k, tf::TF; bf=1.0, D=1.0, Ω_M0=0.29992)
 end
 
 
-struct IntegralsIPSalpha
+struct IntegralIPSalpha
      l_si::Float64
      l_b::Float64
      l_a::Float64
@@ -74,7 +74,7 @@ struct IntegralsIPSalpha
      r_a::Float64
      right::Float64
 
-     function IntegralsIPSalpha(tf::TF, cosmo::Cosmology, l, n=0;
+     function IntegralIPSalpha(tf::TF, cosmo::Cosmology, l, n=0;
           D=nothing, bf=1.0,
           N::Int=1024, kmin=1e-6, kmax=1e4, s0=1e-4,
           fit_left_min=nothing, fit_left_max=nothing, p0_left=nothing,
@@ -137,8 +137,8 @@ struct CosmoPNG
      tf::TF
      file_TF::String
 
-     J0::IntegralsIPSalpha
-     J2::IntegralsIPSalpha
+     J0::IntegralIPSalpha
+     J2::IntegralIPSalpha
 
      params::Dict{Symbol,T1} where {T1}
 
@@ -147,22 +147,23 @@ struct CosmoPNG
                file_TF::String;
                comments::Bool = true, D = nothing, bf = 1.0,
                flm0 = 5e-2, flM0 = 1e-1, flm2 = 5e-1, flM2 = 1e0,
-               kmin = 1e-6, kmax=1e4
+               kmin = 1e-6, kmax=1e4, N::Int = 1024
           )
 
           table = readdlm(file_TF; comments=comments)
           ks_tf = convert(Vector{Float64}, table[:, 1])
           pks_tf = convert(Vector{Float64}, table[:, 2])
 
+          DD = isnothing(D) ? 1.0 : D
           tf = TF(ks_tf, pks_tf)
      
-          J0 = f_NL_IntegralIPS(tf, cosmo, 0, 0; D=DD, bf=bf, kmin=kmin, kmax=kmax,
-               fit_left_min=flm0, fit_left_max=flM0, con=false)
-          J2 = f_NL_IntegralIPS(tf, cosmo, 2, 0; D=DD, bf=bf, kmin=kmin, kmax=kmax,
-               fit_left_min=flm2, fit_left_max=flM2, con=false)
+          J0 = IntegralIPSalpha(tf, cosmo, 0, 0; D=DD, bf=bf, kmin=kmin, kmax=kmax,
+               fit_left_min=flm0, fit_left_max=flM0, N=N)
+          J2 = IntegralIPSalpha(tf, cosmo, 2, 0; D=DD, bf=bf, kmin=kmin, kmax=kmax,
+               fit_left_min=flm2, fit_left_max=flM2, N=N)
      
           params = Dict(:D=>D, :bf=>bf, :flm0=>flm0, :flM0=>flM0, 
-               :flm2=>flm2, :flM2=>flM2, :kmin=>kmin, :kmax=>kmax)
+               :flm2=>flm2, :flM2=>flM2, :kmin=>kmin, :kmax=>kmax, :N=>N)
 
           new(tf, file_TF, J0, J2, params)
      end
@@ -290,7 +291,7 @@ function print_map_ξ_S_multipole(
           print(io, "# Parameters used for the considered CosmoPNG: ")
           print(io, "\n")
           for key in keys(cosmopng.params)
-               println(io, "# \t\t$(key) = $(kwargs[key])")
+               println(io, "# \t\t$(key) = $(cosmopng.params[key])")
           end
           println(io, "#")
 
@@ -306,8 +307,7 @@ function print_map_ξ_S_multipole(
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
           end
-          isnothing(s1) || println(io, "#\n# NOTE: the computation is done not in " *
-                                       "s1 = s_eff, because you specified in input s1 = $s1 !")
+
           println(io, "# ")
           println(io, "# s [Mpc/h_0] \t \t xi")
           for (s, xi) in zip(vec[1], vec[2])
