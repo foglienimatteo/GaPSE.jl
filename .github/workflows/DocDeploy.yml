@@ -27,10 +27,10 @@ name: Documentation
 #  pull_request:
 #
 
-#on: [push]
-on:
-  release:
-    types: [published, edited, prereleased, released]
+on: [push]
+#on:
+#  release:
+#    types: [published, edited, prereleased, released]
 
 jobs:
   build:
