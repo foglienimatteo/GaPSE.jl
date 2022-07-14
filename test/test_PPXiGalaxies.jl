@@ -20,7 +20,7 @@
 
 
 
-@testset "test map_ξ_PPMatter_multipole" begin
+@testset "test map_ξ_PPGalaxies_multipole" begin
      RTOL = 1e-3
      kwargs_xis_PP = Dict(
           :pr => false, :enhancer => 1e8,
@@ -31,13 +31,13 @@
      @testset "with F" begin
           @testset "monopole" begin
                L = 0
-               true_xi = "datatest/pp_matter/xi_ppmatter_withF_L$L" * ".txt"
+               true_xi = "datatest/PPXiGalaxies/xi_ppgalaxies_withF_L$L" * ".txt"
 
                table = readdlm(true_xi; comments=true)
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               calc_ss, calc_xis = GaPSE.map_ξ_PPMatter_multipole(COSMO,
+               calc_ss, calc_xis = GaPSE.map_ξ_PPGalaxies_multipole(COSMO,
                     10 .^ range(0, 3, length=300); use_windows=true,
                     L=L, kwargs_xis_PP...)
 
@@ -47,13 +47,13 @@
 
           @testset "quadrupole" begin
                L = 2
-               true_xi = "datatest/pp_matter/xi_ppmatter_withF_L$L" * ".txt"
+               true_xi = "datatest/PPXiGalaxies/xi_ppgalaxies_withF_L$L" * ".txt"
 
                table = readdlm(true_xi; comments=true)
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               calc_ss, calc_xis = GaPSE.map_ξ_PPMatter_multipole(COSMO,
+               calc_ss, calc_xis = GaPSE.map_ξ_PPGalaxies_multipole(COSMO,
                     10 .^ range(0, 3, length=300); use_windows=true,
                     L=L, kwargs_xis_PP...)
 
@@ -63,13 +63,13 @@
 
           @testset "hexadecapole" begin
                L = 4
-               true_xi = "datatest/pp_matter/xi_ppmatter_withF_L$L" * ".txt"
+               true_xi = "datatest/PPXiGalaxies/xi_ppgalaxies_withF_L$L" * ".txt"
 
                table = readdlm(true_xi; comments=true)
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               calc_ss, calc_xis = GaPSE.map_ξ_PPMatter_multipole(COSMO,
+               calc_ss, calc_xis = GaPSE.map_ξ_PPGalaxies_multipole(COSMO,
                     10 .^ range(0, 3, length=300); use_windows=true,
                     L=L, kwargs_xis_PP...)
 
@@ -81,13 +81,13 @@
      @testset "without F" begin
           @testset "monopole" begin
                L = 0
-               true_xi = "datatest/pp_matter/xi_ppmatter_noF_L$L" * ".txt"
+               true_xi = "datatest/PPXiGalaxies/xi_ppgalaxies_noF_L$L" * ".txt"
 
                table = readdlm(true_xi; comments=true)
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               calc_ss, calc_xis = GaPSE.map_ξ_PPMatter_multipole(COSMO,
+               calc_ss, calc_xis = GaPSE.map_ξ_PPGalaxies_multipole(COSMO,
                     10 .^ range(0, 3, length=300); use_windows=false,
                     L=L, kwargs_xis_PP...)
 
@@ -97,13 +97,13 @@
 
           @testset "quadrupole" begin
                L = 2
-               true_xi = "datatest/pp_matter/xi_ppmatter_noF_L$L" * ".txt"
+               true_xi = "datatest/PPXiGalaxies/xi_ppgalaxies_noF_L$L" * ".txt"
 
                table = readdlm(true_xi; comments=true)
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               calc_ss, calc_xis = GaPSE.map_ξ_PPMatter_multipole(COSMO,
+               calc_ss, calc_xis = GaPSE.map_ξ_PPGalaxies_multipole(COSMO,
                     10 .^ range(0, 3, length=300); use_windows=false,
                     L=L, kwargs_xis_PP...)
 
@@ -113,13 +113,13 @@
 
           @testset "hexadecapole" begin
                L = 4
-               true_xi = "datatest/pp_matter/xi_ppmatter_noF_L$L" * ".txt"
+               true_xi = "datatest/PPXiGalaxies/xi_ppgalaxies_noF_L$L" * ".txt"
 
                table = readdlm(true_xi; comments=true)
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               calc_ss, calc_xis = GaPSE.map_ξ_PPMatter_multipole(COSMO,
+               calc_ss, calc_xis = GaPSE.map_ξ_PPGalaxies_multipole(COSMO,
                     10 .^ range(0, 3, length=300); use_windows=false,
                     L=L, kwargs_xis_PP...)
 
@@ -136,7 +136,7 @@ end
 
 
 
-@testset "test print_map_ξ_PPMatter_multipole" begin
+@testset "test print_map_ξ_PPGalaxies_multipole" begin
      RTOL = 1e-3
      kwargs_xis_PP = Dict(
           :pr => false, :enhancer => 1e8,
@@ -147,8 +147,8 @@ end
      @testset "with F" begin
           @testset "monopole" begin
                L = 0
-               name = "calc_xi_ppmatter_withF_L$L" * ".txt"
-               true_xi = "datatest/pp_matter/xi_ppmatter_withF_L$L" * ".txt"
+               name = "calc_xi_ppgalaxies_withF_L$L" * ".txt"
+               true_xi = "datatest/PPXiGalaxies/xi_ppgalaxies_withF_L$L" * ".txt"
 
                isfile(name) && rm(name)
 
@@ -156,7 +156,7 @@ end
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               GaPSE.print_map_ξ_PPMatter_multipole(COSMO, name,
+               GaPSE.print_map_ξ_PPGalaxies_multipole(COSMO, name,
                     10 .^ range(0, 3, length=300); use_windows=true,
                     L=L, kwargs_xis_PP...)
 
@@ -172,8 +172,8 @@ end
 
           @testset "quadrupole" begin
                L = 2
-               name = "calc_xi_ppmatter_withF_L$L" * ".txt"
-               true_xi = "datatest/pp_matter/xi_ppmatter_withF_L$L" * ".txt"
+               name = "calc_xi_ppgalaxies_withF_L$L" * ".txt"
+               true_xi = "datatest/PPXiGalaxies/xi_ppgalaxies_withF_L$L" * ".txt"
 
                isfile(name) && rm(name)
 
@@ -181,7 +181,7 @@ end
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               GaPSE.print_map_ξ_PPMatter_multipole(COSMO, name,
+               GaPSE.print_map_ξ_PPGalaxies_multipole(COSMO, name,
                     10 .^ range(0, 3, length=300); use_windows=true,
                     L=L, kwargs_xis_PP...)
 
@@ -199,8 +199,8 @@ end
 
           @testset "hexadecapole" begin
                L = 4
-               name = "calc_xi_ppmatter_withF_L$L" * ".txt"
-               true_xi = "datatest/pp_matter/xi_ppmatter_withF_L$L" * ".txt"
+               name = "calc_xi_ppgalaxies_withF_L$L" * ".txt"
+               true_xi = "datatest/PPXiGalaxies/xi_ppgalaxies_withF_L$L" * ".txt"
 
                isfile(name) && rm(name)
 
@@ -208,7 +208,7 @@ end
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               GaPSE.print_map_ξ_PPMatter_multipole(COSMO, name,
+               GaPSE.print_map_ξ_PPGalaxies_multipole(COSMO, name,
                     10 .^ range(0, 3, length=300); use_windows=true,
                     L=L, kwargs_xis_PP...)
 
@@ -226,8 +226,8 @@ end
      @testset "without F" begin
           @testset "monopole" begin
                L = 0
-               name = "calc_xi_ppmatter_noF_L$L" * ".txt"
-               true_xi = "datatest/pp_matter/xi_ppmatter_noF_L$L" * ".txt"
+               name = "calc_xi_ppgalaxies_noF_L$L" * ".txt"
+               true_xi = "datatest/PPXiGalaxies/xi_ppgalaxies_noF_L$L" * ".txt"
 
                isfile(name) && rm(name)
 
@@ -235,7 +235,7 @@ end
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               GaPSE.print_map_ξ_PPMatter_multipole(COSMO, name,
+               GaPSE.print_map_ξ_PPGalaxies_multipole(COSMO, name,
                     10 .^ range(0, 3, length=300); use_windows=false,
                     L=L, kwargs_xis_PP...)
 
@@ -251,8 +251,8 @@ end
 
           @testset "quadrupole" begin
                L = 2
-               name = "calc_xi_ppmatter_noF_L$L" * ".txt"
-               true_xi = "datatest/pp_matter/xi_ppmatter_noF_L$L" * ".txt"
+               name = "calc_xi_ppgalaxies_noF_L$L" * ".txt"
+               true_xi = "datatest/PPXiGalaxies/xi_ppgalaxies_noF_L$L" * ".txt"
 
                isfile(name) && rm(name)
 
@@ -260,7 +260,7 @@ end
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               GaPSE.print_map_ξ_PPMatter_multipole(COSMO, name,
+               GaPSE.print_map_ξ_PPGalaxies_multipole(COSMO, name,
                     10 .^ range(0, 3, length=300); use_windows=false,
                     L=L, kwargs_xis_PP...)
 
@@ -276,8 +276,8 @@ end
 
           @testset "hexadecapole" begin
                L = 4
-               name = "calc_xi_ppmatter_noF_L$L" * ".txt"
-               true_xi = "datatest/pp_matter/xi_ppmatter_noF_L$L" * ".txt"
+               name = "calc_xi_ppgalaxies_noF_L$L" * ".txt"
+               true_xi = "datatest/PPXiGalaxies/xi_ppgalaxies_noF_L$L" * ".txt"
 
                isfile(name) && rm(name)
 
@@ -285,7 +285,7 @@ end
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               GaPSE.print_map_ξ_PPMatter_multipole(COSMO, name,
+               GaPSE.print_map_ξ_PPGalaxies_multipole(COSMO, name,
                     10 .^ range(0, 3, length=300); use_windows=false,
                     L=L, kwargs_xis_PP...)
 

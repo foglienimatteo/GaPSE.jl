@@ -69,7 +69,7 @@ include("CosmoUtils.jl")
 include("IPSTools.jl")
 include("XiMatter.jl")
 include("Cosmology.jl")
-include("PPXiMatter.jl")
+include("PPXiGalaxies.jl")
 include("PNG.jl")
 
 

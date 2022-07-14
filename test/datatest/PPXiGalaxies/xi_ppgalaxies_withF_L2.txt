@@ -1,14 +1,14 @@
-# This is an integration map on mu of the ξ multipole concerning the PP Matter.
 ###############
 #    GaPSE    #
 ############### 
 #
+# This is an integration map on mu of the ξ multipole concerning the PP Galaxies.
 # The Cosmology considered had the following paremeters:
 # 
-# - Matter Power Spectrum input file: "../test/datatest/file_pk.txt"
-# - Background data input file: "../test/datatest/WideA_ZA_background.dat"
-# - F window function input file: "../test/datatest/F_REFERENCE_pi2.txt"
-# - Integrated F window function input file: "../test/datatest/IntegrF_REFERENCE_pi2.txt"
+# - Matter Power Spectrum input file: "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/file_pk.txt"
+# - Background data input file: "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/WideA_ZA_background.dat"
+# - F window function input file: "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/F_REFERENCE_pi2.txt"
+# - Integrated F window function input file: "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/IntegrF_REFERENCE_pi2.txt"
 #
 # - Basic CosmoParams considered: 
 #	 z_min = 0.05 	 z_max = 0.2
@@ -41,7 +41,7 @@
 # 	 σ_3 = 3735.1226181519773
 # 	 (where σ_i = \int_{k_{min}}^{k_{max}}\frac{dq}{2 π^2} q^{2-i} P(q))
 # 
-# computational time needed (in s) : 1.2605
+# computational time needed (in s) : 1.2760
 # kwards passed: 
 # 		use_windows = true
 # 		L = 2
@@ -52,7 +52,7 @@
 # 		μ_rtol = 0.01
 # 
 # s [Mpc/h_0] 	 	 xi
-1.0 	 -1.4566859643367562
+1.0 	 -1.3249843313651317
 1.0233717986325197 	 -1.313434257002573
 1.0472898382363585 	 -1.3019313155217052
 1.071766885445503 	 -1.2904732253592932

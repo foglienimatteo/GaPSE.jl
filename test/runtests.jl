@@ -184,8 +184,8 @@ end
      include("test_XiMatter.jl")
 end
 
-@testset "test PPXiMatter" begin
-     include("test_PPXiMatter.jl")
+@testset "test PPXiGalaxies" begin
+     include("test_PPXiGalaxies.jl")
 end
 
 

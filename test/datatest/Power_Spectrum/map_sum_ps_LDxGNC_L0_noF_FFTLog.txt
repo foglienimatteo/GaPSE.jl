@@ -5,12 +5,12 @@
 #
 # Power Spectra Multipole computation for the cross correlations between 
 #Luminosity Distance perturbations and Galaxy Number Counts from the file:
-# ../test/datatest/Power_Spectrum/map_sum_xi_LDxGNC_L0_noF.txt
+# /Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/Power_Spectrum/map_sum_xi_LDxGNC_L0_noF.txt
 #
 # For this PS_multipole computation we set: 
 # 	 #points used in Fourier transform N = 300
 # 	 multipole degree in consideration L = 0
-# overall computational time needed (in s) : 0.1484
+# overall computational time needed (in s) : 0.1522
 # kwards passed to "print_all_PS_multipole": 
 # 		ν = 1.5
 # 		n_extrap_high = 500

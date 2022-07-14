@@ -4,12 +4,12 @@
 #
 #
 # Power Spectra Multipole computation for the Luminosity Distance perturbations GR effect
-# from the file: ../test/datatest/Power_Spectrum/map_sum_xi_LD_L0_noF.txt
+# from the file: /Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/Power_Spectrum/map_sum_xi_LD_L0_noF.txt
 #
 # For this PS_multipole computation we set: 
 # 	 #points used in Fourier transform N = 300
 # 	 multipole degree in consideration L = 0
-# overall computational time needed (in s) : 0.6023
+# overall computational time needed (in s) : 0.4374
 # kwards passed to "print_all_PS_multipole": 
 # 		ν = 1.5
 # 		n_extrap_high = 500
