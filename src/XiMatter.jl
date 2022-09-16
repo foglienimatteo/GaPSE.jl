@@ -18,6 +18,15 @@
 #
 
 
+"""
+    ξ_from_PS(f_in;
+     int_k_min::Float64 = 1e-3, int_k_max::Float64 = 1e1,
+     L::Int = 0, N::Int = 1024, pr::Bool = true,
+     s0::Union{Nothing,Float64} = nothing,
+     right::Union{Float64,Nothing} = nothing)
+
+TBW
+"""
 function ξ_from_PS(f_in;
      int_k_min::Float64 = 1e-3, int_k_max::Float64 = 1e1,
      L::Int = 0, N::Int = 1024, pr::Bool = true,

@@ -18,6 +18,55 @@
 #
 
 
+
+"""
+     TF(
+          left_value::Float64
+          left::Float64
+
+          spline::Dierckx.Spline1D
+
+          r_si::Float64
+          r_b::Float64
+          r_a::Float64
+          right::Float64
+          )
+
+Contains all the information useful in order to return the Transfer Function value from:
+- a spline inside the interval `left ≤ x ≤ right`
+- the associated power law for `x > right` (with "right" coefficients `r_si`, `r_b` and `r_a`)
+- the associated constant left value `left_value` for `x < left`
+
+
+
+## Arguments 
+
+- `left_value::Float64` : the constant value that must be returned in case `x < left`.
+
+- `left::Float64` : the break between the left power-law (for `x <left`) and the 
+  spline (for `x ≥ left`); its value is the `xs[begin]` one.
+
+- `spline::Dierckx.Spline1D` : spline that interpolates between the real values of the 
+  integral calculated inside the range `left ≤ x ≤ right`
+
+- `right::Float64` : the break between the right power-law (for `x ≥ left`) and the 
+  spline (for `x ≤ right`); its value is the `xs[end]` one.
+
+- `r_si, r_b, r_a :: Float64` : coefficient for the spurious power-law 
+  ``y = f(x) = a + b \\, x^s`` for the RIGHT edge; when an input value `x > right` is
+  given, the returned one is obtained from `power_law` with this coefficients (
+  where, of course, `r_si` is the exponent, `r_b`` the coefficient and `r_a` the 
+  spurious adding constant). 
+  NOTE: for numerical issues, the "pure" power-law ``y = f(x) = b + x^s`` should be used. 
+
+## Constructors
+
+`TF(ks, Tks)` : from a set of `(ks, Tks)` pairs, take the mean of the first 10 as left
+value and fit with `power_law_from_data` the last 15.
+
+
+See also: [`power_law_from_data`](@ref)
+"""
 struct TF
      left_value::Float64
      left::Float64
@@ -42,6 +91,27 @@ struct TF
 end;
 
 
+"""
+     (f::TF)(x)
+
+Return the value of the `f::TF` as follows:
+```math
+f(x)=
+\\begin{cases}
+y_{\\mathrm left} \\; ,
+    \\quad \\quad x < \\mathrm{left}\\\\
+\\mathrm{spline}(x) \\; , \\quad \\mathrm{left} \\leq x \\leq \\mathrm{right} \\\\
+a_\\mathrm{R} + b_\\mathrm{R} \\, x ^ {s_\\mathrm{R}} \\; , 
+\\quad x > \\mathrm{right}
+\\end{cases}
+```
+
+where ``y_\\mathrm{left}``,``\\mathrm{left}``,
+``\\mathrm{spline}``, ``a_\\mathrm{R}``, ``b_\\mathrm{R}``, ``s_\\mathrm{R}`` and 
+``\\mathrm{right}`` are all stored inside the `TF` considered.
+
+See also: [`TF`](@ref)
+"""
 function (tf::TF)(k)
      if k < tf.left
           return tf.left_value
@@ -56,6 +126,26 @@ end;
 ##########################################################################################92
 
 
+"""
+     α_bias(k, tf::TF; bf=1.0, D=1.0, Ω_M0=0.29992)
+
+Return the coefficient ``\\alpha_{\\rm bias}`` that relates the Non-Gaussian density fluctiations 
+``\\delta_{\\rm NG}`` and the Non-Gaussian gravitational potential ``\\Phi_{\\rm NG}``
+in Fourier space:
+
+```math
+\\delta_{\\rm NG}(k) = \\alpha(k, z) \\,  \\Phi_{\\rm NG}(k) \\; \\;  , \\quad
+\\alpha(k, z) = \\frac{2}{3} \\frac{k^2 T_m(k) D(z)}{\\Omega_{\\mathrm{M}0}} \\left(\\frac{c}{H_0}\\right)^2 
+\\; \\; ,  \\quad \\; \\alpha_{\\rm bias} = \\frac{b_{\\phi} f_{\\rm NL}}{\\alpha(k, z)} \\; .
+```
+
+- `bf=1.0` : value of the degenerate product ``b_{\\phi} f_{\\rm NL}``.
+- `D = 1.0` : value of the linear growth factor ``D`` at present day; inside this function, 
+  it is multiplied for a constant ``q`` in order to get ``q \\, D = ``  
+
+
+See also: [`TF`](@ref)
+"""
 function α_bias(k, tf::TF; bf=1.0, D=1.0, Ω_M0=0.29992)
      return 1.5 * bf * Ω_M0 * (100 / 299792.458)^2 / (0.779017 * D * k^2 * tf(k))
 end
@@ -143,12 +233,12 @@ struct CosmoPNG
      params::Dict{Symbol,T1} where {T1}
 
      function CosmoPNG(
-               cosmo::Cosmology,
-               file_TF::String;
-               comments::Bool = true, D = nothing, bf = 1.0,
-               flm0 = 5e-2, flM0 = 1e-1, flm2 = 5e-1, flM2 = 1e0,
-               kmin = 1e-6, kmax=1e4, N::Int = 1024
-          )
+          cosmo::Cosmology,
+          file_TF::String;
+          comments::Bool=true, D=nothing, bf=1.0,
+          flm0=5e-2, flM0=1e-1, flm2=5e-1, flM2=1e0,
+          kmin=1e-6, kmax=1e4, N::Int=1024
+     )
 
           table = readdlm(file_TF; comments=comments)
           ks_tf = convert(Vector{Float64}, table[:, 1])
@@ -156,14 +246,14 @@ struct CosmoPNG
 
           DD = isnothing(D) ? cosmo.D_of_s(cosmo.s_eff) : D
           tf = TF(ks_tf, pks_tf)
-     
+
           J0 = IntegralIPSalpha(tf, cosmo, 0, 0; D=DD, bf=bf, kmin=kmin, kmax=kmax,
                fit_left_min=flm0, fit_left_max=flM0, N=N)
           J2 = IntegralIPSalpha(tf, cosmo, 2, 0; D=DD, bf=bf, kmin=kmin, kmax=kmax,
                fit_left_min=flm2, fit_left_max=flM2, N=N)
-     
-          params = Dict(:D=>D, :bf=>bf, :flm0=>flm0, :flM0=>flM0, 
-               :flm2=>flm2, :flM2=>flM2, :kmin=>kmin, :kmax=>kmax, :N=>N)
+
+          params = Dict(:D => D, :bf => bf, :flm0 => flm0, :flM0 => flM0,
+               :flm2 => flm2, :flM2 => flM2, :kmin => kmin, :kmax => kmax, :N => N)
 
           new(tf, file_TF, J0, J2, params)
      end
@@ -220,7 +310,7 @@ function integrand_ξ_S_multipole(s, μ, cosmo::Cosmology, cosmopng::CosmoPNG;
      res = if use_windows == true
           ξ_S(s, μ, cosmo, cosmopng) .* (
                spline_integrF(s, μ, cosmo.windowFint) / cosmo.WFI_norm * Pl(μ, L)
-               )
+          )
      else
           ξ_S(s, μ, cosmo, cosmopng) .* Pl(μ, L)
      end
