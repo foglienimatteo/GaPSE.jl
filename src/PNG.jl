@@ -146,11 +146,127 @@ in Fourier space:
 
 See also: [`TF`](@ref)
 """
-function α_bias(k, tf::TF; bf=1.0, D=1.0, Ω_M0=0.29992)
+function α_bias(k, tf::TF; bf=1.0, D=1.0, Ω_M0=0.29992, q=0.779017)
      return 1.5 * bf * Ω_M0 * (100 / 299792.458)^2 / (0.779017 * D * k^2 * tf(k))
 end
 
 
+
+"""
+     IntegralIPSalpha(
+          l_si::Float64
+          l_b::Float64
+          l_a::Float64
+          left::Float64
+
+          spline::Dierckx.Spline1D
+
+          r_si::Float64
+          r_b::Float64
+          r_a::Float64
+          right::Float64
+     )
+
+Contains all the information useful in order to return the value of the integral
+of the Input Power Spectrum weighted with the `α_bias` function. In other words,
+return this expression:
+
+```math
+\\int_0^\\infty \\frac{\\mathrm{d} q}{2 \\pi^2} \\, q^2 \\,
+    \\frac{j_\\ell(qs)}{(qs)^n} \\, P(q) \\, \\alpha_{\\mathrm{bias}} \\; ,
+```
+
+where ``P(q)`` is the Input Power Spectrum and
+
+```math
+\\delta_{\\rm NG}(k) = \\alpha(k, z) \\,  \\Phi_{\\rm NG}(k) \\; \\;  , \\quad
+\\alpha(k, z) = \\frac{2}{3} \\frac{k^2 T_m(k) D(z)}{\\Omega_{\\mathrm{M}0}} \\left(\\frac{c}{H_0}\\right)^2 
+\\; \\; ,  \\quad \\; \\alpha_{\\rm bias} = \\frac{b_{\\phi} f_{\\rm NL}}{\\alpha(k, z)} \\; .
+```
+
+## Arguments 
+
+- `l_si, l_b, l_a ::Float64` : coefficient for the spurious power-law 
+  ``y = f(x) = a + b \\, x^s`` for the LEFT edge; when an input value `x < left` is
+  given, the returned one is obtained from `power_law` with this coefficients (
+  where, of course, `l_si` is the exponent, `l_b` the coefficient and `l_a` the 
+  spurious adding constant). 
+
+- `left::Float64` : the break between the left power-law (for `x < left`) and the 
+  spline (for `x ≥ left`); its value is the `fit_min` of the used constructor.
+
+- `spline::Dierckx.Spline1D` : spline that interpolates between the real values of the 
+  integral calculated inside the range `left ≤ x ≤ right`
+
+- `right::Float64` : the break between the right power-law (for `x > right`) and the 
+  spline (for `x ≤ right`); its value is the `fit_max` of the used constructor.
+
+- `r_si, r_b, r_a ::Float64` : coefficient for the spurious power-law 
+  ``y = f(x) = a + b \\, x^s`` for the RIGHT edge; when an input value `x > right` is
+  given, the returned one is obtained from `power_law` with this coefficients (
+  where, of course, `r_si` is the exponent, `r_b` the coefficient and `r_a` the 
+  spurious adding constant). 
+  NOTE: for numerical issues, only the "pure" power-law ``y = f(x) = b + x^s`` can be used. 
+  In other words, it always set `r_a = 0.0`.
+
+## Constructors
+
+    IntegralIPSalpha(tf::TF, cosmo::Cosmology, l, n=0; D=nothing, bf=1.0,
+        N::Int=1024, kmin=1e-6, kmax=1e4, s0=1e-4,
+        fit_left_min=nothing, fit_left_max=nothing, p0_left=nothing,
+        fit_right_min=nothing, fit_right_max=nothing, p0_right=nothing)
+
+The integral obtained with this constructor is calculated through `xicalc`, and
+expanded with power-laws at the edges.
+
+- `tf::TF`: the struct that contains all the data concerning the Transfer Function.
+
+- `cosmo::Cosmology` : cosmology to be used in this computation
+
+- `l` : degree of the spherical Bessel function to be used.
+
+- `n=0` : degree of the exponent for the denominator. The interesting case is
+  only the default value ``0``.
+
+- `D = nothing` : value of the linear growth factor ``D`` to be used. If `nothing`,
+  it will be internally set as ``D(z_{\\mathrm{eff}})``, where ``z_{\\mathrm{eff}}`` is
+  the effective redshift for the input cosmology.
+
+- `bf = 1.0` : value of the degenerate product ``b_{\\phi} f_{\\rm NL}``.
+
+- `kmin = 1e-6, kmax = 1e4, s0 = 1e-4` : values to be passed to `xicalc` for the
+  integration
+
+- `fit_left_min = 2.0, fit_left_max = 10.0` : the limits (min and max) where the integral
+  must be fitted with a power law, for small distances. This operation is necessary, because `xicalc`,
+  in this context, gives wrong results for too small input distance `s`; nevertheless,
+  this integral has fixed power-law trends for ``s \\rightarrow 0``, so this approach gives
+  good results.
+
+- `p0_left = nothing` : vector with the initial values for the left power-law fitting; its length must
+  be 2 (if you want to fit with a pure power-law ``y = f(x) = b x^s``, so only `l_si` and `l_b` 
+  are matter of concern) or 3 (if you want to fit with a spurious power-law ``y = f(x) = a + b x^s``,
+  so you are also interested in `l_a`); if `nothing`, it will be
+  automatically set `p0 = [-1.0, 1.0]`.
+
+- `fit_right_min = nothing, fit_right_max = nothing` : the limits (min and max) where the integral
+  must be fitted with a power law, for high distances. 
+  This integral has fixed power-law trends for ``s \\rightarrow \\infty``, so this approach gives
+  good results. If `nothing`, the last 15 points returned from `xicalc` are used for
+  this fitting.
+  NOTE: for numerical issues, only the "pure" power-law ``y = f(x) = b + x^s`` can be used. 
+
+- `p0_right = nothing` : vector with the initial values for the left power-law fitting; its length must
+  be 2 (to fit with a pure power-law ``y = f(x) = b x^s``, so only `r_si` and `r_b` 
+  are matter of concern); if `nothing`, it will be
+  automatically set `p0 = [-4.0, 1.0]`.
+
+All the power-law fitting (both "pure" and spurious) are made through the 
+local function `power_law_from_data`.
+
+See also: [`power_law_from_data`](@ref), [`power_law`](@ref), 
+[`Cosmology`](@ref), [`α_bias`](@ref)
+"""
 struct IntegralIPSalpha
      l_si::Float64
      l_b::Float64
@@ -206,6 +322,27 @@ struct IntegralIPSalpha
 end;
 
 
+"""
+     (f::IntegralIPSalpha)(x)
+
+Return the value of the `f::IntegralIPSalpha` as follows:
+```math
+f(x)=
+\\begin{cases}
+a_\\mathrm{L} + b_\\mathrm{L} \\, x ^ {s_\\mathrm{L}} \\; ,
+    \\quad x < \\mathrm{left}\\\\
+\\mathrm{spline}(x) \\; , \\quad \\mathrm{left} \\leq x \\leq \\mathrm{right} \\\\
+a_\\mathrm{R} + b_\\mathrm{R} \\, x ^ {s_\\mathrm{R}} \\; , 
+\\quad x > \\mathrm{right}
+\\end{cases}
+```
+
+where ``a_\\mathrm{L}``, ``b_\\mathrm{L}``, ``s_\\mathrm{L}``, ``\\mathrm{left}``,
+``\\mathrm{spline}``, ``a_\\mathrm{R}``, ``b_\\mathrm{R}``, ``s_\\mathrm{R}`` and 
+``\\mathrm{right}`` are all stored inside the `IntegralIPSalpha` considered.
+
+See also: [`IntegralIPSalpha`](@ref)
+"""
 function (Jl::IntegralIPSalpha)(x)
      if x < Jl.left
           return power_law(x, Jl.l_si, Jl.l_b, Jl.l_a)
