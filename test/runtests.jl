@@ -87,7 +87,6 @@ end
 end
 
 
-
 ################################### COSMOLOGY IMPLEMENTATION #############################92
 
 
@@ -174,7 +173,7 @@ KWARGS_LDxGNC = Dict(
 );
 
 
-################################### TEST PLANE-PARALLEL APPROXIMATIONS#### ###############92
+################################### TEST PLANE-PARALLEL APPROXIMATIONS ###################92
 
 @testset "test PPDoppler" begin
      include("test_PPDoppler.jl")
@@ -186,6 +185,15 @@ end
 
 @testset "test PPXiGalaxies" begin
      include("test_PPXiGalaxies.jl")
+end
+
+
+
+################################### TEST PRIMORDIAL NON-GAUSSIANITES #####################92
+
+
+@testset "test PNG" begin
+     include("test_PNG.jl")
 end
 
 

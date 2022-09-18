@@ -189,8 +189,6 @@ end
                calc_ss = convert(Vector{Float64}, calc_table[:, 1])
                calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-               println()
-
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
 
