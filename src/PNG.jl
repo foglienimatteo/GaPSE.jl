@@ -360,6 +360,80 @@ end;
 
 
 
+
+"""
+    CosmoPNG(
+        tf::TF
+        file_TF::String
+
+        J0::IntegralIPSalpha
+        J2::IntegralIPSalpha
+
+        params::Dict{Symbol,T1} where {T1}
+        )
+
+Struct that contains all the information that may be used for the 
+Correlation Function computations of the Primordial Non-Gaussianities signal.
+
+## Arguments
+
+- `tf::TF` : transfer function to be used.
+
+- `file_TF::String` : name of the file where the transfer function was read.
+
+- `J0` and `J2::IntegralIPSalpha` : integrals with the following form:
+```math
+  J_\\ell = \\int_0^\\infty \\frac{\\mathrm{d} q}{2 \\pi^2} \\, q^2 \\,
+  j_\\ell(qs) \\, P(q) \\, \\alpha_{\\mathrm{bias}} \\; ,
+```
+
+  where ``P(q)`` is the Input Power Spectrum and
+
+```math
+  \\delta_{\\rm NG}(k) = \\alpha(k, z) \\,  \\Phi_{\\rm NG}(k) \\; \\;  , \\quad
+  \\alpha(k, z) = \\frac{2}{3} \\frac{k^2 T_m(k) D(z)}{\\Omega_{\\mathrm{M}0}} \\left(\\frac{c}{H_0}\\right)^2 
+  \\; \\; ,  \\quad \\; \\alpha_{\\rm bias} = \\frac{b_{\\phi} f_{\\rm NL}}{\\alpha(k, z)} \\; .
+```
+
+- `params::Dict{Symbol, T1} where {T1}` : parameter values used in the constructor.
+
+
+## Constructor 
+
+    CosmoPNG(
+          cosmo::Cosmology,
+          file_TF::String;
+          comments::Bool=true, D=nothing, bf=1.0,
+          flm0=5e-2, flM0=1e-1, flm2=5e-1, flM2=1e0,
+          kmin=1e-6, kmax=1e4, N::Int=1024
+     )
+
+- `cosmo::Cosmology` : cosmology to be considered, both in terms od Input Power Spectrum
+  and of cosmological parameters.
+
+- `file_TF::String ` : name of the file where the Transfer Function to be used is stored.
+
+- `comments::Bool=true` : the `file_TF` file contains comments at the beginning?
+
+- `D = nothing` : value of the linear growth factor ``D`` to be used. If `nothing`,
+  it will be internally set as ``D(z_{\\mathrm{eff}})``, where ``z_{\\mathrm{eff}}`` is
+  the effective redshift for the input cosmology.
+
+- `bf = 1.0` : value of the degenerate product ``b_{\\phi} f_{\\rm NL}``.
+
+- `kmin = 1e-6, kmax = 1e4, s0 = 1e-4` : values to be passed to `xicalc` for the
+  integration of both `J0` and `J2`
+
+- `flm0=5e-2, flM0=1e-1` : the limits (min and max) where the integral `J0`
+  must be fitted with a power law, for small distances. This operation is necessary, because `xicalc`,
+  in this context, gives wrong results for too small input distance `s`; nevertheless,
+  this integral has fixed power-law trends for ``s \\rightarrow 0``, so this approach gives
+  good results.
+
+- `flm2=5e-1, flM2=1e0` : same as the previous ones, but for `J2`.
+
+See also: [`TF`](@ref), [`IntegralIPSalpha`](@ref), [`Cosmology`](@ref)
+"""
 struct CosmoPNG
      tf::TF
      file_TF::String
