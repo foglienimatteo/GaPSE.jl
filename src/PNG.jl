@@ -146,7 +146,7 @@ in Fourier space:
 
 See also: [`TF`](@ref)
 """
-function α_bias(k, tf::TF; bf=1.0, D=1.0, Ω_M0=0.29992, q=0.779017)
+function α_bias(k, tf::TF; bf=1.0, D=1.0, Ω_M0=0.29992)
      return 1.5 * bf * Ω_M0 * (100 / 299792.458)^2 / (0.779017 * D * k^2 * tf(k))
 end
 

@@ -108,6 +108,11 @@ end
           ys_1_calc = [my_cosmopng.J0(k) for k in xs]
           ys_2_calc = [my_cosmopng.J2(k) for k in xs]
 
+          @test isapprox(IntIPSalpha_J0(1.34), 9.484203885952665e-5; rtol=RTOL)
+          @test isapprox(my_cosmopng.J0(1.34), 9.484203885952665e-5; rtol=RTOL)
+          @test isapprox(IntIPSalpha_J2(1.34), 1.689394925744043e-5; rtol=RTOL)
+          @test isapprox(my_cosmopng.J2(1.34), 1.689394925744043e-5; rtol=RTOL)
+
           @test all([isapprox(a, b; rtol=RTOL) for (a, b) in zip(pks_true, pks_calc)])
           @test my_cosmopng.file_TF == "datatest/Tk.dat"
           @test all([isapprox(a, b; rtol=RTOL) for (a, b) in zip(ys_1_true, ys_1_calc)])
@@ -154,6 +159,11 @@ end
           pks_calc = [my_cosmopng.tf(k) for k in ks_true]
           ys_1_calc = [my_cosmopng.J0(k) for k in xs]
           ys_2_calc = [my_cosmopng.J2(k) for k in xs]
+
+          @test isapprox(IntIPSalpha_J0(1.34), 9.484203885952665e-5; rtol=RTOL)
+          @test isapprox(my_cosmopng.J0(1.34), 9.484203885952665e-5; rtol=RTOL)
+          @test isapprox(IntIPSalpha_J2(1.34), 1.689394925744043e-5; rtol=RTOL)
+          @test isapprox(my_cosmopng.J2(1.34), 1.689394925744043e-5; rtol=RTOL)
 
           @test all([isapprox(a, b; rtol=RTOL) for (a, b) in zip(pks_true, pks_calc)])
           @test my_cosmopng.file_TF == "datatest/Tk.dat"
