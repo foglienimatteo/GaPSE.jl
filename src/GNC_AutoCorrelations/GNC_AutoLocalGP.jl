@@ -19,6 +19,9 @@
 
 
 function ξ_GNC_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
+     P0 = Point(0.0, cosmo)
+     f0, ℋ0 = P0.f, P0.ℋ
+
      s1, D1, f1, a1, ℛ1, ℋ1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℛ_GNC, P1.ℋ
      s2, D2, f2, a2, ℛ2, ℋ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℛ_GNC, P2.ℋ
      s_b1, s_b2 = cosmo.params.s_b, cosmo.params.s_b
@@ -27,13 +30,31 @@ function ξ_GNC_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
 
      Δs = s(s1, s2, y)
 
-     factor = 1/4 * Δs^4 * D1 * D2 / (a1 * a2)
+     factor = 1 / 4 * Δs^4 * D1 * D2 / (a1 * a2)
      parenth_1 = 2 * f2 * ℋ2^2 * a2 * (𝑓_evo2 - 3) + 3 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5 * s_b2 - 2)
      parenth_2 = 2 * f1 * ℋ1^2 * a1 * (𝑓_evo1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f1 + ℛ1 + 5 * s_b1 - 2)
 
      I04_tilde = cosmo.tools.I04_tilde(Δs)
 
-     res = factor * parenth_1 * parenth_2 * I04_tilde
+     #### New observer terms #########
+
+     I04_tilde_s1 = cosmo.tools.I04_tilde(s1)
+     I04_tilde_s1 = cosmo.tools.I04_tilde(s1)
+     σ2 = cosmo.tools.σ_2
+
+     J_σ2 = 1 / 3 * y * f0^2 * ℋ0^2 * (ℛ1 - 5 * s_b1 + 2) * (ℛ2 - 5 * s_b2 + 2)
+
+     obs_parenth_1 = ℋ0 * s1 * ℛ1 * (2 * f0 - 3 * Ω_M0) + 2 * f0 * (5 * s_b1 - 2)
+     obs_parenth_2 = ℋ0 * s2 * ℛ2 * (2 * f0 - 3 * Ω_M0) + 2 * f0 * (5 * s_b2 - 2)
+
+     obs_terms_1 = ℋ0^2 * s2^4 / (4 * s1 * a2) * obs_parenth_1 * parenth_1 + ℋ0^2 / (4 * s1 * s2) obs_parenth_1 * obs_parenth_2 * σ2
+
+
+
+     #################################
+
+     #res = factor * parenth_1 * parenth_2 * I04_tilde
+     res = factor * parenth_1 * parenth_2 * I04_tilde + obs_terms
 
      return res
 end
