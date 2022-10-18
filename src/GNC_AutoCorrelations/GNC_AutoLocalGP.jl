@@ -50,7 +50,7 @@ function ξ_GNC_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      obs_parenth_1 = ℋ0 * s1^4 / (4 * s2 * a1) * (2 * a1 * ℋ1^2 * f1 * (𝑓_evo1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f1 + ℛ1 + 5 * s_b1 - 2))
      obs_parenth_2 = ℋ0 * s2^4 / (4 * s1 * a2) * (2 * a2 * ℋ2^2 * f2 * (𝑓_evo2 - 3) + 3 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5 * s_b2 - 2))
 
-     obs_terms = obs_common_2 * obs_parenth_1 * I04_tilde_s1 + obs_common_1 * obs_parenth_2 * I04_tilde_s2 + J_σ2 * σ2
+     obs_terms = D2 * obs_common_2 * obs_parenth_1 * I04_tilde_s1 + D1 * obs_common_1 * obs_parenth_2 * I04_tilde_s2 + J_σ2 * σ2
 
 
      #################################
