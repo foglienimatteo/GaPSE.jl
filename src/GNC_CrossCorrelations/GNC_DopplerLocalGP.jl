@@ -95,9 +95,9 @@ function ξ_GNC_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs::
 end
 
 
-function ξ_GNC_Doppler_LocalGP(s1, s2, y, cosmo::Cosmology)
+function ξ_GNC_Doppler_LocalGP(s1, s2, y, cosmo::Cosmology; obs::Bool = true)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_GNC_Doppler_LocalGP(P1, P2, y, cosmo)
+     return ξ_GNC_Doppler_LocalGP(P1, P2, y, cosmo; obs = obs)
 end
 
 
@@ -111,7 +111,7 @@ end
 
 
 
-function ξ_GNC_LocalGP_Doppler(s1, s2, y, cosmo::Cosmology)
-     ξ_GNC_Doppler_LocalGP(s2, s1, y, cosmo)
+function ξ_GNC_LocalGP_Doppler(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_GNC_Doppler_LocalGP(s2, s1, y, cosmo; kwargs...)
 end
 

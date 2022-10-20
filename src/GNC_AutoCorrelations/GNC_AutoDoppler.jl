@@ -41,7 +41,7 @@ function ξ_GNC_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Bool = t
      else
 
           #### New observer terms #########
-          
+
           P0 = Point(0.0, cosmo)
           f0, ℋ0 = P0.f, P0.ℋ
 
@@ -67,9 +67,9 @@ function ξ_GNC_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Bool = t
 end
 
 
-function ξ_GNC_Doppler(s1, s2, y, cosmo::Cosmology)
+function ξ_GNC_Doppler(s1, s2, y, cosmo::Cosmology; obs::Bool = true)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_GNC_Doppler(P1, P2, y, cosmo)
+     return ξ_GNC_Doppler(P1, P2, y, cosmo; obs = obs)
 end
 
 

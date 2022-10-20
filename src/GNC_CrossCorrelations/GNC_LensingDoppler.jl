@@ -117,7 +117,7 @@ function integrand_ξ_GNC_Lensing_Doppler(
             )
      else
           #### New observer terms #########
-          
+
           P0 = Point(0.0, cosmo)
           ℋ0, f0 = P0.ℋ, P0.f
 
@@ -138,11 +138,11 @@ end
 
 function integrand_ξ_GNC_Lensing_Doppler(
      χ1::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology)
+     y, cosmo::Cosmology; obs::Bool = true)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ1, cosmo)
-     return integrand_ξ_GNC_Lensing_Doppler(IP, P1, P2, y, cosmo)
+     return integrand_ξ_GNC_Lensing_Doppler(IP, P1, P2, y, cosmo; obs = obs)
 end
 
 
