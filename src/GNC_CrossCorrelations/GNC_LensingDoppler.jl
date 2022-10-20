@@ -73,19 +73,22 @@ See also: [`ξ_GNC_Lensing_Doppler`](@ref), [`int_on_mu_Lensing_Doppler`](@ref)
 """
 function integrand_ξ_GNC_Lensing_Doppler(
      IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+     y, cosmo::Cosmology; obs::Bool = true)
+
+     P0 = Point(0.0, cosmo)
+     f0, ℋ0 = P0.f, P0.ℋ
 
      s1 = P1.comdist
      s2, D_s2, f_s2, ℋ_s2, ℛ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_GNC
      χ1, D1, a1 = IP.comdist, IP.D, IP.a
-     s_b_s1 = cosmo.params.s_b
+     s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b
      Ω_M0 = cosmo.params.Ω_M0
 
 
      Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
      Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0
 
-     common = ℋ0^2 * Ω_M0 * D1 * (χ1 - s1) * (5 * s_b_s1 - 2)/ (s1 * a1)
+     common = ℋ0^2 * Ω_M0 * D1 * (χ1 - s1) * (5 * s_b_s1 - 2) / (s1 * a1)
      factor = D_s2 * f_s2 * ℋ_s2 * ℛ_s2
 
      new_J00 = 1 / 15 * (χ1^2 * y + χ1 * s2 * (4 * y^2 - 3) - 2 * y * s2^2)
@@ -95,8 +98,10 @@ function integrand_ξ_GNC_Lensing_Doppler(
           + χ1 * (23 * y^2 - 3) * s2^3 - 8 * y * s2^4)
      new_J04 = 1 / (70 * Δχ1^2) * (
           2 * χ1^4 * y + 2 * χ1^3 * (2 * y^2 - 3) * s2
-          - χ1^2 * y * (y^2 + 5) * s2^2
-          + χ1 * (y^2 + 9) * s2^3 - 4 * y * s2^4)
+          -
+          χ1^2 * y * (y^2 + 5) * s2^2
+          +
+          χ1 * (y^2 + 9) * s2^3 - 4 * y * s2^4)
      new_J20 = y * Δχ1^2
 
      I00 = cosmo.tools.I00(Δχ1)
@@ -104,10 +109,29 @@ function integrand_ξ_GNC_Lensing_Doppler(
      I40 = cosmo.tools.I40(Δχ1)
      I02 = cosmo.tools.I02(Δχ1)
 
-     return common * factor * (
-                  new_J00 * I00 + new_J02 * I20 +
-                  new_J04 * I40 + new_J20 * I02
-             )
+
+     if obs == false
+          return common * factor * (
+                 new_J00 * I00 + new_J02 * I20 +
+                 new_J04 * I40 + new_J20 * I02
+            )
+     else
+          #### New observer terms #########
+          P0 = Point(0.0, cosmo)
+          ℋ0, f0 = P0.ℋ, P0.f
+
+          I13_χ1 = cosmo.tools.I13(χ1)
+
+          obs_terms = - 3 * χ1^2 * y * f0 * ℋ0 * (ℛ_s2 - 5 * s_b_s2 + 2) * common * I13_χ1
+
+          #################################     
+          
+          return common * factor * (
+                 new_J00 * I00 + new_J02 * I20 +
+                 new_J04 * I40 + new_J20 * I02
+            ) + obs_terms
+     end
+
 end
 
 

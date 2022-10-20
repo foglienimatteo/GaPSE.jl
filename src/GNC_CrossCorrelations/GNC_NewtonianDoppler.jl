@@ -49,9 +49,7 @@ I^n_l(s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} q^2 \\, P(q) \\, \\frac
 
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
-function ξ_GNC_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
-     P0 = Point(0.0, cosmo)
-     ℋ0, f0 = P0.ℋ, P0.f
+function ξ_GNC_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Bool=true)
 
      s1, D1, f1 = P1.comdist, P1.D, P1.f
      s2, D2, f2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_GNC
@@ -83,20 +81,25 @@ function ξ_GNC_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
      I20 = cosmo.tools.I20(Δs)
      I40 = cosmo.tools.I40(Δs)
 
+     if obs == false
+          return common * (J00 * I00 + J02 * I20 + J04 * I40)
+     else
+          #### New observer terms #########
 
-     #### New observer terms #########
+          P0 = Point(0.0, cosmo)
+          ℋ0, f0 = P0.ℋ, P0.f
 
-     I31_s1 = cosmo.tools.I31(s1)
-     I11_s1 = cosmo.tools.I11(s1)
+          I31_s1 = cosmo.tools.I31(s1)
+          I11_s1 = cosmo.tools.I11(s1)
 
-     obs_common = 1 / 5 * y * f0 * ℋ0 * s1 * (ℛ2 - 5 * s_b2 + 2)
+          obs_common = 1 / 5 * y * f0 * ℋ0 * s1 * (ℛ2 - 5 * s_b2 + 2)
 
-     obs_terms = D1 * obs_common * ((5 * b1 + 3 * f1) * I11_s1 - 2 * f1 * I31_s1)
+          obs_terms = D1 * obs_common * ((5 * b1 + 3 * f1) * I11_s1 - 2 * f1 * I31_s1)
 
-     #################################
+          #################################
 
-     #return common * (J00 * I00 + J02 * I20 + J04 * I40)
-     return common * (J00 * I00 + J02 * I20 + J04 * I40) + obs_terms
+          return common * (J00 * I00 + J02 * I20 + J04 * I40) + obs_terms
+     end
 end
 
 
