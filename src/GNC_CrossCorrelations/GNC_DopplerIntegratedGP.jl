@@ -63,7 +63,7 @@ See also: [`ξ_GNC_Doppler_IntegratedGP`](@ref), [`int_on_mu_Doppler_IntegratedG
 """
 function integrand_ξ_GNC_Doppler_IntegratedGP(
      IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+     y, cosmo::Cosmology; obs::Bool = true)
 
      s1, D_s1, f_s1, ℋ_s1, ℛ_s1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_GNC
      s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
@@ -74,7 +74,7 @@ function integrand_ξ_GNC_Doppler_IntegratedGP(
      Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
      Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
 
-     common = D_s1 * ℋ0^2 * Ω_M0 * D2 / (s2 * a2)
+     common = ℋ0^2 * Ω_M0 * D2 / (s2 * a2)
      factor = Δχ2^2 * f_s1 * ℋ_s1 * ℛ_s1 * (χ2 * y - s1) 
      parenth = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2
 
@@ -83,10 +83,28 @@ function integrand_ξ_GNC_Doppler_IntegratedGP(
      I40 = cosmo.tools.I40(Δχ2)
      I02 = cosmo.tools.I02(Δχ2)
 
-     return common * factor * parenth * (
-                 1 / 15 * I00 + 2 / 21 * I20
-                 + 1 / 35 * I40 + 1 * I02
-            )
+     if obs == false
+          return D_s1 * common * factor * parenth * (
+                    1 / 15 * I00 + 2 / 21 * I20
+                    + 1 / 35 * I40 + 1 * I02
+               )
+     else
+          #### New observer terms #########
+          
+          P0 = Point(0.0, cosmo)
+          ℋ0, f0 = P0.ℋ, P0.f
+
+          I13_χ2 = cosmo.tools.I13(χ2)
+
+          obs_terms = - 3 * χ2^2 * y * f0 * ℋ0 * (ℛ_s1 - 5 * s_b_s1 + 2) * common * parenth * I13_χ2
+
+          #################################
+          
+          return D_s1 * common * factor * parenth * (
+                    1 / 15 * I00 + 2 / 21 * I20
+                    + 1 / 35 * I40 + 1 * I02
+               ) + obs_terms
+     end
 end
 
 

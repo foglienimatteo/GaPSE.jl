@@ -117,6 +117,7 @@ function integrand_ξ_GNC_Lensing_Doppler(
             )
      else
           #### New observer terms #########
+          
           P0 = Point(0.0, cosmo)
           ℋ0, f0 = P0.ℋ, P0.f
 
