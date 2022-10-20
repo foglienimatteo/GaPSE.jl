@@ -57,7 +57,7 @@ See also: [`ξ_GNC_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_IntegratedG
 """
 function integrand_ξ_GNC_LocalGP_IntegratedGP(
      IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+     y, cosmo::Cosmology; obs::Bool = true)
 
      s1, D_s1, f_s1, a_s1, ℋ_s1, ℛ_s1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ, P1.ℛ_GNC
      s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
@@ -69,12 +69,27 @@ function integrand_ξ_GNC_LocalGP_IntegratedGP(
      Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
      Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
 
-     factor = 3 / 2 * D_s1 * Δχ2^4 * ℋ0^2 * Ω_M0 * D2 * (s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2) / (s2 * a2 * a_s1)
+     factor = 3 * ℋ0^2 * Ω_M0 * D2 * (s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2) / (2 * s2 * a2)
      parenth = 2 * f_s1 * ℋ_s1^2 * a_s1 * (𝑓_evo_s1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f_s1 + ℛ_s1 + 5 * s_b_s1 - 2)
      
      I04_tilde = cosmo.tools.I04_tilde(Δχ2)
 
-     return factor * parenth * I04_tilde
+     if obs == false
+          return Δχ2^4 / a_s1 * D_s1 * factor * parenth * I04_tilde
+     else
+          #### New observer terms #########
+          
+          P0 = Point(0.0, cosmo)
+          ℋ0, f0 = P0.ℋ, P0.f
+
+          I04_tilde_χ2 = cosmo.tools.I04_tilde(χ2)
+
+          obs_terms = χ2^4 / s1 * factor * (ℋ0 * s1 * ℛ1 * (2 * f0 - 3 * Ω_M0) + 2 * f0 * (5 * s_b_s1 - 2)) * I04_tilde_χ2
+          
+          #################################
+
+          return Δχ2^4 / a_s1 * D_s1 * factor * parenth * I04_tilde + obs_terms
+     end
 end
 
 
