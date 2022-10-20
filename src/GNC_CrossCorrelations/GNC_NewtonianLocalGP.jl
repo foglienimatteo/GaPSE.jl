@@ -79,7 +79,7 @@ function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs
 
           #### New observer terms #########
 
-           P0 = Point(0.0, cosmo)
+          P0 = Point(0.0, cosmo)
           ℋ0, f0 = P0.ℋ, P0.f
 
           I31_s1 = cosmo.tools.I31(s1)
