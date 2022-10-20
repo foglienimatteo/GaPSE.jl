@@ -50,6 +50,9 @@ I^n_l(s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} q^2 \\, P(q) \\, \\frac
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
 function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
+     P0 = Point(0.0, cosmo)
+     ℋ0, f0 = P0.ℋ, P0.f
+
      s1, D1, f1 = P1.comdist, P1.D, P1.f
      s2, D2, f2, a2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ, P2.ℛ_GNC
      b1 = cosmo.params.b
@@ -62,17 +65,38 @@ function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      common = 2 * f2 * a2 * ℋ2^2 * (𝑓_evo2 - 3) + 3 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5 * s_b2 - 2)
      factor = f1 * ((3 * y^2 - 1) * s2^2 - 4 * y * s1 * s2 + 2 * s1^2)
 
-     J20 = - 1 / 6 * (3 * b1 + f1) * (- 2 * y * s1 * s2 + s1^2 + s2^2)
+     J20 = -1 / 6 * (3 * b1 + f1) * (-2 * y * s1 * s2 + s1^2 + s2^2)
 
      I00 = cosmo.tools.I00(Δs)
      I20 = cosmo.tools.I20(Δs)
      I40 = cosmo.tools.I40(Δs)
      I02 = cosmo.tools.I02(Δs)
 
+     #### New observer terms #########
+
+     I31_s1 = cosmo.tools.I31(s1)
+     I11_s1 = cosmo.tools.I11(s1)
+     I13_s1 = cosmo.tools.I13(s1)
+
+     obs_common = ℋ0 * s1^2 * (ℛ2 * s2 * ℋ0 * (2 * f0 - 3 * Ω_M0) +  2 * f0 * (5 * s_b2 + 2))
+
+     obs_terms = D1 * obs_common * ( (3 * b1 + f1) / 2 * I13_s1 + (b1 + f1)/10 * (I11_s1 + I31_s1) )
+
+     #################################
+
+
+     #return D1 * D2 / a2 * common * (
+     #            factor * (1 / 90 * I00 + 1 / 63 * I20 + 1 / 210 * I40)
+     #            +
+     #            J20 * I02
+     #       )
+
      return D1 * D2 / a2 * common * (
-          factor * (1 / 90 * I00 + 1 / 63 * I20 + 1 / 210 * I40) 
-          + J20 * I02
-          )
+                 factor * (1 / 90 * I00 + 1 / 63 * I20 + 1 / 210 * I40)
+                 +
+                 J20 * I02
+            ) + obs_terms
+
 end
 
 
