@@ -294,8 +294,10 @@ struct Cosmology
           vec_ℋs_p = [derivative(ℋ_of_τ, t) for t in BD.conftime]
           ℋ_p_of_s = Spline1D(BD.comdist, vec_ℋs_p; bc="error")
      
-          ss = 10 .^ range(-4, log10(BD.comdist[end]), length=1000)
-          ℛ_LDs = [func_ℛ_LD(s, (println("s, H_of_s = $s, $(ℋ_of_s(s))"); ℋ_of_s(s)); s_lim=params.s_lim) for s in ss]
+          println(BD.z[end], " ",BD.comdist[end])
+          first_ss = 10.0 .^ range(-4, log10(BD.comdist[end]), length=1000)
+          ss = vcat(first_ss[begin:end-1], BD.comdist[end])
+          ℛ_LDs = [func_ℛ_LD(s, ℋ_of_s(s); s_lim=params.s_lim) for s in ss]
           ℛ_LD_of_s = Spline1D(vcat(0.0, ss), vcat(ℛ_LDs[begin], ℛ_LDs); bc="error")
      
           ℛ_GNCs = [func_ℛ_GNC(s, ℋ_of_s(s), ℋ_p_of_s(s);
