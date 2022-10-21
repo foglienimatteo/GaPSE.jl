@@ -90,9 +90,6 @@ function integrand_ξ_GNC_Doppler_IntegratedGP(
                )
      else
           #### New observer terms #########
-          
-          P0 = Point(0.0, cosmo)
-          ℋ0, f0 = P0.ℋ, P0.f
 
           I13_χ2 = cosmo.tools.I13(χ2)
 

@@ -41,9 +41,6 @@ function ξ_GNC_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Bool = t
 
           #### New observer terms #########
 
-          P0 = Point(0.0, cosmo)
-          f0, ℋ0 = P0.f, P0.ℋ
-
           I04_tilde_s1 = cosmo.tools.I04_tilde(s1)
           I04_tilde_s2 = cosmo.tools.I04_tilde(s2)
           σ2 = cosmo.tools.σ_2

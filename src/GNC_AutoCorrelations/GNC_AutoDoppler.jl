@@ -42,9 +42,6 @@ function ξ_GNC_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Bool = t
 
           #### New observer terms #########
 
-          P0 = Point(0.0, cosmo)
-          f0, ℋ0 = P0.f, P0.ℋ
-
           I13_s1, I13_s2 = cosmo.tools.I13(s1), cosmo.tools.I13(s2)
           I31_s1, I31_s2 = cosmo.tools.I31(s1), cosmo.tools.I31(s2)
           I11_s1, I11_s2 = cosmo.tools.I11(s1), cosmo.tools.I11(s2)

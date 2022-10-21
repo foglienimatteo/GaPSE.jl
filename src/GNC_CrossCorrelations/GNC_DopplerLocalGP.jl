@@ -74,9 +74,6 @@ function ξ_GNC_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs::
      else
           #### New observer terms #########
 
-          P0 = Point(0.0, cosmo)
-          ℋ0, f0 = P0.ℋ, P0.f
-
           I13_s1 = cosmo.tools.I13(s1)
           I13_s2 = cosmo.tools.I13(s2)
 
