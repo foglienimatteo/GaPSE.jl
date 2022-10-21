@@ -68,7 +68,7 @@ function integrand_ξ_GNC_Doppler_IntegratedGP(
      s1, D_s1, f_s1, ℋ_s1, ℛ_s1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_GNC
      s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
      χ2, D2, a2, f2, ℋ2 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
-     s_b_s2 = cosmo.params.s_b
+     s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
