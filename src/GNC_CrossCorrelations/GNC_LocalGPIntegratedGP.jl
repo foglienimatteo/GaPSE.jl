@@ -81,7 +81,7 @@ function integrand_ξ_GNC_LocalGP_IntegratedGP(
 
           I04_tilde_χ2 = cosmo.tools.I04_tilde(χ2)
 
-          obs_terms = χ2^4 / s1 * factor * (ℋ0 * s1 * ℛ1 * (2 * f0 - 3 * Ω_M0) + 2 * f0 * (5 * s_b_s1 - 2)) * I04_tilde_χ2
+          obs_terms = χ2^4 / s1 * factor * (ℋ0 * s1 * ℛ_s1 * (2 * f0 - 3 * Ω_M0) + 2 * f0 * (5 * s_b_s1 - 2)) * I04_tilde_χ2
           
           #################################
 
