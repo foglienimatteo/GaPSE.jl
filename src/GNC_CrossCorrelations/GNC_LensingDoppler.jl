@@ -218,7 +218,7 @@ See also: [`integrand_ξ_GNC_Lensing_Doppler`](@ref), [`int_on_mu_Lensing_Dopple
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNC_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Int = 100)
+     en::Float64 = 1e6, N_χs::Int = 100, obs::Bool = true)
 
      χ1s = s1 .* range(1e-6, 1, length = N_χs)
 
@@ -226,7 +226,7 @@ function ξ_GNC_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
      IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_Lensing_Doppler(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNC_Lensing_Doppler(IP, P1, P2, y, cosmo; obs = obs)
           for IP in IPs
      ]
 

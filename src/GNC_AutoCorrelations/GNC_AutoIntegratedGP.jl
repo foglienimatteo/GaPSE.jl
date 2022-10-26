@@ -64,7 +64,7 @@ See also: [`ξ_GNC_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
 """
 function integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
      P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+     y, cosmo::Cosmology; obs::Bool = true)
 
      s1, ℛ_s1 = P1.comdist, P1.ℛ_GNC
      s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
@@ -88,7 +88,7 @@ end
 
 
 function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e10, N_χs_2::Int = 100)
+     en::Float64 = 1e10, N_χs_2::Int = 100, obs::Bool = true)
 
      #adim_χs = range(1e-12, 1, N_χs)
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
@@ -100,7 +100,7 @@ function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξ_igp = [
-          en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; obs = obs)
           for IP1 in IP1s, IP2 in IP2s
      ]
 

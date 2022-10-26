@@ -68,7 +68,7 @@ See also: [`ξ_GNC_Lensing_IntegratedGP`](@ref), [`integrand_on_mu_Lensing_Integ
 function integrand_ξ_GNC_Lensing_IntegratedGP(
      IP1::Point, IP2::Point,
      P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+     y, cosmo::Cosmology; obs::Bool = true)
 
      s1 = P1.comdist
      s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
@@ -173,7 +173,7 @@ See also: [`integrand_ξ_GNC_Lensing_IntegratedGP`](@ref), [`integrand_on_mu_Len
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNC_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs_2::Int = 100)
+     en::Float64 = 1e6, N_χs_2::Int = 100, obs::Bool = true)
 
      χ1s = P1.comdist .* range(1e-6, 1, length = N_χs_2)
      χ2s = P2.comdist .* range(1e-6, 1, length = N_χs_2 + 7)
@@ -182,7 +182,7 @@ function ξ_GNC_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_Lensing_IntegratedGP(IP1, IP2, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNC_Lensing_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; obs = obs)
           for IP1 in IP1s, IP2 in IP2s
      ]
 

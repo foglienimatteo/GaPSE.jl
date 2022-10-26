@@ -66,7 +66,7 @@ See also: [`ξ_GNC_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_LocalGP`](@ref)
 """
 function integrand_ξ_GNC_Lensing_LocalGP(
      IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+     y, cosmo::Cosmology; obs::Bool = true)
 
      s1 = P1.comdist
      s2, D_s2, f_s2, a_s2, ℋ_s2, ℛ_s2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ, P2.ℛ_GNC
@@ -100,11 +100,11 @@ end
 
 function integrand_ξ_GNC_Lensing_LocalGP(
      χ1::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology)
+     y, cosmo::Cosmology; obs::Bool = true)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ1, cosmo)
-     return integrand_ξ_GNC_Lensing_LocalGP(IP, P1, P2, y, cosmo)
+     return integrand_ξ_GNC_Lensing_LocalGP(IP, P1, P2, y, cosmo; obs = obs)
 end
 
 
@@ -165,7 +165,7 @@ See also: [`integrand_ξ_GNC_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_LocalG
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNC_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Int = 100)
+     en::Float64 = 1e6, N_χs::Int = 100, obs::Bool = true)
 
      χ1s = s1 .* range(1e-6, 1, length = N_χs)
 
@@ -173,7 +173,7 @@ function ξ_GNC_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
      IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_Lensing_LocalGP(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNC_Lensing_LocalGP(IP, P1, P2, y, cosmo; obs = obs)
           for IP in IPs
      ]
 

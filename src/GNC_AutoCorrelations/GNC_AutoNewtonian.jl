@@ -18,7 +18,7 @@
 #
 
 
-function ξ_GNC_Newtonian(P1::Point, P2::Point, y, cosmo::Cosmology)
+function ξ_GNC_Newtonian(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Bool = true)
      s1, D1, f1 = P1.comdist, P1.D, P1.f
      s2, D2, f2 = P2.comdist, P2.D, P2.f
      b1, b2 = cosmo.params.b, cosmo.params.b
@@ -47,9 +47,9 @@ function ξ_GNC_Newtonian(P1::Point, P2::Point, y, cosmo::Cosmology)
 end
 
 
-function ξ_GNC_Newtonian(s1, s2, y, cosmo::Cosmology)
+function ξ_GNC_Newtonian(s1, s2, y, cosmo::Cosmology; obs::Bool = true)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_GNC_Newtonian(P1, P2, y, cosmo)
+     return ξ_GNC_Newtonian(P1, P2, y, cosmo; obs = obs)
 end
 
 
