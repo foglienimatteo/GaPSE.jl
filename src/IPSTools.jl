@@ -507,6 +507,7 @@ end
           σ_1::Float64
           σ_2::Float64
           σ_3::Float64
+          σ_4::Float64
 
           fit_min::Union{Float64,Nothing}
           fit_max::Union{Float64,Nothing}
@@ -542,7 +543,7 @@ Input Power Spectrum.
   This integral is calculated brute-force with `quadgk`, and fitted with power-laws
   at the edges (for `s < 0.1` and `s > 1e4`).
 
-- `σ_0, σ_1, σ_2, σ_3 :: Float64`: these are the results of the following integral:
+- `σ_0, σ_1, σ_2, σ_3, σ_4 :: Float64`: these are the results of the following integral:
   ```math
   \\sigma_i = \\int_{k_\\mathrm{min}}^{k_\\mathrm{max}} \\frac{\\mathrm{d} q}{2 \\pi^2} \\, q^{2-i} \\, P(q)
   ```
@@ -612,6 +613,7 @@ struct IPSTools
      σ_1::Float64
      σ_2::Float64
      σ_3::Float64
+     σ_4::Float64
 
      fit_min::Float64
      fit_max::Float64
@@ -686,8 +688,9 @@ struct IPSTools
           σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), k_min, k_max)[1]
           σ_2 = quadgk(q -> PK(q) / (2 * π^2), k_min, k_max)[1]
           σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), k_min, k_max)[1]
+          σ_4 = quadgk(q -> PK(q) / (2 * π^2 * q^2), k_min, k_max)[1]
 
-          new(I00, I20, I40, I02, I22, I31, I13, I11, I04_tilde, σ_0, σ_1, σ_2, σ_3,
+          new(I00, I20, I40, I02, I22, I31, I13, I11, I04_tilde, σ_0, σ_1, σ_2, σ_3, σ_4,
                fit_min, fit_max, k_min, k_max)
      end
 

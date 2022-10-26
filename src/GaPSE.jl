@@ -200,6 +200,7 @@ function parameters_used(io::IO, cosmo::Cosmology; logo::Bool=true)
      println(io, "# \t σ_1 = $(cosmo.tools.σ_1)")
      println(io, "# \t σ_2 = $(cosmo.tools.σ_2)")
      println(io, "# \t σ_3 = $(cosmo.tools.σ_3)")
+     println(io, "# \t σ_4 = $(cosmo.tools.σ_4)")
      println(io, "# \t (where σ_i = \\int_{k_{min}}^{k_{max}}\\frac{dq}{2 π^2} q^{2-i} P(q))")
      println(io, "# ")
 end
