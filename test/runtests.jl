@@ -266,6 +266,7 @@ end
 
 ################################### TEST RELATIVISTIC GALAXY NUMBER COUNTS ###############92
 
+#=
 
 @testset "test GNC_XiMultipoles" begin
      include("test_GNC_XiMultipoles.jl")
@@ -275,6 +276,7 @@ end
      include("test_GNC_SumXiMultipoles.jl")
 end
 
+=#
 
 ##############################
 
@@ -289,17 +291,21 @@ all_xis_GNC_L0_noF = [convert(Vector{Float64}, table_xis_GNC_L0_noF[:, i]) for i
      include("test_GNC_AutoCorrelations/test_GNC_AutoNewton.jl")
 end
 
+#=
 @testset "test GNC_AutoDoppler" begin
      include("test_GNC_AutoCorrelations/test_GNC_AutoDoppler.jl")
 end
+=#
 
 @testset "test GNC_AutoIntegratedGP" begin
      include("test_GNC_AutoCorrelations/test_GNC_AutoIntegratedGP.jl")
 end
 
+#=
 @testset "test GNC_AutoLocalGP" begin
      include("test_GNC_AutoCorrelations/test_GNC_AutoLocalGP.jl")
 end
+=#
 
 @testset "test GNC_AutoLensing" begin
      include("test_GNC_AutoCorrelations/test_GNC_AutoLensing.jl")
@@ -308,17 +314,17 @@ end
 
 ##############################
 
-@testset "test GNC_NewtonDoppler" begin
-     include("test_GNC_CrossCorrelations/test_GNC_NewtonDoppler.jl")
-end
+#@testset "test GNC_NewtonDoppler" begin
+#     include("test_GNC_CrossCorrelations/test_GNC_NewtonDoppler.jl")
+#end
 
 @testset "test GNC_NewtonLensing" begin
-     include("test_GNC_CrossCorrelations/test_GNC_NewtonDoppler.jl")
+     include("test_GNC_CrossCorrelations/test_GNC_NewtonLensing.jl")
 end
 
-@testset "test GNC_NewtonLocalGP" begin
-     include("test_GNC_CrossCorrelations/test_GNC_NewtonLocalGP.jl")
-end
+#@testset "test GNC_NewtonLocalGP" begin
+#     include("test_GNC_CrossCorrelations/test_GNC_NewtonLocalGP.jl")
+#end
 
 @testset "test GNC_NewtonIntegratedGP" begin
      include("test_GNC_CrossCorrelations/test_GNC_NewtonIntegratedGP.jl")
@@ -328,25 +334,25 @@ end
      include("test_GNC_CrossCorrelations/test_GNC_DopplerLensing.jl")
 end
 
-@testset "test GNC_DopplerLocalGP" begin
-     include("test_GNC_CrossCorrelations/test_GNC_DopplerLocalGP.jl")
-end
+#@testset "test GNC_DopplerLocalGP" begin
+#     include("test_GNC_CrossCorrelations/test_GNC_DopplerLocalGP.jl")
+#end
 
-@testset "test GNC_DopplerIntegratedGP" begin
-     include("test_GNC_CrossCorrelations/test_GNC_DopplerIntegratedGP.jl")
-end
+#@testset "test GNC_DopplerIntegratedGP" begin
+#     include("test_GNC_CrossCorrelations/test_GNC_DopplerIntegratedGP.jl")
+#end
 
 @testset "test GNC_LensingIntegratedGP" begin
      include("test_GNC_CrossCorrelations/test_GNC_LensingIntegratedGP.jl")
 end
 
-@testset "test GNC_LensingLocalGP" begin
-     include("test_GNC_CrossCorrelations/test_GNC_LensingLocalGP.jl")
-end
+#@testset "test GNC_LensingLocalGP" begin
+#     include("test_GNC_CrossCorrelations/test_GNC_LensingLocalGP.jl")
+#end
 
-@testset "test GNC_LocalGPIntegratedGP" begin
-     include("test_GNC_CrossCorrelations/test_GNC_LocalGPIntegratedGP.jl")
-end
+#@testset "test GNC_LocalGPIntegratedGP" begin
+#     include("test_GNC_CrossCorrelations/test_GNC_LocalGPIntegratedGP.jl")
+#end
 
 
 ##### TEST RELATIVISTIC GALAXY NUMBER COUNTS X LUMINOSITY DISTANCE PERT. and viceversa ###92
