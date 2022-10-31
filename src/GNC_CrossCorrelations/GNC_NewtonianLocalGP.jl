@@ -83,9 +83,9 @@ function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs
           I11_s1 = cosmo.tools.I11(s1)
           I13_s1 = cosmo.tools.I13(s1)
 
-          obs_common = ℋ0 * s1^2 * (ℛ2 * s2 * ℋ0 * (2 * f0 - 3 * Ω_M0) +  2 * f0 * (5 * s_b2 + 2))
+          obs_common = ℋ0 * s1^2 / (2 * s2) * (ℛ2 * s2 * ℋ0 * (2 * f0 - 3 * Ω_M0) +  2 * f0 * (5 * s_b2 - 2))
 
-          obs_terms = D1 * obs_common * ( (3 * b1 + f1) / 2 * I13_s1 + (b1 + f1)/10 * (I11_s1 + I31_s1) )
+          obs_terms = D1 * obs_common * ( (b1 + f1)/5 * (I11_s1 + I31_s1) - (3 * b1 + f1) * I13_s1)
 
           #################################
 
