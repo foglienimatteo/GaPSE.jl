@@ -93,7 +93,7 @@ function integrand_ξ_GNC_Doppler_IntegratedGP(
 
           I13_χ2 = cosmo.tools.I13(χ2)
 
-          obs_terms = - 3 * χ2^2 * y * f0 * ℋ0 * (ℛ_s1 - 5 * s_b_s1 + 2) * common * parenth * I13_χ2
+          obs_terms = - 3 * χ2^3 * y * f0 * ℋ0 * (ℛ_s1 - 5 * s_b_s1 + 2) * common * parenth * I13_χ2
 
           #################################
           
