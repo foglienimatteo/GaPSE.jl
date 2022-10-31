@@ -159,7 +159,7 @@ function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs_2::Int = 100, Δχ_min::Float64 = 1e-4, obs::Bool = true)
 
      χ1s = P1.comdist .* range(1e-6, 1, length = N_χs_2)
-     χ2s = P2.comdist .* range(1e-6, 1, length = N_χs_2 + 7)
+     χ2s = P2.comdist .* range(1e-5, 1, length = N_χs_2 + 7)
 
      IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
