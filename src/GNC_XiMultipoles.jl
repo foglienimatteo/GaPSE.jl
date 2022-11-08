@@ -408,6 +408,14 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
      ss = isnothing(v_ss) ? 10 .^ range(0, 3, length=N_log) : v_ss
      xis = pr ? begin
           @showprogress "$effect, L=$L: " [
+               #=
+               begin
+               effect=="auto_lensing" && print("s=$s, ")
+               rs = ξ_GNC_multipole(s_1, s, effect, cosmo; L=L, kwargs...)
+               effect=="auto_lensing" && print("res=$rs, ")
+               rs
+               end
+               =# 
                ξ_GNC_multipole(s_1, s, effect, cosmo; L=L, kwargs...) for s in ss
           ]
      end : [

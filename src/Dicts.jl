@@ -145,7 +145,7 @@ const GR_EFFECTS_chi_si_LD = [
 ];
 
 const GR_EFFECTS_chi_di_LD = [
-     "auto_lensing", "auto_integratedgp", 
+     "auto_lensing", "auto_integratedgp",
      "lensing_integratedgp", "integratedgp_lensing",
 ];
 
@@ -162,14 +162,14 @@ function specif_kwargs_LD(name::String, kwargs)
 
      @assert (name ∈ GaPSE.GR_EFFECTS_LD) error
 
-     if name ∈  GR_EFFECTS_chi_integrated_LD
+     if name ∈ GR_EFFECTS_chi_integrated_LD
           if name ∈ GR_EFFECTS_chi_si_LD
-               return filter(p->!(first(p) ∈ chi_di_LD_kwargs && first(p) ∉ chi_si_LD_kwargs), kwargs)
+               return filter(p -> !(first(p) ∈ chi_di_LD_kwargs && first(p) ∉ chi_si_LD_kwargs), kwargs)
           else
-               return filter(p->!(first(p) ∈ chi_si_LD_kwargs && first(p) ∉ chi_di_LD_kwargs), kwargs)
+               return filter(p -> !(first(p) ∈ chi_si_LD_kwargs && first(p) ∉ chi_di_LD_kwargs), kwargs)
           end
      else
-          return filter(p->(first(p) ∉ chi_integrated_LD_kwargs), kwargs)
+          return filter(p -> (first(p) ∉ chi_integrated_LD_kwargs), kwargs)
      end
 end
 
@@ -274,6 +274,25 @@ See also: [`GR_EFFECTS_GNC`](@ref), [`VEC_ξs_GNC`](@ref)
 const DICT_GR_ξs_GNC = Dict([k => v for (k, v) in zip(GR_EFFECTS_GNC, VEC_ξs_GNC)]...)
 
 
+
+"""
+     const DICT_ξs_GR_GNC::Dict{Function,String}
+
+For an input key TPCF function `func` from `VEC_ξs_GNC`, return the 
+associated string `DICT_ξs_GR_GNC[func]` from `GR_EFFECTS_GNC`,
+
+## Example
+
+```jldoctest
+julia> GaPSE.DICT_GR_ξs_GNC[ξ_GNC_Doppler]
+"auto_doppler"
+```
+
+See also: [`GR_EFFECTS_GNC`](@ref), [`VEC_ξs_GNC`](@ref)
+"""
+const DICT_ξs_GR_GNC = Dict([k => v for (k, v) in zip(VEC_ξs_GNC, GR_EFFECTS_GNC)]...)
+
+
 """
      const INDEX_GR_EFFECT_GNC::Dict{String,Integer}
 
@@ -339,14 +358,14 @@ function specif_kwargs_GNC(name::String, kwargs)
 
      @assert (name ∈ GaPSE.GR_EFFECTS_GNC) error
 
-     if name ∈  GR_EFFECTS_chi_integrated_GNC
+     if name ∈ GR_EFFECTS_chi_integrated_GNC
           if name ∈ GR_EFFECTS_chi_si_GNC
-               return filter(p->!(first(p) ∈ chi_di_GNC_kwargs && first(p) ∉ chi_si_GNC_kwargs), kwargs)
+               return filter(p -> !(first(p) ∈ chi_di_GNC_kwargs && first(p) ∉ chi_si_GNC_kwargs), kwargs)
           else
-               return filter(p->!(first(p) ∈ chi_si_GNC_kwargs && first(p) ∉ chi_di_GNC_kwargs), kwargs)
+               return filter(p -> !(first(p) ∈ chi_si_GNC_kwargs && first(p) ∉ chi_di_GNC_kwargs), kwargs)
           end
      else
-          return filter(p->(first(p) ∉ chi_integrated_GNC_kwargs), kwargs)
+          return filter(p -> (first(p) ∉ chi_integrated_GNC_kwargs), kwargs)
      end
 end
 
@@ -393,27 +412,19 @@ to change it.
 See also: [`VEC_ξs_GNCxLD`](@ref)
 """
 const GR_EFFECTS_GNCxLD = [
-     "newton_doppler", 
-     "newton_lensing", 
-     "newton_localgp", 
-     "newton_integratedgp",
-
-     "doppler_doppler",
+     "newton_doppler",
+     "newton_lensing",
+     "newton_localgp",
+     "newton_integratedgp", "doppler_doppler",
      "doppler_lensing",
-     "doppler_localgp", 
-     "doppler_integratedgp",
-
-     "lensing_doppler",
+     "doppler_localgp",
+     "doppler_integratedgp", "lensing_doppler",
      "lensing_lensing",
      "lensing_localgp",
-     "lensing_integratedgp",
-     
-     "localgp_doppler",
+     "lensing_integratedgp", "localgp_doppler",
      "localgp_lensing",
      "localgp_localgp",
-     "localgp_integratedgp",
-
-     "integratedgp_doppler",
+     "localgp_integratedgp", "integratedgp_doppler",
      "integratedgp_lensing",
      "integratedgp_localgp",
      "integratedgp_integratedgp",
@@ -455,27 +466,19 @@ to change it.
 See also: [`VEC_ξs_LDxGNC`](@ref)
 """
 const GR_EFFECTS_LDxGNC = [
-     "doppler_newton", 
-     "lensing_newton", 
-     "localgp_newton", 
-     "integratedgp_newton",
-
-     "doppler_doppler",
+     "doppler_newton",
+     "lensing_newton",
+     "localgp_newton",
+     "integratedgp_newton", "doppler_doppler",
      "lensing_doppler",
-     "localgp_doppler", 
-     "integratedgp_doppler",
-
-     "doppler_lensing",
+     "localgp_doppler",
+     "integratedgp_doppler", "doppler_lensing",
      "lensing_lensing",
      "localgp_lensing",
-     "integratedgp_lensing",
-     
-     "doppler_localgp",
+     "integratedgp_lensing", "doppler_localgp",
      "lensing_localgp",
      "localgp_localgp",
-     "integratedgp_localgp",
-
-     "doppler_integratedgp",
+     "integratedgp_localgp", "doppler_integratedgp",
      "lensing_integratedgp",
      "localgp_integratedgp",
      "integratedgp_integratedgp",
@@ -521,26 +524,18 @@ See also: [`GR_EFFECTS_GNCxLD`](@ref)
 """
 const VEC_ξs_GNCxLD = [
      ξ_GNCxLD_Newtonian_Doppler,
-     ξ_GNCxLD_Newtonian_Lensing, 
-     ξ_GNCxLD_Newtonian_LocalGP, 
-     ξ_GNCxLD_Newtonian_IntegratedGP, 
-
-     ξ_GNCxLD_Doppler_Doppler,
+     ξ_GNCxLD_Newtonian_Lensing,
+     ξ_GNCxLD_Newtonian_LocalGP,
+     ξ_GNCxLD_Newtonian_IntegratedGP, ξ_GNCxLD_Doppler_Doppler,
      ξ_GNCxLD_Doppler_Lensing,
-     ξ_GNCxLD_Doppler_LocalGP, 
-     ξ_GNCxLD_Doppler_IntegratedGP, 
-     
-     ξ_GNCxLD_Lensing_Doppler,
+     ξ_GNCxLD_Doppler_LocalGP,
+     ξ_GNCxLD_Doppler_IntegratedGP, ξ_GNCxLD_Lensing_Doppler,
      ξ_GNCxLD_Lensing_Lensing,
      ξ_GNCxLD_Lensing_LocalGP,
-     ξ_GNCxLD_Lensing_IntegratedGP,
-
-     ξ_GNCxLD_LocalGP_Doppler,
+     ξ_GNCxLD_Lensing_IntegratedGP, ξ_GNCxLD_LocalGP_Doppler,
      ξ_GNCxLD_LocalGP_Lensing,
      ξ_GNCxLD_LocalGP_LocalGP,
-     ξ_GNCxLD_LocalGP_IntegratedGP,
-
-     ξ_GNCxLD_IntegratedGP_Doppler,
+     ξ_GNCxLD_LocalGP_IntegratedGP, ξ_GNCxLD_IntegratedGP_Doppler,
      ξ_GNCxLD_IntegratedGP_Lensing,
      ξ_GNCxLD_IntegratedGP_LocalGP,
      ξ_GNCxLD_IntegratedGP_IntegratedGP,
@@ -585,24 +580,16 @@ const VEC_ξs_LDxGNC = [
      ξ_LDxGNC_Doppler_Newtonian,
      ξ_LDxGNC_Lensing_Newtonian,
      ξ_LDxGNC_LocalGP_Newtonian,
-     ξ_LDxGNC_IntegratedGP_Newtonian,
-
-     ξ_LDxGNC_Doppler_Doppler,
+     ξ_LDxGNC_IntegratedGP_Newtonian, ξ_LDxGNC_Doppler_Doppler,
      ξ_LDxGNC_Lensing_Doppler,
      ξ_LDxGNC_LocalGP_Doppler,
-     ξ_LDxGNC_IntegratedGP_Doppler,
-
-     ξ_LDxGNC_Doppler_Lensing,
+     ξ_LDxGNC_IntegratedGP_Doppler, ξ_LDxGNC_Doppler_Lensing,
      ξ_LDxGNC_Lensing_Lensing,
      ξ_LDxGNC_LocalGP_Lensing,
-     ξ_LDxGNC_IntegratedGP_Lensing,
-
-     ξ_LDxGNC_Doppler_LocalGP,
+     ξ_LDxGNC_IntegratedGP_Lensing, ξ_LDxGNC_Doppler_LocalGP,
      ξ_LDxGNC_Lensing_LocalGP,
      ξ_LDxGNC_LocalGP_LocalGP,
-     ξ_LDxGNC_IntegratedGP_LocalGP,
-
-     ξ_LDxGNC_Doppler_IntegratedGP,
+     ξ_LDxGNC_IntegratedGP_LocalGP, ξ_LDxGNC_Doppler_IntegratedGP,
      ξ_LDxGNC_Lensing_IntegratedGP,
      ξ_LDxGNC_LocalGP_IntegratedGP,
      ξ_LDxGNC_IntegratedGP_IntegratedGP,
@@ -667,7 +654,7 @@ julia> GaPSE.INDEX_GR_EFFECT_GNCxLD["newton_lensing"]
 See also: [`GR_EFFECTS_GNCxLD`](@ref)
 """
 const INDEX_GR_EFFECT_GNCxLD = Dict([name => i for (i, name) in
-                                  enumerate(GR_EFFECTS_GNCxLD)]...)
+                                     enumerate(GR_EFFECTS_GNCxLD)]...)
 
 
 """
@@ -686,7 +673,7 @@ julia> GaPSE.INDEX_GR_EFFECT_LDxGNC["lensing_newton"]
 See also: [`GR_EFFECTS_LDxGNC`](@ref)
 """
 const INDEX_GR_EFFECT_LDxGNC = Dict([name => i for (i, name) in
-                                  enumerate(GR_EFFECTS_LDxGNC)]...)
+                                     enumerate(GR_EFFECTS_LDxGNC)]...)
 
 
 ##########
@@ -708,7 +695,7 @@ julia> GaPSE.DICT_GR_ξs_GNCxLD[2]
 See also: [`GR_EFFECTS_GNCxLD`](@ref)
 """
 const GR_EFFECT_INDEX_GNCxLD = Dict([i => name for (i, name) in
-                                  enumerate(GR_EFFECTS_GNCxLD)]...)
+                                     enumerate(GR_EFFECTS_GNCxLD)]...)
 
 
 """
@@ -727,7 +714,7 @@ julia> GaPSE.DICT_GR_ξs_LDxGNC[2]
 See also: [`GR_EFFECTS_LDxGNC`](@ref)
 """
 const GR_EFFECT_INDEX_LDxGNC = Dict([i => name for (i, name) in
-                                  enumerate(GR_EFFECTS_LDxGNC)]...)
+                                     enumerate(GR_EFFECTS_LDxGNC)]...)
 
 
 ###########################################
@@ -735,19 +722,11 @@ const GR_EFFECT_INDEX_LDxGNC = Dict([i => name for (i, name) in
 
 
 const GR_EFFECTS_chi_si_GNCxLD = [
-     "newton_lensing", 
-     "newton_integratedgp",
-
-     "doppler_lensing",
-     "doppler_integratedgp",
-
-     "lensing_doppler",
-     "lensing_localgp",
-     
-     "localgp_lensing",
-     "localgp_integratedgp",
-
-     "integratedgp_doppler",
+     "newton_lensing",
+     "newton_integratedgp", "doppler_lensing",
+     "doppler_integratedgp", "lensing_doppler",
+     "lensing_localgp", "localgp_lensing",
+     "localgp_integratedgp", "integratedgp_doppler",
      "integratedgp_localgp",
 ];
 
@@ -771,14 +750,14 @@ function specif_kwargs_GNCxLD(name::String, kwargs)
 
      @assert (name ∈ GaPSE.GR_EFFECTS_GNCxLD) error
 
-     if name ∈  GR_EFFECTS_chi_integrated_GNCxLD
+     if name ∈ GR_EFFECTS_chi_integrated_GNCxLD
           if name ∈ GR_EFFECTS_chi_si_GNCxLD
-               return filter(p->!(first(p) ∈ chi_di_GNCxLD_kwargs && first(p) ∉ chi_si_GNCxLD_kwargs), kwargs)
+               return filter(p -> !(first(p) ∈ chi_di_GNCxLD_kwargs && first(p) ∉ chi_si_GNCxLD_kwargs), kwargs)
           else
-               return filter(p->!(first(p) ∈ chi_si_GNCxLD_kwargs && first(p) ∉ chi_di_GNCxLD_kwargs), kwargs)
+               return filter(p -> !(first(p) ∈ chi_si_GNCxLD_kwargs && first(p) ∉ chi_di_GNCxLD_kwargs), kwargs)
           end
      else
-          return filter(p->(first(p) ∉ chi_integrated_GNCxLD_kwargs), kwargs)
+          return filter(p -> (first(p) ∉ chi_integrated_GNCxLD_kwargs), kwargs)
      end
 end
 
@@ -787,19 +766,11 @@ end
 
 
 const GR_EFFECTS_chi_si_LDxGNC = [
-     "lensing_newton", 
-     "integratedgp_newton",
-
-     "lensing_doppler",
-     "integratedgp_doppler",
-
-     "doppler_lensing",
-     "localgp_lensing",
-     
-     "lensing_localgp",
-     "integratedgp_localgp",
-
-     "doppler_integratedgp",
+     "lensing_newton",
+     "integratedgp_newton", "lensing_doppler",
+     "integratedgp_doppler", "doppler_lensing",
+     "localgp_lensing", "lensing_localgp",
+     "integratedgp_localgp", "doppler_integratedgp",
      "localgp_integratedgp",
 ];
 
@@ -823,13 +794,13 @@ function specif_kwargs_LDxGNC(name::String, kwargs)
 
      @assert (name ∈ GaPSE.GR_EFFECTS_LDxGNC) error
 
-     if name ∈  GR_EFFECTS_chi_integrated_LDxGNC
+     if name ∈ GR_EFFECTS_chi_integrated_LDxGNC
           if name ∈ GR_EFFECTS_chi_si_LDxGNC
-               return filter(p->!(first(p) ∈ chi_di_LDxGNC_kwargs && first(p) ∉ chi_si_LDxGNC_kwargs), kwargs)
+               return filter(p -> !(first(p) ∈ chi_di_LDxGNC_kwargs && first(p) ∉ chi_si_LDxGNC_kwargs), kwargs)
           else
-               return filter(p->!(first(p) ∈ chi_si_LDxGNC_kwargs && first(p) ∉ chi_di_LDxGNC_kwargs), kwargs)
+               return filter(p -> !(first(p) ∈ chi_si_LDxGNC_kwargs && first(p) ∉ chi_di_LDxGNC_kwargs), kwargs)
           end
      else
-          return filter(p->(first(p) ∉ chi_integrated_GNCxLD_kwargs), kwargs)
+          return filter(p -> (first(p) ∉ chi_integrated_GNCxLD_kwargs), kwargs)
      end
 end
