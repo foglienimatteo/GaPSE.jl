@@ -68,7 +68,7 @@ See also: [`ξ_GNC_Lensing_IntegratedGP`](@ref), [`integrand_on_mu_Lensing_Integ
 function integrand_ξ_GNC_Lensing_IntegratedGP(
      IP1::Point, IP2::Point,
      P1::Point, P2::Point,
-     y, cosmo::Cosmology; obs::Bool = true)
+     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
 
      s1 = P1.comdist
      s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
@@ -173,7 +173,7 @@ See also: [`integrand_ξ_GNC_Lensing_IntegratedGP`](@ref), [`integrand_on_mu_Len
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNC_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs_2::Int = 100, obs::Bool = true)
+     en::Float64 = 1e6, N_χs_2::Int = 100, obs::Union{Bool, Symbol} = :noobsvel)
 
      χ1s = P1.comdist .* range(1e-6, 1, length = N_χs_2)
      χ2s = P2.comdist .* range(1e-6, 1, length = N_χs_2)

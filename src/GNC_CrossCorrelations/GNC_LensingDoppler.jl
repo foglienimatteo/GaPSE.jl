@@ -73,7 +73,7 @@ See also: [`ξ_GNC_Lensing_Doppler`](@ref), [`int_on_mu_Lensing_Doppler`](@ref)
 """
 function integrand_ξ_GNC_Lensing_Doppler(
      IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology; obs::Bool = true)
+     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
 
      s1 = P1.comdist
      s2, D_s2, f_s2, ℋ_s2, ℛ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_GNC
@@ -107,12 +107,13 @@ function integrand_ξ_GNC_Lensing_Doppler(
      I02 = cosmo.tools.I02(Δχ1)
 
 
-     if obs == false
+     if obs == false || obs == :no || obs == :noobsvel
           return common * factor * (
                  new_J00 * I00 + new_J02 * I20 +
                  new_J04 * I40 + new_J20 * I02
             )
-     else
+            
+     elseif obs == true || obs == :yes
           #### New observer terms #########
 
           I13_χ1 = cosmo.tools.I13(χ1)
@@ -125,6 +126,10 @@ function integrand_ξ_GNC_Lensing_Doppler(
                  new_J00 * I00 + new_J02 * I20 +
                  new_J04 * I40 + new_J20 * I02
             ) + obs_terms
+     else
+          throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
+               "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
+               ))
      end
 
 end
@@ -132,7 +137,7 @@ end
 
 function integrand_ξ_GNC_Lensing_Doppler(
      χ1::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology; obs::Bool = true)
+     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ1, cosmo)
@@ -218,7 +223,7 @@ See also: [`integrand_ξ_GNC_Lensing_Doppler`](@ref), [`int_on_mu_Lensing_Dopple
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNC_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Int = 100, obs::Bool = true)
+     en::Float64 = 1e6, N_χs::Int = 100, obs::Union{Bool, Symbol} = :noobsvel)
 
      χ1s = s1 .* range(1e-6, 1, length = N_χs)
 

@@ -49,7 +49,7 @@ I^n_l(s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} q^2 \\, P(q) \\, \\frac
 
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
-function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Bool = true)
+function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
      s1, D1, f1 = P1.comdist, P1.D, P1.f
      s2, D2, f2, a2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ, P2.ℛ_GNC
      b1 = cosmo.params.b
@@ -69,13 +69,13 @@ function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs
      I40 = cosmo.tools.I40(Δs)
      I02 = cosmo.tools.I02(Δs)
 
-     if obs == false
+     if obs == false || obs == :no 
           return D1 * D2 / a2 * common * (
                     factor * (1 / 90 * I00 + 1 / 63 * I20 + 1 / 210 * I40)
                     +
                     J20 * I02
                )
-     else
+     elseif obs == true || obs == :yes || obs == :noobsvel
 
           #### New observer terms #########
 
@@ -94,11 +94,16 @@ function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs
                     +
                     J20 * I02
                ) + obs_terms
+
+     else 
+          throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
+               "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
+               ))
      end
 end
 
 
-function ξ_GNC_Newtonian_LocalGP(s1, s2, y, cosmo::Cosmology; obs::Bool = true)
+function ξ_GNC_Newtonian_LocalGP(s1, s2, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      return ξ_GNC_Newtonian_LocalGP(P1, P2, y, cosmo; obs = obs)
 end

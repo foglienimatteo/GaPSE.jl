@@ -18,7 +18,7 @@
 #
 
 
-function ξ_GNC_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Bool = true)
+function ξ_GNC_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
 
      s1, D1, f1, a1, ℛ1, ℋ1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℛ_GNC, P1.ℋ
      s2, D2, f2, a2, ℛ2, ℋ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℛ_GNC, P2.ℋ
@@ -35,9 +35,10 @@ function ξ_GNC_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Bool = t
      I04_tilde = cosmo.tools.I04_tilde(Δs)
 
 
-     if obs == false
+     if obs == false || obs == :no
           return factor * parenth_1 * parenth_2 * I04_tilde
-     else
+
+     elseif obs == true || obs == :yes || obs == :noobsvel
 
           #### New observer terms #########
 
@@ -64,12 +65,15 @@ function ξ_GNC_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Bool = t
           #################################
 
           return factor * parenth_1 * parenth_2 * I04_tilde + obs_terms
-
+     else
+          throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
+               "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
+               ))
      end
 end
 
 
-function ξ_GNC_LocalGP(s1, s2, y, cosmo::Cosmology; obs::Bool = true)
+function ξ_GNC_LocalGP(s1, s2, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      return ξ_GNC_LocalGP(P1, P2, y, cosmo; obs = obs)
 end

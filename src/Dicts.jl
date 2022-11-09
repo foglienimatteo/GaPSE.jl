@@ -369,8 +369,34 @@ function specif_kwargs_GNC(name::String, kwargs)
      end
 end
 
+"""
+     const EFFECTS_WITH_OBS_VEL = [
+          "auto_doppler",
+          "newton_doppler", "doppler_newton",
+          "lensing_doppler", "doppler_lensing",
+          "doppler_localgp", "localgp_doppler",
+          "doppler_integratedgp", "integratedgp_doppler",
+     ] 
+
+Contains the names of the GNC effects that have observer terms derived from
+a non-zero observer velocity.
+"""
+const EFFECTS_WITH_OBS_VEL = [
+     "auto_doppler",
+     "newton_doppler", "doppler_newton",
+     "lensing_doppler", "doppler_lensing",
+     "doppler_localgp", "localgp_doppler",
+     "doppler_integratedgp", "integratedgp_doppler",
+]
 
 
+"""
+     const VALID_OBS_VALUES = [:yes, :no, :noobsvel]
+
+Contains the valid Symbols for the variable "obs", which refers to the GNC
+terms related to the observer.
+"""
+const VALID_OBS_VALUES = [:yes, :no, :noobsvel]
 
 ##################### GALAXY NUMBER COUNTS x LUMINOSITY DISTANCE #############################
 

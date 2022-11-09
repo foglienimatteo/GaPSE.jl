@@ -57,7 +57,7 @@ See also: [`ξ_GNC_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_IntegratedG
 """
 function integrand_ξ_GNC_LocalGP_IntegratedGP(
      IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology; obs::Bool = true)
+     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
 
      s1, D_s1, f_s1, a_s1, ℋ_s1, ℛ_s1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ, P1.ℛ_GNC
      s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
@@ -74,9 +74,10 @@ function integrand_ξ_GNC_LocalGP_IntegratedGP(
      
      I04_tilde = cosmo.tools.I04_tilde(Δχ2)
 
-     if obs == false
+     if obs == false || obs == :no 
           return Δχ2^4 / a_s1 * D_s1 * factor * parenth * I04_tilde
-     else
+          
+     elseif obs == true || obs == :yes || obs == :noobsvel
           #### New observer terms #########
 
           I04_tilde_χ2 = cosmo.tools.I04_tilde(χ2)
@@ -86,6 +87,10 @@ function integrand_ξ_GNC_LocalGP_IntegratedGP(
           #################################
 
           return Δχ2^4 / a_s1 * D_s1 * factor * parenth * I04_tilde + obs_terms
+     else
+          throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
+               "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
+               ))
      end
 end
 
@@ -149,7 +154,7 @@ See also: [`integrand_ξ_GNC_LocalGP_IntegratedGP`](@ref), [`int_on_mu_LocalGP_I
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNC_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Int = 100, obs::Bool = true)
+     en::Float64 = 1e6, N_χs::Int = 100, obs::Union{Bool, Symbol} = :noobsvel)
 
      χ2s = s2 .* range(1e-6, 1, length = N_χs)
 

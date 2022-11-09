@@ -156,6 +156,7 @@ integrand_ξ_GNC_multipole
 
 
 
+
 function ξ_GNC_multipole(
      s1, s, effect::Function, cosmo::Cosmology;
      L::Int=0,
@@ -165,15 +166,18 @@ function ξ_GNC_multipole(
      μ_atol::Float64=0.0,
      μ_rtol::Float64=1e-2,
      trap::Bool=false,
+     obs::Union{Bool, Symbol} = :noobsvel,
      kwargs...)
 
      error = "$(string(effect)) is not a valid GR effect function for galaxy number counts.\n" *
              "Valid GR effect functions for galaxy number counts are the following:\n" *
              string(string.(VEC_ξs_GNC) .* " , "...)
      @assert (effect ∈ VEC_ξs_GNC) error
+     @assert typeof(obs) == Bool || obs ∈ VALID_OBS_VALUES ":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
+          "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
 
      orig_f(μ) = enhancer * integrand_ξ_GNC_multipole(s1, s, μ, effect, cosmo;
-          L=L, use_windows=use_windows, kwargs...)
+          L=L, use_windows=use_windows, obs = obs, kwargs...)
      
      int =
           if s > 1.0 && trap == false

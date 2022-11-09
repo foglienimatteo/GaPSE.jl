@@ -63,7 +63,7 @@ See also: [`ξ_GNC_Newtonian_IntegratedGP`](@ref), [`int_on_mu_Newtonian_Integra
 """
 function integrand_ξ_GNC_Newtonian_IntegratedGP(
      IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology; obs::Bool = true)
+     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
 
      s1, D_s1, f_s1 = P1.comdist, P1.D, P1.f
      s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
@@ -160,7 +160,7 @@ See also: [`integrand_ξ_GNC_Newtonian_IntegratedGP`](@ref), [`int_on_mu_Newtoni
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNC_Newtonian_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Int = 100, obs::Bool = true)
+     en::Float64 = 1e6, N_χs::Int = 100, obs::Union{Bool, Symbol} = :noobsvel)
 
      χ2s = s2 .* range(1e-6, 1, length = N_χs)
 

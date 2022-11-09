@@ -63,7 +63,7 @@ See also: [`ξ_GNC_Doppler_IntegratedGP`](@ref), [`int_on_mu_Doppler_IntegratedG
 """
 function integrand_ξ_GNC_Doppler_IntegratedGP(
      IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology; obs::Bool = true)
+     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
 
      s1, D_s1, f_s1, ℋ_s1, ℛ_s1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_GNC
      s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
@@ -83,12 +83,12 @@ function integrand_ξ_GNC_Doppler_IntegratedGP(
      I40 = cosmo.tools.I40(Δχ2)
      I02 = cosmo.tools.I02(Δχ2)
 
-     if obs == false
+     if obs == false || obs == :no || obs == :noobsvel
           return D_s1 * common * factor * parenth * (
                     1 / 15 * I00 + 2 / 21 * I20
                     + 1 / 35 * I40 + 1 * I02
                )
-     else
+     elseif obs == true || obs == :yes
           #### New observer terms #########
 
           I13_χ2 = cosmo.tools.I13(χ2)
@@ -101,13 +101,17 @@ function integrand_ξ_GNC_Doppler_IntegratedGP(
                     1 / 15 * I00 + 2 / 21 * I20
                     + 1 / 35 * I40 + 1 * I02
                ) + obs_terms
+     else
+          throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
+               "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
+               ))
      end
 end
 
 
 function integrand_ξ_GNC_Doppler_IntegratedGP(
      χ2::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology; obs::Bool = true)
+     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ2, cosmo)
@@ -170,7 +174,7 @@ See also: [`integrand_ξ_GNC_Doppler_IntegratedGP`](@ref), [`int_on_mu_Doppler_I
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNC_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Int = 100, obs::Bool = true)
+     en::Float64 = 1e6, N_χs::Int = 100, obs::Union{Bool, Symbol} = :noobsvel)
 
      χ2s = s2 .* range(1e-6, 1, length = N_χs)
 

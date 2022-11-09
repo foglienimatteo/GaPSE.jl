@@ -18,8 +18,8 @@
 #
 
 
-function ξ_GNC_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Bool = true)
-
+function ξ_GNC_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
+     
      s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_GNC
      s2, D2, f2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_GNC
      s_b1, s_b2 = cosmo.params.s_b, cosmo.params.s_b
@@ -36,9 +36,9 @@ function ξ_GNC_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Bool = t
      parenth = 1 / 45 * I00 + 2 / 63 * I20 + 1 / 105 * I40
 
 
-     if obs == false
+     if obs == false || obs == :no || obs == :noobsvel
           return common * (factor * parenth + 1 / 3 * y * Δs^2 * I02)
-     else
+     elseif obs == true || obs == :yes
 
           #### New observer terms #########
 
@@ -59,12 +59,16 @@ function ξ_GNC_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Bool = t
           #################################
 
           return common * (factor * parenth + 1 / 3 * y * Δs^2 * I02) + obs_terms
+     else
+          throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
+               "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
+               ))
      end
 
 end
 
 
-function ξ_GNC_Doppler(s1, s2, y, cosmo::Cosmology; obs::Bool = true)
+function ξ_GNC_Doppler(s1, s2, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      return ξ_GNC_Doppler(P1, P2, y, cosmo; obs = obs)
 end

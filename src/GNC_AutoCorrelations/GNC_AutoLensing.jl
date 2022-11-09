@@ -96,7 +96,7 @@ function integrand_ξ_GNC_Lensing(
      IP1::Point, IP2::Point,
      P1::Point, P2::Point,
      y, cosmo::Cosmology;
-     Δχ_min::Float64=1e-4, obs::Bool = true)
+     Δχ_min::Float64=1e-4, obs::Union{Bool, Symbol} = :noobsvel)
 
      s1 = P1.comdist
      s2 = P2.comdist
@@ -156,7 +156,7 @@ end
 
 
 function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs_2::Int = 100, Δχ_min::Float64 = 1e-4, obs::Bool = true)
+     en::Float64 = 1e6, N_χs_2::Int = 100, Δχ_min::Float64 = 1e-4, obs::Union{Bool, Symbol} = :noobsvel)
 
      χ1s = P1.comdist .* range(1e-6, 1, length = N_χs_2)
      #χ2s = P2.comdist .* range(1e-5, 1, length = N_χs_2 + 7)

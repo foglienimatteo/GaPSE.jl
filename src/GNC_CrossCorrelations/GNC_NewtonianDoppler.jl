@@ -49,7 +49,7 @@ I^n_l(s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} q^2 \\, P(q) \\, \\frac
 
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
-function ξ_GNC_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Bool=true)
+function ξ_GNC_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
 
      s1, D1, f1 = P1.comdist, P1.D, P1.f
      s2, D2, f2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_GNC
@@ -81,9 +81,10 @@ function ξ_GNC_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology; obs
      I20 = cosmo.tools.I20(Δs)
      I40 = cosmo.tools.I40(Δs)
 
-     if obs == false
+     if obs == false || obs == :no || obs == :noobsvel
           return common * (J00 * I00 + J02 * I20 + J04 * I40)
-     else
+          
+     elseif obs == true || obs == :yes
           #### New observer terms #########
 
           I31_s1 = cosmo.tools.I31(s1)
@@ -96,11 +97,15 @@ function ξ_GNC_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology; obs
           #################################
 
           return common * (J00 * I00 + J02 * I20 + J04 * I40) + obs_terms
+     else
+          throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
+               "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
+               ))
      end
 end
 
 
-function ξ_GNC_Newtonian_Doppler(s1, s2, y, cosmo::Cosmology; obs::Bool = true)
+function ξ_GNC_Newtonian_Doppler(s1, s2, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      return ξ_GNC_Newtonian_Doppler(P1, P2, y, cosmo; obs = obs)
 end
