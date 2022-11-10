@@ -26,7 +26,10 @@ function integrand_ξ_GNC_multipole(s1, s, μ, effect::Function, cosmo::Cosmolog
      res = if use_windows == true
           #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
           int = effect(s1, s2_value, y_value, cosmo; kwargs...)
-          #println("int = $int")
+          println("int = $int")
+          print(" F_val = ", spline_integrF(s, μ, cosmo.windowFint))
+          print(" \t cost = " , cosmo.WFI_norm)
+          println(" \t Lp = " , Pl(μ, L) )
           int .* (spline_integrF(s, μ, cosmo.windowFint)/cosmo.WFI_norm * Pl(μ, L))
 
           #=
@@ -183,14 +186,13 @@ function ξ_GNC_multipole(
           if s > 1.0 && trap == false
                quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=μ_atol, rtol=μ_rtol)[1]
           else
-               #=
+               
                μs = union(
-                    range(-1.0, -0.90, length=N_μs),
-                    range(-0.90, 0.90, length=N_μs),
-                    range(0.90, 1.0, length=N_μs)
+                    range(-1.0, -0.98, length=N_μs),
+                    range(-0.98, 0.98, length=N_μs),
+                    range(0.98, 1.0, length=N_μs)
                     )
-               =#
-               μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_μs)
+               #μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_μs)
                orig_fs = orig_f.(μs)
                #orig_fs
                trapz(μs, orig_fs)

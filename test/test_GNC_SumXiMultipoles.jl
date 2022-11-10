@@ -30,6 +30,7 @@
           :enhancer => 1e8, :N_μs => 30,
           :μ_atol => 0.0, :μ_rtol => 1e-2,
           :N_χs => 100, :N_χs_2 => 50,
+          :obs => false,
           #:pr => false,
      )
 
@@ -123,6 +124,7 @@ end
           :enhancer => 1e8, :N_μs => 30,
           :μ_atol => 0.0, :μ_rtol => 1e-2,
           :N_χs => 100, :N_χs_2 => 50,
+          :obs => false,
           #:pr => false,
      )
 
@@ -218,7 +220,7 @@ end
           :N_log => 3, :use_windows => false,
           :enhancer => 1e8, :N_μs => 30,
           :μ_atol => 0.0, :μ_rtol => 1e-2,
-          :pr => false,
+          :pr => false, :obs => false,
      )
 
 
@@ -258,7 +260,7 @@ end
           :N_log => 3, :use_windows => false,
           :enhancer => 1e8, :N_μs => 30,
           :μ_atol => 0.0, :μ_rtol => 1e-2,
-          :pr => false,
+          :pr => false, :obs => false,
      )
 
      @testset "first" begin

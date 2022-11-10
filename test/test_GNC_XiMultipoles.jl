@@ -27,7 +27,8 @@
      kwargs =  Dict(
           :use_windows => false,
           :enhancer => 1e8, :N_μs => 200,
-          :μ_atol => 0.0, :μ_rtol => 1e-2
+          :μ_atol => 0.0, :μ_rtol => 1e-2,
+          :obs => false,
      )
 
 
@@ -126,7 +127,7 @@ end
           :pr => false,
           :enhancer => 1e8, :N_μs => 30,
           :μ_atol => 0.0, :μ_rtol => 1e-2,
-          :N_log => 1000
+          :N_log => 1000, :obs => false,
      )
 
      @testset "zero" begin
