@@ -23,15 +23,16 @@ function integrand_ξ_GNC_multipole(s1, s, μ, effect::Function, cosmo::Cosmolog
 
      s2_value = s2(s1, s, μ)
      y_value = y(s1, s, μ)
+
      res = if use_windows == true
           #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
           int = effect(s1, s2_value, y_value, cosmo; kwargs...)
-          println("int = $int")
-          print(" F_val = ", spline_integrF(s, μ, cosmo.windowFint))
-          print(" \t cost = " , cosmo.WFI_norm)
-          println(" \t Lp = " , Pl(μ, L) )
-          int .* (spline_integrF(s, μ, cosmo.windowFint)/cosmo.WFI_norm * Pl(μ, L))
+          #print(" F_val = ", spline_integrF(s, μ, cosmo.windowFint))
+          #isapprox(cost, 3.1749350588720085e10; rtol=1e-5) || print(" \t cost = " , cosmo.WFI_norm)
+          #isapprox(Pl(μ, L), 1.0; rotl=1e-4) || println(" \t Lp = " , Pl(μ, L) )
+          #println("IF = $val")
 
+          int .* (spline_integrF(s, μ, cosmo.windowFint)/cosmo.WFI_norm * Pl(μ, L))
           #=
           ϕ_s2 = ϕ(s2_value, cosmo.s_min, cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
@@ -43,7 +44,6 @@ function integrand_ξ_GNC_multipole(s1, s, μ, effect::Function, cosmo::Cosmolog
           int .* Pl(μ, L)
      end
 
-     #println("res = $res")
      return (2.0 * L + 1.0) / 2.0 * res
 end
 
