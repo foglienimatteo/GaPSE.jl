@@ -426,23 +426,23 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
 
      t1 = time()
 
-     orig_f(μ, s) = enhancer * integrand_ξ_GNC_multipole(s1, s, μ, effect, cosmo; 
-          L = L, obs = obs, kwargs...)
-
 
      s_1 = isnothing(s1) ? cosmo.s_eff : s1
      v_ss = isnothing(ss) ? 10 .^ range(0, 3, length = N_log) : ss
      xis = [0.0 for i in 1:length(v_ss)]
+
+     orig_f(μ, s) = enhancer * integrand_ξ_GNC_multipole(s_1, s, μ, effect, cosmo; 
+          L = L, obs = obs, kwargs...)
 
      if alg == :lobatto 
           μs, ws = gausslobatto(N_lob)
 
           global xis = pr ? begin
                @showprogress "$effect, L=$L: " [
-                    dot(ws, [orig_f(s, μ) for μ in μs])/enhancer for s in ss
+                    dot(ws, [orig_f(μ, s) for μ in μs])/enhancer for s in ss
                     ]
                end : [
-                    dot(ws, [orig_f(s, μ) for μ in μs])/enhancer for s in ss
+                    dot(ws, [orig_f(μ, s) for μ in μs])/enhancer for s in ss
                ]
 
      elseif alg == :quad 
@@ -468,10 +468,10 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
 
           global xis = pr ? begin
                @showprogress "$effect, L=$L: " [
-                    trapz(μs, [orig_f(s, μ) for μ in μs])/enhancer for s in ss
+                    trapz(μs, [orig_f(μ, s) for μ in μs])/enhancer for s in ss
                     ]
                end : [
-                    trapz(μs, [orig_f(s, μ) for μ in μs])/enhancer for s in ss
+                    trapz(μs, [orig_f(μ, s) for μ in μs])/enhancer for s in ss
                ]
 
      else
