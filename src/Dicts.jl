@@ -18,6 +18,15 @@
 #
 
 
+"""
+     const VALID_INTEGRATION_ALGORITHM = [:lobatto, :quad, :trap]
+
+Valid integration lgorithm that can be used in order to perform an 
+integration over the ``\\mu`` angle cosine.
+"""
+const VALID_INTEGRATION_ALGORITHM = [:lobatto, :quad, :trap]
+
+
 ##################### PERTURBED LUMINOSITY DISTANCE #############################
 
 

@@ -32,7 +32,7 @@ using .FFTLog
 using Dierckx # Licence: BSD
 using HCubature, QuadGK, WignerSymbols # Licence: MIT "Expat"
 using LegendrePolynomials, AssociatedLegendrePolynomials # Licence: MIT "Expat"
-using SpecialFunctions, Trapz, LsqFit # Licence: MIT
+using SpecialFunctions, Trapz, LsqFit, FastGaussQuadrature, LinearAlgebra  # Licence: MIT
 using GridInterpolations  # Licence: MIT "Expat"
 using ProgressMeter, Printf  # Licence: MIT "Expat"
 
