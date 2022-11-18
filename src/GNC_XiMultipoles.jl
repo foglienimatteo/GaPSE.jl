@@ -163,7 +163,7 @@ integrand_ξ_GNC_multipole
 function ξ_GNC_multipole(
      s1, s, effect::Function, cosmo::Cosmology;
      alg::Symbol = :lobatto, obs::Union{Bool, Symbol} = :noobsvel,
-     enhancer::Float64 = 1e6, N_lob::Int = 100,
+     enhancer::Float64 = 1e6, N_lob::Int = 100, L::Int = 0,
      N_trap::Int = 50, atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
      kwargs...)
 
@@ -179,10 +179,11 @@ function ξ_GNC_multipole(
      @assert N_trap > 2 "N_trap must be >2,  N_trap = $N_trap is not!"  
      @assert N_lob > 2 "N_lob must be >2,  N_lob = $N_lob is not!"  
      @assert atol_quad ≥ 0.0 "atol_quad must be ≥ 0.0,  atol_quad = $atol_quad is not!"  
-     @assert rtol_quad ≥ 0.0  "rtol_trap must be ≥ 0.0,  rtol_quad = $rtol_quad is not!"      
+     @assert rtol_quad ≥ 0.0  "rtol_trap must be ≥ 0.0,  rtol_quad = $rtol_quad is not!" 
+     @assert L ≥ 0 "L must be ≥ 0, L = $L is not!"       
 
 
-     orig_f(μ) = enhancer * integrand_ξ_GNC_multipole(s1, s, μ, effect, cosmo; obs = obs, kwargs...)
+     orig_f(μ) = enhancer * integrand_ξ_GNC_multipole(s1, s, μ, effect, cosmo; L = L, obs = obs, kwargs...)
      
      int = if alg == :lobatto 
                xs, ws = gausslobatto(N_lob)
@@ -422,7 +423,8 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
      @assert N_trap > 2 "N_trap must be >2,  N_trap = $N_trap is not!"  
      @assert N_lob > 2 "N_lob must be >2,  N_lob = $N_lob is not!"  
      @assert atol_quad ≥ 0.0 "atol_quad must be ≥ 0.0,  atol_quad = $atol_quad is not!"  
-     @assert rtol_quad ≥ 0.0  "rtol_trap must be ≥ 0.0,  rtol_quad = $rtol_quad is not!"      
+     @assert rtol_quad ≥ 0.0  "rtol_trap must be ≥ 0.0,  rtol_quad = $rtol_quad is not!"
+     @assert L ≥ 0 "L must be ≥ 0, L = $L is not!"      
 
      t1 = time()
 
@@ -439,10 +441,10 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
 
           global xis = pr ? begin
                @showprogress "$effect, L=$L: " [
-                    dot(ws, [orig_f(μ, s) for μ in μs])/enhancer for s in ss
+                    dot(ws, [orig_f(μ, s) for μ in μs])/enhancer for s in v_ss
                     ]
                end : [
-                    dot(ws, [orig_f(μ, s) for μ in μs])/enhancer for s in ss
+                    dot(ws, [orig_f(μ, s) for μ in μs])/enhancer for s in v_ss
                ]
 
      elseif alg == :quad 
@@ -450,11 +452,11 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
           global xis = pr ? begin
                @showprogress "$effect, L=$L: " [
                     quadgk(μ -> orig_f(μ, s), -1.0, 1.0; 
-                         atol = atol_quad, rtol = rtol_quad)[1]/enhancer for s in ss
+                         atol = atol_quad, rtol = rtol_quad)[1]/enhancer for s in v_ss
                     ]
                end : [
                     quadgk(μ -> orig_f(μ, s), -1.0, 1.0; 
-                         atol = atol_quad, rtol = rtol_quad)[1]/enhancer for s in ss
+                         atol = atol_quad, rtol = rtol_quad)[1]/enhancer for s in v_ss
                ]
 
      elseif  alg == :trap
@@ -468,10 +470,10 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
 
           global xis = pr ? begin
                @showprogress "$effect, L=$L: " [
-                    trapz(μs, [orig_f(μ, s) for μ in μs])/enhancer for s in ss
+                    trapz(μs, [orig_f(μ, s) for μ in μs])/enhancer for s in v_ss
                     ]
                end : [
-                    trapz(μs, [orig_f(μ, s) for μ in μs])/enhancer for s in ss
+                    trapz(μs, [orig_f(μ, s) for μ in μs])/enhancer for s in v_ss
                ]
 
      else
@@ -565,21 +567,21 @@ See also: [`integrand_ξ_GNC_multipole`](@ref), [`ξ_GNC_multipole`](@ref),
 function print_map_ξ_GNC_multipole(
           cosmo::Cosmology, out::String, 
           effect::Union{String,Function}, ss = nothing;
-          s1 = nothing, kwargs...)
+          s1 = nothing, L::Int = 0, kwargs...)
 
      check_parent_directory(out)
      check_namefile(out)
 
      s_1 = isnothing(s1) ? cosmo.s_eff : s1
      t1 = time()
-     vec = map_ξ_GNC_multipole(cosmo, effect, ss; s1 = s_1, kwargs...)
+     vec = map_ξ_GNC_multipole(cosmo, effect, ss; s1 = s_1, L = L, kwargs...)
      t2 = time()
 
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
           println(io, BRAND)
 
-          println(io, "#\n# This is an integration map on mu of the ξ multipole $effect GR effect")
+          println(io, "#\n# This is an integration map on mu of the ξ L=$L multipole $effect GR effect")
           println(io, "# concerning the relativistic galaxy number counts.")
           parameters_used(io, cosmo; logo = false)
           println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
@@ -589,6 +591,7 @@ function print_map_ξ_GNC_multipole(
                println(io, "none")
           else
                print(io, "\n")
+               println(io, "# \t\tL = $L")
                for key in keys(kwargs)
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end

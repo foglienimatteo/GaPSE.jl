@@ -195,6 +195,32 @@ end
 
 ##########################################################################################92
 
+function number_to_string(x::Number)
+    if iszero(imag(x))
+        return "$(real(x))"
+    elseif iszero(real(x))
+        return "$(imag(x))im"
+    else
+        if imag(x) > 0
+            return "$(real(x))+$(imag(x))im"
+        else
+            return "$(real(x))-$(abs(imag(x)))im"
+        end
+    end
+end
+
+
+function vecstring_to_vecnumbers(v; dt::DataType = Float64)
+    try 
+        return convert(Vector{dt}, v) 
+    catch e 
+        [parse(dt, el) for el in v]
+    end
+end
+
+
+##########################################################################################92
+
 
 function readxy(input::String; comments::Bool=true, 
         xdt::DataType = Float64, ydt::DataType = Float64)
@@ -222,29 +248,3 @@ function readxyall(input::String; comments::Bool=true,
            for col in eachcol(table[:, 3:end])]
     return (xs, ys, all)
 end;
-
-
-##########################################################################################92
-
-function number_to_string(x::Number)
-    if iszero(imag(x))
-        return "$(real(x))"
-    elseif iszero(real(x))
-        return "$(imag(x))im"
-    else
-        if imag(x) > 0
-            return "$(real(x))+$(imag(x))im"
-        else
-            return "$(real(x))-$(abs(imag(x)))im"
-        end
-    end
-end
-
-
-function vecstring_to_vecnumbers(v; dt::DataType = Float64)
-    try 
-        return convert(Vector{dt}, v) 
-    catch e 
-        [parse(dt, el) for el in v]
-    end
-end

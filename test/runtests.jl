@@ -172,7 +172,7 @@ KWARGS_LDxGNC = Dict(
      :N_log => 100,
 );
 
-
+#=
 ################################### TEST PLANE-PARALLEL APPROXIMATIONS ###################92
 
 @testset "test PPDoppler" begin
@@ -263,7 +263,7 @@ end
      include("test_LD_CrossCorrelations/test_LD_LocalGPIntegratedGP.jl")
 end
 
-
+=#
 ################################### TEST RELATIVISTIC GALAXY NUMBER COUNTS ###############92
 
 

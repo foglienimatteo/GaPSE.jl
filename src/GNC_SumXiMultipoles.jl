@@ -198,7 +198,7 @@ function print_map_sum_ξ_GNC_multipole(
           L = L, s1 = s_1, pr = pr, sum_xi = sum_xi, kwargs...)
      t2 = time()
 
-     (pr) && println("\ntime needed for map_sum_ξ_GNC_multipole " *
+     (pr) && println("\ntime needed for map_sum_ξ_GNC_multipole L=$L" *
                    "[in s] = $(@sprintf("%.5f", t2-t1)) \n")
 
      isfile(out) && run(`rm $out`)
@@ -206,7 +206,7 @@ function print_map_sum_ξ_GNC_multipole(
           println(io, BRAND)
 
           println(io, "#\n# This is an integration map on mu of the sum" *
-                      " of all the ξ_GNC_L=$L multipole GR effects")
+                      " of all the ξ_GNC L=$L multipole GR effects")
           println(io, "# concerning the relativistic galaxy number counts.")
           !(single == true) ||
                println(io, "# In input was set \"single = $single\", " *
@@ -224,6 +224,7 @@ function print_map_sum_ξ_GNC_multipole(
                println(io, "none")
           else
                print(io, "\n")
+               println(io, "# \t\tL = $L")
                for key in keys(kwargs)
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end

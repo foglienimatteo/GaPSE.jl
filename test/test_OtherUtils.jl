@@ -188,5 +188,181 @@ end
      @test GaPSE.number_to_string(0.0 + 2.15 * im) == "2.15im"
      @test GaPSE.number_to_string(-0.0 - 2.15 * im) == "-2.15im"
      @test GaPSE.number_to_string(-3.1415 - 2.15 * im) == "-3.1415-2.15im"
-     @test GaPSE.number_to_string(3.1415 +   2.15 * im) == "3.1415+2.15im"
+     @test GaPSE.number_to_string(3.1415 + 2.15 * im) == "3.1415+2.15im"
 end
+
+
+
+
+##########################################################################################92
+
+
+@testset "test readxy" begin
+     open("some_data.txt", "w") do io
+          println(io, "# lets create a small comment")
+          println(io, "# made of two lines")
+          for i in 1:15
+               println(io, " \t $i \t\t $(i+2.5)")
+          end
+     end
+
+     xs, ys = GaPSE.readxy("some_data.txt", comments=true)
+     for i in 1:15
+          @test xs[i] ≈ i
+          @test ys[i] ≈ i + 2.5
+     end
+
+     rm("some_data.txt")
+
+     ################
+
+     open("some_data.txt", "w") do io
+          for i in 1:15
+               println(io, " \t $i \t\t $(i+2)")
+          end
+     end
+
+     xs, ys = GaPSE.readxy("some_data.txt", comments=false)
+     for i in 1:15
+          @test xs[i] ≈ i
+          @test ys[i] ≈ i + 2
+     end
+
+     rm("some_data.txt")
+
+     ################
+
+     open("some_data.txt", "w") do io
+          for i in 1:15
+               println(io, " \t $i \t\t $(i+2)")
+          end
+     end
+
+     xs, ys = GaPSE.readxy("some_data.txt"; xdt=Int, ydt=Int, comments=false)
+     for i in 1:15
+          @test xs[i] ≈ i
+          @test ys[i] ≈ i + 2
+     end
+
+     rm("some_data.txt")
+end
+
+
+
+
+@testset "test readxall" begin
+     open("some_data.txt", "w") do io
+          println(io, "# lets create a small comment")
+          println(io, "# made of two lines")
+          for i in 1:15
+               println(io, " \t $i \t\t $(i+2) \t 0.1 \t $(0.1*i)")
+          end
+     end
+
+     xs, ys = GaPSE.readxall("some_data.txt", comments=true)
+     for i in 1:15
+          @test xs[i] ≈ i
+          @test ys[1][i] ≈ i + 2
+          @test ys[2][i] ≈ 0.1
+          @test ys[3][i] ≈ 0.1 * i
+     end
+
+     rm("some_data.txt")
+
+     ################
+
+     open("some_data.txt", "w") do io
+          for i in 1:15
+               println(io, " \t $i \t\t $(i+2) \t 0.1 \t $(0.1*i)")
+          end
+     end
+
+     xs, ys = GaPSE.readxall("some_data.txt", comments=false)
+     for i in 1:15
+          @test xs[i] ≈ i
+          @test ys[1][i] ≈ i + 2
+          @test ys[2][i] ≈ 0.1
+          @test ys[3][i] ≈ 0.1 * i
+     end
+
+     rm("some_data.txt")
+
+     ################
+
+     open("some_data.txt", "w") do io
+          for i in 1:15
+               println(io, " \t $i \t\t $(i+2) \t 0.1 \t $(0.1*i)")
+          end
+     end
+
+     xs, ys = GaPSE.readxall("some_data.txt"; xdt=Int, ydt=Float64, comments=false)
+     for i in 1:15
+          @test xs[i] ≈ i
+          @test ys[1][i] ≈ i + 2
+          @test ys[2][i] ≈ 0.1
+          @test ys[3][i] ≈ 0.1 * i
+     end
+
+     rm("some_data.txt")
+     println(ys)
+end
+
+
+@testset "test readxyall" begin
+     open("some_data.txt", "w") do io
+          println(io, "# lets create a small comment")
+          println(io, "# made of two lines")
+          for i in 1:15
+               println(io, " \t $i \t\t $(i+2) \t 0.1 \t $(0.1*i)")
+          end
+     end
+
+     xs, ys, zs = GaPSE.readxyall("some_data.txt", comments=true)
+     for i in 1:15
+          @test xs[i] ≈ i
+          @test ys[i] ≈ i + 2
+          @test zs[1][i] ≈ 0.1
+          @test zs[2][i] ≈ 0.1 * i
+     end
+
+     rm("some_data.txt")
+
+     ################
+
+     open("some_data.txt", "w") do io
+          for i in 1:15
+               println(io, " \t $i \t\t $(i+2) \t 0.1 \t $(0.1*i)")
+          end
+     end
+
+     xs, ys, zs = GaPSE.readxyall("some_data.txt", comments=true)
+     for i in 1:15
+          @test xs[i] ≈ i
+          @test ys[i] ≈ i + 2
+          @test zs[1][i] ≈ 0.1
+          @test zs[2][i] ≈ 0.1 * i
+     end
+
+     rm("some_data.txt")
+
+     ################
+
+     open("some_data.txt", "w") do io
+          for i in 1:15
+               println(io, " \t $i \t\t $(i+2) \t 0.1 \t $(0.1*i)")
+          end
+     end
+
+     xs, ys, zs = GaPSE.readxyall("some_data.txt"; xdt=Int64, ydt=Float32, zdt=Float64, comments=true)
+     for i in 1:15
+          @test xs[i] ≈ i
+          @test ys[i] ≈ i + 2
+          @test zs[1][i] ≈ 0.1
+          @test zs[2][i] ≈ 0.1 * i
+     end
+
+     rm("some_data.txt")
+     println(ys)
+end
+
+

@@ -24,92 +24,159 @@
      func_effect = GaPSE.ξ_GNC_Doppler
      RTOL = 1e-2
 
-     kwargs =  Dict(
-          :use_windows => false,
-          :enhancer => 1e8, :N_μs => 200,
-          :μ_atol => 0.0, :μ_rtol => 1e-2,
-          :obs => false,
-     )
-
 
      @testset "zeros" begin
-          @test_throws AssertionError GaPSE.ξ_GNC_multipole(COSMO.s_eff, 10.0, "strange", COSMO;
-               L = 0, kwargs...)
+          @test_throws AssertionError GaPSE.ξ_GNC_multipole(COSMO.s_eff, 10.0, "strange", COSMO)
+          @test_throws AssertionError GaPSE.ξ_GNC_multipole(COSMO.s_eff, 10.0, "auto_doppler", COSMO;
+               obs=:trap)
+          @test_throws AssertionError GaPSE.ξ_GNC_multipole(COSMO.s_eff, 10.0, "auto_doppler", COSMO;
+               alg=:noobsvel)
+
+          @test_throws AssertionError GaPSE.ξ_GNC_multipole(COSMO.s_eff, 10.0, "auto_doppler", COSMO;
+               L=-1)
+          @test_throws AssertionError GaPSE.ξ_GNC_multipole(COSMO.s_eff, 10.0, "auto_doppler", COSMO;
+               atol_quad=-0.1)
+          @test_throws AssertionError GaPSE.ξ_GNC_multipole(COSMO.s_eff, 10.0, "auto_doppler", COSMO;
+               rtol_quad=-0.1)
+          @test_throws AssertionError GaPSE.ξ_GNC_multipole(COSMO.s_eff, 10.0, "auto_doppler", COSMO;
+               N_trap=2)
+          @test_throws AssertionError GaPSE.ξ_GNC_multipole(COSMO.s_eff, 10.0, "auto_doppler", COSMO;
+               N_lob=2)
      end
 
-     @testset "L = 0" begin
-          L = 0
-          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_" * name_effect * "_L$L" * ".txt"; comments = true)
-          ss = convert(Vector{Float64}, table[:, 1])
-          xis = convert(Vector{Float64}, table[:, 2])
 
-          calc_xis_1 = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
-               L = L, kwargs...) for s in ss]
-          calc_xis_2 = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, func_effect, COSMO;
-               L = L, kwargs...) for s in ss]
+     @testset "no window, with observer terms" begin
+          kwargs = Dict(
+               :use_windows => false,
+               :enhancer => 1e8, :obs => :yes,
+               :N_lob => 100, :N_trap => 100,
+               :atol_quad => 0.0, :rtol_quad => 1e-2
+          )
 
-          @test all([isapprox(xi, calc_xi, rtol = RTOL) for (xi, calc_xi) in zip(xis, calc_xis_1)])
-          @test all([isapprox(xi, calc_xi, rtol = RTOL) for (xi, calc_xi) in zip(xis, calc_xis_2)])
-     end
+          @testset "L = 0" begin
+               L = 0
+               ss_lob, xis_lob = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_" *
+                                              name_effect * "_lobatto_noF_withobs_L$L" * ".txt"; comments=true)
+               ss_trap, xis_trap = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_" *
+                                                name_effect * "_trap_noF_withobs_L$L" * ".txt"; comments=true)
 
-     @testset "L = 1" begin
-          L = 1
-          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_" * name_effect * "_L$L" * ".txt"; comments = true)
-          ss = convert(Vector{Float64}, table[:, 1])
-          xis = convert(Vector{Float64}, table[:, 2])
+               calc_xis_lob = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
+                    L=L, alg=:lobatto, kwargs...) for s in ss_lob]
+               calc_xis_trap = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
+                    L=L, alg=:trap, kwargs...) for s in ss_trap]
 
-          calc_xis_1 = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
-               L = L, kwargs...) for s in ss]
-          calc_xis_2 = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, func_effect, COSMO;
-               L = L, kwargs...) for s in ss]
+               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_lob, calc_xis_lob)])
+               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_trap, calc_xis_trap)])
 
-          @test all([isapprox(xi, calc_xi, rtol = RTOL) for (xi, calc_xi) in zip(xis, calc_xis_1)])
-          @test all([isapprox(xi, calc_xi, rtol = RTOL) for (xi, calc_xi) in zip(xis, calc_xis_2)])
-     end
+               if L in [0, 2]
+                    ss_quad, xis_quad = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_" *
+                                                     name_effect * "_quad_noF_withobs_L$L" * ".txt"; comments=true)
+                    calc_xis_quad = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
+                         L=L, alg=:quad, kwargs...) for s in ss_quad]
 
-     @testset "L = 2" begin
-          L = 2
-          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_" * name_effect * "_L$L" * ".txt"; comments = true)
-          ss = convert(Vector{Float64}, table[:, 1])
-          xis = convert(Vector{Float64}, table[:, 2])
+                    @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_quad, calc_xis_quad)])
+               end
+          end
 
-          calc_xis_1 = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
-               L = L, kwargs...) for s in ss]
-          calc_xis_2 = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, func_effect, COSMO;
-               L = L, kwargs...) for s in ss]
+          @testset "L = 1" begin
+               L = 1
+               ss_lob, xis_lob = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_" *
+                                              name_effect * "_lobatto_noF_withobs_L$L" * ".txt"; comments=true)
+               ss_trap, xis_trap = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_" *
+                                                name_effect * "_trap_noF_withobs_L$L" * ".txt"; comments=true)
 
-          @test all([isapprox(xi, calc_xi, rtol = RTOL) for (xi, calc_xi) in zip(xis, calc_xis_1)])
-          @test all([isapprox(xi, calc_xi, rtol = RTOL) for (xi, calc_xi) in zip(xis, calc_xis_2)])
-     end
+               calc_xis_lob = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
+                    L=L, alg=:lobatto, kwargs...) for s in ss_lob]
+               calc_xis_trap = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
+                    L=L, alg=:trap, kwargs...) for s in ss_trap]
 
-     @testset "L = 3" begin
-          L = 3
-          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_" * name_effect * "_L$L" * ".txt"; comments = true)
-          ss = convert(Vector{Float64}, table[:, 1])
-          xis = convert(Vector{Float64}, table[:, 2])
+               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_lob, calc_xis_lob)])
+               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_trap, calc_xis_trap)])
 
-          calc_xis_1 = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
-               L = L, kwargs...) for s in ss]
-          calc_xis_2 = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, func_effect, COSMO;
-               L = L, kwargs...) for s in ss]
+               if L in [0, 2]
+                    ss_quad, xis_quad = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_" *
+                                                     name_effect * "_quad_noF_withobs_L$L" * ".txt"; comments=true)
+                    calc_xis_quad = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
+                         L=L, alg=:quad, kwargs...) for s in ss_quad]
 
-          @test all([isapprox(xi, calc_xi, rtol = RTOL) for (xi, calc_xi) in zip(xis, calc_xis_1)])
-          @test all([isapprox(xi, calc_xi, rtol = RTOL) for (xi, calc_xi) in zip(xis, calc_xis_2)])
-     end
+                    @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_quad, calc_xis_quad)])
+               end
+          end
+          
+          @testset "L = 2" begin
+               L = 2
+               ss_lob, xis_lob = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_" * 
+                    name_effect * "_lobatto_noF_withobs_L$L" * ".txt"; comments=true)
+               ss_trap, xis_trap = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_" * 
+                    name_effect * "_trap_noF_withobs_L$L" * ".txt"; comments=true)
 
-     @testset "L = 4" begin
-          L = 4
-          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_" * name_effect * "_L$L" * ".txt"; comments = true)
-          ss = convert(Vector{Float64}, table[:, 1])
-          xis = convert(Vector{Float64}, table[:, 2])
+               calc_xis_lob = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
+                    L=L, alg=:lobatto, kwargs...) for s in ss_lob]
+               calc_xis_trap = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
+                    L=L, alg=:trap, kwargs...) for s in ss_trap]
 
-          calc_xis_1 = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
-               L = L, kwargs...) for s in ss]
-          calc_xis_2 = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, func_effect, COSMO;
-               L = L, kwargs...) for s in ss]
+               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_lob, calc_xis_lob)])
+               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_trap, calc_xis_trap)])
 
-          @test all([isapprox(xi, calc_xi, rtol = RTOL) for (xi, calc_xi) in zip(xis, calc_xis_1)])
-          @test all([isapprox(xi, calc_xi, rtol = RTOL) for (xi, calc_xi) in zip(xis, calc_xis_2)])
+               if L in [0,2]
+                    ss_quad, xis_quad = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_" * 
+                         name_effect * "_quad_noF_withobs_L$L" * ".txt"; comments=true)
+                    calc_xis_quad = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
+                         L=L, alg=:quad, kwargs...) for s in ss_quad]
+
+                    @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_quad, calc_xis_quad)])
+               end
+          end
+          
+          @testset "L = 3" begin
+               L = 3
+               ss_lob, xis_lob = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_" * 
+                    name_effect * "_lobatto_noF_withobs_L$L" * ".txt"; comments=true)
+               ss_trap, xis_trap = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_" * 
+                    name_effect * "_trap_noF_withobs_L$L" * ".txt"; comments=true)
+
+               calc_xis_lob = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
+                    L=L, alg=:lobatto, kwargs...) for s in ss_lob]
+               calc_xis_trap = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
+                    L=L, alg=:trap, kwargs...) for s in ss_trap]
+
+               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_lob, calc_xis_lob)])
+               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_trap, calc_xis_trap)])
+
+               if L in [0,2]
+                    ss_quad, xis_quad = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_" * 
+                         name_effect * "_quad_noF_withobs_L$L" * ".txt"; comments=true)
+                    calc_xis_quad = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
+                         L=L, alg=:quad, kwargs...) for s in ss_quad]
+
+                    @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_quad, calc_xis_quad)])
+               end
+          end
+          
+          @testset "L = 4" begin
+               L = 4
+               ss_lob, xis_lob = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_" * 
+                    name_effect * "_lobatto_noF_withobs_L$L" * ".txt"; comments=true)
+               ss_trap, xis_trap = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_" * 
+                    name_effect * "_trap_noF_withobs_L$L" * ".txt"; comments=true)
+
+               calc_xis_lob = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
+                    L=L, alg=:lobatto, kwargs...) for s in ss_lob]
+               calc_xis_trap = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
+                    L=L, alg=:trap, kwargs...) for s in ss_trap]
+
+               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_lob, calc_xis_lob)])
+               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_trap, calc_xis_trap)])
+
+               if L in [0,2]
+                    ss_quad, xis_quad = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_" * 
+                         name_effect * "_quad_noF_withobs_L$L" * ".txt"; comments=true)
+                    calc_xis_quad = [GaPSE.ξ_GNC_multipole(COSMO.s_eff, s, name_effect, COSMO;
+                         L=L, alg=:quad, kwargs...) for s in ss_quad]
+
+                    @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_quad, calc_xis_quad)])
+               end
+          end
      end
 end
 
@@ -123,11 +190,11 @@ end
      effect = "auto_doppler"
 
      kwargs = Dict(
-          :use_windows => false,
-          :pr => false,
-          :enhancer => 1e8, :N_μs => 30,
-          :μ_atol => 0.0, :μ_rtol => 1e-2,
-          :N_log => 1000, :obs => false,
+          :use_windows => false, :pr => false,
+          :enhancer => 1e8, :obs => :yes,
+          :N_lob => 100, :N_trap => 100,
+          :atol_quad => 0.0, :rtol_quad => 1e-2,
+          :alg => :lobatto,
      )
 
      @testset "zero" begin
@@ -139,61 +206,61 @@ end
      end
 
      @testset "first" begin
-          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_auto_doppler_L0_first.txt"; comments = true)
+          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_auto_doppler_L0_first.txt"; comments=true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
           name = "calc_xi_GNC_auto_doppler_L0_first.txt"
           isfile(name) && rm(name)
           GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, nothing;
-               s1 = nothing, L = 0, kwargs...)
+               s1=nothing, L=0, kwargs...)
 
-          calc_table = readdlm(name; comments = true)
+          calc_table = readdlm(name; comments=true)
           calc_ss = convert(Vector{Float64}, calc_table[:, 1])
           calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-          @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
-          @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+          @test all([isapprox(s, calc_s, rtol=1e-2) for (s, calc_s) in zip(ss, calc_ss)])
+          @test all([isapprox(xi, calc_xi, rtol=1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
 
           rm(name)
      end
 
      @testset "second" begin
-          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_auto_doppler_L0_second.txt"; comments = true)
+          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_auto_doppler_L0_second.txt"; comments=true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
           name = "calc_xi_GNC_auto_doppler_L0_second.txt"
           isfile(name) && rm(name)
-          GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, 10 .^ range(0, 3, length = 344);
-               s1 = nothing, L = 0, kwargs...)
+          GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, 10 .^ range(0, 3, length=344);
+               s1=nothing, L=0, kwargs...)
 
-          calc_table = readdlm(name; comments = true)
+          calc_table = readdlm(name; comments=true)
           calc_ss = convert(Vector{Float64}, calc_table[:, 1])
           calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-          @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
-          @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+          @test all([isapprox(s, calc_s, rtol=1e-2) for (s, calc_s) in zip(ss, calc_ss)])
+          @test all([isapprox(xi, calc_xi, rtol=1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
 
           rm(name)
      end
 
      @testset "third" begin
-          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_auto_doppler_L0_third.txt"; comments = true)
+          table = readdlm("datatest/GNC_doppler_multipoles/xi_GNC_auto_doppler_L0_third.txt"; comments=true)
           ss = convert(Vector{Float64}, table[:, 1])
           xis = convert(Vector{Float64}, table[:, 2])
 
           name = "calc_xi_GNC_auto_doppler_L0_third.txt"
           isfile(name) && rm(name)
-          GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, 10 .^ range(0, 3, length = 344);
-               s1 = COSMO.s_eff - 65.0, L = 0, kwargs...)
+          GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, 10 .^ range(0, 3, length=344);
+               s1=COSMO.s_eff - 65.0, L=0, kwargs...)
 
-          calc_table = readdlm(name; comments = true)
+          calc_table = readdlm(name; comments=true)
           calc_ss = convert(Vector{Float64}, calc_table[:, 1])
           calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-          @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
-          @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+          @test all([isapprox(s, calc_s, rtol=1e-2) for (s, calc_s) in zip(ss, calc_ss)])
+          @test all([isapprox(xi, calc_xi, rtol=1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
 
           rm(name)
      end
