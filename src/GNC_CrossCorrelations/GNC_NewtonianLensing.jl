@@ -170,15 +170,81 @@ See also: [`integrand_ξ_GNC_Newtonian_Lensing`](@ref), [`int_on_mu_Newtonian_Le
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Int = 100, obs::Union{Bool, Symbol} = :noobsvel)
+     en::Float64=1e6, N_χs::Int=100, obs::Union{Bool,Symbol}=:noobsvel)
 
-     χ2s = s2 .* range(1e-6, 1, length = N_χs)
+     #χ2s = s2 .* range(1e-6, 1, length=N_χs)
+     small_less = 50
+     LIM = 500
+     FRAC = 7.0
+     χ2s = if y < 0.95 || s2 ≤ s1 - small_less
+          vec= s2 .* range(1e-6, 1.0, length=N_χs)
+               for x in vec
+                    @assert x < s2 "1: $x"
+               end
+               vec
+
+          elseif (s2 > s1 - small_less) && (s2 < s1 + small_less)
+               tot_N_χs = N_χs % 2 == 0 ? N_χs : N_χs + 1
+               vec = vcat(
+                    1.0 .* range(1e-6, s1 - small_less, length=Int(tot_N_χs / 2)),
+                    1.0 .* range(s1 - small_less, s2, length=Int(tot_N_χs / 2))
+               )
+
+               vec
+
+          elseif (s2 ≥ s1 + small_less) && (s2 < s1 + LIM)
+               tot_N_χs = N_χs % 4 == 0 ? N_χs :
+                         (N_χs + 1) % 4 == 0 ? N_χs + 1 :
+                         (N_χs + 2) % 4 == 0 ? N_χs + 2 :
+                         (N_χs + 3) % 4 == 0 ? N_χs + 3 :
+                         throw(AssertionError("what"))
+               vec = if  s1 + small_less < s2
+                         vcat(
+                              1.0 .* range(1e-6, s1 - small_less, length=Int(tot_N_χs / 4)),
+                              1.0 .* range(s1 - small_less, s1 + small_less, length=Int(tot_N_χs / 2)),
+                              1.0 .* range(s1 + small_less, s2, length=Int(tot_N_χs / 4))
+                         )
+                    else
+                         vcat(
+                              1.0 .* range(1e-6, s1 - small_less, length=Int(tot_N_χs / 4)),
+                              1.0 .* range(s1 - small_less, s2, length=tot_N_χs)
+                         )
+                    end
+
+               vec
+
+          elseif s2  ≥ LIM + s1
+               tot_N_χs = N_χs % 4 == 0 ? N_χs :
+                         (N_χs + 1) % 4 == 0 ? N_χs + 1 :
+                         (N_χs + 2) % 4 == 0 ? N_χs + 2 :
+                         (N_χs + 3) % 4 == 0 ? N_χs + 3 :
+                         throw(AssertionError("what"))
+
+               vec = if s1 + s2 / FRAC < s2
+                         vcat(
+                              1.0 .* range(1e-6, s1 - s2 / FRAC, length=Int(tot_N_χs / 4)),
+                              1.0 .* range(s1 - s2 / FRAC, s1 + s2 / FRAC, length=tot_N_χs),
+                              1.0 .* range(s1 + s2 / FRAC, s2, length=Int(tot_N_χs / 4))
+                         )
+                    else
+                         vcat(
+                              1.0 .* range(1e-6, s1 - s2 / FRAC, length=Int(tot_N_χs / 4)),
+                              1.0 .* range(s1 - s2 / FRAC, s2, length=tot_N_χs),
+                              )
+                    end
+
+               vec
+
+          else
+               throw(AssertionError("how the hell did you arrived here?"))
+     end
+
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
      IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; obs = obs)
+          en * GaPSE.integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; obs=obs)
           for IP in IPs
      ]
 
