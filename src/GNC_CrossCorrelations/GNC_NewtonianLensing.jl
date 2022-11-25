@@ -177,10 +177,7 @@ function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
      LIM = 500
      FRAC = 7.0
      χ2s = if y < 0.95 || s2 ≤ s1 - small_less
-          vec= s2 .* range(1e-6, 1.0, length=N_χs)
-               for x in vec
-                    @assert x < s2 "1: $x"
-               end
+               vec = s2 .* range(1e-6, 1.0, length=N_χs)
                vec
 
           elseif (s2 > s1 - small_less) && (s2 < s1 + small_less)
