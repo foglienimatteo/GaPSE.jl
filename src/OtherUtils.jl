@@ -248,3 +248,98 @@ function readxyall(input::String; comments::Bool=true,
            for col in eachcol(table[:, 3:end])]
     return (xs, ys, all)
 end;
+
+
+
+##########################################################################################92
+
+
+
+"""
+    sample_subdivision_begin(x_min, x_stop, x_end; 
+        frac_begin::Float64 = 0.5, N::Int = 100, ass::Bool = true)
+
+Return a vector of `N+2` points inside the interval `x_min ≤ x ≤ x_max` linearly distributed
+with two different sampling:
+- in `x_min ≤ x ≤ x_stop` there are around `frac_begin * N` points;
+- in `x_stop ≤ x ≤ x_max` there are around `(1.0 - frac_begin) * N` points.
+
+`frac_begin` is then the fraction of the `N` points that is inside the LEFT INTERVAL.
+If `ass::Bool` is set to `false` the assert checks on the input data will not be performed. 
+"""
+function sample_subdivision_begin(x_min, x_stop, x_max; frac_begin::Float64 = 0.5, N::Int = 100, ass::Bool = true)
+    if ass == true
+        @assert 0.0 < frac_begin < 1.0 "frac_begin must be in 0.0 < frac_begin < 1.0, frac_begin = $frac_begin is not valid!" 
+        @assert x_min < x_stop "x_min < x_stop must hold, x_min = $x_min and x_stop = $x_stop do not!"
+        @assert x_stop < x_max "x_stop < x_max must hold, x_stop = $x_stop and x_max = $x_max do not!"
+        @assert N > 3 "N > 3 must hold, N = $N do not!"
+    end
+
+    return unique(
+        vcat(
+            range(x_min, x_stop; length = Int( ceil( frac_begin * N)) + 1) ,
+            range(x_stop, x_max; length = Int( ceil( (1.0 - frac_begin) * N)) + 1)
+        )
+    )
+end
+
+
+"""
+    sample_subdivision_middle(x_min, x_start, x_stop, x_max; 
+        frac_middle::Float64 = 0.5, rel_frac_begin::Union{Float64, Nothing} = nothing, 
+        N::Int = 100, ass::Bool = true)
+
+Return a vector of `N+3` points inside the interval `x_min ≤ x ≤ x_max` linearly distributed
+with three different sampling, depending on the values of `frac_middle` and `rel_frac_begin`.
+
+If `rel_frac_begin == nothing`, defining the relative size of the segment `x_min ≤ x ≤ x_start`
+compared to the "masked one" `x_min ≤ x ≤ x_start || x_stop ≤ x ≤ x_max` as 
+`rel_prop_begin = (x_start - x_min) / (x_max - x_min - x_stop + x_start)`:
+- in `x_min ≤ x ≤ x_start` there are around `(1.0 - frac_middle) * rel_prop_begin * N` points;
+- in `x_start ≤ x ≤ x_stop` there are around `frac_middle * N` points;
+- in `x_stop ≤ x ≤ x_max` there are around `(1.0 - frac_middle) * (1.0 - rel_prop_begin) * N` points.
+
+If `rel_frac_begin` is instead a float inside the interval `0.0 < rel_frac_begin < 1.0`: 
+- in `x_min ≤ x ≤ x_start` there are around `(1.0 - frac_middle) * rel_frac_begin * N` points;
+- in `x_start ≤ x ≤ x_stop` there are around `frac_middle * N` points;
+- in `x_stop ≤ x ≤ x_max` there are around `(1.0 - frac_middle) * (1.0 - rel_frac_begin) * N` points.
+
+`frac_middle` is then the fraction of the `N` points that is inside the MIDDLE INTERVAL, while 
+`rel_frac_begin` is the one inside the LEFT INTERVAL COMPARED TO THE MASKED TOTAL ONE.
+If `ass::Bool` is set to `false` the assert checks on the input data will not be performed. 
+"""
+function sample_subdivision_middle(x_min, x_start, x_stop, x_max; 
+        frac_middle::Float64 = 0.5, rel_frac_begin::Union{Float64, Nothing} = nothing, 
+        N::Int = 100, ass::Bool = true)
+    
+    if ass == true
+        @assert 0.0 < frac_middle < 1.0 "frac_middle must be in 0.0 < frac_middle < 1.0, frac_middle = $frac_middle is not valid!" 
+        @assert isnothing(rel_frac_begin) || 0.0 < rel_frac_begin < 1.0 "rel_frac_begin must be in "*
+            "0.0 < rel_frac_begin < 1.0, rel_frac_begin = $rel_frac_begin not valid!" 
+        @assert x_min < x_start "x_min < x_start must hold, x_min = $x_min and x_start = $x_start do not!"
+        @assert x_start < x_stop "x_start < x_stop must hold, x_start = $x_start and x_stop = $x_stop do not!"
+        @assert x_stop < x_max "x_stop < x_max must hold, x_stop = $x_stop and x_max = $x_max do not!"
+        @assert N > 5 "N > 5 must hold, N = $N do not!"
+    end
+    
+    
+    if isnothing(rel_frac_begin)
+        rel_prop_begin = (x_start - x_min) / (x_max - x_min - x_stop + x_start)
+        
+        return unique(
+            vcat(
+                range(x_min, x_start; length = Int( ceil( (1.0 - frac_middle) * rel_prop_begin * N) ) + 1 ),
+                range(x_start, x_stop; length = Int( ceil( frac_middle * N ) + 1 ) ),
+                range(x_stop, x_max; length = Int( ceil( (1.0-frac_middle) * (1.0 - rel_prop_begin) * N) ) + 1 ),
+            )
+        )
+    else
+        return unique(
+            vcat(
+                range(x_min, x_start; length = Int( ceil( (1.0 - frac_middle) * rel_frac_begin * N) ) + 1 ),
+                range(x_start, x_stop; length = Int( ceil( frac_middle * N ) + 1 ) ),
+                range(x_stop, x_max; length = Int( ceil( (1.0 - frac_middle) * (1.0 - rel_frac_begin) * N) ) + 1 ),
+            )
+        )
+    end
+end

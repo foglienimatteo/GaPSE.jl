@@ -63,7 +63,8 @@ See also: [`ξ_GNC_Newtonian_Lensing`](@ref), [`int_on_mu_Newtonian_Lensing`](@r
 """
 function integrand_ξ_GNC_Newtonian_Lensing(
      IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
+     y, cosmo::Cosmology; Δχ_min::Float64=1e-1,
+     obs::Union{Bool, Symbol} = :noobsvel)
 
      s1, D_s1, f_s1 = P1.comdist, P1.D, P1.f
      s2 = P2.comdist
@@ -101,6 +102,8 @@ function integrand_ξ_GNC_Newtonian_Lensing(
      I40 = cosmo.tools.I40(Δχ2)
 
      return common * (new_J00 * I00 + new_J02 * I20 + new_J04 * I40)
+
+     - 2.0 / 3.0 
 end
 
 
@@ -170,80 +173,108 @@ See also: [`integrand_ξ_GNC_Newtonian_Lensing`](@ref), [`int_on_mu_Newtonian_Le
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
-     en::Float64=1e6, N_χs::Int=100, obs::Union{Bool,Symbol}=:noobsvel)
+     en::Float64=1e6, N_χs::Int=100, Δχ_min::Float64=1e-1,
+     obs::Union{Bool,Symbol}=:noobsvel)
 
      #χ2s = s2 .* range(1e-6, 1, length=N_χs)
+     STARTING = 0.0
      small_less = 50
      LIM = 500
      FRAC = 7.0
+
      χ2s = if y < 0.95 || s2 ≤ s1 - small_less
-               vec = s2 .* range(1e-6, 1.0, length=N_χs)
-               vec
+          s2 .* range(STARTING, 1.0, length=N_χs)
 
-          elseif (s2 > s1 - small_less) && (s2 < s1 + small_less)
-               tot_N_χs = N_χs % 2 == 0 ? N_χs : N_χs + 1
-               vec = vcat(
-                    1.0 .* range(1e-6, s1 - small_less, length=Int(tot_N_χs / 2)),
-                    1.0 .* range(s1 - small_less, s2, length=Int(tot_N_χs / 2))
+     elseif 0 < s1 - small_less < s2 < s1 + small_less
+          GaPSE.sample_subdivision_begin(STARTING, s1 - small_less, s2; 
+               frac_begin = 0.5, N = N_χs)
+
+     elseif s1 + small_less ≤ s2 < s1 + LIM
+          GaPSE.sample_subdivision_begin(STARTING, s1 - small_less, s2; 
+               frac_begin = 0.25, N = N_χs)
+
+     elseif s2 ≥ s1 + LIM
+          vec = s1 + s2 / FRAC < s2 ? GaPSE.sample_subdivision_middle(
+                    STARTING, s1 - s2 / FRAC, s1 + s2 / FRAC, s2; 
+                    frac_middle = 0.8, N = N_χs
+               ) : GaPSE.sample_subdivision_begin(
+                    STARTING, s1 - s2 / FRAC, s2; 
+                    frac_begin = 0.2, N = N_χs
                )
-
-               vec
-
-          elseif (s2 ≥ s1 + small_less) && (s2 < s1 + LIM)
-               tot_N_χs = N_χs % 4 == 0 ? N_χs :
-                         (N_χs + 1) % 4 == 0 ? N_χs + 1 :
-                         (N_χs + 2) % 4 == 0 ? N_χs + 2 :
-                         (N_χs + 3) % 4 == 0 ? N_χs + 3 :
-                         throw(AssertionError("what"))
-               vec = if  s1 + small_less < s2
-                         vcat(
-                              1.0 .* range(1e-6, s1 - small_less, length=Int(tot_N_χs / 4)),
-                              1.0 .* range(s1 - small_less, s1 + small_less, length=Int(tot_N_χs / 2)),
-                              1.0 .* range(s1 + small_less, s2, length=Int(tot_N_χs / 4))
-                         )
-                    else
-                         vcat(
-                              1.0 .* range(1e-6, s1 - small_less, length=Int(tot_N_χs / 4)),
-                              1.0 .* range(s1 - small_less, s2, length=tot_N_χs)
-                         )
-                    end
-
-               vec
-
-          elseif s2  ≥ LIM + s1
-               tot_N_χs = N_χs % 4 == 0 ? N_χs :
-                         (N_χs + 1) % 4 == 0 ? N_χs + 1 :
-                         (N_χs + 2) % 4 == 0 ? N_χs + 2 :
-                         (N_χs + 3) % 4 == 0 ? N_χs + 3 :
-                         throw(AssertionError("what"))
-
-               vec = if s1 + s2 / FRAC < s2
-                         vcat(
-                              1.0 .* range(1e-6, s1 - s2 / FRAC, length=Int(tot_N_χs / 4)),
-                              1.0 .* range(s1 - s2 / FRAC, s1 + s2 / FRAC, length=tot_N_χs),
-                              1.0 .* range(s1 + s2 / FRAC, s2, length=Int(tot_N_χs / 4))
-                         )
-                    else
-                         vcat(
-                              1.0 .* range(1e-6, s1 - s2 / FRAC, length=Int(tot_N_χs / 4)),
-                              1.0 .* range(s1 - s2 / FRAC, s2, length=tot_N_χs),
-                              )
-                    end
-
-               vec
-
-          else
-               throw(AssertionError("how the hell did you arrived here?"))
+          vec
+     else
+          throw(AssertionError("how the hell did you arrived here?"))
      end
+     #=
+     χ2s = if y < 0.95 || s2 ≤ s1 - small_less
+          s2 .* range(STARTING, 1.0, length=N_χs)
 
+     elseif (s2 > s1 - small_less > 0) && (s2 < s1 + small_less)
+          tot_N_χs = N_χs % 2 == 0 ? N_χs : N_χs + 1
+          vec = vcat(
+               1.0 .* range(STARTING, s1 - small_less, length=Int(tot_N_χs / 2)),
+               1.0 .* range(s1 - small_less, s2, length=Int(tot_N_χs / 2))
+          )
+
+          unique(vec)
+
+     elseif (s2 ≥ s1 + small_less) && (s2 < s1 + LIM)
+          tot_N_χs = N_χs % 4 == 0 ? N_χs :
+                     (N_χs + 1) % 4 == 0 ? N_χs + 1 :
+                     (N_χs + 2) % 4 == 0 ? N_χs + 2 :
+                     (N_χs + 3) % 4 == 0 ? N_χs + 3 :
+                     throw(AssertionError("what"))
+          vec = if s1 + small_less < s2
+               vcat(
+                    1.0 .* range(STARTING, s1 - small_less, length=Int(tot_N_χs / 4)),
+                    1.0 .* range(s1 - small_less, s1 + small_less, length=Int(tot_N_χs / 2)),
+                    1.0 .* range(s1 + small_less, s2, length=Int(tot_N_χs / 4))
+               )
+          else
+               vcat(
+                    1.0 .* range(STARTING, s1 - small_less, length=Int(tot_N_χs / 4)),
+                    1.0 .* range(s1 - small_less, s2, length=tot_N_χs)
+               )
+          end
+
+          unique(vec)
+
+     elseif s2 ≥ LIM + s1
+          tot_N_χs = N_χs % 4 == 0 ? N_χs :
+                    (N_χs + 1) % 4 == 0 ? N_χs + 1 :
+                    (N_χs + 2) % 4 == 0 ? N_χs + 2 :
+                    (N_χs + 3) % 4 == 0 ? N_χs + 3 :
+                    throw(AssertionError("what"))
+
+          vec = if s1 + s2 / FRAC < s2
+               vcat(
+                    1.0 .* range(STARTING, s1 - s2 / FRAC, length=Int(tot_N_χs / 4)),
+                    1.0 .* range(s1 - s2 / FRAC, s1 + s2 / FRAC, length=tot_N_χs),
+                    1.0 .* range(s1 + s2 / FRAC, s2, length=Int(tot_N_χs / 4))
+               )
+          else
+               vcat(
+                    1.0 .* range(STARTING, s1 - s2 / FRAC, length=Int(tot_N_χs / 4)),
+                    1.0 .* range(s1 - s2 / FRAC, s2, length=tot_N_χs),
+               )
+          end
+          
+          unique(vec)
+     else
+          throw(AssertionError("how the hell did you arrived here?"))
+     end
+     =#
+
+     println("chi2s = $χ2s")
 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
      IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; obs=obs)
+          en * GaPSE.integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; obs=obs, Δχ_min = Δχ_min)
           for IP in IPs
      ]
+     println("int_ξs = $int_ξs")
 
      res = trapz(χ2s, int_ξs)
      #println("res = $res")
@@ -261,7 +292,102 @@ end
 
 
 
+#=
 function ξ_GNC_Lensing_Newtonian(s1, s2, y, cosmo::Cosmology; kwargs...)
      ξ_GNC_Newtonian_Lensing(s2, s1, y, cosmo; kwargs...)
 end
+=#
 
+
+function integrand_ξ_GNC_Lensing_Newtonian(
+     χ2::Float64, s1::Float64, s2::Float64,
+     y, cosmo::Cosmology;
+     kwargs...)
+
+     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+     IP = Point(χ2, cosmo)
+     return integrand_ξ_GNC_Newtonian_Lensing(IP, P2, P1, y, cosmo; kwargs...)
+end
+
+
+function ξ_GNC_Lensing_Newtonian(s1, s2, y, cosmo::Cosmology;
+     en::Float64=1e6, N_χs::Int=100, obs::Union{Bool,Symbol}=:noobsvel)
+
+     #χ2s = s2 .* range(1e-6, 1, length=N_χs)
+     STARTING = 1e-6
+     small_less = 50
+     LIM = 500
+     FRAC = 7.0
+     χ2s = if y < 0.95 || s2 ≤ s1 - small_less
+          s2 .* range(1e-6, 1.0, length=N_χs)
+
+     elseif (s2 > s1 - small_less > 0) && (s2 < s1 + small_less)
+          tot_N_χs = N_χs % 2 == 0 ? N_χs : N_χs + 1
+          vec = vcat(
+               1.0 .* range(STARTING, s1 - small_less, length=Int(tot_N_χs / 2)),
+               1.0 .* range(s1 - small_less, s2, length=Int(tot_N_χs / 2))
+          )
+
+          unique(vec)
+
+     elseif (s2 ≥ s1 + small_less) && (s2 < s1 + LIM)
+          tot_N_χs = N_χs % 4 == 0 ? N_χs :
+                     (N_χs + 1) % 4 == 0 ? N_χs + 1 :
+                     (N_χs + 2) % 4 == 0 ? N_χs + 2 :
+                     (N_χs + 3) % 4 == 0 ? N_χs + 3 :
+                     throw(AssertionError("what"))
+          vec = if s1 + small_less < s2
+               vcat(
+                    1.0 .* range(STARTING, s1 - small_less, length=Int(tot_N_χs / 4)),
+                    1.0 .* range(s1 - small_less, s1 + small_less, length=Int(tot_N_χs / 2)),
+                    1.0 .* range(s1 + small_less, s2, length=Int(tot_N_χs / 4))
+               )
+          else
+               vcat(
+                    1.0 .* range(1e-6, s1 - small_less, length=Int(tot_N_χs / 4)),
+                    1.0 .* range(s1 - small_less, s2, length=tot_N_χs)
+               )
+          end
+
+          unique(vec)
+
+     elseif s2 ≥ LIM + s1
+          tot_N_χs = N_χs % 4 == 0 ? N_χs :
+                    (N_χs + 1) % 4 == 0 ? N_χs + 1 :
+                    (N_χs + 2) % 4 == 0 ? N_χs + 2 :
+                    (N_χs + 3) % 4 == 0 ? N_χs + 3 :
+                    throw(AssertionError("what"))
+
+          vec = if s1 + s2 / FRAC < s2
+               vcat(
+                    1.0 .* range(STARTING, s1 - s2 / FRAC, length=Int(tot_N_χs / 4)),
+                    1.0 .* range(s1 - s2 / FRAC, s1 + s2 / FRAC, length=tot_N_χs),
+                    1.0 .* range(s1 + s2 / FRAC, s2, length=Int(tot_N_χs / 4))
+               )
+          else
+               vcat(
+                    1.0 .* range(STARTING, s1 - s2 / FRAC, length=Int(tot_N_χs / 4)),
+                    1.0 .* range(s1 - s2 / FRAC, s2, length=tot_N_χs),
+               )
+          end
+          
+          unique(vec)
+     else
+          throw(AssertionError("how the hell did you arrived here?"))
+     end
+
+
+
+     @assert all([0.0 ≤ x ≤ 2*s2 for x in χ2s]) "χ2s = $χ2s"
+     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
+     IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
+
+     int_ξs = [
+          en * GaPSE.integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; obs=obs)
+          for IP in IPs
+     ]
+
+     res = trapz(χ2s, int_ξs)
+     #println("res = $res")
+     return res / en
+end
