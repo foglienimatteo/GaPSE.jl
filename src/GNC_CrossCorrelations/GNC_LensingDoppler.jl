@@ -73,7 +73,8 @@ See also: [`ξ_GNC_Lensing_Doppler`](@ref), [`int_on_mu_Lensing_Doppler`](@ref)
 """
 function integrand_ξ_GNC_Lensing_Doppler(
      IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
+     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel,
+     Δχ_min::Float64 = 1e-1)
 
      s1 = P1.comdist
      s2, D_s2, f_s2, ℋ_s2, ℛ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_GNC
@@ -88,30 +89,36 @@ function integrand_ξ_GNC_Lensing_Doppler(
      common = ℋ0^2 * Ω_M0 * D1 * (χ1 - s1) * (5 * s_b_s1 - 2) / (s1 * a1)
      factor = D_s2 * f_s2 * ℋ_s2 * ℛ_s2
 
-     new_J00 = 1 / 15 * (χ1^2 * y + χ1 * s2 * (4 * y^2 - 3) - 2 * y * s2^2)
-     new_J02 = 1 / (42 * Δχ1^2) * (
-          4 * χ1^4 * y + 4 * χ1^3 * (2 * y^2 - 3) * s2
-          + χ1^2 * y * (11 - 23 * y^2) * s2^2
-          + χ1 * (23 * y^2 - 3) * s2^3 - 8 * y * s2^4)
-     new_J04 = 1 / (70 * Δχ1^2) * (
-          2 * χ1^4 * y + 2 * χ1^3 * (2 * y^2 - 3) * s2
-          -
-          χ1^2 * y * (y^2 + 5) * s2^2
-          +
-          χ1 * (y^2 + 9) * s2^3 - 4 * y * s2^4)
-     new_J20 = y * Δχ1^2
+     first_part = if Δχ1 ≥ Δχ_min
+          new_J00 = 1 / 15 * (χ1^2 * y + χ1 * s2 * (4 * y^2 - 3) - 2 * y * s2^2)
+          new_J02 = 1 / (42 * Δχ1^2) * (
+               4 * χ1^4 * y + 4 * χ1^3 * (2 * y^2 - 3) * s2
+               + χ1^2 * y * (11 - 23 * y^2) * s2^2
+               + χ1 * (23 * y^2 - 3) * s2^3 - 8 * y * s2^4)
+          new_J04 = 1 / (70 * Δχ1^2) * (
+               2 * χ1^4 * y + 2 * χ1^3 * (2 * y^2 - 3) * s2
+               -
+               χ1^2 * y * (y^2 + 5) * s2^2
+               +
+               χ1 * (y^2 + 9) * s2^3 - 4 * y * s2^4)
+          new_J20 = y * Δχ1^2
 
-     I00 = cosmo.tools.I00(Δχ1)
-     I20 = cosmo.tools.I20(Δχ1)
-     I40 = cosmo.tools.I40(Δχ1)
-     I02 = cosmo.tools.I02(Δχ1)
+          I00 = cosmo.tools.I00(Δχ1)
+          I20 = cosmo.tools.I20(Δχ1)
+          I40 = cosmo.tools.I40(Δχ1)
+          I02 = cosmo.tools.I02(Δχ1)
 
-
-     if obs == false || obs == :no || obs == :noobsvel
-          return common * factor * (
+          common * factor * (
                  new_J00 * I00 + new_J02 * I20 +
                  new_J04 * I40 + new_J20 * I02
             )
+     else
+          common * factor * cosmo.tools.σ_2
+     end
+
+
+     if obs == false || obs == :no || obs == :noobsvel
+          return first_part
             
      elseif obs == true || obs == :yes
           #### New observer terms #########
@@ -122,10 +129,7 @@ function integrand_ξ_GNC_Lensing_Doppler(
 
           #################################     
           
-          return common * factor * (
-                 new_J00 * I00 + new_J02 * I20 +
-                 new_J04 * I40 + new_J20 * I02
-            ) + obs_terms
+          return first_part + obs_terms
      else
           throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
                "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
@@ -137,11 +141,11 @@ end
 
 function integrand_ξ_GNC_Lensing_Doppler(
      χ1::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
+     y, cosmo::Cosmology; kwargs...)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ1, cosmo)
-     return integrand_ξ_GNC_Lensing_Doppler(IP, P1, P2, y, cosmo; obs = obs)
+     return integrand_ξ_GNC_Lensing_Doppler(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
@@ -223,7 +227,8 @@ See also: [`integrand_ξ_GNC_Lensing_Doppler`](@ref), [`int_on_mu_Lensing_Dopple
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNC_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Int = 100, obs::Union{Bool, Symbol} = :noobsvel)
+     en::Float64 = 1e6, N_χs::Int = 100, obs::Union{Bool, Symbol} = :noobsvel, 
+     Δχ_min::Float64 = 1e-1)
 
      χ1s = s1 .* range(1e-6, 1, length = N_χs)
 
@@ -231,7 +236,8 @@ function ξ_GNC_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
      IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_Lensing_Doppler(IP, P1, P2, y, cosmo; obs = obs)
+          en * GaPSE.integrand_ξ_GNC_Lensing_Doppler(IP, P1, P2, y, cosmo; 
+               obs = obs, Δχ_min = Δχ_min)
           for IP in IPs
      ]
 
@@ -256,3 +262,11 @@ function ξ_GNC_Doppler_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
      ξ_GNC_Lensing_Doppler(s2, s1, y, cosmo; kwargs...)
 end
 
+function integrand_ξ_GNC_Doppler_Lensing(
+     χ1::Float64, s1::Float64, s2::Float64,
+     y, cosmo::Cosmology; kwargs...)
+
+     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+     IP = Point(χ1, cosmo)
+     return integrand_ξ_GNC_Lensing_Doppler(IP, P2, P1, y, cosmo; kwargs...)
+end

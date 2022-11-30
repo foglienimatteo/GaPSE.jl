@@ -135,8 +135,8 @@ function integrand_ξ_GNC_Lensing(
 
      else
 
-          lim = 4 / 15 * (5 * cosmo.tools.σ_2 + 6 * cosmo.tools.σ_0 * χ2^2)
-          9 / 4 * lim
+          #3 / 5 * (5 * cosmo.tools.σ_2 + 6 * cosmo.tools.σ_0 * χ2^2)
+          3 * cosmo.tools.σ_2 + 6/5 * χ1^2 * cosmo.tools.σ_0 
      end
 
      return factor / denomin * first_res
