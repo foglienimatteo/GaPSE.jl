@@ -18,6 +18,8 @@
 #
 
 
+
+
 function integrand_ξ_LDxGNC_multipole(s1, s, μ, effect::Function, cosmo::Cosmology;
      L::Int=0, use_windows::Bool=true, kwargs...)
 

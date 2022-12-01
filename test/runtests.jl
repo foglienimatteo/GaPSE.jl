@@ -40,7 +40,7 @@ const HUBBLE_0 = 1e5 / 299792458.0
 include("TEST_DATA.jl")
 
 ##########################################################################################92
-
+#=
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
@@ -84,7 +84,7 @@ end
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
 end
-
+=#
 
 
 ################################### COSMOLOGY IMPLEMENTATION #############################92
@@ -148,11 +148,12 @@ KWARGS_LD = Dict(
 KWARGS_GNC = Dict(
      :pr => true,
      :use_windows => false,
-     :enhancer => 1e8, :N_μs => 30,
-     :μ_atol => 0.0, :μ_rtol => 1e-2,
-     :N_χs => 100, :N_χs_2 => 30,
-     :N_log => 100, :obs => false,
+     :enhancer => 1e8, :N_trap => 30, :N_lob => 30,
+     :atol_quad => 0.0, :rtol_quad => 1e-2,
+     :N_χs => 100, :N_χs_2 => 60,
+     :N_log => 3,
 );
+SS_GNC = 10 .^ range(-1, log10(2.0*COSMO.s_max), length = 100); 
 
 KWARGS_GNCxLD = Dict(
      :pr => true,
@@ -198,18 +199,6 @@ end
 
 
 ################################### TEST LUMINOSITY DISTANCE PERTURBATIONS ###############92
-
-
-@testset "test LD_XiMultipoles" begin
-     include("test_LD_XiMultipoles.jl")
-end
-
-@testset "test LD_SumXiMultipoles" begin
-     include("test_LD_SumXiMultipoles.jl")
-end
-
-
-##############################
 
 
 table_xis_LD_L0_noF = readdlm("datatest/LD_SumXiMultipoles/map_sum_xi_LD_L0_noF.txt",
@@ -263,20 +252,21 @@ end
      include("test_LD_CrossCorrelations/test_LD_LocalGPIntegratedGP.jl")
 end
 
+
+##############################
+
+
+@testset "test LD_XiMultipoles" begin
+     include("test_LD_XiMultipoles.jl")
+end
+
+@testset "test LD_SumXiMultipoles" begin
+     include("test_LD_SumXiMultipoles.jl")
+end
+
 =#
 ################################### TEST RELATIVISTIC GALAXY NUMBER COUNTS ###############92
 
-
-@testset "test GNC_XiMultipoles" begin
-     include("test_GNC_XiMultipoles.jl")
-end
-
-@testset "test GNC_SumXiMultipoles" begin
-     include("test_GNC_SumXiMultipoles.jl")
-end
-
-
-##############################
 
 table_xis_GNC_L0_noF = readdlm("datatest/GNC_SumXiMultipoles/map_sum_xi_GNC_L0_noF.txt",
      comments=true);
@@ -315,9 +305,11 @@ end
      include("test_GNC_CrossCorrelations/test_GNC_NewtonDoppler.jl")
 end
 
+
 @testset "test GNC_NewtonLensing" begin
      include("test_GNC_CrossCorrelations/test_GNC_NewtonLensing.jl")
 end
+
 
 @testset "test GNC_NewtonLocalGP" begin
      include("test_GNC_CrossCorrelations/test_GNC_NewtonLocalGP.jl")
@@ -327,9 +319,11 @@ end
      include("test_GNC_CrossCorrelations/test_GNC_NewtonIntegratedGP.jl")
 end
 
+
 @testset "test GNC_DopplerLensing" begin
      include("test_GNC_CrossCorrelations/test_GNC_DopplerLensing.jl")
 end
+
 
 @testset "test GNC_DopplerLocalGP" begin
      include("test_GNC_CrossCorrelations/test_GNC_DopplerLocalGP.jl")
@@ -352,26 +346,21 @@ end
 end
 
 
+##############################
+
+@test 1==2
+
+@testset "test GNC_XiMultipoles" begin
+     include("test_GNC_XiMultipoles.jl")
+end
+
+@testset "test GNC_SumXiMultipoles" begin
+     include("test_GNC_SumXiMultipoles.jl")
+end
+
+
 ##### TEST RELATIVISTIC GALAXY NUMBER COUNTS X LUMINOSITY DISTANCE PERT. and viceversa ###92
 
-
-@testset "test GNCxLD_XiMultipoles" begin
-     include("test_GNCxLD_XiMultipoles.jl")
-end
-
-@testset "test LDxGNC_XiMultipoles" begin
-     include("test_LDxGNC_XiMultipoles.jl")
-end
-
-@testset "test GNCxLD_SumXiMultipoles" begin
-     include("test_GNCxLD_SumXiMultipoles.jl")
-end
-
-@testset "test LDxGNC_SumXiMultipoles" begin
-     include("test_LDxGNC_SumXiMultipoles.jl")
-end
-
-##############################
 
 table_xis_GNCxLD_L0_noF = readdlm("datatest/GNCxLD_SumXiMultipoles/map_sum_xi_GNCxLD_L0_noF.txt",
      comments=true);
@@ -473,3 +462,25 @@ end
 @testset "test GNCxLD_IntegratedGPIntegratedGP" begin
      include("test_GNCxLD_CrossCorrelations/test_GNCxLD_IntegratedGPIntegratedGP.jl")
 end
+
+
+##############################
+
+
+@testset "test GNCxLD_XiMultipoles" begin
+     include("test_GNCxLD_XiMultipoles.jl")
+end
+
+@testset "test LDxGNC_XiMultipoles" begin
+     include("test_LDxGNC_XiMultipoles.jl")
+end
+
+@testset "test GNCxLD_SumXiMultipoles" begin
+     include("test_GNCxLD_SumXiMultipoles.jl")
+end
+
+@testset "test LDxGNC_SumXiMultipoles" begin
+     include("test_LDxGNC_SumXiMultipoles.jl")
+end
+
+##############################

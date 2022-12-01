@@ -430,7 +430,7 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
 
 
      s_1 = isnothing(s1) ? cosmo.s_eff : s1
-     v_ss = isnothing(ss) ? 10 .^ range(0, 3, length = N_log) : ss
+     v_ss = isnothing(ss) ? 10 .^ range(0, log10(2*cosmo.s_max), length = N_log) : ss
      xis = [0.0 for i in 1:length(v_ss)]
 
      orig_f(μ, s) = enhancer * integrand_ξ_GNC_multipole(s_1, s, μ, effect, cosmo; 

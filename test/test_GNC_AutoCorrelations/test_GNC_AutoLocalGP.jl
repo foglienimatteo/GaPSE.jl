@@ -17,7 +17,7 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-@testset "test xi auto_localgp L = 0" begin
+@testset "test xi auto_localgp L = 0 no observer terms" begin
      effect = "auto_localgp"
      L = 0
 
@@ -26,8 +26,8 @@
 
      name = "calc_xi_" * effect * "_GNC_L$L" * ".txt"
      isfile(name) && rm(name)
-     GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, 10 .^ range(-1, 3, length=KWARGS_GNC[:N_log]);
-          L = L, GaPSE.specif_kwargs_GNC(effect, KWARGS_GNC)...)
+     GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, SS_GNC;
+          L = L, alg = :quad, obs =:no, GaPSE.specif_kwargs_GNC(effect, KWARGS_GNC)...)
 
      calc_table = readdlm(name; comments = true)
      calc_ss = convert(Vector{Float64}, calc_table[:, 1])
@@ -37,5 +37,8 @@
      @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
 
      rm(name)
+
+     #println("xis = $xis ;")
+     #println("calc_xis = $calc_xis ;")
 end
 
