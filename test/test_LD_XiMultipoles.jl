@@ -49,7 +49,7 @@
      @testset "no window, with observer terms" begin
           kwargs = Dict(
                :use_windows => false,
-               :enhancer => 1e8, :obs => :yes,
+               :enhancer => 1e8, 
                :N_lob => 100, :N_trap => 100,
                :atol_quad => 0.0, :rtol_quad => 1e-2
           )
@@ -157,7 +157,7 @@
      @testset "no window, no observer terms" begin
           kwargs = Dict(
                :use_windows => false,
-               :enhancer => 1e8, :obs => :no,
+               :enhancer => 1e8,
                :N_lob => 100, :N_trap => 100,
                :atol_quad => 0.0, :rtol_quad => 1e-2
           )
@@ -165,9 +165,9 @@
           @testset "L = 0" begin
                L = 0
                ss_lob, xis_lob = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                              name_effect * "_lobatto_noF_noobs_L$L" * ".txt"; comments=true)
+                                              name_effect * "_lobatto_noF_L$L" * ".txt"; comments=true)
                ss_trap, xis_trap = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_trap_noF_noobs_L$L" * ".txt"; comments=true)
+                                                name_effect * "_trap_noF_L$L" * ".txt"; comments=true)
 
                calc_xis_lob = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                     L=L, alg=:lobatto, kwargs...) for s in ss_lob]
@@ -179,7 +179,7 @@
 
 
                ss_quad, xis_quad = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_quad_noF_noobs_L$L" * ".txt"; comments=true)
+                                                name_effect * "_quad_noF_L$L" * ".txt"; comments=true)
                calc_xis_quad = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                     L=L, alg=:quad, kwargs...) for s in ss_quad]
 
@@ -189,9 +189,9 @@
           @testset "L = 1" begin
                L = 1
                ss_lob, xis_lob = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                              name_effect * "_lobatto_noF_noobs_L$L" * ".txt"; comments=true)
+                                              name_effect * "_lobatto_noF_L$L" * ".txt"; comments=true)
                ss_trap, xis_trap = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_trap_noF_noobs_L$L" * ".txt"; comments=true)
+                                                name_effect * "_trap_noF_L$L" * ".txt"; comments=true)
 
                calc_xis_lob = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                     L=L, alg=:lobatto, kwargs...) for s in ss_lob]
@@ -205,9 +205,9 @@
           @testset "L = 2" begin
                L = 2
                ss_lob, xis_lob = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                              name_effect * "_lobatto_noF_noobs_L$L" * ".txt"; comments=true)
+                                              name_effect * "_lobatto_noF_L$L" * ".txt"; comments=true)
                ss_trap, xis_trap = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_trap_noF_noobs_L$L" * ".txt"; comments=true)
+                                                name_effect * "_trap_noF_L$L" * ".txt"; comments=true)
 
                calc_xis_lob = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                     L=L, alg=:lobatto, kwargs...) for s in ss_lob]
@@ -218,7 +218,7 @@
                @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_trap, calc_xis_trap)])
 
                ss_quad, xis_quad = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_quad_noF_noobs_L$L" * ".txt"; comments=true)
+                                                name_effect * "_quad_noF_L$L" * ".txt"; comments=true)
                calc_xis_quad = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                     L=L, alg=:quad, kwargs...) for s in ss_quad]
 
@@ -230,9 +230,9 @@
           @testset "L = 3" begin
                L = 3
                ss_lob, xis_lob = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                              name_effect * "_lobatto_noF_noobs_L$L" * ".txt"; comments=true)
+                                              name_effect * "_lobatto_noF_L$L" * ".txt"; comments=true)
                ss_trap, xis_trap = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_trap_noF_noobs_L$L" * ".txt"; comments=true)
+                                                name_effect * "_trap_noF_L$L" * ".txt"; comments=true)
 
                calc_xis_lob = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                     L=L, alg=:lobatto, kwargs...) for s in ss_lob]
@@ -246,9 +246,9 @@
           @testset "L = 4" begin
                L = 4
                ss_lob, xis_lob = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                              name_effect * "_lobatto_noF_noobs_L$L" * ".txt"; comments=true)
+                                              name_effect * "_lobatto_noF_L$L" * ".txt"; comments=true)
                ss_trap, xis_trap = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_trap_noF_noobs_L$L" * ".txt"; comments=true)
+                                                name_effect * "_trap_noF_L$L" * ".txt"; comments=true)
 
                calc_xis_lob = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                     L=L, alg=:lobatto, kwargs...) for s in ss_lob]
@@ -263,7 +263,7 @@
      @testset "with window, no observer terms" begin
           kwargs = Dict(
                :use_windows => true,
-               :enhancer => 1e8, :obs => :no,
+               :enhancer => 1e8,
                :N_lob => 100, :N_trap => 100,
                :atol_quad => 0.0, :rtol_quad => 1e-2
           )
@@ -271,9 +271,9 @@
           @testset "L = 0" begin
                L = 0
                ss_lob, xis_lob = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                              name_effect * "_lobatto_withF_noobs_L$L" * ".txt"; comments=true)
+                                              name_effect * "_lobatto_withF_L$L" * ".txt"; comments=true)
                ss_trap, xis_trap = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_trap_withF_noobs_L$L" * ".txt"; comments=true)
+                                                name_effect * "_trap_withF_L$L" * ".txt"; comments=true)
 
                calc_xis_lob = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                     L=L, alg=:lobatto, kwargs...) for s in ss_lob]
@@ -285,7 +285,7 @@
 
 
                ss_quad, xis_quad = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_quad_withF_noobs_L$L" * ".txt"; comments=true)
+                                                name_effect * "_quad_withF_L$L" * ".txt"; comments=true)
                calc_xis_quad = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                     L=L, alg=:quad, kwargs...) for s in ss_quad]
 
@@ -295,9 +295,9 @@
           @testset "L = 1" begin
                L = 1
                ss_lob, xis_lob = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                              name_effect * "_lobatto_withF_noobs_L$L" * ".txt"; comments=true)
+                                              name_effect * "_lobatto_withF_L$L" * ".txt"; comments=true)
                ss_trap, xis_trap = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_trap_withF_noobs_L$L" * ".txt"; comments=true)
+                                                name_effect * "_trap_withF_L$L" * ".txt"; comments=true)
 
                calc_xis_lob = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                     L=L, alg=:lobatto, kwargs...) for s in ss_lob]
@@ -311,9 +311,9 @@
           @testset "L = 2" begin
                L = 2
                ss_lob, xis_lob = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                              name_effect * "_lobatto_withF_noobs_L$L" * ".txt"; comments=true)
+                                              name_effect * "_lobatto_withF_L$L" * ".txt"; comments=true)
                ss_trap, xis_trap = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_trap_withF_noobs_L$L" * ".txt"; comments=true)
+                                                name_effect * "_trap_withF_L$L" * ".txt"; comments=true)
 
                calc_xis_lob = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                     L=L, alg=:lobatto, kwargs...) for s in ss_lob]
@@ -324,7 +324,7 @@
                @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_trap, calc_xis_trap)])
 
                ss_quad, xis_quad = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_quad_withF_noobs_L$L" * ".txt"; comments=true)
+                                                name_effect * "_quad_withF_L$L" * ".txt"; comments=true)
                calc_xis_quad = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                     L=L, alg=:quad, kwargs...) for s in ss_quad]
 
@@ -336,9 +336,9 @@
           @testset "L = 3" begin
                L = 3
                ss_lob, xis_lob = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                              name_effect * "_lobatto_withF_noobs_L$L" * ".txt"; comments=true)
+                                              name_effect * "_lobatto_withF_L$L" * ".txt"; comments=true)
                ss_trap, xis_trap = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_trap_withF_noobs_L$L" * ".txt"; comments=true)
+                                                name_effect * "_trap_withF_L$L" * ".txt"; comments=true)
 
                calc_xis_lob = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                     L=L, alg=:lobatto, kwargs...) for s in ss_lob]
@@ -352,9 +352,9 @@
           @testset "L = 4" begin
                L = 4
                ss_lob, xis_lob = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                              name_effect * "_lobatto_withF_noobs_L$L" * ".txt"; comments=true)
+                                              name_effect * "_lobatto_withF_L$L" * ".txt"; comments=true)
                ss_trap, xis_trap = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_trap_withF_noobs_L$L" * ".txt"; comments=true)
+                                                name_effect * "_trap_withF_L$L" * ".txt"; comments=true)
 
                calc_xis_lob = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
                     L=L, alg=:lobatto, kwargs...) for s in ss_lob]

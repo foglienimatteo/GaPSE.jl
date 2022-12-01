@@ -177,10 +177,10 @@ function ξ_LD_multipole(
      @assert (effect ∈ VEC_ξs_LD) error
 
      orig_f(μ) = enhancer * integrand_ξ_LD_multipole(s1, s, μ, effect, cosmo;
-          L=L, use_windows=use_windows, kwargs...)
+          L=L, kwargs...)
 
      int = if alg == :lobatto 
-          xs, ws = gauv_sslobatto(N_lob)
+          xs, ws = gausslobatto(N_lob)
           dot(ws, orig_f.(xs))
 
      elseif alg == :quad 
@@ -197,7 +197,7 @@ function ξ_LD_multipole(
           trapz(μs, orig_fs)
 
      else
-          throw(Av_ssertionError("how the hell did you arrive here?"))
+          throw(AssertionError("how the hell did you arrive here?"))
      end
      #=
      int =
