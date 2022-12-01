@@ -153,7 +153,7 @@ KWARGS_GNC = Dict(
      :N_χs => 100, :N_χs_2 => 60,
      :N_log => 3,
 );
-SS_GNC = 10 .^ range(-1, log10(2.0*COSMO.s_max), length = 100); 
+SS_GNC = 10 .^ range(-1, log10(2.0 * COSMO.s_max), length=100);
 
 KWARGS_GNCxLD = Dict(
      :pr => true,
@@ -267,13 +267,19 @@ end
 =#
 ################################### TEST RELATIVISTIC GALAXY NUMBER COUNTS ###############92
 
-
-table_xis_GNC_L0_noF = readdlm("datatest/GNC_SumXiMultipoles/map_sum_xi_GNC_L0_noF.txt",
+ss_GNC_L0_noF_noobs, xis_sum_GNC_L0_noF_noobs, all_xis_GNC_L0_noF_noobs = 
+     GaPSE.readxyall("datatest/GNC_SumXiMultipoles/xis_GNC_L0_noF_noobs.txt", comments = true)
+ss_GNC_L0_noF_noobsvel, xis_sum_GNC_L0_noF_noobsvel, all_xis_GNC_L0_noF_noobsvel =
+     GaPSE.readxyall("datatest/GNC_SumXiMultipoles/xis_GNC_L0_noF_noobsvel.txt", comments=true)
+ss_GNC_L0_noF_withobs, xis_sum_GNC_L0_noF_withobs, all_xis_GNC_L0_noF_withobs =
+     GaPSE.readxyall("datatest/GNC_SumXiMultipoles/xis_GNC_L0_noF_withobs.txt", comments=true)
+#=
+table_xis_GNC_L0_noF = readdlm("datatest/GNC_SumXiMultipoles/xis_GNC_L0_noF_noobs.txt",
      comments=true);
 ss_GNC_L0_noF = convert(Vector{Float64}, table_xis_GNC_L0_noF[:, 1]);
 xis_sum_GNC_L0_noF = convert(Vector{Float64}, table_xis_GNC_L0_noF[:, 2]);
 all_xis_GNC_L0_noF = [convert(Vector{Float64}, table_xis_GNC_L0_noF[:, i]) for i in 3:27];
-
+=#
 
 @testset "test GNC_AutoNewton" begin
      include("test_GNC_AutoCorrelations/test_GNC_AutoNewton.jl")
@@ -348,7 +354,6 @@ end
 
 ##############################
 
-@test 1==2
 
 @testset "test GNC_XiMultipoles" begin
      include("test_GNC_XiMultipoles.jl")

@@ -21,8 +21,8 @@
      effect = "lensing_integratedgp"
      L = 0
 
-     ss = ss_GNC_L0_noF
-     xis = all_xis_GNC_L0_noF[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
+     ss = ss_GNC_L0_noF_noobs
+     xis = all_xis_GNC_L0_noF_noobs[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
 
      name = "calc_xi_" * effect * "_GNC_L$L" * ".txt"
      isfile(name) && rm(name)
@@ -47,8 +47,8 @@ end
      effect = "integratedgp_lensing"
      L = 0
 
-     ss = ss_GNC_L0_noF
-     xis = all_xis_GNC_L0_noF[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
+     ss = ss_GNC_L0_noF_noobs
+     xis = all_xis_GNC_L0_noF_noobs[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
 
      name = "calc_xi_" * effect * "_GNC_L$L" * ".txt"
      isfile(name) && rm(name)
