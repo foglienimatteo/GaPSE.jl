@@ -44,14 +44,14 @@
 # 	 σ_4 = 3.415930015488999e6
 # 	 (where σ_i = \int_{k_{min}}^{k_{max}}\frac{dq}{2 π^2} q^{2-i} P(q))
 # 
-# computational time needed (in s) : 0.0341
+# computational time needed (in s) : 0.0248
 # kwards passed: 
 # 		L = 0
 # 		alg = quad
 # 		obs = noobsvel
+# 		use_windows = false
 # 		N_lob = 100
 # 		enhancer = 1.0e8
-# 		use_windows = false
 # 		pr = false
 # 		N_trap = 100
 # 		rtol_quad = 0.01

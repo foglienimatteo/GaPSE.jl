@@ -381,8 +381,8 @@ end
      kwargs = Dict(
           :use_windows => false,
           :pr => false,
-          :enhancer => 1e8, :N_μs => 30,
-          :μ_atol => 0.0, :μ_rtol => 1e-2,
+          :enhancer => 1e8, :N_trap => 30, :N_lob => 30,
+          :atol_quad => 0.0, :rtol_quad => 1e-2,
           :N_log => 1000
      )
 
