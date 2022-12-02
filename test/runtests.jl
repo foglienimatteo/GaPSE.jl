@@ -256,12 +256,13 @@ end
 @testset "test LD_XiMultipoles" begin
      include("test_LD_XiMultipoles.jl")
 end
-=#
+
+
 
 @testset "test LD_SumXiMultipoles" begin
      include("test_LD_SumXiMultipoles.jl")
 end
-
+=#
 
 ################################### TEST RELATIVISTIC GALAXY NUMBER COUNTS ###############92
 
@@ -349,7 +350,6 @@ end
 @testset "test GNC_LocalGPIntegratedGP" begin
      include("test_GNC_CrossCorrelations/test_GNC_LocalGPIntegratedGP.jl")
 end
-=#
 
 ##############################
 
@@ -358,10 +358,12 @@ end
      include("test_GNC_XiMultipoles.jl")
 end
 
+
 @testset "test GNC_SumXiMultipoles" begin
      include("test_GNC_SumXiMultipoles.jl")
 end
-
+=#
+ 
 
 ##### TEST RELATIVISTIC GALAXY NUMBER COUNTS X LUMINOSITY DISTANCE PERT. and viceversa ###92
 

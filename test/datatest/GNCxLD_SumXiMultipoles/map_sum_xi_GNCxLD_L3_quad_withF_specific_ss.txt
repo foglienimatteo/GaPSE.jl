@@ -1,0 +1,63 @@
+###############
+#    GaPSE    #
+############### 
+#
+#
+# This is an integration map on mu of the sum of all the ξ_GNCxLD_L=3 multipole GR effects.
+# In input was set "single = true", so, together with their sum, all the CFs are here reported.
+#
+# The Cosmology considered had the following paremeters:
+# 
+# - Matter Power Spectrum input file: "/Users/di75tom/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/file_pk.txt"
+# - Background data input file: "/Users/di75tom/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/WideA_ZA_background.dat"
+# - F window function input file: "/Users/di75tom/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/F_REFERENCE_pi2.txt"
+# - Integrated F window function input file: "/Users/di75tom/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/IntegrF_REFERENCE_pi2.txt"
+#
+# - Basic CosmoParams considered: 
+#	 z_min = 0.05 	 z_max = 0.2
+#	 θ_max = 1.5707963267948966 [rad] 	 h_0 = 0.7
+#	 Ω_b = 0.0489 	 Ω_cdm = 0.25102 	 Ω_M0 = 0.29992
+#	 b = 1.0 	 f_evo = 0.0 	 s_b = 0.0
+#
+# - CosmoParams about the Input Power Spectrum: 
+#	 fit_left_min = 1.0e-6 	 fit_right_min = 10.0 	 
+#	 fit_left_max = 3.0e-6 	 fit_right_max = 20.0 	 
+#
+# - CosmoParams about the Input Power Spectrum Tools: 
+#	 k_max = 10.0 	 fit_max = 0.5 	 N = 1024 	 
+#	 con = true 	 k_min = 1.0e-8 	 fit_min = 0.05 	 
+#
+# - CosmoParams about the Integrated Window Function F: 
+#	 ss_step = 21.768735478453323 	 N = 1000 	 rtol = 0.01 	 
+#	 llim = 0.0 	 atol = 0.0 	 rlim = Inf 	 
+#	 ss_stop = 0.0 	 trap = true 	 ss_start = 0.0 	 
+#
+# - Computed quantities: 
+# 	 effective redshift z_eff = 0.15045636096023227 
+# 	 comoving s_min = 148.19200014657565 Mpc/h_0
+# 	 comoving s_max = 571.7022420258767 Mpc/h_0
+# 	 comoving s_eff = 435.3747095690665 Mpc/h_0
+# 	 Volume of the survey V_survey = 3.845366167995967e8 Mpc^3/h_0^3
+# 	 σ_0 = 15.593462966741178
+# 	 σ_1 = 15.074895881392285
+# 	 σ_2 = 100.85852368830226
+# 	 σ_3 = 3735.1226181519773
+# 	 σ_4 = 3.415930015488999e6
+# 	 (where σ_i = \int_{k_{min}}^{k_{max}}\frac{dq}{2 π^2} q^{2-i} P(q))
+# 
+# computational time needed (in s) : 7.9522
+# kwards passed: 
+# 		alg = quad
+# 		N_lob = 30
+# 		N_χs = 40
+# 		enhancer = 1.0e8
+# 		use_windows = true
+# 		N_trap = 30
+# 		N_χs_2 = 20
+# 		rtol_quad = 0.01
+# 		atol_quad = 0.0
+# 
+# 1: s [Mpc/h_0] 	 2: xi_SUM 	 3: xi_newton_doppler 	 4: xi_newton_lensing 	 5: xi_newton_localgp 	 6: xi_newton_integratedgp 	 7: xi_doppler_doppler 	 8: xi_doppler_lensing 	 9: xi_doppler_localgp 	 10: xi_doppler_integratedgp 	 11: xi_lensing_doppler 	 12: xi_lensing_lensing 	 13: xi_lensing_localgp 	 14: xi_lensing_integratedgp 	 15: xi_localgp_doppler 	 16: xi_localgp_lensing 	 17: xi_localgp_localgp 	 18: xi_localgp_integratedgp 	 19: xi_integratedgp_doppler 	 20: xi_integratedgp_lensing 	 21: xi_integratedgp_localgp 	 22: xi_integratedgp_integratedgp 	 
+10 	 -0.00019690256104976184 	 -0.0001952747564907345 	 -2.093675365416933e-6 	 -3.0041619584130854e-8 	 -5.402346283470845e-9 	 4.96905215101724e-7 	 -5.0630766061267126e-9 	 -2.4019650120420223e-9 	 -3.507049319332545e-11 	 4.909788945780584e-9 	 5.135800748414443e-9 	 -1.5321652434864137e-11 	 -1.8083620250362777e-12 	 1.8964366932852293e-9 	 1.189765670553719e-11 	 -1.1377701603471306e-13 	 -1.7146561883758446e-12 	 -2.458363950052278e-11 	 -4.980988596599289e-13 	 -2.2601179011094707e-13 	 1.1420484113832838e-14 	 
+500 	 5.434731663748703e-7 	 3.725028613514305e-7 	 1.0565129245538718e-8 	 -4.460140104024285e-8 	 -1.8406660654343955e-8 	 2.2879453034535237e-7 	 1.2169949380555048e-9 	 2.4259266274775094e-8 	 -1.2000903591508713e-8 	 2.0164907086778848e-10 	 -2.572865005153192e-10 	 7.689876895933612e-10 	 8.535302400536997e-11 	 -1.35271247689538e-8 	 2.9634401949333497e-10 	 -2.079570002354667e-9 	 -2.2555162751677077e-9 	 -9.54849421512219e-10 	 6.119794437091335e-11 	 -8.488686304595838e-10 	 -3.46966643553723e-10 	 
+1000 	 -4.739316859312957e-9 	 -3.4900801293917137e-9 	 -8.826934534674271e-10 	 4.6007695698323573e-10 	 3.6056273808170183e-10 	 -7.04191408960168e-9 	 -3.253671640113675e-10 	 1.8164882881445787e-9 	 9.223551053071719e-10 	 -1.315123829107122e-10 	 4.2045102092231403e-11 	 3.2490032997877986e-11 	 1.467562761293984e-11 	 1.6708190601032257e-9 	 7.36074303276415e-11 	 8.722054109024896e-10 	 2.6210583539289264e-10 	 3.993311690095225e-10 	 1.518731298980769e-11 	 1.4977365581743486e-10 	 4.0526634307191147e-11 	 

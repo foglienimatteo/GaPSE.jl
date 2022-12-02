@@ -287,18 +287,14 @@ end
      end
 
      @testset "first" begin
-          table = readdlm("datatest/LD_doppler_multipoles/xi_LD_auto_doppler_L0_first.txt"; comments=true)
-          ss = convert(Vector{Float64}, table[:, 1])
-          xis = convert(Vector{Float64}, table[:, 2])
+          ss, xis = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_auto_doppler_L0_first.txt"; comments=true)
 
           name = "calc_xi_LD_auto_doppler_L0_first.txt"
           isfile(name) && rm(name)
           GaPSE.print_map_ξ_LD_multipole(COSMO, name, effect, nothing;
                s1=nothing, L=0, kwargs...)
 
-          calc_table = readdlm(name; comments=true)
-          calc_ss = convert(Vector{Float64}, calc_table[:, 1])
-          calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+          calc_ss, calc_xis = GaPSE.readxy(name; comments = true)
 
           @test all([isapprox(s, calc_s, rtol=1e-2) for (s, calc_s) in zip(ss, calc_ss)])
           @test all([isapprox(xi, calc_xi, rtol=1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
@@ -307,18 +303,14 @@ end
      end
 
      @testset "second" begin
-          table = readdlm("datatest/LD_doppler_multipoles/xi_LD_auto_doppler_L0_second.txt"; comments=true)
-          ss = convert(Vector{Float64}, table[:, 1])
-          xis = convert(Vector{Float64}, table[:, 2])
+          ss, xis = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_auto_doppler_L0_second.txt"; comments=true)
 
           name = "calc_xi_LD_auto_doppler_L0_second.txt"
           isfile(name) && rm(name)
           GaPSE.print_map_ξ_LD_multipole(COSMO, name, effect, 10 .^ range(0, 3, length=344);
                s1=nothing, L=0, kwargs...)
 
-          calc_table = readdlm(name; comments=true)
-          calc_ss = convert(Vector{Float64}, calc_table[:, 1])
-          calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+          calc_ss, calc_xis = GaPSE.readxy(name; comments = true)
 
           @test all([isapprox(s, calc_s, rtol=1e-2) for (s, calc_s) in zip(ss, calc_ss)])
           @test all([isapprox(xi, calc_xi, rtol=1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
@@ -327,18 +319,14 @@ end
      end
 
      @testset "third" begin
-          table = readdlm("datatest/LD_doppler_multipoles/xi_LD_auto_doppler_L0_third.txt"; comments=true)
-          ss = convert(Vector{Float64}, table[:, 1])
-          xis = convert(Vector{Float64}, table[:, 2])
+          ss, xis = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_auto_doppler_L0_third.txt"; comments=true)
 
           name = "calc_xi_LD_auto_doppler_L0_third.txt"
           isfile(name) && rm(name)
           GaPSE.print_map_ξ_LD_multipole(COSMO, name, effect, 10 .^ range(0, 3, length=344);
                s1=COSMO.s_eff - 65.0, L=0, kwargs...)
 
-          calc_table = readdlm(name; comments=true)
-          calc_ss = convert(Vector{Float64}, calc_table[:, 1])
-          calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+          calc_ss, calc_xis = GaPSE.readxy(name; comments = true)
 
           @test all([isapprox(s, calc_s, rtol=1e-2) for (s, calc_s) in zip(ss, calc_ss)])
           @test all([isapprox(xi, calc_xi, rtol=1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
