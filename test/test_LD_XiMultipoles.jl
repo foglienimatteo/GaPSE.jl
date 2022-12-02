@@ -28,8 +28,7 @@
 
      @testset "zeros" begin
           @test_throws AssertionError GaPSE.ξ_LD_multipole(COSMO.s_eff, 10.0, "strange", COSMO)
-          @test_throws AssertionError GaPSE.ξ_LD_multipole(COSMO.s_eff, 10.0, "auto_doppler", COSMO;
-               obs=:trap)
+
           @test_throws AssertionError GaPSE.ξ_LD_multipole(COSMO.s_eff, 10.0, "auto_doppler", COSMO;
                alg=:noobsvel)
 
@@ -46,115 +45,7 @@
      end
 
 
-     @testset "no window, with observer terms" begin
-          kwargs = Dict(
-               :use_windows => false,
-               :enhancer => 1e8, 
-               :N_lob => 100, :N_trap => 100,
-               :atol_quad => 0.0, :rtol_quad => 1e-2
-          )
-
-          @testset "L = 0" begin
-               L = 0
-               ss_lob, xis_lob = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                              name_effect * "_lobatto_noF_withobs_L$L" * ".txt"; comments=true)
-               ss_trap, xis_trap = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_trap_noF_withobs_L$L" * ".txt"; comments=true)
-
-               calc_xis_lob = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
-                    L=L, alg=:lobatto, kwargs...) for s in ss_lob]
-               calc_xis_trap = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
-                    L=L, alg=:trap, kwargs...) for s in ss_trap]
-
-               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_lob, calc_xis_lob)])
-               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_trap, calc_xis_trap)])
-
-               ss_quad, xis_quad = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_quad_noF_withobs_L$L" * ".txt"; comments=true)
-               calc_xis_quad = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
-                    L=L, alg=:quad, kwargs...) for s in ss_quad]
-
-               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_quad, calc_xis_quad)])
-          end
-
-          @testset "L = 1" begin
-               L = 1
-               ss_lob, xis_lob = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                              name_effect * "_lobatto_noF_withobs_L$L" * ".txt"; comments=true)
-               ss_trap, xis_trap = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_trap_noF_withobs_L$L" * ".txt"; comments=true)
-
-               calc_xis_lob = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
-                    L=L, alg=:lobatto, kwargs...) for s in ss_lob]
-               calc_xis_trap = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
-                    L=L, alg=:trap, kwargs...) for s in ss_trap]
-
-               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_lob, calc_xis_lob)])
-               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_trap, calc_xis_trap)])
-          end
-
-          @testset "L = 2" begin
-               L = 2
-               ss_lob, xis_lob = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                              name_effect * "_lobatto_noF_withobs_L$L" * ".txt"; comments=true)
-               ss_trap, xis_trap = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_trap_noF_withobs_L$L" * ".txt"; comments=true)
-
-               calc_xis_lob = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
-                    L=L, alg=:lobatto, kwargs...) for s in ss_lob]
-               calc_xis_trap = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
-                    L=L, alg=:trap, kwargs...) for s in ss_trap]
-
-               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_lob, calc_xis_lob)])
-               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_trap, calc_xis_trap)])
-
-
-               ss_quad, xis_quad = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_quad_noF_withobs_L$L" * ".txt"; comments=true)
-               calc_xis_quad = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
-                    L=L, alg=:quad, kwargs...) for s in ss_quad]
-
-               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_quad, calc_xis_quad)])
-          end
-
-          @testset "L = 3" begin
-               L = 3
-               ss_lob, xis_lob = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                              name_effect * "_lobatto_noF_withobs_L$L" * ".txt"; comments=true)
-               ss_trap, xis_trap = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_trap_noF_withobs_L$L" * ".txt"; comments=true)
-
-               calc_xis_lob = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
-                    L=L, alg=:lobatto, kwargs...) for s in ss_lob]
-               calc_xis_trap = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
-                    L=L, alg=:trap, kwargs...) for s in ss_trap]
-
-               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_lob, calc_xis_lob)])
-               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_trap, calc_xis_trap)])
-
-          end
-
-          @testset "L = 4" begin
-               L = 4
-               ss_lob, xis_lob = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                              name_effect * "_lobatto_noF_withobs_L$L" * ".txt"; comments=true)
-               ss_trap, xis_trap = GaPSE.readxy("datatest/LD_doppler_multipoles/xi_LD_" *
-                                                name_effect * "_trap_noF_withobs_L$L" * ".txt"; comments=true)
-
-               calc_xis_lob = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
-                    L=L, alg=:lobatto, kwargs...) for s in ss_lob]
-               calc_xis_trap = [GaPSE.ξ_LD_multipole(COSMO.s_eff, s, name_effect, COSMO;
-                    L=L, alg=:trap, kwargs...) for s in ss_trap]
-
-               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_lob, calc_xis_lob)])
-               @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_trap, calc_xis_trap)])
-
-               println("xis_trap = $xis_trap;")
-               println("calc_xis_trap = $calc_xis_trap ;")
-          end
-     end
-
-     @testset "no window, no observer terms" begin
+     @testset "no window" begin
           kwargs = Dict(
                :use_windows => false,
                :enhancer => 1e8,
@@ -223,8 +114,8 @@
                     L=L, alg=:quad, kwargs...) for s in ss_quad]
 
                @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_quad, calc_xis_quad)])
-               println("xis_trap = $xis_trap;")
-               println("calc_xis_trap = $calc_xis_trap ;")
+               #println("xis_trap = $xis_trap;")
+               #println("calc_xis_trap = $calc_xis_trap ;")
           end
 
           @testset "L = 3" begin
@@ -260,7 +151,7 @@
           end
      end
 
-     @testset "with window, no observer terms" begin
+     @testset "with window" begin
           kwargs = Dict(
                :use_windows => true,
                :enhancer => 1e8,
@@ -329,8 +220,8 @@
                     L=L, alg=:quad, kwargs...) for s in ss_quad]
 
                @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_quad, calc_xis_quad)])
-               println("xis_trap = $xis_trap;")
-               println("calc_xis_trap = $calc_xis_trap ;")
+               #println("xis_trap = $xis_trap;")
+               #println("calc_xis_trap = $calc_xis_trap ;")
           end
 
           @testset "L = 3" begin
@@ -377,10 +268,11 @@ end
 
 @testset "test print_map_ξ_LD_multipole" begin
      effect = "auto_doppler"
+     SS_LD_DOPPLER_WITHOBS = 10 .^ range(-1, log10(2 * COSMO.s_max), length=300);
 
      kwargs = Dict(
           :use_windows => false,
-          :pr => false,
+          :pr => false, :alg => :quad,
           :enhancer => 1e8, :N_trap => 30, :N_lob => 30,
           :atol_quad => 0.0, :rtol_quad => 1e-2,
           :N_log => 1000
@@ -454,3 +346,4 @@ end
           rm(name)
      end
 end
+

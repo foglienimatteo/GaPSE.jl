@@ -194,10 +194,10 @@ function ξ_GNC_multipole(
 
           elseif  alg == :trap
                μs = union(
-                    range(-1.0, -0.98, length=N_trap),
-                    range(-0.98, 0.98, length=N_trap),
-                    range(0.98, 1.0, length=N_trap)
-                    )
+                    range(-1.0, -0.98, length = Int(ceil(N_trap/3) + 1)),
+                    range(-0.98, 0.98, length = Int(ceil(N_trap/3) + 1)),
+                    range(0.98, 1.0, length = Int(ceil(N_trap/3) + 1))
+               )
                #μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_trap)
                orig_fs = orig_f.(μs)
                trapz(μs, orig_fs)
@@ -462,10 +462,10 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
      elseif  alg == :trap
 
           μs = union(
-               range(-1.0, -0.98, length = N_trap),
-               range(-0.98, 0.98, length = N_trap),
-               range(0.98, 1.0, length = N_trap)
-               )
+               range(-1.0, -0.98, length = Int(ceil(N_trap/3) + 1)),
+               range(-0.98, 0.98, length = Int(ceil(N_trap/3) + 1)),
+               range(0.98, 1.0, length = Int(ceil(N_trap/3) + 1))
+          )
           #μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_trap)
 
           global xis = pr ? begin
