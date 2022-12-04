@@ -18,6 +18,9 @@
 #
 
 
+println("\n\nNow I start the tests of sum_ξ_GNCxLD_multipole and print_sum_ξ_GNCxLD_multipole")
+println("It will take a while, but do not worry: I'm working.")
+
 @testset "test sum_ξ_GNCxLD_multipole no_window" begin
      RTOL = 1e-2
      kwargs = Dict(
@@ -725,7 +728,7 @@
      end
 end
 
-
+println("\nDon't worry, I am on it...")
 
 @testset "test sum_ξ_GNCxLD_multipole with_window" begin
      RTOL = 1e-2
@@ -1434,11 +1437,11 @@ end
      end
 end
 
-
+println("\nJust finished the tests on sum_ξ_GNCxLD_multipole.")
 
 ##########################################################################################92
 
-
+println("Now I work on print_sum_ξ_GNCxLD_multipole...")
 
 @testset "test map_sum_ξ_GNCxLD_multipole no_window" begin
      RTOL = 1e-2
@@ -1938,6 +1941,7 @@ end
      end
 end
 
+println("\nDon't worry, I have almost finished...")
 
 @testset "test map_sum_ξ_GNCxLD_multipole with_window" begin
      RTOL = 1e-2
@@ -2019,15 +2023,6 @@ end
           #### lob ####
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
                "datatest/GNCxLD_SumXiMultipoles/map_sum_xi_GNCxLD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
-
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_GNCxLD_multipole(COSMO, ss_lob;
-               L=L, alg=:lobatto, kwargs...)
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
-          #### lob ####
-          ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/GNCxLD_SumXiMultipoles/map_sum_xi_GNCxLD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
 
           calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_GNCxLD_multipole(COSMO, ss_lob;
                L=L, alg=:lobatto, kwargs...)
@@ -2131,15 +2126,6 @@ end
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
-          #### lob ####
-          ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/GNCxLD_SumXiMultipoles/map_sum_xi_GNCxLD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
-
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_GNCxLD_multipole(COSMO, ss_lob;
-               L=L, alg=:lobatto, kwargs...)
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[1], calc_xis_lob[1])]) # newton_doppler
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[2], calc_xis_lob[2])]) # newton_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[3], calc_xis_lob[3])]) # newton_localgp
@@ -2231,15 +2217,6 @@ end
           #### lob ####
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
                "datatest/GNCxLD_SumXiMultipoles/map_sum_xi_GNCxLD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
-
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_GNCxLD_multipole(COSMO, ss_lob;
-               L=L, alg=:lobatto, kwargs...)
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
-          #### lob ####
-          ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/GNCxLD_SumXiMultipoles/map_sum_xi_GNCxLD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
 
           calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_GNCxLD_multipole(COSMO, ss_lob;
                L=L, alg=:lobatto, kwargs...)
@@ -2343,15 +2320,6 @@ end
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
-          #### lob ####
-          ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/GNCxLD_SumXiMultipoles/map_sum_xi_GNCxLD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
-
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_GNCxLD_multipole(COSMO, ss_lob;
-               L=L, alg=:lobatto, kwargs...)
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[1], calc_xis_lob[1])]) # newton_doppler
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[2], calc_xis_lob[2])]) # newton_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[3], calc_xis_lob[3])]) # newton_localgp
@@ -2449,15 +2417,6 @@ end
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
-          #### lob ####
-          ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/GNCxLD_SumXiMultipoles/map_sum_xi_GNCxLD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
-
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_GNCxLD_multipole(COSMO, ss_lob;
-               L=L, alg=:lobatto, kwargs...)
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[1], calc_xis_lob[1])]) # newton_doppler
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[2], calc_xis_lob[2])]) # newton_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[3], calc_xis_lob[3])]) # newton_localgp
@@ -2481,3 +2440,5 @@ end
 
      end
 end
+
+println("\ndone!")
