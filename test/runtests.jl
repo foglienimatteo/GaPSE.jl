@@ -40,7 +40,7 @@ const HUBBLE_0 = 1e5 / 299792458.0
 include("TEST_DATA.jl")
 
 ##########################################################################################92
-#=
+
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
@@ -84,7 +84,7 @@ end
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
 end
-=#
+
 
 
 ################################### COSMOLOGY IMPLEMENTATION #############################92
@@ -193,6 +193,7 @@ end
 @testset "test PPXiGalaxies" begin
      include("test_PPXiGalaxies.jl")
 end
+=#
 
 
 
@@ -202,13 +203,13 @@ end
 @testset "test PNG" begin
      include("test_PNG.jl")
 end
-=#
+
 
 ################################### TEST LUMINOSITY DISTANCE PERTURBATIONS ###############92
 
 ss_LD_L0_noF, xis_sum_LD_L0_noF, all_xis_LD_L0_noF = 
      GaPSE.readxyall("datatest/LD_SumXiMultipoles/xis_LD_L0_noF.txt", comments = true)
-#=
+
 @testset "test LD_AutoDoppler" begin
      include("test_LD_AutoCorrelations/test_LD_AutoDoppler.jl")
 end
@@ -267,7 +268,7 @@ end
 @testset "test LD_SumXiMultipoles" begin
      include("test_LD_SumXiMultipoles.jl")
 end
-=#
+
 
 ################################### TEST RELATIVISTIC GALAXY NUMBER COUNTS ###############92
 
@@ -278,14 +279,6 @@ ss_GNC_L0_noF_noobsvel, xis_sum_GNC_L0_noF_noobsvel, all_xis_GNC_L0_noF_noobsvel
 ss_GNC_L0_noF_withobs, xis_sum_GNC_L0_noF_withobs, all_xis_GNC_L0_noF_withobs =
      GaPSE.readxyall("datatest/GNC_SumXiMultipoles/xis_GNC_L0_noF_withobs.txt", comments=true)
 
-#=
-table_xis_GNC_L0_noF = readdlm("datatest/GNC_SumXiMultipoles/xis_GNC_L0_noF_noobs.txt",
-     comments=true);
-ss_GNC_L0_noF = convert(Vector{Float64}, table_xis_GNC_L0_noF[:, 1]);
-xis_sum_GNC_L0_noF = convert(Vector{Float64}, table_xis_GNC_L0_noF[:, 2]);
-all_xis_GNC_L0_noF = [convert(Vector{Float64}, table_xis_GNC_L0_noF[:, i]) for i in 3:27];
-=#
-#=
 @testset "test GNC_AutoNewton" begin
      include("test_GNC_AutoCorrelations/test_GNC_AutoNewton.jl")
 end
@@ -367,7 +360,7 @@ end
 @testset "test GNC_SumXiMultipoles" begin
      include("test_GNC_SumXiMultipoles.jl")
 end
-=#
+
  
 
 ##### TEST RELATIVISTIC GALAXY NUMBER COUNTS X LUMINOSITY DISTANCE PERT. and viceversa ###92
@@ -380,7 +373,7 @@ ss_LDxGNC_L0_noF, xis_sum_LDxGNC_L0_noF, all_xis_LDxGNC_L0_noF =
      GaPSE.readxyall("datatest/LDxGNC_SumXiMultipoles/xis_LDxGNC_L0_noF.txt",
           comments = true);
 
-#=
+
 @testset "test GNCxLD_NewtonDoppler" begin
      include("test_GNCxLD_CrossCorrelations/test_GNCxLD_NewtonDoppler.jl")
 end
@@ -471,19 +464,22 @@ end
 
 
 ##############################
-=#
+
 
 @testset "test GNCxLD_XiMultipoles" begin
      include("test_GNCxLD_XiMultipoles.jl")
 end
 
+
 @testset "test LDxGNC_XiMultipoles" begin
      include("test_LDxGNC_XiMultipoles.jl")
 end
 
+
 @testset "test GNCxLD_SumXiMultipoles" begin
      include("test_GNCxLD_SumXiMultipoles.jl")
 end
+
 
 @testset "test LDxGNC_SumXiMultipoles" begin
      include("test_LDxGNC_SumXiMultipoles.jl")

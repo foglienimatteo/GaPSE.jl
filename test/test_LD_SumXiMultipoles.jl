@@ -42,11 +42,11 @@
      @testset "L = 0 no_window" begin
           L = 0
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
 
 
           @testset "s = 10, L = 0, no_window" begin
@@ -179,11 +179,11 @@
      @testset "L = 1 no_window" begin
           L = 1
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
 
 
           @testset "s = 10, L = 1, no_window" begin
@@ -316,11 +316,11 @@
      @testset "L = 2 no_window" begin
           L = 2
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
 
 
           @testset "s = 10, L = 2, no_window" begin
@@ -453,11 +453,11 @@
      @testset "L = 3 no_window" begin
           L = 3
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
 
 
           @testset "s = 10, L = 3, no_window" begin
@@ -590,11 +590,11 @@
      @testset "L = 4 no_window" begin
           L = 4
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
 
 
           @testset "s = 10, L = 4, no_window" begin
@@ -751,11 +751,11 @@ end
      @testset "L = 0 with_window" begin
           L = 0
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
 
 
           @testset "s = 10, L = 0, with_window" begin
@@ -888,11 +888,11 @@ end
      @testset "L = 1 with_window" begin
           L = 1
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
 
 
           @testset "s = 10, L = 1, with_window" begin
@@ -1025,11 +1025,11 @@ end
      @testset "L = 2 with_window" begin
           L = 2
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
 
 
           @testset "s = 10, L = 2, with_window" begin
@@ -1162,11 +1162,11 @@ end
      @testset "L = 3 with_window" begin
           L = 3
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
 
 
           @testset "s = 10, L = 3, with_window" begin
@@ -1299,11 +1299,11 @@ end
      @testset "L = 4 with_window" begin
           L = 4
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
 
 
           @testset "s = 10, L = 4, with_window" begin
@@ -1457,7 +1457,7 @@ end
 
           ##### quad ####
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
 
           calc_ss_quad, calc_sums_quad, calc_xis_quad = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_quad;
                L=L, alg=:quad, kwargs...)
@@ -1484,7 +1484,7 @@ end
 
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
 
           calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_trap;
                L=L, alg=:trap, kwargs...)
@@ -1511,7 +1511,7 @@ end
 
           #### lob ####
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
 
           calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_lob;
                L=L, alg=:lobatto, kwargs...)
@@ -1542,7 +1542,7 @@ end
 
           ##### quad ####
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
 
           calc_ss_quad, calc_sums_quad, calc_xis_quad = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_quad;
                L=L, alg=:quad, kwargs...)
@@ -1569,7 +1569,7 @@ end
 
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
 
           calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_trap;
                L=L, alg=:trap, kwargs...)
@@ -1596,7 +1596,7 @@ end
 
           #### lob ####
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
 
           calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_lob;
                L=L, alg=:lobatto, kwargs...)
@@ -1627,7 +1627,7 @@ end
 
           ##### quad ####
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
 
           calc_ss_quad, calc_sums_quad, calc_xis_quad = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_quad;
                L=L, alg=:quad, kwargs...)
@@ -1654,7 +1654,7 @@ end
 
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
 
           calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_trap;
                L=L, alg=:trap, kwargs...)
@@ -1681,7 +1681,7 @@ end
 
           #### lob ####
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
 
           calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_lob;
                L=L, alg=:lobatto, kwargs...)
@@ -1712,7 +1712,7 @@ end
 
           ##### quad ####
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
 
           calc_ss_quad, calc_sums_quad, calc_xis_quad = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_quad;
                L=L, alg=:quad, kwargs...)
@@ -1739,7 +1739,7 @@ end
 
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
 
           calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_trap;
                L=L, alg=:trap, kwargs...)
@@ -1766,7 +1766,7 @@ end
 
           #### lob ####
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
 
           calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_lob;
                L=L, alg=:lobatto, kwargs...)
@@ -1797,7 +1797,7 @@ end
 
           ##### quad ####
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
 
           calc_ss_quad, calc_sums_quad, calc_xis_quad = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_quad;
                L=L, alg=:quad, kwargs...)
@@ -1824,7 +1824,7 @@ end
 
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
 
           calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_trap;
                L=L, alg=:trap, kwargs...)
@@ -1851,7 +1851,7 @@ end
 
           #### lob ####
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_noF_specific_ss.txt", comments=true)
 
           calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_lob;
                L=L, alg=:lobatto, kwargs...)
@@ -1896,7 +1896,7 @@ end
 
           ##### quad ####
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
 
           calc_ss_quad, calc_sums_quad, calc_xis_quad = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_quad;
                L=L, alg=:quad, kwargs...)
@@ -1923,7 +1923,7 @@ end
 
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
 
           calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_trap;
                L=L, alg=:trap, kwargs...)
@@ -1950,7 +1950,7 @@ end
 
           #### lob ####
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
 
           calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_lob;
                L=L, alg=:lobatto, kwargs...)
@@ -1981,7 +1981,7 @@ end
 
           ##### quad ####
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
 
           calc_ss_quad, calc_sums_quad, calc_xis_quad = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_quad;
                L=L, alg=:quad, kwargs...)
@@ -2008,7 +2008,7 @@ end
 
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
 
           calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_trap;
                L=L, alg=:trap, kwargs...)
@@ -2035,7 +2035,7 @@ end
 
           #### lob ####
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
 
           calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_lob;
                L=L, alg=:lobatto, kwargs...)
@@ -2066,7 +2066,7 @@ end
 
           ##### quad ####
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
 
           calc_ss_quad, calc_sums_quad, calc_xis_quad = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_quad;
                L=L, alg=:quad, kwargs...)
@@ -2093,7 +2093,7 @@ end
 
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
 
           calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_trap;
                L=L, alg=:trap, kwargs...)
@@ -2120,7 +2120,7 @@ end
 
           #### lob ####
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
 
           calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_lob;
                L=L, alg=:lobatto, kwargs...)
@@ -2151,7 +2151,7 @@ end
 
           ##### quad ####
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
 
           calc_ss_quad, calc_sums_quad, calc_xis_quad = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_quad;
                L=L, alg=:quad, kwargs...)
@@ -2178,7 +2178,7 @@ end
 
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
 
           calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_trap;
                L=L, alg=:trap, kwargs...)
@@ -2205,7 +2205,7 @@ end
 
           #### lob ####
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
 
           calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_lob;
                L=L, alg=:lobatto, kwargs...)
@@ -2236,7 +2236,7 @@ end
 
           ##### quad ####
           ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
 
           calc_ss_quad, calc_sums_quad, calc_xis_quad = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_quad;
                L=L, alg=:quad, kwargs...)
@@ -2263,7 +2263,7 @@ end
 
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
 
           calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_trap;
                L=L, alg=:trap, kwargs...)
@@ -2290,7 +2290,7 @@ end
 
           #### lob ####
           ss_lob, res_sums_lob, res_xis_lob = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/map_sum_xi_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
+               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_lob_withF_specific_ss.txt", comments=true)
 
           calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_lob;
                L=L, alg=:lobatto, kwargs...)

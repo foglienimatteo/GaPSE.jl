@@ -1,0 +1,64 @@
+###############
+#    GaPSE    #
+############### 
+#
+#
+# This is an integration map on mu of the sum of all the ξ_LD_L=0 multipole GR effects
+# concerning the luminosity distance perturbations.
+# In input was set "single = true", so, together with their sum, all the CFs are here reported.
+#
+# The Cosmology considered had the following paremeters:
+# 
+# - Matter Power Spectrum input file: "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/file_pk.txt"
+# - Background data input file: "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/WideA_ZA_background.dat"
+# - F window function input file: "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/F_REFERENCE_pi2.txt"
+# - Integrated F window function input file: "/Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/IntegrF_REFERENCE_pi2.txt"
+#
+# - Basic CosmoParams considered: 
+#	 z_min = 0.05 	 z_max = 0.2
+#	 θ_max = 1.5707963267948966 [rad] 	 h_0 = 0.7
+#	 Ω_b = 0.0489 	 Ω_cdm = 0.25102 	 Ω_M0 = 0.29992
+#	 b = 1.0 	 f_evo = 0.0 	 s_b = 0.0
+#
+# - CosmoParams about the Input Power Spectrum: 
+#	 fit_left_min = 1.0e-6 	 fit_right_min = 10.0 	 
+#	 fit_left_max = 3.0e-6 	 fit_right_max = 20.0 	 
+#
+# - CosmoParams about the Input Power Spectrum Tools: 
+#	 k_max = 10.0 	 fit_max = 0.5 	 N = 1024 	 
+#	 con = true 	 k_min = 1.0e-8 	 fit_min = 0.05 	 
+#
+# - CosmoParams about the Integrated Window Function F: 
+#	 ss_step = 21.768735478453323 	 N = 1000 	 rtol = 0.01 	 
+#	 llim = 0.0 	 atol = 0.0 	 rlim = Inf 	 
+#	 ss_stop = 0.0 	 trap = true 	 ss_start = 0.0 	 
+#
+# - Computed quantities: 
+# 	 effective redshift z_eff = 0.15045636096023224 
+# 	 comoving s_min = 148.1920001465757 Mpc/h_0
+# 	 comoving s_max = 571.7022420258767 Mpc/h_0
+# 	 comoving s_eff = 435.3747095690664 Mpc/h_0
+# 	 Volume of the survey V_survey = 3.845366167995967e8 Mpc^3/h_0^3
+# 	 σ_0 = 15.593462966741178
+# 	 σ_1 = 15.074895881392285
+# 	 σ_2 = 100.85852368830226
+# 	 σ_3 = 3735.1226181519773
+# 	 σ_4 = 3.415930015488999e6
+# 	 (where σ_i = \int_{k_{min}}^{k_{max}}\frac{dq}{2 π^2} q^{2-i} P(q))
+# 
+# computational time needed (in s) : 0.6407
+# kwards passed: 
+# 		alg = trap
+# 		N_lob = 30
+# 		N_χs = 40
+# 		enhancer = 1.0e8
+# 		use_windows = false
+# 		N_trap = 30
+# 		N_χs_2 = 20
+# 		rtol_quad = 0.01
+# 		atol_quad = 0.0
+# 
+# 1: s [Mpc/h_0] 	 2: xi_SUM 	 3: xi_auto_doppler 	 4: xi_auto_lensing 	 5: xi_auto_localgp 	 6: xi_auto_integratedgp 	 7: xi_lensing_doppler 	 8: xi_doppler_lensing 	 9: xi_doppler_localgp 	 10: xi_localgp_doppler 	 11: xi_doppler_integratedgp 	 12: xi_integratedgp_doppler 	 13: xi_lensing_localgp 	 14: xi_localgp_lensing 	 15: xi_lensing_integratedgp 	 16: xi_integratedgp_lensing 	 17: xi_localgp_integratedgp 	 18: xi_integratedgp_localgp 	 
+10 	 3.080199041202567e-5 	 3.1040185918879244e-5 	 1.6609966948695022e-7 	 -1.213844367999977e-10 	 -3.4992794399054626e-10 	 -1.6920911412009438e-7 	 -1.6947236253017607e-7 	 -8.420747226985839e-10 	 -5.781545752938678e-10 	 -3.902357624521545e-8 	 -3.9021608418093244e-8 	 7.266442029786552e-9 	 7.2716329387644464e-9 	 2.1830566254837566e-9 	 2.1839520411539117e-9 	 -2.2909820028978437e-9 	 -2.291074980452244e-9 	 
+500 	 2.679351116327203e-7 	 4.483221302939305e-7 	 3.896684151663125e-9 	 -1.990299106807148e-8 	 -7.757719159300143e-10 	 -4.156464632556377e-9 	 -8.50596292802585e-9 	 -4.205887335522853e-8 	 -6.823910242343996e-8 	 -1.5794169942269924e-8 	 -2.123344622301944e-8 	 -2.604214177465516e-11 	 3.397740075392136e-9 	 3.7319438316711616e-10 	 6.615610918062832e-10 	 -4.136202062624376e-9 	 -3.8871716702982624e-9 	 
+1000 	 -1.591106422106162e-8 	 3.7270077715670985e-8 	 2.3843675823953782e-9 	 -8.759686269490447e-9 	 -1.3183757610545129e-9 	 2.6254915494659205e-10 	 1.1636996017665874e-9 	 -5.351859558238299e-9 	 -2.0619026770073253e-8 	 -1.0620310003599125e-8 	 -4.893057343262894e-9 	 -5.6304317159924547e-11 	 2.3892367337143247e-9 	 1.545369787107959e-10 	 4.0980038171510157e-10 	 -6.468112208949704e-9 	 -1.8586001381532276e-9 	 
