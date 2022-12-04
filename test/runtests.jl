@@ -159,20 +159,25 @@ SS_GNC = 10 .^ range(-1, log10(2.0 * COSMO.s_max), length=100);
 KWARGS_GNCxLD = Dict(
      :pr => true,
      :use_windows => false,
-     :enhancer => 1e8, :N_trap => 30, :N_lob => 30,
+     :enhancer => 1e8, 
+     :N_trap => 30, :N_lob => 30,
      :atol_quad => 0.0, :rtol_quad => 1e-2,
      :N_χs => 100, :N_χs_2 => 60,
      :N_log => 3,
 );
+SS_GNCxLD = 10 .^ range(0, log10(2.0*COSMO.s_max), length = 100);
 
 KWARGS_LDxGNC = Dict(
      :pr => true,
      :use_windows => false,
-     :enhancer => 1e8, :N_trap => 30, :N_lob => 30,
+     :enhancer => 1e8, 
+     :N_trap => 30, :N_lob => 30,
      :atol_quad => 0.0, :rtol_quad => 1e-2,
      :N_χs => 100, :N_χs_2 => 60,
      :N_log => 3,
 );
+SS_LDxGNC = 10 .^ range(0, log10(2.0*COSMO.s_max), length = 100);
+
 
 #=
 ################################### TEST PLANE-PARALLEL APPROXIMATIONS ###################92
@@ -368,18 +373,12 @@ end
 ##### TEST RELATIVISTIC GALAXY NUMBER COUNTS X LUMINOSITY DISTANCE PERT. and viceversa ###92
 
 
-table_xis_GNCxLD_L0_noF = readdlm("datatest/GNCxLD_SumXiMultipoles/map_sum_xi_GNCxLD_L0_noF.txt",
-     comments=true);
-ss_GNCxLD_L0_noF = convert(Vector{Float64}, table_xis_GNCxLD_L0_noF[:, 1]);
-xis_sum_GNCxLD_L0_noF = convert(Vector{Float64}, table_xis_GNCxLD_L0_noF[:, 2]);
-all_xis_GNCxLD_L0_noF = [convert(Vector{Float64}, table_xis_GNCxLD_L0_noF[:, i]) for i in 3:22];
-
-table_xis_LDxGNC_L0_noF = readdlm("datatest/GNCxLD_SumXiMultipoles/map_sum_xi_LDxGNC_L0_noF.txt",
-     comments=true);
-ss_LDxGNC_L0_noF = convert(Vector{Float64}, table_xis_LDxGNC_L0_noF[:, 1]);
-xis_sum_LDxGNC_L0_noF = convert(Vector{Float64}, table_xis_LDxGNC_L0_noF[:, 2]);
-all_xis_LDxGNC_L0_noF = [convert(Vector{Float64}, table_xis_LDxGNC_L0_noF[:, i]) for i in 3:22];
-
+ss_GNCxLD_L0_noF, xis_sum_GNCxLD_L0_noF, all_xis_GNCxLD_L0_noF = 
+     GaPSE.readxyall("datatest/GNCxLD_SumXiMultipoles/xis_GNCxLD_L0_noF.txt",
+          comments = true);
+ss_LDxGNC_L0_noF, xis_sum_LDxGNC_L0_noF, all_xis_LDxGNC_L0_noF = 
+     GaPSE.readxyall("datatest/LDxGNC_SumXiMultipoles/xis_LDxGNC_L0_noF.txt",
+          comments = true);
 
 @testset "test GNCxLD_NewtonDoppler" begin
      include("test_GNCxLD_CrossCorrelations/test_GNCxLD_NewtonDoppler.jl")

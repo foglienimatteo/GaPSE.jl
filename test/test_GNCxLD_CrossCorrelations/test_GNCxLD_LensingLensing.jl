@@ -26,8 +26,8 @@
 
      name = "calc_xi_" * effect * "_GNCxLD_L$L" * ".txt"
      isfile(name) && rm(name)
-     GaPSE.print_map_ξ_GNCxLD_multipole(COSMO, name, effect, 10 .^ range(-1, 3, length=KWARGS_GNCxLD[:N_log]);
-          L = L, GaPSE.specif_kwargs_GNCxLD(effect, KWARGS_GNCxLD)...)
+     GaPSE.print_map_ξ_GNCxLD_multipole(COSMO, name, effect, SS_GNCxLD;
+          L = L, alg = :quad, GaPSE.specif_kwargs_GNCxLD(effect, KWARGS_GNCxLD)...)
 
      calc_table = readdlm(name; comments = true)
      calc_ss = convert(Vector{Float64}, calc_table[:, 1])
@@ -52,8 +52,8 @@ end
 
      name = "calc_xi_" * effect * "_LDxGNC_L$L" * ".txt"
      isfile(name) && rm(name)
-     GaPSE.print_map_ξ_LDxGNC_multipole(COSMO, name, effect, 10 .^ range(-1, 3, length=KWARGS_LDxGNC[:N_log]);
-          L = L, GaPSE.specif_kwargs_LDxGNC(effect, KWARGS_LDxGNC)...)
+     GaPSE.print_map_ξ_LDxGNC_multipole(COSMO, name, effect, SS_LDxGNC;
+          L = L, alg = :quad, GaPSE.specif_kwargs_LDxGNC(effect, KWARGS_LDxGNC)...)
 
      calc_table = readdlm(name; comments = true)
      calc_ss = convert(Vector{Float64}, calc_table[:, 1])
