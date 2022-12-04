@@ -18,6 +18,8 @@
 #
 
 
+println("\n\nNow I start the tests of ξ_GNCxLD_multipole and print_ξ_GNCxLD_multipole")
+println("It will take a while, but do not worry: I'm working.")
 
 
 @testset "test ξ_GNCxLD_multipole" begin
@@ -43,7 +45,6 @@
           @test_throws AssertionError GaPSE.ξ_GNCxLD_multipole(COSMO.s_eff, 10.0, "localgp_doppler", COSMO;
                N_lob=2)
      end
-
 
      @testset "no window" begin
           kwargs = Dict(
@@ -150,6 +151,8 @@
                @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_trap, calc_xis_trap)])
           end
      end
+
+     println("\nDon't worry, I am on it...")
 
      @testset "with window" begin
           kwargs = Dict(
@@ -259,11 +262,12 @@
 end
 
 
-
+println("\nJust finished the tests on ξ_GNCxLD_multipole.")
 
 
 ##########################################################################################92
 
+println("Now I work on print_ξ_GNCxLD_multipole...")
 
 
 @testset "test print_map_ξ_GNCxLD_multipole" begin
@@ -335,3 +339,4 @@ end
      end
 end
 
+println("\ndone!")

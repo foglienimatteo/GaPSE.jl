@@ -18,10 +18,12 @@
 #
 
 
+println("\n\nNow I start the tests of ξ_GNCxLD_multipole and print_ξ_GNCxLD_multipole")
+println("It will take a while, but do not worry: I'm working.")
 
 
 @testset "test ξ_LDxGNC_multipole" begin
-     name_effect = "auto_doppler"
+     name_effect = "localgp_doppler"
      func_effect = GaPSE.ξ_LDxGNC_LocalGP_Doppler
      RTOL = 1e-2
      #SS_LDxGNC_DOPPLER_WITHOBS = 10 .^ range(-1, log10(2 * COSMO.s_max), length=300);
@@ -29,18 +31,18 @@
      @testset "zeros" begin
           @test_throws AssertionError GaPSE.ξ_LDxGNC_multipole(COSMO.s_eff, 10.0, "strange", COSMO)
 
-          @test_throws AssertionError GaPSE.ξ_LDxGNC_multipole(COSMO.s_eff, 10.0, "auto_doppler", COSMO;
+          @test_throws AssertionError GaPSE.ξ_LDxGNC_multipole(COSMO.s_eff, 10.0, "localgp_doppler", COSMO;
                alg=:noobsvel)
 
-          @test_throws AssertionError GaPSE.ξ_LDxGNC_multipole(COSMO.s_eff, 10.0, "auto_doppler", COSMO;
+          @test_throws AssertionError GaPSE.ξ_LDxGNC_multipole(COSMO.s_eff, 10.0, "localgp_doppler", COSMO;
                L=-1)
-          @test_throws AssertionError GaPSE.ξ_LDxGNC_multipole(COSMO.s_eff, 10.0, "auto_doppler", COSMO;
+          @test_throws AssertionError GaPSE.ξ_LDxGNC_multipole(COSMO.s_eff, 10.0, "localgp_doppler", COSMO;
                atol_quad=-0.1)
-          @test_throws AssertionError GaPSE.ξ_LDxGNC_multipole(COSMO.s_eff, 10.0, "auto_doppler", COSMO;
+          @test_throws AssertionError GaPSE.ξ_LDxGNC_multipole(COSMO.s_eff, 10.0, "localgp_doppler", COSMO;
                rtol_quad=-0.1)
-          @test_throws AssertionError GaPSE.ξ_LDxGNC_multipole(COSMO.s_eff, 10.0, "auto_doppler", COSMO;
+          @test_throws AssertionError GaPSE.ξ_LDxGNC_multipole(COSMO.s_eff, 10.0, "localgp_doppler", COSMO;
                N_trap=2)
-          @test_throws AssertionError GaPSE.ξ_LDxGNC_multipole(COSMO.s_eff, 10.0, "auto_doppler", COSMO;
+          @test_throws AssertionError GaPSE.ξ_LDxGNC_multipole(COSMO.s_eff, 10.0, "localgp_doppler", COSMO;
                N_lob=2)
      end
 
@@ -151,6 +153,8 @@
           end
      end
 
+     println("\nDon't worry, I am on it...")
+     
      @testset "with window" begin
           kwargs = Dict(
                :use_windows => true,
@@ -259,15 +263,17 @@
 end
 
 
-
+println("\nJust finished the tests on ξ_LDxGNC_multipole.")
 
 
 ##########################################################################################92
 
 
+println("Now I work on print_ξ_LDxGNC_multipole...")
+
 
 @testset "test print_map_ξ_LDxGNC_multipole" begin
-     effect = "auto_doppler"
+     effect = "localgp_doppler"
      SS_LDxGNC_DOPPLER_WITHOBS = 10 .^ range(-1, log10(2 * COSMO.s_max), length=300);
 
      kwargs = Dict(
@@ -287,9 +293,9 @@ end
      end
 
      @testset "first" begin
-          ss, xis = GaPSE.readxy("datatest/LDxGNC_localgp_doppler_multipoles/xi_LDxGNC_auto_doppler_L0_first.txt"; comments=true)
+          ss, xis = GaPSE.readxy("datatest/LDxGNC_localgp_doppler_multipoles/xi_LDxGNC_localgp_doppler_L0_first.txt"; comments=true)
 
-          name = "calc_xi_LDxGNC_auto_doppler_L0_first.txt"
+          name = "calc_xi_LDxGNC_localgp_doppler_L0_first.txt"
           isfile(name) && rm(name)
           GaPSE.print_map_ξ_LDxGNC_multipole(COSMO, name, effect, nothing;
                s1=nothing, L=0, kwargs...)
@@ -303,9 +309,9 @@ end
      end
 
      @testset "second" begin
-          ss, xis = GaPSE.readxy("datatest/LDxGNC_localgp_doppler_multipoles/xi_LDxGNC_auto_doppler_L0_second.txt"; comments=true)
+          ss, xis = GaPSE.readxy("datatest/LDxGNC_localgp_doppler_multipoles/xi_LDxGNC_localgp_doppler_L0_second.txt"; comments=true)
 
-          name = "calc_xi_LDxGNC_auto_doppler_L0_second.txt"
+          name = "calc_xi_LDxGNC_localgp_doppler_L0_second.txt"
           isfile(name) && rm(name)
           GaPSE.print_map_ξ_LDxGNC_multipole(COSMO, name, effect, 10 .^ range(0, 3, length=344);
                s1=nothing, L=0, kwargs...)
@@ -319,9 +325,9 @@ end
      end
 
      @testset "third" begin
-          ss, xis = GaPSE.readxy("datatest/LDxGNC_localgp_doppler_multipoles/xi_LDxGNC_auto_doppler_L0_third.txt"; comments=true)
+          ss, xis = GaPSE.readxy("datatest/LDxGNC_localgp_doppler_multipoles/xi_LDxGNC_localgp_doppler_L0_third.txt"; comments=true)
 
-          name = "calc_xi_LDxGNC_auto_doppler_L0_third.txt"
+          name = "calc_xi_LDxGNC_localgp_doppler_L0_third.txt"
           isfile(name) && rm(name)
           GaPSE.print_map_ξ_LDxGNC_multipole(COSMO, name, effect, 10 .^ range(0, 3, length=344);
                s1=COSMO.s_eff - 65.0, L=0, kwargs...)
@@ -335,3 +341,5 @@ end
      end
 end
 
+
+println("\ndone!")
