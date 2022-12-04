@@ -380,6 +380,7 @@ ss_LDxGNC_L0_noF, xis_sum_LDxGNC_L0_noF, all_xis_LDxGNC_L0_noF =
      GaPSE.readxyall("datatest/LDxGNC_SumXiMultipoles/xis_LDxGNC_L0_noF.txt",
           comments = true);
 
+#=
 @testset "test GNCxLD_NewtonDoppler" begin
      include("test_GNCxLD_CrossCorrelations/test_GNCxLD_NewtonDoppler.jl")
 end
@@ -470,7 +471,7 @@ end
 
 
 ##############################
-
+=#
 
 @testset "test GNCxLD_XiMultipoles" begin
      include("test_GNCxLD_XiMultipoles.jl")

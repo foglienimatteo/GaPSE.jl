@@ -22,7 +22,7 @@
 
 @testset "test ξ_LDxGNC_multipole" begin
      name_effect = "auto_doppler"
-     func_effect = GaPSE.ξ_LDxGNC_Doppler
+     func_effect = GaPSE.ξ_LDxGNC_LocalGP_Doppler
      RTOL = 1e-2
      #SS_LDxGNC_DOPPLER_WITHOBS = 10 .^ range(-1, log10(2 * COSMO.s_max), length=300);
 
