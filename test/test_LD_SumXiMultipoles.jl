@@ -500,6 +500,9 @@
                @test isapprox(res_sum_spec_ss_lob, calc_res_sum_spec_ss_lob; rtol=RTOL)
                @test all([isapprox(a, r; rtol=RTOL) for (a, r) in zip(calc_res_xis_spec_ss_lob, res_xis_spec_ss_lob)])
 
+               println("calc_res_xis_spec_ss_lob = $calc_res_xis_spec_ss_lob ;")
+               println("res_xis_spec_ss_lob = $res_xis_spec_ss_lob ; ")
+
           end
 
           @testset "s = 500, L = 3, no_window" begin
@@ -1770,6 +1773,9 @@ end
 
           calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_lob;
                L=L, alg=:lobatto, kwargs...)
+
+          println("res_xis_lob[2] = $(res_xis_lob[2]) ;")
+          println("calc_xis_lob[2] = $(calc_xis_lob[2]); ")
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
