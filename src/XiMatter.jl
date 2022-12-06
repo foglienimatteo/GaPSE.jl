@@ -116,10 +116,8 @@ function print_ξ_from_PS(input::String, out::String;
           println(io, "# computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
           print(io, "# kwards passed to \"print_ξ_from_PS\": ")
 
-          if isempty(kwargs)
-               println(io, "none")
-          else
-               print(io, "\n")
+          println(io, "\n# \t\tL = $L")
+          if !isempty(kwargs)
                for key in keys(kwargs)
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
@@ -156,10 +154,8 @@ function print_ξ_from_PS(ks, pks, out::String;
           println(io, "# computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
           print(io, "# kwards passed to \"print_ξ_from_PS\": ")
 
-          if isempty(kwargs)
-               println(io, "none")
-          else
-               print(io, "\n")
+          println(io, "\n# \t\tL = $L")
+          if !isempty(kwargs)
                for key in keys(kwargs)
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end

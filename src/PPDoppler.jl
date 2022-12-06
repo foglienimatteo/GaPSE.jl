@@ -77,13 +77,13 @@ function ξ_PPD_multipole(
      L::Int=0,
      use_windows::Bool=true,
      enhancer::Float64=1e6,
-     μ_atol::Float64=0.0,
-     μ_rtol::Float64=1e-2)
+     atol_quad::Float64=0.0,
+     rtol_quad::Float64=1e-2)
 
      orig_f(μ) = enhancer * integrand_ξ_PPD_multipole(s, μ, cosmo;
           L=L, use_windows=use_windows)
 
-     int = quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=μ_atol, rtol=μ_rtol)[1]
+     int = quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=atol_quad, rtol=rtol_quad)[1]
 
      return int / enhancer
 end
@@ -126,23 +126,22 @@ function print_map_ξ_PPD_multipole(
      cosmo::Cosmology,
      out::String,
      v_ss=nothing;
+     L::Int=0,
      kwargs...)
 
      t1 = time()
-     vec = map_ξ_PPD_multipole(cosmo, v_ss; kwargs...)
+     vec = map_ξ_PPD_multipole(cosmo, v_ss; L = L, kwargs...)
      t2 = time()
 
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
-          println(io, "# This is an integration map on mu of the ξ multipole concerning the PP Doppler.")
+          println(io, "# This is an integration map on mu of the ξ L=$L multipole concerning the PP Doppler.")
           parameters_used(io, cosmo)
           println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
           print(io, "# kwards passed: ")
 
-          if isempty(kwargs)
-               println(io, "none")
-          else
-               print(io, "\n")
+          println(io, "\n# \t\tL = $L")
+          if !isempty(kwargs)
                for key in keys(kwargs)
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end

@@ -24,7 +24,7 @@
      RTOL = 1e-3
      kwargs_xis_PP = Dict(
           :pr => false, :enhancer => 1e8,
-          :μ_atol => 0.0, :μ_rtol => 1e-2,
+          :atol_quad => 0.0, :rtol_quad => 1e-2,
           :N_log => 100,
      )
 
@@ -108,7 +108,7 @@ end
      RTOL = 1e-3
      kwargs_xis_PP = Dict(
           :pr => false, :enhancer => 1e8,
-          :μ_atol => 0.0, :μ_rtol => 1e-2,
+          :atol_quad => 0.0, :rtol_quad => 1e-2,
           :N_log => 100,
      )
 

@@ -598,15 +598,13 @@ function print_map_ξ_GNCxLD_multipole(
           println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
           print(io, "# kwards passed: ")
 
-          if isempty(kwargs)
-               println(io, "none")
-          else
-               print(io, "\n")
-               println(io, "# \t\tL = $L")
+          println(io, "\n# \t\tL = $L")
+          if !isempty(kwargs)
                for key in keys(kwargs)
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
           end
+          
           isnothing(s1) || println(io, "#\n# NOTE: the computation is done not in " *
                                        "s1 = s_eff, because you specified in input s1 = $s1 !")
           println(io, "# ")

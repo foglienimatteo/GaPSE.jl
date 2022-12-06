@@ -220,11 +220,8 @@ function print_map_sum_ξ_GNC_multipole(
           println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
           print(io, "# kwards passed: ")
 
-          if isempty(kwargs)
-               println(io, "none")
-          else
-               print(io, "\n")
-               println(io, "# \t\tL = $L")
+          println(io, "\n# \t\tL = $L")
+          if !isempty(kwargs)
                for key in keys(kwargs)
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
@@ -262,10 +259,8 @@ function print_map_sum_ξ_GNC_multipole(
                     #println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
                     print(io, "# kwards passed: ")
 
-                    if isempty(kwargs)
-                         println(io, "none")
-                    else
-                         print(io, "\n")
+                    println(io, "\n# \t\tL = $L")
+                    if !isempty(kwargs)
                          for key in keys(kwargs)
                               println(io, "# \t\t$(key) = $(kwargs[key])")
                          end
