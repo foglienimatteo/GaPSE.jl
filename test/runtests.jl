@@ -41,7 +41,7 @@ include("TEST_DATA.jl")
 
 ##########################################################################################92
 
-#=
+
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
@@ -85,7 +85,7 @@ end
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
 end
-=#
+
 
 
 ################################### COSMOLOGY IMPLEMENTATION #############################92
@@ -211,7 +211,6 @@ end
 ss_LD_L0_noF, xis_sum_LD_L0_noF, all_xis_LD_L0_noF = 
      GaPSE.readxyall("datatest/LD_SumXiMultipoles/xis_LD_L0_noF.txt", comments = true)
 
-     #=
 @testset "test LD_AutoDoppler" begin
      include("test_LD_AutoCorrelations/test_LD_AutoDoppler.jl")
 end
@@ -264,7 +263,7 @@ end
 @testset "test LD_XiMultipoles" begin
      include("test_LD_XiMultipoles.jl")
 end
-=#
+
 
 
 @testset "test LD_SumXiMultipoles" begin
