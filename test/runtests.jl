@@ -41,7 +41,7 @@ include("TEST_DATA.jl")
 
 ##########################################################################################92
 
-
+#=
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
@@ -85,7 +85,7 @@ end
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
 end
-
+=#
 
 
 ################################### COSMOLOGY IMPLEMENTATION #############################92
@@ -180,7 +180,7 @@ KWARGS_LDxGNC = Dict(
 SS_LDxGNC = 10 .^ range(0, log10(2.0*COSMO.s_max), length = 100);
 
 
-
+#=
 ################################### TEST PLANE-PARALLEL APPROXIMATIONS ###################92
 
 @testset "test PPDoppler" begin
@@ -264,12 +264,19 @@ end
      include("test_LD_XiMultipoles.jl")
 end
 
+=#
+#=
+@testset "test LD_SumXiMultipoles_P1" begin
+     include("test_LD_SumXiMultipoles_P1.jl")
+end
+=#
 
-
-@testset "test LD_SumXiMultipoles" begin
-     include("test_LD_SumXiMultipoles.jl")
+@testset "test LD_SumXiMultipoles_P2" begin
+     include("test_LD_SumXiMultipoles_P2.jl")
 end
 
+@test 1==2
+#=
 
 ################################### TEST RELATIVISTIC GALAXY NUMBER COUNTS ###############92
 
@@ -358,15 +365,18 @@ end
 end
 
 
-@testset "test GNC_SumXiMultipoles" begin
-     include("test_GNC_SumXiMultipoles.jl")
+@testset "test GNC_SumXiMultipoles_P1" begin
+     include("test_GNC_SumXiMultipoles_P1.jl")
 end
+=#
 
- 
+@testset "test GNC_SumXiMultipoles_P2" begin
+     include("test_GNC_SumXiMultipoles_P2.jl")
+end
 
 ##### TEST RELATIVISTIC GALAXY NUMBER COUNTS X LUMINOSITY DISTANCE PERT. and viceversa ###92
 
-
+#=
 ss_GNCxLD_L0_noF, xis_sum_GNCxLD_L0_noF, all_xis_GNCxLD_L0_noF = 
      GaPSE.readxyall("datatest/GNCxLD_SumXiMultipoles/xis_GNCxLD_L0_noF.txt",
           comments = true);
@@ -476,14 +486,23 @@ end
      include("test_LDxGNC_XiMultipoles.jl")
 end
 
+=#
 
-@testset "test GNCxLD_SumXiMultipoles" begin
-     include("test_GNCxLD_SumXiMultipoles.jl")
+@testset "test GNCxLD_SumXiMultipoles_P1" begin
+     include("test_GNCxLD_SumXiMultipoles_P1.jl")
+end
+
+@testset "test GNCxLD_SumXiMultipoles_P2" begin
+     include("test_GNCxLD_SumXiMultipoles_P2.jl")
 end
 
 
-@testset "test LDxGNC_SumXiMultipoles" begin
-     include("test_LDxGNC_SumXiMultipoles.jl")
+@testset "test LDxGNC_SumXiMultipoles_P1" begin
+     include("test_LDxGNC_SumXiMultipoles_P1.jl")
+end
+
+@testset "test LDxGNC_SumXiMultipoles_P2" begin
+     include("test_LDxGNC_SumXiMultipoles_P2.jl")
 end
 
 ##############################

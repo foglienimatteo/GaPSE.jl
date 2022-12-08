@@ -17,7 +17,7 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-println("\n\nNow I start the tests of sum_ξ_LD_multipole and print_sum_ξ_LD_multipole")
+println("\n\nNow I start the tests of sum_ξ_LD_multipole and map_sum_ξ_LD_multipole")
 println("It will take a while, but do not worry: I'm working.")
 
 @testset "test sum_ξ_LD_multipole no_window" begin
@@ -502,8 +502,8 @@ println("It will take a while, but do not worry: I'm working.")
                @test isapprox(res_sum_spec_ss_lob, calc_res_sum_spec_ss_lob; rtol=RTOL)
                @test all([isapprox(a, r; rtol=RTOL) for (a, r) in zip(calc_res_xis_spec_ss_lob, res_xis_spec_ss_lob)])
 
-               println("calc_res_xis_spec_ss_lob = $calc_res_xis_spec_ss_lob ;")
-               println("res_xis_spec_ss_lob = $res_xis_spec_ss_lob ; ")
+               #println("calc_res_xis_spec_ss_lob = $calc_res_xis_spec_ss_lob ;")
+               #println("res_xis_spec_ss_lob = $res_xis_spec_ss_lob ; ")
 
           end
 
@@ -1439,12 +1439,12 @@ println("\nDon't worry, I am on it...")
      end
 end
 
-println("\nJust finished the tests on sum_ξ_LD_multipole.")
+println("\nJust finished the tests on sum_ξ_LD_multipole!")
 
 
 ##########################################################################################92
 
-println("Now I work on print_sum_ξ_LD_multipole...")
+println("Now I work on map_sum_ξ_LD_multipole...")
 
 @testset "test map_sum_ξ_LD_multipole no_window" begin
      RTOL = 1.2e-2
@@ -1777,8 +1777,8 @@ println("Now I work on print_sum_ξ_LD_multipole...")
           calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.map_sum_ξ_LD_multipole(COSMO, ss_lob;
                L=L, alg=:lobatto, kwargs...)
 
-          println("res_xis_lob[2] = $(res_xis_lob[2]) ;")
-          println("calc_xis_lob[2] = $(calc_xis_lob[2]); ")
+          #println("res_xis_lob[2] = $(res_xis_lob[2]) ;")
+          #println("calc_xis_lob[2] = $(calc_xis_lob[2]); ")
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
@@ -1887,7 +1887,7 @@ println("Now I work on print_sum_ξ_LD_multipole...")
      end
 end
 
-println("\nDon't worry, I have almost finished...")
+println("\nDon't worry, I am fully operative...")
 
 @testset "test map_sum_ξ_LD_multipole with_window" begin
      RTOL = 1.2e-2
@@ -2327,4 +2327,10 @@ println("\nDon't worry, I have almost finished...")
      end
 end
 
-println("\ndone!")
+println("\nJust finished the tests on map_sum_ξ_LD_multipole!")
+
+
+
+
+
+
