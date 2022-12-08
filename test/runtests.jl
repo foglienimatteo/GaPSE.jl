@@ -160,24 +160,24 @@ SS_GNC = 10 .^ range(-1, log10(2.0 * COSMO.s_max), length=100);
 KWARGS_GNCxLD = Dict(
      :pr => true,
      :use_windows => false,
-     :enhancer => 1e8, 
+     :enhancer => 1e8,
      :N_trap => 30, :N_lob => 30,
      :atol_quad => 0.0, :rtol_quad => 1e-2,
      :N_χs => 100, :N_χs_2 => 60,
      :N_log => 3,
 );
-SS_GNCxLD = 10 .^ range(0, log10(2.0*COSMO.s_max), length = 100);
+SS_GNCxLD = 10 .^ range(0, log10(2.0 * COSMO.s_max), length=100);
 
 KWARGS_LDxGNC = Dict(
      :pr => true,
      :use_windows => false,
-     :enhancer => 1e8, 
+     :enhancer => 1e8,
      :N_trap => 30, :N_lob => 30,
      :atol_quad => 0.0, :rtol_quad => 1e-2,
      :N_χs => 100, :N_χs_2 => 60,
      :N_log => 3,
 );
-SS_LDxGNC = 10 .^ range(0, log10(2.0*COSMO.s_max), length = 100);
+SS_LDxGNC = 10 .^ range(0, log10(2.0 * COSMO.s_max), length=100);
 
 
 #=
@@ -265,17 +265,16 @@ end
 end
 
 =#
-#=
+
 @testset "test LD_SumXiMultipoles_P1" begin
      include("test_LD_SumXiMultipoles_P1.jl")
 end
-=#
+
 
 @testset "test LD_SumXiMultipoles_P2" begin
      include("test_LD_SumXiMultipoles_P2.jl")
 end
 
-@test 1==2
 #=
 
 ################################### TEST RELATIVISTIC GALAXY NUMBER COUNTS ###############92
@@ -364,15 +363,16 @@ end
      include("test_GNC_XiMultipoles.jl")
 end
 
-
+=#
 @testset "test GNC_SumXiMultipoles_P1" begin
      include("test_GNC_SumXiMultipoles_P1.jl")
 end
-=#
+
 
 @testset "test GNC_SumXiMultipoles_P2" begin
      include("test_GNC_SumXiMultipoles_P2.jl")
 end
+
 
 ##### TEST RELATIVISTIC GALAXY NUMBER COUNTS X LUMINOSITY DISTANCE PERT. and viceversa ###92
 

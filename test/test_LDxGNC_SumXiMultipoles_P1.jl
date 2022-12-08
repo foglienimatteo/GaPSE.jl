@@ -17,7 +17,7 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-println("\n\nNow I start the tests of sum_ξ_LDxGNC_multipole and print_sum_ξ_LDxGNC_multipole")
+println("\n\nNow I start the tests of sum_ξ_LDxGNC_multipole.")
 println("It will take a while, but do not worry: I'm working.")
 
 @testset "test sum_ξ_LDxGNC_multipole no_window" begin

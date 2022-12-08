@@ -2852,7 +2852,7 @@ println("\nJust finished the tests on sum_ξ_GNC_multipole.")
 
 ##########################################################################################92
 
-println("Now I work on print_sum_ξ_GNC_multipole...")
+println("Now I work on map_sum_ξ_GNC_multipole...")
 
 @testset "test map_sum_ξ_GNC_multipole no_window no observer terms" begin
      RTOL = 1.2e-2

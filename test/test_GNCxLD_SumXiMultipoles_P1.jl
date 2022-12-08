@@ -18,7 +18,7 @@
 #
 
 
-println("\n\nNow I start the tests of sum_ξ_GNCxLD_multipole and print_sum_ξ_GNCxLD_multipole")
+println("\n\nNow I start the tests of sum_ξ_GNCxLD_multipole.")
 println("It will take a while, but do not worry: I'm working.")
 
 @testset "test sum_ξ_GNCxLD_multipole no_window" begin
@@ -1232,7 +1232,7 @@ println("\nJust finished the tests on sum_ξ_GNCxLD_multipole.")
 
 ##########################################################################################92
 
-println("Now I work on print_sum_ξ_GNCxLD_multipole...")
+println("Now I work on map_sum_ξ_GNCxLD_multipole...")
 
 @testset "test map_sum_ξ_GNCxLD_multipole no_window" begin
      RTOL = 1.2e-2
