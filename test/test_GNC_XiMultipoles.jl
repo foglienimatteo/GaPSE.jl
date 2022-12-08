@@ -17,7 +17,8 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-
+println("\n\nNow I start the tests of ξ_GNC_multipole.")
+println("It will take a while, but do not worry: I'm working.")
 
 @testset "test ξ_GNC_multipole" begin
      name_effect = "auto_doppler"
@@ -468,11 +469,12 @@
      end
 end
 
+println("\nJust finished the tests on ξ_GNC_multipole.")
 
 
 ##########################################################################################92
 
-
+println("Now I work on map_ξ_GNC_multipole...")
 
 @testset "test print_map_ξ_GNC_multipole" begin
      effect = "auto_doppler"
@@ -502,7 +504,7 @@ end
                s1=nothing, L=0, kwargs...)
 
           calc_table = readdlm(name; comments=true)
-          calc_ss, calc_xis = GaPSE.readxy(name; comments = true)
+          calc_ss, calc_xis = GaPSE.readxy(name; comments=true)
 
           @test all([isapprox(s, calc_s, rtol=1e-2) for (s, calc_s) in zip(ss, calc_ss)])
           @test all([isapprox(xi, calc_xi, rtol=1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
@@ -511,7 +513,7 @@ end
      end
 
      @testset "second" begin
-          ss, xis = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_auto_doppler_L0_second.txt"; comments = true)
+          ss, xis = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_auto_doppler_L0_second.txt"; comments=true)
 
           name = "calc_xi_GNC_auto_doppler_L0_second.txt"
           isfile(name) && rm(name)
@@ -519,7 +521,7 @@ end
                s1=nothing, L=0, kwargs...)
 
           calc_table = readdlm(name; comments=true)
-          calc_ss, calc_xis = GaPSE.readxy(name; comments = true)
+          calc_ss, calc_xis = GaPSE.readxy(name; comments=true)
 
           @test all([isapprox(s, calc_s, rtol=1e-2) for (s, calc_s) in zip(ss, calc_ss)])
           @test all([isapprox(xi, calc_xi, rtol=1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
@@ -528,7 +530,7 @@ end
      end
 
      @testset "third" begin
-          ss, xis = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_auto_doppler_L0_third.txt"; comments = true)
+          ss, xis = GaPSE.readxy("datatest/GNC_doppler_multipoles/xi_GNC_auto_doppler_L0_third.txt"; comments=true)
 
           name = "calc_xi_GNC_auto_doppler_L0_third.txt"
           isfile(name) && rm(name)
@@ -536,7 +538,7 @@ end
                s1=COSMO.s_eff - 65.0, L=0, kwargs...)
 
           calc_table = readdlm(name; comments=true)
-          calc_ss, calc_xis = GaPSE.readxy(name; comments = true)
+          calc_ss, calc_xis = GaPSE.readxy(name; comments=true)
 
           @test all([isapprox(s, calc_s, rtol=1e-2) for (s, calc_s) in zip(ss, calc_ss)])
           @test all([isapprox(xi, calc_xi, rtol=1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
@@ -544,3 +546,5 @@ end
           rm(name)
      end
 end
+
+println("\ndone!")

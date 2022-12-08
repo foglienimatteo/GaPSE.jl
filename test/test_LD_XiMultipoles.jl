@@ -18,7 +18,8 @@
 #
 
 
-
+println("\n\nNow I start the tests of ξ_LD_multipole.")
+println("It will take a while, but do not worry: I'm working.")
 
 @testset "test ξ_LD_multipole" begin
      name_effect = "auto_doppler"
@@ -261,16 +262,17 @@
 end
 
 
+println("\nJust finished the tests on ξ_LD_multipole.")
 
 
 
 ##########################################################################################92
 
-
+println("Now I work on map_ξ_LD_multipole...")
 
 @testset "test print_map_ξ_LD_multipole" begin
      effect = "auto_doppler"
-     SS_LD_DOPPLER_WITHOBS = 10 .^ range(-1, log10(2 * COSMO.s_max), length=300);
+     SS_LD_DOPPLER_WITHOBS = 10 .^ range(-1, log10(2 * COSMO.s_max), length=300)
 
      kwargs = Dict(
           :use_windows => false,
@@ -296,7 +298,7 @@ end
           GaPSE.print_map_ξ_LD_multipole(COSMO, name, effect, nothing;
                s1=nothing, L=0, kwargs...)
 
-          calc_ss, calc_xis = GaPSE.readxy(name; comments = true)
+          calc_ss, calc_xis = GaPSE.readxy(name; comments=true)
 
           @test all([isapprox(s, calc_s, rtol=1e-2) for (s, calc_s) in zip(ss, calc_ss)])
           @test all([isapprox(xi, calc_xi, rtol=1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
@@ -312,7 +314,7 @@ end
           GaPSE.print_map_ξ_LD_multipole(COSMO, name, effect, 10 .^ range(0, 3, length=344);
                s1=nothing, L=0, kwargs...)
 
-          calc_ss, calc_xis = GaPSE.readxy(name; comments = true)
+          calc_ss, calc_xis = GaPSE.readxy(name; comments=true)
 
           @test all([isapprox(s, calc_s, rtol=1e-2) for (s, calc_s) in zip(ss, calc_ss)])
           @test all([isapprox(xi, calc_xi, rtol=1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
@@ -328,7 +330,7 @@ end
           GaPSE.print_map_ξ_LD_multipole(COSMO, name, effect, 10 .^ range(0, 3, length=344);
                s1=COSMO.s_eff - 65.0, L=0, kwargs...)
 
-          calc_ss, calc_xis = GaPSE.readxy(name; comments = true)
+          calc_ss, calc_xis = GaPSE.readxy(name; comments=true)
 
           @test all([isapprox(s, calc_s, rtol=1e-2) for (s, calc_s) in zip(ss, calc_ss)])
           @test all([isapprox(xi, calc_xi, rtol=1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
@@ -337,3 +339,4 @@ end
      end
 end
 
+println("\ndone!")

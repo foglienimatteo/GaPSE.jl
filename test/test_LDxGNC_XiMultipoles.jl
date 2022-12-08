@@ -18,7 +18,7 @@
 #
 
 
-println("\n\nNow I start the tests of ξ_GNCxLD_multipole and print_ξ_GNCxLD_multipole")
+println("\n\nNow I start the tests of ξ_GNCxLD_multipole.")
 println("It will take a while, but do not worry: I'm working.")
 
 
@@ -269,7 +269,7 @@ println("\nJust finished the tests on ξ_LDxGNC_multipole.")
 ##########################################################################################92
 
 
-println("Now I work on print_ξ_LDxGNC_multipole...")
+println("Now I work on map_ξ_LDxGNC_multipole...")
 
 
 @testset "test print_map_ξ_LDxGNC_multipole" begin
