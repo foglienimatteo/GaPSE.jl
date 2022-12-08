@@ -70,6 +70,10 @@ println("This will be longer...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[17], calc_xis_quad[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[18], calc_xis_quad[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[19], calc_xis_quad[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[20], calc_xis_quad[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -102,6 +106,10 @@ println("This will be longer...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -134,6 +142,10 @@ println("This will be longer...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -171,6 +183,10 @@ println("This will be longer...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -203,6 +219,10 @@ println("This will be longer...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -240,6 +260,10 @@ println("This will be longer...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[17], calc_xis_quad[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[18], calc_xis_quad[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[19], calc_xis_quad[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[20], calc_xis_quad[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -272,6 +296,10 @@ println("This will be longer...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -304,6 +332,10 @@ println("This will be longer...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -342,6 +374,10 @@ println("This will be longer...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -374,6 +410,10 @@ println("This will be longer...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -411,6 +451,10 @@ println("This will be longer...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -443,6 +487,10 @@ println("This will be longer...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -499,6 +547,10 @@ println("\nprocessing...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[17], calc_xis_quad[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[18], calc_xis_quad[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[19], calc_xis_quad[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[20], calc_xis_quad[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -531,6 +583,10 @@ println("\nprocessing...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -563,6 +619,10 @@ println("\nprocessing...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -600,6 +660,10 @@ println("\nprocessing...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -632,6 +696,10 @@ println("\nprocessing...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -669,6 +737,10 @@ println("\nprocessing...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[17], calc_xis_quad[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[18], calc_xis_quad[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[19], calc_xis_quad[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[20], calc_xis_quad[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -701,6 +773,10 @@ println("\nprocessing...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -733,6 +809,10 @@ println("\nprocessing...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -770,6 +850,10 @@ println("\nprocessing...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -802,6 +886,10 @@ println("\nprocessing...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -839,6 +927,10 @@ println("\nprocessing...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -871,6 +963,10 @@ println("\nprocessing...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -938,6 +1034,10 @@ println("\nI am at half of this path...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[17], calc_xis_quad[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[18], calc_xis_quad[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[19], calc_xis_quad[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[20], calc_xis_quad[20])]) # integratedgp_localgp
 
         
           rm(name)
@@ -982,6 +1082,10 @@ println("\nI am at half of this path...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1026,6 +1130,10 @@ println("\nI am at half of this path...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1074,6 +1182,10 @@ println("\nI am at half of this path...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1117,6 +1229,10 @@ println("\nI am at half of this path...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1165,6 +1281,10 @@ println("\nI am at half of this path...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[17], calc_xis_quad[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[18], calc_xis_quad[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[19], calc_xis_quad[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[20], calc_xis_quad[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1208,6 +1328,10 @@ println("\nI am at half of this path...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1251,6 +1375,10 @@ println("\nI am at half of this path...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1299,6 +1427,10 @@ println("\nI am at half of this path...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1342,6 +1474,10 @@ println("\nI am at half of this path...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1390,6 +1526,10 @@ println("\nI am at half of this path...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1433,6 +1573,10 @@ println("\nI am at half of this path...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1502,6 +1646,10 @@ println("\nAlmost finished...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[17], calc_xis_quad[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[18], calc_xis_quad[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[19], calc_xis_quad[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[20], calc_xis_quad[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1545,6 +1693,10 @@ println("\nAlmost finished...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1589,6 +1741,10 @@ println("\nAlmost finished...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1637,6 +1793,10 @@ println("\nAlmost finished...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1680,6 +1840,10 @@ println("\nAlmost finished...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1728,6 +1892,10 @@ println("\nAlmost finished...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[17], calc_xis_quad[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[18], calc_xis_quad[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[19], calc_xis_quad[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[20], calc_xis_quad[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1771,6 +1939,10 @@ println("\nAlmost finished...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1814,6 +1986,10 @@ println("\nAlmost finished...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1862,6 +2038,10 @@ println("\nAlmost finished...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1905,6 +2085,10 @@ println("\nAlmost finished...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1953,6 +2137,10 @@ println("\nAlmost finished...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[14], calc_xis_trap[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[15], calc_xis_trap[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[16], calc_xis_trap[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
@@ -1996,6 +2184,10 @@ println("\nAlmost finished...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[14], calc_xis_lob[14])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[15], calc_xis_lob[15])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[16], calc_xis_lob[16])]) # integratedgp_localgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
+          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
           for effect in GaPSE.GR_EFFECTS_GNCxLD
