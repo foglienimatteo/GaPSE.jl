@@ -148,8 +148,8 @@ println("It will take a while, but do not worry: I'm working.")
                     L=L, alg=:trap, kwargs...) for s in ss_trap]
 
                @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_lob, calc_xis_lob)])
-               println("xis_lob = $xis_lob ;")
-               println("calc_xis_lob = $calc_xis_lob ;")
+               #println("xis_lob = $xis_lob ;")
+               #println("calc_xis_lob = $calc_xis_lob ;")
                @test all([isapprox(xi, calc_xi, rtol=RTOL) for (xi, calc_xi) in zip(xis_trap, calc_xis_trap)])
           end
      end

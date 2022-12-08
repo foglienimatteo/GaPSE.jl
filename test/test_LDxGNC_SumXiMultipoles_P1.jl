@@ -21,7 +21,7 @@ println("\n\nNow I start the tests of sum_ξ_LDxGNC_multipole and map_sum_ξ_LDx
 println("It will take a while, but do not worry: I'm working.")
 
 @testset "test sum_ξ_LDxGNC_multipole no_window" begin
-     RTOL = 1.2e-2
+     RTOL = 2e-2
      kwargs = Dict(
           :use_windows => false,
           :enhancer => 1e8,
@@ -631,7 +631,7 @@ end
 println("\nDon't worry, I am on it...")
 
 @testset "test sum_ξ_LDxGNC_multipole with_window" begin
-     RTOL = 1.2e-2
+     RTOL = 2e-2
      kwargs = Dict(
           :use_windows => true,
           :enhancer => 1e8,
@@ -1243,7 +1243,7 @@ println("\nJust finished the tests on sum_ξ_LDxGNC_multipole!")
 println("Now I work on map_sum_ξ_LDxGNC_multipole...")
 
 @testset "test map_sum_ξ_LDxGNC_multipole no_window" begin
-     RTOL = 1.2e-2
+     RTOL = 2e-2
 
      kwargs = Dict(
           :use_windows => false,
@@ -1606,7 +1606,7 @@ end
 println("\nDon't worry, I am fully operative...")
 
 @testset "test map_sum_ξ_LDxGNC_multipole with_window" begin
-     RTOL = 1.2e-2
+     RTOL = 2e-2
 
      kwargs = Dict(
           :use_windows => true,

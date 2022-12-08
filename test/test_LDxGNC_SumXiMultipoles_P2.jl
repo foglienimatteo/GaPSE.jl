@@ -23,7 +23,7 @@ println("This will be longer...")
 
 
 @testset "test print_map_sum_ξ_LDxGNC_multipole no_window, first method" begin
-     RTOL = 1.2e-2
+     RTOL = 2e-2
 
      kwargs = Dict(
           :use_windows => false,
@@ -452,7 +452,7 @@ end
 println("\nprocessing...")
 
 @testset "test print_map_sum_ξ_LDxGNC_multipole with_window, first method" begin
-     RTOL = 1.2e-2
+     RTOL = 2e-2
 
      kwargs = Dict(
           :use_windows => true,
@@ -883,7 +883,7 @@ println("\nI am at half of this path...")
 
 
 @testset "test print_map_sum_ξ_LDxGNC_multipole no_window second method" begin
-     RTOL = 1.2e-2
+     RTOL = 2e-2
 
      kwargs = Dict(
           :use_windows => false,
@@ -1447,7 +1447,7 @@ println("\nAlmost finished...")
 
 
 @testset "test print_map_sum_ξ_LDxGNC_multipole with_window second method" begin
-     RTOL = 1.2e-2
+     RTOL = 2e-2
 
      kwargs = Dict(
           :use_windows => true,
