@@ -25,7 +25,7 @@ println("It will take a while, but do not worry: I'm working.")
 @testset "test ξ_GNCxLD_multipole" begin
      name_effect = "localgp_doppler"
      func_effect = GaPSE.ξ_GNCxLD_LocalGP_Doppler
-     RTOL = 1e-2
+     RTOL = 1.2e-2
      #SS_GNCxLD_DOPPLER_WITHOBS = 10 .^ range(-1, log10(2 * COSMO.s_max), length=300);
 
      @testset "zeros" begin

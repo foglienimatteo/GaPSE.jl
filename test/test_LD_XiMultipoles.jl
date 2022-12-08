@@ -23,7 +23,7 @@
 @testset "test ξ_LD_multipole" begin
      name_effect = "auto_doppler"
      func_effect = GaPSE.ξ_LD_Doppler
-     RTOL = 1e-2
+     RTOL = 1.2e-2
      #SS_LD_DOPPLER_WITHOBS = 10 .^ range(-1, log10(2 * COSMO.s_max), length=300);
 
      @testset "zeros" begin
