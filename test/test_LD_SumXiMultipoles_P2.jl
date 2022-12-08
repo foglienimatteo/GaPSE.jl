@@ -142,39 +142,6 @@ println("This will be longer...")
      @testset "L = 1 no_window" begin
           L = 1
 
-          ##### quad ####
-          ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
-
-          name = "calc_xis_LD_L$L" * "_quad_noF_specific_ss.txt"
-          isfile(name) && rm(name)
-
-          GaPSE.print_map_sum_ξ_LD_multipole(COSMO, name, ss_quad; 
-               single=true, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad, calc_xis_quad =  GaPSE.readxyall(name, comments=true)
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_quad, calc_ss_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_quad, calc_sums_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[1], calc_xis_quad[1])]) # auto_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[2], calc_xis_quad[2])]) # auto_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[3], calc_xis_quad[3])]) # auto_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[4], calc_xis_quad[4])]) # auto_integrated
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[5], calc_xis_quad[5])]) # lensing_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[6], calc_xis_quad[6])]) # doppler_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[7], calc_xis_quad[7])]) # doppler_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[8], calc_xis_quad[8])]) # localgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[9], calc_xis_quad[9])]) # doppler_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[10], calc_xis_quad[10])]) # integratedgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[11], calc_xis_quad[11])]) # lensing_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[12], calc_xis_quad[12])]) # localgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[13], calc_xis_quad[13])]) # lensing_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
-
-          rm(name)
-
-
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
                "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
@@ -345,38 +312,6 @@ println("This will be longer...")
      @testset "L = 3 no_window" begin
           L = 3
 
-          ##### quad ####
-          ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
-
-          name = "calc_xis_LD_L$L" * "_quad_noF_specific_ss.txt"
-          isfile(name) && rm(name)
-
-          GaPSE.print_map_sum_ξ_LD_multipole(COSMO, name, ss_quad; 
-               single=true, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad, calc_xis_quad =  GaPSE.readxyall(name, comments=true)
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_quad, calc_ss_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_quad, calc_sums_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[1], calc_xis_quad[1])]) # auto_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[2], calc_xis_quad[2])]) # auto_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[3], calc_xis_quad[3])]) # auto_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[4], calc_xis_quad[4])]) # auto_integrated
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[5], calc_xis_quad[5])]) # lensing_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[6], calc_xis_quad[6])]) # doppler_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[7], calc_xis_quad[7])]) # doppler_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[8], calc_xis_quad[8])]) # localgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[9], calc_xis_quad[9])]) # doppler_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[10], calc_xis_quad[10])]) # integratedgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[11], calc_xis_quad[11])]) # lensing_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[12], calc_xis_quad[12])]) # localgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[13], calc_xis_quad[13])]) # lensing_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
-
-          rm(name)
-
 
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
@@ -446,39 +381,6 @@ println("This will be longer...")
 
      @testset "L = 4 no_window" begin
           L = 4
-
-          ##### quad ####
-          ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
-
-          name = "calc_xis_LD_L$L" * "_quad_noF_specific_ss.txt"
-          isfile(name) && rm(name)
-
-          GaPSE.print_map_sum_ξ_LD_multipole(COSMO, name, ss_quad; 
-               single=true, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad, calc_xis_quad =  GaPSE.readxyall(name, comments=true)
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_quad, calc_ss_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_quad, calc_sums_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[1], calc_xis_quad[1])]) # auto_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[2], calc_xis_quad[2])]) # auto_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[3], calc_xis_quad[3])]) # auto_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[4], calc_xis_quad[4])]) # auto_integrated
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[5], calc_xis_quad[5])]) # lensing_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[6], calc_xis_quad[6])]) # doppler_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[7], calc_xis_quad[7])]) # doppler_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[8], calc_xis_quad[8])]) # localgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[9], calc_xis_quad[9])]) # doppler_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[10], calc_xis_quad[10])]) # integratedgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[11], calc_xis_quad[11])]) # lensing_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[12], calc_xis_quad[12])]) # localgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[13], calc_xis_quad[13])]) # lensing_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
-
-          rm(name)
-
 
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
@@ -669,39 +571,6 @@ println("\nprocessing...")
      @testset "L = 1 with_window" begin
           L = 1
 
-          ##### quad ####
-          ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
-
-          name = "calc_xis_LD_L$L" * "_quad_withF_specific_ss.txt"
-          isfile(name) && rm(name)
-
-          GaPSE.print_map_sum_ξ_LD_multipole(COSMO, name, ss_quad; 
-               single=true, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad, calc_xis_quad =  GaPSE.readxyall(name, comments=true)
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_quad, calc_ss_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_quad, calc_sums_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[1], calc_xis_quad[1])]) # auto_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[2], calc_xis_quad[2])]) # auto_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[3], calc_xis_quad[3])]) # auto_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[4], calc_xis_quad[4])]) # auto_integrated
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[5], calc_xis_quad[5])]) # lensing_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[6], calc_xis_quad[6])]) # doppler_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[7], calc_xis_quad[7])]) # doppler_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[8], calc_xis_quad[8])]) # localgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[9], calc_xis_quad[9])]) # doppler_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[10], calc_xis_quad[10])]) # integratedgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[11], calc_xis_quad[11])]) # lensing_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[12], calc_xis_quad[12])]) # localgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[13], calc_xis_quad[13])]) # lensing_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
-
-          rm(name)
-
-
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
                "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
@@ -872,39 +741,6 @@ println("\nprocessing...")
      @testset "L = 3 with_window" begin
           L = 3
 
-          ##### quad ####
-          ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
-
-          name = "calc_xis_LD_L$L" * "_quad_withF_specific_ss.txt"
-          isfile(name) && rm(name)
-
-          GaPSE.print_map_sum_ξ_LD_multipole(COSMO, name, ss_quad; 
-               single=true, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad, calc_xis_quad =  GaPSE.readxyall(name, comments=true)
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_quad, calc_ss_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_quad, calc_sums_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[1], calc_xis_quad[1])]) # auto_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[2], calc_xis_quad[2])]) # auto_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[3], calc_xis_quad[3])]) # auto_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[4], calc_xis_quad[4])]) # auto_integrated
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[5], calc_xis_quad[5])]) # lensing_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[6], calc_xis_quad[6])]) # doppler_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[7], calc_xis_quad[7])]) # doppler_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[8], calc_xis_quad[8])]) # localgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[9], calc_xis_quad[9])]) # doppler_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[10], calc_xis_quad[10])]) # integratedgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[11], calc_xis_quad[11])]) # lensing_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[12], calc_xis_quad[12])]) # localgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[13], calc_xis_quad[13])]) # lensing_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
-
-          rm(name)
-
-
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
                "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
@@ -973,39 +809,6 @@ println("\nprocessing...")
 
      @testset "L = 4 with_window" begin
           L = 4
-
-          ##### quad ####
-          ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
-
-          name = "calc_xis_LD_L$L" * "_quad_withF_specific_ss.txt"
-          isfile(name) && rm(name)
-
-          GaPSE.print_map_sum_ξ_LD_multipole(COSMO, name, ss_quad; 
-               single=true, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad, calc_xis_quad =  GaPSE.readxyall(name, comments=true)
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_quad, calc_ss_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_quad, calc_sums_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[1], calc_xis_quad[1])]) # auto_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[2], calc_xis_quad[2])]) # auto_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[3], calc_xis_quad[3])]) # auto_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[4], calc_xis_quad[4])]) # auto_integrated
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[5], calc_xis_quad[5])]) # lensing_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[6], calc_xis_quad[6])]) # doppler_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[7], calc_xis_quad[7])]) # doppler_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[8], calc_xis_quad[8])]) # localgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[9], calc_xis_quad[9])]) # doppler_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[10], calc_xis_quad[10])]) # integratedgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[11], calc_xis_quad[11])]) # lensing_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[12], calc_xis_quad[12])]) # localgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[13], calc_xis_quad[13])]) # lensing_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
-
-          rm(name)
-
 
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
@@ -1235,50 +1038,6 @@ println("\nI am at half of this path...")
      @testset "L = 1 no_window" begin
           L = 1
 
-          ##### quad ####
-          ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
-
-          name = "calc_xis_LD_L$L" * "_quad_noF_specific_ss.txt"
-          isfile(name) && rm(name)
-
-          GaPSE.print_map_sum_ξ_LD_multipole(COSMO, name, ss_quad; 
-               single=false, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad =  GaPSE.readxy(name, comments=true)
-          calc_xis_quad = [
-               begin
-                    a_name = "all_LD_standalones_CFs/xi_LD_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments = true)
-                    xis
-               end for effect in GaPSE.GR_EFFECTS_LD
-          ]
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_quad, calc_ss_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_quad, calc_sums_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[1], calc_xis_quad[1])]) # auto_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[2], calc_xis_quad[2])]) # auto_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[3], calc_xis_quad[3])]) # auto_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[4], calc_xis_quad[4])]) # auto_integrated
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[5], calc_xis_quad[5])]) # lensing_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[6], calc_xis_quad[6])]) # doppler_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[7], calc_xis_quad[7])]) # doppler_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[8], calc_xis_quad[8])]) # localgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[9], calc_xis_quad[9])]) # doppler_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[10], calc_xis_quad[10])]) # integratedgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[11], calc_xis_quad[11])]) # lensing_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[12], calc_xis_quad[12])]) # localgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[13], calc_xis_quad[13])]) # lensing_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
-
-          rm(name)
-          for effect in GaPSE.GR_EFFECTS_LD
-               rm("all_LD_standalones_CFs/xi_LD_" * effect * "_L$L" * ".txt")
-          end
-          rm("all_LD_standalones_CFs")
-
-
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
                "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
@@ -1504,50 +1263,6 @@ println("\nI am at half of this path...")
      @testset "L = 3 no_window" begin
           L = 3
 
-          ##### quad ####
-          ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
-
-          name = "calc_xis_LD_L$L" * "_quad_noF_specific_ss.txt"
-          isfile(name) && rm(name)
-
-          GaPSE.print_map_sum_ξ_LD_multipole(COSMO, name, ss_quad; 
-               single=false, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad =  GaPSE.readxy(name, comments=true)
-          calc_xis_quad = [
-               begin
-                    a_name = "all_LD_standalones_CFs/xi_LD_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments = true)
-                    xis
-               end for effect in GaPSE.GR_EFFECTS_LD
-          ]
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_quad, calc_ss_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_quad, calc_sums_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[1], calc_xis_quad[1])]) # auto_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[2], calc_xis_quad[2])]) # auto_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[3], calc_xis_quad[3])]) # auto_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[4], calc_xis_quad[4])]) # auto_integrated
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[5], calc_xis_quad[5])]) # lensing_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[6], calc_xis_quad[6])]) # doppler_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[7], calc_xis_quad[7])]) # doppler_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[8], calc_xis_quad[8])]) # localgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[9], calc_xis_quad[9])]) # doppler_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[10], calc_xis_quad[10])]) # integratedgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[11], calc_xis_quad[11])]) # lensing_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[12], calc_xis_quad[12])]) # localgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[13], calc_xis_quad[13])]) # lensing_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
-
-          rm(name)
-          for effect in GaPSE.GR_EFFECTS_LD
-               rm("all_LD_standalones_CFs/xi_LD_" * effect * "_L$L" * ".txt")
-          end
-          rm("all_LD_standalones_CFs")
-
-
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
                "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_noF_specific_ss.txt", comments=true)
@@ -1638,50 +1353,6 @@ println("\nI am at half of this path...")
 
      @testset "L = 4 no_window" begin
           L = 4
-
-          ##### quad ####
-          ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_noF_specific_ss.txt", comments=true)
-
-          name = "calc_xis_LD_L$L" * "_quad_noF_specific_ss.txt"
-          isfile(name) && rm(name)
-
-          GaPSE.print_map_sum_ξ_LD_multipole(COSMO, name, ss_quad; 
-               single=false, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad =  GaPSE.readxy(name, comments=true)
-          calc_xis_quad = [
-               begin
-                    a_name = "all_LD_standalones_CFs/xi_LD_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments = true)
-                    xis
-               end for effect in GaPSE.GR_EFFECTS_LD
-          ]
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_quad, calc_ss_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_quad, calc_sums_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[1], calc_xis_quad[1])]) # auto_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[2], calc_xis_quad[2])]) # auto_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[3], calc_xis_quad[3])]) # auto_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[4], calc_xis_quad[4])]) # auto_integrated
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[5], calc_xis_quad[5])]) # lensing_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[6], calc_xis_quad[6])]) # doppler_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[7], calc_xis_quad[7])]) # doppler_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[8], calc_xis_quad[8])]) # localgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[9], calc_xis_quad[9])]) # doppler_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[10], calc_xis_quad[10])]) # integratedgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[11], calc_xis_quad[11])]) # lensing_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[12], calc_xis_quad[12])]) # localgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[13], calc_xis_quad[13])]) # lensing_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
-
-          rm(name)
-          for effect in GaPSE.GR_EFFECTS_LD
-               rm("all_LD_standalones_CFs/xi_LD_" * effect * "_L$L" * ".txt")
-          end
-          rm("all_LD_standalones_CFs")
-
 
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
@@ -1930,50 +1601,6 @@ println("\nAlmost finished...")
      @testset "L = 1 with_window" begin
           L = 1
 
-          ##### quad ####
-          ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
-
-          name = "calc_xis_LD_L$L" * "_quad_withF_specific_ss.txt"
-          isfile(name) && rm(name)
-
-          GaPSE.print_map_sum_ξ_LD_multipole(COSMO, name, ss_quad; 
-               single=false, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad =  GaPSE.readxy(name, comments=true)
-          calc_xis_quad = [
-               begin
-                    a_name = "all_LD_standalones_CFs/xi_LD_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments = true)
-                    xis
-               end for effect in GaPSE.GR_EFFECTS_LD
-          ]
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_quad, calc_ss_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_quad, calc_sums_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[1], calc_xis_quad[1])]) # auto_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[2], calc_xis_quad[2])]) # auto_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[3], calc_xis_quad[3])]) # auto_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[4], calc_xis_quad[4])]) # auto_integrated
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[5], calc_xis_quad[5])]) # lensing_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[6], calc_xis_quad[6])]) # doppler_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[7], calc_xis_quad[7])]) # doppler_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[8], calc_xis_quad[8])]) # localgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[9], calc_xis_quad[9])]) # doppler_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[10], calc_xis_quad[10])]) # integratedgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[11], calc_xis_quad[11])]) # lensing_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[12], calc_xis_quad[12])]) # localgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[13], calc_xis_quad[13])]) # lensing_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
-
-          rm(name)
-          for effect in GaPSE.GR_EFFECTS_LD
-               rm("all_LD_standalones_CFs/xi_LD_" * effect * "_L$L" * ".txt")
-          end
-          rm("all_LD_standalones_CFs")
-
-
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
                "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
@@ -2199,50 +1826,6 @@ println("\nAlmost finished...")
      @testset "L = 3 with_window" begin
           L = 3
 
-          ##### quad ####
-          ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
-
-          name = "calc_xis_LD_L$L" * "_quad_withF_specific_ss.txt"
-          isfile(name) && rm(name)
-
-          GaPSE.print_map_sum_ξ_LD_multipole(COSMO, name, ss_quad; 
-               single=false, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad =  GaPSE.readxy(name, comments=true)
-          calc_xis_quad = [
-               begin
-                    a_name = "all_LD_standalones_CFs/xi_LD_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments = true)
-                    xis
-               end for effect in GaPSE.GR_EFFECTS_LD
-          ]
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_quad, calc_ss_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_quad, calc_sums_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[1], calc_xis_quad[1])]) # auto_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[2], calc_xis_quad[2])]) # auto_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[3], calc_xis_quad[3])]) # auto_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[4], calc_xis_quad[4])]) # auto_integrated
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[5], calc_xis_quad[5])]) # lensing_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[6], calc_xis_quad[6])]) # doppler_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[7], calc_xis_quad[7])]) # doppler_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[8], calc_xis_quad[8])]) # localgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[9], calc_xis_quad[9])]) # doppler_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[10], calc_xis_quad[10])]) # integratedgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[11], calc_xis_quad[11])]) # lensing_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[12], calc_xis_quad[12])]) # localgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[13], calc_xis_quad[13])]) # lensing_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
-
-          rm(name)
-          for effect in GaPSE.GR_EFFECTS_LD
-               rm("all_LD_standalones_CFs/xi_LD_" * effect * "_L$L" * ".txt")
-          end
-          rm("all_LD_standalones_CFs")
-
-
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
                "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_trap_withF_specific_ss.txt", comments=true)
@@ -2333,50 +1916,6 @@ println("\nAlmost finished...")
 
      @testset "L = 4 with_window" begin
           L = 4
-
-          ##### quad ####
-          ss_quad, res_sums_quad, res_xis_quad = GaPSE.readxyall(
-               "datatest/LD_SumXiMultipoles/xis_LD_L$L" * "_quad_withF_specific_ss.txt", comments=true)
-
-          name = "calc_xis_LD_L$L" * "_quad_withF_specific_ss.txt"
-          isfile(name) && rm(name)
-
-          GaPSE.print_map_sum_ξ_LD_multipole(COSMO, name, ss_quad; 
-               single=false, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad =  GaPSE.readxy(name, comments=true)
-          calc_xis_quad = [
-               begin
-                    a_name = "all_LD_standalones_CFs/xi_LD_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments = true)
-                    xis
-               end for effect in GaPSE.GR_EFFECTS_LD
-          ]
-
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_quad, calc_ss_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_quad, calc_sums_quad)])
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[1], calc_xis_quad[1])]) # auto_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[2], calc_xis_quad[2])]) # auto_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[3], calc_xis_quad[3])]) # auto_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[4], calc_xis_quad[4])]) # auto_integrated
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[5], calc_xis_quad[5])]) # lensing_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[6], calc_xis_quad[6])]) # doppler_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[7], calc_xis_quad[7])]) # doppler_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[8], calc_xis_quad[8])]) # localgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[9], calc_xis_quad[9])]) # doppler_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[10], calc_xis_quad[10])]) # integratedgp_doppler
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[11], calc_xis_quad[11])]) # lensing_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[12], calc_xis_quad[12])]) # localgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[13], calc_xis_quad[13])]) # lensing_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[14], calc_xis_quad[14])]) # integratedgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[15], calc_xis_quad[15])]) # localgp_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[16], calc_xis_quad[16])]) # integratedgp_localgp
-
-          rm(name)
-          for effect in GaPSE.GR_EFFECTS_LD
-               rm("all_LD_standalones_CFs/xi_LD_" * effect * "_L$L" * ".txt")
-          end
-          rm("all_LD_standalones_CFs")
-
 
           #### trap ####
           ss_trap, res_sums_trap, res_xis_trap = GaPSE.readxyall(
