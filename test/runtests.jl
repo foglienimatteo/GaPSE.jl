@@ -40,7 +40,7 @@ const HUBBLE_0 = 1e5 / 299792458.0
 include("TEST_DATA.jl")
 
 ##########################################################################################92
-
+#=
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
@@ -86,7 +86,7 @@ end
 end
 
 
-
+=#
 ################################### COSMOLOGY IMPLEMENTATION #############################92
 
 
@@ -273,7 +273,6 @@ end
 @testset "test LD_SumXiMultipoles_P2" begin
      include("test_LD_SumXiMultipoles_P2.jl")
 end
-
 
 
 ################################### TEST RELATIVISTIC GALAXY NUMBER COUNTS ###############92

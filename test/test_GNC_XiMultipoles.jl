@@ -24,7 +24,7 @@ println("It will take a while, but do not worry: I'm working.")
      name_effect = "auto_doppler"
      func_effect = GaPSE.ξ_GNC_Doppler
      RTOL = 1.2e-2
-     #SS_GNC_DOPPLER_WITHOBS = 10 .^ range(-1, log10(2 * COSMO.s_max), length=300);
+     #SS_GNC_DOPPLER_WITHOBS = 10 .^ range(0, log10(2 * COSMO.s_max), length=300);
 
      @testset "zeros" begin
           @test_throws AssertionError GaPSE.ξ_GNC_multipole(COSMO.s_eff, 10.0, "strange", COSMO)
