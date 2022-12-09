@@ -485,7 +485,7 @@ end
 end
 =#
 
-#=
+
 @testset "test GNCxLD_SumXiMultipoles_P1" begin
      include("test_GNCxLD_SumXiMultipoles_P1.jl")
 end
@@ -493,7 +493,7 @@ end
 @testset "test GNCxLD_SumXiMultipoles_P2" begin
      include("test_GNCxLD_SumXiMultipoles_P2.jl")
 end
-=#
+
 
 @testset "test LDxGNC_SumXiMultipoles_P1" begin
      include("test_LDxGNC_SumXiMultipoles_P1.jl")
