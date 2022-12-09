@@ -40,7 +40,7 @@ const HUBBLE_0 = 1e5 / 299792458.0
 include("TEST_DATA.jl")
 
 ##########################################################################################92
-#=
+
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
@@ -86,7 +86,7 @@ end
 end
 
 
-=#
+
 ################################### COSMOLOGY IMPLEMENTATION #############################92
 
 
@@ -178,7 +178,7 @@ KWARGS_LDxGNC = Dict(
 );
 SS_LDxGNC = 10 .^ range(0, log10(2.0 * COSMO.s_max), length=100);
 
-#=
+
 
 ################################### TEST PLANE-PARALLEL APPROXIMATIONS ###################92
 
@@ -483,7 +483,7 @@ end
 @testset "test LDxGNC_XiMultipoles" begin
      include("test_LDxGNC_XiMultipoles.jl")
 end
-=#
+
 
 
 @testset "test GNCxLD_SumXiMultipoles_P1" begin
