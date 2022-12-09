@@ -28,9 +28,9 @@ println("This will be longer...")
      kwargs = Dict(
           :use_windows => false,
           :enhancer => 1e8, :s1 => nothing,
-          :N_trap => 30, :N_lob => 30,
+          :N_trap => 100, :N_lob => 100,
           :atol_quad => 0.0, :rtol_quad => 1e-2,
-          :N_χs => 40, :N_χs_2 => 20,
+          :N_χs => 50, :N_χs_2 => 50,
           :pr => false,
      )
 
@@ -505,9 +505,9 @@ println("\nprocessing...")
      kwargs = Dict(
           :use_windows => true,
           :enhancer => 1e8, :s1 => nothing,
-          :N_trap => 30, :N_lob => 30,
+          :N_trap => 100, :N_lob => 100,
           :atol_quad => 0.0, :rtol_quad => 1e-2,
-          :N_χs => 40, :N_χs_2 => 20,
+          :N_χs => 50, :N_χs_2 => 50,
           :pr => false,
      )
 
@@ -984,9 +984,9 @@ println("\nI am at half of this path...")
      kwargs = Dict(
           :use_windows => false,
           :enhancer => 1e8, :s1 => nothing,
-          :N_trap => 30, :N_lob => 30,
+          :N_trap => 100, :N_lob => 100,
           :atol_quad => 0.0, :rtol_quad => 1e-2,
-          :N_χs => 40, :N_χs_2 => 20,
+          :N_χs => 50, :N_χs_2 => 50,
           :pr => false,
      )
 
@@ -1596,9 +1596,9 @@ println("\nAlmost finished...")
      kwargs = Dict(
           :use_windows => true,
           :enhancer => 1e8, :s1 => nothing,
-          :N_trap => 30, :N_lob => 30,
+          :N_trap => 100, :N_lob => 100,
           :atol_quad => 0.0, :rtol_quad => 1e-2,
-          :N_χs => 40, :N_χs_2 => 20,
+          :N_χs => 50, :N_χs_2 => 50,
           :pr => false,
      )
 
