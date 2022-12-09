@@ -23,12 +23,12 @@ println("This will be longer...")
 
 
 @testset "test print_map_sum_ξ_LDxGNC_multipole no_window, first method" begin
-     RTOL = 2e-2
+     RTOL = 1.2e-2
 
      kwargs = Dict(
           :use_windows => false,
           :enhancer => 1e8, :s1 => nothing,
-          :N_trap => 60, :N_lob => 60,
+          :N_trap => 30, :N_lob => 30,
           :atol_quad => 0.0, :rtol_quad => 1e-2,
           :N_χs => 40, :N_χs_2 => 20,
           :pr => false,
@@ -48,9 +48,9 @@ println("This will be longer...")
           name = "calc_xis_LDxGNC_L$L" * "_quad_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_quad;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_quad; 
                single=true, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad, calc_xis_quad = GaPSE.readxyall(name, comments=true)
+          calc_ss_quad, calc_sums_quad, calc_xis_quad =  GaPSE.readxyall(name, comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_quad, calc_ss_quad)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_quad, calc_sums_quad)])
@@ -84,9 +84,9 @@ println("This will be longer...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=true, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.readxyall(name, comments=true)
+          calc_ss_trap, calc_sums_trap, calc_xis_trap =  GaPSE.readxyall(name, comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_trap, calc_ss_trap)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_trap, calc_sums_trap)])
@@ -120,9 +120,9 @@ println("This will be longer...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=true, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.readxyall(name, comments=true)
+          calc_ss_lob, calc_sums_lob, calc_xis_lob =  GaPSE.readxyall(name,  comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
@@ -161,9 +161,9 @@ println("This will be longer...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=true, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.readxyall(name, comments=true)
+          calc_ss_trap, calc_sums_trap, calc_xis_trap =  GaPSE.readxyall(name, comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_trap, calc_ss_trap)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_trap, calc_sums_trap)])
@@ -197,9 +197,9 @@ println("This will be longer...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=true, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.readxyall(name, comments=true)
+          calc_ss_lob, calc_sums_lob, calc_xis_lob =  GaPSE.readxyall(name,  comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
@@ -238,9 +238,9 @@ println("This will be longer...")
           name = "calc_xis_LDxGNC_L$L" * "_quad_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_quad;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_quad; 
                single=true, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad, calc_xis_quad = GaPSE.readxyall(name, comments=true)
+          calc_ss_quad, calc_sums_quad, calc_xis_quad =  GaPSE.readxyall(name, comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_quad, calc_ss_quad)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_quad, calc_sums_quad)])
@@ -274,9 +274,9 @@ println("This will be longer...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=true, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.readxyall(name, comments=true)
+          calc_ss_trap, calc_sums_trap, calc_xis_trap =  GaPSE.readxyall(name, comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_trap, calc_ss_trap)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_trap, calc_sums_trap)])
@@ -310,9 +310,9 @@ println("This will be longer...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=true, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.readxyall(name, comments=true)
+          calc_ss_lob, calc_sums_lob, calc_xis_lob =  GaPSE.readxyall(name,  comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
@@ -352,9 +352,9 @@ println("This will be longer...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=true, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.readxyall(name, comments=true)
+          calc_ss_trap, calc_sums_trap, calc_xis_trap =  GaPSE.readxyall(name, comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_trap, calc_ss_trap)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_trap, calc_sums_trap)])
@@ -388,9 +388,9 @@ println("This will be longer...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=true, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.readxyall(name, comments=true)
+          calc_ss_lob, calc_sums_lob, calc_xis_lob =  GaPSE.readxyall(name,  comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
@@ -429,9 +429,9 @@ println("This will be longer...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=true, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.readxyall(name, comments=true)
+          calc_ss_trap, calc_sums_trap, calc_xis_trap =  GaPSE.readxyall(name, comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_trap, calc_ss_trap)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_trap, calc_sums_trap)])
@@ -465,9 +465,9 @@ println("This will be longer...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=true, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.readxyall(name, comments=true)
+          calc_ss_lob, calc_sums_lob, calc_xis_lob =  GaPSE.readxyall(name,  comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
@@ -500,12 +500,12 @@ end
 println("\nprocessing...")
 
 @testset "test print_map_sum_ξ_LDxGNC_multipole with_window, first method" begin
-     RTOL = 2e-2
+     RTOL = 1.2e-2
 
      kwargs = Dict(
           :use_windows => true,
           :enhancer => 1e8, :s1 => nothing,
-          :N_trap => 60, :N_lob => 60,
+          :N_trap => 30, :N_lob => 30,
           :atol_quad => 0.0, :rtol_quad => 1e-2,
           :N_χs => 40, :N_χs_2 => 20,
           :pr => false,
@@ -525,9 +525,9 @@ println("\nprocessing...")
           name = "calc_xis_LDxGNC_L$L" * "_quad_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_quad;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_quad; 
                single=true, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad, calc_xis_quad = GaPSE.readxyall(name, comments=true)
+          calc_ss_quad, calc_sums_quad, calc_xis_quad =  GaPSE.readxyall(name, comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_quad, calc_ss_quad)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_quad, calc_sums_quad)])
@@ -551,10 +551,6 @@ println("\nprocessing...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[18], calc_xis_quad[18])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[19], calc_xis_quad[19])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[20], calc_xis_quad[20])]) # integratedgp_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[17], calc_xis_quad[17])]) # lensing_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[18], calc_xis_quad[18])]) # integratedgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[19], calc_xis_quad[19])]) # localgp_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[20], calc_xis_quad[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -565,9 +561,9 @@ println("\nprocessing...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=true, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.readxyall(name, comments=true)
+          calc_ss_trap, calc_sums_trap, calc_xis_trap =  GaPSE.readxyall(name, comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_trap, calc_ss_trap)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_trap, calc_sums_trap)])
@@ -591,10 +587,6 @@ println("\nprocessing...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[17], calc_xis_trap[17])]) # lensing_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[18], calc_xis_trap[18])]) # integratedgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[19], calc_xis_trap[19])]) # localgp_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_trap[20], calc_xis_trap[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -605,9 +597,9 @@ println("\nprocessing...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=true, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.readxyall(name, comments=true)
+          calc_ss_lob, calc_sums_lob, calc_xis_lob =  GaPSE.readxyall(name,  comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
@@ -646,9 +638,9 @@ println("\nprocessing...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=true, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.readxyall(name, comments=true)
+          calc_ss_trap, calc_sums_trap, calc_xis_trap =  GaPSE.readxyall(name, comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_trap, calc_ss_trap)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_trap, calc_sums_trap)])
@@ -682,9 +674,9 @@ println("\nprocessing...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=true, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.readxyall(name, comments=true)
+          calc_ss_lob, calc_sums_lob, calc_xis_lob =  GaPSE.readxyall(name,  comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
@@ -708,10 +700,6 @@ println("\nprocessing...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[17], calc_xis_lob[17])]) # lensing_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[18], calc_xis_lob[18])]) # integratedgp_lensing
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[19], calc_xis_lob[19])]) # localgp_integratedgp
-          @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_lob[20], calc_xis_lob[20])]) # integratedgp_localgp
 
           rm(name)
 
@@ -727,9 +715,9 @@ println("\nprocessing...")
           name = "calc_xis_LDxGNC_L$L" * "_quad_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_quad;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_quad; 
                single=true, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad, calc_xis_quad = GaPSE.readxyall(name, comments=true)
+          calc_ss_quad, calc_sums_quad, calc_xis_quad =  GaPSE.readxyall(name, comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_quad, calc_ss_quad)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_quad, calc_sums_quad)])
@@ -763,9 +751,9 @@ println("\nprocessing...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=true, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.readxyall(name, comments=true)
+          calc_ss_trap, calc_sums_trap, calc_xis_trap =  GaPSE.readxyall(name, comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_trap, calc_ss_trap)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_trap, calc_sums_trap)])
@@ -799,9 +787,9 @@ println("\nprocessing...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=true, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.readxyall(name, comments=true)
+          calc_ss_lob, calc_sums_lob, calc_xis_lob =  GaPSE.readxyall(name,  comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
@@ -840,9 +828,9 @@ println("\nprocessing...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=true, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.readxyall(name, comments=true)
+          calc_ss_trap, calc_sums_trap, calc_xis_trap =  GaPSE.readxyall(name, comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_trap, calc_ss_trap)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_trap, calc_sums_trap)])
@@ -876,9 +864,9 @@ println("\nprocessing...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=true, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.readxyall(name, comments=true)
+          calc_ss_lob, calc_sums_lob, calc_xis_lob =  GaPSE.readxyall(name,  comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
@@ -917,9 +905,9 @@ println("\nprocessing...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=true, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap, calc_xis_trap = GaPSE.readxyall(name, comments=true)
+          calc_ss_trap, calc_sums_trap, calc_xis_trap =  GaPSE.readxyall(name, comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_trap, calc_ss_trap)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_trap, calc_sums_trap)])
@@ -953,9 +941,9 @@ println("\nprocessing...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=true, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.readxyall(name, comments=true)
+          calc_ss_lob, calc_sums_lob, calc_xis_lob =  GaPSE.readxyall(name,  comments=true)
 
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(ss_lob, calc_ss_lob)])
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_sums_lob, calc_sums_lob)])
@@ -991,12 +979,12 @@ println("\nI am at half of this path...")
 
 
 @testset "test print_map_sum_ξ_LDxGNC_multipole no_window second method" begin
-     RTOL = 2e-2
+     RTOL = 1.2e-2
 
      kwargs = Dict(
           :use_windows => false,
           :enhancer => 1e8, :s1 => nothing,
-          :N_trap => 60, :N_lob => 60,
+          :N_trap => 30, :N_lob => 30,
           :atol_quad => 0.0, :rtol_quad => 1e-2,
           :N_χs => 40, :N_χs_2 => 20,
           :pr => false,
@@ -1016,14 +1004,14 @@ println("\nI am at half of this path...")
           name = "calc_xis_LDxGNC_L$L" * "_quad_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_quad;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_quad; 
                single=false, L=L, alg=:quad, kwargs...)
 
-          calc_ss_quad, calc_sums_quad = GaPSE.readxy(name, comments=true)
+          calc_ss_quad, calc_sums_quad =  GaPSE.readxy(name, comments=true)
           calc_xis_quad = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1051,7 +1039,7 @@ println("\nI am at half of this path...")
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[19], calc_xis_quad[19])]) # localgp_integratedgp
           @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[20], calc_xis_quad[20])]) # integratedgp_localgp
 
-
+        
           rm(name)
           for effect in GaPSE.GR_EFFECTS_LDxGNC
                rm("all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt")
@@ -1065,13 +1053,13 @@ println("\nI am at half of this path...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=false, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap = GaPSE.readxy(name, comments=true)
+          calc_ss_trap, calc_sums_trap =  GaPSE.readxy(name, comments=true)
           calc_xis_trap = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1112,14 +1100,14 @@ println("\nI am at half of this path...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=false, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.readxyall(name, comments=true)
-          calc_ss_lob, calc_sums_lob = GaPSE.readxy(name, comments=true)
+          calc_ss_lob, calc_sums_lob, calc_xis_lob =  GaPSE.readxyall(name,  comments=true)
+          calc_ss_lob, calc_sums_lob =  GaPSE.readxy(name, comments=true)
           calc_xis_lob = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1165,13 +1153,13 @@ println("\nI am at half of this path...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=false, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap = GaPSE.readxy(name, comments=true)
+          calc_ss_trap, calc_sums_trap =  GaPSE.readxy(name, comments=true)
           calc_xis_trap = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1212,13 +1200,13 @@ println("\nI am at half of this path...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=false, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob = GaPSE.readxy(name, comments=true)
+          calc_ss_lob, calc_sums_lob =  GaPSE.readxy(name, comments=true)
           calc_xis_lob = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1264,13 +1252,13 @@ println("\nI am at half of this path...")
           name = "calc_xis_LDxGNC_L$L" * "_quad_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_quad;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_quad; 
                single=false, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad = GaPSE.readxy(name, comments=true)
+          calc_ss_quad, calc_sums_quad =  GaPSE.readxy(name, comments=true)
           calc_xis_quad = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1311,13 +1299,13 @@ println("\nI am at half of this path...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=false, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap = GaPSE.readxy(name, comments=true)
+          calc_ss_trap, calc_sums_trap =  GaPSE.readxy(name, comments=true)
           calc_xis_trap = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1358,13 +1346,13 @@ println("\nI am at half of this path...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=false, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob = GaPSE.readxy(name, comments=true)
+          calc_ss_lob, calc_sums_lob =  GaPSE.readxy(name, comments=true)
           calc_xis_lob = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1410,13 +1398,13 @@ println("\nI am at half of this path...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=false, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap = GaPSE.readxy(name, comments=true)
+          calc_ss_trap, calc_sums_trap =  GaPSE.readxy(name, comments=true)
           calc_xis_trap = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1457,13 +1445,13 @@ println("\nI am at half of this path...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=false, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob = GaPSE.readxy(name, comments=true)
+          calc_ss_lob, calc_sums_lob =  GaPSE.readxy(name, comments=true)
           calc_xis_lob = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1509,13 +1497,13 @@ println("\nI am at half of this path...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=false, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap = GaPSE.readxy(name, comments=true)
+          calc_ss_trap, calc_sums_trap =  GaPSE.readxy(name, comments=true)
           calc_xis_trap = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1556,13 +1544,13 @@ println("\nI am at half of this path...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_noF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=false, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob = GaPSE.readxy(name, comments=true)
+          calc_ss_lob, calc_sums_lob =  GaPSE.readxy(name, comments=true)
           calc_xis_lob = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1603,12 +1591,12 @@ println("\nAlmost finished...")
 
 
 @testset "test print_map_sum_ξ_LDxGNC_multipole with_window second method" begin
-     RTOL = 2e-2
+     RTOL = 1.2e-2
 
      kwargs = Dict(
           :use_windows => true,
           :enhancer => 1e8, :s1 => nothing,
-          :N_trap => 60, :N_lob => 60,
+          :N_trap => 30, :N_lob => 30,
           :atol_quad => 0.0, :rtol_quad => 1e-2,
           :N_χs => 40, :N_χs_2 => 20,
           :pr => false,
@@ -1628,14 +1616,14 @@ println("\nAlmost finished...")
           name = "calc_xis_LDxGNC_L$L" * "_quad_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_quad;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_quad; 
                single=false, L=L, alg=:quad, kwargs...)
 
-          calc_ss_quad, calc_sums_quad = GaPSE.readxy(name, comments=true)
+          calc_ss_quad, calc_sums_quad =  GaPSE.readxy(name, comments=true)
           calc_xis_quad = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1676,13 +1664,13 @@ println("\nAlmost finished...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=false, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap = GaPSE.readxy(name, comments=true)
+          calc_ss_trap, calc_sums_trap =  GaPSE.readxy(name, comments=true)
           calc_xis_trap = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1723,14 +1711,14 @@ println("\nAlmost finished...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=false, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob, calc_xis_lob = GaPSE.readxyall(name, comments=true)
-          calc_ss_lob, calc_sums_lob = GaPSE.readxy(name, comments=true)
+          calc_ss_lob, calc_sums_lob, calc_xis_lob =  GaPSE.readxyall(name,  comments=true)
+          calc_ss_lob, calc_sums_lob =  GaPSE.readxy(name, comments=true)
           calc_xis_lob = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1776,13 +1764,13 @@ println("\nAlmost finished...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=false, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap = GaPSE.readxy(name, comments=true)
+          calc_ss_trap, calc_sums_trap =  GaPSE.readxy(name, comments=true)
           calc_xis_trap = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1823,13 +1811,13 @@ println("\nAlmost finished...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=false, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob = GaPSE.readxy(name, comments=true)
+          calc_ss_lob, calc_sums_lob =  GaPSE.readxy(name, comments=true)
           calc_xis_lob = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1875,13 +1863,13 @@ println("\nAlmost finished...")
           name = "calc_xis_LDxGNC_L$L" * "_quad_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_quad;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_quad; 
                single=false, L=L, alg=:quad, kwargs...)
-          calc_ss_quad, calc_sums_quad = GaPSE.readxy(name, comments=true)
+          calc_ss_quad, calc_sums_quad =  GaPSE.readxy(name, comments=true)
           calc_xis_quad = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1922,13 +1910,13 @@ println("\nAlmost finished...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=false, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap = GaPSE.readxy(name, comments=true)
+          calc_ss_trap, calc_sums_trap =  GaPSE.readxy(name, comments=true)
           calc_xis_trap = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -1969,13 +1957,13 @@ println("\nAlmost finished...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=false, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob = GaPSE.readxy(name, comments=true)
+          calc_ss_lob, calc_sums_lob =  GaPSE.readxy(name, comments=true)
           calc_xis_lob = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -2021,13 +2009,13 @@ println("\nAlmost finished...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=false, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap = GaPSE.readxy(name, comments=true)
+          calc_ss_trap, calc_sums_trap =  GaPSE.readxy(name, comments=true)
           calc_xis_trap = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -2068,13 +2056,13 @@ println("\nAlmost finished...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=false, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob = GaPSE.readxy(name, comments=true)
+          calc_ss_lob, calc_sums_lob =  GaPSE.readxy(name, comments=true)
           calc_xis_lob = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -2120,13 +2108,13 @@ println("\nAlmost finished...")
           name = "calc_xis_LDxGNC_L$L" * "_trap_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_trap; 
                single=false, L=L, alg=:trap, kwargs...)
-          calc_ss_trap, calc_sums_trap = GaPSE.readxy(name, comments=true)
+          calc_ss_trap, calc_sums_trap =  GaPSE.readxy(name, comments=true)
           calc_xis_trap = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]
@@ -2167,13 +2155,13 @@ println("\nAlmost finished...")
           name = "calc_xis_LDxGNC_L$L" * "_lob_withF_specific_ss.txt"
           isfile(name) && rm(name)
 
-          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob;
+          GaPSE.print_map_sum_ξ_LDxGNC_multipole(COSMO, name, ss_lob; 
                single=false, L=L, alg=:lobatto, kwargs...)
-          calc_ss_lob, calc_sums_lob = GaPSE.readxy(name, comments=true)
+          calc_ss_lob, calc_sums_lob =  GaPSE.readxy(name, comments=true)
           calc_xis_lob = [
                begin
                     a_name = "all_LDxGNC_standalones_CFs/xi_LDxGNC_" * effect * "_L$L" * ".txt"
-                    _, xis = GaPSE.readxy(a_name, comments=true)
+                    _, xis = GaPSE.readxy(a_name, comments = true)
                     xis
                end for effect in GaPSE.GR_EFFECTS_LDxGNC
           ]

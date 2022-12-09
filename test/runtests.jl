@@ -178,7 +178,7 @@ KWARGS_LDxGNC = Dict(
 );
 SS_LDxGNC = 10 .^ range(0, log10(2.0 * COSMO.s_max), length=100);
 
-
+#=
 
 ################################### TEST PLANE-PARALLEL APPROXIMATIONS ###################92
 
@@ -483,9 +483,9 @@ end
 @testset "test LDxGNC_XiMultipoles" begin
      include("test_LDxGNC_XiMultipoles.jl")
 end
+=#
 
-
-
+#=
 @testset "test GNCxLD_SumXiMultipoles_P1" begin
      include("test_GNCxLD_SumXiMultipoles_P1.jl")
 end
@@ -493,7 +493,7 @@ end
 @testset "test GNCxLD_SumXiMultipoles_P2" begin
      include("test_GNCxLD_SumXiMultipoles_P2.jl")
 end
-
+=#
 
 @testset "test LDxGNC_SumXiMultipoles_P1" begin
      include("test_LDxGNC_SumXiMultipoles_P1.jl")
