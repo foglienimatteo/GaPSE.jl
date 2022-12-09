@@ -573,20 +573,21 @@ function print_map_ξ_S_multipole(
      cosmo::Cosmology, cosmopng::CosmoPNG,
      out::String,
      v_ss=nothing;
+     L::Int=0,
      kwargs...)
 
      check_parent_directory(out)
      check_namefile(out)
 
      t1 = time()
-     vec = map_ξ_S_multipole(cosmo, cosmopng, v_ss; kwargs...)
+     vec = map_ξ_S_multipole(cosmo, cosmopng, v_ss; L=L, kwargs...)
      t2 = time()
 
      isfile(out) && run(`rm $out`)
      open(out, "w") do io
           println(io, BRAND)
 
-          println(io, "#\n# This is an integration map on mu of the ξ multipole of S,\n" *
+          println(io, "#\n# This is an integration map on mu of the ξ L=$L multipole of S,\n" *
                       "# which is the difference between the Power Spectrum with PNG and with f_NL = 0.")
           println(io, "# Transfer function read from the file: $(cosmopng.file_TF)")
           print(io, "# Parameters used for the considered CosmoPNG: ")
@@ -600,10 +601,8 @@ function print_map_ξ_S_multipole(
           println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
           print(io, "# kwards passed: ")
 
-          if isempty(kwargs)
-               println(io, "none")
-          else
-               print(io, "\n")
+          println(io, "\n# \t\tL = $L")
+          if !isempty(kwargs)
                for key in keys(kwargs)
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
