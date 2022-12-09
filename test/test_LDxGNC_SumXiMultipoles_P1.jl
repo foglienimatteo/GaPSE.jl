@@ -25,9 +25,9 @@ println("It will take a while, but do not worry: I'm working.")
      kwargs = Dict(
           :use_windows => false,
           :enhancer => 1e8,
-          :N_trap => 100, :N_lob => 100,
+          :N_trap => 30, :N_lob => 30,
           :atol_quad => 0.0, :rtol_quad => 1e-2,
-          :N_χs => 40, :N_χs_2 => 20,
+          :N_χs => 50, :N_χs_2 => 50,
           #:pr => false,
      )
 
@@ -635,9 +635,9 @@ println("\nDon't worry, I am on it...")
      kwargs = Dict(
           :use_windows => true,
           :enhancer => 1e8,
-          :N_trap => 100, :N_lob => 100,
+          :N_trap => 30, :N_lob => 30,
           :atol_quad => 0.0, :rtol_quad => 1e-2,
-          :N_χs => 40, :N_χs_2 => 20,
+          :N_χs => 50, :N_χs_2 => 50,
           #:pr => false,
      )
 
@@ -1248,9 +1248,9 @@ println("Now I work on map_sum_ξ_LDxGNC_multipole...")
      kwargs = Dict(
           :use_windows => false,
           :enhancer => 1e8,
-          :N_trap => 100, :N_lob => 100,
+          :N_trap => 30, :N_lob => 30,
           :atol_quad => 0.0, :rtol_quad => 1e-2,
-          :N_χs => 40, :N_χs_2 => 20,
+          :N_χs => 50, :N_χs_2 => 50,
           :pr => false,
      )
 
@@ -1659,9 +1659,9 @@ println("\nDon't worry, I am fully operative...")
      kwargs = Dict(
           :use_windows => true,
           :enhancer => 1e8,
-          :N_trap => 100, :N_lob => 100,
+          :N_trap => 30, :N_lob => 30,
           :atol_quad => 0.0, :rtol_quad => 1e-2,
-          :N_χs => 40, :N_χs_2 => 20,
+          :N_χs => 50, :N_χs_2 => 50,
           :pr => false,
      )
 
