@@ -63,18 +63,18 @@ See also: [`ξ_GNC_Doppler_IntegratedGP`](@ref), [`int_on_mu_Doppler_IntegratedG
 """
 function integrand_ξ_GNC_Doppler_IntegratedGP(
      IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
 
      s1, D_s1, f_s1, ℋ_s1, ℛ_s1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_GNC
      s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
      χ2, D2, a2, f2, ℋ2 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
-     s_b_s2 = cosmo.params.s_b
+     s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b
      Ω_M0 = cosmo.params.Ω_M0
 
      Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
      Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
 
-     common = D_s1 * ℋ0^2 * Ω_M0 * D2 / (s2 * a2)
+     common = ℋ0^2 * Ω_M0 * D2 / (s2 * a2)
      factor = Δχ2^2 * f_s1 * ℋ_s1 * ℛ_s1 * (χ2 * y - s1) 
      parenth = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2
 
@@ -83,27 +83,45 @@ function integrand_ξ_GNC_Doppler_IntegratedGP(
      I40 = cosmo.tools.I40(Δχ2)
      I02 = cosmo.tools.I02(Δχ2)
 
-     return common * factor * parenth * (
-                 1 / 15 * I00 + 2 / 21 * I20
-                 + 1 / 35 * I40 + 1 * I02
-            )
+     if obs == false || obs == :no || obs == :noobsvel
+          return D_s1 * common * factor * parenth * (
+                    1 / 15 * I00 + 2 / 21 * I20
+                    + 1 / 35 * I40 + 1 * I02
+               )
+     elseif obs == true || obs == :yes
+          #### New observer terms #########
+
+          I13_χ2 = cosmo.tools.I13(χ2)
+
+          obs_terms = - 3 * χ2^3 * y * f0 * ℋ0 * (ℛ_s1 - 5 * s_b_s1 + 2) * common * parenth * I13_χ2
+
+          #################################
+          
+          return D_s1 * common * factor * parenth * (
+                    1 / 15 * I00 + 2 / 21 * I20
+                    + 1 / 35 * I40 + 1 * I02
+               ) + obs_terms
+     else
+          throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
+               "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
+               ))
+     end
 end
 
 
 function integrand_ξ_GNC_Doppler_IntegratedGP(
      χ2::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology;
-     kwargs...)
+     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ2, cosmo)
-     return integrand_ξ_GNC_Doppler_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
+     return integrand_ξ_GNC_Doppler_IntegratedGP(IP, P1, P2, y, cosmo; obs = obs)
 end
 
 
 @doc raw"""
      ξ_GNC_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-          en::Float64 = 1e6, N_χs::Integer = 100):: Float64
+          en::Float64 = 1e6, N_χs::Int = 100):: Float64
 
 Return the Doppler-LocalGP cross-correlation function 
 ``\\xi^{v_{\\parallel}\\int\\phi} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
@@ -147,7 +165,7 @@ the integrand function `integrand_ξ_GNC_Doppler_IntegratedGP`.
 - `en::Float64 = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
-- `N_χs::Integer = 100`: number of points to be used for sampling the integral
+- `N_χs::Int = 100`: number of points to be used for sampling the integral
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
@@ -156,7 +174,7 @@ See also: [`integrand_ξ_GNC_Doppler_IntegratedGP`](@ref), [`int_on_mu_Doppler_I
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNC_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Integer = 100)
+     en::Float64 = 1e6, N_χs::Int = 100, obs::Union{Bool, Symbol} = :noobsvel)
 
      χ2s = s2 .* range(1e-6, 1, length = N_χs)
 
@@ -164,7 +182,7 @@ function ξ_GNC_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
      IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_Doppler_IntegratedGP(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNC_Doppler_IntegratedGP(IP, P1, P2, y, cosmo; obs = obs)
           for IP in IPs
      ]
 

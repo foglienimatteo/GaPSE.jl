@@ -24,7 +24,7 @@
           IP1::Point, IP2::Point,
           P1::Point, P2::Point,
           y, cosmo::Cosmology;
-          Δχ_min::Float64 = 1e-4) :: Float64
+          Δχ_min::Float64 = 1e-1) :: Float64
 
 Return the integrand of the Lensing auto-correlation function 
 ``\\xi^{\\kappa\\kappa} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
@@ -75,7 +75,7 @@ and the ``J`` coefficients are given by
 
 ## Optional arguments
 
-- `Δχ_min::Float64 = 1e-6` : when ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
+- `Δχ_min::Float64 = 1e-1` : when ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
@@ -96,7 +96,7 @@ function integrand_ξ_GNC_Lensing(
      IP1::Point, IP2::Point,
      P1::Point, P2::Point,
      y, cosmo::Cosmology;
-     Δχ_min::Float64=1e-4)
+     Δχ_min::Float64=1e-1, obs::Union{Bool, Symbol} = :noobsvel)
 
      s1 = P1.comdist
      s2 = P2.comdist
@@ -135,8 +135,8 @@ function integrand_ξ_GNC_Lensing(
 
      else
 
-          lim = 4 / 15 * (5 * cosmo.tools.σ_2 + 6 * cosmo.tools.σ_0 * χ2^2)
-          9 / 4 * lim
+          #3 / 5 * (5 * cosmo.tools.σ_2 + 6 * cosmo.tools.σ_0 * χ2^2)
+          3 * cosmo.tools.σ_2 + 6/5 * χ1^2 * cosmo.tools.σ_0 
      end
 
      return factor / denomin * first_res
@@ -156,16 +156,17 @@ end
 
 
 function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs_2::Integer = 100, Δχ_min::Float64 = 1e-4)
+     en::Float64 = 1e6, N_χs_2::Int = 100, Δχ_min::Float64 = 1e-1, obs::Union{Bool, Symbol} = :noobsvel)
 
      χ1s = P1.comdist .* range(1e-6, 1, length = N_χs_2)
-     χ2s = P2.comdist .* range(1e-6, 1, length = N_χs_2 + 7)
+     #χ2s = P2.comdist .* range(1e-5, 1, length = N_χs_2 + 7)
+     χ2s = P2.comdist .* range(1e-6, 1, length = N_χs_2)
 
      IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξ_Lensings = [
-          en * GaPSE.integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; Δχ_min = Δχ_min)
+          en * GaPSE.integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; Δχ_min = Δχ_min, obs = obs)
           for IP1 in IP1s, IP2 in IP2s
      ]
 
@@ -185,8 +186,8 @@ end
 """
      ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
           en::Float64 = 1e6,
-          Δχ_min::Float64 = 1e-3,
-          N_χs::Integer = 100) :: Float64
+          Δχ_min::Float64 = 1e-1,
+          N_χs::Int = 100) :: Float64
 
      ξ_GNC_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...) = 
           ξ_GNC_Lensing(Point(s1, cosmo), Point(s2, cosmo), y, cosmo; kwargs...)
@@ -247,7 +248,7 @@ the integrand function `integrand_ξ_GNC_Lensing`.
 - `en::Float64 = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
-- `Δχ_min::Float64 = 1e-6` : when ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
+- `Δχ_min::Float64 = 1e-1` : when ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
@@ -260,7 +261,7 @@ the integrand function `integrand_ξ_GNC_Lensing`.
   as the result of the parenthesis instead of calculating it in the normal way; it prevents
   computational divergences.
 
-- `N_χs::Integer = 100`: number of points to be used for sampling the integral
+- `N_χs::Int = 100`: number of points to be used for sampling the integral
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 

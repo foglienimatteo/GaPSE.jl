@@ -136,11 +136,20 @@ struct BackgroundData
 
           data = readdlm(file, comments = true)
 
+          #=
           N_z_MAX = findfirst(z -> z <= z_max, data[:, I_redshift]) - 1
+          println("N_z_MAX = $N_z_MAX")
           com_dist_z_MAX = data[:, I_comdist][N_z_MAX]
-          N_2_com_dist_z_MAX = findfirst(s -> s <= 3.0 * com_dist_z_MAX, data[:, I_comdist]) - 1
+          println("com_dist_z_MAX  = $com_dist_z_MAX ")
+          N_3_com_dist_z_MAX = findfirst(s -> s <= 3.0 * com_dist_z_MAX, data[:, I_comdist]) - 1
+          println("N_3_com_dist_z_MAX  = $N_3_com_dist_z_MAX ")
 
-          data_dict = Dict([name => reverse(data[:, i][N_2_com_dist_z_MAX:end])
+          data_dict = Dict([name => reverse(data[:, i][N_3_com_dist_z_MAX:end])
+                            for (i, name) in enumerate(names)]...)
+          =#
+
+          N_z_MAX = findfirst(z -> z <= 1000.0, data[:, I_redshift]) - 1
+          data_dict = Dict([name => reverse(data[:, i][N_z_MAX:end])
                             for (i, name) in enumerate(names)]...)
 
           com_H = data_dict["H [1/Mpc]"] ./ h ./ (1.0 .+ data_dict["z"])

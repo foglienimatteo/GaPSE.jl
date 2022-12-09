@@ -108,48 +108,48 @@ struct InputPS
      right::Float64
 
 
-     function InputPS(file::String; fit_left_min = 1e-6, fit_left_max = 3e-6,
-          fit_right_min = 1e1, fit_right_max = 2e1)
+     function InputPS(file::String; fit_left_min=1e-6, fit_left_max=3e-6,
+          fit_right_min=1e1, fit_right_max=2e1)
 
-          data = readdlm(file, comments = true)
+          data = readdlm(file, comments=true)
           @assert size(data[:, 1]) == size(data[:, 2]) "ks and pks must have the same length!"
 
           ks = convert(Vector{Float64}, data[:, 1])
           pks = convert(Vector{Float64}, data[:, 2])
 
           l_si, l_b, l_a = power_law_from_data(
-               ks, pks, [1.0, 1.0], fit_left_min, fit_left_max; con = false)
+               ks, pks, [1.0, 1.0], fit_left_min, fit_left_max; con=false)
 
           r_si, r_b, r_a = power_law_from_data(
-               ks, pks, [-3.0, 1.0], fit_right_min, fit_right_max; con = false)
+               ks, pks, [-3.0, 1.0], fit_right_min, fit_right_max; con=false)
 
           ind_left = findfirst(x -> x > fit_left_min, ks) - 1
           ind_right = findfirst(x -> x >= fit_right_max, ks)
           new_ks = vcat(ks[ind_left:ind_right])
           new_pks = vcat(pks[ind_left:ind_right])
-          spline = Spline1D(new_ks, new_pks; bc = "error")
+          spline = Spline1D(new_ks, new_pks; bc="error")
 
 
           new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_max)
      end
 
      function InputPS(ks::AbstractVector{T1}, pks::AbstractVector{T2};
-          fit_left_min = 1e-6, fit_left_max = 3e-6,
-          fit_right_min = 1e1, fit_right_max = 2e1) where {T1,T2}
+          fit_left_min=1e-6, fit_left_max=3e-6,
+          fit_right_min=1e1, fit_right_max=2e1) where {T1,T2}
 
           @assert size(ks) == size(pks) "ks and pks must have the same length!"
 
           l_si, l_b, l_a = power_law_from_data(
-               ks, pks, [1.0, 1.0], fit_left_min, fit_left_max; con = false)
+               ks, pks, [1.0, 1.0], fit_left_min, fit_left_max; con=false)
 
           r_si, r_b, r_a = power_law_from_data(
-               ks, pks, [-3.0, 1.0], fit_right_min, fit_right_max; con = false)
+               ks, pks, [-3.0, 1.0], fit_right_min, fit_right_max; con=false)
 
           ind_left = findfirst(x -> x > fit_left_min, ks) - 1
           ind_right = findfirst(x -> x >= fit_right_max, ks)
           new_ks = vcat(ks[ind_left:ind_right])
           new_pks = vcat(pks[ind_left:ind_right])
-          spline = Spline1D(new_ks, new_pks; bc = "error")
+          spline = Spline1D(new_ks, new_pks; bc="error")
 
           new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_max)
      end
@@ -213,25 +213,25 @@ obtained from the Input Power Spectrum.
 
 ## Arguments 
 
-- `l_si, l_b, l_a :: Float64` : coefficient for the spurious power-law 
+- `l_si, l_b, l_a ::Float64` : coefficient for the spurious power-law 
   ``y = f(x) = a + b \\, x^s`` for the LEFT edge; when an input value `x < left` is
   given, the returned one is obtained from `power_law` with this coefficients (
   where, of course, `l_si` is the exponent, `l_b` the coefficient and `l_a` the 
   spurious adding constant). 
 
-- `left::Float64` : the break between the left power-law (for `x <left`) and the 
+- `left::Float64` : the break between the left power-law (for `x < left`) and the 
   spline (for `x ≥ left`); its value is the `fit_min` of the used constructor.
 
 - `spline::Dierckx.Spline1D` : spline that interpolates between the real values of the 
   integral calculated inside the range `left ≤ x ≤ right`
 
-- `right::Float64` : the break between the right power-law (for `x > left`) and the 
+- `right::Float64` : the break between the right power-law (for `x > right`) and the 
   spline (for `x ≤ right`); its value is the `fit_max` of the used constructor.
 
-- `r_si, r_b, r_a :: Float64` : coefficient for the spurious power-law 
+- `r_si, r_b, r_a ::Float64` : coefficient for the spurious power-law 
   ``y = f(x) = a + b \\, x^s`` for the RIGHT edge; when an input value `x > right` is
   given, the returned one is obtained from `power_law` with this coefficients (
-  where, of course, `r_si` is the exponent, `r_b`` the coefficient and `r_a` the 
+  where, of course, `r_si` is the exponent, `r_b` the coefficient and `r_a` the 
   spurious adding constant). 
   NOTE: for numerical issues, only the "pure" power-law ``y = f(x) = b + x^s`` can be used. 
   In other words, it always set `r_a = 0.0`.
@@ -241,7 +241,7 @@ obtained from the Input Power Spectrum.
 There are two type of integrals we are interested in, and so two constructors are
 here provided:
 
-- `IntegralIPS(ips, l, n; N::Integer = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
+- `IntegralIPS(ips, l, n; N::Int = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
      fit_left_min = 2.0, fit_left_max = 10.0, p0_left = nothing, con = false,
      fit_right_min = nothing, fit_right_max = nothing, p0_right = nothing)`
   This is the one used for the "classical" ``I_\\ell_n`` integrals:
@@ -262,7 +262,7 @@ here provided:
      - `kmin = 1e-4, kmax = 1e3, s0 = 1e-3` : values to be passed to `xicalc` for the
        integration
 
-     - `fit_left_min = 2.0, fit_left_max = 10.0,` : the limits (min and max) where the integral ``I_\\ell^n``
+     - `fit_left_min = 2.0, fit_left_max = 10.0` : the limits (min and max) where the integral ``I_\\ell^n``
        must be fitted with a power law, for small distances. This operation is necessary, because `xicalc`,
        in this context, gives wrong results for too small input distance `s`; nevertheless, all
        these ``I_\\ell^n`` integrals have fixed power-law trends for ``s \\rightarrow 0``, so this approach gives
@@ -284,7 +284,7 @@ here provided:
 
      - `fit_right_min = nothing, fit_right_max = nothing` : the limits (min and max) where the integral ``I_\\ell^n``
        must be fitted with a power law, for high distances. 
-       These ``I_\\ell^n`` integrals have fixed power-law trends for ``s \\rightarrow infty``, so this approach gives
+       These ``I_\\ell^n`` integrals have fixed power-law trends for ``s \\rightarrow \\infty``, so this approach gives
        good results. If `nothing`, the last 15 points returned from `xicalc` are used for
        this fitting.
        NOTE: for numerical issues, only the "pure" power-law ``y = f(x) = b + x^s`` can be used. 
@@ -295,7 +295,7 @@ here provided:
        automatically set `p0 = [-4.0, 1.0, 0.0]`.
 
 
-- `IntegralIPS(ips, func::Function; N::Integer = 1024, kmin = 1e-4, kmax = 1e3,
+- `IntegralIPS(ips, func::Function; N::Int = 1024, kmin = 1e-4, kmax = 1e3,
      fit_left_min = 0.1, fit_left_max = 1.0, p0_left = nothing, con = false,
      fit_right_min = nothing, fit_right_max = nothing, p0_right = nothing,
      kwargs...)`
@@ -337,7 +337,7 @@ here provided:
 
      - `fit_right_min = nothing, fit_right_max = nothing` : the limits (min and max) where the integral ``I_\\ell^n``
        must be fitted with a power law, for high distances. 
-       These ``I_\\ell^n`` integrals have fixed power-law trends for ``s \\rightarrow infty``, so this approach gives
+       These ``I_\\ell^n`` integrals have fixed power-law trends for ``s \\rightarrow \\infty``, so this approach gives
        good results. If `nothing`, the last 15 points returned from `xicalc` are used for
        this fitting.
        NOTE: for numerical issues, only the "pure" power-law ``y = f(x) = b + x^s`` can be used. 
@@ -351,7 +351,8 @@ here provided:
 All the power-law fitting (both "pure" and spurious) are made through the 
 local function `power_law_from_data`.
 
-See also: [`power_law_from_data`](@ref), [`func_I04_tilde`](@ref)
+See also: [`power_law_from_data`](@ref), [`power_law`](@ref),
+[`func_I04_tilde`](@ref)
 """
 struct IntegralIPS
      l_si::Float64
@@ -366,27 +367,27 @@ struct IntegralIPS
      r_a::Float64
      right::Float64
 
-     function IntegralIPS(ips, l, n; N::Integer = 1024, kmin = 1e-4, kmax = 1e3, s0 = 1e-3,
-          fit_left_min = 2.0, fit_left_max = 10.0, p0_left = nothing, con = false,
-          fit_right_min = nothing, fit_right_max = nothing, p0_right = nothing)
+     function IntegralIPS(ips, l, n; N::Int=1024, kmin=1e-4, kmax=1e3, s0=1e-3,
+          fit_left_min=2.0, fit_left_max=10.0, p0_left=nothing, con=false,
+          fit_right_min=nothing, fit_right_max=nothing, p0_right=nothing)
 
-          rs, xis = xicalc(ips, l, n; N = N, kmin = kmin, kmax = kmax, r0 = s0)
+          rs, xis = xicalc(ips, l, n; N=N, kmin=kmin, kmax=kmax, r0=s0)
 
           p_0_left = isnothing(p0_left) ? (con == true ? [-1.0, 1.0, 0.0] : [-1.0, 1.0]) : p0_left
           l_si, l_b, l_a = power_law_from_data(
-               rs, xis, p_0_left, fit_left_min, fit_left_max; con = con)
+               rs, xis, p_0_left, fit_left_min, fit_left_max; con=con)
 
           fit_right_MIN = isnothing(fit_right_min) ? rs[length(rs)-16] : fit_right_min
           fit_right_MAX = isnothing(fit_right_max) ? rs[length(rs)-1] : fit_right_max
           p_0_right = isnothing(p0_right) ? [-4.0, 1.0] : p0_right
           r_si, r_b, r_a = power_law_from_data(
-               rs, xis, p_0_right, fit_right_MIN, fit_right_MAX; con = false)
+               rs, xis, p_0_right, fit_right_MIN, fit_right_MAX; con=false)
 
           ind_left = findfirst(x -> x > fit_left_min, rs) - 1
           ind_right = findfirst(x -> x >= fit_right_MAX, rs)
           new_rs = vcat(rs[ind_left:ind_right])
           new_Is = vcat(xis[ind_left:ind_right])
-          spline = Spline1D(new_rs, new_Is; bc = "error")
+          spline = Spline1D(new_rs, new_Is; bc="error")
 
           #println("\nleft = $l_si , $l_b , $l_a, $fit_left_min")
           #println("right = $r_si , $r_b , $r_a, $fit_right_MAX\n")
@@ -394,28 +395,28 @@ struct IntegralIPS
           new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_MAX)
      end
 
-     function IntegralIPS(ips, func::Function; N::Integer = 1024, kmin = 1e-4, kmax = 1e3,
-          fit_left_min = 0.1, fit_left_max = 1.0, p0_left = nothing, con = false,
-          fit_right_min = nothing, fit_right_max = nothing, p0_right = nothing,
+     function IntegralIPS(ips, func::Function; N::Int=1024, kmin=1e-4, kmax=1e3,
+          fit_left_min=0.1, fit_left_max=1.0, p0_left=nothing, con=false,
+          fit_right_min=nothing, fit_right_max=nothing, p0_right=nothing,
           kwargs...)
 
-          ss = 10 .^ range(log10(0.999 * fit_left_min), 4, length = N)
+          ss = 10 .^ range(log10(0.999 * fit_left_min), 4, length=N)
           Is = [func(ips, s, kmin, kmax; kwargs...) for s in ss]
 
           p_0_left = isnothing(p0_left) ? (con == true ? [-2.0, -1.0, 0.0] : [-2.0, -1.0]) : p0_left
           l_si, l_b, l_a = power_law_from_data(
-               ss, Is, p_0_left, fit_left_min, fit_left_max; con = con)
+               ss, Is, p_0_left, fit_left_min, fit_left_max; con=con)
 
           fit_right_MIN = isnothing(fit_right_min) ? ss[length(ss)-13] : fit_right_min
           fit_right_MAX = isnothing(fit_right_max) ? ss[length(ss)-1] : fit_right_max
           p_0_right = isnothing(p0_right) ? [-4.0, -1.0] : p0_right
           r_si, r_b, r_a = power_law_from_data(
-               ss, Is, p_0_right, fit_right_MIN, fit_right_MAX; con = false)
+               ss, Is, p_0_right, fit_right_MIN, fit_right_MAX; con=false)
 
           #println("\nLEFT = $l_si , $l_b , $l_a, $fit_left_min")
           #println("RIGHT = $r_si , $r_b , $r_a, $fit_right_MAX\n")
 
-          spline = Spline1D(ss, Is; bc = "error")
+          spline = Spline1D(ss, Is; bc="error")
 
           new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_MAX)
      end
@@ -506,6 +507,7 @@ end
           σ_1::Float64
           σ_2::Float64
           σ_3::Float64
+          σ_4::Float64
 
           fit_min::Union{Float64,Nothing}
           fit_max::Union{Float64,Nothing}
@@ -541,7 +543,7 @@ Input Power Spectrum.
   This integral is calculated brute-force with `quadgk`, and fitted with power-laws
   at the edges (for `s < 0.1` and `s > 1e4`).
 
-- `σ_0, σ_1, σ_2, σ_3 :: Float64`: these are the results of the following integral:
+- `σ_0, σ_1, σ_2, σ_3, σ_4 :: Float64`: these are the results of the following integral:
   ```math
   \\sigma_i = \\int_{k_\\mathrm{min}}^{k_\\mathrm{max}} \\frac{\\mathrm{d} q}{2 \\pi^2} \\, q^{2-i} \\, P(q)
   ```
@@ -559,7 +561,7 @@ Input Power Spectrum.
 
 ## Constructors
 
-`IPSTools(ips::InputPS; N::Integer = 1024,
+`IPSTools(ips::InputPS; N::Int = 1024,
      fit_min::Float64 = 0.05, fit_max::Float64 = 0.5,
      k_min::Float64 = 1e-6, k_max::Float64 = 10.0
      con::Bool = false
@@ -567,7 +569,7 @@ Input Power Spectrum.
 
 - `ips::InputPS` : the Input Power Spectrum to be used in all the calculations.
 
-- `N::Integer = 1024` : number of points to be used in the `xicalc` function
+- `N::Int = 1024` : number of points to be used in the `xicalc` function
 
 - `k_min::Float64 = 1e-6, k_max::Float64 = 10.0` : integrations extremes of 
   the ``\\sigma_i``s
@@ -611,6 +613,7 @@ struct IPSTools
      σ_1::Float64
      σ_2::Float64
      σ_3::Float64
+     σ_4::Float64
 
      fit_min::Float64
      fit_max::Float64
@@ -619,12 +622,12 @@ struct IPSTools
 
      function IPSTools(
           ips::InputPS;
-          N::Integer = 1024,
-          fit_min::Float64 = 0.05,
-          fit_max::Float64 = 0.5,
-          con::Bool = false,
-          k_min::Float64 = 1e-6,
-          k_max::Float64 = 10.0
+          N::Int=1024,
+          fit_min::Float64=0.05,
+          fit_max::Float64=0.5,
+          con::Bool=false,
+          k_min::Float64=1e-6,
+          k_max::Float64=10.0
      )
           #PK = Spline1D(ips.ks, ips.pks; bc = "error")
           PK = ips
@@ -634,26 +637,26 @@ struct IPSTools
 
           p0 = con ? [-1.0, 1.0, 0.0] : [-1.0, 1.0]
 
-          I00 = IntegralIPS(PK, 0, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
-          I20 = IntegralIPS(PK, 2, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
-          I40 = IntegralIPS(PK, 4, 0; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
-          I02 = IntegralIPS(PK, 0, 2; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
-          I22 = IntegralIPS(PK, 2, 2; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
-          I31 = IntegralIPS(PK, 3, 1; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
-          I13 = IntegralIPS(PK, 1, 3; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
-          I11 = IntegralIPS(PK, 1, 1; N = N, kmin = kmin, kmax = kmax, s0 = s0,
-               fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)
+          I00 = IntegralIPS(PK, 0, 0; N=N, kmin=kmin, kmax=kmax, s0=s0,
+               fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)
+          I20 = IntegralIPS(PK, 2, 0; N=N, kmin=kmin, kmax=kmax, s0=s0,
+               fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)
+          I40 = IntegralIPS(PK, 4, 0; N=N, kmin=kmin, kmax=kmax, s0=s0,
+               fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)
+          I02 = IntegralIPS(PK, 0, 2; N=N, kmin=kmin, kmax=kmax, s0=s0,
+               fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)
+          I22 = IntegralIPS(PK, 2, 2; N=N, kmin=kmin, kmax=kmax, s0=s0,
+               fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)
+          I31 = IntegralIPS(PK, 3, 1; N=N, kmin=kmin, kmax=kmax, s0=s0,
+               fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)
+          I13 = IntegralIPS(PK, 1, 3; N=N, kmin=kmin, kmax=kmax, s0=s0,
+               fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)
+          I11 = IntegralIPS(PK, 1, 1; N=N, kmin=kmin, kmax=kmax, s0=s0,
+               fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)
 
           p0_tilde = con ? [-2.0, -1.0, 0.0] : [-2.0, -1.0]
-          I04_tilde = IntegralIPS(PK, func_I04_tilde; N = N, kmin = kmin, kmax = kmax,
-               fit_left_min = 0.1, fit_left_max = 1.0, p0_left = p0_tilde, con = con)
+          I04_tilde = IntegralIPS(PK, func_I04_tilde; N=N, kmin=kmin, kmax=kmax,
+               fit_left_min=0.1, fit_left_max=1.0, p0_left=p0_tilde, con=con)
 
 
           #=
@@ -685,8 +688,9 @@ struct IPSTools
           σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), k_min, k_max)[1]
           σ_2 = quadgk(q -> PK(q) / (2 * π^2), k_min, k_max)[1]
           σ_3 = quadgk(q -> PK(q) / (2 * π^2 * q), k_min, k_max)[1]
+          σ_4 = quadgk(q -> PK(q) / (2 * π^2 * q^2), k_min, k_max)[1]
 
-          new(I00, I20, I40, I02, I22, I31, I13, I11, I04_tilde, σ_0, σ_1, σ_2, σ_3,
+          new(I00, I20, I40, I02, I22, I31, I13, I11, I04_tilde, σ_0, σ_1, σ_2, σ_3, σ_4,
                fit_min, fit_max, k_min, k_max)
      end
 

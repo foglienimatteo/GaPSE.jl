@@ -1,5 +1,13 @@
 # HEAD
 
+- Implemented tests.
+
+- Added the `PNG.jl` source code file for the analysis of the Primrodial Non-Gaussianites
+
+- Calibrated the integrals on `χ` for some of the GNC terms
+
+- Now you can compute the integral on `μ` (for `GNC`, `LD`,  `GNCxLD` and `LDxGNC` TPCFs) through three algorithms,and you can specify with one to use with the keyword argument `alg`:  `:quad`, `:lobatto`, and `:trap`.
+
 # VERSION 0.4.0
 
 - Added tests for all the previous features.

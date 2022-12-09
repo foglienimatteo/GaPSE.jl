@@ -41,8 +41,6 @@ include("TEST_DATA.jl")
 
 ##########################################################################################92
 
-
-
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
@@ -86,6 +84,7 @@ end
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
 end
+
 
 
 ################################### COSMOLOGY IMPLEMENTATION #############################92
@@ -140,41 +139,48 @@ dict_L_dir = Dict(0 => "monopoles", 1 => "dipoles", 2 => "tripoles",
 KWARGS_LD = Dict(
      :pr => true,
      :use_windows => false,
-     :enhancer => 1e8, :N_μs => 30,
-     :μ_atol => 0.0, :μ_rtol => 1e-2,
-     :N_χs => 100, :N_χs_2 => 30,
-     :N_log => 100,
+     :enhancer => 1e8, :N_trap => 30, :N_lob => 30,
+     :atol_quad => 0.0, :rtol_quad => 1e-2,
+     :N_χs => 100, :N_χs_2 => 60,
+     :N_log => 3,
 );
+SS_LD = 10 .^ range(0, log10(2.0 * COSMO.s_max), length=100);
 
 KWARGS_GNC = Dict(
      :pr => true,
      :use_windows => false,
-     :enhancer => 1e8, :N_μs => 30,
-     :μ_atol => 0.0, :μ_rtol => 1e-2,
-     :N_χs => 100, :N_χs_2 => 30,
-     :N_log => 100,
+     :enhancer => 1e8, :N_trap => 30, :N_lob => 30,
+     :atol_quad => 0.0, :rtol_quad => 1e-2,
+     :N_χs => 100, :N_χs_2 => 60,
+     :N_log => 3,
 );
+SS_GNC = 10 .^ range(-1, log10(2.0 * COSMO.s_max), length=100);
 
 KWARGS_GNCxLD = Dict(
      :pr => true,
      :use_windows => false,
-     :enhancer => 1e8, :N_μs => 30,
-     :μ_atol => 0.0, :μ_rtol => 1e-2,
-     :N_χs => 100, :N_χs_2 => 30,
-     :N_log => 100,
+     :enhancer => 1e8,
+     :N_trap => 30, :N_lob => 30,
+     :atol_quad => 0.0, :rtol_quad => 1e-2,
+     :N_χs => 100, :N_χs_2 => 60,
+     :N_log => 3,
 );
+SS_GNCxLD = 10 .^ range(0, log10(2.0 * COSMO.s_max), length=100);
 
 KWARGS_LDxGNC = Dict(
      :pr => true,
      :use_windows => false,
-     :enhancer => 1e8, :N_μs => 30,
-     :μ_atol => 0.0, :μ_rtol => 1e-2,
-     :N_χs => 100, :N_χs_2 => 30,
-     :N_log => 100,
+     :enhancer => 1e8,
+     :N_trap => 30, :N_lob => 30,
+     :atol_quad => 0.0, :rtol_quad => 1e-2,
+     :N_χs => 100, :N_χs_2 => 60,
+     :N_log => 3,
 );
+SS_LDxGNC = 10 .^ range(0, log10(2.0 * COSMO.s_max), length=100);
 
 
-################################### TEST PLANE-PARALLEL APPROXIMATIONS#### ###############92
+
+################################### TEST PLANE-PARALLEL APPROXIMATIONS ###################92
 
 @testset "test PPDoppler" begin
      include("test_PPDoppler.jl")
@@ -184,31 +190,25 @@ end
      include("test_XiMatter.jl")
 end
 
-@testset "test PPXiMatter" begin
-     include("test_PPXiMatter.jl")
+@testset "test PPXiGalaxies" begin
+     include("test_PPXiGalaxies.jl")
+end
+
+
+
+
+################################### TEST PRIMORDIAL NON-GAUSSIANITES #####################92
+
+
+@testset "test PNG" begin
+     include("test_PNG.jl")
 end
 
 
 ################################### TEST LUMINOSITY DISTANCE PERTURBATIONS ###############92
 
-
-@testset "test LD_XiMultipoles" begin
-     include("test_LD_XiMultipoles.jl")
-end
-
-@testset "test LD_SumXiMultipoles" begin
-     include("test_LD_SumXiMultipoles.jl")
-end
-
-
-##############################
-
-
-table_xis_LD_L0_noF = readdlm("datatest/LD_SumXiMultipoles/map_sum_xi_LD_L0_noF.txt",
-     comments=true);
-ss_LD_L0_noF = convert(Vector{Float64}, table_xis_LD_L0_noF[:, 1]);
-xis_sum_LD_L0_noF = convert(Vector{Float64}, table_xis_LD_L0_noF[:, 2]);
-all_xis_LD_L0_noF = [convert(Vector{Float64}, table_xis_LD_L0_noF[:, i]) for i in 3:18];
+ss_LD_L0_noF, xis_sum_LD_L0_noF, all_xis_LD_L0_noF = 
+     GaPSE.readxyall("datatest/LD_SumXiMultipoles/xis_LD_L0_noF.txt", comments = true)
 
 @testset "test LD_AutoDoppler" begin
      include("test_LD_AutoCorrelations/test_LD_AutoDoppler.jl")
@@ -256,26 +256,33 @@ end
 end
 
 
-################################### TEST RELATIVISTIC GALAXY NUMBER COUNTS ###############92
-
-
-@testset "test GNC_XiMultipoles" begin
-     include("test_GNC_XiMultipoles.jl")
-end
-
-@testset "test GNC_SumXiMultipoles" begin
-     include("test_GNC_SumXiMultipoles.jl")
-end
-
-
 ##############################
 
-table_xis_GNC_L0_noF = readdlm("datatest/GNC_SumXiMultipoles/map_sum_xi_GNC_L0_noF.txt",
-     comments=true);
-ss_GNC_L0_noF = convert(Vector{Float64}, table_xis_GNC_L0_noF[:, 1]);
-xis_sum_GNC_L0_noF = convert(Vector{Float64}, table_xis_GNC_L0_noF[:, 2]);
-all_xis_GNC_L0_noF = [convert(Vector{Float64}, table_xis_GNC_L0_noF[:, i]) for i in 3:27];
 
+@testset "test LD_XiMultipoles" begin
+     include("test_LD_XiMultipoles.jl")
+end
+
+
+
+@testset "test LD_SumXiMultipoles_P1" begin
+     include("test_LD_SumXiMultipoles_P1.jl")
+end
+
+
+@testset "test LD_SumXiMultipoles_P2" begin
+     include("test_LD_SumXiMultipoles_P2.jl")
+end
+
+
+################################### TEST RELATIVISTIC GALAXY NUMBER COUNTS ###############92
+
+ss_GNC_L0_noF_noobs, xis_sum_GNC_L0_noF_noobs, all_xis_GNC_L0_noF_noobs = 
+     GaPSE.readxyall("datatest/GNC_SumXiMultipoles/xis_GNC_L0_noF_noobs.txt", comments = true)
+ss_GNC_L0_noF_noobsvel, xis_sum_GNC_L0_noF_noobsvel, all_xis_GNC_L0_noF_noobsvel =
+     GaPSE.readxyall("datatest/GNC_SumXiMultipoles/xis_GNC_L0_noF_noobsvel.txt", comments=true)
+ss_GNC_L0_noF_withobs, xis_sum_GNC_L0_noF_withobs, all_xis_GNC_L0_noF_withobs =
+     GaPSE.readxyall("datatest/GNC_SumXiMultipoles/xis_GNC_L0_noF_withobs.txt", comments=true)
 
 @testset "test GNC_AutoNewton" begin
      include("test_GNC_AutoCorrelations/test_GNC_AutoNewton.jl")
@@ -285,13 +292,16 @@ end
      include("test_GNC_AutoCorrelations/test_GNC_AutoDoppler.jl")
 end
 
+
 @testset "test GNC_AutoIntegratedGP" begin
      include("test_GNC_AutoCorrelations/test_GNC_AutoIntegratedGP.jl")
 end
 
+
 @testset "test GNC_AutoLocalGP" begin
      include("test_GNC_AutoCorrelations/test_GNC_AutoLocalGP.jl")
 end
+
 
 @testset "test GNC_AutoLensing" begin
      include("test_GNC_AutoCorrelations/test_GNC_AutoLensing.jl")
@@ -304,9 +314,11 @@ end
      include("test_GNC_CrossCorrelations/test_GNC_NewtonDoppler.jl")
 end
 
+
 @testset "test GNC_NewtonLensing" begin
-     include("test_GNC_CrossCorrelations/test_GNC_NewtonDoppler.jl")
+     include("test_GNC_CrossCorrelations/test_GNC_NewtonLensing.jl")
 end
+
 
 @testset "test GNC_NewtonLocalGP" begin
      include("test_GNC_CrossCorrelations/test_GNC_NewtonLocalGP.jl")
@@ -316,9 +328,11 @@ end
      include("test_GNC_CrossCorrelations/test_GNC_NewtonIntegratedGP.jl")
 end
 
+
 @testset "test GNC_DopplerLensing" begin
      include("test_GNC_CrossCorrelations/test_GNC_DopplerLensing.jl")
 end
+
 
 @testset "test GNC_DopplerLocalGP" begin
      include("test_GNC_CrossCorrelations/test_GNC_DopplerLocalGP.jl")
@@ -340,39 +354,33 @@ end
      include("test_GNC_CrossCorrelations/test_GNC_LocalGPIntegratedGP.jl")
 end
 
+##############################
+
+
+@testset "test GNC_XiMultipoles" begin
+     include("test_GNC_XiMultipoles.jl")
+end
+
+
+@testset "test GNC_SumXiMultipoles_P1" begin
+     include("test_GNC_SumXiMultipoles_P1.jl")
+end
+
+
+@testset "test GNC_SumXiMultipoles_P2" begin
+     include("test_GNC_SumXiMultipoles_P2.jl")
+end
+
 
 ##### TEST RELATIVISTIC GALAXY NUMBER COUNTS X LUMINOSITY DISTANCE PERT. and viceversa ###92
 
 
-@testset "test GNCxLD_XiMultipoles" begin
-     include("test_GNCxLD_XiMultipoles.jl")
-end
-
-@testset "test LDxGNC_XiMultipoles" begin
-     include("test_LDxGNC_XiMultipoles.jl")
-end
-
-@testset "test GNCxLD_SumXiMultipoles" begin
-     include("test_GNCxLD_SumXiMultipoles.jl")
-end
-
-@testset "test LDxGNC_SumXiMultipoles" begin
-     include("test_LDxGNC_SumXiMultipoles.jl")
-end
-
-##############################
-
-table_xis_GNCxLD_L0_noF = readdlm("datatest/GNCxLD_SumXiMultipoles/map_sum_xi_GNCxLD_L0_noF.txt",
-     comments=true);
-ss_GNCxLD_L0_noF = convert(Vector{Float64}, table_xis_GNCxLD_L0_noF[:, 1]);
-xis_sum_GNCxLD_L0_noF = convert(Vector{Float64}, table_xis_GNCxLD_L0_noF[:, 2]);
-all_xis_GNCxLD_L0_noF = [convert(Vector{Float64}, table_xis_GNCxLD_L0_noF[:, i]) for i in 3:22];
-
-table_xis_LDxGNC_L0_noF = readdlm("datatest/GNCxLD_SumXiMultipoles/map_sum_xi_LDxGNC_L0_noF.txt",
-     comments=true);
-ss_LDxGNC_L0_noF = convert(Vector{Float64}, table_xis_LDxGNC_L0_noF[:, 1]);
-xis_sum_LDxGNC_L0_noF = convert(Vector{Float64}, table_xis_LDxGNC_L0_noF[:, 2]);
-all_xis_LDxGNC_L0_noF = [convert(Vector{Float64}, table_xis_LDxGNC_L0_noF[:, i]) for i in 3:22];
+ss_GNCxLD_L0_noF, xis_sum_GNCxLD_L0_noF, all_xis_GNCxLD_L0_noF = 
+     GaPSE.readxyall("datatest/GNCxLD_SumXiMultipoles/xis_GNCxLD_L0_noF.txt",
+          comments = true);
+ss_LDxGNC_L0_noF, xis_sum_LDxGNC_L0_noF, all_xis_LDxGNC_L0_noF = 
+     GaPSE.readxyall("datatest/LDxGNC_SumXiMultipoles/xis_LDxGNC_L0_noF.txt",
+          comments = true);
 
 
 @testset "test GNCxLD_NewtonDoppler" begin
@@ -462,3 +470,37 @@ end
 @testset "test GNCxLD_IntegratedGPIntegratedGP" begin
      include("test_GNCxLD_CrossCorrelations/test_GNCxLD_IntegratedGPIntegratedGP.jl")
 end
+
+
+##############################
+
+
+@testset "test GNCxLD_XiMultipoles" begin
+     include("test_GNCxLD_XiMultipoles.jl")
+end
+
+
+@testset "test LDxGNC_XiMultipoles" begin
+     include("test_LDxGNC_XiMultipoles.jl")
+end
+
+
+
+@testset "test GNCxLD_SumXiMultipoles_P1" begin
+     include("test_GNCxLD_SumXiMultipoles_P1.jl")
+end
+
+@testset "test GNCxLD_SumXiMultipoles_P2" begin
+     include("test_GNCxLD_SumXiMultipoles_P2.jl")
+end
+
+
+@testset "test LDxGNC_SumXiMultipoles_P1" begin
+     include("test_LDxGNC_SumXiMultipoles_P1.jl")
+end
+
+@testset "test LDxGNC_SumXiMultipoles_P2" begin
+     include("test_LDxGNC_SumXiMultipoles_P2.jl")
+end
+
+##############################

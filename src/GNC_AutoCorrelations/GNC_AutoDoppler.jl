@@ -18,9 +18,11 @@
 #
 
 
-function ξ_GNC_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
+function ξ_GNC_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
+     
      s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_GNC
      s2, D2, f2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_GNC
+     s_b1, s_b2 = cosmo.params.s_b, cosmo.params.s_b
 
      Δs = s(P1.comdist, P2.comdist, y)
      common = D1 * D2 * f1 * f2 * ℛ1 * ℛ2 * ℋ1 * ℋ2
@@ -31,15 +33,44 @@ function ξ_GNC_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
      I40 = cosmo.tools.I40(Δs)
      I02 = cosmo.tools.I02(Δs)
 
-     parenth = 1/45 * I00 + 2/63 * I20 + 1/105 * I40
+     parenth = 1 / 45 * I00 + 2 / 63 * I20 + 1 / 105 * I40
 
-     return  common * (factor * parenth + 1/3 * y * Δs^2 * I02)
+
+     if obs == false || obs == :no || obs == :noobsvel
+          return common * (factor * parenth + 1 / 3 * y * Δs^2 * I02)
+     elseif obs == true || obs == :yes
+
+          #### New observer terms #########
+
+          I13_s1, I13_s2 = cosmo.tools.I13(s1), cosmo.tools.I13(s2)
+          I31_s1, I31_s2 = cosmo.tools.I31(s1), cosmo.tools.I31(s2)
+          I11_s1, I11_s2 = cosmo.tools.I11(s1), cosmo.tools.I11(s2)
+          σ2 = cosmo.tools.σ_2
+
+          obs_common_12 = y * f0 * ℋ0 * s1^2 * f1 * ℋ1 * ℛ1 * (ℛ2 - 5 * s_b2 + 2)
+          obs_common_21 = y * f0 * ℋ0 * s2^2 * f2 * ℋ2 * ℛ2 * (ℛ1 - 5 * s_b1 + 2)
+          J_σ2 = 1 / 3 * y * f0^2 * ℋ0^2 * (ℛ1 - 5 * s_b1 + 2) * (ℛ2 - 5 * s_b2 + 2)
+
+          obs_terms_12 = D1 * obs_common_12 * (1 / 5 * (I11_s1 + I31_s1) - I13_s1 )
+          obs_terms_21 = D2 * obs_common_21 * (1 / 5 * (I11_s2 + I31_s2) - I13_s2 )
+
+          obs_terms = obs_terms_12 + obs_terms_21 + J_σ2 * σ2
+
+          #################################
+
+          return common * (factor * parenth + 1 / 3 * y * Δs^2 * I02) + obs_terms
+     else
+          throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
+               "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
+               ))
+     end
+
 end
 
 
-function ξ_GNC_Doppler(s1, s2, y, cosmo::Cosmology)
+function ξ_GNC_Doppler(s1, s2, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_GNC_Doppler(P1, P2, y, cosmo)
+     return ξ_GNC_Doppler(P1, P2, y, cosmo; obs = obs)
 end
 
 

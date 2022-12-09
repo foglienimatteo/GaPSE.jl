@@ -66,7 +66,7 @@ See also: [`ξ_GNC_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_LocalGP`](@ref)
 """
 function integrand_ξ_GNC_Lensing_LocalGP(
      IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
 
      s1 = P1.comdist
      s2, D_s2, f_s2, a_s2, ℋ_s2, ℛ_s2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ, P2.ℛ_GNC
@@ -100,17 +100,17 @@ end
 
 function integrand_ξ_GNC_Lensing_LocalGP(
      χ1::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology)
+     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ1, cosmo)
-     return integrand_ξ_GNC_Lensing_LocalGP(IP, P1, P2, y, cosmo)
+     return integrand_ξ_GNC_Lensing_LocalGP(IP, P1, P2, y, cosmo; obs = obs)
 end
 
 
 """
      ξ_GNC_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
-          en::Float64 = 1e6, N_χs::Integer = 100):: Float64
+          en::Float64 = 1e6, N_χs::Int = 100):: Float64
 
 Return the Lensing-LocalGP cross-correlation function 
 ``\\xi^{\\kappa \\phi} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
@@ -156,7 +156,7 @@ the integrand function `integrand_ξ_GNC_Lensing_LocalGP`.
 - `en::Float64 = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
-- `N_χs::Integer = 100`: number of points to be used for sampling the integral
+- `N_χs::Int = 100`: number of points to be used for sampling the integral
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
@@ -165,7 +165,7 @@ See also: [`integrand_ξ_GNC_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_LocalG
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNC_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Integer = 100)
+     en::Float64 = 1e6, N_χs::Int = 100, obs::Union{Bool, Symbol} = :noobsvel)
 
      χ1s = s1 .* range(1e-6, 1, length = N_χs)
 
@@ -173,7 +173,7 @@ function ξ_GNC_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
      IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_Lensing_LocalGP(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNC_Lensing_LocalGP(IP, P1, P2, y, cosmo; obs = obs)
           for IP in IPs
      ]
 

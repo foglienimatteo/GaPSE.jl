@@ -49,7 +49,7 @@ I^n_l(s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} q^2 \\, P(q) \\, \\frac
 
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
-function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
+function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
      s1, D1, f1 = P1.comdist, P1.D, P1.f
      s2, D2, f2, a2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ, P2.ℛ_GNC
      b1 = cosmo.params.b
@@ -62,23 +62,50 @@ function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology)
      common = 2 * f2 * a2 * ℋ2^2 * (𝑓_evo2 - 3) + 3 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5 * s_b2 - 2)
      factor = f1 * ((3 * y^2 - 1) * s2^2 - 4 * y * s1 * s2 + 2 * s1^2)
 
-     J20 = - 1 / 6 * (3 * b1 + f1) * (- 2 * y * s1 * s2 + s1^2 + s2^2)
+     J20 = -1 / 6 * (3 * b1 + f1) * (-2 * y * s1 * s2 + s1^2 + s2^2)
 
      I00 = cosmo.tools.I00(Δs)
      I20 = cosmo.tools.I20(Δs)
      I40 = cosmo.tools.I40(Δs)
      I02 = cosmo.tools.I02(Δs)
 
-     return D1 * D2 / a2 * common * (
-          factor * (1 / 90 * I00 + 1 / 63 * I20 + 1 / 210 * I40) 
-          + J20 * I02
-          )
+     if obs == false || obs == :no 
+          return D1 * D2 / a2 * common * (
+                    factor * (1 / 90 * I00 + 1 / 63 * I20 + 1 / 210 * I40)
+                    +
+                    J20 * I02
+               )
+     elseif obs == true || obs == :yes || obs == :noobsvel
+
+          #### New observer terms #########
+
+          I31_s1 = cosmo.tools.I31(s1)
+          I11_s1 = cosmo.tools.I11(s1)
+          I13_s1 = cosmo.tools.I13(s1)
+
+          obs_common = ℋ0 * s1^2 / (2 * s2) * (ℛ2 * s2 * ℋ0 * (2 * f0 - 3 * Ω_M0) +  2 * f0 * (5 * s_b2 - 2))
+
+          obs_terms = D1 * obs_common * ( (b1 + f1)/5 * (I11_s1 + I31_s1) - (3 * b1 + f1) * I13_s1)
+
+          #################################
+
+          return D1 * D2 / a2 * common * (
+                    factor * (1 / 90 * I00 + 1 / 63 * I20 + 1 / 210 * I40)
+                    +
+                    J20 * I02
+               ) + obs_terms
+
+     else 
+          throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
+               "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
+               ))
+     end
 end
 
 
-function ξ_GNC_Newtonian_LocalGP(s1, s2, y, cosmo::Cosmology)
+function ξ_GNC_Newtonian_LocalGP(s1, s2, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_GNC_Newtonian_LocalGP(P1, P2, y, cosmo)
+     return ξ_GNC_Newtonian_LocalGP(P1, P2, y, cosmo; obs = obs)
 end
 
 
@@ -92,7 +119,7 @@ end
 
 
 
-function ξ_GNC_LocalGP_Newtonian(s1, s2, y, cosmo::Cosmology)
-     ξ_GNC_Newtonian_LocalGP(s2, s1, y, cosmo)
+function ξ_GNC_LocalGP_Newtonian(s1, s2, y, cosmo::Cosmology; kwargs...)
+     ξ_GNC_Newtonian_LocalGP(s2, s1, y, cosmo; kwargs...)
 end
 

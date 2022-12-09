@@ -63,7 +63,8 @@ See also: [`ξ_GNC_Newtonian_Lensing`](@ref), [`int_on_mu_Newtonian_Lensing`](@r
 """
 function integrand_ξ_GNC_Newtonian_Lensing(
      IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+     y, cosmo::Cosmology; Δχ_min::Float64=1e-1,
+     obs::Union{Bool, Symbol} = :noobsvel)
 
      s1, D_s1, f_s1 = P1.comdist, P1.D, P1.f
      s2 = P2.comdist
@@ -76,31 +77,38 @@ function integrand_ξ_GNC_Newtonian_Lensing(
      Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
 
      common = D_s1 * ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) * (5 * s_b_s2 - 2) / (a2 * s2)
-
-     new_J00 = 1 / 5 * (f_s1 * χ2 * (3 * y^2 - 1) - 3 * y * s1 * f_s1 - 5 * y * s1 * b_s1)
-     new_J02 = 1 / (14 * Δχ2^2) * (
-          7 * s1 * b_s1 * (-2 * χ2^2 * y + χ2 * s1 * (y^2 + 3) - 2 * y * s1^2) +
-          f_s1 * (
-               4 * χ2^3 * (3 * y^2 - 1) - 2 * χ2^2 * y * s1 * (3 * y^2 + 8)
-               +
-               χ2 * s1^2 * (9 * y^2 + 11) - 6 * y * s1^3
-          )
-     )
-     new_J04 = 3 / (70 * Δχ2^4) * f_s1 * (
-                    χ2^5 * (6 * y^2 - 2) + 6 * χ2^4 * y * s1 * (y^2 - 3)
-                    -
-                    χ2^3 * s1^2 * (y^4 + 12 * y^2 - 21)
+     
+     if Δχ2 ≥ Δχ_min
+          new_J00 = 1 / 5 * (f_s1 * χ2 * (3 * y^2 - 1) - 3 * y * s1 * f_s1 - 5 * y * s1 * b_s1)
+          new_J02 = 1 / (14 * Δχ2^2) * (
+               7 * s1 * b_s1 * (-2 * χ2^2 * y + χ2 * s1 * (y^2 + 3) - 2 * y * s1^2) +
+               f_s1 * (
+                    4 * χ2^3 * (3 * y^2 - 1) - 2 * χ2^2 * y * s1 * (3 * y^2 + 8)
                     +
-                    2 * χ2^2 * y * s1^3 * (y^2 + 3) - 12 * χ2 * s1^4
-                    +
-                    4 * y * s1^5
+                    χ2 * s1^2 * (9 * y^2 + 11) - 6 * y * s1^3
                )
+          )
+          new_J04 = 3 / (70 * Δχ2^4) * f_s1 * (
+                         χ2^5 * (6 * y^2 - 2) + 6 * χ2^4 * y * s1 * (y^2 - 3)
+                         -
+                         χ2^3 * s1^2 * (y^4 + 12 * y^2 - 21)
+                         +
+                         2 * χ2^2 * y * s1^3 * (y^2 + 3) - 12 * χ2 * s1^4
+                         +
+                         4 * y * s1^5
+                    )
 
-     I00 = cosmo.tools.I00(Δχ2)
-     I20 = cosmo.tools.I20(Δχ2)
-     I40 = cosmo.tools.I40(Δχ2)
+          I00 = cosmo.tools.I00(Δχ2)
+          I20 = cosmo.tools.I20(Δχ2)
+          I40 = cosmo.tools.I40(Δχ2)
 
-     return common * (new_J00 * I00 + new_J02 * I20 + new_J04 * I40)
+          return common * (new_J00 * I00 + new_J02 * I20 + new_J04 * I40)
+
+     else 
+          #return - 2.0 / 3.0 * Δχ2 * f(Δχ2) * D(Δχ2) * cosmo.tools.σ_2^2.0
+          #return - 2.0 / 3.0 * common * χ2 * f_s1 * cosmo.tools.σ_2^2
+          return - common * s1 * (f_s1 + 5 * b_s1) * cosmo.tools.σ_0 / 5.0
+     end
 end
 
 
@@ -117,7 +125,7 @@ end
 
 @doc raw"""
      ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
-          en::Float64 = 1e6, N_χs::Integer = 100):: Float64
+          en::Float64 = 1e6, N_χs::Int = 100):: Float64
 
 Return the Doppler-LocalGP cross-correlation function 
 ``\\xi^{v_{\\parallel}\\int\\phi} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
@@ -161,7 +169,7 @@ the integrand function `integrand_ξ_GNC_Newtonian_Lensing`.
 - `en::Float64 = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
-- `N_χs::Integer = 100`: number of points to be used for sampling the integral
+- `N_χs::Int = 100`: number of points to be used for sampling the integral
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
@@ -170,21 +178,42 @@ See also: [`integrand_ξ_GNC_Newtonian_Lensing`](@ref), [`int_on_mu_Newtonian_Le
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Integer = 100)
+     en::Float64=1e6, N_χs::Int=100, Δχ_min::Float64=1e-1,
+     obs::Union{Bool,Symbol}=:noobsvel, suit_sampling::Bool = true)
 
-     χ2s = s2 .* range(1e-6, 1, length = N_χs)
+     STARTING = 0.0
+     frac_begin, frac_middle, FRAC_s = 0.6, 0.6, 0.10
 
+     χ2s = if suit_sampling == false
+          s2 .* range(STARTING, 1.0, length=N_χs)
+     else
+
+          if s2 < (1.0 - FRAC_s) * s1
+               s2 .* range(STARTING, 1.0, length=N_χs)
+
+          elseif (1.0 - FRAC_s) * s1 ≤ s2 ≤ (1.0 + FRAC_s) * s1  
+               GaPSE.sample_subdivision_begin(STARTING, (1.0 - FRAC_s) * s1, s2; 
+                    frac_begin = frac_begin, N = N_χs, ass = false)
+
+          elseif (1.0 + FRAC_s) * s1 < s2
+               GaPSE.sample_subdivision_middle(
+                         STARTING, (1.0 - FRAC_s) * s1, (1.0 + FRAC_s) * s1, s2; 
+                         frac_middle = frac_middle, N = N_χs, ass = false
+                    )
+          else
+               throw(AssertionError("how the hell did you arrived here?"))
+          end
+     end
+ 
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
      IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; obs=obs, Δχ_min = Δχ_min)
           for IP in IPs
      ]
 
-     res = trapz(χ2s, int_ξs)
-     #println("res = $res")
-     return res / en
+     return  trapz(χ2s, int_ξs) / en
 end
 
 
@@ -201,4 +230,3 @@ end
 function ξ_GNC_Lensing_Newtonian(s1, s2, y, cosmo::Cosmology; kwargs...)
      ξ_GNC_Newtonian_Lensing(s2, s1, y, cosmo; kwargs...)
 end
-

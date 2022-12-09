@@ -63,7 +63,7 @@ See also: [`ξ_GNC_Newtonian_IntegratedGP`](@ref), [`int_on_mu_Newtonian_Integra
 """
 function integrand_ξ_GNC_Newtonian_IntegratedGP(
      IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
 
      s1, D_s1, f_s1 = P1.comdist, P1.D, P1.f
      s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
@@ -107,7 +107,7 @@ end
 
 @doc raw"""
      ξ_GNC_Newtonian_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-          en::Float64 = 1e6, N_χs::Integer = 100):: Float64
+          en::Float64 = 1e6, N_χs::Int = 100):: Float64
 
 Return the Doppler-LocalGP cross-correlation function 
 ``\\xi^{v_{\\parallel}\\int\\phi} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
@@ -151,7 +151,7 @@ the integrand function `integrand_ξ_GNC_Newtonian_IntegratedGP`.
 - `en::Float64 = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
-- `N_χs::Integer = 100`: number of points to be used for sampling the integral
+- `N_χs::Int = 100`: number of points to be used for sampling the integral
   along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
 
@@ -160,7 +160,7 @@ See also: [`integrand_ξ_GNC_Newtonian_IntegratedGP`](@ref), [`int_on_mu_Newtoni
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNC_Newtonian_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Integer = 100)
+     en::Float64 = 1e6, N_χs::Int = 100, obs::Union{Bool, Symbol} = :noobsvel)
 
      χ2s = s2 .* range(1e-6, 1, length = N_χs)
 
@@ -168,7 +168,7 @@ function ξ_GNC_Newtonian_IntegratedGP(s1, s2, y, cosmo::Cosmology;
      IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_Newtonian_IntegratedGP(IP, P1, P2, y, cosmo)
+          en * GaPSE.integrand_ξ_GNC_Newtonian_IntegratedGP(IP, P1, P2, y, cosmo; obs = obs)
           for IP in IPs
      ]
 
