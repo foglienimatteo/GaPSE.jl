@@ -117,20 +117,32 @@ function main()
           N_χs=100, N_χs_2=60
      );
 
-     ps_kwargs(twofast::Bool) = twofast ?
-          Dict(
-               :twofast => true, :epl => true, :pr => false,
-               :N_left => 12, :N_right => 12,
-               :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
-               :int_s_min => 1e0, :int_s_max => 1200.0
-          ) : Dict(
-               :twofast => false, :pr => true, :ν => 1.5, 
-               :n_extrap_low => 0, :n_extrap_high => 0, 
-               :n_pad => 500, :cut_first_n => 6
-          )
+     function ps_kwargs(alg::Symbol = :fftlog) 
+          if alg == :twofast
+               return Dict(
+                    :alg => :twofast, :L => 0, :pr => true,
+                    :cut_first_n => 6, :cut_last_n => 4,
+                    :epl => true, 
+                    :N_left => 12, :N_right => 12,
+                    :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
+                    :int_s_min => 1e0, :int_s_max => 1200.0,
+                    cut_first_n => 6, cut_last_n => 3,
+               ) 
+          elseif alg == :fftlog
+          
+               return Dict(
+                    :alg => :fftlog, :L => 0,
+                    :cut_first_n => 6, :cut_last_n => 4,
+                    :ν => 1.5, :n_pad => 500,
+                    :n_extrap_low => 0, :n_extrap_high => 0,  
+               )
+          else
+               throw(AssertionError("alg = :$alg is not a valid algorithm for PS_multipole"))
+          end
+     end
 
      GaPSE.print_all_PS_multipole(DIR * "GNC_sb0_fevo0_L0_noF_noobsvel_quad.txt",
-          DIR * "PS_sb0_fevo0_L0_noF_noobsvel_quad.txt", "GNC"; L=0, ps_kwargs(false)...)
+          DIR * "PS_sb0_fevo0_L0_noF_noobsvel_quad.txt", "GNC"; L=0, ps_kwargs(:fftlog)...)
 
 
 end

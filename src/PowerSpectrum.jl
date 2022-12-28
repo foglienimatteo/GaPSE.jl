@@ -73,7 +73,7 @@ P_L(k) = \\frac{2 L + 1}{A^{'}} (-i)^L \\, \\phi(s_\\mathrm{eff}) \\int_0^\\inft
 The second method reads the input file, takes the first column as `ss` and the second as `fs`
 and recalls the first method.
      
-Currenlty, there are two algorithms you can coose in order to perform the computation; you can choose 
+Currenlty, there are two algorithms you can choose in order to perform the computation; you can choose 
 which one to use through the keyword value `alg`:
 - `alg = :fftlog` (default and recommended option) will employ the [FFTLog](https://github.com/marcobonici/FFTLog.jl) 
   algorithm.
