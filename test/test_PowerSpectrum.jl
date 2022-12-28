@@ -21,7 +21,7 @@
 
 @testset "test TwoFAST PS_multipole" begin
      RTOL = 1e-3
-     kwargs_ps = Dict(:epl => true, :pr => false, :twofast => true,
+     kwargs_ps = Dict(:epl => true, :pr => false, :alg => :twofast,
           :N_left => 12, :N_right => 12,
           :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
           :int_s_min => 1e-4, :int_s_max => 1e4)
@@ -91,10 +91,10 @@
      end
 end
 
-
+#=
 @testset "test TwoFAST print_PS_multipole first method" begin
      RTOL = 1e-3
-     kwargs_ps = Dict(:epl => true, :pr => false, :twofast => true,
+     kwargs_ps = Dict(:epl => true, :pr => false, :alg => :twofast,
           :N_left => 12, :N_right => 12,
           :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
           :int_s_min => 1e-4, :int_s_max => 1e4)
@@ -199,7 +199,7 @@ end
 
 @testset "test TwoFAST print_PS_multipole second method" begin
      RTOL = 1e-3
-     kwargs_ps = Dict(:epl => true, :pr => false, :twofast => true,
+     kwargs_ps = Dict(:epl => true, :pr => false, :alg => :twofast,
           :N_left => 12, :N_right => 12,
           :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
           :int_s_min => 1e-4, :int_s_max => 1e4)
@@ -343,7 +343,7 @@ end
           rm(name)
      end
 
-     kwargs_ps = Dict(:epl => true, :pr => false, :twofast => true,
+     kwargs_ps = Dict(:epl => true, :pr => false, :alg => :twofast,
           :N_left => 12, :N_right => 12,
           :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
           :int_s_min => 1e-4, :int_s_max => 1e4)
@@ -989,3 +989,5 @@ end
           rm(out_file)
      end
 end
+
+=#

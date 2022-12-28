@@ -40,7 +40,7 @@ const HUBBLE_0 = 1e5 / 299792458.0
 include("TEST_DATA.jl")
 
 ##########################################################################################92
-
+#=
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
@@ -80,11 +80,11 @@ end
 @testset "test Dicts" begin
      include("test_Dicts.jl")
 end
+=#
 
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
 end
-
 
 
 ################################### COSMOLOGY IMPLEMENTATION #############################92
