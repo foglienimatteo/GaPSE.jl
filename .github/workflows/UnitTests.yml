@@ -20,11 +20,11 @@
 
 name: Unit tests
 
-on: [push]
+# on: [push]
 
-#on:
-#  release:
-#    types: [published, edited, prereleased, released]
+on:
+  release:
+    types: [published, edited, prereleased, released]
 
 #on:
 #  push:
