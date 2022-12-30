@@ -32,9 +32,9 @@ want to perform the computation with `hcubature`.
 See also: [`integrand_F`](@ref), [`F_hcub`](@ref), [`map_F`](@ref)
 """
 const DEFAULT_FMAP_OPTS_hcub = Dict(
-     :θ_max => π / 2.0::Float64, 
-     :tolerance => 1e-8::Float64, 
-     :rtol => 1e-2::Float64, 
+     :θ_max => π / 2.0::Float64,
+     :tolerance => 1e-8::Float64,
+     :rtol => 1e-2::Float64,
      :atol => 1e-3::Float64,
      :pr => true::Bool,
 )
@@ -56,9 +56,9 @@ want to perform the computation with `trap`.
 See also: [`integrand_F`](@ref), [`F_trap`](@ref), [`map_F`](@ref)
 """
 const DEFAULT_FMAP_OPTS_trap = Dict(
-     :θ_max => π / 2.0::Float64, 
-     :tolerance => 1e-8::Float64, 
-     :N => 300::Int64, 
+     :θ_max => π / 2.0::Float64,
+     :tolerance => 1e-8::Float64,
+     :N => 300::Int64,
      :en => 1.0::Float64,
      :pr => true::Bool,
 )
@@ -104,7 +104,7 @@ solve the problem, returning 0 if ``0<-\\mathrm{den}< \\mathrm{tolerance}``
 
 See also: [`F`](@ref), [`map_F`](@ref)
 """
-function integrand_F(θ_1, θ, x, μ, θ_max; tolerance = 1e-8)
+function integrand_F(θ_1, θ, x, μ, θ_max; tolerance=1e-8)
      if (x * cos(θ) + cos(θ_1)) / √(x^2 + 1 + 2 * x * μ) - cos(θ_max) > 0 &&
         (μ - cos(θ + θ_1)) > 0 &&
         (cos(θ - θ_1) - μ) > 0
@@ -170,11 +170,11 @@ this function.
 See also:  [`F_trap`](@ref), [`map_F`](@ref), [`integrand_F`](@ref), 
 [`check_compatible_dicts`](@ref)
 """
-function F_hcub(x, μ; θ_max = π/2, tolerance = 1e-8, atol = 1e-2, rtol = 1e-5, kwargs...)
-     my_int(var) = integrand_F(var[1], var[2], x, μ, θ_max; tolerance = tolerance)
+function F_hcub(x, μ; θ_max=π / 2, tolerance=1e-8, atol=1e-2, rtol=1e-5, kwargs...)
+     my_int(var) = integrand_F(var[1], var[2], x, μ, θ_max; tolerance=tolerance)
      a = [0.0, 0.0]
      b = [θ_max, π]
-     return hcubature(my_int, a, b; rtol = rtol, atol = atol, kwargs...)
+     return hcubature(my_int, a, b; rtol=rtol, atol=atol, kwargs...)
 end;
 
 
@@ -222,26 +222,26 @@ to use this one.
 See also:  [`F_hcub`](@ref), [`map_F`](@ref), [`integrand_F`](@ref), 
 [`check_compatible_dicts`](@ref)
 """
-function F_trap(x, μ; θ_max = π/2, N::Int=300, en=1.0, 
-        tolerance = 1e-13)
-    
+function F_trap(x, μ; θ_max=π / 2, N::Int=300, en=1.0,
+     tolerance=1e-13)
+
      χ1s = θ_max .* range(0.0, 1.0, length=N)
-     χ2s = π .* range(0.0, 1.0, length=N+7)
+     χ2s = π .* range(0.0, 1.0, length=N + 7)
 
      zs = [
-          en * integrand_F(χ1, χ2, x, μ, θ_max; tolerance = tolerance)
+          en * integrand_F(χ1, χ2, x, μ, θ_max; tolerance=tolerance)
           for χ1 in χ1s, χ2 in χ2s
      ]
 
      res = trapz((χ1s, χ2s), zs)
-    
+
      return res / en
 end;
 
 
-function print_map_F(out::String, x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
-     trap::Bool = true, x1 = 0, x2 = 3, μ1 = -1, μ2 = 1,
-     Fmap_opts::Dict = Dict{Symbol,Any}(), kwargs...)
+function print_map_F(out::String, x_step::Float64=0.01, μ_step::Float64=0.01;
+     trap::Bool=true, x1=0, x2=3, μ1=-1, μ2=1,
+     Fmap_opts::Dict=Dict{Symbol,Any}(), kwargs...)
 
      check_parent_directory(out)
      check_namefile(out)
@@ -256,9 +256,9 @@ function print_map_F(out::String, x_step::Float64 = 0.01, μ_step::Float64 = 0.0
      @assert 0 < μ_step < 1 "The integration step of μ must be 0<μ_step<1, not $(μ_step)!"
 
      @assert typeof(Fmap_opts) <: Dict{Symbol,T1} where {T1}
-          "the keys of the Fmap_opts dict have to be Symbols (like :k_min, :N, ...)"
+     "the keys of the Fmap_opts dict have to be Symbols (like :k_min, :N, ...)"
      trap ? check_compatible_dicts(DEFAULT_FMAP_OPTS_trap, Fmap_opts, "Fmap_opts") :
-               check_compatible_dicts(DEFAULT_FMAP_OPTS_hcub, Fmap_opts, "Fmap_opts")
+     check_compatible_dicts(DEFAULT_FMAP_OPTS_hcub, Fmap_opts, "Fmap_opts")
      Fmap_dict = trap ? merge(DEFAULT_FMAP_OPTS_trap, Fmap_opts) : merge(DEFAULT_FMAP_OPTS_hcub, Fmap_opts)
 
      μs = μ1:μ_step:μ2
@@ -269,12 +269,12 @@ function print_map_F(out::String, x_step::Float64 = 0.01, μ_step::Float64 = 0.0
      time_1 = time()
 
      new_F(x, μ) = trap ?
-          F_trap(x, μ; θ_max = Fmap_dict[:θ_max], 
-               tolerance = Fmap_dict[:tolerance], N = Fmap_dict[:N], 
-               en = Fmap_dict[:en]) :
-          F_hcub(x, μ; θ_max = Fmap_dict[:θ_max], 
-          tolerance = Fmap_dict[:tolerance], atol = Fmap_dict[:atol], 
-          rtol = Fmap_dict[:rtol], kwargs...)    
+                   F_trap(x, μ; θ_max=Fmap_dict[:θ_max],
+          tolerance=Fmap_dict[:tolerance], N=Fmap_dict[:N],
+          en=Fmap_dict[:en]) :
+                   F_hcub(x, μ; θ_max=Fmap_dict[:θ_max],
+          tolerance=Fmap_dict[:tolerance], atol=Fmap_dict[:atol],
+          rtol=Fmap_dict[:rtol], kwargs...)
 
      Fs_grid = Fmap_dict[:pr] ? begin
           @showprogress "window F evaluation: " map(new_F, xs_grid, μs_grid)
@@ -287,8 +287,10 @@ function print_map_F(out::String, x_step::Float64 = 0.01, μ_step::Float64 = 0.0
           println(io, BRAND)
           println(io, "# This is an integration map on μ and x of the window function F(x, μ)")
           println(io, "# For its analytical definition, check the code.\n#")
-          println(io, "# It was set trap = $trap, so the computation was performed with "*
-                         begin trap ? "trap()" : "hcubature()" end )
+          println(io, "# It was set trap = $trap, so the computation was performed with " *
+                      begin
+               trap ? "trap()" : "hcubature()"
+          end)
           println(io, "# Parameters used in this integration map:")
           println(io, "# x_min = $(x1) \t x_max = $(x2) \t x_step = $(x_step)")
           println(io, "# mu_min = $(μ1) \t mu_max = $(μ2) \t mu_step = $(μ_step)")
@@ -321,8 +323,8 @@ end
 
 
 
-function print_map_F(out::String, xs::Vector{Float64}, μs::Vector{Float64}; 
-     trap::Bool = true, Fmap_opts::Dict = Dict{Symbol,Any}(), kwargs...)
+function print_map_F(out::String, xs::Vector{Float64}, μs::Vector{Float64};
+     trap::Bool=true, Fmap_opts::Dict=Dict{Symbol,Any}(), kwargs...)
 
      check_parent_directory(out)
      check_namefile(out)
@@ -335,9 +337,9 @@ function print_map_F(out::String, xs::Vector{Float64}, μs::Vector{Float64};
      @assert all(μs .<= 1.0) "All μs must be <=1.0!"
 
      @assert typeof(Fmap_opts) <: Dict{Symbol,T1} where {T1}
-          "the keys of the Fmap_opts dict have to be Symbols (like :k_min, :N, ...)"
+     "the keys of the Fmap_opts dict have to be Symbols (like :k_min, :N, ...)"
      trap ? check_compatible_dicts(DEFAULT_FMAP_OPTS_trap, Fmap_opts, "Fmap_opts") :
-               check_compatible_dicts(DEFAULT_FMAP_OPTS_hcub, Fmap_opts, "Fmap_opts")
+     check_compatible_dicts(DEFAULT_FMAP_OPTS_hcub, Fmap_opts, "Fmap_opts")
      Fmap_dict = trap ? merge(DEFAULT_FMAP_OPTS_trap, Fmap_opts) : merge(DEFAULT_FMAP_OPTS_hcub, Fmap_opts)
 
 
@@ -347,12 +349,12 @@ function print_map_F(out::String, xs::Vector{Float64}, μs::Vector{Float64};
      time_1 = time()
 
      new_F(x, μ) = trap ?
-          F_trap(x, μ; θ_max = Fmap_dict[:θ_max], 
-               tolerance = Fmap_dict[:tolerance], N = Fmap_dict[:N], 
-               en = Fmap_dict[:en]) :
-          F_hcub(x, μ; θ_max = Fmap_dict[:θ_max], 
-          tolerance = Fmap_dict[:tolerance], atol = Fmap_dict[:atol], 
-          rtol = Fmap_dict[:rtol], kwargs...) 
+                   F_trap(x, μ; θ_max=Fmap_dict[:θ_max],
+          tolerance=Fmap_dict[:tolerance], N=Fmap_dict[:N],
+          en=Fmap_dict[:en]) :
+                   F_hcub(x, μ; θ_max=Fmap_dict[:θ_max],
+          tolerance=Fmap_dict[:tolerance], atol=Fmap_dict[:atol],
+          rtol=Fmap_dict[:rtol], kwargs...)
 
      Fs_grid = Fmap_dict[:pr] ? begin
           @showprogress "window F evaluation: " map(new_F, xs_grid, μs_grid)
@@ -364,8 +366,10 @@ function print_map_F(out::String, xs::Vector{Float64}, μs::Vector{Float64};
      open(out, "w") do io
           println(io, BRAND)
           println(io, "# This is an integration map on μ and x of the window function F(x, μ)")
-          println(io, "# It was set trap = $trap, so the computation was performed with "*
-                         begin trap ? "trap()" : "hcubature()" end )
+          println(io, "# It was set trap = $trap, so the computation was performed with " *
+                      begin
+               trap ? "trap()" : "hcubature()"
+          end)
           println(io, "# For its analytical definition, check the code.\n#")
           println(io, "# Parameters used in this integration map:")
           println(io, "# computational time (in s) : $(@sprintf("%.3f", time_2-time_1))")
@@ -468,6 +472,26 @@ Struct containing xs, μs and Fs values of the window function ``F(x, μ)``.
 - along a fixed column the changing value is `x`
 - along a fixed row the changing value is `μ`
 
+The analytical definition of the window function is the following (see Eq. A.10 of
+Castorina, Di Dio, 2021):
+
+```math
+\\begin{split}
+F(x,\\mu; \\theta_\\mathrm{max}) = & \\;4\\pi 
+    \\int_0^{\\theta_\\mathrm{max}} \\mathrm{d}\\theta_1 \\int_0^\\pi \\mathrm{d} \\theta \\; 
+    \\, \\Theta\\left(\\frac
+        {x \\cos \\theta + \\cos \\theta_1}{\\sqrt{x^1+2+2x\\mu}} - 
+        \\cos(\\theta_\\mathrm{max}) 
+        \\right) 
+    \\, \\Theta(\\mu-\\cos(\\theta+\\theta_1)) \\\\
+    &\\Theta(\\cos(\\theta - \\theta_1)-\\mu) \\;
+    \\frac{\\sin\\theta\\sin\\theta_1}
+        {\\sqrt{(\\sin\\theta\\sin\\theta_1)^2-(\\cos\\theta\\cos\\theta_1-\\mu)^2}}
+\\end{split}
+```
+
+where the ``\\Theta``s are Heaviside theta functions.
+
 ## Constructors
 
 `WindowF(file::String)` : read the F map from the file `file`. Such a file might
@@ -505,7 +529,7 @@ struct WindowF
 
 
      function WindowF(file::String)
-          data = readdlm(file, comments = true)
+          data = readdlm(file, comments=true)
           xs, μs, Fs = data[:, 1], data[:, 2], data[:, 3]
           @assert size(xs) == size(μs) == size(Fs) "xs, μs and Fs must have the same length!"
 

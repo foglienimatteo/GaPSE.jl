@@ -216,7 +216,7 @@ See also:  [`InputPS`](@ref), [`CosmoParams`](@ref), [`IPSTools`](@ref),
 """
 struct Cosmology
      IPS::InputPS
-     ξ_matter::EPLs
+     #ξ_matter::EPLs
      params::CosmoParams
      tools::IPSTools
      windowF::WindowF
@@ -259,9 +259,9 @@ struct Cosmology
           windowF = WindowF(file_windowF)
           tools = IPSTools(IPS; params.IPSTools...)
      
-          ss_m, xis_m = ξ_from_PS(IPS; int_k_min=1e-6, int_k_max=1e3,
-               L=0, N=1024, pr=false, s0=nothing, right=nothing)
-          ξ_matter = EPLs(ss_m, xis_m, [1.0, 1.0], [-1.0, 1.0])
+          #ss_m, xis_m = ξ_from_PS(IPS; int_k_min=1e-6, int_k_max=1e3,
+          #     L=0, N=1024, pr=false, s0=nothing, right=nothing)
+          #ξ_matter = EPLs(ss_m, xis_m, [1.0, 1.0], [-1.0, 1.0])
           #=
           z_of_s_lim = my_interpolation(BD.comdist[1], BD.z[1], BD.comdist[2], BD.z[2], s_lim)
           D_of_s_lim = my_interpolation(BD.comdist[1], BD.D[1], BD.comdist[2], BD.D[2], s_lim)
@@ -319,7 +319,7 @@ struct Cosmology
 
           new(
                IPS,
-               ξ_matter,
+               #ξ_matter,
                params,
                tools,
                windowF,

@@ -72,15 +72,18 @@ end
 @testset "test WindowF" begin
      include("test_WindowF.jl")
 end
+=#
 
 @testset "test WindowFIntegrated" begin
      include("test_WindowFIntegrated.jl")
 end
 
+@test 1 == 2
+
 @testset "test Dicts" begin
      include("test_Dicts.jl")
 end
-=#
+
 
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
