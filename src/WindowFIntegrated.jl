@@ -240,16 +240,36 @@ function print_map_IntegratedF(s_min, s_max, ss::Vector{Float64},
      end
 end
 
+
+function print_map_IntegratedF(z_min, z_max, zs::Vector{Float64},
+     μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String,
+     file_data::String;
+     names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
+
+     BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
+     s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+
+     print_map_IntegratedF(s_of_z(z_min), s_of_z(z_max), s_of_z.(zs),
+          μs, windowF, out; kwargs...)
+end
+
+
 """
      print_map_IntegratedF(s_min, s_max, ss::Vector{Float64},
           μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String;
           alg::Symbol=:trap, llim=nothing, rlim=nothing,
           rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true)
 
+     print_map_IntegratedF(z_min, z_max, ss::Vector{Float64},
+          μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String,
+          file_data::String; 
+          names_bg = NAMES_BACKGROUND, h_0 = 0.7, kwargs...)
+
 Evaluate the integrated window function ``\\mathcal{F}(s,\\mu)`` in a rectangual grid 
 of ``\\mu`` and ``s`` values, and print the results in the `out` file.
 
-It takes as input:
+
+The first method takes as input:
 - `s_min` and `s_max` for the radial `ϕ` function.
 - `ss::Vector{Float64}` and `μs::Vector{Float64}` :  the vector of s and μ points where to evaluate 
   sample the integrated window function ``\\mathcal{F}``; they will be stored in the struct.
