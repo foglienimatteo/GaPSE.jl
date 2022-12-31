@@ -68,11 +68,11 @@ end
 @testset "test Cosmology" begin
      include("test_Cosmology.jl")
 end
-
+=#
 @testset "test WindowF" begin
      include("test_WindowF.jl")
 end
-=#
+
 
 @testset "test WindowFIntegrated" begin
      include("test_WindowFIntegrated.jl")

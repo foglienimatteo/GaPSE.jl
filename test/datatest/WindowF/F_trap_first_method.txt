@@ -5,18 +5,17 @@
 # This is an integration map on μ and x of the window function F(x, μ)
 # For its analytical definition, check the code.
 #
-# It was set trap = true, so the computation was performed with trap()
 # Parameters used in this integration map:
-# x_min = 0 	 x_max = 3 	 x_step = 0.25
-# mu_min = -1 	 mu_max = 1 	 mu_step = 0.25
-# computational time (in s) : 8.182
+# 		x_min = 0 	 x_max = 3 	 x_step = 0.25
+# 		mu_min = -1 	 mu_max = 1 	 mu_step = 0.25
+# 		alg = :trap
+# computational time (in s) : 6.952
 # kwards passed: 
 # 		θ_max = 1.5707963267948966
 # 		N = 1000
 # 		en = 1.0
-# 		tolerance = 1.0e-8
+# 		tolerance = 1.0e-10
 # 		pr = true
-# 		trapz = true
 #
 # x 	 mu 	 F
 0.0	 -1.0 	 0.0

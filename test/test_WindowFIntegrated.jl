@@ -318,5 +318,6 @@ end
      @test all([s1 ≈ s2 for (s1, s2) in zip(orig_wfi.ss, other_wfi.ss)])
      @test all([μ1 ≈ μ2 for (μ1, μ2) in zip(orig_wfi.μs, other_wfi.μs)])
      @test all([IF1 ≈ IF2 for (IF1, IF2) in zip(orig_wfi.IFs, other_wfi.IFs)])
+     rm(print_trap)
 end
 

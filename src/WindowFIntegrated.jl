@@ -184,6 +184,7 @@ As optional arguments:
   `alg = :quad`;
 - `rtol=1e-2` and `atol=0.0` : relative and absoute tolerance for `quadgk`; they are useless if you set
   `alg = :trap`;
+- `pr::Bool = true` : do you want to see the progress-bar of the computation?
 
 See also: [`integrated_F_quadgk`](@ref), [`integrated_F_trapz`](@ref),
 [`ϕ`](@ref), [`WindowF`](@ref), [`WindowFIntegrated`](@ref)
