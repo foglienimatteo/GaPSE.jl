@@ -47,27 +47,33 @@ function main()
 
      PATH_TO_GAPSE = "./"
      FILE_F_MAP = PATH_TO_GAPSE * "data/F_REFERENCE_pi2.txt";
+     z_min, z_max, θ_max = 1.0, 1.5, π / 2.0;
 
      #=
+
+     kwargs_map_F_hcub = Dict(
+          :θ_max => θ_max, :tolerance => 1e-10, 
+          :rtol => 1e-2, :atol => 1e-3, :pr => true,
+     );
+
+     kwargs_map_F_trap = Dict(
+          :θ_max => θ_max, :tolerance => 1e-10, 
+          :N => 1000, :pr => true,
+     );
+
      xs = [x for x in 0:0.02:5]
      μs = union(
-          [μ for μ in range(-1.0, -0.95, length = 100)], 
-          [μ for μ in range(-0.95, 0.95, length = 100)],
-          [μ for μ in range(0.95, 1.0, length = 100)]
-     )
-     GaPSE.print_map_F(FILE_F_MAP, 
-     xs, μs; 
-     trap = true,
-     Fmap_opts = Dict(
-               :θ_max => π / 2.0, :tolerance => 1e-8, 
-               :N => 1000, :pr => true
-          )
+          [μ for μ in range(-1.0, -0.98, length = 50)], 
+          [μ for μ in range(-0.98, 0.98, length = 102)],
+          [μ for μ in range(0.98, 1.0, length = 50)]);
+     GaPSE.print_map_F(FILE_F_MAP, xs, μs; 
+          alg = :trap, Fmap_opts = kwargs_map_F_trap # we recommend to use :trap
+          #alg = :hcub, Fmap_opts = kwargs_map_F_hcub # but you can use also :hcub if you prefer
      )
      =#
 
      FILE_BACKGROUND = PATH_TO_GAPSE * "data/WideA_ZA_background.dat"
 
-     z_min, z_max, θ_max = 1.0, 1.5, π / 2.0
      WFI_opts = Dict(
           :ss_start => 0.0, :ss_stop => 0.0,
           :ss_step => 100, :llim => 0.0, :rlim => Inf,
@@ -89,15 +95,20 @@ function main()
      FILE_IF_MAP = PATH_TO_GAPSE * "data/IntegrF_REFERENCE_pi2_z005020.txt"
 
      #=
-     new_calc_μs = union([μ for μ in -1.0:0.0001:(-0.98)], 
-          [μ for μ in -0.98:0.01:0.98], 
-          [μ for μ in 0.98:0.0001:1.0]);
+     calc_μs = union(
+          [μ for μ in range(-1.0, -0.98, length = 50)], 
+          [μ for μ in range(-0.98, 0.98, length = 102)],
+          [μ for μ in range(0.98, 1.0, length = 50)]);
 
      GaPSE.print_map_IntegratedF(
           FILE_F_MAP, FILE_IF_MAP, 
-          z_min, z_max, new_calc_μs, FILE_BACKGROUND;
-          trap = true, WFI_opts...
-          )
+          z_min, z_max, calc_μs;
+          alg = :trap, Dict(
+               :llim => nothing, :rlim => nothing, 
+               :rtol => 1e-2, :atol => 0.0, 
+               :N => 1000, :pr => true,
+          )...
+     )
      =#
 
      FILE_PS = PATH_TO_GAPSE * "test/datatest/file_pk.txt"

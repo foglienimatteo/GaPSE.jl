@@ -155,40 +155,6 @@ function print_map_IntegratedF(in::String, out::String, s_min, s_max,
 end
 =#
 
-"""
-     print_map_IntegratedF(s_min, s_max, ss::Vector{Float64},
-          μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String;
-          alg::Symbol=:trap, llim=nothing, rlim=nothing,
-          rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true)
-
-Evaluate the integrated window function ``\\mathcal{F}(s,\\mu)`` in a rectangual grid 
-of ``\\mu`` and ``s`` values, and print the results in the `out` file.
-
-It takes as input:
-- `s_min` and `s_max` for the radial `ϕ` function.
-- `ss::Vector{Float64}` and `μs::Vector{Float64}` :  the vector of s and μ points where to evaluate 
-  sample the integrated window function ``\\mathcal{F}``; they will be stored in the struct.
-- `windowF::Union{String,WindowF}`, i.e. the window function itself; it can be passed as the namefile
-  where the window is stored in (that will be opened with `WindowF`) or as a `WindowF` struct directly.
-- `out::String` : the name of the output file
-
-As optional arguments:
-
-- `alg::Symbol = :trap` : algorithm to be used for the integration; the valid options are `:quad`
-  (that will recall `integrated_F_quadgk`) and `:trap` (that will recall `integrated_F_trapz`);
-  other values will lead to `AssertionError`
-- `llim=nothing` and `rlim=nothing` : integration limits for quad/trap; 
-  if `llim=nothing` it will be set to `0.95 * s_min`; if `rlim=nothing`, it will be set to `1.05*s_max`,
-  while if `rlim=Inf` it will be set to `3 * s_max`.
-- `N::Int = 1000` : number of points to be used for the sampling of `trapz`; it's useless if you set
-  `alg = :quad`;
-- `rtol=1e-2` and `atol=0.0` : relative and absoute tolerance for `quadgk`; they are useless if you set
-  `alg = :trap`;
-- `pr::Bool = true` : do you want to see the progress-bar of the computation?
-
-See also: [`integrated_F_quadgk`](@ref), [`integrated_F_trapz`](@ref),
-[`ϕ`](@ref), [`WindowF`](@ref), [`WindowFIntegrated`](@ref)
-"""
 function print_map_IntegratedF(s_min, s_max, ss::Vector{Float64},
      μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String;
      alg::Symbol=:trap, llim=nothing, rlim=nothing,
@@ -274,6 +240,56 @@ function print_map_IntegratedF(s_min, s_max, ss::Vector{Float64},
      end
 end
 
+"""
+     print_map_IntegratedF(s_min, s_max, ss::Vector{Float64},
+          μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String;
+          alg::Symbol=:trap, llim=nothing, rlim=nothing,
+          rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true)
+
+Evaluate the integrated window function ``\\mathcal{F}(s,\\mu)`` in a rectangual grid 
+of ``\\mu`` and ``s`` values, and print the results in the `out` file.
+
+It takes as input:
+- `s_min` and `s_max` for the radial `ϕ` function.
+- `ss::Vector{Float64}` and `μs::Vector{Float64}` :  the vector of s and μ points where to evaluate 
+  sample the integrated window function ``\\mathcal{F}``; they will be stored in the struct.
+- `windowF::Union{String,WindowF}`, i.e. the window function itself; it can be passed as the namefile
+  where the window is stored in (that will be opened with `WindowF`) or as a `WindowF` struct directly.
+- `out::String` : the name of the output file
+
+
+The analytical expression for the integrated window function is the following:
+
+```math
+\\mathcal{F}(s, \\mu) = 
+    \\int_0^\\infty \\mathrm{d}s_1 \\, \\phi(s_1) \\,  
+    \\phi\\left(\\sqrt{s_1^2 + s^2 + 2 \\, s_1 \\, s \\, \\mu}\\right) 
+    \\, F\\left(\\frac{s}{s_1}, \\mu \\right)
+```
+
+where ``\\phi`` is the angular part of the survey window function and ``F(x, μ)`` is the 
+window function. Check the documentation of `WindowF` for its definition.
+
+As optional arguments:
+
+- `alg::Symbol = :trap` : algorithm to be used for the integration; the valid options are `:quad`
+  (that will recall `integrated_F_quadgk`) and `:trap` (that will recall `integrated_F_trapz`);
+  other values will lead to `AssertionError`
+- `llim=nothing` and `rlim=nothing` : integration limits for quad/trap; 
+  if `llim=nothing` it will be set to `0.95 * s_min`; if `rlim=nothing`, it will be set to `1.05*s_max`,
+  while if `rlim=Inf` it will be set to `3 * s_max`.
+- `N::Int = 1000` : number of points to be used for the sampling of `trapz`; it's useless if you set
+  `alg = :quad`;
+- `rtol=1e-2` and `atol=0.0` : relative and absoute tolerance for `quadgk`; they are useless if you set
+  `alg = :trap`;
+- `pr::Bool = true` : do you want to see the progress-bar of the computation?
+
+See also: [`integrated_F_quadgk`](@ref), [`integrated_F_trapz`](@ref),
+[`ϕ`](@ref), [`WindowF`](@ref), [`WindowFIntegrated`](@ref)
+"""
+print_map_IntegratedF
+
+
 #=
 function print_map_IntegratedF(in::String, out::String, z_min, z_max,
      μs::Vector{Float64}, file_data::String; kwargs...)
@@ -316,7 +332,7 @@ The analytical expression for the integrated window function is the following:
 ```
 
 where ``\\phi`` is the angular part of the survey window function and ``F(x, μ)`` is the 
-window funcion. Check the documentation of `WindowF` for its definition.
+window function. Check the documentation of `WindowF` for its definition.
 
 
 ## Constructors
