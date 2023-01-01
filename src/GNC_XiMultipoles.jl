@@ -19,7 +19,7 @@
 
 
 function integrand_ξ_GNC_multipole(s1, s, μ, effect::Function, cosmo::Cosmology;
-     L::Int = 0, use_windows::Bool = true, kwargs...)
+     L::Int=0, use_windows::Bool=true, kwargs...)
 
      s2_value = s2(s1, s, μ)
      y_value = y(s1, s, μ)
@@ -32,7 +32,7 @@ function integrand_ξ_GNC_multipole(s1, s, μ, effect::Function, cosmo::Cosmolog
           #isapprox(Pl(μ, L), 1.0; rotl=1e-4) || println(" \t Lp = " , Pl(μ, L) )
           #println("IF = $val")
 
-          int .* (spline_integrF(s, μ, cosmo.windowFint)/cosmo.WFI_norm * Pl(μ, L))
+          int .* (spline_integrF(s, μ, cosmo.windowFint) / cosmo.WFI_norm * Pl(μ, L))
           #=
           ϕ_s2 = ϕ(s2_value, cosmo.s_min, cosmo.s_max)
           (ϕ_s2 > 0.0) || (return 0.0)
@@ -61,26 +61,30 @@ end
 
 """
      integrand_ξ_GNC_multipole(s1, s, μ, effect::Function, cosmo::Cosmology;
-          L::Int = 0, 
-          use_windows::Bool = true, 
-          kwargs...) ::Float64
+          L::Int = 0, use_windows::Bool = true, kwargs...)
 
-     integrand_ξ_GNC_multipole(s1, s, μ, effect::String, cosmo::Cosmology; 
-          L::Int = 0, 
-          use_windows::Bool = true, 
-          kwargs...) ::Float64
+     integrand_ξ_GNC_multipole(s1, s, μ, effect::String, cosmo::Cosmology; kwargs...)
 
 Return the integrand on ``\\mu = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}`` 
 of the of the chosen correlation function term, i.e.
 the following function ``f(s_1, s, \\mu)``:
 
 ```math
-     f(s_1, s, \\mu) = \\xi (s_1, s_2, \\cos{\\theta}) 
-          \\, \\mathcal{L}_L(\\mu) \\,  \\phi(s_2) \\, F\\left(\\frac{s}{s_1}, \\mu \\right)
+     f_L(s_1, s, \\mu) = \\xi \\left(s_1, s_2, y\\right) 
+          \\, \\mathcal{L}_L(\\mu) \\, \\times 
+    \\begin{cases} 
+        \\frac{1}{\\mathcal{N}}\\mathcal{F}(s, \\mu) \\quad \\mathrm{use\\_windows == true} \\\\
+        1 \\quad\\quad \\mathrm{use\\_windows == false}
+    \\end{cases}
 ```
-where ``y =  \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``,
-``s = \\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}`` and ``\\xi`` is the corresponding
-CF effect.
+
+where:
+- ``s_2 = s_2(s_1, s, \\mu) = \\sqrt{s_1^2 + s^2 + 2 \\, s_1 \\, s \\, \\mu}`` 
+- ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2 = \\frac{\\mu \\, s + s_1}{s_2(s_1, s, \\mu)}``
+- ``\\xi`` is the corresponding CF effect
+- ``\\mathcal{L}_L(\\mu)`` is the Legendre polynomial of order ``L``
+- ``\\mathcal{F}(s, \\mu)`` is the integrated window function stored in `cosmo::Cosmology` (check the documentation of `WindowFIntegrated`)
+- ``\\mathcal{N}`` is the integrated window function norm (check the documentation of `WindowFIntegrated`)
 
 In the former method you have to pass as an input the `effect` function you want 
 to integrate, while in the (recommended) latter one it's necessary to specify the
@@ -88,42 +92,15 @@ name of the CF term among the following:
 
 `$(string(GaPSE.GR_EFFECTS_GNC .* " , "...))`
 
-to which correspond the following functions:
+to which correspond the following functions, respectively:
 
 `$(string(string.(GaPSE.VEC_ξs_GNC) .* " , "...))`
 
-The window functions ``F(x, \\mu)`` and ``\\phi(s)`` are calculated for the given
-Cosmology `cosmo` through the functions `spline_F` and `ϕ` respectivelly.
-
-In case `use_windows` is set to `false`, the window functions ``\\phi`` and ``F``
-are removed, i.e is returned the following function ``f^{'}(s_1, s, \\mu)``:
-
-```math
-     f^{'}(s_1, s, \\mu) = \\xi (s_1, s_2, \\cos{\\theta}) 
-          \\, \\mathcal{L}_L(\\mu) 
-```
-
-The function ``\\xi(s_1, s_2, \\cos{\\theta})`` is calculated
-from, depending on the value of `effect`:
-- `effect == auto_doppler` => [`ξ_GNC_Doppler`](@ref)
-- `effect == auto_lensing` => [`ξ_GNC_Lensing`](@ref)
-- `effect == auto_localgp` => [`ξ_GNC_LocalGP`](@ref)
-- `effect == auto_integratedgp` => [`ξ_GNC_IntegratedGP`](@ref)
-- `effect == doppler_lensing` => [`ξ_GNC_Doppler_lensing`](@ref)
-- `effect == lensing_doppler` => [`ξ_GNC_Lensing_Doppler`](@ref)
-- `effect == doppler_localgp` => [`ξ_GNC_Doppler_LocalGP`](@ref)
-- `effect == localgp_doppler` => [`ξ_GNC_LocalGP_Doppler`](@ref)
-- `effect == doppler_integratedgp` => [`ξ_GNC_Doppler_IntegratedGP`](@ref)
-- `effect == integratedgp_doppler` => [`ξ_GNC_IntegratedGP_Doppler`](@ref)
-- `effect == lensing_localgp` => [`ξ_GNC_Lensing_LocalGP`](@ref)
-- `effect == localgp_lensing` => [`ξ_GNC_LocalGP_Lensing`](@ref)
-- `effect == lensing_integratedgp` => [`ξ_GNC_Lensing_IntegratedGP`](@ref)
-- `effect == integratedgp_lensing` => [`ξ_GNC_IntegratedGP_Lensing`](@ref)
-- `effect == localgp_integratedgp` => [`ξ_GNC_LocalGP_IntegratedGP`](@ref)
-- `effect == integratedgp_localgp` => [`ξ_GNC_IntegratedGP_LocalGP`](@ref)
-
 Note that these is an internal conversion of coordiate sistems
-from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
+from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`. The inverse relations are:
+- ``s = s(s_1, s_2, y) = \\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}``
+- ``\\mu = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}} = \\frac{y \\, s_2 - s_1}{s(s_1, s_2, y)}``.
+
 
 ## Inputs
 
@@ -141,7 +118,7 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 - `L::Int = 0`: order of the Legendre polynomial to be used
 
 - `use_windows::Bool = false`: tells if the integrand must consider the two
-   window function ``\\phi`` and ``F``
+   window function ``\\phi`` and ``\\mathcal{F}``
 
 - `kwargs...` : other keyword arguments that will be passed to the selected 
   GR TPCF effect (`ξ_GNC_Doppler`, `ξ_GNC_Lensing`, ...)
@@ -149,7 +126,7 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`
 
 See also: [`ξ_GNC_multipole`](@ref), [`map_ξ_GNC_multipole`](@ref),
 [`print_map_ξ_GNC_multipole`](@ref),
-[`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
+[`WindowFIntegrated`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
 [`y`](@ref), [`s2`](@ref), [`GR_EFFECTS_GNC`](@ref)
 """
 integrand_ξ_GNC_multipole
@@ -162,49 +139,49 @@ integrand_ξ_GNC_multipole
 
 function ξ_GNC_multipole(
      s1, s, effect::Function, cosmo::Cosmology;
-     alg::Symbol = :lobatto, obs::Union{Bool, Symbol} = :noobsvel,
-     enhancer::Float64 = 1e6, N_lob::Int = 100, L::Int = 0,
-     N_trap::Int = 50, atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
+     alg::Symbol=:lobatto, obs::Union{Bool,Symbol}=:noobsvel,
+     enhancer::Float64=1e6, N_lob::Int=100, L::Int=0,
+     N_trap::Int=50, atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
      kwargs...)
 
      error = "$(string(effect)) is not a valid GR effect function for galaxy number counts.\n" *
              "Valid GR effect functions for galaxy number counts are the following:\n" *
              string(string.(VEC_ξs_GNC) .* " , "...)
      @assert (effect ∈ VEC_ξs_GNC) error
-     @assert typeof(obs) == Bool || obs ∈ VALID_OBS_VALUES ":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
-          "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
-     @assert alg ∈ VALID_INTEGRATION_ALGORITHM ":$alg is not a valid Symbol for \"alg\"; they are: \n\t"*
-          "$(":".*string.(VALID_INTEGRATION_ALGORITHM) .* vcat([" , " for i in 1:length(VALID_INTEGRATION_ALGORITHM)-1], " .")... )" 
+     @assert typeof(obs) == Bool || obs ∈ VALID_OBS_VALUES ":$obs is not a valid Symbol for \"obs\"; they are: \n\t" *
+                                                           "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )"
+     @assert alg ∈ VALID_INTEGRATION_ALGORITHM ":$alg is not a valid Symbol for \"alg\"; they are: \n\t" *
+                                               "$(":".*string.(VALID_INTEGRATION_ALGORITHM) .* vcat([" , " for i in 1:length(VALID_INTEGRATION_ALGORITHM)-1], " .")... )"
 
-     @assert N_trap > 2 "N_trap must be >2,  N_trap = $N_trap is not!"  
-     @assert N_lob > 2 "N_lob must be >2,  N_lob = $N_lob is not!"  
-     @assert atol_quad ≥ 0.0 "atol_quad must be ≥ 0.0,  atol_quad = $atol_quad is not!"  
-     @assert rtol_quad ≥ 0.0  "rtol_trap must be ≥ 0.0,  rtol_quad = $rtol_quad is not!" 
-     @assert L ≥ 0 "L must be ≥ 0, L = $L is not!"       
+     @assert N_trap > 2 "N_trap must be >2,  N_trap = $N_trap is not!"
+     @assert N_lob > 2 "N_lob must be >2,  N_lob = $N_lob is not!"
+     @assert atol_quad ≥ 0.0 "atol_quad must be ≥ 0.0,  atol_quad = $atol_quad is not!"
+     @assert rtol_quad ≥ 0.0 "rtol_trap must be ≥ 0.0,  rtol_quad = $rtol_quad is not!"
+     @assert L ≥ 0 "L must be ≥ 0, L = $L is not!"
 
 
-     orig_f(μ) = enhancer * integrand_ξ_GNC_multipole(s1, s, μ, effect, cosmo; L = L, obs = obs, kwargs...)
-     
-     int = if alg == :lobatto 
-               xs, ws = gausslobatto(N_lob)
-               dot(ws, orig_f.(xs))
+     orig_f(μ) = enhancer * integrand_ξ_GNC_multipole(s1, s, μ, effect, cosmo; L=L, obs=obs, kwargs...)
 
-          elseif alg == :quad 
-               quadgk(μ -> orig_f(μ), -1.0, 1.0; atol = atol_quad, rtol = rtol_quad)[1]
+     int = if alg == :lobatto
+          xs, ws = gausslobatto(N_lob)
+          dot(ws, orig_f.(xs))
 
-          elseif  alg == :trap
-               μs = union(
-                    range(-1.0, -0.98, length = Int(ceil(N_trap/3) + 1)),
-                    range(-0.98, 0.98, length = Int(ceil(N_trap/3) + 1)),
-                    range(0.98, 1.0, length = Int(ceil(N_trap/3) + 1))
-               )
-               #μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_trap)
-               orig_fs = orig_f.(μs)
-               trapz(μs, orig_fs)
+     elseif alg == :quad
+          quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=atol_quad, rtol=rtol_quad)[1]
 
-          else
-               throw(AssertionError("how the hell did you arrive here?"))
-          end
+     elseif alg == :trap
+          μs = union(
+               range(-1.0, -0.98, length=Int(ceil(N_trap / 3) + 1)),
+               range(-0.98, 0.98, length=Int(ceil(N_trap / 3) + 1)),
+               range(0.98, 1.0, length=Int(ceil(N_trap / 3) + 1))
+          )
+          #μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_trap)
+          orig_fs = orig_f.(μs)
+          trapz(μs, orig_fs)
+
+     else
+          throw(AssertionError("how the hell did you arrive here?"))
+     end
 
      return int / enhancer
 end
@@ -406,75 +383,75 @@ See also: [`integrand_ξ_GNC_multipole`](@ref), [`ξ_GNC_multipole`](@ref),
 [`y`](@ref), [`s2`](@ref), [`GR_EFFECTS_GNC`](@ref)
 """
 function map_ξ_GNC_multipole(cosmo::Cosmology,
-     effect::Union{String,Function}, ss = nothing;
-     s1 = nothing, L::Int = 0, alg::Symbol = :lobatto,
-     obs::Union{Bool, Symbol} = :noobsvel,
-     N_lob::Int = 100, N_trap::Int = 50, 
-     atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2, 
-     pr::Bool = true, N_log::Int = 1000, sum_xi::Bool = false, 
-     enhancer::Float64 = 1e6,
+     effect::Union{String,Function}, ss=nothing;
+     s1=nothing, L::Int=0, alg::Symbol=:lobatto,
+     obs::Union{Bool,Symbol}=:noobsvel,
+     N_lob::Int=100, N_trap::Int=50,
+     atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
+     pr::Bool=true, N_log::Int=1000, sum_xi::Bool=false,
+     enhancer::Float64=1e6,
      kwargs...)
 
-     @assert typeof(obs) == Bool || obs ∈ VALID_OBS_VALUES ":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
-          "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
-     @assert alg ∈ VALID_INTEGRATION_ALGORITHM ":$alg is not a valid Symbol for \"alg\"; they are: \n\t"*
-          "$(":".*string.(VALID_INTEGRATION_ALGORITHM) .* vcat([" , " for i in 1:length(VALID_INTEGRATION_ALGORITHM)-1], " .")... )" 
+     @assert typeof(obs) == Bool || obs ∈ VALID_OBS_VALUES ":$obs is not a valid Symbol for \"obs\"; they are: \n\t" *
+                                                           "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )"
+     @assert alg ∈ VALID_INTEGRATION_ALGORITHM ":$alg is not a valid Symbol for \"alg\"; they are: \n\t" *
+                                               "$(":".*string.(VALID_INTEGRATION_ALGORITHM) .* vcat([" , " for i in 1:length(VALID_INTEGRATION_ALGORITHM)-1], " .")... )"
 
-     @assert N_trap > 2 "N_trap must be >2,  N_trap = $N_trap is not!"  
-     @assert N_lob > 2 "N_lob must be >2,  N_lob = $N_lob is not!"  
-     @assert atol_quad ≥ 0.0 "atol_quad must be ≥ 0.0,  atol_quad = $atol_quad is not!"  
-     @assert rtol_quad ≥ 0.0  "rtol_trap must be ≥ 0.0,  rtol_quad = $rtol_quad is not!"
-     @assert L ≥ 0 "L must be ≥ 0, L = $L is not!"      
+     @assert N_trap > 2 "N_trap must be >2,  N_trap = $N_trap is not!"
+     @assert N_lob > 2 "N_lob must be >2,  N_lob = $N_lob is not!"
+     @assert atol_quad ≥ 0.0 "atol_quad must be ≥ 0.0,  atol_quad = $atol_quad is not!"
+     @assert rtol_quad ≥ 0.0 "rtol_trap must be ≥ 0.0,  rtol_quad = $rtol_quad is not!"
+     @assert L ≥ 0 "L must be ≥ 0, L = $L is not!"
 
      t1 = time()
 
 
      s_1 = isnothing(s1) ? cosmo.s_eff : s1
-     v_ss = isnothing(ss) ? 10 .^ range(0, log10(2*cosmo.s_max), length = N_log) : ss
+     v_ss = isnothing(ss) ? 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log) : ss
      xis = [0.0 for i in 1:length(v_ss)]
 
-     orig_f(μ, s) = enhancer * integrand_ξ_GNC_multipole(s_1, s, μ, effect, cosmo; 
-          L = L, obs = obs, kwargs...)
+     orig_f(μ, s) = enhancer * integrand_ξ_GNC_multipole(s_1, s, μ, effect, cosmo;
+          L=L, obs=obs, kwargs...)
 
-     if alg == :lobatto 
+     if alg == :lobatto
           μs, ws = gausslobatto(N_lob)
 
           global xis = pr ? begin
                @showprogress "$effect, L=$L: " [
-                    dot(ws, [orig_f(μ, s) for μ in μs])/enhancer for s in v_ss
-                    ]
-               end : [
-                    dot(ws, [orig_f(μ, s) for μ in μs])/enhancer for s in v_ss
+                    dot(ws, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
                ]
+          end : [
+               dot(ws, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
+          ]
 
-     elseif alg == :quad 
+     elseif alg == :quad
 
           global xis = pr ? begin
                @showprogress "$effect, L=$L: " [
-                    quadgk(μ -> orig_f(μ, s), -1.0, 1.0; 
-                         atol = atol_quad, rtol = rtol_quad)[1]/enhancer for s in v_ss
-                    ]
-               end : [
-                    quadgk(μ -> orig_f(μ, s), -1.0, 1.0; 
-                         atol = atol_quad, rtol = rtol_quad)[1]/enhancer for s in v_ss
+                    quadgk(μ -> orig_f(μ, s), -1.0, 1.0;
+                         atol=atol_quad, rtol=rtol_quad)[1] / enhancer for s in v_ss
                ]
+          end : [
+               quadgk(μ -> orig_f(μ, s), -1.0, 1.0;
+                    atol=atol_quad, rtol=rtol_quad)[1] / enhancer for s in v_ss
+          ]
 
-     elseif  alg == :trap
+     elseif alg == :trap
 
           μs = union(
-               range(-1.0, -0.98, length = Int(ceil(N_trap/3) + 1)),
-               range(-0.98, 0.98, length = Int(ceil(N_trap/3) + 1)),
-               range(0.98, 1.0, length = Int(ceil(N_trap/3) + 1))
+               range(-1.0, -0.98, length=Int(ceil(N_trap / 3) + 1)),
+               range(-0.98, 0.98, length=Int(ceil(N_trap / 3) + 1)),
+               range(0.98, 1.0, length=Int(ceil(N_trap / 3) + 1))
           )
           #μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_trap)
 
           global xis = pr ? begin
                @showprogress "$effect, L=$L: " [
-                    trapz(μs, [orig_f(μ, s) for μ in μs])/enhancer for s in v_ss
-                    ]
-               end : [
-                    trapz(μs, [orig_f(μ, s) for μ in μs])/enhancer for s in v_ss
+                    trapz(μs, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
                ]
+          end : [
+               trapz(μs, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
+          ]
 
      else
           throw(AssertionError("how the hell did you arrive here?"))
@@ -492,7 +469,7 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
 
      t2 = time()
      (!sum_xi) && (pr) && println("\ntime needed for map_ξ_GNC_multipole for $effect, L=$L " *
-                   "[in s] = $(@sprintf("%.5f", t2-t1)) \n")
+                                  "[in s] = $(@sprintf("%.5f", t2-t1)) \n")
      return (v_ss, xis)
 end
 
@@ -565,16 +542,16 @@ See also: [`integrand_ξ_GNC_multipole`](@ref), [`ξ_GNC_multipole`](@ref),
 [`y`](@ref), [`s2`](@ref), [`GR_EFFECTS_GNC`](@ref)
 """
 function print_map_ξ_GNC_multipole(
-          cosmo::Cosmology, out::String, 
-          effect::Union{String,Function}, ss = nothing;
-          s1 = nothing, L::Int = 0, kwargs...)
+     cosmo::Cosmology, out::String,
+     effect::Union{String,Function}, ss=nothing;
+     s1=nothing, L::Int=0, kwargs...)
 
      check_parent_directory(out)
      check_namefile(out)
 
      s_1 = isnothing(s1) ? cosmo.s_eff : s1
      t1 = time()
-     vec = map_ξ_GNC_multipole(cosmo, effect, ss; s1 = s_1, L = L, kwargs...)
+     vec = map_ξ_GNC_multipole(cosmo, effect, ss; s1=s_1, L=L, kwargs...)
      t2 = time()
 
      isfile(out) && run(`rm $out`)
@@ -583,7 +560,7 @@ function print_map_ξ_GNC_multipole(
 
           println(io, "#\n# This is an integration map on mu of the ξ L=$L multipole $effect GR effect")
           println(io, "# concerning the relativistic galaxy number counts.")
-          parameters_used(io, cosmo; logo = false)
+          parameters_used(io, cosmo; logo=false)
           println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
           print(io, "# kwards passed: ")
 
@@ -593,7 +570,7 @@ function print_map_ξ_GNC_multipole(
                     println(io, "# \t\t$(key) = $(kwargs[key])")
                end
           end
-          
+
           isnothing(s1) || println(io, "#\n# NOTE: the computation is done not in " *
                                        "s1 = s_eff, because you specified in input s1 = $s1 !")
           println(io, "# ")

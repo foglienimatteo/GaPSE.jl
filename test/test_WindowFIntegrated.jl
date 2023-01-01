@@ -111,38 +111,38 @@ end
 
 ##########
 
-@testset "test print_map_IntegratedF" begin
+@testset "test print_map_IntegratedF with com dist" begin
      name_trap = "datatest/WindowFIntegrated/IntF_trap.txt"
      name_quad = "datatest/WindowFIntegrated/IntF_quad.txt"
-     in = FILE_F_MAP
      out_trap = "calc_IntF_trap.txt"
      out_quad = "calc_IntF_quad.txt"
      #z_min, z_max = 0.05, 0.20;
      s_min, s_max = 148.1920001465757, 571.7022420258767
-     ref_ss = [s for s in 100.0:50.0:500.0]
+     ref_ss = [s for s in 0.0:50.0:500.0]
      ref_μs = vcat([-1.0, -0.98, -0.95], [μ for μ in -0.9:0.3:0.9], [0.95, 0.98, 1.0])
 
      isfile(out_trap) && rm(out_trap)
      isfile(out_quad) && rm(out_quad)
 
      @testset "zeros" begin
-          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, ref_μs, in, out_trap; alg=:anything)
-          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, ref_μs, in, out_trap; llim=-1.0)
-          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, ref_μs, in, out_trap; rlim=0.0)
-          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, ref_μs, in, out_trap; llim=1.0, rlim=0.5)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, ref_μs, FILE_F_MAP, out_trap; alg=:anything)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, ref_μs, FILE_F_MAP, out_trap; llim=-1.0)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, ref_μs, FILE_F_MAP, out_trap; rlim=0.0)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, ref_μs, FILE_F_MAP, out_trap; llim=1.0, rlim=0.5)
 
-          @test_throws AssertionError GaPSE.print_map_IntegratedF(-1.0, 10.0, ref_ss, ref_μs, in, out_trap)
-          @test_throws AssertionError GaPSE.print_map_IntegratedF(1.0, 0.5, ref_ss, ref_μs, in, out_trap)
-          @test_throws AssertionError GaPSE.print_map_IntegratedF(1.0, 1.0, ref_ss, ref_μs, in, out_trap)
-          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, [-1.0, 0.0, 50.0, 100.0], ref_μs, in, out_trap)
-          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, [0.0, 50.0, 30.0, 100.0], ref_μs, in, out_trap)
-          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, [-1.5, -1.0, 0.0, 0.5], in, out_trap)
-          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, [-1.0, -0.5, 0.5, 0.0, 1.0], in, out_trap)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(-1.0, 10.0, ref_ss, ref_μs, FILE_F_MAP, out_trap)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(1.0, 0.5, ref_ss, ref_μs, FILE_F_MAP, out_trap)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(1.0, 1.0, ref_ss, ref_μs, FILE_F_MAP, out_trap)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, [-1.0, 0.0, 50.0, 100.0], ref_μs, FILE_F_MAP, out_trap)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, [0.0, 50.0, 30.0, 100.0], ref_μs, FILE_F_MAP, out_trap)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, [-1.5, -1.0, 0.0, 0.5], FILE_F_MAP, out_trap)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, [-1.0, -0.5, 0.5, 0.0, 1.0], FILE_F_MAP, out_trap)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, ref_μs, FILE_F_MAP, "nonexistingdir/file.txt")
      end
 
 
      @testset "test trap 1" begin
-          GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, ref_μs, in, out_trap;
+          GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, ref_μs, FILE_F_MAP, out_trap;
                alg=:trap, kwargs_map_F_int...)
 
           table_output_F = readdlm(out_trap, comments=true)
@@ -163,7 +163,7 @@ end
      end
 
      @testset "test trap 2" begin
-          wf = GaPSE.WindowF(in)
+          wf = GaPSE.WindowF(FILE_F_MAP)
           GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, ref_μs, wf, out_trap;
                alg=:trap, kwargs_map_F_int...)
 
@@ -185,7 +185,7 @@ end
      end
 
      @testset "test quad 1" begin
-          GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, ref_μs, in, out_quad;
+          GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, ref_μs, FILE_F_MAP, out_quad;
                alg=:quad, kwargs_map_F_int...)
 
           table_output_F = readdlm(out_quad, comments=true)
@@ -206,8 +206,132 @@ end
      end
 
      @testset "test quad 2" begin
-          wf = GaPSE.WindowF(in)
+          wf = GaPSE.WindowF(FILE_F_MAP)
           GaPSE.print_map_IntegratedF(s_min, s_max, ref_ss, ref_μs, wf, out_quad;
+               alg=:quad, kwargs_map_F_int...)
+
+          table_output_F = readdlm(out_quad, comments=true)
+          output_ss = convert(Vector{Float64}, table_output_F[:, 1])
+          output_μs = convert(Vector{Float64}, table_output_F[:, 2])
+          output_IFs = convert(Vector{Float64}, table_output_F[:, 3])
+
+          table_F = readdlm(name_quad, comments=true)
+          ss = convert(Vector{Float64}, table_F[:, 1])
+          μs = convert(Vector{Float64}, table_F[:, 2])
+          IFs = convert(Vector{Float64}, table_F[:, 3])
+
+          @test all([s1 ≈ s2 for (s1, s2) in zip(ss, output_ss)])
+          @test all([μ1 ≈ μ2 for (μ1, μ2) in zip(μs, output_μs)])
+          @test all([IF1 ≈ IF2 for (IF1, IF2) in zip(IFs, output_IFs)])
+
+          rm(out_quad)
+     end
+end
+
+@testset "test print_map_IntegratedF with redshifts" begin
+     name_trap = "datatest/WindowFIntegrated/IntF_trap.txt"
+     name_quad = "datatest/WindowFIntegrated/IntF_quad.txt"
+     out_trap = "calc_IntF_trap.txt"
+     out_quad = "calc_IntF_quad.txt"
+     # The following vector of redshifts are the values corresponding for the ""future""
+     # Cosmology to the following comoving distances
+     #s_min, s_max = 148.1920001465757, 571.7022420258767
+     # ref_ss = [s for s in 100.0:50.0:500.0]
+     z_min, z_max = 0.05, 0.20
+     ref_zs = [0.0, 0.01674166576924665,
+          0.03361259170114134, 0.050617270275786205, 0.06776014179168262,
+          0.08504575380657542, 0.10247876620072593, 0.12006395442156174,
+          0.1378062128024508, 0.15571055793431468, 0.17378213220269997]
+
+     ref_μs = vcat([-1.0, -0.98, -0.95], [μ for μ in -0.9:0.3:0.9], [0.95, 0.98, 1.0])
+
+     isfile(out_trap) && rm(out_trap)
+     isfile(out_quad) && rm(out_quad)
+
+     @testset "zeros" begin
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(z_min, z_max, ref_zs, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND; alg=:anything)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(z_min, z_max, ref_zs, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND; llim=-1.0)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(z_min, z_max, ref_zs, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND; rlim=0.0)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(z_min, z_max, ref_zs, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND; llim=1.0, rlim=0.5)
+
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(-1.0, 1.0, ref_zs, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(1.0, 0.5, ref_zs, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(1.0, 1.0, ref_zs, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(z_min, z_max, [-1.0, 0.0, 0.1, 0.2], ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(z_min, z_max, [0.0, 0.2, 0.1, 0.3], ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(z_min, z_max, ref_zs, [-1.5, -1.0, 0.0, 0.5], FILE_F_MAP, out_trap, FILE_BACKGROUND)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(z_min, z_max, ref_zs, [-1.0, -0.5, 0.5, 0.0, 1.0], FILE_F_MAP, out_trap, FILE_BACKGROUND)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(z_min, z_max, ref_zs, ref_μs, FILE_F_MAP, "nonexistingdir/file.txt", FILE_BACKGROUND)
+     end
+
+
+     @testset "test trap 1" begin
+          GaPSE.print_map_IntegratedF(z_min, z_max, ref_zs, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND;
+               alg=:trap, kwargs_map_F_int...)
+
+          table_output_F = readdlm(out_trap, comments=true)
+          output_ss = convert(Vector{Float64}, table_output_F[:, 1])
+          output_μs = convert(Vector{Float64}, table_output_F[:, 2])
+          output_IFs = convert(Vector{Float64}, table_output_F[:, 3])
+
+          table_F = readdlm(name_trap, comments=true)
+          ss = convert(Vector{Float64}, table_F[:, 1])
+          μs = convert(Vector{Float64}, table_F[:, 2])
+          IFs = convert(Vector{Float64}, table_F[:, 3])
+
+          @test all([s1 ≈ s2 for (s1, s2) in zip(ss, output_ss)])
+          @test all([μ1 ≈ μ2 for (μ1, μ2) in zip(μs, output_μs)])
+          @test all([IF1 ≈ IF2 for (IF1, IF2) in zip(IFs, output_IFs)])
+
+          rm(out_trap)
+     end
+
+     @testset "test trap 2" begin
+          wf = GaPSE.WindowF(FILE_F_MAP)
+          GaPSE.print_map_IntegratedF(z_min, z_max, ref_zs, ref_μs, wf, out_trap, FILE_BACKGROUND;
+               alg=:trap, kwargs_map_F_int...)
+
+          table_output_F = readdlm(out_trap, comments=true)
+          output_ss = convert(Vector{Float64}, table_output_F[:, 1])
+          output_μs = convert(Vector{Float64}, table_output_F[:, 2])
+          output_IFs = convert(Vector{Float64}, table_output_F[:, 3])
+
+          table_F = readdlm(name_trap, comments=true)
+          ss = convert(Vector{Float64}, table_F[:, 1])
+          μs = convert(Vector{Float64}, table_F[:, 2])
+          IFs = convert(Vector{Float64}, table_F[:, 3])
+
+          @test all([s1 ≈ s2 for (s1, s2) in zip(ss, output_ss)])
+          @test all([μ1 ≈ μ2 for (μ1, μ2) in zip(μs, output_μs)])
+          @test all([IF1 ≈ IF2 for (IF1, IF2) in zip(IFs, output_IFs)])
+
+          rm(out_trap)
+     end
+
+     @testset "test quad 1" begin
+          GaPSE.print_map_IntegratedF(z_min, z_max, ref_zs, ref_μs, FILE_F_MAP, out_quad, FILE_BACKGROUND;
+               alg=:quad, kwargs_map_F_int...)
+
+          table_output_F = readdlm(out_quad, comments=true)
+          output_ss = convert(Vector{Float64}, table_output_F[:, 1])
+          output_μs = convert(Vector{Float64}, table_output_F[:, 2])
+          output_IFs = convert(Vector{Float64}, table_output_F[:, 3])
+
+          table_F = readdlm(name_quad, comments=true)
+          ss = convert(Vector{Float64}, table_F[:, 1])
+          μs = convert(Vector{Float64}, table_F[:, 2])
+          IFs = convert(Vector{Float64}, table_F[:, 3])
+
+          @test all([s1 ≈ s2 for (s1, s2) in zip(ss, output_ss)])
+          @test all([μ1 ≈ μ2 for (μ1, μ2) in zip(μs, output_μs)])
+          @test all([IF1 ≈ IF2 for (IF1, IF2) in zip(IFs, output_IFs)])
+
+          rm(out_quad)
+     end
+
+     @testset "test quad 2" begin
+          wf = GaPSE.WindowF(FILE_F_MAP)
+          GaPSE.print_map_IntegratedF(z_min, z_max, ref_zs, ref_μs, wf, out_quad, FILE_BACKGROUND;
                alg=:quad, kwargs_map_F_int...)
 
           table_output_F = readdlm(out_quad, comments=true)
@@ -300,10 +424,10 @@ end
      wfi_trap = GaPSE.WindowFIntegrated("datatest/WindowFIntegrated/IntF_trap.txt")
      spline_trap(s, μ) = GaPSE.spline_integrF(s, μ, wfi_trap)
 
-     @test isapprox(spline_trap(375.0, -0.8), 1.59994e+09; rtol=1e-5)
-     @test isapprox(spline_trap(499.0, -0.8), 1.27605e+09; rtol=1e-5)
-     @test isapprox(spline_trap(375.0, 0.1), 6.21812e+08; rtol=1e-5)
-     @test isapprox(spline_trap(499.0, 0.1), 1.04803e+08; rtol=1e-5)
+     @test isapprox(spline_trap(375.0, -0.8), 1.599944823071156e9; rtol=1e-5)
+     @test isapprox(spline_trap(499.0, -0.8), 1.2760483651794796e9; rtol=1e-5)
+     @test isapprox(spline_trap(375.0, 0.1), 6.21811893461226e8; rtol=1e-5)
+     @test isapprox(spline_trap(499.0, 0.1), 1.0480317459427744e8; rtol=1e-5)
 end
 
 @testset "test second method print_map_integrated" begin

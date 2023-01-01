@@ -50,7 +50,6 @@ function main()
      z_min, z_max, θ_max = 1.0, 1.5, π / 2.0;
 
      #=
-
      kwargs_map_F_hcub = Dict(
           :θ_max => θ_max, :tolerance => 1e-10, 
           :rtol => 1e-2, :atol => 1e-3, :pr => true,
@@ -95,14 +94,19 @@ function main()
      FILE_IF_MAP = PATH_TO_GAPSE * "data/IntegrF_REFERENCE_pi2_z005020.txt"
 
      #=
+     double_z_max = GaPSE.corresponding_redshift(z_max, 3.0, FILE_BACKGROUND)
+     calc_zs = [z for z in range(0.0, double_z_max, length=100)]
+
      calc_μs = union(
           [μ for μ in range(-1.0, -0.98, length = 50)], 
           [μ for μ in range(-0.98, 0.98, length = 102)],
           [μ for μ in range(0.98, 1.0, length = 50)]);
 
      GaPSE.print_map_IntegratedF(
-          FILE_F_MAP, FILE_IF_MAP, 
-          z_min, z_max, calc_μs;
+          z_min, z_max, calc_zs, calc_μs,
+          PATH_TO_GAPSE * "data/F_REFERENCE_pi2.txt", 
+          PATH_TO_GAPSE * "data/IntegrF_REFERENCE_pi2_z005020.txt", 
+          FILE_BACKGROUND;
           alg = :trap, Dict(
                :llim => nothing, :rlim => nothing, 
                :rtol => 1e-2, :atol => 0.0, 

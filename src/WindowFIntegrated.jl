@@ -163,9 +163,10 @@ function print_map_IntegratedF(s_min, s_max, ss::Vector{Float64},
      check_parent_directory(out)
      check_namefile(out)
 
-     @assert 0 < s_min < s_max " 0 < s_min < s_max must hold!"
+     @assert 0.0 < s_min < s_max " 0.0 < s_min < s_max must hold!"
      @assert 9 < N < 100001 " 10 < N < 100001 must hold!"
      @assert all(ss .≥ 0.0) "All ss must be ≥ 0.0!"
+     @assert ss[begin] ≈ 0.0 "Why don't you start sampling from s=0ad from s=$(ss[begin])?"
      @assert all([ss[i+1] > ss[i] for i in 1:(length(ss)-1)]) "ss must be a float vector of increasing values!"
      @assert all(μs .≥ -1.0) "All μs must be ≥-1.0!"
      @assert all([μs[i+1] > μs[i] for i in 1:(length(μs)-1)]) "μs must be a float vector of increasing values!"
@@ -229,6 +230,9 @@ function print_map_IntegratedF(s_min, s_max, ss::Vector{Float64},
           println(io, "# where F(x, \\mu) is stored in a WindowF struct (for its analytical definition, check the code.\n#")
 
           println(io, "#\n# Time needed for this computation [in s]: $(t2-t1)")
+          println(io, "# Range of interest:")
+          println(io, "# \t s_min = $s_min h_0^{-1} Mpc")
+          println(io, "# \t s_max = $s_max h_0^{-1} Mpc")
           println(io, "# The keyword arguments were:")
           println(io, "# \t alg = :$alg \t llim = $llim \t rlim = $rlim")
           println(io, "# \t rtol = $rtol \t atol = $atol \t N = $N \t pr = $pr")
@@ -246,22 +250,32 @@ function print_map_IntegratedF(z_min, z_max, zs::Vector{Float64},
      file_data::String;
      names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
 
+     @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
+     @assert all(zs .≥ 0.0) "All zs must be ≥ 0.0!"
+     @assert zs[begin] ≈ 0.0 "Why don't you start sampling from z=0 instead from z=$(zs[begin])?"
+     @assert all([zs[i+1] > zs[i] for i in 1:(length(zs)-1)]) "zs must be a float vector of increasing values!"
+
      BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
      s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+     SS = union([0.0], s_of_z.(zs[begin+1:end]))
 
-     print_map_IntegratedF(s_of_z(z_min), s_of_z(z_max), s_of_z.(zs),
+     print_map_IntegratedF(s_of_z(z_min), s_of_z(z_max), SS,
           μs, windowF, out; kwargs...)
 end
 
 
 """
-     print_map_IntegratedF(s_min, s_max, ss::Vector{Float64},
-          μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String;
+     print_map_IntegratedF(
+          s_min, s_max, 
+          ss::Vector{Float64}, μs::Vector{Float64}, 
+          windowF::Union{String,WindowF}, out::String;
           alg::Symbol=:trap, llim=nothing, rlim=nothing,
           rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true)
 
-     print_map_IntegratedF(z_min, z_max, ss::Vector{Float64},
-          μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String,
+     print_map_IntegratedF(
+          z_min, z_max, 
+          zs::Vector{Float64}, μs::Vector{Float64}, 
+          windowF::Union{String,WindowF}, out::String,
           file_data::String; 
           names_bg = NAMES_BACKGROUND, h_0 = 0.7, kwargs...)
 
@@ -270,13 +284,24 @@ of ``\\mu`` and ``s`` values, and print the results in the `out` file.
 
 
 The first method takes as input:
-- `s_min` and `s_max` for the radial `ϕ` function.
-- `ss::Vector{Float64}` and `μs::Vector{Float64}` :  the vector of s and μ points where to evaluate 
-  sample the integrated window function ``\\mathcal{F}``; they will be stored in the struct.
+- `s_min` and `s_max` : min and max comoving distance of the survey; their values will be internally
+  used by the radial function `ϕ`
+- `ss::Vector{Float64}` and `μs::Vector{Float64}` :  the vector of s and μ points where to  
+  sample the integrated window function ``\\mathcal{F}``. They must be a float vector of 
+  increasing values; more precisely:
+  - `ss` must be a float vector of increasing comoving distance values (so each element must be ≥ 0);
+    the first and last values ARE NOT RELATED to `s_min` and `s_max`.
+  - `μs` must be a float vector of increasing cosine values (so each element x must be -1 ≤ x ≤ 1).
+
 - `windowF::Union{String,WindowF}`, i.e. the window function itself; it can be passed as the namefile
   where the window is stored in (that will be opened with `WindowF`) or as a `WindowF` struct directly.
 - `out::String` : the name of the output file
 
+The second method takes as input the min and max redshifts of the survey (`z_min`and `z_max`),
+the vector of redshifts `zs::Vector{Float64}` for the integrated window function sampling and the `file_data` where
+there can be found the association ``z \\rightarrow s(z)``. Such file must have the structure of the 
+background data produced by the [`CLASS`](https://github.com/lesgourg/class_public) code.
+Note that also `zs` musyt be a float vector of increasing redshift values (so each element must be ≥ 0).
 
 The analytical expression for the integrated window function is the following:
 
@@ -290,7 +315,9 @@ The analytical expression for the integrated window function is the following:
 where ``\\phi`` is the angular part of the survey window function and ``F(x, μ)`` is the 
 window function. Check the documentation of `WindowF` for its definition.
 
-As optional arguments:
+## Optional arguments
+
+As optional arguments of the first method:
 
 - `alg::Symbol = :trap` : algorithm to be used for the integration; the valid options are `:quad`
   (that will recall `integrated_F_quadgk`) and `:trap` (that will recall `integrated_F_trapz`);
@@ -304,8 +331,24 @@ As optional arguments:
   `alg = :trap`;
 - `pr::Bool = true` : do you want to see the progress-bar of the computation?
 
+The optional arguments given to the second method will be directly given to the first one.
+The only two exceptions are options relative to the background data, managed internally by the struct
+`BackgroundData`:
+
+- `names = NAMES_BACKGROUND` : the column names of the `file_data`. If the colum order change from
+  the default one `NAMES_BACKGROUND`, you must set as input the vector of string with the correct
+  one, with the SAME names. They are, with the default order:\n
+  $(NAMES_BACKGROUND)
+
+- `h = 0.7` : the adimensional hubble constant. By default, CLASS background data are measured with
+  it numerically expressed (so distances are measured in `Mpc`, for example), while this code works
+  with `h` in the unit of measure (so distances are measured in `Mpc/h`, for example).
+  Change this value to `1.0` if the input data do not have this issue, or to your value of interest 
+  (`0.67`, `0.5`, ...).
+
 See also: [`integrated_F_quadgk`](@ref), [`integrated_F_trapz`](@ref),
-[`ϕ`](@ref), [`WindowF`](@ref), [`WindowFIntegrated`](@ref)
+[`ϕ`](@ref), [`WindowF`](@ref), [`WindowFIntegrated`](@ref),
+[`BackgroundData`](@ref)
 """
 print_map_IntegratedF
 

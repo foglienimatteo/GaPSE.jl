@@ -227,3 +227,49 @@ See also: [`A`](@ref), [`V_survey`](@ref)
 const A_prime = 1.0 / (4.0 * π)
 
 
+
+##########################################################################################92
+
+
+"""
+    corresponding_redshift(z, m, file_data::String; names_bg=NAMES_BACKGROUND, h_0=0.7, Z_MAX = 1e3)
+
+For a given `file_data` containing the csomological background quantities (that will be managed
+by the struct `BackgroundData`), return the redshift corresponding (for that cosmology) to the 
+comoving distance equals to `m * s(z)`, where `z` is the input redshift and `m` a coeffient.
+
+Essentially, in a sketch:
+
+Input `z`, `m` -> Computes `s1 = s(z)`  -> Computes `s2 = m * s1 ` -> Return `z2 = z(s2)`
+
+This function is not efficient, it should be used only in order to have a rough estimation for the
+maximum sampling value of the Integrated Window Function.
+
+## Optional arguments
+
+- `names = NAMES_BACKGROUND` : the column names of the `file_data`. If the colum order change from
+  the default one `NAMES_BACKGROUND`, you must set as input the vector of string with the correct
+  one, with the SAME names. They are, with the default order:\n
+  $(NAMES_BACKGROUND)
+
+- `h = 0.7` : the adimensional hubble constant. By default, CLASS background data are measured with
+  it numerically expressed (so distances are measured in `Mpc`, for example), while this code works
+  with `h` in the unit of measure (so distances are measured in `Mpc/h`, for example).
+  Change this value to `1.0` if the input data do not have this issue, or to your value of interest 
+  (`0.67`, `0.5`, ...).
+
+- `Z_MAX = 1e3` : maximum redshift to consider for BackgroundData; it should be high.
+
+See also: [`BackgroundData`](@ref), [`WindowFIntegrated`](@ref)
+"""
+function corresponding_redshift(z, m, file_data::String; names_bg=NAMES_BACKGROUND, h_0=0.7, Z_MAX=1e3)
+     @assert m > 0 "m > 0 must hold!"
+     @assert 0.0 ≤ z < Z_MAX "0.0 ≤ z < Z_MAX must hold"
+
+     BD = BackgroundData(file_data, Z_MAX; names=names_bg, h=h_0)
+     s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+     z_of_s = Spline1D(BD.comdist, BD.z; bc="error")
+
+     s = s_of_z(z)
+     return z_of_s(m * s)
+end

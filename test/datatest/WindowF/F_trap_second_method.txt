@@ -6,7 +6,7 @@
 # For its analytical definition, check the code.
 #
 # Parameters used in this integration map:
-# computational time (in s) : 19.857
+# computational time (in s) : 19.067
 # kwards passed: 
 # 		alg = :trap
 # 		θ_max = 1.5707963267948966
