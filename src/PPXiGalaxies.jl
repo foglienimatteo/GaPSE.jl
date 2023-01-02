@@ -211,7 +211,7 @@ of the of the galaxies two-point correlation function in the plane parallel appr
 i.e. the following function ``f(s_1, s, \\mu)``:
 
 ```math
-     f_L(s_1, s, \\mu) = \\xi^{\\mathrm{pp}} \\left(s, \\mu\\right) 
+     f_L(s, \\mu) = \\xi^{\\mathrm{pp}} \\left(s, \\mu\\right) 
           \\, \\mathcal{L}_L(\\mu) \\, \\times 
     \\begin{cases} 
         \\frac{1}{\\mathcal{N}}\\mathcal{F}(s, \\mu) \\quad \\mathrm{use\\_windows == true} \\\\
@@ -226,6 +226,20 @@ where:
 - ``\\mathcal{F}(s, \\mu)`` is the integrated window function stored in `cosmo::Cosmology` (check the documentation of `WindowFIntegrated`)
 - ``\\mathcal{N}`` is the integrated window function norm (check the documentation of `WindowFIntegrated`)
 
+## Inputs
+
+- `s`: the comoving distance  where must be evaluated the integral
+
+- `μ`: the cosine between `s1` and `s` where must be evaluated the integral
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
+
+## Optional arguments 
+
+- `L::Int = 0`: order of the Legendre polynomial to be used
+
+- `use_windows::Bool = false`: tells if the integrand must consider the two
+   window function ``\\phi`` and ``\\mathcal{F}``
 
 See also: [`ξ_PPGalaxies`](@ref), [`WindowFIntegrated`](@ref), [`Cosmology`](@ref), 
 """
@@ -257,6 +271,9 @@ end
 
 
 
+"""
+
+"""
 function ξ_PPGalaxies_multipole(
      s, cosmo::Cosmology;
      L::Int=0,
