@@ -340,7 +340,7 @@ See also: [`integrand_ξ_GNC_multipole`](@ref),
           kwargs...) ::Tuple{Vector{Float64}, Vector{Float64}}
 
 Evaluate the multipole of order `L` of the chosen Galaxy Number Counts (GNC) 
-Two-Point Correlation Function (TPCF) term for all the  comoving distance 
+Two-Point Correlation Function (TPCF) term for all the comoving distance 
 values stored inside `ss`.
 If `ss = nothing`, it is set `ss = 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log)`.
 If `s1 = nothing`, it is set `s1 = cosmo.s_eff`.
@@ -434,7 +434,7 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`. The inve
   the internal result is divided by `enhancer`.
 
 - `N_log::Int = 1000` : number of points to be used in the default logaritmically-spaced 
-  range for `ss`, i.e. `range(0, 3, N_log)`; it is ignored if `ss ≠ nothing` 
+  range for `ss`, i.e. `range(0, log10(2 * cosmo.s_max), length=N_log)`; it is ignored if `ss ≠ nothing` 
 
 - `pr::Bool = true` : do you want the progress bar showed on screen, in order to 
   check the time needed for the computation? (`true` recommended)
@@ -453,14 +453,14 @@ See also: [`integrand_ξ_GNC_multipole`](@ref), [`ξ_GNC_multipole`](@ref),
 [`y`](@ref), [`s2`](@ref), [`GR_EFFECTS_GNC`](@ref), [`GaPSE.VEC_ξs_GNC`](@ref)
 """
 function map_ξ_GNC_multipole(cosmo::Cosmology,
-          effect::Union{String,Function}, ss = nothing;
-          s1 = nothing, L::Int = 0, alg::Symbol = :lobatto,
-          obs::Union{Bool,Symbol} = :noobsvel,
-          N_lob::Int = 100, N_trap::Int = 50,
-          atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
-          enhancer::Float64=1e6, N_log::Int = 1000, 
-          pr::Bool = true, sum_xi::Bool = false,
-          kwargs...) 
+     effect::Union{String,Function}, ss=nothing;
+     s1=nothing, L::Int=0, alg::Symbol=:lobatto,
+     obs::Union{Bool,Symbol}=:noobsvel,
+     N_lob::Int=100, N_trap::Int=50,
+     atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
+     enhancer::Float64=1e6, N_log::Int=1000,
+     pr::Bool=true, sum_xi::Bool=false,
+     kwargs...)
 
      @assert typeof(obs) == Bool || obs ∈ VALID_OBS_VALUES ":$obs is not a valid Symbol for \"obs\"; they are: \n\t" *
                                                            "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )"
@@ -546,39 +546,44 @@ end
 
 ##########################################################################################92
 
-
 """
      print_map_ξ_GNC_multipole(
-          cosmo::Cosmology,
-          out::String,
+          cosmo::Cosmology, out::String,
           effect::Union{String,Function},
           ss = nothing;
           s1 = nothing,
           kwargs...)
 
-Evaluate the multipole of order `L` of the chosen correlation function term, 
-through the `ξ_GNC_multipole` function, for all the `s` values stored inside `ss`, and
-print the results (with all the options used) in a file named `out`.
-If `ss = nothing`, it is set `ss = 10 .^ range(0, 3, length = N_log)`.
+Evaluate the multipole of order `L` of the chosen Galaxy Number Counts (GNC) 
+Two-Point Correlation Function (TPCF) term for all the  comoving distance 
+values stored inside `ss`, and print the results (with all the options used) 
+in a file named `out`.
+If `ss = nothing`, it is set `ss = 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log)`.
 If `s1 = nothing`, it is set `s1 = cosmo.s_eff`.
 
-The function evaluated is then the following:
+The function evaluated is then the following ``\\xi_L(s_1, s)``:
 
 ```math
-\\xi_L(s_1, s, \\mu) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
-    \\xi (s_1, s_2, \\cos{\\theta}) \\, \\mathcal{L}_L(\\mu) \\,  \\times
-\\begin{cases}  
-    \\phi(s_2) \\, F\\left(\\frac{s}{s_1}, \\mu \\right) \\;,
-        \\quad \\mathrm{use_windows == true}\\\\
-    1\\;, \\quad \\mathrm{use_windows == false}
-\\end{cases}
+    \\xi_L(s_1, s) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
+        \\xi (s_1, s_2, \\cos{\\theta}) \\, \\mathcal{L}_L(\\mu) \\,  \\times
+    \\begin{cases} 
+        \\frac{1}{\\mathcal{N}}\\mathcal{F}(s, \\mu) \\quad \\mathrm{use\\_windows == true} \\\\
+        1 \\quad\\quad \\mathrm{use\\_windows == false}
+    \\end{cases}
 ```
-where ``y =  \\cos{\\theta} = \\hat{\\mathbf{s}}_1 
-\\cdot \\hat{\\mathbf{s}}_2`` and ``\\xi`` is the chosen CF effect, for all the 
-comoving distances `s` inside `ss`. 
 
-The window functions ``F(x, \\mu)`` and ``\\phi(s)`` are calculated for the given
-Cosmology `cosmo` through the functions `spline_F` and `ϕ` respectivelly.
+where:
+- ``s_2 = s_2(s_1, s, \\mu) = \\sqrt{s_1^2 + s^2 + 2 \\, s_1 \\, s \\, \\mu}`` 
+- ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2 = \\frac{\\mu \\, s + s_1}{s_2(s_1, s, \\mu)}``
+- ``\\xi`` is the corresponding GNC TPCF effect
+- ``\\mathcal{L}_L(\\mu)`` is the Legendre polynomial of order ``L``
+- ``\\mathcal{F}(s, \\mu)`` is the integrated window function stored in `cosmo::Cosmology` (check the documentation of `WindowFIntegrated`)
+- ``\\mathcal{N}`` is the integrated window function norm (check the documentation of `WindowFIntegrated`) 
+
+Note that these is an internal conversion of coordiate sistems
+from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`. The inverse relations are:
+- ``s = s(s_1, s_2, y) = \\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}``
+- ``\\mu = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}} = \\frac{y \\, s_2 - s_1}{s(s_1, s_2, y)}``.
 
 ## Inputs
 
@@ -596,20 +601,70 @@ Cosmology `cosmo` through the functions `spline_F` and `ϕ` respectivelly.
 - `out::String` : name of the file where the results must be stored.
 
 - ``ss` : vector/range of `s` values where the function must be evaluated; if `ss = nothing`, 
-  it is set `ss = 10 .^ range(0, 3, length = N_log)`.
+  it is set `ss = 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log)`.
 
 
 ## Optional arguments
 
-- `s1 = nothing` : comoving distance from the observer where the TPCF should be evaluated;
-  if `s1 = nothing`, it is automatically set `s1 = cosmo.s_eff` from the given input `Cosmology`.
+This function recall internally `map_ξ_GNC_multipole`, so the kwargs are the same; we report them
+for comfortness:
 
-- `kwargs...` : other keyword arguments that will be passed to `map_ξ_GNC_multipole`
+- `s1 = nothing` : comoving distance from the observer where the TPCF should be evaluated;
+  if `s1 = nothing`, it is automatically set `s1 = cosmo.s_eff` from the given input `cosmo::Cosmology`.
+
+- `L::Int = 0`: order of the Legendre polynomial to be used
+
+- `alg::Symbol = :trap` : algorithm to be used for the integration; the valid options 
+  are (other values will lead to `AssertionError`):
+  - `:quad` -> the integration over ``\\mu`` will be preformed through the Julia function `quadgk` 
+  from the [`QuadGK.jl`](https://github.com/JuliaMath/QuadGK.jl) Julia package, that uses an adaptive 
+  Gauss-Kronrod quadrature.
+  - `:trap` -> the integration over ``\\mu`` will be preformed through the Julia function `trapz` 
+  from the [`Trapz.jl`](https://github.com/francescoalemanno/Trapz.jl) Julia package, that uses the
+  simple trapezoidal rulae.
+  - `:lobatto` -> the integration over ``\\mu`` will be preformed through the Julia function `gausslobatto` 
+  from the [`FastGaussQuadrature.jl`](https://github.com/JuliaApproximation/FastGaussQuadrature.jl) Julia package, 
+  that uses the Gauss-Lobatto quadrature. 
+  WE RECOMMEND TO USE `:quad` FOR MONOPOLES AND `:lobatto` FOR HIGHER ORDER MULTIPOLES!
+  
+- `use_windows::Bool = false`: tells if the integrand must consider the two
+   window function ``\\phi`` and ``\\mathcal{F}``
+
+- `obs::Union{Bool,Symbol} = :noobsvel` : do you want to consider the observer terms in the computation of the 
+  chosen GNC TPCF effect?
+  - `:yes` or `true` -> all the observer effects will be considered
+  - `:no` or `false` -> no observer term will be taken into account
+  - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
+    will be neglected, the other ones will be taken into account
+
+- `N_lob::Int = 100` : number of points to be used in the sampling made by the function `trapz`.
+  Note that these options will have an effect only if you se `alg = :quad`.
+
+- `N_trap::Int = 200` : number of points to be used in the sampling made by the function `trapz`.
+  Note that these options will have an effect only if you se `alg = :quad`.
+
+- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+  to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
+  because the time for evaluation increase quickly.
+  Note that these options will have an effect only if you se `alg = :quad`.
+
+- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+  the returned value is NOT modified by this value, because after a multiplication
+  the internal result is divided by `enhancer`.
+
+- `N_log::Int = 1000` : number of points to be used in the default logaritmically-spaced 
+  range for `ss`, i.e. `range(0, log10(2 * cosmo.s_max), length=N_log)`; it is ignored if `ss ≠ nothing` 
+
+- `pr::Bool = true` : do you want the progress bar showed on screen, in order to 
+  check the time needed for the computation? (`true` recommended)
+
+- `kwargs...` : other keyword arguments that will be passed to the selected 
+  GNC TPCF effect (`ξ_GNC_Doppler`, `ξ_GNC_Lensing`, ...)
 
 See also: [`integrand_ξ_GNC_multipole`](@ref), [`ξ_GNC_multipole`](@ref),
-[`map_ξ_GNC_multipole`](@ref), 
-[`spline_F`](@ref), [`ϕ`](@ref), [`Cosmology`](@ref), 
-[`y`](@ref), [`s2`](@ref), [`GR_EFFECTS_GNC`](@ref)
+[`print_map_ξ_GNC_multipole`](@ref),
+[`WindowFIntegrated`](@ref), [`Cosmology`](@ref), 
+[`y`](@ref), [`s2`](@ref), [`GR_EFFECTS_GNC`](@ref), [`GaPSE.VEC_ξs_GNC`](@ref)
 """
 function print_map_ξ_GNC_multipole(
      cosmo::Cosmology, out::String,
