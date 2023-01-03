@@ -43,24 +43,32 @@ in the Plane-Parallel approximation.
 In the first method, you should pass the `Point` where to evaluate that function,
 while in the second (that internally recalls the first) you must provide the 
 comoving distance `s`.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 The analytical expression of such TPCF monopole is the following:
 ```math
-\\xi^{\\mathrm{pp}}_0(s,z) = D^2(z) \\, I_0^0(s)\\, \\left(b^2 + 
+\\xi^{\\mathrm{pp, g}}_0(s) = D^2(z) \\, I_0^0(s)\\, \\left(b^2 + 
 \\frac{2}{3} \\, b \\, f(z) + \\frac{1}{5} \\, f^2(z)\\right)
 ```
-where ``b`` is the galaxy bias, ``z`` the redshift, ``D`` the linear growth factor, 
-``f`` the linear growth rate and ``I_\\ell^n`` is defined as
-```math
-I_\\ell^n(s) = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
-\\, q^2 \\, P(q) \\, \\frac{j_\\ell(qs)}{(qs)^n}
-```
-with ``P(q)`` as the matter Power Spectrum at ``z=0`` and ``j_\\ell`` as spherical
-Bessel function of order ``\\ell``.
+
+where: 
+- ``b`` is the galaxy bias
+- ``z`` is the redshift associated to the comoving distance ``s`` in this cosmology
+- ``D`` the linear growth factor and ``f`` the linear growth rate
+- ``I_\\ell^n`` is defined as
+  ```math
+  I_\\ell^n(s) = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_\\ell(qs)}{(qs)^n}
+  ```
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` and ``j_\\ell`` as spherical
+  Bessel function of order ``\\ell``.
 
 All the cosmological data needed for this computation are taken from the input struct `cosmo::Cosmology`.
 
-See also: [`Point`](@ref), [`Cosmology`](@ref)
+See also: [`Point`](@ref), [`Cosmology`](@ref), 
+[`ξ_PPGalaxies_L2`](@ref), [`ξ_PPGalaxies_L4`](@ref), 
+[`integrand_ξ_PPGalaxies_multipole`](@ref), [`ξ_PPGalaxies_multipole`](@ref) 
+[`map_ξ_PPGalaxies_multipole`](@ref), [`print_map_ξ_PPGalaxies_multipole`](@ref)
 """
 ξ_PPGalaxies_L0
 
@@ -88,24 +96,31 @@ in the Plane-Parallel approximation.
 In the first method, you should pass the `Point` where to evaluate that function,
 while in the second (that internally recalls the first) you must provide the 
 comoving distance `s`.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 The analytical expression of such TPCF monopole is the following:
 ```math
-\\xi^{\\mathrm{pp}}_2(s,z) = - D^2(z) \\, I_2^0(s)\\, \\left(\\frac{4}{3} 
+\\xi^{\\mathrm{pp, g}}_2(s) = - D^2(z) \\, I_2^0(s)\\, \\left(\\frac{4}{3} 
 \\, b \\, f(z) + \\frac{4}{7} \\, f^2(z)\\right)
 ```
-where ``b`` is the galaxy bias, ``z`` the redshift, ``D`` the linear growth factor, 
-``f`` the linear growth rate and ``I_\\ell^n`` is defined as
-```math
-I_\\ell^n(s) = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
-\\, q^2 \\, P(q) \\, \\frac{j_\\ell(qs)}{(qs)^n}
-```
-with ``P(q)`` as the matter Power Spectrum at ``z=0`` and ``j_\\ell`` as spherical
-Bessel function of order ``\\ell``.
+where: 
+- ``b`` is the galaxy bias
+- ``z`` is the redshift associated to the comoving distance ``s`` in this cosmology
+- ``D`` the linear growth factor and ``f`` the linear growth rate
+- ``I_\\ell^n`` is defined as
+  ```math
+  I_\\ell^n(s) = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_\\ell(qs)}{(qs)^n}
+  ```
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` and ``j_\\ell`` as spherical
+  Bessel function of order ``\\ell``.
 
 All the cosmological data needed for this computation are taken from the input struct `cosmo::Cosmology`.
 
-See also: [`Point`](@ref), [`Cosmology`](@ref)
+See also: [`Point`](@ref), [`Cosmology`](@ref), 
+[`ξ_PPGalaxies_L0`](@ref), [`ξ_PPGalaxies_L4`](@ref), 
+[`integrand_ξ_PPGalaxies_multipole`](@ref), [`ξ_PPGalaxies_multipole`](@ref) 
+[`map_ξ_PPGalaxies_multipole`](@ref), [`print_map_ξ_PPGalaxies_multipole`](@ref)
 """
 ξ_PPGalaxies_L2
 
@@ -133,24 +148,31 @@ in the Plane-Parallel approximation.
 In the first method, you should pass the `Point` where to evaluate that function,
 while in the second (that internally recalls the first) you must provide the 
 comoving distance `s`.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 The analytical expression of such TPCF monopole is the following:
 ```math
-\\xi^{\\mathrm{pp}}_4(s,z) = D^2(z) \\, I_4^0(s)\\, 
+\\xi^{\\mathrm{pp, g}}_4(s,z) = D^2(z) \\, I_4^0(s)\\, 
 \\left(\\frac{8}{35} \\, f^2(z)\\right)
 ```
-where ``b`` is the galaxy bias, ``z`` the redshift, ``D`` the linear growth factor, 
-``f`` the linear growth rate and ``I_\\ell^n`` is defined as
-```math
-I_\\ell^n(s) = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
-\\, q^2 \\, P(q) \\, \\frac{j_\\ell(qs)}{(qs)^n}
-```
-with ``P(q)`` as the matter Power Spectrum at ``z=0`` and ``j_\\ell`` as spherical
-Bessel function of order ``\\ell``.
+where: 
+- ``b`` is the galaxy bias
+- ``z`` is the redshift associated to the comoving distance ``s`` in this cosmology
+- ``D`` the linear growth factor and ``f`` the linear growth rate
+- ``I_\\ell^n`` is defined as
+  ```math
+  I_\\ell^n(s) = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_\\ell(qs)}{(qs)^n}
+  ```
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` and ``j_\\ell`` as spherical
+  Bessel function of order ``\\ell``.
 
 All the cosmological data needed for this computation are taken from the input struct `cosmo::Cosmology`.
 
-See also: [`Point`](@ref), [`Cosmology`](@ref)
+See also: [`Point`](@ref), [`Cosmology`](@ref), 
+[`ξ_PPGalaxies_L0`](@ref), [`ξ_PPGalaxies_L2`](@ref), 
+[`integrand_ξ_PPGalaxies_multipole`](@ref), [`ξ_PPGalaxies_multipole`](@ref) 
+[`map_ξ_PPGalaxies_multipole`](@ref), [`print_map_ξ_PPGalaxies_multipole`](@ref)
 """
 ξ_PPGalaxies_L4
 
@@ -158,35 +180,39 @@ See also: [`Point`](@ref), [`Cosmology`](@ref)
 
 
 """
-     ξ_PPGalaxies(s1, μ, cosmo::Cosmology)
+     ξ_PPGalaxies(s, μ, cosmo::Cosmology)
 
 Return the value of the Two-Point Correlation Function (TPCF) of the Galaxies
 in the Plane-Parallel approximation in the given comoving distance `s` and cosine
 value for the Legendre polynomials `μ` (for the given `cosmo::Cosmology`).
 
-The analytical expression of such TPCF monopole is the following:
+The analytical expression of such TPCF is the following:
 ```math
 \\begin{split}
-\\xi^{\\mathrm{pp}}(s,&z,\\mu) = \\xi^{\\mathrm{pp}}_0(s,z) + 
-    \\xi^{\\mathrm{pp}}_2(s,z) \\mathcal{L}_2(\\mu) + 
-    \\xi^{\\mathrm{pp}}_4(s,z) \\mathcal{L}_4(\\mu)  \\\\
-&\\xi^{\\mathrm{pp}}_0(s,z) = D^2(z) \\, I_0^0(s)\\, \\left(b^2 + 
+\\xi^{\\mathrm{pp, g}}(s,\\mu) = \\xi^{\\mathrm{pp, g}}_0(s,z) + 
+    \\xi^{\\mathrm{pp, g}}_2(s) \\mathcal{L}_2(\\mu) + 
+    \\xi^{\\mathrm{pp, g}}_4(s) \\mathcal{L}_4(\\mu)  \\\\
+&\\xi^{\\mathrm{pp, g}}_0(s) = D^2(z) \\, I_0^0(s)\\, \\left(b^2 + 
     \\frac{2}{3} \\, b \\, f(z) + \\frac{1}{5} \\, f^2(z)\\right)  \\\\
-&\\xi^{\\mathrm{pp}}_2(s,z) = - D^2(z) \\, I_2^0(s)\\, \\left(\\frac{4}{3} 
+&\\xi^{\\mathrm{pp, g}}_2(s) = - D^2(z) \\, I_2^0(s)\\, \\left(\\frac{4}{3} 
     \\, b \\, f(z) + \\frac{4}{7} \\, f^2(z)\\right)  \\\\
-&\\xi^{\\mathrm{pp}}_4(s,z) = D^2(z) \\, I_4^0(s)\\, 
+&\\xi^{\\mathrm{pp, g}}_4(s) = D^2(z) \\, I_4^0(s)\\, 
     \\left(\\frac{8}{35} \\, f^2(z)\\right)
 \\end{split}
 ```
-where ``b`` is the galaxy bias, ``z`` the redshift, ``D`` the linear growth factor, 
-``f`` the linear growth rate, ``\\mathcal{L}_\\ell`` the Legendre polynomial of order ``\\ell`` 
-and ``I_\\ell^n`` is defined as
-```math
-I_\\ell^n(s) = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
-\\, q^2 \\, P(q) \\, \\frac{j_\\ell(qs)}{(qs)^n}
-```
-with ``P(q)`` as the matter Power Spectrum at ``z=0`` and ``j_\\ell`` as spherical
-Bessel function of order ``\\ell``.
+
+where: 
+- ``b`` is the galaxy bias
+- ``z`` is the redshift associated to the comoving distance ``s`` in this cosmology
+- ``D`` the linear growth factor and ``f`` the linear growth rate
+- ``\\mathcal{L}_\\ell`` the Legendre polynomial of order ``\\ell``
+- ``I_\\ell^n`` is defined as
+  ```math
+  I_\\ell^n(s) = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_\\ell(qs)}{(qs)^n}
+  ```
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` and ``j_\\ell`` as spherical
+  Bessel function of order ``\\ell``.
 
 All the cosmological data needed for this computation are taken from the input struct `cosmo::Cosmology`.
 
@@ -213,7 +239,7 @@ of the of the Galaxies Two-Point Correlation Function (TPCF) in the Plane Parall
 approximation, i.e. the following function ``f(s, \\mu)``:
 
 ```math
-     f_L(s, \\mu) = \\xi^{\\mathrm{pp}} \\left(s, \\mu\\right) 
+     f_L(s, \\mu) = \\xi^{\\mathrm{pp, g}} \\left(s, \\mu\\right) 
           \\, \\mathcal{L}_L(\\mu) \\, \\times 
     \\begin{cases} 
         \\frac{1}{\\mathcal{N}}\\mathcal{F}(s, \\mu) \\quad \\mathrm{use\\_windows == true} \\\\
@@ -222,8 +248,8 @@ approximation, i.e. the following function ``f(s, \\mu)``:
 ```
 
 where:
-- ``\\xi`` is the Two-Point Correlation Function (TPCF) of the Galaxies in the Plane-Parallel approximation,
-  computed from `ξ_PPGalaxies`.
+- ``\\xi^{\\mathrm{pp, g}}`` is the Two-Point Correlation Function (TPCF) of the Galaxies 
+  in the Plane-Parallel approximation, computed from `ξ_PPGalaxies`.
 - ``\\mathcal{L}_L(\\mu)`` is the Legendre polynomial of order ``L``
 - ``\\mathcal{F}(s, \\mu)`` is the integrated window function stored in `cosmo::Cosmology` (check the documentation of `WindowFIntegrated`)
 - ``\\mathcal{N}`` is the integrated window function norm (check the documentation of `WindowFIntegrated`)
@@ -285,11 +311,11 @@ end
 
 
 Evaluate the multipole of order `L` of the Galaxies Two-Point Correlation Function (TPCF) in the Plane 
-Parallel (PP)  term i.e. the following function ``\\xi^{\\mathrm{pp}} (s)``:
+Parallel (PP)  term i.e. the following function ``\\xi^{\\mathrm{pp, g}} (s)``:
 
 ```math
-     \\xi^{\\mathrm{pp}} (s) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
-    \\xi^{\\mathrm{pp}} \\left(s, \\mu\\right) 
+     \\xi^{\\mathrm{pp, g}} (s) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
+    \\xi^{\\mathrm{pp, g}} \\left(s, \\mu\\right) 
           \\, \\mathcal{L}_L(\\mu) \\, \\times 
     \\begin{cases} 
         \\frac{1}{\\mathcal{N}}\\mathcal{F}(s, \\mu) \\quad \\mathrm{use\\_windows == true} \\\\
@@ -298,8 +324,8 @@ Parallel (PP)  term i.e. the following function ``\\xi^{\\mathrm{pp}} (s)``:
 ```
 
 where:
-- ``\\xi`` is the Two-Point Correlation Function (TPCF) of the Galaxies in the Plane-Parallel approximation,
-  computed from `ξ_PPGalaxies`.
+- ``\\xi^{\\mathrm{pp, g}}`` is the Two-Point Correlation Function (TPCF) of the Galaxies 
+  in the Plane-Parallel approximation, computed from `ξ_PPGalaxies`.
 - ``\\mathcal{L}_L(\\mu)`` is the Legendre polynomial of order ``L``
 - ``\\mathcal{F}(s, \\mu)`` is the integrated window function stored in `cosmo::Cosmology` (check the documentation of `WindowFIntegrated`)
 - ``\\mathcal{N}`` is the integrated window function norm (check the documentation of `WindowFIntegrated`)
@@ -369,11 +395,11 @@ Parallel (PP) term for all the comoving distance
 values stored inside `ss`.
 If `ss = nothing`, it is set `ss = 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log)`.
 
-The function evaluated is then the following ``\\xi^{\\mathrm{pp}} (s)``:
+The function evaluated is then the following ``\\xi^{\\mathrm{pp, g}} (s)``:
 
 ```math
-     \\xi^{\\mathrm{pp}} (s) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
-    \\xi^{\\mathrm{pp}} \\left(s, \\mu\\right) 
+     \\xi^{\\mathrm{pp, g}} (s) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
+    \\xi^{\\mathrm{pp, g}} \\left(s, \\mu\\right) 
           \\, \\mathcal{L}_L(\\mu) \\, \\times 
     \\begin{cases} 
         \\frac{1}{\\mathcal{N}}\\mathcal{F}(s, \\mu) \\quad \\mathrm{use\\_windows == true} \\\\
@@ -382,8 +408,8 @@ The function evaluated is then the following ``\\xi^{\\mathrm{pp}} (s)``:
 ```
 
 where:
-- ``\\xi`` is the Two-Point Correlation Function (TPCF) of the Galaxies in the Plane-Parallel approximation,
-  computed from `ξ_PPGalaxies`.
+- ``\\xi^{\\mathrm{pp, g}}`` is the Two-Point Correlation Function (TPCF) of the Galaxies 
+  in the Plane-Parallel approximation, computed from `ξ_PPGalaxies`.
 - ``\\mathcal{L}_L(\\mu)`` is the Legendre polynomial of order ``L``
 - ``\\mathcal{F}(s, \\mu)`` is the integrated window function stored in `cosmo::Cosmology` (check the documentation of `WindowFIntegrated`)
 - ``\\mathcal{N}`` is the integrated window function norm (check the documentation of `WindowFIntegrated`)
@@ -461,15 +487,15 @@ end
 
 """
      print_map_ξ_PPGalaxies_multipole(
-         cosmo::Cosmology, out::String,
-            ss = nothing;
-         L::Int = 0, use_windows::Bool = true,
+          cosmo::Cosmology, out::String,
+          ss = nothing;
+          L::Int = 0, use_windows::Bool = true,
           atol_quad::Float64 = 0.0,
           rtol_quad::Float64 = 1e-2
           enhancer::Float64 = 1e6
-        pr::Bool = true,
-         N_log::Int = 1000,
-         kwargs...)
+          pr::Bool = true,
+          N_log::Int = 1000,
+          kwargs...)
 
 
 Evaluate the multipole of order `L` of the Galaxies Two-Point Correlation Function (TPCF) in the Plane 
@@ -477,11 +503,11 @@ Parallel (PP) term for all the comoving distance values stored inside `ss`,
 and print the results (with all the options used) in a file named `out`.
 If `ss = nothing`, it is set `ss = 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log)`.
 
-The function evaluated is then the following ``\\xi^{\\mathrm{pp}} (s)``:
+The function evaluated is then the following ``\\xi^{\\mathrm{pp, g}} (s)``:
 
 ```math
-     \\xi^{\\mathrm{pp}} (s) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
-    \\xi^{\\mathrm{pp}} \\left(s, \\mu\\right) 
+     \\xi^{\\mathrm{pp, g}} (s) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
+    \\xi^{\\mathrm{pp, g}} \\left(s, \\mu\\right) 
           \\, \\mathcal{L}_L(\\mu) \\, \\times 
     \\begin{cases} 
         \\frac{1}{\\mathcal{N}}\\mathcal{F}(s, \\mu) \\quad \\mathrm{use\\_windows == true} \\\\
@@ -490,8 +516,8 @@ The function evaluated is then the following ``\\xi^{\\mathrm{pp}} (s)``:
 ```
 
 where:
-- ``\\xi`` is the Two-Point Correlation Function (TPCF) of the Galaxies in the Plane-Parallel approximation,
-  computed from `ξ_PPGalaxies`.
+- ``\\xi^{\\mathrm{pp, g}}`` is the Two-Point Correlation Function (TPCF) of the Galaxies 
+  in the Plane-Parallel approximation, computed from `ξ_PPGalaxies`.
 - ``\\mathcal{L}_L(\\mu)`` is the Legendre polynomial of order ``L``
 - ``\\mathcal{F}(s, \\mu)`` is the integrated window function stored in `cosmo::Cosmology` (check the documentation of `WindowFIntegrated`)
 - ``\\mathcal{N}`` is the integrated window function norm (check the documentation of `WindowFIntegrated`)

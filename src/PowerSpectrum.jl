@@ -170,7 +170,7 @@ PS_multipole
 
 
 function print_PS_multipole(ss, fs, out::String;
-     L::Int=0, pr::Bool=true, alg::Symbol=:fftlog, kwargs...)
+    L::Int=0, pr::Bool=true, alg::Symbol=:fftlog, kwargs...)
 
      check_parent_directory(out)
      check_namefile(out)
@@ -184,7 +184,7 @@ function print_PS_multipole(ss, fs, out::String;
      N = length(vec[1])
 
      isfile(out) && run(`rm $out`)
-     open(out, "w") do io
+      open(out, "w") do io
           println(io, BRAND)
 
           println(io, "# Power Spectrum Multipole computation from two input vectors.")
