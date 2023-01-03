@@ -119,7 +119,6 @@ const DEFAULT_WFI_OPTS = Dict(
 
           IPS::Dict{Symbol,T1} where {T1}
           IPSTools::Dict{Symbol,T2} where {T2}
-          WFI::Dict{Symbol,T3} where {T3}
      )
 
 
@@ -131,8 +130,8 @@ matter of concerns for the `Cosmology` we are interested in.
 - `z_min::Float64` and `z_max::Float64` : the minimum and maximum redshifts of the
   survey we want to study.
 
-- `θ_max::Float64` : Angular maximum value of the survey. It is
-  implicitly assumed an azimutal simmetry of the survey.
+- `θ_max::Float64` : Angular maximum value of the survey. It must be `0 < θ_max ≤ π/2.0`. 
+  It is implicitly assumed an azimutal simmetry of the survey. 
 
 - `Ω_b::Float64`, `Ω_cdm::Float64` and `Ω_M0::Float64` : barionic, cold-dark-matter and
   total matter density parameters.
@@ -145,9 +144,9 @@ matter of concerns for the `Cosmology` we are interested in.
 
 - `𝑓_evo::Float64` : evolution bias.
 
-- `s_lim::Float64` : the lower-bound value for the function `func_ℛ_LD`; it is necessary, because
-  `ℛ_LD` blows up for ``s \\rightarrow 0^{+}``. Consequently, if the `func_ℛ_LD` input value is 
-  `0 ≤ s < s_lim`, the returned value is always `func_ℛ_LD(s_lim)`.
+- `s_lim::Float64` : the lower-bound value for the functions `func_ℛ_LD` and `func_ℛ_GNC`; it is necessary, because
+  `ℛ_LD` and `ℛ_GNC` blows up for ``s \\rightarrow 0^{+}``. Consequently, if the `func_ℛ_LD`/`func_ℛ_GNC` input value is 
+  `0 ≤ s < s_lim`, the returned value is always `func_ℛ_LD(s_lim)`/`func_ℛ_GNC(s_lim)`.
 
 - `IPS::Dict{Symbol,T1} where {T1}` : dictionary concerning all the options that should be 
   passed to `InputPS` in the contruction of a `Cosmology`. The allowed keys, with their default
@@ -177,11 +176,12 @@ matter of concerns for the `Cosmology` we are interested in.
 
 ## Constructors
 
-`CosmoParams(z_min, z_max, θ_max;
+     CosmoParams(z_min, z_max, θ_max;
           Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70, s_lim = 1e-2,
           IPS_opts::Dict = Dict{Symbol,Any}(),
           IPSTools_opts::Dict = Dict{Symbol,Any}()
-     )`
+     )
+     
 The associations are trivials, with `Ω_M0 = Ω_cdm + Ω_b`.
 For the two dictionary, you may pass only the key and the value you are interested in,
 and all the other default ones will be considered.
@@ -231,7 +231,7 @@ struct CosmoParams
           Ω_b=0.0489, Ω_cdm=0.251020, h_0=0.70, s_lim=1e-2,
           b=1.0, s_b=0.0, 𝑓_evo=0.0,
           IPS_opts::Dict=Dict{Symbol,Any}(),
-          IPSTools_opts::Dict=Dict{Symbol,Any}(),
+          IPSTools_opts::Dict=Dict{Symbol,Any}()
           #WFI_opts::Dict=Dict{Symbol,Any}()
      )
           str(n, a, b) = "the keys of the $n dict have to be Symbols (like :$a, :$b, ...)"
@@ -282,9 +282,9 @@ struct CosmoParams
                Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0,
                b, s_b, 𝑓_evo,
                s_lim,
-               IPS, IPSTools, 
+               IPS, IPSTools,
                #WFI
-               )
+          )
      end
 end
 

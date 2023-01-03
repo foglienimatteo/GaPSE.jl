@@ -30,7 +30,7 @@
           kwargs...) ::Tuple{Float64, Vector{Float64}}
 
 Evaluate the multipole of order `L` of all the Galaxy Number Counts (GNC) 
-Two-Point Correlation Fucntion (TPCF) multipoles and their sum
+Two-Point Correlation Function (TPCF) multipoles and their sum
 in the comoving distance `s1` and a comoving distance `s` from it 
 for the input `cosmo::Cosmology`.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
@@ -135,7 +135,7 @@ end
           kwargs...) ::Tuple{Vector{Float64}, Vector{Float64}, Vector{Vector{Float64}}}
 
 Evaluate the multipole of order `L` of all the Galaxy Number Counts (GNC) 
-Two-Point Correlation Fucntion (TPCF) multipoles and their sum
+Two-Point Correlation Function (TPCF) multipoles and their sum
 in the comoving distance `s1`,  for all the comoving distances stored inside `ss` (representing 
 the comoving distance from `s1`) for the input `cosmo::Cosmology`.
 If `ss = nothing`, it is set `ss = 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log)`.
@@ -266,7 +266,7 @@ end
           kwargs...) 
 
 Evaluate the multipole of order `L` of all the Galaxy Number Counts (GNC) 
-Two-Point Correlation Fucntion (TPCF) multipoles and their sum
+Two-Point Correlation Function (TPCF) multipoles and their sum
 in the comoving distance `s1`,  for all the comoving distances stored inside `ss` (representing 
 the comoving distance from `s1`) for the input `cosmo::Cosmology`; finally,
 it saves the results inside the file `out`.

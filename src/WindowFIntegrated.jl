@@ -35,9 +35,10 @@ The analytical expression of the Integrated window function is the following:
     \\, F\\left(\\frac{s}{s_1}, \\mu \\right)
 ```
 
-where ``\\phi`` is the radial part of the survey window function (currently defined as a step function inside
-the interval `s_min ≤ s ≤ s_max`) and ``F`` is the window
-function. Check the documentation of `WindowF` for its definition.
+where ``s`` is the comoving distance, ``\\mu`` the cosine angle,
+``\\phi`` is the angular part of the survey window function and ``F(x, μ)`` is the 
+window function. Check the documentation of `WindowF` for its definition.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
      
 ## Optional arguments
 
@@ -96,9 +97,10 @@ The analytical expression of the Integrated window function is the following:
     \\, F\\left(\\frac{s}{s_1}, \\mu \\right)
 ```
 
-where ``\\phi`` is the radial part of the survey window function (currently defined as a step function inside
-the interval `s_min ≤ s ≤ s_max`) and ``F`` is the window
-function. Check the documentation of `WindowF` for its definition.
+where ``s`` is the comoving distance, ``\\mu`` the cosine angle,
+``\\phi`` is the angular part of the survey window function and ``F(x, μ)`` is the 
+window function. Check the documentation of `WindowF` for its definition.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
      
 ## Optional arguments
 
@@ -312,8 +314,10 @@ The analytical expression for the integrated window function is the following:
     \\, F\\left(\\frac{s}{s_1}, \\mu \\right)
 ```
 
-where ``\\phi`` is the angular part of the survey window function and ``F(x, μ)`` is the 
+where ``s`` is the comoving distance, ``\\mu`` the cosine angle,
+``\\phi`` is the angular part of the survey window function and ``F(x, μ)`` is the 
 window function. Check the documentation of `WindowF` for its definition.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 ## Optional arguments
 
@@ -394,8 +398,10 @@ The analytical expression for the integrated window function is the following:
     \\, F\\left(\\frac{s}{s_1}, \\mu \\right)
 ```
 
-where ``\\phi`` is the angular part of the survey window function and ``F(x, μ)`` is the 
+where ``s`` is the comoving distance, ``\\mu`` the cosine angle,
+``\\phi`` is the angular part of the survey window function and ``F(x, μ)`` is the 
 window function. Check the documentation of `WindowF` for its definition.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 
 ## Constructors
@@ -431,7 +437,7 @@ because the constructor will recognise it. What does matter is the columns order
 
 See also: [`integrated_F_trapz`](@ref), [`integrated_F_quadgk`](@ref),
 [`spline_integrF`](@ref), [`WindowF`](@ref), [`ϕ`](@ref),
-[` print_map_IntegratedF`](@ref)
+[`print_map_IntegratedF`](@ref)
 """
 struct WindowFIntegrated
      ss::Vector{Float64}
@@ -525,8 +531,8 @@ end
 """
      spline_integrF(s, μ, str::WindowFIntegrated)::Float64
 
-Return the 2-dim spline value of ``F`` in the given `(s,μ)`, where
-``F`` is defined in the input `WindowF`.
+Return the 2-dim spline value of ``\\mathcal{F}`` in the given `(s,μ)`, where
+``\\mathcal{F}`` is defined in the input `WindowFIntegrated`.
 The spline is obtained through the `interpolate` function of the 
 [`GridInterpolations`](https://github.com/sisl/GridInterpolations.jl) Julia
 package.

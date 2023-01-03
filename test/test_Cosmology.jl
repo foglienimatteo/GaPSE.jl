@@ -41,9 +41,9 @@
      for k in keys(GaPSE.DEFAULT_IPSTOOLS_OPTS)
           @test cosmo.params.IPSTools[k] ≈ GaPSE.DEFAULT_IPSTOOLS_OPTS[k]
      end
-     for k in keys(GaPSE.DEFAULT_WFI_OPTS)
-          @test cosmo.params.WFI[k] ≈ GaPSE.DEFAULT_WFI_OPTS[k]
-     end
+     #for k in keys(GaPSE.DEFAULT_WFI_OPTS)
+     #     @test cosmo.params.WFI[k] ≈ GaPSE.DEFAULT_WFI_OPTS[k]
+     #end
 
 
      @test isapprox(cosmo.z_eff, Z_EFF, rtol = RTOL)
@@ -64,4 +64,3 @@
      @test all(isapprox(cosmo.f_of_s.(COM_DIST), GROWTH_FACTOR_F, rtol = RTOL))
      @test all(isapprox(cosmo.ℋ_of_s.(COM_DIST), COM_H, rtol = RTOL))
 end
-

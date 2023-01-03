@@ -54,23 +54,39 @@ end
 
 
 """
-     func_ℛ_GNC(s, ℋ, ℋ_p; s_b=0.0, 𝑓_evo=0.0, s_lim=0.01, ℋ_0 = ℋ0)
+     func_ℛ_GNC(s, ℋ, ℋ_p; s_b = 0.0, 𝑓_evo = 0.0, s_lim=0.01, ℋ_0 = ℋ0)
 
-Return the following value:
+
+Given in input a comoving distance `s`, a comoving Hubble parameter `ℋ` and
+its first derivative value `ℋ_p` wrt the comoving time ``\\tau``, 
+this function returns the following value:
+
 ```math
-\\mathrm{func_ℛ_LD}(s, \\scrH)=
+\\mathscr{R}_\\mathrm{GNC}(s, \\mathscr{H}; s_{\\mathrm{b}})=
 \\begin{cases}
-5 s_b + \\frac{2 - 5 s_b}{\\scrH \\, s} +  
-     \\frac{\\dot{\\scrH}}{\\scrH^2} - \\itf_{\\mathrm{evo}}\\; ,
+5 s_{\\mathrm{b}} + \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathscr{H} \\, s} +  
+     \\frac{\\dot{\\mathscr{H}}}{\\mathscr{H}^2} - \\mathit{f}_{\\mathrm{evo}}\\; ,
     \\quad s > s_\\mathrm{lim}\\\\
-1 - \\frac{1}{\\scrH_0 \\, s_\\mathrm{lim}} 
-5 s_b + \\frac{2 - 5 s_b}{\\scrH_0 \\, s_\\mathrm{lim}} +  
-     \\frac{\\dot{\\scrH}}{\\scrH_0^2} - \\itf_{\\mathrm{evo}}\\; , 
+1 - \\frac{1}{\\mathscr{H}_0 \\, s_\\mathrm{lim}} 
+5 s_{\\mathrm{b}} + \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathscr{H}_0 \\, s_\\mathrm{lim}} +  
+     \\frac{\\dot{\\mathscr{H}}}{\\mathscr{H}_0^2} - \\mathit{f}_{\\mathrm{evo}}\\; , 
      \\quad \\quad 0 \\leq s \\leq s_\\mathrm{lim}
 \\end{cases}
 ```
 
-It's used inside the TPCFs concerning the galaxy number counts.
+where ``s_{\\mathrm{b}}`` is the magnification bias (i.e. the slope of the luminosity 
+function at the luminosity threshold), ``\\mathit{f}_{\\mathrm{evo}}`` the evolution bias
+and ``\\dot{\\mathscr{H}} = \\mathrm{d}\\mathscr{H} / \\mathrm{d}\\tau``.
+ 
+The ``0 \\leq s \\leq s_\\mathrm{lim}`` case is used in order to avoid 
+the divergence of the denominator.
+This function is used inside a `Cosmology` for the computations concering the
+Two-Point Correlation Fuctions (TPCFs) relative to the Galaxy Number Counts (GNC).
+The default value of the comoving Hubble parameter nowadays is, in natural system
+(where the speed of light c=1): 
+``\\mathscr{H}_0 \\simeq 3.335641\\times10^{-4} \\; h_0^{-1}\\mathrm{Mpc}``
+
+See also: [`func_ℛ_GNC`](@ref), [`Cosmology`](@ref), [`ℋ0`](@ref)
 """
 function func_ℛ_GNC(s, ℋ, ℋ_p; s_b=0.0, 𝑓_evo=0.0, s_lim=0.01, ℋ_0=ℋ0)
      if s_b ≈ 2.0 / 5.0
@@ -119,15 +135,18 @@ end
           )
 
 Struct that contains all the information that may be used for the 
-Correlation Function computations.
+Two-Point Correlation Function (TPCF) computations.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 ## Arguments 
 
-- `IPS::InputPS` : the matter Input Power Spectrum of the Universe we are focusiong on.
+- `IPS::InputPS` : the matter Input Power Spectrum at present day of the Universe we are focusiong on.
 
-- `params::CosmoParams` : options and parameters decided for this Cosmology.
+- `params::CosmoParams` : options and parameters decided for this Cosmology; check the documentation of
+  `CosmoParams` for more information.
 
-- `tools::IPSTools` : all the functions and integrals depending on the Input PS.
+- `tools::IPSTools` : all the functions and integrals depending on the Input Power Spectrum; check the documentation
+  of `IPSTools` for more information.
 
 - `windowF::WindowF` : the window function ``F``, defined as:
   ```math
@@ -164,21 +183,31 @@ Correlation Function computations.
 - `z_of_s, D_of_s, f_of_s, ℋ_of_s, ℋ_p_of_s, ℛ_LD_of_s, ℛ_GNC_of_s ::Dierckx.Spline1D` :
   splines obtained from the data stored by `BackgroundData` applied to the input background 
   data file. Given an input comoving distance `s`, they return the corresponding value of,
-  respectivelly:
+  respectively:
   - the redshift `z`;
-  - the growth factor `D`;
-  - the growth rate `f`;
+  - the linear growth factor `D` (normalized to 1.0 at present day);
+  - the linear growth rate `f`;
   - the comoving Hubble parameter `ℋ`;
   - the derivative of the comoving Hubble parameter wrt the comoving time `ℋ_p`; 
-  - `ℛ_LD`, obtained from `func_ℛ_LD` anddefined as:
+  - `ℛ_LD`, obtained from `func_ℛ_LD` and defined as:
   ```math
-     \\scrR_{\\mathrm{LD}} = 1 - \\frac{1}{\\scrH \\, s}
+     \\mathscr{R}_{\\mathrm{LD}} = 1 - \\frac{1}{\\mathscr{H} \\, s}
   ```
+  where ``s`` is the comoving distance and \\mathscr{H} is comoving Hubble parameter.
+  It's spline is obtained in a sample of point given by 
+  `10.0 .^ range(-4, log10(max(comdist...)), length=1000)`.
   - `ℛ_GNC`, obtained from `func_ℛ_GNC` and defined as:
   ```math
-     \\scrR_{\\mathrm{GNC}} = 5 s_b + \\frac{2 - 5 s_b}{\\scrH \\, s} +  
-     \\frac{\\dot{\\scrH}}{\\scrH^2} - \\itf_{\\mathrm{evo}}
+     \\mathscr{R}_{\\mathrm{GNC}} = 5 s_b + \\frac{2 - 5 s_b}{\\mathscr{H} \\, s} +  
+     \\frac{\\dot{\\mathscr{H}}}{\\mathscr{H}^2} - \\mathit{f}_{\\mathrm{evo}}
   ```
+  where``s`` is the comoving distance, \\mathscr{H} is comoving Hubble parameter,
+  ``s_{\\mathrm{b}}`` is the magnification bias (i.e. the slope of the luminosity 
+  function at the luminosity threshold), ``\\mathit{f}_{\\mathrm{evo}}`` the evolution bias
+  and ``\\dot{\\mathscr{H}} = \\mathrm{d}\\mathscr{H} / \\mathrm{d}\\tau`` the first derivative
+  of the comoving Hubble parameter wrt the comoving time ``\\tau``.
+  It's spline is obtained in a sample of point given by 
+  `10.0 .^ range(-4, log10(max(comdist...)), length=1000)`.
 
 - `s_of_z ::Dierckx.Spline1D` : spline that returns the value of the comoving distance `s`
   corresponding to an input redshift `z`. Also this spline is obtained from the data stored by 
@@ -201,42 +230,41 @@ Correlation Function computations.
 
 ## Constructors
 
-`Cosmology(
-     params::CosmoParams,
-     file_data::String,
-     file_ips::String,
-     file_windowF::String,
-     file_Is::Union{String,Nothing} = nothing;
-     names_bg = NAMES_BACKGROUND)`
+    Cosmology(
+        params::CosmoParams,
+        file_data::String,
+        file_ips::String,
+        file_windowF::String,
+        file_IntwindowF::String;
+        names_bg = NAMES_BACKGROUND)
 
 - `params::CosmoParams` : parameters to be used for this Cosmology. See the docstring
   of `CosmoParams` for more information on the possible inputs.
 
 - `file_data::String` : file containing all the background data; it is expected that such file
-  is a background output of the CLASS program (link: https://github.com/lesgourg/class_public).
-  It is managed through `BackgroundData`.
+  is a background output of the [CLASS](link: https://github.com/lesgourg/class_public) code.
+  It is managed through the struct `BackgroundData`.
 
-- `file_ips::String` : file containing the Input Power Spectrum; it is expected that such file
-  is a power spectrum output of the CLASS program (link: https://github.com/lesgourg/class_public).
-  It is managed through `InputPS`.
+- `file_ips::String` : file containing the Input Power Spectrum at present day; it is expected that such file
+  is a Power Spectrum output of the [CLASS](link: https://github.com/lesgourg/class_public) code.
+  It is managed through the struct `InputPS`.
 
 - `file_windowF::String` : file containing a map of the window function `F`.
-  This file is managed through `WindowF`, and can be produced with `F_map`; see their
+  This file is managed through the struct `WindowF`, and can be produced with the function `print_map_F`; see their
   docstrings for more information.
 
-- `file_Is::Union{String,Nothing} = nothing` : if you want to given in input manually
-  all the ``I_\\ell^n`` integrals, you can set as input the file containing them.
-  It is expected that they are ordered in colums with the following order:
-  `s  I00  I20  I40  I02  I22  I31  I11  I13  I04_tilde`.
-  If nothing is passed (recommended), they are manually calculated from the Input Power Spectrum.
+- `file_IntwindowF::String` : file containing a map of the Integrated Window Function `\\mathcal{F}`.
+  This file is managed through the struct `WindowFIntegrated`, and can be produced with the function 
+  `print_map_IntegartedF`; see their docstrings for more information.
 
 - `names = NAMES_BACKGROUND` : the column names of the `file_data`. If the colum order change from
   the default one `NAMES_BACKGROUND`, you must set as input the vector of string with the correct
   one, with the SAME names. They are, with the default order:\n
-  $(NAMES_BACKGROUND)  
+  $(GaPSE.NAMES_BACKGROUND)  
 
-See also:  [`InputPS`](@ref), [`CosmoParams`](@ref), [`IPSTools`](@ref),
-[`BackgroundData`](@ref), [`WindowF`](@ref), [`F_map`](@ref), [`func_z_eff`](@ref),
+See also: [`CosmoParams`](@ref), [`InputPS`](@ref), [`IPSTools`](@ref),
+[`BackgroundData`](@ref), [`WindowF`](@ref), [`WindowFIntegrated`](@ref), 
+[`print_map_F`](@ref), [`print_map_IntegratedF`](@ref), [`func_z_eff`](@ref),
 [`V_survey`](@ref), [`func_ℛ_LD`](@ref), [`func_ℛ_GNC`](@ref), 
 """
 struct Cosmology
@@ -281,7 +309,7 @@ struct Cosmology
      )
 
           BD = BackgroundData(file_data, params.z_max; names=names_bg, h=params.h_0)
-          IPS = InputPS(file_ips;)
+          IPS = InputPS(file_ips; params.IPS...)
           windowF = WindowF(file_windowF)
           tools = IPSTools(IPS; params.IPSTools...)
 
@@ -372,24 +400,47 @@ end
 """
      Point(
           z::Float64
-          #conftime::Float64
           comdist::Float64
-          #angdist::Float64
-          #lumdist::Float64
           D::Float64
           f::Float64
           ℋ::Float64
           ℋ_p::Float64
           ℛ_LD::Float64
           ℛ_GNC::Float64
-          a::Float64)
+          a::Float64
+          )
      
 A point in the Universe, placed at redshift `z` from us.
-It contains all the relevant cosmological information at that redshift.
+It contains all the relevant cosmological information at that redshift, respectively:
+- the redshift `z`;
+- the comoving distance `s`;
+- the linear growth factor `D` (normalized to 1.0 at present day);
+- the linear growth rate `f`;
+- the comoving Hubble parameter `ℋ`;
+- the first derivative `ℋ_p` of the comoving Hubble parameter `ℋ` wrt the comoving time ``\\tau``;
+- the derivative of the comoving Hubble parameter wrt the comoving time `ℋ_p`; 
+- `ℛ_LD`, obtained from `func_ℛ_LD` and defined as:
+  ```math
+  \\mathscr{R}_{\\mathrm{LD}} = 1 - \\frac{1}{\\mathscr{H} \\, s}
+  ```
+  where ``s`` is the comoving distance and \\mathscr{H} is comoving Hubble parameter.
+- `ℛ_GNC`, obtained from `func_ℛ_GNC` and defined as:
+  ```math
+  \\mathscr{R}_{\\mathrm{GNC}} = 5 s_b + \\frac{2 - 5 s_b}{\\mathscr{H} \\, s} +  
+  \\frac{\\dot{\\mathscr{H}}}{\\mathscr{H}^2} - \\mathit{f}_{\\mathrm{evo}}
+  ```
+  where``s`` is the comoving distance, \\mathscr{H} is comoving Hubble parameter,
+  ``s_{\\mathrm{b}}`` is the magnification bias (i.e. the slope of the luminosity 
+  function at the luminosity threshold), ``\\mathit{f}_{\\mathrm{evo}}`` the evolution bias
+  and ``\\dot{\\mathscr{H}} = \\mathrm{d}\\mathscr{H} / \\mathrm{d}\\tau`` the first derivative
+  of the comoving Hubble parameter wrt the comoving time ``\\tau``.
+- the scale factor `a` (normalized to 1.0 at present day);
+
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 ## Constructors
 
-`Point(s, cosmo::Cosmology)` : given a comoving distance `s`, extrapolate all 
+`Point(s, cosmo::Cosmology)` : given a comoving distance `s`, it extrapolates all 
 the data from the given input `Cosmology`.
 
 See also: [`Cosmology`](@ref)

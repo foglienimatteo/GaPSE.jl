@@ -54,7 +54,6 @@ function check_compatible_dicts(ref::Dict, b::Dict, name::String="NO-NAME")
                 "must be of type T<:Real (not Bool) !" *
                 "\n The type of the input value $(b[k]) is instead " *
                 "$(typeof(b[k]))"
-        #elseif isnothing(ref[k]) 
             
         else
             @assert typeof(b[k]) == typeof(ref[k]) "the value associated" *
