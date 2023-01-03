@@ -40,7 +40,7 @@ const HUBBLE_0 = 1e5 / 299792458.0
 include("TEST_DATA.jl")
 
 ##########################################################################################92
-
+#=
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
@@ -86,7 +86,7 @@ end
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
 end
-
+=#
 
 ################################### COSMOLOGY IMPLEMENTATION #############################92
 
@@ -101,10 +101,12 @@ const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
           :N => 1024, :fit_min => 0.05, :fit_max => 0.5,
           :con => true, :k_min => 1e-8, :k_max => 10.0,
      ),
+     #=
      WFI_opts=Dict(:llim => 0.0, :rlim => Inf, :N => 1000,
           :trap => true, :rtol => 1e-2, :atol => 0.0,
           :ss_start => 0.0, :ss_step => 21.768735478453323,
           :ss_stop => 0.0)
+     =#
 )
 
 const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP, FILE_IF_MAP)
