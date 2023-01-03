@@ -220,7 +220,7 @@ See also:[`ξ_PPDoppler`](@ref), [`ξ_PPDoppler_multipole`](@ref),
 [`map_ξ_PPDoppler_multipole`](@ref), [`print_map_ξ_PPDoppler_multipole`](@ref)
 [`WindowFIntegrated`](@ref), [`Cosmology`](@ref), 
 """
-function integrand_ξ_PPD_multipole(s, μ, cosmo::Cosmology;
+function integrand_ξ_PPDoppler_multipole(s, μ, cosmo::Cosmology;
      L::Int=0, use_windows::Bool=true)
 
      res = if use_windows == true
@@ -302,7 +302,7 @@ See also: [`ξ_PPDoppler`](@ref), [`integrand_ξ_PPDoppler_multipole`](@ref),
 [`map_ξ_PPDoppler_multipole`](@ref), [`print_map_ξ_PPDoppler_multipole`](@ref)
 [`WindowFIntegrated`](@ref), [`Cosmology`](@ref), 
 """
-function ξ_PPD_multipole(
+function ξ_PPDoppler_multipole(
      s, cosmo::Cosmology;
      L::Int=0,
      use_windows::Bool=true,
@@ -310,7 +310,7 @@ function ξ_PPD_multipole(
      atol_quad::Float64=0.0,
      rtol_quad::Float64=1e-2)
 
-     orig_f(μ) = enhancer * integrand_ξ_PPD_multipole(s, μ, cosmo;
+     orig_f(μ) = enhancer * integrand_ξ_PPDoppler_multipole(s, μ, cosmo;
           L=L, use_windows=use_windows)
 
      int = quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=atol_quad, rtol=rtol_quad)[1]
@@ -405,7 +405,7 @@ See also: [`ξ_PPDoppler`](@ref), [`integrand_ξ_PPDoppler_multipole`](@ref),
 [`ξ_PPDoppler_multipole`](@ref), [`print_map_ξ_PPDoppler_multipole`](@ref)
 [`WindowFIntegrated`](@ref), [`Cosmology`](@ref), 
 """
-function map_ξ_PPD_multipole(cosmo::Cosmology,
+function map_ξ_PPDoppler_multipole(cosmo::Cosmology,
      ss=nothing;
      pr::Bool=true,
      N_log::Int=1000,
@@ -416,14 +416,14 @@ function map_ξ_PPD_multipole(cosmo::Cosmology,
      v_ss = isnothing(ss) ? 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log) : ss
      xis = pr ? begin
           @showprogress "PP Doppler, L=$L: " [
-               ξ_PPD_multipole(s, cosmo; L=L, kwargs...) for s in v_ss
+               ξ_PPDoppler_multipole(s, cosmo; L=L, kwargs...) for s in v_ss
           ]
      end : [
-          ξ_PPD_multipole(s, cosmo; L=L, kwargs...) for s in v_ss
+          ξ_PPDoppler_multipole(s, cosmo; L=L, kwargs...) for s in v_ss
      ]
 
      t2 = time()
-     pr && println("\ntime needed for map_ξ_PPD_multipole for PPDoppler " *
+     pr && println("\ntime needed for map_ξ_PPDoppler_multipole for PPDoppler " *
                    "[in s] = $(@sprintf("%.5f", t2-t1)) ")
      return (v_ss, xis)
 end
@@ -512,7 +512,7 @@ See also: [`ξ_PPDoppler`](@ref), [`integrand_ξ_PPDoppler_multipole`](@ref),
 [`ξ_PPDoppler_multipole`](@ref), [`map_ξ_PPDoppler_multipole`](@ref)
 [`WindowFIntegrated`](@ref), [`Cosmology`](@ref), 
 """
-function print_map_ξ_PPD_multipole(
+function print_map_ξ_PPDoppler_multipole(
      cosmo::Cosmology,
      out::String,
      ss=nothing;
@@ -520,7 +520,7 @@ function print_map_ξ_PPD_multipole(
      kwargs...)
 
      t1 = time()
-     vec = map_ξ_PPD_multipole(cosmo, ss; L=L, kwargs...)
+     vec = map_ξ_PPDoppler_multipole(cosmo, ss; L=L, kwargs...)
      t2 = time()
 
      isfile(out) && run(`rm $out`)

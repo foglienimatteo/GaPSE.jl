@@ -186,9 +186,11 @@ function parameters_used(io::IO, cosmo::Cosmology; logo::Bool=true)
      my_println_dict(io, cosmo.params.IPSTools; pref="#\t ", N=3)
      println(io, "#")
 
+     #=
      println(io, "# - CosmoParams about the Integrated Window Function F: ")
      my_println_dict(io, cosmo.params.WFI; pref="#\t ", N=3)
      println(io, "#")
+     =#
 
      println(io, "# - Computed quantities: ")
      println(io, "# \t effective redshift z_eff = $(cosmo.z_eff) ")

@@ -546,12 +546,18 @@ end
 
 ##########################################################################################92
 
+
 """
      print_map_ξ_GNC_multipole(
           cosmo::Cosmology, out::String,
           effect::Union{String,Function},
           ss = nothing;
-          s1 = nothing,
+          s1 = nothing, L::Int = 0, alg::Symbol = :lobatto,
+          obs::Union{Bool,Symbol} = :noobsvel,
+          N_lob::Int = 100, N_trap::Int = 50,
+          atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
+          enhancer::Float64=1e6, N_log::Int = 1000, 
+          pr::Bool = true,
           kwargs...)
 
 Evaluate the multipole of order `L` of the chosen Galaxy Number Counts (GNC) 
@@ -600,7 +606,7 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`. The inve
 
 - `out::String` : name of the file where the results must be stored.
 
-- ``ss` : vector/range of `s` values where the function must be evaluated; if `ss = nothing`, 
+- `ss` : vector/range of `s` values where the function must be evaluated; if `ss = nothing`, 
   it is set `ss = 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log)`.
 
 

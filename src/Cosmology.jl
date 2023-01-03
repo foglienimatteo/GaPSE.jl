@@ -21,18 +21,27 @@
 """
      func_ℛ_LD(s, ℋ; s_lim=0.01, ℋ_0 = ℋ0)
 
-Return the following value:
+Given in inpuit a comoving distance `s` and a comoving Hubble parameter `ℋ`, this
+function returns the following value:
 ```math
-\\mathrm{func_ℛ_LD}(s, \\scrH)=
+\\mathscr{R}_\\mathrm{LD}(s, \\mathscr{H})=
 \\begin{cases}
-1 - \\frac{1}{\\scrH \\, s} \\; ,
+1 - \\frac{1}{\\mathscr{H} \\, s} \\; ,
     \\quad s > s_\\mathrm{lim}\\\\
-1 - \\frac{1}{\\scrH_0 \\, s_\\mathrm{lim}} \\; , 
+1 - \\frac{1}{\\mathscr{H}_0 \\, s_\\mathrm{lim}} \\; , 
      \\quad \\quad 0 \\leq s \\leq s_\\mathrm{lim}
 \\end{cases}
 ```
 
-It's used inside the TPCFs concerning the perturbed luminosity distance.
+The ``0 \\leq s \\leq s_\\mathrm{lim}`` case is used in order to avoid 
+the divergence of the denominator.
+This function is used inside a `Cosmology` for the computations concering the
+Two-Point Correlation Fuctions (TPCFs) relative to the perturbed Luminosity Distance (LD).
+The default value of the comoving Hubble parameter nowadays is, in natural system
+(where the speed of light c=1): 
+``\\mathscr{H}_0 \\simeq 3.335641\\times10^{-4} \\; h_0^{-1}\\mathrm{Mpc}``
+
+See also: [`func_ℛ_GNC`](@ref), [`Cosmology`](@ref), [`ℋ0`](@ref)
 """
 function func_ℛ_LD(s, ℋ; s_lim=0.01, ℋ_0=ℋ0)
      if s > s_lim
@@ -266,7 +275,8 @@ struct Cosmology
           file_data::String,
           file_ips::String,
           file_windowF::String,
-          file_IntwindowF::Union{String,Nothing}=nothing;
+          file_IntwindowF::String,
+          #file_IntwindowF::Union{String,Nothing}=nothing;
           names_bg=NAMES_BACKGROUND
      )
 
@@ -326,9 +336,13 @@ struct Cosmology
           s_eff = s_of_z(z_eff)
           vol = V_survey(s_min, s_max, params.θ_max)
 
+          #=
           windowFintegrated = isnothing(file_IntwindowF) ?
                               WindowFIntegrated(s_min, s_max, windowF; params.WFI...) :
                               WindowFIntegrated(file_IntwindowF)
+          =#
+          windowFintegrated = WindowFIntegrated(file_IntwindowF)
+
           #WFI_norm = sum([spline_integrF(0, μ, windowFintegrated) 
           #     for μ in range(-0.90, 0.90, length=100)]) / 100
           WFI_norm = quadgk(μ -> spline_integrF(10.0, μ, windowFintegrated), -1, 1; rtol=1e-2)[1] / 2

@@ -50,11 +50,12 @@ function check_compatible_dicts(ref::Dict, b::Dict, name::String="NO-NAME")
                                 "the allowed ones are the following:\n $(keys(ref))")
 
         if (typeof(ref[k]) <: Real) && !(typeof(ref[k]) <: Union{Bool,Int})
-            @assert typeof(b[k]) <: Real && typeof(b[k]) ≠ Bool
-            "the value associated with the (valid) key $k the Dict $(name) " *
-            "must be of type T<:Real (not Bool) !" *
-            "\n The type of the input value $(b[k]) is instead " *
-            "$(typeof(b[k]))"
+            @assert typeof(b[k]) <: Real && typeof(b[k]) ≠ Bool "the value associated with the (valid) key $k the Dict $(name) " *
+                "must be of type T<:Real (not Bool) !" *
+                "\n The type of the input value $(b[k]) is instead " *
+                "$(typeof(b[k]))"
+        #elseif isnothing(ref[k]) 
+            
         else
             @assert typeof(b[k]) == typeof(ref[k]) "the value associated" *
                                                    " with the (valid) key $k for the Dict $(name) " *
