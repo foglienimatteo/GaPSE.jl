@@ -265,6 +265,22 @@ function print_map_IntegratedF(z_min, z_max, zs::Vector{Float64},
           μs, windowF, out; kwargs...)
 end
 
+function print_map_IntegratedF(z_min, z_max,
+     μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String,
+     file_data::String;
+     names_bg=NAMES_BACKGROUND, h_0=0.7, N_ss::Int = 100, kwargs...)
+
+     @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
+     @assert N_ss > 9 "N_ss > 9 must hold!"
+     BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
+     s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+     s_min, s_max = s_of_z(z_min), s_of_z(z_max)
+     SS = union([0.0], [s for s in range(0.0, 3.0*s_max, length = N_ss)][begin+1:end])
+
+     print_map_IntegratedF(s_min, s_max, SS,
+          μs, windowF, out; kwargs...)
+end
+
 
 """
      print_map_IntegratedF(

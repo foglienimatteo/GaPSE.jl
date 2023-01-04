@@ -104,6 +104,76 @@ end
 
 
 
+struct CosmoSplines
+     z_of_s::Dierckx.Spline1D
+     D_of_s::Dierckx.Spline1D
+     f_of_s::Dierckx.Spline1D
+     ℋ_of_s::Dierckx.Spline1D
+     ℋ_p_of_s::Dierckx.Spline1D
+     ℛ_LD_of_s::Dierckx.Spline1D
+     ℛ_GNC_of_s::Dierckx.Spline1D
+
+     s_of_z::Dierckx.Spline1D
+
+     z_eff::Float64
+     s_min::Float64
+     s_max::Float64
+     s_eff::Float64
+
+     file_data::String
+     names::Vector{String}
+     z_min::Float64
+     z_max::Float64
+     h::Float64
+     s_lim::Float64
+     s_b::Float64
+     𝑓_evo::Float64
+
+     function CosmoSplines(
+               file_data::String, z_min, z_max; 
+               names::Vector{String} = NAMES_BACKGROUND, h=0.7, 
+               s_lim = 0.01, s_b = 0.0,
+               𝑓_evo = 0.0
+               )
+
+          BD = BackgroundData(file_data, z_max; names=names, h=h)
+
+          z_of_s = Spline1D(BD.comdist, BD.z; bc="error")
+          s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+          D_of_s = Spline1D(BD.comdist, BD.D; bc="error")
+          f_of_s = Spline1D(BD.comdist, BD.f; bc="error")
+          ℋ_of_s = Spline1D(BD.comdist, BD.ℋ; bc="error")
+
+          ℋ_of_τ = Spline1D(reverse(BD.conftime), reverse(BD.ℋ); bc="error")
+          vec_ℋs_p = [derivative(ℋ_of_τ, t) for t in BD.conftime]
+          ℋ_p_of_s = Spline1D(BD.comdist, vec_ℋs_p; bc="error")
+
+          #println(BD.z[end], " ",BD.comdist[end])
+          first_ss = 10.0 .^ range(-4, log10(BD.comdist[end]), length=1000)
+          ss = vcat(first_ss[begin:end-1], BD.comdist[end])
+          ℛ_LDs = [func_ℛ_LD(s, ℋ_of_s(s); s_lim=s_lim) for s in ss]
+          ℛ_LD_of_s = Spline1D(vcat(0.0, ss), vcat(ℛ_LDs[begin], ℛ_LDs); bc="error")
+
+          ℛ_GNCs = [func_ℛ_GNC(s, ℋ_of_s(s), ℋ_p_of_s(s);
+               s_b=s_b, 𝑓_evo=𝑓_evo, s_lim=s_lim) for s in ss]
+          ℛ_GNC_of_s = Spline1D(vcat(0.0, ss), vcat(ℛ_GNCs[begin], ℛ_GNCs); bc="error")
+
+          s_min = s_of_z(z_min)
+          s_max = s_of_z(z_max)
+          z_eff = GaPSE.func_z_eff(s_min, s_max, z_of_s)
+          s_eff = s_of_z(z_eff)
+
+          new(z_of_s, D_of_s, f_of_s, ℋ_of_s, ℋ_p_of_s, ℛ_LD_of_s, ℛ_GNC_of_s,
+               s_of_z,
+               z_eff, s_min, s_max, s_eff,
+               file_data, names, z_min, z_max, h, s_lim, s_b, 𝑓_evo)
+     end
+end
+
+
+
+##########################################################################################92
+
 
 """
      Cosmology(
@@ -305,10 +375,10 @@ struct Cosmology
           file_windowF::String,
           file_IntwindowF::String,
           #file_IntwindowF::Union{String,Nothing}=nothing;
-          names_bg=NAMES_BACKGROUND
+          names_bg::Vector{String} = NAMES_BACKGROUND
      )
 
-          BD = BackgroundData(file_data, params.z_max; names=names_bg, h=params.h_0)
+          #BD = BackgroundData(file_data, params.z_max; names=names_bg, h=params.h_0)
           IPS = InputPS(file_ips; params.IPS...)
           windowF = WindowF(file_windowF)
           tools = IPSTools(IPS; params.IPSTools...)
@@ -316,53 +386,13 @@ struct Cosmology
           #ss_m, xis_m = ξ_from_PS(IPS; int_k_min=1e-6, int_k_max=1e3,
           #     L=0, N=1024, pr=false, s0=nothing, right=nothing)
           #ξ_matter = EPLs(ss_m, xis_m, [1.0, 1.0], [-1.0, 1.0])
-          #=
-          z_of_s_lim = my_interpolation(BD.comdist[1], BD.z[1], BD.comdist[2], BD.z[2], s_lim)
-          D_of_s_lim = my_interpolation(BD.comdist[1], BD.D[1], BD.comdist[2], BD.D[2], s_lim)
-          f_of_s_lim = my_interpolation(BD.comdist[1], BD.f[1], BD.comdist[2], BD.f[2], s_lim)
-          ℋ_of_s_lim = my_interpolation(BD.comdist[1], BD.ℋ[1], BD.comdist[2], BD.ℋ[2], s_lim)
 
-          new_BD_comdist = vcat(0.0, s_lim, BD.comdist[2:end])
-          new_BD_z = vcat(0.0, z_of_s_lim, BD.z[2:end])
-          new_BD_D = vcat(D_of_s_lim, D_of_s_lim, BD.D[2:end])
-          new_BD_f = vcat(f_of_s_lim, f_of_s_lim, BD.f[2:end])
-          new_BD_ℋ = vcat(ℋ_of_s_lim, ℋ_of_s_lim, BD.ℋ[2:end])
+          CS = CosmoSplines(file_data, params.z_min, params.z_max; 
+               names=names_bg, h=params.h_0, 
+               s_lim = params.s_lim, 
+               s_b = params.s_b, 𝑓_evo = params.𝑓_evo);
 
-          another_BD_comdist = vcat(s_lim, s_lim, BD.comdist[2:end])
-          another_BD_z = vcat(z_of_s_lim, z_of_s_lim, BD.z[2:end])
-
-          z_of_s = Spline1D(new_BD_comdist, another_BD_z; bc = "error")
-          s_of_z = Spline1D(new_BD_z, another_BD_comdist; bc = "error")
-          D_of_s = Spline1D(new_BD_comdist, new_BD_D; bc = "error")
-          f_of_s = Spline1D(new_BD_comdist, new_BD_f; bc = "error")
-          ℋ_of_s = Spline1D(new_BD_comdist, new_BD_ℋ; bc = "error")
-          =#
-
-          z_of_s = Spline1D(BD.comdist, BD.z; bc="error")
-          s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
-          D_of_s = Spline1D(BD.comdist, BD.D; bc="error")
-          f_of_s = Spline1D(BD.comdist, BD.f; bc="error")
-          ℋ_of_s = Spline1D(BD.comdist, BD.ℋ; bc="error")
-
-          ℋ_of_τ = Spline1D(reverse(BD.conftime), reverse(BD.ℋ); bc="error")
-          vec_ℋs_p = [derivative(ℋ_of_τ, t) for t in BD.conftime]
-          ℋ_p_of_s = Spline1D(BD.comdist, vec_ℋs_p; bc="error")
-
-          #println(BD.z[end], " ",BD.comdist[end])
-          first_ss = 10.0 .^ range(-4, log10(BD.comdist[end]), length=1000)
-          ss = vcat(first_ss[begin:end-1], BD.comdist[end])
-          ℛ_LDs = [func_ℛ_LD(s, ℋ_of_s(s); s_lim=params.s_lim) for s in ss]
-          ℛ_LD_of_s = Spline1D(vcat(0.0, ss), vcat(ℛ_LDs[begin], ℛ_LDs); bc="error")
-
-          ℛ_GNCs = [func_ℛ_GNC(s, ℋ_of_s(s), ℋ_p_of_s(s);
-               s_b=params.s_b, 𝑓_evo=params.𝑓_evo, s_lim=params.s_lim) for s in ss]
-          ℛ_GNC_of_s = Spline1D(vcat(0.0, ss), vcat(ℛ_GNCs[begin], ℛ_GNCs); bc="error")
-
-          s_min = s_of_z(params.z_min)
-          s_max = s_of_z(params.z_max)
-          z_eff = func_z_eff(s_min, s_max, z_of_s)
-          s_eff = s_of_z(z_eff)
-          vol = V_survey(s_min, s_max, params.θ_max)
+          vol = V_survey(CS.s_min, CS.s_max, params.θ_max)
 
           #=
           windowFintegrated = isnothing(file_IntwindowF) ?
@@ -383,9 +413,9 @@ struct Cosmology
                windowF,
                windowFintegrated,
                WFI_norm,
-               z_of_s, D_of_s, f_of_s, ℋ_of_s, ℋ_p_of_s, ℛ_LD_of_s, ℛ_GNC_of_s,
-               s_of_z,
-               z_eff, s_min, s_max, s_eff,
+               CS.z_of_s, CS.D_of_s, CS.f_of_s, CS.ℋ_of_s, CS.ℋ_p_of_s, CS.ℛ_LD_of_s, CS.ℛ_GNC_of_s,
+               CS.s_of_z,
+               CS.z_eff, CS.s_min, CS.s_max, CS.s_eff,
                vol,
                file_data,
                file_ips,

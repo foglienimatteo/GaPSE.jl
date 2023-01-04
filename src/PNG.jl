@@ -211,10 +211,10 @@ where ``P(q)`` is the Input Power Spectrum and
 
 ## Constructors
 
-    IntegralIPSalpha(tf::TF, cosmo::Cosmology, l, n=0; D=nothing, bf=1.0,
-        N::Int=1024, kmin=1e-6, kmax=1e4, s0=1e-4,
-        fit_left_min=nothing, fit_left_max=nothing, p0_left=nothing,
-        fit_right_min=nothing, fit_right_max=nothing, p0_right=nothing)
+     IntegralIPSalpha(tf::TF, cosmo::Cosmology, l, n=0; D=nothing, bf=1.0,
+          N::Int=1024, kmin=1e-6, kmax=1e4, s0=1e-4,
+          fit_left_min=nothing, fit_left_max=nothing, p0_left=nothing,
+          fit_right_min=nothing, fit_right_max=nothing, p0_right=nothing)
 
 The integral obtained with this constructor is calculated through `xicalc`, and
 expanded with power-laws at the edges.
@@ -382,25 +382,25 @@ Correlation Function computations of the Primordial Non-Gaussianities signal.
 - `file_TF::String` : name of the file where the transfer function was read.
 
 - `J0` and `J2::IntegralIPSalpha` : integrals with the following form:
-```math
+  ```math
   J_\\ell = \\int_0^\\infty \\frac{\\mathrm{d} q}{2 \\pi^2} \\, q^2 \\,
   j_\\ell(qs) \\, P(q) \\, \\alpha_{\\mathrm{bias}} \\; ,
-```
+  ```
 
   where ``P(q)`` is the Input Power Spectrum and
 
-```math
+  ```math
   \\delta_{\\rm NG}(k) = \\alpha(k, z) \\,  \\Phi_{\\rm NG}(k) \\; \\;  , \\quad
   \\alpha(k, z) = \\frac{2}{3} \\frac{k^2 T_m(k) D(z)}{\\Omega_{\\mathrm{M}0}} \\left(\\frac{c}{H_0}\\right)^2 
   \\; \\; ,  \\quad \\; \\alpha_{\\rm bias} = \\frac{b_{\\phi} f_{\\rm NL}}{\\alpha(k, z)} \\; .
-```
+  ```
 
 - `params::Dict{Symbol, T1} where {T1}` : parameter values used in the constructor.
 
 
 ## Constructor 
 
-    CosmoPNG(
+     CosmoPNG(
           cosmo::Cosmology,
           file_TF::String;
           comments::Bool=true, D=nothing, bf=1.0,
@@ -424,13 +424,13 @@ Correlation Function computations of the Primordial Non-Gaussianities signal.
 - `kmin = 1e-6, kmax = 1e4, s0 = 1e-4` : values to be passed to `xicalc` for the
   integration of both `J0` and `J2`
 
-- `flm0=5e-2, flM0=1e-1` : the limits (min and max) where the integral `J0`
+- `flm0=5e-2`, `flM0=1e-1` : the limits (min and max) where the integral `J0`
   must be fitted with a power law, for small distances. This operation is necessary, because `xicalc`,
   in this context, gives wrong results for too small input distance `s`; nevertheless,
   this integral has fixed power-law trends for ``s \\rightarrow 0``, so this approach gives
   good results.
 
-- `flm2=5e-1, flM2=1e0` : same as the previous ones, but for `J2`.
+- `flm2=5e-1`, `flM2=1e0` : same as the previous ones, but for `J2`.
 
 See also: [`TF`](@ref), [`IntegralIPSalpha`](@ref), [`Cosmology`](@ref)
 """
