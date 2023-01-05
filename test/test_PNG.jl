@@ -138,7 +138,7 @@ end
                flm_0=flm_0, flM_0=flM_0, s0_0=s0_0,
                kmin_0=kmin_0, kmax_0=kmax_0, N_0=N_0,
                flm_2=flm_2, flM_2=flM_2, s0_2=s0_2,
-               kmin_2=kmax_1, kmax_2=kmax_2, N_2=N_2
+               kmin_2=kmin_2, kmax_2=kmax_2, N_2=N_2
           )
 
           @test params.D ≈ D_eff
@@ -171,7 +171,7 @@ end
                flm_0=flm_0, flM_0=flM_0, s0_0=s0_0,
                kmin_0=kmin_0, kmax_0=kmax_0, N_0=N_0,
                flm_2=flm_2, flM_2=flM_2, s0_2=s0_2,
-               kmin_2=kmax_1, kmax_2=kmax_2, N_2=N_2
+               kmin_2=kmin_2, kmax_2=kmax_2, N_2=N_2
           )
 
           @test params.D ≈ D_eff
@@ -201,13 +201,13 @@ end
 
      @testset "first" begin
           my_cosmopngparams = GaPSE.CosmoPNGParams(
-          COSMO.D_of_s(COSMO.s_eff);
-          bf=1.0, 
-          Dict(
-               :flm_0 => 5e-2, :flM_0 => 1e-1, :s0_0 => 1e-4,
-               :kmin_0 => 1e-6, :kmax_0 => 1e4, :N_0 => 1024,
-               :flm_2 => 5e-1, :flM_2 => 1e0, :s0_2 => 1e-4,
-               :kmin_2 => 1e-6, :kmax_2 => 1e4, :N_2 => 1024
+               COSMO.D_of_s(COSMO.s_eff);
+               bf=1.0,
+               Dict(
+                    :flm_0 => 5e-2, :flM_0 => 1e-1, :s0_0 => 1e-4,
+                    :kmin_0 => 1e-6, :kmax_0 => 1e4, :N_0 => 1024,
+                    :flm_2 => 5e-1, :flM_2 => 1e0, :s0_2 => 1e-4,
+                    :kmin_2 => 1e-6, :kmax_2 => 1e4, :N_2 => 1024
                )...
           )
 
@@ -247,15 +247,17 @@ end
      end
 
      @testset "second" begin
+          flm_0, flM_0 = 5e-3, 1e-2
+          flm_2, flM_2 = 4e-3, 1e-1
 
           my_cosmopngparams = GaPSE.CosmoPNGParams(
-          COSMO.D_of_s(COSMO.s_eff);
-          bf=1.0, 
-          Dict(
-               :flm_0 => 5e-3, :flM_0 => 1e-2, :s0_0 => 1e-4,
-               :kmin_0 => 1e-6, :kmax_0 => 1e4, :N_0 => 1024,
-               :flm_2 => 5e-3, :flM_2 => 1e-2, :s0_2 => 1e-4,
-               :kmin_2 => 1e-6, :kmax_2 => 1e4, :N_2 => 1024
+               COSMO.D_of_s(COSMO.s_eff);
+               bf=1.0,
+               Dict(
+                    :flm_0 => flm_0, :flM_0 => flM_0, :s0_0 => 1e-4,
+                    :kmin_0 => 1e-6, :kmax_0 => 1e4, :N_0 => 1024,
+                    :flm_2 => flm_2, :flM_2 => flM_2, :s0_2 => 1e-4,
+                    :kmin_2 => 1e-6, :kmax_2 => 1e4, :N_2 => 1024
                )...
           )
 
@@ -267,15 +269,13 @@ end
 
           IntIPSalpha_J0 = GaPSE.IntegralIPSalpha(my_TF, COSMO, 0, 0;
                D=nothing, bf=1.0, N=1024, kmin=1e-6, kmax=1e4, s0=1e-4,
-               fit_left_min=flm0, fit_left_max=flM0, p0_left=nothing,
+               fit_left_min=flm_0, fit_left_max=flM_0, p0_left=nothing,
                fit_right_min=nothing, fit_right_max=nothing, p0_right=nothing)
           IntIPSalpha_J2 = GaPSE.IntegralIPSalpha(my_TF, COSMO, 2, 0;
                D=nothing, bf=1.0, N=1024, kmin=1e-6, kmax=1e4, s0=1e-4,
-               fit_left_min=flm2, fit_left_max=flM2, p0_left=nothing,
+               fit_left_min=flm_2, fit_left_max=flM_2, p0_left=nothing,
                fit_right_min=nothing, fit_right_max=nothing, p0_right=nothing)
 
-          params = Dict(:bf => 1.0, :N => 1024, :D => nothing, :flm0 => flm0,
-               :flm2 => flm2, :flM0 => flM0, :flM2 => flM2, :kmax => 10000.0, :kmin => 1.0e-6)
 
           xs = 10.0 .^ range(-6, 3, length=300)
 
@@ -309,7 +309,18 @@ end
           :atol_quad => 0.0, :rtol_quad => 1e-2,
           :N_log => 100,
      )
-     cosmopng = GaPSE.CosmoPNG(COSMO, "datatest/Tk.dat")
+
+     cosmopngparams = GaPSE.CosmoPNGParams(
+          COSMO.D_of_s(COSMO.s_eff);
+          bf=1.0,
+          Dict(
+               :flm_0 => 5e-3, :flM_0 => 1e-2, :s0_0 => 1e-4,
+               :kmin_0 => 1e-6, :kmax_0 => 1e4, :N_0 => 1024,
+               :flm_2 => 5e-3, :flM_2 => 1e-2, :s0_2 => 1e-4,
+               :kmin_2 => 1e-6, :kmax_2 => 1e4, :N_2 => 1024
+          )...
+     )
+     cosmopng = GaPSE.CosmoPNG(cosmopngparams, COSMO, "datatest/Tk.dat")
 
      @testset "with F" begin
           @testset "monopole" begin
@@ -395,7 +406,17 @@ end
           :atol_quad => 0.0, :rtol_quad => 1e-2,
           :N_log => 100,
      )
-     cosmopng = GaPSE.CosmoPNG(COSMO, "datatest/Tk.dat")
+     cosmopngparams = GaPSE.CosmoPNGParams(
+          COSMO.D_of_s(COSMO.s_eff);
+          bf=1.0,
+          Dict(
+               :flm_0 => 5e-3, :flM_0 => 1e-2, :s0_0 => 1e-4,
+               :kmin_0 => 1e-6, :kmax_0 => 1e4, :N_0 => 1024,
+               :flm_2 => 5e-3, :flM_2 => 1e-2, :s0_2 => 1e-4,
+               :kmin_2 => 1e-6, :kmax_2 => 1e4, :N_2 => 1024
+          )...
+     )
+     cosmopng = GaPSE.CosmoPNG(cosmopngparams, COSMO, "datatest/Tk.dat")
 
      @testset "with F" begin
           @testset "monopole" begin

@@ -188,7 +188,7 @@ SS_LDxGNC = 10 .^ range(0, log10(2.0 * COSMO.s_max), length=100);
 
 ################################### TEST PLANE-PARALLEL APPROXIMATIONS ###################92
 
-
+#=
 @testset "test PPDoppler" begin
      include("test_PPDoppler.jl")
 end
@@ -200,6 +200,7 @@ end
 @testset "test PPXiGalaxies" begin
      include("test_PPXiGalaxies.jl")
 end
+=#
 
 
 

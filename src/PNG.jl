@@ -555,13 +555,13 @@ struct CosmoPNG
                D=pngparams.D, bf=pngparams.bf,
                kmin=pngparams.kmin_0, kmax=pngparams.kmax_0,
                s0=pngparams.s0_0,
-               fit_left_min=pngparams.flm0_0, fit_left_max=pngparams.flM0_0,
+               fit_left_min=pngparams.flm_0, fit_left_max=pngparams.flM_0,
                N=pngparams.N_0)
           J2 = IntegralIPSalpha(tf, cosmo, 2, 0;
                D=pngparams.D, bf=pngparams.bf,
                kmin=pngparams.kmin_2, kmax=pngparams.kmax_2,
                s0=pngparams.s0_2,
-               fit_left_min=pngparams.flm2_2, fit_left_max=pngparams.flM2_2,
+               fit_left_min=pngparams.flm_2, fit_left_max=pngparams.flM_2,
                N=pngparams.N_2)
 
           new(pngparams, tf, file_TF, J0, J2)
@@ -1116,9 +1116,11 @@ function print_map_ξ_S_multipole(
           println(io, "# Transfer function read from the file: $(cosmopng.file_TF)")
           print(io, "# Parameters used for the considered CosmoPNG: ")
           print(io, "\n")
-          for key in keys(cosmopng.params)
-               println(io, "# \t\t$(key) = $(cosmopng.params[key])")
-          end
+          println(io, "# \t D = $(cosmopng.params.D) \t bf = $(cosmopng.params.bf)")
+          println(io, "# \t flm_0 = $(cosmopng.params.flm_0) \t flM_0 = $(cosmopng.params.flM_0) \t N_0 = $(cosmopng.params.N_0)")
+          println(io, "# \t kmin_0 = $(cosmopng.params.kmin_0) \t kmax_0 = $(cosmopng.params.kmax_0) \t s0_0 = $(cosmopng.params.s0_0)")
+          println(io, "# \t flm_2 = $(cosmopng.params.flm_2) \t flM_2 = $(cosmopng.params.flM_2) \t N_2 = $(cosmopng.params.N_2)")
+          println(io, "# \t kmin_2 = $(cosmopng.params.kmin_2) \t kmax_2 = $(cosmopng.params.kmax_2) \t s0_2 = $(cosmopng.params.s0_2)")
           println(io, "#")
 
           parameters_used(io, cosmo; logo=false)
