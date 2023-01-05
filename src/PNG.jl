@@ -373,7 +373,7 @@ end;
         )
 
 Struct that contains all the information that may be used for the 
-Correlation Function computations of the Primordial Non-Gaussianities signal.
+Correlation Function computations of the Primordial Non-Gaussianities (PNG) signal.
 
 ## Arguments
 
@@ -490,6 +490,52 @@ function ξ_S_L0(s1, cosmo::Cosmology, cosmopng::CosmoPNG)
      return ξ_S_L0(P1, cosmo, cosmopng)
 end
 
+"""
+    ξ_S_L0(P::Point, cosmo::Cosmology, cosmopng::CosmoPNG)
+    ξ_S_L0(s1, cosmo::Cosmology, cosmopng::CosmoPNG)
+
+Return the value of the Two-Point Correlation Function (TPCF) monopole of the signal (S)
+of the local Primordial Non-Gaussianities (PNG) (for the given `cosmo::Cosmology` and 
+`cosmopng::CosmoPNG`).
+In the first method, you should pass the `Point` where to evaluate that function,
+while in the second (that internally recalls the first) you must provide the 
+comoving distance `s`.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
+
+The analytical expression of such TPCF monopole is the following:
+```math
+\\xi^{\\mathrm{S}}_0(s) = 2 \\left( b + \\frac{1}{3}f(z_{\\mathrm{eff}})\\right)
+\\,  D^2(z_{\\mathrm{eff}}) \\, J_0(s)
+```
+
+where: 
+- ``b`` is the galaxy bias (stored in `cosmo`)
+- ``z`` is the redshift associated to the comoving distance ``s`` in this cosmology
+- ``s_{\\mathrm{eff}}`` is the effective comoving distance stored in `cosmo` (and ``z_{\\mathrm{eff}}``
+  its associated effective redshift in that cosmology)
+- ``D`` the linear growth factor and ``f`` the linear growth rate (whose splines are stored in `cosmo`)
+- ``J_\\ell`` (stored in `cosmopng`) is defined as
+  ```math
+  J_\\ell(s) = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, j_\\ell(qs) \\, \\alpha_{\\mathrm{bias}}(q,z)
+  ```
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`), ``j_\\ell`` as spherical
+  Bessel function of order ``\\ell`` and
+  ```math
+  \\alpha_{\\rm bias}(q,z) = \\frac{b_{\\phi} f_{\\rm NL}}{\\alpha(q, z)} \\quad ,  \\quad 
+  \\alpha(q, z) = \\frac{2}{3} \\frac{q^2 T_m(q) D(z)}{\\Omega_{\\mathrm{M}0}} \\left(\\frac{c}{H_0}\\right)^2
+  ```
+  with ``b_{\\phi}f_{\\rm NL}`` is stored in `cosmopng`. Check the documentation of `α_bias` and `CosmoPNG`
+  for more information.
+
+
+See also: [`Point`](@ref), [`Cosmology`](@ref), [`CosmoPNG`](@ref), [`α_bias`](@ref), 
+[`ξ_S_L2`](@ref), [`ξ_S`](@ref), 
+[`integrand_ξ_S_multipole`](@ref), [`ξ_S_multipole`](@ref) 
+[`map_ξ_S_multipole`](@ref), [`print_map_ξ_S_multipole`](@ref)
+"""
+ξ_S_L0
+
 function ξ_S_L2(P::Point, cosmo::Cosmology, cosmopng::CosmoPNG)
      s = P.comdist
 
@@ -505,6 +551,102 @@ function ξ_S_L2(s1, cosmo::Cosmology, cosmopng::CosmoPNG)
 end
 
 
+"""
+    ξ_S_L2(P::Point, cosmo::Cosmology, cosmopng::CosmoPNG)
+    ξ_S_L2(s1, cosmo::Cosmology, cosmopng::CosmoPNG)
+
+Return the value of the Two-Point Correlation Function (TPCF) quadrupole of the signal (S)
+of the local Primordial Non-Gaussianities (PNG) (for the given `cosmo::Cosmology` and 
+`cosmopng::CosmoPNG`).
+In the first method, you should pass the `Point` where to evaluate that function,
+while in the second (that internally recalls the first) you must provide the 
+comoving distance `s`.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
+
+The analytical expression of such TPCF monopole is the following:
+```math
+\\xi^{\\mathrm{S}}_2(s) = - \\frac{4}{3} \\, f(z_{\\mathrm{eff}})
+\\,  D^2(z_{\\mathrm{eff}}) \\, J_2(s)
+```
+
+where: 
+- ``b`` is the galaxy bias (stored in `cosmo`)
+- ``z`` is the redshift associated to the comoving distance ``s`` in this cosmology
+- ``s_{\\mathrm{eff}}`` is the effective comoving distance stored in `cosmo` (and ``z_{\\mathrm{eff}}``
+  its associated effective redshift in that cosmology)
+- ``D`` the linear growth factor and ``f`` the linear growth rate (whose splines are stored in `cosmo`)
+- ``J_\\ell`` (stored in `cosmopng`) is defined as
+  ```math
+  J_\\ell(s) = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, j_\\ell(qs) \\, \\alpha_{\\mathrm{bias}}(q,z)
+  ```
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`), ``j_\\ell`` as spherical
+  Bessel function of order ``\\ell`` and
+  ```math
+  \\alpha_{\\rm bias}(q,z) = \\frac{b_{\\phi} f_{\\rm NL}}{\\alpha(q, z)} \\quad ,  \\quad 
+  \\alpha(q, z) = \\frac{2}{3} \\frac{q^2 T_m(q) D(z)}{\\Omega_{\\mathrm{M}0}} \\left(\\frac{c}{H_0}\\right)^2
+  ```
+  with ``b_{\\phi}f_{\\rm NL}`` is stored in `cosmopng`. Check the documentation of `α_bias` and `CosmoPNG`
+  for more information.
+
+
+See also: [`Point`](@ref), [`Cosmology`](@ref), [`CosmoPNG`](@ref), [`α_bias`](@ref), 
+[`ξ_S_L0`](@ref), [`ξ_S`](@ref), 
+[`integrand_ξ_S_multipole`](@ref), [`ξ_S_multipole`](@ref) 
+[`map_ξ_S_multipole`](@ref), [`print_map_ξ_S_multipole`](@ref)
+"""
+ξ_S_L2
+
+
+"""
+    ξ_S(s, μ, cosmo::Cosmology, cosmopng::CosmoPNG)
+
+Return the value of the Two-Point Correlation Function (TPCF) of the signal (S)
+of the local Primordial Non-Gaussianities (PNG) in the given comoving distance `s` and cosine
+value for the Legendre polynomials `μ` (for the given `cosmo::Cosmology` and 
+`cosmopng::CosmoPNG`).
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
+
+The analytical expression of such TPCF monopole is the following:
+```math
+\\begin{split}
+\\xi^{\\mathrm{S}}(s&,\\mu) = \\xi^{\\mathrm{S}}_0(s) + 
+    \\xi^{\\mathrm{S}}_2(s) \\mathcal{L}_2(\\mu) \\\\
+&\\xi^{\\mathrm{S}}_0(s) = 2 \\left( b + \\frac{1}{3}f(z_{\\mathrm{eff}})\\right)
+\\,  D^2(z_{\\mathrm{eff}}) \\, J_0(s) \\\\
+&\\xi^{\\mathrm{S}}_2(s) = - \\frac{4}{3} \\, f(z_{\\mathrm{eff}})
+\\,  D^2(z_{\\mathrm{eff}}) \\, J_2(s)
+\\end{split}
+```
+
+
+where: 
+- ``b`` is the galaxy bias (stored in `cosmo`)
+- ``z`` is the redshift associated to the comoving distance ``s`` in this cosmology
+- ``s_{\\mathrm{eff}}`` is the effective comoving distance stored in `cosmo` (and ``z_{\\mathrm{eff}}``
+  its associated effective redshift in that cosmology)
+- ``D`` the linear growth factor and ``f`` the linear growth rate (whose splines are stored in `cosmo`)
+- ``\\mathcal{L}_\\ell`` the Legendre polynomial of order ``\\ell``
+- ``J_\\ell`` (stored in `cosmopng`) is defined as
+  ```math
+  J_\\ell(s) = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, j_\\ell(qs) \\, \\alpha_{\\mathrm{bias}}(q,z)
+  ```
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`), ``j_\\ell`` as spherical
+  Bessel function of order ``\\ell`` and
+  ```math
+  \\alpha_{\\rm bias}(q,z) = \\frac{b_{\\phi} f_{\\rm NL}}{\\alpha(q, z)} \\quad ,  \\quad 
+  \\alpha(q, z) = \\frac{2}{3} \\frac{q^2 T_m(q) D(z)}{\\Omega_{\\mathrm{M}0}} \\left(\\frac{c}{H_0}\\right)^2
+  ```
+  with ``b_{\\phi}f_{\\rm NL}`` is stored in `cosmopng`. Check the documentation of `α_bias` and `CosmoPNG`
+  for more information.
+
+
+See also: [`Point`](@ref), [`Cosmology`](@ref), [`CosmoPNG`](@ref), [`α_bias`](@ref), 
+[`ξ_S_L0`](@ref), [`ξ_S_L2`](@ref), 
+[`integrand_ξ_S_multipole`](@ref), [`ξ_S_multipole`](@ref) 
+[`map_ξ_S_multipole`](@ref), [`print_map_ξ_S_multipole`](@ref)
+"""
 function ξ_S(s1, y, cosmo::Cosmology, cosmopng::CosmoPNG)
      ξ_S_L0(s1, cosmo, cosmopng) + ξ_S_L2(s1, cosmo, cosmopng) * Pl(y, 2)
 end
@@ -514,7 +656,51 @@ end
 ##########################################################################################92
 
 
+"""
+     integrand_ξ_S_multipole(s, μ, cosmo::Cosmology, cosmopng::CosmoPNG;
+          L::Int=0, use_windows::Bool=true)
 
+Return the integrand on ``\\mu = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}`` 
+of the Two-Point Correlation Function (TPCF) concerning the signal (S) of the 
+local Primordial Non-Gaussianities (PNG), i.e. the following function ``f(s, \\mu)``:
+
+```math
+     f_L(s, \\mu) = \\xi^{\\mathrm{S}} \\left(s, \\mu\\right) 
+          \\, \\mathcal{L}_L(\\mu) \\, \\times 
+    \\begin{cases} 
+        \\frac{1}{\\mathcal{N}}\\mathcal{F}(s, \\mu) \\quad \\mathrm{use\\_windows == true} \\\\
+        1 \\quad\\quad \\mathrm{use\\_windows == false}
+    \\end{cases}
+```
+
+where:
+- ``\\xi^{\\mathrm{S}}`` is the TPCF of the PNG signal, computed from `ξ_S`.
+- ``\\mathcal{L}_L(\\mu)`` is the Legendre polynomial of order ``L``
+- ``\\mathcal{F}(s, \\mu)`` is the integrated window function stored in `cosmo::Cosmology` (check the documentation of `WindowFIntegrated`)
+- ``\\mathcal{N}`` is the integrated window function norm (check the documentation of `WindowFIntegrated`)
+
+## Inputs
+
+- `s`: the comoving distance  where must be evaluated the integral
+
+- `μ`: the cosine between `s1` and `s` where must be evaluated the integral
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
+
+- `cosmopng::CosmoPNG`: struct that contains all the information that may be used for the TPCF 
+  computations of the PNG signal.
+
+## Optional arguments 
+
+- `L::Int = 0`: order of the Legendre polynomial to be used
+
+- `use_windows::Bool = false`: tells if the integrand must consider ``\\mathcal{F}``
+  or not.
+
+See also:[`ξ_S`](@ref), [`ξ_S_multipole`](@ref), 
+[`map_ξ_S_multipole`](@ref), [`print_map_ξ_S_multipole`](@ref)
+[`WindowFIntegrated`](@ref), [`Cosmology`](@ref), [`CosmoPNG`](@ref), 
+"""
 function integrand_ξ_S_multipole(s, μ, cosmo::Cosmology, cosmopng::CosmoPNG;
      L::Int=0, use_windows::Bool=true)
 
@@ -529,46 +715,286 @@ function integrand_ξ_S_multipole(s, μ, cosmo::Cosmology, cosmopng::CosmoPNG;
      return (2.0 * L + 1.0) / 2.0 * res
 end
 
+
+"""
+     ξ_PPGalaxies_multipole(
+          s, cosmo::Cosmology, cosmopng::CosmoPNG;;
+          L::Int = 0, use_windows::Bool = true,
+          atol_quad::Float64 = 0.0,
+          rtol_quad::Float64 = 1e-2
+          enhancer::Float64 = 1e6 ) ::Float64
+
+
+Evaluate the multipole of order `L` of the Two-Point Correlation Function (TPCF) 
+concerning the signal (S) of the local Primordial Non-Gaussianities (PNG), 
+i.e. the following function ``\\xi^{\\mathrm{S}} (s)``:
+
+```math
+     \\xi^{\\mathrm{S}} (s) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
+    \\xi^{\\mathrm{S}} \\left(s, \\mu\\right) 
+          \\, \\mathcal{L}_L(\\mu) \\, \\times 
+    \\begin{cases} 
+        \\frac{1}{\\mathcal{N}}\\mathcal{F}(s, \\mu) \\quad \\mathrm{use\\_windows == true} \\\\
+        1 \\quad\\quad \\mathrm{use\\_windows == false}
+    \\end{cases}
+```
+
+where:
+- ``\\xi^{\\mathrm{S}}(s,\\mu)`` is the TPCF of the PNG signal with the angular dependence, computed from `ξ_S`.
+- ``\\mathcal{L}_L(\\mu)`` is the Legendre polynomial of order ``L``
+- ``\\mathcal{F}(s, \\mu)`` is the integrated window function stored in `cosmo::Cosmology` (check the documentation of `WindowFIntegrated`)
+- ``\\mathcal{N}`` is the integrated window function norm (check the documentation of `WindowFIntegrated`)
+
+The integration over ``\\mu`` is preformed through the Julia function `quadgk` 
+from the [`QuadGK.jl`](https://github.com/JuliaMath/QuadGK.jl) Julia package, that uses an adaptive 
+Gauss-Kronrod quadrature.
+
+## Inputs
+
+- `s`: the comoving distance  where must be evaluated the integral
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
+
+- `cosmopng::CosmoPNG`: struct that contains all the information that may be used for the TPCF 
+  computations of the PNG signal.
+
+## Optional arguments 
+
+- `L::Int = 0`: order of the Legendre polynomial to be used
+
+- `use_windows::Bool = false`: tells if the integrand must consider ``\\mathcal{F}``
+  or not.
+
+- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+  to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
+  because the time for evaluation increase quickly.
+
+- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+  the returned value is NOT modified by this value, because after a multiplication
+  the internal result is divided by `enhancer`.
+
+See also: [`ξ_S`](@ref), [`integrand_ξ_S_multipole`](@ref), 
+[`map_ξ_S_multipole`](@ref), [`print_map_ξ_S_multipole`](@ref)
+[`WindowFIntegrated`](@ref), [`Cosmology`](@ref), [`CosmoPNG`](@ref), 
+"""
 function ξ_S_multipole(
      s, cosmo::Cosmology, cosmopng::CosmoPNG;
      L::Int=0,
      use_windows::Bool=true,
-     enhancer::Float64=1e6,
-     μ_atol::Float64=0.0,
-     μ_rtol::Float64=1e-2)
+     atol_quad::Float64=0.0,
+     rtol_quad::Float64=1e-2,
+     enhancer::Float64=1e6)
 
      orig_f(μ) = enhancer * integrand_ξ_S_multipole(s, μ, cosmo, cosmopng;
           L=L, use_windows=use_windows)
 
-     int = quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=μ_atol, rtol=μ_rtol)[1]
+     int = quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=atol_quad, rtol=rtol_quad)[1]
 
      return int / enhancer
 end
 
-function map_ξ_S_multipole(cosmo::Cosmology, cosmopng::CosmoPNG,
-     v_ss=nothing;
+
+
+##########################################################################################92
+
+
+"""
+     map_ξ_S_multipole(
+          cosmo::Cosmology, cosmopng::CosmoPNG,
+          ss = nothing;
+          L::Int = 0, use_windows::Bool = true,
+          atol_quad::Float64 = 0.0,
+          rtol_quad::Float64 = 1e-2,
+          enhancer::Float64 = 1e6,
+          pr::Bool = true,
+          N_log::Int = 1000,
+          kwargs...) ::Tuple{Vector{Float64}, Vector{Float64}}
+
+
+Evaluate the multipole of order `L` of the Two-Point Correlation Function (TPCF) 
+concerning the signal (S) of the local Primordial Non-Gaussianities (PNG),
+for all the comoving distance values stored inside `ss`.
+If `ss = nothing`, it is set `ss = 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log)`.
+
+The function evaluated is then the following ``\\xi^{\\mathrm{S}} (s)``:
+
+```math
+     \\xi^{\\mathrm{S}} (s) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
+    \\xi^{\\mathrm{S}} \\left(s, \\mu\\right) 
+          \\, \\mathcal{L}_L(\\mu) \\, \\times 
+    \\begin{cases} 
+        \\frac{1}{\\mathcal{N}}\\mathcal{F}(s, \\mu) \\quad \\mathrm{use\\_windows == true} \\\\
+        1 \\quad\\quad \\mathrm{use\\_windows == false}
+    \\end{cases}
+```
+
+where:
+- ``\\xi^{\\mathrm{S}}(s,\\mu)`` is the TPCF of the PNG signal
+  with the angular dependence, computed from `ξ_S`.
+- ``\\mathcal{L}_L(\\mu)`` is the Legendre polynomial of order ``L``
+- ``\\mathcal{F}(s, \\mu)`` is the integrated window function stored in `cosmo::Cosmology` (check the documentation of `WindowFIntegrated`)
+- ``\\mathcal{N}`` is the integrated window function norm (check the documentation of `WindowFIntegrated`)
+
+The integration over ``\\mu`` is preformed through the Julia function `quadgk` 
+from the [`QuadGK.jl`](https://github.com/JuliaMath/QuadGK.jl) Julia package, that uses an adaptive 
+Gauss-Kronrod quadrature.
+
+## Inputs
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
+
+- `cosmopng::CosmoPNG`: struct that contains all the information that may be used for the TPCF 
+  computations of the PNG signal.
+
+- `ss` : vector/range of `s` values where the function must be evaluated; if `ss = nothing`, 
+  it is set `ss = 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log)`. This is why it is returned 
+  also the vector of the "input" values.
+
+## Optional arguments 
+
+This function recall internally `ξ_S_multipole`, so the kwargs of the latter are valid also for the former; 
+we report them for comfortness:
+
+- `L::Int = 0`: order of the Legendre polynomial to be used
+
+- `use_windows::Bool = false`: tells if the integrand must consider ``\\mathcal{F}``
+  or not.
+
+- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+  to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
+  because the time for evaluation increase quickly.
+
+- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+  the returned value is NOT modified by this value, because after a multiplication
+  the internal result is divided by `enhancer`.
+
+- `N_log::Int = 1000` : number of points to be used in the default logaritmically-spaced 
+  range for `ss`, i.e. `range(0, log10(2 * cosmo.s_max), length=N_log)`; it is ignored if `ss ≠ nothing` 
+
+- `pr::Bool = true` : do you want the progress bar showed on screen, in order to 
+  check the time needed for the computation? (`true` recommended)
+
+# Returns
+
+A `Tuple{Vector{Float64}, Vector{Float64}}`, which has as first element the `ss` vector
+and as second one the corresponding ξ value evaluated.
+
+See also: [`ξ_S`](@ref), [`integrand_ξ_S_multipole`](@ref), 
+[`ξ_S_multipole`](@ref), [`print_map_ξ_S_multipole`](@ref)
+[`WindowFIntegrated`](@ref), [`Cosmology`](@ref), [`CosmoPNG`](@ref), 
+"""
+function map_ξ_S_multipole(
+     cosmo::Cosmology, cosmopng::CosmoPNG,
+     ss=nothing;
      pr::Bool=true,
      N_log::Int=1000,
      L::Int=0,
      kwargs...)
 
      t1 = time()
-     ss = isnothing(v_ss) ? 10 .^ range(0, 3, length=N_log) : v_ss
+     v_ss = isnothing(ss) ? 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log) : ss
      xis = pr ? begin
           @showprogress "ξ_S, L=$L: " [
-               ξ_S_multipole(s, cosmo, cosmopng; L=L, kwargs...) for s in ss
+               ξ_S_multipole(s, cosmo, cosmopng; L=L, kwargs...) for s in v_ss
           ]
      end : [
-          ξ_S_multipole(s, cosmo, cosmopng; L=L, kwargs...) for s in ss
+          ξ_S_multipole(s, cosmo, cosmopng; L=L, kwargs...) for s in v_ss
      ]
 
      t2 = time()
      pr && println("\ntime needed for map_ξ_S_multipole " *
                    "[in s] = $(@sprintf("%.5f", t2-t1)) ")
-     return (ss, xis)
+     return (v_ss, xis)
 end
 
 
+
+##########################################################################################92
+
+
+"""
+     print_map_ξ_S_multipole(
+          cosmo::Cosmology, cosmopng::CosmoPNG, 
+        out::String, ss = nothing;
+          L::Int = 0, use_windows::Bool = true,
+          atol_quad::Float64 = 0.0,
+          rtol_quad::Float64 = 1e-2,
+          enhancer::Float64 = 1e6,
+          pr::Bool = true,
+          N_log::Int = 1000,
+          kwargs...)
+
+
+Evaluate the multipole of order `L` of the Two-Point Correlation Function (TPCF) 
+concerning the signal (S) of the local Primordial Non-Gaussianities (PNG),
+for all the comoving distance values stored inside `ss`, 
+and print the results (with all the options used) in a file named `out`.
+If `ss = nothing`, it is set `ss = 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log)`.
+
+The function evaluated is then the following ``\\xi^{\\mathrm{S}} (s)``:
+
+```math
+     \\xi^{\\mathrm{S}} (s) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
+    \\xi^{\\mathrm{S}} \\left(s, \\mu\\right) 
+          \\, \\mathcal{L}_L(\\mu) \\, \\times 
+    \\begin{cases} 
+        \\frac{1}{\\mathcal{N}}\\mathcal{F}(s, \\mu) \\quad \\mathrm{use\\_windows == true} \\\\
+        1 \\quad\\quad \\mathrm{use\\_windows == false}
+    \\end{cases}
+```
+
+where:
+- ``\\xi^{\\mathrm{S}}(s,\\mu)`` is the TPCF of the PNG signal
+  with the angular dependence, computed from `ξ_S`.
+- ``\\mathcal{L}_L(\\mu)`` is the Legendre polynomial of order ``L``
+- ``\\mathcal{F}(s, \\mu)`` is the integrated window function stored in `cosmo::Cosmology` (check the documentation of `WindowFIntegrated`)
+- ``\\mathcal{N}`` is the integrated window function norm (check the documentation of `WindowFIntegrated`)
+
+The integration over ``\\mu`` is preformed through the Julia function `quadgk` 
+from the [`QuadGK.jl`](https://github.com/JuliaMath/QuadGK.jl) Julia package, that uses an adaptive 
+Gauss-Kronrod quadrature.
+
+## Inputs
+
+- `cosmo::Cosmology`: cosmology to be used in this computation
+
+- `cosmopng::CosmoPNG`: struct that contains all the information that may be used for the TPCF 
+  computations of the PNG signal.
+
+- `out::String` : name of the file where the results must be stored.
+
+- `ss` : vector/range of `s` values where the function must be evaluated; if `ss = nothing`, 
+  it is set `ss = 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log)`. This is why it is returned 
+  also the vector of the "input" values.
+
+## Optional arguments 
+
+This function recall internally `map_ξ_S_multipole`, so the kwargs of the latter are valid also for the former; 
+we report them for comfortness:
+
+- `L::Int = 0`: order of the Legendre polynomial to be used
+
+- `use_windows::Bool = false`: tells if the integrand must consider ``\\mathcal{F}``
+  or not.
+
+- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+  to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
+  because the time for evaluation increase quickly.
+
+- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+  the returned value is NOT modified by this value, because after a multiplication
+  the internal result is divided by `enhancer`.
+
+- `N_log::Int = 1000` : number of points to be used in the default logaritmically-spaced 
+  range for `ss`, i.e. `range(0, log10(2 * cosmo.s_max), length=N_log)`; it is ignored if `ss ≠ nothing` 
+
+- `pr::Bool = true` : do you want the progress bar showed on screen, in order to 
+  check the time needed for the computation? (`true` recommended)
+
+See also: [`ξ_S`](@ref), [`integrand_ξ_S_multipole`](@ref), 
+[`ξ_S_multipole`](@ref), [`map_ξ_S_multipole`](@ref)
+[`WindowFIntegrated`](@ref), [`Cosmology`](@ref), [`CosmoPNG`](@ref)
+"""
 function print_map_ξ_S_multipole(
      cosmo::Cosmology, cosmopng::CosmoPNG,
      out::String,

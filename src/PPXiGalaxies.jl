@@ -189,7 +189,7 @@ value for the Legendre polynomials `μ` (for the given `cosmo::Cosmology`).
 The analytical expression of such TPCF is the following:
 ```math
 \\begin{split}
-\\xi^{\\mathrm{pp, g}}(s,\\mu) = \\xi^{\\mathrm{pp, g}}_0(s,z) + 
+\\xi^{\\mathrm{pp, g}}(s&,\\mu) = \\xi^{\\mathrm{pp, g}}_0(s) + 
     \\xi^{\\mathrm{pp, g}}_2(s) \\mathcal{L}_2(\\mu) + 
     \\xi^{\\mathrm{pp, g}}_4(s) \\mathcal{L}_4(\\mu)  \\\\
 &\\xi^{\\mathrm{pp, g}}_0(s) = D^2(z) \\, I_0^0(s)\\, \\left(b^2 + 
@@ -217,6 +217,7 @@ where:
 All the cosmological data needed for this computation are taken from the input struct `cosmo::Cosmology`.
 
 See also: [`Point`](@ref), [`Cosmology`](@ref),
+[`ξ_PPGalaxies_L0`](@ref), [`ξ_PPGalaxies_L2`](@ref), [`ξ_PPGalaxies_L4`](@ref)
 [`integrand_ξ_PPGalaxies_multipole`](@ref), [`ξ_PPGalaxies_multipole`](@ref) 
 [`map_ξ_PPGalaxies_multipole`](@ref), [`print_map_ξ_PPGalaxies_multipole`](@ref)
 """
@@ -235,7 +236,7 @@ end
           L::Int=0, use_windows::Bool=true)
 
 Return the integrand on ``\\mu = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}`` 
-of the of the Galaxies Two-Point Correlation Function (TPCF) in the Plane Parallel (PP) 
+of the Galaxies Two-Point Correlation Function (TPCF) in the Plane Parallel (PP) 
 approximation, i.e. the following function ``f(s, \\mu)``:
 
 ```math
@@ -248,8 +249,8 @@ approximation, i.e. the following function ``f(s, \\mu)``:
 ```
 
 where:
-- ``\\xi^{\\mathrm{pp, g}}`` is the Two-Point Correlation Function (TPCF) of the Galaxies 
-  in the Plane-Parallel approximation, computed from `ξ_PPGalaxies`.
+- ``\\xi^{\\mathrm{pp, g}}(s,\\mu)`` is the TPCF of the Galaxies in the PP approximation
+  with the angular dependence, computed from `ξ_PPGalaxies`.
 - ``\\mathcal{L}_L(\\mu)`` is the Legendre polynomial of order ``L``
 - ``\\mathcal{F}(s, \\mu)`` is the integrated window function stored in `cosmo::Cosmology` (check the documentation of `WindowFIntegrated`)
 - ``\\mathcal{N}`` is the integrated window function norm (check the documentation of `WindowFIntegrated`)
@@ -266,8 +267,8 @@ where:
 
 - `L::Int = 0`: order of the Legendre polynomial to be used
 
-- `use_windows::Bool = false`: tells if the integrand must consider the two
-   window function ``\\phi`` and ``\\mathcal{F}``
+- `use_windows::Bool = false`: tells if the integrand must consider ``\\mathcal{F}``
+  or not.
 
 See also:[`ξ_PPGalaxies`](@ref), [`ξ_PPGalaxies_multipole`](@ref), 
 [`map_ξ_PPGalaxies_multipole`](@ref), [`print_map_ξ_PPGalaxies_multipole`](@ref)
@@ -306,7 +307,7 @@ end
           s, cosmo::Cosmology;
           L::Int = 0, use_windows::Bool = true,
           atol_quad::Float64 = 0.0,
-          rtol_quad::Float64 = 1e-2
+          rtol_quad::Float64 = 1e-2,
           enhancer::Float64 = 1e6 ) ::Float64
 
 
@@ -324,8 +325,8 @@ Parallel (PP)  term i.e. the following function ``\\xi^{\\mathrm{pp, g}} (s)``:
 ```
 
 where:
-- ``\\xi^{\\mathrm{pp, g}}`` is the Two-Point Correlation Function (TPCF) of the Galaxies 
-  in the Plane-Parallel approximation, computed from `ξ_PPGalaxies`.
+- ``\\xi^{\\mathrm{pp, g}}(s,\\mu)`` is the TPCF of the Galaxies in the PP approximation
+  with the angular dependence, computed from `ξ_PPGalaxies`.
 - ``\\mathcal{L}_L(\\mu)`` is the Legendre polynomial of order ``L``
 - ``\\mathcal{F}(s, \\mu)`` is the integrated window function stored in `cosmo::Cosmology` (check the documentation of `WindowFIntegrated`)
 - ``\\mathcal{N}`` is the integrated window function norm (check the documentation of `WindowFIntegrated`)
@@ -344,8 +345,8 @@ Gauss-Kronrod quadrature.
 
 - `L::Int = 0`: order of the Legendre polynomial to be used
 
-- `use_windows::Bool = false`: tells if the integrand must consider the two
-   window function ``\\phi`` and ``\\mathcal{F}``
+- `use_windows::Bool = false`: tells if the integrand must consider ``\\mathcal{F}``
+  or not.
 
 - `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
@@ -383,8 +384,8 @@ end
           cosmo::Cosmology, ss = nothing;
           L::Int = 0, use_windows::Bool = true,
           atol_quad::Float64 = 0.0,
-          rtol_quad::Float64 = 1e-2
-          enhancer::Float64 = 1e6
+          rtol_quad::Float64 = 1e-2,
+          enhancer::Float64 = 1e6,
           pr::Bool = true,
           N_log::Int = 1000,
           kwargs...) ::Tuple{Vector{Float64}, Vector{Float64}}
@@ -408,8 +409,8 @@ The function evaluated is then the following ``\\xi^{\\mathrm{pp, g}} (s)``:
 ```
 
 where:
-- ``\\xi^{\\mathrm{pp, g}}`` is the Two-Point Correlation Function (TPCF) of the Galaxies 
-  in the Plane-Parallel approximation, computed from `ξ_PPGalaxies`.
+- ``\\xi^{\\mathrm{pp, g}}(s,\\mu)`` is the TPCF of the Galaxies in the PP approximation
+  with the angular dependence, computed from `ξ_PPGalaxies`.
 - ``\\mathcal{L}_L(\\mu)`` is the Legendre polynomial of order ``L``
 - ``\\mathcal{F}(s, \\mu)`` is the integrated window function stored in `cosmo::Cosmology` (check the documentation of `WindowFIntegrated`)
 - ``\\mathcal{N}`` is the integrated window function norm (check the documentation of `WindowFIntegrated`)
@@ -433,8 +434,8 @@ we report them for comfortness:
 
 - `L::Int = 0`: order of the Legendre polynomial to be used
 
-- `use_windows::Bool = false`: tells if the integrand must consider the two
-   window function ``\\phi`` and ``\\mathcal{F}``
+- `use_windows::Bool = false`: tells if the integrand must consider ``\\mathcal{F}``
+  or not.
 
 - `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
@@ -491,8 +492,8 @@ end
           ss = nothing;
           L::Int = 0, use_windows::Bool = true,
           atol_quad::Float64 = 0.0,
-          rtol_quad::Float64 = 1e-2
-          enhancer::Float64 = 1e6
+          rtol_quad::Float64 = 1e-2,
+          enhancer::Float64 = 1e6,
           pr::Bool = true,
           N_log::Int = 1000,
           kwargs...)
@@ -516,8 +517,8 @@ The function evaluated is then the following ``\\xi^{\\mathrm{pp, g}} (s)``:
 ```
 
 where:
-- ``\\xi^{\\mathrm{pp, g}}`` is the Two-Point Correlation Function (TPCF) of the Galaxies 
-  in the Plane-Parallel approximation, computed from `ξ_PPGalaxies`.
+- ``\\xi^{\\mathrm{pp, g}}(s,\\mu)`` is the TPCF of the Galaxies in the PP approximation
+  with the angular dependence, computed from `ξ_PPGalaxies`.
 - ``\\mathcal{L}_L(\\mu)`` is the Legendre polynomial of order ``L``
 - ``\\mathcal{F}(s, \\mu)`` is the integrated window function stored in `cosmo::Cosmology` (check the documentation of `WindowFIntegrated`)
 - ``\\mathcal{N}`` is the integrated window function norm (check the documentation of `WindowFIntegrated`)
@@ -543,8 +544,8 @@ we report them for comfortness:
 
 - `L::Int = 0`: order of the Legendre polynomial to be used
 
-- `use_windows::Bool = false`: tells if the integrand must consider the two
-   window function ``\\phi`` and ``\\mathcal{F}``
+- `use_windows::Bool = false`: tells if the integrand must consider ``\\mathcal{F}``
+  or not.
 
 - `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
