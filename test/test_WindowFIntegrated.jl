@@ -361,9 +361,7 @@ end
      # Cosmology to the following comoving distances
      #s_min, s_max = 148.1920001465757, 571.7022420258767
      # ref_ss = [s for s in 100.0:50.0:500.0]
-     z_min, z_max = 0.05, 0.20
-     ref_μs = vcat([-1.0, -0.98, -0.95], [μ for μ in -0.9:0.3:0.9], [0.95, 0.98, 1.0])
-
+     z_min, z_max = 1.0, 1.5
      ref_μs = vcat([-1.0, -0.98, -0.95], [μ for μ in -0.9:0.3:0.9], [0.95, 0.98, 1.0])
 
      isfile(out_trap) && rm(out_trap)
@@ -374,7 +372,9 @@ end
           @test_throws AssertionError GaPSE.print_map_IntegratedF(z_min, z_max, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND; llim=-1.0)
           @test_throws AssertionError GaPSE.print_map_IntegratedF(z_min, z_max, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND; rlim=0.0)
           @test_throws AssertionError GaPSE.print_map_IntegratedF(z_min, z_max, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND; llim=1.0, rlim=0.5)
-          @test_throws AssertionError GaPSE.print_map_IntegratedF(z_min, z_max, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND; N_ss = 3)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(z_min, z_max, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND; N_ss=3)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(z_min, z_max, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND; m=0.0)
+          @test_throws AssertionError GaPSE.print_map_IntegratedF(z_min, z_max, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND; m=20.0)
 
           @test_throws AssertionError GaPSE.print_map_IntegratedF(-1.0, 1.0, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND)
           @test_throws AssertionError GaPSE.print_map_IntegratedF(1.0, 0.5, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND)
@@ -387,7 +387,7 @@ end
 
      @testset "test trap 1" begin
           GaPSE.print_map_IntegratedF(z_min, z_max, ref_μs, FILE_F_MAP, out_trap, FILE_BACKGROUND;
-               alg=:trap, N_ss=10, kwargs_map_F_int...)
+               alg=:trap, N_ss=20, m=2.1, kwargs_map_F_int...)
 
           table_output_F = readdlm(out_trap, comments=true)
           output_ss = convert(Vector{Float64}, table_output_F[:, 1])
@@ -399,6 +399,10 @@ end
           μs = convert(Vector{Float64}, table_F[:, 2])
           IFs = convert(Vector{Float64}, table_F[:, 3])
 
+          #println("ss = $ss;")
+          #println("μs = $μs;")
+          #println("IFs = $IFs;")
+
           @test all([s1 ≈ s2 for (s1, s2) in zip(ss, output_ss)])
           @test all([μ1 ≈ μ2 for (μ1, μ2) in zip(μs, output_μs)])
           @test all([IF1 ≈ IF2 for (IF1, IF2) in zip(IFs, output_IFs)])
@@ -409,7 +413,7 @@ end
      @testset "test trap 2" begin
           wf = GaPSE.WindowF(FILE_F_MAP)
           GaPSE.print_map_IntegratedF(z_min, z_max, ref_μs, wf, out_trap, FILE_BACKGROUND;
-               alg=:trap, N_ss = 10, kwargs_map_F_int...)
+               alg=:trap, N_ss=20, m=2.1, kwargs_map_F_int...)
 
           table_output_F = readdlm(out_trap, comments=true)
           output_ss = convert(Vector{Float64}, table_output_F[:, 1])
@@ -430,7 +434,7 @@ end
 
      @testset "test quad 1" begin
           GaPSE.print_map_IntegratedF(z_min, z_max, ref_μs, FILE_F_MAP, out_quad, FILE_BACKGROUND;
-               alg=:quad,  N_ss = 10, kwargs_map_F_int...)
+               alg=:quad, N_ss=20, m=2.1, kwargs_map_F_int...)
 
           table_output_F = readdlm(out_quad, comments=true)
           output_ss = convert(Vector{Float64}, table_output_F[:, 1])
@@ -452,7 +456,7 @@ end
      @testset "test quad 2" begin
           wf = GaPSE.WindowF(FILE_F_MAP)
           GaPSE.print_map_IntegratedF(z_min, z_max, ref_μs, wf, out_quad, FILE_BACKGROUND;
-               alg=:quad, N_ss = 10, kwargs_map_F_int...)
+               alg=:quad, N_ss=20, m=2.1, kwargs_map_F_int...)
 
           table_output_F = readdlm(out_quad, comments=true)
           output_ss = convert(Vector{Float64}, table_output_F[:, 1])

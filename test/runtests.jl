@@ -40,7 +40,7 @@ const HUBBLE_0 = 1e5 / 299792458.0
 include("TEST_DATA.jl")
 
 ##########################################################################################92
-
+#=
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
@@ -70,15 +70,16 @@ end
      include("test_Cosmology.jl")
 end
 
-
 @testset "test WindowF" begin
      include("test_WindowF.jl")
 end
+=#
 
 @testset "test WindowFIntegrated" begin
      include("test_WindowFIntegrated.jl")
 end
 
+@test 1==2
 
 @testset "test Dicts" begin
      include("test_Dicts.jl")

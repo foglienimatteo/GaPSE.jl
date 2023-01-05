@@ -268,14 +268,15 @@ end
 function print_map_IntegratedF(z_min, z_max,
      μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String,
      file_data::String;
-     names_bg=NAMES_BACKGROUND, h_0=0.7, N_ss::Int = 100, kwargs...)
+     names_bg=NAMES_BACKGROUND, h_0=0.7, N_ss::Int=100, m::Float64=2.1, kwargs...)
 
      @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
      @assert N_ss > 9 "N_ss > 9 must hold!"
+     @assert 0.0 < m < 10.0 "0.0 < m < 10.0 must hold!"
      BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
      s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
      s_min, s_max = s_of_z(z_min), s_of_z(z_max)
-     SS = union([0.0], [s for s in range(0.0, 3.0*s_max, length = N_ss)][begin+1:end])
+     SS = union([0.0], [s for s in range(0.0, m * s_max, length=N_ss)][begin+1:end])
 
      print_map_IntegratedF(s_min, s_max, SS,
           μs, windowF, out; kwargs...)
@@ -297,6 +298,14 @@ end
           file_data::String; 
           names_bg = NAMES_BACKGROUND, h_0 = 0.7, kwargs...)
 
+     print_map_IntegratedF(
+          z_min, z_max,
+          μs::Vector{Float64}, 
+          windowF::Union{String,WindowF}, out::String,
+          file_data::String;
+          names_bg = NAMES_BACKGROUND, h_0 = 0.7, N_ss::Int = 100, 
+          m::Float64 = 2.1, kwargs...)
+
 Evaluate the integrated window function ``\\mathcal{F}(s,\\mu)`` in a rectangual grid 
 of ``\\mu`` and ``s`` values, and print the results in the `out` file.
 
@@ -316,10 +325,21 @@ The first method takes as input:
 - `out::String` : the name of the output file
 
 The second method takes as input the min and max redshifts of the survey (`z_min`and `z_max`),
-the vector of redshifts `zs::Vector{Float64}` for the integrated window function sampling and the `file_data` where
-there can be found the association ``z \\rightarrow s(z)``. Such file must have the structure of the 
+the vector of redshifts `zs::Vector{Float64}` for the integrated window function sampling, `μs` and `windowF` 
+as before and the `file_data` where can be found the association ``z \\rightarrow s(z)``. 
+Such file must have the structure of the 
 background data produced by the [`CLASS`](https://github.com/lesgourg/class_public) code.
 Note that also `zs` musyt be a float vector of increasing redshift values (so each element must be ≥ 0).
+This method internally recalls the first one, so the other `kwargs...` are in common.
+
+The third method takes as input the min and max redshifts of the survey (`z_min`and `z_max`) and the same 
+input as the second method (`μs`, `widnowF`, `out` and `file_data`) but NOT THE REDSHIFT SAMPLING VECTOR `zs`.
+The sampling will be internally made linearly from ``s = 0`` to ``s = m \\, s_{\\mathrm{max}}``, 
+where `s_max` is the comoving distance associated to `z_max` (for the data stored in `file_data`) 
+and `m::Float64 = 2.1` a coefficient that we suggest to set equals to `2 < m < 3`.
+`N_ss::Int = 100` is the number of `s` values used for the sampling in the interval 
+``[0, m \\, s_{\\mathrm{max}}]``.
+This method internally recalls the first one, so the other `kwargs...` are in common.
 
 The analytical expression for the integrated window function is the following:
 
