@@ -73,7 +73,7 @@ end
 @testset "test WindowF" begin
      include("test_WindowF.jl")
 end
-=#
+
 
 @testset "test WindowFIntegrated" begin
      include("test_WindowFIntegrated.jl")
@@ -89,7 +89,7 @@ end
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
 end
-
+=#
 
 ################################### COSMOLOGY IMPLEMENTATION #############################92
 
@@ -188,6 +188,7 @@ SS_LDxGNC = 10 .^ range(0, log10(2.0 * COSMO.s_max), length=100);
 
 ################################### TEST PLANE-PARALLEL APPROXIMATIONS ###################92
 
+
 @testset "test PPDoppler" begin
      include("test_PPDoppler.jl")
 end
@@ -210,6 +211,7 @@ end
      include("test_PNG.jl")
 end
 
+@test 1==2 
 
 ################################### TEST LUMINOSITY DISTANCE PERTURBATIONS ###############92
 

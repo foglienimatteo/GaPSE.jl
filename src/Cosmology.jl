@@ -301,12 +301,12 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 ## Constructors
 
     Cosmology(
-        params::CosmoParams,
-        file_data::String,
-        file_ips::String,
-        file_windowF::String,
-        file_IntwindowF::String;
-        names_bg = NAMES_BACKGROUND)
+          params::CosmoParams,
+          file_data::String,
+          file_ips::String,
+          file_windowF::String,
+          file_IntwindowF::String;
+          names_bg = NAMES_BACKGROUND)
 
 - `params::CosmoParams` : parameters to be used for this Cosmology. See the docstring
   of `CosmoParams` for more information on the possible inputs.

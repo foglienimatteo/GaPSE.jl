@@ -360,22 +360,135 @@ end;
 
 
 
+"""
+    CosmoParams(
+          D::Float64 
+          bf::Float64
+
+          flm_0::Float64 
+          flM_0::Float64 
+          kmin_0::Float64 
+          kmax_0::Float64  
+          N_0::Int
+
+          flm_2::Float64  
+          flM_2::Float64 
+          kmin_2::Float64 
+          kmax_2::Float64  
+          N_2::Int
+     )
+
+
+Struct that contains all the parameters and options that are 
+matter of concerns for the `CosmoPNG` we are interested in.
+
+## Arguments
+
+- `D` : linear growth factor `D` to be used for the
+  `α_bias` function.
+
+- `bf` : value of the degenerate product ``b_{\\phi} f_{\\rm NL}``.
+
+- `kmin_0`, `kmax_0`, s0_0` : values to be passed to `xicalc` for the
+  integration made by `IntegralIPSalpha` of the term ``J_0``
+
+- `flm_0`, `flM_0` : the limits (min and max) where the integral made by `IntegralIPSalpha` of the term ``J_0``
+  must be fitted with a power law, for small distances. This operation is necessary, because `xicalc`,
+  in this context, gives wrong results for too small input distance `s`; nevertheless,
+  this integral has fixed power-law trends for ``s \\rightarrow 0``, so this approach gives
+  good results.
+
+- `kmin_2`, `kmax_2`, s0_2`, `flm_2`, `flM_2` : same as the previous terms, but for the integral ``J_2``
+
+
+## Constructors
+
+     function CosmoPNGParams(D; 
+          bf = 1.0,
+          flm_0 = 5e-2, flM_0 = 1e-1, s0_0 = 1e-4,
+          kmin_0 = 1e-6, kmax_0 = 1e4, N_0::Int = 1024,
+          flm_2 = 5e-1, flM_2 = 1e0, s0_2 = 1e-4,
+          kmin_2 = 1e-6, kmax_2 = 1e4, N_2::Int = 1024,
+          )
+     
+The associations are trivials.
+The only thing to be put attention on is that `D` is a MANDATORY argument, while
+all the other ones are keyword arguments with a default value.
+You should use:
+
+    pngparams = CosmoPNGParams(cosmo.D_of_s(cosmo.s_eff); ...)
+
+where `cosmo::Cosmology` is the Cosmology you are interested in and 
+`s_eff` is the effective comoving distance (stored on `cosmo`). 
+
+See also: [`Cosmology`](@ref), [`CosmoPNG`](@ref), [`IntegralIPSalpha`](@ref),
+[`α_bias`](@ref)
+"""
+struct CosmoPNGParams
+     D::Float64
+     bf::Float64
+
+     flm_0::Float64
+     flM_0::Float64
+     s0_0::Float64
+     kmin_0::Float64
+     kmax_0::Float64
+     N_0::Int
+
+     flm_2::Float64
+     flM_2::Float64
+     s0_2::Float64
+     kmin_2::Float64
+     kmax_2::Float64
+     N_2::Int
+
+     function CosmoPNGParams(D;
+          bf=1.0,
+          flm_0=5e-2, flM_0=1e-1, s0_0=1e-4,
+          kmin_0=1e-6, kmax_0=1e4, N_0::Int=1024,
+          flm_2=5e-1, flM_2=1e0, s0_2=1e-4,
+          kmin_2=1e-6, kmax_2=1e4, N_2::Int=1024
+     )
+
+          @assert D > 0.0 "D > 0.0 must hold!"
+          @assert bf > 0.0 "bf > 0.0 must hold!"
+
+          @assert N_0 > 10 "N_0 > 10 must hold!"
+          @assert 0.0 < flm_0 < flM_0 "0.0 < flm_0 < flM_0 must hold!"
+          @assert 0.0 < kmin_0 < kmax_0 "0.0 < kmin_0 < kmax_0 must hold!"
+          @assert kmin_0 < s0_0 < kmax_0 "kmin_0 < s0_0 < kmax_0 must hold!"
+
+          @assert N_2 > 10 "N_2 > 10 must hold!"
+          @assert 0.0 < flm_2 < flM_2 "0.0 < flm_2 < flM_2 must hold!"
+          @assert 0.0 < kmin_2 < kmax_2 "0.0 < kmin_2 < kmax_2 must hold!"
+          @assert kmin_2 < s0_2 < kmax_2 "kmin_2 < s0_2 < kmax_2 must hold!"
+
+
+          new(
+               D, bf,
+               flm_0, flM_0, s0_0, kmin_0, kmax_0, N_0,
+               flm_2, flM_2, s0_2, kmin_2, kmax_2, N_2,
+          )
+     end
+end
 
 """
     CosmoPNG(
-        tf::TF
-        file_TF::String
+          params::CosmoPNGParams
+          tf::TF
+          file_TF::String
 
-        J0::IntegralIPSalpha
-        J2::IntegralIPSalpha
-
-        params::Dict{Symbol,T1} where {T1}
-        )
+          J0::IntegralIPSalpha
+          J2::IntegralIPSalpha
+          )
 
 Struct that contains all the information that may be used for the 
 Correlation Function computations of the Primordial Non-Gaussianities (PNG) signal.
 
 ## Arguments
+
+- `params::CosmoPNGParams` : parameters to be used for this Cosmology. See the docstring
+  of `CosmoParams` for more information on the possible inputs.
 
 - `tf::TF` : transfer function to be used.
 
@@ -395,18 +508,17 @@ Correlation Function computations of the Primordial Non-Gaussianities (PNG) sign
   \\; \\; ,  \\quad \\; \\alpha_{\\rm bias} = \\frac{b_{\\phi} f_{\\rm NL}}{\\alpha(k, z)} \\; .
   ```
 
-- `params::Dict{Symbol, T1} where {T1}` : parameter values used in the constructor.
-
 
 ## Constructor 
 
      CosmoPNG(
-          cosmo::Cosmology,
-          file_TF::String;
-          comments::Bool=true, D=nothing, bf=1.0,
-          flm0=5e-2, flM0=1e-1, flm2=5e-1, flM2=1e0,
-          kmin=1e-6, kmax=1e4, N::Int=1024
+          pngparams::CosmoPNGParams,
+          cosmo::Cosmology, file_TF::String;
+          comments::Bool=true
      )
+
+- `pngparams::CosmoParams` : parameters to be used for this Cosmology. See the docstring
+  of `CosmoParams` for more information on the possible inputs.
 
 - `cosmo::Cosmology` : cosmology to be considered, both in terms od Input Power Spectrum
   and of cosmological parameters.
@@ -415,58 +527,44 @@ Correlation Function computations of the Primordial Non-Gaussianities (PNG) sign
 
 - `comments::Bool=true` : the `file_TF` file contains comments at the beginning?
 
-- `D = nothing` : value of the linear growth factor ``D`` to be used. If `nothing`,
-  it will be internally set as ``D(z_{\\mathrm{eff}})``, where ``z_{\\mathrm{eff}}`` is
-  the effective redshift for the input cosmology.
-
-- `bf = 1.0` : value of the degenerate product ``b_{\\phi} f_{\\rm NL}``.
-
-- `kmin = 1e-6, kmax = 1e4, s0 = 1e-4` : values to be passed to `xicalc` for the
-  integration of both `J0` and `J2`
-
-- `flm0=5e-2`, `flM0=1e-1` : the limits (min and max) where the integral `J0`
-  must be fitted with a power law, for small distances. This operation is necessary, because `xicalc`,
-  in this context, gives wrong results for too small input distance `s`; nevertheless,
-  this integral has fixed power-law trends for ``s \\rightarrow 0``, so this approach gives
-  good results.
-
-- `flm2=5e-1`, `flM2=1e0` : same as the previous ones, but for `J2`.
-
 See also: [`TF`](@ref), [`IntegralIPSalpha`](@ref), [`Cosmology`](@ref)
 """
 struct CosmoPNG
+     params::CosmoPNGParams
+
      tf::TF
      file_TF::String
 
      J0::IntegralIPSalpha
      J2::IntegralIPSalpha
 
-     params::Dict{Symbol,T1} where {T1}
-
      function CosmoPNG(
-          cosmo::Cosmology,
-          file_TF::String;
-          comments::Bool=true, D=nothing, bf=1.0,
-          flm0=5e-2, flM0=1e-1, flm2=5e-1, flM2=1e0,
-          kmin=1e-6, kmax=1e4, N::Int=1024
+          pngparams::CosmoPNGParams,
+          cosmo::Cosmology, file_TF::String;
+          comments::Bool=true
      )
 
           table = readdlm(file_TF; comments=comments)
           ks_tf = convert(Vector{Float64}, table[:, 1])
           pks_tf = convert(Vector{Float64}, table[:, 2])
 
-          DD = isnothing(D) ? cosmo.D_of_s(cosmo.s_eff) : D
+          #DD = isnothing(D) ? cosmo.D_of_s(cosmo.s_eff) : D
           tf = TF(ks_tf, pks_tf)
 
-          J0 = IntegralIPSalpha(tf, cosmo, 0, 0; D=DD, bf=bf, kmin=kmin, kmax=kmax,
-               fit_left_min=flm0, fit_left_max=flM0, N=N)
-          J2 = IntegralIPSalpha(tf, cosmo, 2, 0; D=DD, bf=bf, kmin=kmin, kmax=kmax,
-               fit_left_min=flm2, fit_left_max=flM2, N=N)
+          J0 = IntegralIPSalpha(tf, cosmo, 0, 0;
+               D=pngparams.D, bf=pngparams.bf,
+               kmin=pngparams.kmin_0, kmax=pngparams.kmax_0,
+               s0=pngparams.s0_0,
+               fit_left_min=pngparams.flm0_0, fit_left_max=pngparams.flM0_0,
+               N=pngparams.N_0)
+          J2 = IntegralIPSalpha(tf, cosmo, 2, 0;
+               D=pngparams.D, bf=pngparams.bf,
+               kmin=pngparams.kmin_2, kmax=pngparams.kmax_2,
+               s0=pngparams.s0_2,
+               fit_left_min=pngparams.flm2_2, fit_left_max=pngparams.flM2_2,
+               N=pngparams.N_2)
 
-          params = Dict(:D => D, :bf => bf, :flm0 => flm0, :flM0 => flM0,
-               :flm2 => flm2, :flM2 => flM2, :kmin => kmin, :kmax => kmax, :N => N)
-
-          new(tf, file_TF, J0, J2, params)
+          new(pngparams, tf, file_TF, J0, J2)
      end
 end
 
@@ -717,7 +815,7 @@ end
 
 
 """
-     ξ_PPGalaxies_multipole(
+     ξ_S_multipole(
           s, cosmo::Cosmology, cosmopng::CosmoPNG;;
           L::Int = 0, use_windows::Bool = true,
           atol_quad::Float64 = 0.0,
@@ -915,7 +1013,7 @@ end
 """
      print_map_ξ_S_multipole(
           cosmo::Cosmology, cosmopng::CosmoPNG, 
-        out::String, ss = nothing;
+          out::String, ss = nothing;
           L::Int = 0, use_windows::Bool = true,
           atol_quad::Float64 = 0.0,
           rtol_quad::Float64 = 1e-2,
