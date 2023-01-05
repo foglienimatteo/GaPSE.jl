@@ -11,6 +11,7 @@ end
 GaPSE.TF
 GaPSE.α_bias
 GaPSE.IntegralIPSalpha
+GaPSE.CosmoPNGParams
 GaPSE.CosmoPNG
 GaPSE.ξ_S_L0
 GaPSE.ξ_S_L2
