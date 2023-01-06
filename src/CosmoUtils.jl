@@ -20,9 +20,14 @@
 
 
 """
-     func_z_eff(s_min, s_max, z_of_s) :: Float64
+     func_z_eff(s_min, s_max, z_of_s) ::Float64
 
-Return the effective redshift ``z_\\mathrm{eff}``, calcuated as follows:
+Given:
+- the input comoving distances `s_min` and `s_max`
+- the spline `z_of_s` that for an input comoving distance ``s`` return the associated redshift ``z(s)``,
+
+this function return the effective redshift ``z_\\mathrm{eff}``, computed as follows:
+
 ```math
 \\begin{split}
 z_\\mathrm{eff} := 
@@ -43,15 +48,21 @@ z_\\mathrm{eff} :=
           \\int_0^\\infty \\mathrm{d}s \\, s^2 \\, \\phi^2(s)
       } \\\\[4pt]
       &= \\frac{3}{s_\\mathrm{max}^3 - s_\\mathrm{min}^3} \\,
-          \\int_{s_\\mathrm{min}}^{s_\\mathrm{max}} \\mathrm{d}s  \\, s^2 \\, z(s)
+          \\int_{s_\\mathrm{min}}^{s_\\mathrm{max}} \\mathrm{d}s  \\, s^2 \\, z(s) \\; .
 \\end{split}
 ```
-where we have used our assuption on separability of the window function
-```math
-     \\phi(\\mathbf{s}) = \\phi(s) \\, W(\\hat{s})
-```
-and their definitions.
 
+We have used our assuption concerning the separability of the window function 
+of the survey ``\\phi(\\mathbf{s})`` into a
+radial and angular part, respectively ``\\phi(s)`` and ``W(\\mathbf{\\hat{s}})``:
+
+```math
+     \\phi(\\mathbf{s}) = \\phi(s) \\, W(\\mathbf{\\hat{s}}) \\; .
+```
+
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
+The final integration over ``\\mathrm{d}s`` is performed through the function `quadgk`
+of the [QuadGK.jl](https://github.com/JuliaMath/QuadGK.jl) Julia package.
 
 See also: [`ϕ`](@ref), [`W`](@ref)
 """
@@ -61,9 +72,9 @@ end
 
 
 """
-     s(s1, s2, y) :: Float64
+     s(s1, s2, y) ::Float64
 
-Return the value ``s = \\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}``
+Return the value ``s = s(s_1, s_2, y) = \\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}``
 
 See also: [`μ`](@ref), [`s2`](@ref), [`y`](@ref)
 """
@@ -71,15 +82,18 @@ s(s1, s2, y) = √(s1^2 + s2^2 - 2 * s1 * s2 * y)
 
 
 """
-     μ(s1, s2, y) :: Float64
+     μ(s1, s2, y) ::Float64
 
-Return the value ``\\mu=\\hat{\\mathbf{s}}_1\\cdot\\hat{\\mathbf{s}}``, defined as:
+Return the cosine ``\\mu=\\hat{\\mathbf{s}}_1\\cdot\\hat{\\mathbf{s}}`` of the angle between 
+the comoving distances ``\\mathbf{s}_1`` and ``\\mathbf{s} = \\mathbf{s}_2 - \\mathbf{s}_1``.
+It can be easily shown that:
 ```math
 \\mu = \\mu(s_1, s_2, y) = \\frac{y \\, s_2 - s_1}{s(s_1, s_2, y)} \\;,
-\\quad s(s_1, s_2, y) = \\sqrt{s_1^2 + s^2 - 2 \\, s_1 \\, s_2 \\, y}
+\\quad s = s(s_1, s_2, y) = \\sqrt{s_1^2 + s^2 - 2 \\, s_1 \\, s_2 \\, y}
 ```
-with ``y=\\cos\\theta=\\hat{\\mathbf{s}}_1\\cdot\\hat{\\mathbf{s}}`` and where ``s`` is 
-obtained from the function `s`
+with ``y=\\cos\\theta=\\hat{\\mathbf{s}}_1\\cdot\\hat{\\mathbf{s}}_2`` and where ``s`` is 
+obtained from the function `s`.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 See also: [`s`](@ref), [`s2`](@ref), [`y`](@ref)
 """
@@ -88,7 +102,7 @@ See also: [`s`](@ref), [`s2`](@ref), [`y`](@ref)
 
 
 """
-     s2(s1, s, μ) :: Float64
+     s2(s1, s, μ) ::Float64
 
 Return the value ``s_2 = \\sqrt{s_1^2 + s^2 + 2 \\, s_1 \\, s \\, \\mu}``
 
@@ -99,17 +113,20 @@ s2(s1, s, μ) = √(s1^2 + s^2 + 2 * s1 * s * μ)
 
 
 """
-     y(s1, s, μ) :: Float64
+     y(s1, s, y) ::Float64
 
-Return the value ``y=\\cos\\theta``, defined as:
+Return the cosine ``y=\\cos\\theta=\\hat{\\mathbf{s}}_1\\cdot\\hat{\\mathbf{s}}_2`` of the angle between 
+the comoving distances ``\\mathbf{s}_1`` and ``\\mathbf{s}_2 = \\mathbf{s}_1 + \\mathbf{s}``.
+It can be easily shown that:
 ```math
-y = y(s_1, s, \\mu) = \\frac{\\mu \\, s + s_1}{s2(s_1, s, \\mu)} \\;,
-\\quad s_2 = \\sqrt{s_1^2 + s^2 + 2 \\, s_1 \\, s \\, \\mu}
+y = y(s_1, s, \\mu) = \\frac{\\mu \\, s + s_1}{s_2(s_1, s, \\mu)} \\;,
+\\quad s_2 = s_2(s_1, s, \\mu) = \\sqrt{s_1^2 + s^2 + 2 \\, s_1 \\, s \\, \\mu}
 ```
-with ``\\mu=\\hat{\\mathbf{s}}_1\\cdot\\hat{\\mathbf{s}}_2`` and 
-where ``s_2`` is btained from the function `s2`
+with ``\\mu=\\hat{\\mathbf{s}}_1\\cdot\\hat{\\mathbf{s}}`` and where ``s_2`` is 
+obtained from the function `s2`.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
-See also: [`s`](@ref), [`μ`](@ref), [`s2`](@ref)
+See also: [`s`](@ref), [`s2`](@ref), [`μ`](@ref)
 """
 y(s1, s, μ) = (μ * s + s1) / s2(s, s1, μ)
 
@@ -121,7 +138,7 @@ y(s1, s, μ) = (μ * s + s1) / s2(s, s1, μ)
 
 
 """
-     ϕ(s, s_min, s_max) :: Float64
+     ϕ(s, s_min, s_max) ::Float64
 
 Radial part of the survey window function. Return `1.0` if is true that
 ``s_\\mathrm{min} < s < s_\\mathrm{max}`` and `0.0` otherwise.
@@ -130,7 +147,7 @@ In this software we made the assuption that the survey window function can be
 separated into a radial and angular part, i.e.:
 
 ```math
-     \\phi(\\mathbf{s}) = \\phi(s) \\, W(\\hat{s})
+     \\phi(\\mathbf{s}) = \\phi(s) \\, W(\\mathbf{\\hat{s}})
 ```
 
 See also: [`W`](@ref)
@@ -140,17 +157,17 @@ See also: [`W`](@ref)
 
 
 """
-     W(θ, θ_max) :: Float64
+     W(θ, θ_max) ::Float64
 
 Angular part of the survey window function. Return `1.0` if is true that
-``0.0 \\leq \\theta < \\theta_\\mathrm{max}`` and `0.0` otherwise. It is
+``0 \\leq \\theta < \\theta_\\mathrm{max}`` and `0.0` otherwise. It is
 implicitly assumed an azimutal simmetry of the survey.
 
 In this software we made the assuption that the survey window function can be
 separated into a radial and angular part, i.e.:
 
 ```math
-     \\phi(\\mathbf{s}) = \\phi(s) \\, W(\\hat{s})
+     \\phi(\\mathbf{s}) = \\phi(s) \\, W(\\mathbf{\\hat{s}})
 ```
 
 See also: [`ϕ`](@ref)
@@ -159,7 +176,7 @@ W(θ, θ_max) = 0.0 ≤ θ < θ_max ? 1.0 : 0.0
 
 
 """
-     V_survey(s_min, s_max, θ_max) :: Float64
+     V_survey(s_min, s_max, θ_max) ::Float64
 
 Return the volume of a survey with azimutal simmetry, i.e.:
 
@@ -190,7 +207,7 @@ end
 
 
 """
-     A(s_min, s_max, θ_max) :: Float64
+     A(s_min, s_max, θ_max) ::Float64
 
 Return the Power Spectrum multipole normalization coefficient `A`, i.e.:
 ```math
