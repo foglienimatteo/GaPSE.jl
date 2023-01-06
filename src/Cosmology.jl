@@ -24,11 +24,11 @@
 Given in inpuit a comoving distance `s` and a comoving Hubble parameter `ℋ`, this
 function returns the following value:
 ```math
-\\mathscr{R}_\\mathrm{LD}(s, \\mathscr{H})=
+\\mathscr{R}_\\mathrm{LD}(s, \\mathcal{H})=
 \\begin{cases}
-1 - \\frac{1}{\\mathscr{H} \\, s} \\; ,
+1 - \\frac{1}{\\mathcal{H} \\, s} \\; ,
     \\quad s > s_\\mathrm{lim}\\\\
-1 - \\frac{1}{\\mathscr{H}_0 \\, s_\\mathrm{lim}} \\; , 
+1 - \\frac{1}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} \\; , 
      \\quad \\quad 0 \\leq s \\leq s_\\mathrm{lim}
 \\end{cases}
 ```
@@ -39,7 +39,7 @@ This function is used inside a `Cosmology` for the computations concering the
 Two-Point Correlation Fuctions (TPCFs) relative to the perturbed Luminosity Distance (LD).
 The default value of the comoving Hubble parameter nowadays is, in natural system
 (where the speed of light c=1): 
-``\\mathscr{H}_0 \\simeq 3.335641\\times10^{-4} \\; h_0^{-1}\\mathrm{Mpc}``
+``\\mathcal{H}_0 \\simeq 3.335641\\times10^{-4} \\; h_0^{-1}\\mathrm{Mpc}``
 
 See also: [`func_ℛ_GNC`](@ref), [`Cosmology`](@ref), [`ℋ0`](@ref)
 """
@@ -62,21 +62,21 @@ its first derivative value `ℋ_p` wrt the comoving time ``\\tau``,
 this function returns the following value:
 
 ```math
-\\mathscr{R}_\\mathrm{GNC}(s, \\mathscr{H}; s_{\\mathrm{b}})=
+\\mathscr{R}_\\mathrm{GNC}(s, \\mathcal{H}; s_{\\mathrm{b}})=
 \\begin{cases}
-5 s_{\\mathrm{b}} + \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathscr{H} \\, s} +  
-     \\frac{\\dot{\\mathscr{H}}}{\\mathscr{H}^2} - \\mathit{f}_{\\mathrm{evo}}\\; ,
+5 s_{\\mathrm{b}} + \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H} \\, s} +  
+     \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}^2} - \\mathit{f}_{\\mathrm{evo}}\\; ,
     \\quad s > s_\\mathrm{lim}\\\\
-1 - \\frac{1}{\\mathscr{H}_0 \\, s_\\mathrm{lim}} 
-5 s_{\\mathrm{b}} + \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathscr{H}_0 \\, s_\\mathrm{lim}} +  
-     \\frac{\\dot{\\mathscr{H}}}{\\mathscr{H}_0^2} - \\mathit{f}_{\\mathrm{evo}}\\; , 
+1 - \\frac{1}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} 
+5 s_{\\mathrm{b}} + \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} +  
+     \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}_0^2} - \\mathit{f}_{\\mathrm{evo}}\\; , 
      \\quad \\quad 0 \\leq s \\leq s_\\mathrm{lim}
 \\end{cases}
 ```
 
 where ``s_{\\mathrm{b}}`` is the magnification bias (i.e. the slope of the luminosity 
 function at the luminosity threshold), ``\\mathit{f}_{\\mathrm{evo}}`` the evolution bias
-and ``\\dot{\\mathscr{H}} = \\mathrm{d}\\mathscr{H} / \\mathrm{d}\\tau``.
+and ``\\dot{\\mathcal{H}} = \\mathrm{d}\\mathcal{H} / \\mathrm{d}\\tau``.
  
 The ``0 \\leq s \\leq s_\\mathrm{lim}`` case is used in order to avoid 
 the divergence of the denominator.
@@ -84,7 +84,7 @@ This function is used inside a `Cosmology` for the computations concering the
 Two-Point Correlation Fuctions (TPCFs) relative to the Galaxy Number Counts (GNC).
 The default value of the comoving Hubble parameter nowadays is, in natural system
 (where the speed of light c=1): 
-``\\mathscr{H}_0 \\simeq 3.335641\\times10^{-4} \\; h_0^{-1}\\mathrm{Mpc}``
+``\\mathcal{H}_0 \\simeq 3.335641\\times10^{-4} \\; h_0^{-1}\\mathrm{Mpc}``
 
 See also: [`func_ℛ_GNC`](@ref), [`Cosmology`](@ref), [`ℋ0`](@ref)
 """
@@ -261,20 +261,20 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
   - the derivative of the comoving Hubble parameter wrt the comoving time `ℋ_p`; 
   - `ℛ_LD`, obtained from `func_ℛ_LD` and defined as:
   ```math
-     \\mathscr{R}_{\\mathrm{LD}} = 1 - \\frac{1}{\\mathscr{H} \\, s}
+     \\mathfrak{R} = 1 - \\frac{1}{\\mathcal{H} \\, s}
   ```
-  where ``s`` is the comoving distance and \\mathscr{H} is comoving Hubble parameter.
+  where ``s`` is the comoving distance and \\mathcal{H} is comoving Hubble parameter.
   It's spline is obtained in a sample of point given by 
   `10.0 .^ range(-4, log10(max(comdist...)), length=1000)`.
   - `ℛ_GNC`, obtained from `func_ℛ_GNC` and defined as:
   ```math
-     \\mathscr{R}_{\\mathrm{GNC}} = 5 s_b + \\frac{2 - 5 s_b}{\\mathscr{H} \\, s} +  
-     \\frac{\\dot{\\mathscr{H}}}{\\mathscr{H}^2} - \\mathit{f}_{\\mathrm{evo}}
+     \\mathcal{R} = 5 s_{\\mathrm{b}} + \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H} \\, s} +  
+     \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}^2} - \\mathit{f}_{\\mathrm{evo}}
   ```
-  where``s`` is the comoving distance, \\mathscr{H} is comoving Hubble parameter,
+  where``s`` is the comoving distance, \\mathcal{H} is comoving Hubble parameter,
   ``s_{\\mathrm{b}}`` is the magnification bias (i.e. the slope of the luminosity 
   function at the luminosity threshold), ``\\mathit{f}_{\\mathrm{evo}}`` the evolution bias
-  and ``\\dot{\\mathscr{H}} = \\mathrm{d}\\mathscr{H} / \\mathrm{d}\\tau`` the first derivative
+  and ``\\dot{\\mathcal{H}} = \\mathrm{d}\\mathcal{H} / \\mathrm{d}\\tau`` the first derivative
   of the comoving Hubble parameter wrt the comoving time ``\\tau``.
   It's spline is obtained in a sample of point given by 
   `10.0 .^ range(-4, log10(max(comdist...)), length=1000)`.
@@ -451,18 +451,18 @@ It contains all the relevant cosmological information at that redshift, respecti
 - the derivative of the comoving Hubble parameter wrt the comoving time `ℋ_p`; 
 - `ℛ_LD`, obtained from `func_ℛ_LD` and defined as:
   ```math
-  \\mathscr{R}_{\\mathrm{LD}} = 1 - \\frac{1}{\\mathscr{H} \\, s}
+  \\mathfrak{R} = 1 - \\frac{1}{\\mathcal{H} \\, s}
   ```
-  where ``s`` is the comoving distance and \\mathscr{H} is comoving Hubble parameter.
+  where ``s`` is the comoving distance and \\mathcal{H} is comoving Hubble parameter.
 - `ℛ_GNC`, obtained from `func_ℛ_GNC` and defined as:
   ```math
-  \\mathscr{R}_{\\mathrm{GNC}} = 5 s_b + \\frac{2 - 5 s_b}{\\mathscr{H} \\, s} +  
-  \\frac{\\dot{\\mathscr{H}}}{\\mathscr{H}^2} - \\mathit{f}_{\\mathrm{evo}}
+  \\mathcal{R} = 5 s_{\\mathrm{b}} + \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H} \\, s} +  
+  \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}^2} - \\mathit{f}_{\\mathrm{evo}}
   ```
-  where``s`` is the comoving distance, \\mathscr{H} is comoving Hubble parameter,
+  where``s`` is the comoving distance, \\mathcal{H} is comoving Hubble parameter,
   ``s_{\\mathrm{b}}`` is the magnification bias (i.e. the slope of the luminosity 
   function at the luminosity threshold), ``\\mathit{f}_{\\mathrm{evo}}`` the evolution bias
-  and ``\\dot{\\mathscr{H}} = \\mathrm{d}\\mathscr{H} / \\mathrm{d}\\tau`` the first derivative
+  and ``\\dot{\\mathcal{H}} = \\mathrm{d}\\mathcal{H} / \\mathrm{d}\\tau`` the first derivative
   of the comoving Hubble parameter wrt the comoving time ``\\tau``.
 - the scale factor `a` (normalized to 1.0 at present day);
 

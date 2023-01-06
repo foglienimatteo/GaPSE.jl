@@ -19,52 +19,136 @@
 
 
 """
-     integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
-          P1::Point, P2::Point,
-          y, cosmo::Cosmology) :: Float64
+     integrand_ξ_GNC_IntegratedGP(
+         IP1::Point, IP2::Point,
+         P1::Point, P2::Point,
+         y, cosmo::Cosmology;
+        obs::Union{Bool,Symbol}=:noobsvel
+            ) ::Float64
 
-Return the integrand of the integrated gravitational potential 
-auto-correlation function ``\\xi^{\\int\\phi\\int\\phi} (s_1, s_2, \\cos{\\theta})``, 
-i.e. the function ``f(s_1, s_2, y, \\chi_1, \\chi_2)`` defined as follows:  
+Return the integrand of the Two-Point Correlation Function (TPCF) of the 
+Integrated Gravitational Potential (GP) 
+auto-correlation effect arising from the Galaxy Number Counts (GNC).
+
+You should pass the two extreme `Point`s (`P1` and `P2`) and the two 
+intermediate integrand `Point`s (`IP1` and `IP2`) where to 
+evaluate the function. 
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
+
+The analytical expression of this integrand is the following:
 
 ```math
-f(s_1, s_2, y, \\chi_1, \\chi_2) = J_{40}(s_1, s_2, y, \\chi_1, \\chi_2) \\tilde{I}^4_0(\\chi)
+\\begin{equation}
+    f^{\\int\\!\\phi \\int \\!\\phi }(\\chi_1, \\chi_2, s_1, s_2, y ) = 
+    J^{\\int \\!\\phi \\int \\!\\phi}_{40} 
+    \\tilde{I}_0^4 ( \\Delta\\chi) \\, ,
+\\end{equation}
 ```
-where ``\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\, \\chi_2 \\, y} ``,
-``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2`` and:
+
+where
+
 ```math
-\\begin{split}
-     &J_{40}(s_1, s_2, y, \\chi_1, \\chi_2)  = 
-          \\frac{
-                    9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(\\chi_1) D(\\chi_2) \\chi^4
-          }{    a(\\chi_1) a(\\chi_2) s_1 s_2} 
-          (s_2 \\mathcal{H}(\\chi_2) \\mathcal{R}(s_2) (f(\\chi_2)-1) - 1) 
-          (s_1 \\mathcal{H}(\\chi_1) \\mathcal{R}(s_1) (f(\\chi_1)-1) - 1)\\\\[5pt]
-     &\\tilde{I}^4_0 (s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} 
-          q^2 \\, P(q) \\, \\frac{j_0(q s) - 1}{(q s)^4}
-\\end{split}
+\\begin{align}
+J^{\\int \\!\\phi\\int \\!\\phi}_{40} =
+    \\frac{
+        9 \\Delta\\chi ^4 \\mathcal{H}_0^4 \\Omega_{\\mathrm{M}0}^2 D(\\chi_1) D(\\chi_2)
+    }{
+        a(\\chi_1) a(\\chi_2) s_1 s_2
+    }
+    &\\left[
+        s_1 (f(\\chi_1) - 1) \\mathcal{H}(\\chi_1) \\mathcal{R}_1 - 5 s_{\\mathrm{b}, 1} + 2
+    \\right] \\times
+    \\nonumber \\\\
+    &\\left[
+        s_2 (f(\\chi_2) - 1) \\mathcal{H}(\\chi_2) \\mathcal{R}_2 - 5 s_{\\mathrm{b}, 2} + 2
+    \\right]
+    \\, .
+\\end{align}
 ```
+
+where:
+
+- ``s_1`` and ``s_2`` are comoving distances;
+
+- ``D_1 = D(s_1)``, ... is the linear growth factor (evaluated in ``s_1``);
+
+- ``a_1 = a(s_1)``, ... is the scale factor (evaluated in ``s_1``);
+
+- ``f_1 = f(s_1)``, ... is the linear growth rate (evaluated in ``s_1``);
+
+- ``\\mathcal{H}_1 = \\mathcal{H}(s_1)``, ... is the comoving 
+  Hubble distances (evaluated in ``s_1``);
+
+- ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``;
+
+- ``\\mathcal{R}_1 = \\mathcal{R}(s_1)``, ... is 
+  computed by `func_ℛ_GNC` in `cosmo::Cosmology` (and evaluated in ``s_1`` );
+  the definition of ``\\mathcal{R}(s)`` is the following:
+  ```math
+  \\mathcal{R}(s) = 5 s_{\\mathrm{b}}(s) + \\frac{2 - 5 s_{\\mathrm{b}}(s)}{\\mathcal{H}(s) \\, s} +  
+  \\frac{\\dot{\\mathcal{H}}(s)}{\\mathcal{H}(s)^2} - \\mathit{f}_{\\mathrm{evo}} \\quad ;
+  ```
+
+- ``b_1 = b(s_1)``, ``s_{\\mathrm{b}, 1} = s_{\\mathrm{b}}(s_1)``, ``\\mathit{f}_{\\mathrm{evo}}``, ... : 
+  galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold), 
+  and evolution bias (the first two evaluated in ``s_1``); they are
+  all stored in `cosmo`;
+
+- ``\\Omega_{\\mathrm{M}0} = \\Omega_{\\mathrm{cdm}} + \\Omega_{\\mathrm{b}}`` is the sum of 
+  cold-dark-matter and barionic density parameters (again, stored in `cosmo`);
+
+- ``\\tilde{I}_0^4`` is defined as
+  ```math
+  \\tilde{I}_0^4 = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_0(qs) - 1}{(qs)^4}
+  ``` 
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`) 
+  and ``j_\\ell`` as spherical Bessel function of order ``\\ell``;
+
+
+- ``\\mathcal{H}_0``, ``f_0`` and so on are evaluated at the observer position (i.e. at present day);
+
+- ``\\Delta\\chi_1 := \\sqrt{\\chi_1^2 + s_2^2-2\\,\\chi_1\\,s_2\\,y}`` and 
+  ``\\Delta\\chi_2 := \\sqrt{s_1^2 + \\chi_2^2-2\\,s_1\\,\\chi_2\\,y}``;
+
+- ``s=\\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}`` and 
+  ``\\Delta\\chi := \\sqrt{\\chi_1^2 + \\chi_2^2-2\\,\\chi_1\\,\\chi_2\\,y}``.
+
+In this TPCF there are no observer terms. The `obs` keyword is inserted only for compatibility with 
+the other GNC TPCFs.
+
+This function is used inside `ξ_GNC_Lensing` with the [`trapz`](@ref) from the 
+[Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 
 ## Inputs
 
-- `IP1::Point` and `IP2::Point`: `Point` inside the integration limits, placed 
-  at comoving distance `χ1` and `χ2` respectively.
+- `P1::Point` and `P2::Point`, or `s1` and `s2`: `Point`/comoving distances where the 
+  TPCF has to be calculated; they contain all the 
+  data of interest needed for this calculus (comoving distance, growth factor and so on).
+  
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
 
-- `P1::Point` and `P2::Point`: extreme `Point` of the integration, placed 
-  at comoving distance `s1` and `s2` respectively.
+- `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
+  used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
 
-- `y`: the cosine of the angle between the two points `P1` and `P2`
+## Keyword Arguments
 
-- `cosmo::Cosmology`: cosmology to be used in this computation
+- `obs::Union{Bool,Symbol} = :noobsvel` : do you want to consider the observer terms in the computation of the 
+  chosen GNC TPCF effect?
+  - `:yes` or `true` -> all the observer effects will be considered
+  - `:no` or `false` -> no observer term will be taken into account
+  - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
+    will be neglected, the other ones will be taken into account
 
 
-See also: [`ξ_GNC_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
+See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
+[`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),
+[`ξ_GNC_IntegratedGP`](@ref)
 """
 function integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
      P1::Point, P2::Point,
-     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
+     y, cosmo::Cosmology; obs::Union{Bool,Symbol}=:noobsvel)
 
      s1, ℛ_s1 = P1.comdist, P1.ℛ_GNC
      s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
@@ -88,19 +172,19 @@ end
 
 
 function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e10, N_χs_2::Int = 100, obs::Union{Bool, Symbol} = :noobsvel)
+     en::Float64=1e10, N_χs_2::Int=100, obs::Union{Bool,Symbol}=:noobsvel)
 
      #adim_χs = range(1e-12, 1, N_χs)
      #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
-     χ1s = P1.comdist .* range(1e-6, 1, length = N_χs_2)
-     χ2s = P2.comdist .* range(1e-6, 1, length = N_χs_2)
+     χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
+     χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
 
      IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
      IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξ_igp = [
-          en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; obs = obs)
+          en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; obs=obs)
           for IP1 in IP1s, IP2 in IP2s
      ]
 
@@ -122,7 +206,7 @@ function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
           [en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo) 
           for IP2 in matrix_IP2s[i]]
           for (i,IP1) in enumerate(IP1s)]
-     
+
      vec_trapz = [trapz(χ2s,int_ξs) for (χ2s,int_ξs) in zip(matrix_χ2s, matrix_int_ξs)]
      res = trapz(χ1s, vec_trapz)
      =#
