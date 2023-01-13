@@ -58,10 +58,10 @@ end
 
 """
      ξ_GNC_Newtonian(P1::Point, P2::Point, y, cosmo::Cosmology; 
-        obs::Union{Bool, Symbol} = :noobsvel) ::Float64
+          obs::Union{Bool, Symbol} = :noobsvel) ::Float64
 
      ξ_GNC_Newtonian(s1, s2, y, cosmo::Cosmology; 
-        obs::Union{Bool, Symbol} = :noobsvel) ::Float64
+          kwargs...) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) of the Newtonian auto-correlation effect
 arising from the Galaxy Number Counts (GNC).
@@ -74,21 +74,21 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 The analytical expression of this term is the following:
 
 ```math
-\\begin{align}
+\\begin{split}
     \\xi^{\\delta\\delta} ( s_1 , s_2 , y )  = D_1 D_2 
     \\left[ 
     J_{00}^{\\delta\\delta} I_0^0 (s) + 
     J_{02}^{\\delta\\delta} I_2^0 (s) + 
     J_{04}^{\\delta\\delta} I_4^0 (s) 
     \\right] \\, , 
-\\end{align}
+\\end{split}
 ```
 
 
 where
 
 ```math
-\\begin{align}
+\\begin{split}
     J_{00}^{\\delta\\delta}  &= \\frac{1}{15}  
     \\left[
         15 b_1 b_2 + 5 b_1 f_2 + 5 b_2 f_1  +
@@ -102,13 +102,13 @@ where
             14 b_2 f_1 + 
             7 b_1 f_2 (3 y^2 - 1) + 
             (11 y^2 + 1) f_1 f_2 
-            \\right]  \\right. \\nonumber \\\\
+            \\right]  \\right.  \\\\
         &\\left.\\qquad \\qquad  
         + s_2^2 \\left[
             14 b_1 f_2 + 
             7 b_2 f_1 (3 y^2 - 1) + 
             (11 y^2 + 1) f_1 f_2 
-            \\right]  \\right. \\nonumber\\\\
+            \\right]  \\right. \\\\
         &\\left. \\qquad \\qquad   
         - 4 y s_1 s_2 \\left[
             7 b_2 f_1 + 7 b_1 f_2 +
@@ -124,7 +124,7 @@ where
         8 y s_1 s_2 (s_1^2 + s_2^2) (3 + y^2)
     \\right]
     \\, .
-\\end{align}
+\\end{split}
 ```
 
 where:
@@ -165,6 +165,14 @@ where:
   \\quad \\sigma_i = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
   \\, q^{2-i} \\, P(q)
   ```
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`) 
+  and ``j_\\ell`` as spherical Bessel function of order ``\\ell``;
+
+- ``\\tilde{I}_0^4`` is defined as
+  ```math
+  \\tilde{I}_0^4 = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_0(qs) - 1}{(qs)^4}
+  ``` 
   with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`) 
   and ``j_\\ell`` as spherical Bessel function of order ``\\ell``;
 

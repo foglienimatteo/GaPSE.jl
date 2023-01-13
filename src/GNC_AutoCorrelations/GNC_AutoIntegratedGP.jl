@@ -48,7 +48,7 @@ The analytical expression of this integrand is the following:
 where
 
 ```math
-\\begin{align}
+\\begin{split}
 J^{\\int \\!\\phi\\int \\!\\phi}_{40} =
     \\frac{
         9 \\Delta\\chi ^4 \\mathcal{H}_0^4 \\Omega_{\\mathrm{M}0}^2 D(\\chi_1) D(\\chi_2)
@@ -58,12 +58,12 @@ J^{\\int \\!\\phi\\int \\!\\phi}_{40} =
     &\\left[
         s_1 (f(\\chi_1) - 1) \\mathcal{H}(\\chi_1) \\mathcal{R}_1 - 5 s_{\\mathrm{b}, 1} + 2
     \\right] \\times
-    \\nonumber \\\\
+     \\\\
     &\\left[
         s_2 (f(\\chi_2) - 1) \\mathcal{H}(\\chi_2) \\mathcal{R}_2 - 5 s_{\\mathrm{b}, 2} + 2
     \\right]
     \\, .
-\\end{align}
+\\end{split}
 ```
 
 where:
@@ -96,6 +96,16 @@ where:
 
 - ``\\Omega_{\\mathrm{M}0} = \\Omega_{\\mathrm{cdm}} + \\Omega_{\\mathrm{b}}`` is the sum of 
   cold-dark-matter and barionic density parameters (again, stored in `cosmo`);
+
+- ``I_\\ell^n`` and ``\\sigma_i`` are defined as
+  ```math
+  I_\\ell^n(s) = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_\\ell(qs)}{(qs)^n} \\quad , 
+  \\quad \\sigma_i = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^{2-i} \\, P(q)
+  ```
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`) 
+  and ``j_\\ell`` as spherical Bessel function of order ``\\ell``;
 
 - ``\\tilde{I}_0^4`` is defined as
   ```math

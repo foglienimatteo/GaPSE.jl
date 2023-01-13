@@ -80,7 +80,7 @@ end
         obs::Union{Bool, Symbol} = :noobsvel) ::Float64
 
      ξ_GNC_Doppler(s1, s2, y, cosmo::Cosmology; 
-        obs::Union{Bool, Symbol} = :noobsvel) ::Float64
+        kwargs...) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) of the Doppler auto-correlation effect
 arising from the Galaxy Number Counts (GNC).
@@ -93,7 +93,7 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 The analytical expression of this term is the following:
 
 ```math
-\\begin{align}
+\\begin{split}
     \\xi^{v_{\\parallel} v_{\\parallel}}( s_1, s_2 , y ) &=
     D_1 D_2 J_{\\alpha}^{v_{\\parallel} v_{\\parallel}}
     \\left[  
@@ -105,26 +105,26 @@ The analytical expression of this term is the following:
         \\right) +
         J^{v_{\\parallel} v_{\\parallel}}_{20} I_0^2 (s)
     \\right] 
-    \\nonumber \\\\
+     \\\\
     & + D_1 \\left[ 
         J^{v_{\\parallel} v_{\\parallel}}_{31} ( s_1 , s_2) I_1^3 (s_1) +   
         J^{v_{\\parallel} v_{\\parallel}}_{11} ( s_1 , s_2) I_1^1 (s_1) + 
         J^{v_{\\parallel} v_{\\parallel}}_{13} ( s_1 ,s_2) I_3^1 (s_1) 
     \\right] 
-    \\nonumber \\\\
+     \\\\
     & + D_2 \\left[
         J^{v_{\\parallel} v_{\\parallel}}_{31} ( s_2 , s_1) I_1^3 (s_2) +  
         J^{v_{\\parallel} v_{\\parallel}}_{11} ( s_2 , s_1) I_1^1 (s_2) +
         J^{v_{\\parallel} v_{\\parallel}}_{13} ( s_2 , s_1) I_3^1 (s_2) 
     \\right]
-    \\nonumber \\\\
+     \\\\
     & + J^{v_{\\parallel} v_{\\parallel}}_{\\sigma2} \\sigma_2 \\, ,
-\\end{align}
+\\end{split}
 ```
 with
 
 ```math
-\\begin{align}
+\\begin{split}
     J_{\\alpha}^{v_{\\parallel} v_{\\parallel}} &= 
     f_1 f_2\\mathcal{H}_1 \\mathcal{H}_2 \\mathcal{R}_1 \\mathcal{R}_2
     \\, , \\\\
@@ -155,7 +155,7 @@ with
     \\frac{1}{3} y f_0^2 \\mathcal{H}_0^2 (\\mathcal{R}_1 - 5 s_{\\mathrm{b}, 1} + 2) 
     (\\mathcal{R}_2 - 5 s_{\\mathrm{b}, 2} + 2) 
     \\, .
-\\end{align}
+\\end{split}
 ```
 
 where:
@@ -196,6 +196,14 @@ where:
   \\quad \\sigma_i = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
   \\, q^{2-i} \\, P(q)
   ```
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`) 
+  and ``j_\\ell`` as spherical Bessel function of order ``\\ell``;
+
+- ``\\tilde{I}_0^4`` is defined as
+  ```math
+  \\tilde{I}_0^4 = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_0(qs) - 1}{(qs)^4}
+  ``` 
   with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`) 
   and ``j_\\ell`` as spherical Bessel function of order ``\\ell``;
 

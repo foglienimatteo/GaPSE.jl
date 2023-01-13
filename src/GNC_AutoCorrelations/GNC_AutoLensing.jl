@@ -39,7 +39,7 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 The analytical expression of this integrand is the following:
 
 ```math
-\\begin{align}
+\\begin{split}
     f^{\\kappa\\kappa} (\\chi_1, \\chi_2, s_1, s_2, y) = 
     J^{\\kappa\\kappa}_{\\alpha}
     &\\left[
@@ -49,14 +49,14 @@ The analytical expression of this integrand is the following:
         &\\left.
         J^{\\kappa\\kappa}_{31} I_1^3(\\Delta\\chi) +
         J^{\\kappa\\kappa}_{22} I_2^2(\\Delta\\chi)
-    \\right] \\nonumber \\, , 
-\\end{align}
+    \\right]  \\, , 
+\\end{split}
 ```
 
 where
 
 ```math
-\\begin{align}
+\\begin{split}
     J^{\\kappa\\kappa}_{\\alpha} & = 
     \\frac{
         \\mathcal{H}_0^4 \\Omega_{\\mathrm{M}0}^2 D(\\chi_1) D(\\chi_2) 
@@ -95,7 +95,7 @@ where
         \\chi_1^2 \\chi_2^2 (11y^4 + 14y^2 + 23) 
     \\right] 
     \\, .
-\\end{align}
+\\end{split}
 ```
 
 where:
@@ -136,6 +136,14 @@ where:
   \\quad \\sigma_i = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
   \\, q^{2-i} \\, P(q)
   ```
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`) 
+  and ``j_\\ell`` as spherical Bessel function of order ``\\ell``;
+
+- ``\\tilde{I}_0^4`` is defined as
+  ```math
+  \\tilde{I}_0^4 = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_0(qs) - 1}{(qs)^4}
+  ``` 
   with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`) 
   and ``j_\\ell`` as spherical Bessel function of order ``\\ell``;
 
@@ -283,12 +291,12 @@ end
 
 """
      ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-          en::Float64 = 1e6,
-          Δχ_min::Float64 = 1e-1,
-          N_χs::Int = 100) ::Float64
+          obs::Union{Bool, Symbol} = :noobsvel,
+          en::Float64 = 1e6, Δχ_min::Float64 = 1e-1,
+          N_χs_2::Int = 100) ::Float64
 
      ξ_GNC_Lensing(s1, s2, y, cosmo::Cosmology; 
-        obs::Union{Bool, Symbol} = :noobsvel) ::Float64
+          kwargs...) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) of the Lensing auto-correlation effect
 arising from the Galaxy Number Counts (GNC).
@@ -301,7 +309,7 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 The analytical expression of this term is the following:
 
 ```math
-\\begin{align}
+\\begin{split}
     \\xi^{\\kappa\\kappa} (s_1, s_2, y) = 
     \\int_0^{s_1} \\mathrm{d}\\chi_1 \\int_0^{s_2} \\mathrm{d}\\chi_2\\;  
     J^{\\kappa\\kappa}_{\\alpha}
@@ -312,14 +320,14 @@ The analytical expression of this term is the following:
         &\\left.
         J^{\\kappa\\kappa}_{31} I_1^3(\\Delta\\chi) +
         J^{\\kappa\\kappa}_{22} I_2^2(\\Delta\\chi)
-    \\right] \\nonumber \\, , 
-\\end{align}
+    \\right]  \\, , 
+\\end{split}
 ```
 
 where
 
 ```math
-\\begin{align}
+\\begin{split}
     J^{\\kappa\\kappa}_{\\alpha} & = 
     \\frac{
         \\mathcal{H}_0^4 \\Omega_{\\mathrm{M}0}^2 D(\\chi_1) D(\\chi_2) 
@@ -358,7 +366,7 @@ where
         \\chi_1^2 \\chi_2^2 (11y^4 + 14y^2 + 23) 
     \\right] 
     \\, .
-\\end{align}
+\\end{split}
 ```
 
 where:
@@ -440,22 +448,27 @@ This function is computed integrating `integrand_ξ_GNC_Lensing` with the [`trap
 - `en::Float64 = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
-- `Δχ_min::Float64 = 1e-4` : when ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
+- `Δχ_min::Float64 = 1e-4` : when 
+  ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
-     \\lim_{\\chi\\to0^{+}} (J_{00} \\, I^0_0(\\chi) + J_{02} \\, I^0_2(\\chi) + 
-          J_{31} \\, I^3_1(\\chi) + J_{22} \\, I^2_2(\\chi)) = 
-          \\frac{4}{15} \\, (5 \\, \\sigma_2 + \\frac{2}{3} \\, σ_0 \\,s_1^2 \\, \\chi_2^2)
+      \\lim_{\\Delta\\chi \\to 0^{+}} \\left(
+          J_{00}^{\\kappa\\kappa} \\, I^0_0(\\Delta\\chi) + 
+          J_{02}^{\\kappa\\kappa} \\, I^0_2(\\Delta\\chi) + 
+          J_{31}^{\\kappa\\kappa} \\, I^3_1(\\Delta\\chi) + 
+          J_{22}^{\\kappa\\kappa} \\, I^2_2(\\Delta\\chi)
+      \\right) = 
+          3 \\, \\sigma_2 + \\frac{6}{5} \\, \\chi_2^2 \\, \\sigma_0
   ```
 
-  So, when it happens that ``\\chi < \\Delta\\chi_\\mathrm{min}``, the function considers this limit
+  So, when it happens that ``\\Delta\\chi < \\Delta\\chi_\\mathrm{min}``, the function considers this limit
   as the result of the parenthesis instead of calculating it in the normal way; it prevents
   computational divergences.
 
-- `N_χs::Int = 100`: number of points to be used for sampling the integral
-  along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
-  with `N_χs ≥ 50` the result is stable.
+- `N_χs_2::Int = 100`: number of points to be used for sampling the integral
+  along the ranges `(0, s1)` (for `χ1`) and `(0, s2)` (for `χ2`); it has been checked that
+  with `N_χs_2 ≥ 50` the result is stable.
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
 [`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),
