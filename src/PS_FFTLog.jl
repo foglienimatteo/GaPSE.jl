@@ -57,19 +57,19 @@ function FFTLog_PS_multipole(ss, xis;
      pr::Bool=true,
      L::Int=0, ν::Union{Float64,Nothing}=nothing,
      n_extrap_low::Int=500,
-     n_extrap_high::Int=500, n_pad::Int=500
-     #cut_first_n::Int=0, cut_last_n::Int=0
+     n_extrap_high::Int=500, n_pad::Int=500,
+     cut_first_n::Int=0, cut_last_n::Int=0
 )
 
      @assert length(ss) == length(xis) "length(ss) == length(xis) must hold!"
-     #@assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
-     #@assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
-     #@assert cut_first_n + cut_last_n < length(ss) "cut_first_n + cut_last_n < length(ss) must hold!"
+     @assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
+     @assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
+     @assert cut_first_n + cut_last_n < length(ss) "cut_first_n + cut_last_n < length(ss) must hold!"
 
-     #a, b = 1 + cut_first_n, length(ss) - cut_last_n
+     a, b = 1 + cut_first_n, length(ss) - cut_last_n
 
-     #SS = ss[a:b]
-     #XIS = xis[a:b] .* SS .^ 3
+     SS = ss[a:b]
+     XIS = xis[a:b] .* SS .^ 3
 
      SS, XIS = ss, xis
 
@@ -135,9 +135,9 @@ case the input xis do not belog to a specific group (and so no predefined number
 
 ## Optional arguments
 
-- `pr::Bool=true` : want to print the automatic messages to the screen?
 - `L::Int=0` : which multipole order should I use for this computation? IT MUST MATCH 
   THE MULTIPOLE ORDER OF THE INPUT TPCF!
+- `pr::Bool=true` : want to print the automatic messages to the screen?
 - `ν::Union{Float64,Nothing} = nothing` : bias parameter, i.e. exponent used to "balance" the curve;
   if `nothing`, will be set automatically to `1.5`
 - `n_extrap_low::Int = 500` and `n_extrap_high::Int = 500` : number of points to concatenate on the left/right
@@ -145,6 +145,8 @@ case the input xis do not belog to a specific group (and so no predefined number
   elements of `ss`.
 - `n_pad::Int = 500` : number of zeros to be concatenated both on the left and
   on the right of the input function. They stabilize a lot the algorithm.
+- `cut_first_n::Int=0` and `cut_last_n::Int=0` : you can cout the first and/or last n elements
+  of the input data, if they are highly irregular.
 
 See also: [`FFTLog_PS_multipole`](@ref), [`PS_multipole`](@ref)
 """
@@ -153,16 +155,15 @@ function FFTLog_all_PS_multipole(input::String,
      L::Int=0, pr::Bool=true,
      ν::Union{Float64,Nothing,Vector{Float64}}=nothing,
      n_extrap_low::Int=500,
-     n_extrap_high::Int=500, n_pad::Int=500
-     #cut_first_n::Int=0, cut_last_n::Int=0
+     n_extrap_high::Int=500, n_pad::Int=500,
+     cut_first_n::Int=0, cut_last_n::Int=0
 )
-
-     #@assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
-     #@assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
-
 
      check_group(group; valid_groups=VALID_GROUPS)
      check_fileisingroup(input, group)
+
+     @assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
+     @assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
 
 
      pr && begin
@@ -190,6 +191,9 @@ function FFTLog_all_PS_multipole(input::String,
 
      table = readdlm(input; comments=true)
      ss = convert(Vector{Float64}, table[:, 1])
+
+     @assert cut_first_n + cut_last_n < length(ss) "cut_first_n + cut_last_n < length(ss) must hold!"
+
      all_xis = [convert(Vector{Float64}, col)
                 for col in eachcol(table[:, 2:end])]
 
@@ -199,6 +203,7 @@ function FFTLog_all_PS_multipole(input::String,
      else
           [ν for i in 1:length(all_xis)]
      end
+
 
      #a, b = 1 + cut_first_n, length(ss) - cut_last_n
      #=
@@ -230,8 +235,8 @@ function FFTLog_all_PS_multipole(input::String,
                     _, pks = FFTLog_PS_multipole(ss, xis;
                          pr=false, L=L, ν=specific_ν,
                          n_extrap_low=n_extrap_low,
-                         n_extrap_high=n_extrap_high, n_pad=n_pad
-                         #cut_first_n=cut_first_n, cut_last_n=cut_last_n
+                         n_extrap_high=n_extrap_high, n_pad=n_pad,
+                         cut_first_n=cut_first_n, cut_last_n=cut_last_n
                     )
                     pks
                end
@@ -242,8 +247,8 @@ function FFTLog_all_PS_multipole(input::String,
                     _, pks = FFTLog_PS_multipole(ss, xis;
                          pr=false, L=L, ν=specific_ν,
                          n_extrap_low=n_extrap_low,
-                         n_extrap_high=n_extrap_high, n_pad=n_pad
-                         #cut_first_n=cut_first_n, cut_last_n=cut_last_n
+                         n_extrap_high=n_extrap_high, n_pad=n_pad,
+                         cut_first_n=cut_first_n, cut_last_n=cut_last_n
                     )
                     pks
                end

@@ -17,21 +17,13 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-function PS_multipole(ss, fs; alg::Symbol=:fftlog,
-     cut_first_n::Int=0, cut_last_n::Int=0, kwargs...)
-
-     @assert length(ss) == length(fs) "length(ss) == length(fs) must hold!"
-     @assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
-     @assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
-     @assert cut_first_n + cut_last_n < length(ss) "cut_first_n + cut_last_n < length(ss) must hold!"
-
-     a, b = 1 + cut_first_n, length(ss) - cut_last_n
+function PS_multipole(ss, fs; alg::Symbol=:fftlog, kwargs...)
 
      if alg == :twofast
-          return TwoFAST_PS_multipole(ss[a:b], fs[a:b]; kwargs...)
+          return TwoFAST_PS_multipole(ss, fs; kwargs...)
 
      elseif alg == :fftlog
-          return FFTLog_PS_multipole(ss[a:b], fs[a:b]; kwargs...)
+          return FFTLog_PS_multipole(ss, fs; kwargs...)
 
      else
           throw(AssertionError(

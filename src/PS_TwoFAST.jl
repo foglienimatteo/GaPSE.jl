@@ -61,6 +61,7 @@ function TwoFAST_PS_multipole(f_in;
      k0::Union{Nothing,Float64}=nothing,
      right::Union{Float64,Nothing}=nothing)
 
+
      k_0 = isnothing(k0) ? 1.0 / int_s_max : k0
 
      t1 = time()
@@ -122,26 +123,27 @@ create also a power law epansions on the edges.
 - `right::Union{Float64,Nothing} = nothing` : do you want to cut the output elements with 
   `ks .> right`? if set to `nothing`, no cut will be done.
 - `N::Int = 1024` : number of points to be used in Fourier transform 
-
+- `cut_first_n::Int=0` and `cut_last_n::Int=0` : you can cout the first and/or last n elements
+  of the input data, if they are highly irregular.
 
 See also: [`PS_multipole`](@ref)
 """
-function TwoFAST_PS_multipole(ss, fs;
+function TwoFAST_PS_multipole(SS, FS;
      int_s_min::Float64=1e-1, int_s_max::Float64=1e3,
      epl::Bool=true, pr::Bool=true, L::Int=0,
      N_left::Int=12, N_right::Int=12,
      p0_left=[-2.0, 1.0], p0_right=[-2.0, 1.0],
-     k0::Union{Nothing,Float64}=nothing
-     #cut_first_n::Int = 0, cut_last_n::Int=0
+     k0::Union{Nothing,Float64}=nothing,
+     cut_first_n::Int = 0, cut_last_n::Int=0
 )
 
-     @assert length(ss) == length(fs) "length(ss) == length(fs) must hold!"
-     #@assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
-     #@assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
-     #@assert cut_first_n + cut_last_n < length(FS) "cut_first_n + cut_last_n < length(ss) must hold!"
+     @assert length(SS) == length(FS) "length(ss) == length(fs) must hold!"
+     @assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
+     @assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
+     @assert cut_first_n + cut_last_n < length(SS) "cut_first_n + cut_last_n < length(ss) must hold!"
 
-     #a, b = 1 + cut_first_n, length(SS) - cut_last_n
-     #ss, fs = SS[a:b], FS[a:b]
+     a, b = 1 + cut_first_n, length(SS) - cut_last_n
+     ss, fs = SS[a:b], FS[a:b]
 
      N = length(ss)
      k_0 = isnothing(k0) ? 1.0 / max(ss...) : k0
@@ -219,7 +221,8 @@ case the input xis do not belog to a specific group (and so no predefined number
 - `right::Union{Float64,Nothing} = nothing` : do you want to cut the output elements with 
   `ks .> right`? if set to `nothing`, no cut will be done.
 - `N::Int = 1024` : number of points to be used in Fourier transform 
-
+- `cut_first_n::Int=0` and `cut_last_n::Int=0` : you can cout the first and/or last n elements
+  of the input data, if they are highly irregular.
 
 See also: [`TwoFAST_PS_multipole`](@ref), [`PS_multipole`](@ref)
 """
