@@ -23,7 +23,7 @@
           IP::Point, P1::Point, P2::Point,
           y, cosmo::Cosmology) :: Float64
 
-Return the integrand of the Doppler-LocalGP cross-correlation function 
+Return the integrand of the Doppler-IntegratedGP cross-correlation function 
 ``\\xi^{v_{\\parallel}\\int\\phi} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
 ``f(s_1, s_2, y, \\chi_1, \\chi_2)`` defined as follows:  
 
@@ -123,7 +123,7 @@ end
      ξ_GNC_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
           en::Float64 = 1e6, N_χs::Int = 100):: Float64
 
-Return the Doppler-LocalGP cross-correlation function 
+Return the Doppler-IntegratedGP cross-correlation function 
 ``\\xi^{v_{\\parallel}\\int\\phi} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
 luminosity distance, defined as follows:
     
@@ -202,6 +202,35 @@ end
 
 
 
+"""
+     ξ_GNC_IntegratedGP_Doppler(s1, s2, y, cosmo::Cosmology; kwargs...) = 
+          ξ_GNC_Doppler_IntegratedGP(s2, s1, y, cosmo; kwargs...)
+
+Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
+Integrated Gravitational Potential (GP) and the Doppler effects arising from the Galaxy Number Counts (GNC).
+
+It's computed through the symmetric function `ξ_GNC_Doppler_IntegratedGP`; check its documentation for
+more details about the analytical expression and the keyword arguments.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
+
+
+## Inputs
+
+- `s1` and `s2`: comoving distances where the TPCF has to be calculated;
+  
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
+
+- `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
+  used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
+
+## Keyword Arguments
+
+- `kwargs...` : Keyword arguments to be passed to the symmetric TPCF
+
+See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
+[`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),
+[`ξ_GNC_Doppler_IntegratedGP`](@ref)
+"""
 function ξ_GNC_IntegratedGP_Doppler(s1, s2, y, cosmo::Cosmology; kwargs...)
      ξ_GNC_Doppler_IntegratedGP(s2, s1, y, cosmo; kwargs...)
 end
