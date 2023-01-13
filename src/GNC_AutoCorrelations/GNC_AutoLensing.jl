@@ -19,38 +19,105 @@
 
 
 
+function integrand_ξ_GNC_Lensing(
+     IP1::Point, IP2::Point,
+     P1::Point, P2::Point,
+     y, cosmo::Cosmology;
+     Δχ_min::Float64=1e-1, obs::Union{Bool,Symbol}=:noobsvel)
+
+     s1 = P1.comdist
+     s2 = P2.comdist
+     χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
+     χ2, D2, a2 = IP2.comdist, IP2.D, IP2.a
+     s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b
+     Ω_M0 = cosmo.params.Ω_M0
+
+     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
+     Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
+
+     denomin = s1 * s2 * a1 * a2
+     factor = ℋ0^4 * Ω_M0^2 * D1 * (s1 - χ1) * D2 * (s2 - χ2) * (5 * s_b_s1 - 2) * (5 * s_b_s2 - 2)
+
+     first_res = if Δχ > Δχ_min
+          χ1χ2 = χ1 * χ2
+
+          new_J00 = -3 / 4 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
+          new_J02 = -3 / 2 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
+          new_J31 = 9 * y * Δχ^2
+          new_J22 = 9 / 4 * χ1χ2 / Δχ^4 * (
+               2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)
+               - 16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
+               + χ1χ2^2 * (11y^4 + 14y^2 + 23)
+          )
+
+          I00 = cosmo.tools.I00(Δχ)
+          I20 = cosmo.tools.I20(Δχ)
+          I13 = cosmo.tools.I13(Δχ)
+          I22 = cosmo.tools.I22(Δχ)
+
+          (
+               new_J00 * I00 + new_J02 * I20 +
+               new_J31 * I13 + new_J22 * I22
+          )
+
+     else
+
+          #3 / 5 * (5 * cosmo.tools.σ_2 + 6 * cosmo.tools.σ_0 * χ2^2)
+          3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
+     end
+
+     return factor / denomin * first_res
+end
+
+function integrand_ξ_GNC_Lensing(
+     χ1::Float64, χ2::Float64,
+     s1::Float64, s2::Float64,
+     y, cosmo::Cosmology;
+     kwargs...)
+
+     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+     IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
+     return integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+end
+
+
 """
      integrand_ξ_GNC_Lensing(
-         IP1::Point, IP2::Point,
-         P1::Point, P2::Point,
-         y, cosmo::Cosmology;
-         Δχ_min::Float64=1e-1, 
-        obs::Union{Bool,Symbol}=:noobsvel
-            ) ::Float64
+           IP1::Point, IP2::Point,
+           P1::Point, P2::Point,
+           y, cosmo::Cosmology;
+           Δχ_min::Float64=1e-1, 
+           obs::Union{Bool,Symbol}=:noobsvel
+           ) ::Float64
+
+     integrand_ξ_GNC_Lensing(
+           χ1::Float64, χ2::Float64,
+           s1::Float64, s2::Float64,
+           y, cosmo::Cosmology;
+           kwargs... )::Float64
 
 Return the integrand of the Two-Point Correlation Function (TPCF) of the 
 Lensing auto-correlation effect arising from the Galaxy Number Counts (GNC).
 
-You should pass the two extreme `Point`s (`P1` and `P2`) and the two 
+In the first method, you should pass the two extreme `Point`s (`P1` and `P2`) and the two 
 intermediate integrand `Point`s (`IP1` and `IP2`) where to 
-evaluate the function. 
+evaluate the function. In the second method (that internally recalls the first),
+you must provide the four corresponding comoving distances `s1`, `s2`, `χ1`, `χ2`.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 The analytical expression of this integrand is the following:
 
 ```math
-\\begin{split}
+\\begin{equation}
     f^{\\kappa\\kappa} (\\chi_1, \\chi_2, s_1, s_2, y) = 
     J^{\\kappa\\kappa}_{\\alpha}
-    &\\left[
+    \\left[
         J^{\\kappa\\kappa}_{00} I_0^0(\\Delta\\chi) + 
         J^{\\kappa\\kappa}_{02} I_2^0(\\Delta\\chi) +
-        \\right.\\\\
-        &\\left.
         J^{\\kappa\\kappa}_{31} I_1^3(\\Delta\\chi) +
         J^{\\kappa\\kappa}_{22} I_2^2(\\Delta\\chi)
     \\right]  \\, , 
-\\end{split}
+\\end{equation}
 ```
 
 where
@@ -182,16 +249,21 @@ This function is used inside `ξ_GNC_Lensing` with the [`trapz`](@ref) from the
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
     will be neglected, the other ones will be taken into account
 
-- `Δχ_min::Float64 = 1e-4` : when ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
+- `Δχ_min::Float64 = 1e-4` : when 
+  ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
-     \\lim_{\\chi\\to0^{+}} (J_{00} \\, I^0_0(\\chi) + J_{02} \\, I^0_2(\\chi) + 
-          J_{31} \\, I^3_1(\\chi) + J_{22} \\, I^2_2(\\chi)) = 
-          \\frac{4}{15} \\, (5 \\, \\sigma_2 + \\frac{2}{3} \\, σ_0 \\,s_1^2 \\, \\chi_2^2)
+      \\lim_{\\Delta\\chi \\to 0^{+}} \\left(
+          J_{00}^{\\kappa\\kappa} \\, I^0_0(\\Delta\\chi) + 
+          J_{02}^{\\kappa\\kappa} \\, I^0_2(\\Delta\\chi) + 
+          J_{31}^{\\kappa\\kappa} \\, I^3_1(\\Delta\\chi) + 
+          J_{22}^{\\kappa\\kappa} \\, I^2_2(\\Delta\\chi)
+      \\right) = 
+          3 \\, \\sigma_2 + \\frac{6}{5} \\, \\chi_2^2 \\, \\sigma_0
   ```
 
-  So, when it happens that ``\\chi < \\Delta\\chi_\\mathrm{min}``, the function considers this limit
+  So, when it happens that ``\\Delta\\chi < \\Delta\\chi_\\mathrm{min}``, the function considers this limit
   as the result of the parenthesis instead of calculating it in the normal way; it prevents
   computational divergences.
 
@@ -199,66 +271,11 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),
 [`ξ_GNC_Lensing`](@ref)
 """
-function integrand_ξ_GNC_Lensing(
-     IP1::Point, IP2::Point,
-     P1::Point, P2::Point,
-     y, cosmo::Cosmology;
-     Δχ_min::Float64=1e-1, obs::Union{Bool,Symbol}=:noobsvel)
+integrand_ξ_GNC_Lensing
 
-     s1 = P1.comdist
-     s2 = P2.comdist
-     χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
-     χ2, D2, a2 = IP2.comdist, IP2.D, IP2.a
-     s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b
-     Ω_M0 = cosmo.params.Ω_M0
 
-     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-     Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
 
-     denomin = s1 * s2 * a1 * a2
-     factor = ℋ0^4 * Ω_M0^2 * D1 * (s1 - χ1) * D2 * (s2 - χ2) * (5 * s_b_s1 - 2) * (5 * s_b_s2 - 2)
-
-     first_res = if Δχ > Δχ_min
-          χ1χ2 = χ1 * χ2
-
-          new_J00 = -3 / 4 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
-          new_J02 = -3 / 2 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
-          new_J31 = 9 * y * Δχ^2
-          new_J22 = 9 / 4 * χ1χ2 / Δχ^4 * (
-               2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)
-               - 16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
-               + χ1χ2^2 * (11y^4 + 14y^2 + 23)
-          )
-
-          I00 = cosmo.tools.I00(Δχ)
-          I20 = cosmo.tools.I20(Δχ)
-          I13 = cosmo.tools.I13(Δχ)
-          I22 = cosmo.tools.I22(Δχ)
-
-          (
-               new_J00 * I00 + new_J02 * I20 +
-               new_J31 * I13 + new_J22 * I22
-          )
-
-     else
-
-          #3 / 5 * (5 * cosmo.tools.σ_2 + 6 * cosmo.tools.σ_0 * χ2^2)
-          3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
-     end
-
-     return factor / denomin * first_res
-end
-
-function integrand_ξ_GNC_Lensing(
-     χ1::Float64, χ2::Float64,
-     s1::Float64, s2::Float64,
-     y, cosmo::Cosmology;
-     kwargs...)
-
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
-     return integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
-end
+##########################################################################################92
 
 
 
