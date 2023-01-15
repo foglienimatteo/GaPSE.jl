@@ -12,6 +12,9 @@ GaPSE.ξ_GNC_Doppler
 GaPSE.ξ_GNC_Lensing
 GaPSE.ξ_GNC_LocalGP
 GaPSE.ξ_GNC_IntegratedGP
+
+GaPSE.integrand_ξ_GNC_Lensing
+GaPSE.integrand_ξ_GNC_IntegratedGP
 ```
 
 # Two-Point Cross-Correlation Functions
@@ -37,6 +40,14 @@ GaPSE.ξ_GNC_Lensing_IntegratedGP
 GaPSE.ξ_GNC_IntegratedGP_Lensing
 GaPSE.ξ_GNC_LocalGP_IntegratedGP
 GaPSE.ξ_GNC_IntegratedGP_LocalGP
+
+GaPSE.integrand_ξ_GNC_Newtonian_Lensing
+GaPSE.integrand_ξ_GNC_Newtonian_IntegratedGP
+GaPSE.integrand_ξ_GNC_Doppler_IntegratedGP
+GaPSE.integrand_ξ_GNC_Lensing_Doppler
+GaPSE.integrand_ξ_GNC_Lensing_LocalGP
+GaPSE.integrand_ξ_GNC_Lensing_IntegratedGP
+GaPSE.integrand_ξ_GNC_LocalGP_IntegratedGP
 ```
 
 
