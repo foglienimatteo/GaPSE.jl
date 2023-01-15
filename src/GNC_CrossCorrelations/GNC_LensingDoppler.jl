@@ -18,59 +18,7 @@
 #
 
 
-@doc raw"""
-     integrand_ξ_GNC_Lensing_Doppler(
-          IP::Point, P1::Point, P2::Point,
-          y, cosmo::Cosmology) :: Float64
 
-Return the integrand of the Lensing-Doppler cross-correlation function 
-``\\xi^{v_{\\parallel}\\kappa} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
-``f(s_1, s_2, y, \\chi_1, \\chi_2)`` defined as follows:  
-
-```math
-f(s_1, s_2, y, \\chi_1, \\chi_2) = 
-     \\mathcal{H}_0^2 \\Omega_{M0} D(s_2) f(s_2) \\mathcal{H}(s_2) \\mathcal{R}(s_2) 
-     \\frac{ D(\\chi_1) (\\chi_1 - s_1) }{a(\\chi_1) s_1} 
-     \\left(
-          J_{00} I^0_0(\\Delta\\chi_1) + J_{02} I^0_2(\\Delta\\chi_1) 
-          + J_{04} I^0_4(\\Delta\\chi_1) + J_{20} I^2_0(\\Delta\\chi_1)
-     \\right)
-```
-
-where ``\\mathcal{H} = a H``, 
-``\\Delta\\chi_1 = \\sqrt{\\chi_1^2 + s_2^2 - 2\\chi_1s_2\\cos{\\theta}}``, 
-``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``) 
-and the ``J`` coefficients are given by 
-
-```math
-\\begin{align*}
-     J_{00} & = \\frac{1}{15}(\\chi_1^2 y + \\chi_1(4 y^2 - 3) s_2 - 2 y s_2^2) \\\\
-     J_{02} & = \\frac{1}{42 \\Delta\\chi_1^2} 
-          (4 \\chi_1^4 y + 4 \\chi_1^3 (2 y^2 - 3) s_2 + \\chi_1^2 y (11 - 23 y^2) s_2^2 + 
-          \\chi_1 (23 y^2 - 3) s_2^3 - 8 y s_2^4) \\\\
-     J_{04} & = \\frac{1}{70 \\Delta\\chi_1^2}
-          (2 \\chi_1^4 y + 2 \\chi_1^3 (2y^2 - 3) s_2 - \\chi_1^2 y (y^2 + 5) s_2^2 + 
-          \\chi_1 (y^2 + 9) s_2^3 - 4 y s_2^4) \\\\
-     J_{20} & = y \\Delta\\chi_1^2
-\\end{align*}
-```
-
-## Inputs
-
-- `IP::Point`: `Point` inside the integration limits, placed 
-  at comoving distance `χ1`.
-
-- `P1::Point` and `P2::Point`: extreme `Point` of the integration, placed 
-  at comoving distance `s1` and `s2` respectively.
-
-- `y`: the cosine of the angle between the two points `P1` and `P2`
-
-- `cosmo::Cosmology`: cosmology to be used in this computation
-
-
-See also: [`ξ_GNC_Lensing_Doppler`](@ref), [`int_on_mu_Lensing_Doppler`](@ref)
-[`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
-"""
 function integrand_ξ_GNC_Lensing_Doppler(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel,
@@ -147,6 +95,9 @@ function integrand_ξ_GNC_Lensing_Doppler(
      IP = Point(χ1, cosmo)
      return integrand_ξ_GNC_Lensing_Doppler(IP, P1, P2, y, cosmo; kwargs...)
 end
+
+
+##########################################################################################92
 
 
 """

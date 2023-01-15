@@ -18,49 +18,7 @@
 #
 
 
-@doc raw"""
-     integrand_ξ_GNC_Doppler_IntegratedGP(
-          IP::Point, P1::Point, P2::Point,
-          y, cosmo::Cosmology) :: Float64
 
-Return the integrand of the Doppler-IntegratedGP cross-correlation function 
-``\\xi^{v_{\\parallel}\\int\\phi} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
-``f(s_1, s_2, y, \\chi_1, \\chi_2)`` defined as follows:  
-
-```math
-f(s_1, s_2, y, \\chi_1, \\chi_2) = 
-     3 \\mathcal{H}(s_1) f(s_1) D(s_1) \\mathcal{H_0}^2 \\Omega_{M0} 
-     \\mathcal{R}(s_1) J_{31} I^3_1(\\chi)
-```
-where ``\\mathcal{H} = a H``, 
-``\\chi = \\sqrt{s_1^2 + \\chi_2^2 - 2 s_1 \\chi_2 \\cos{\\theta}}``, 
-``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``) 
-and:
-
-```math
-J_{31} = 
-     \\frac{D(\\chi_2) (s_1 - \\chi_2 \\cos{\\theta})}{a(\\chi_2)} \\chi^2 
-     \\left(
-          \\frac{1}{s_2} - \\mathcal{R}(s_2) \\mathcal{H}(\\chi_2) (f(\\chi_2) - 1)
-     \\right)
-```
-
-## Inputs
-
-- `IP::Point`: `Point` inside the integration limits, placed 
-  at comoving distance `χ1`.
-
-- `P1::Point` and `P2::Point`: extreme `Point` of the integration, placed 
-  at comoving distance `s1` and `s2` respectively.
-
-- `y`: the cosine of the angle between the two points `P1` and `P2`
-
-- `cosmo::Cosmology`: cosmology to be used in this computation
-
-
-See also: [`ξ_GNC_Doppler_IntegratedGP`](@ref), [`int_on_mu_Doppler_IntegratedGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
-"""
 function integrand_ξ_GNC_Doppler_IntegratedGP(
      IP::Point, P1::Point, P2::Point,
      y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
@@ -111,68 +69,19 @@ end
 
 function integrand_ξ_GNC_Doppler_IntegratedGP(
      χ2::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
+     y, cosmo::Cosmology; obs::Union{Bool,Symbol}=:noobsvel)
 
      P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
      IP = Point(χ2, cosmo)
-     return integrand_ξ_GNC_Doppler_IntegratedGP(IP, P1, P2, y, cosmo; obs = obs)
+     return integrand_ξ_GNC_Doppler_IntegratedGP(IP, P1, P2, y, cosmo; obs=obs)
 end
 
 
-@doc raw"""
-     ξ_GNC_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-          en::Float64 = 1e6, N_χs::Int = 100):: Float64
 
-Return the Doppler-IntegratedGP cross-correlation function 
-``\\xi^{v_{\\parallel}\\int\\phi} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
-luminosity distance, defined as follows:
-    
-```math
-\\xi^{v_{\\parallel}\\int\\phi} (s_1, s_2, \\cos{\\theta}) = 
-     3 \\mathcal{H}(s_1) f(s_1) D(s_1) \\mathcal{H_0}^2 \\Omega_{M0} \\mathcal{R}(s_1) 
-     \\int_0^{s_2} \\mathrm{d}\\chi_2 \\,  J_{31} \\,  I^3_1(\\chi)
-```
-
-where ``\\mathcal{H} = a H``, 
-``\\chi = \\sqrt{s_1^2 + \\chi_2^2 - 2 s_1 \\chi_2 \\cos{\\theta}}``, 
-``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``) 
-and:
-
-```math
-J_{31} = 
-     \\frac{D(\\chi_2) (s_1 - \\chi_2 \\cos{\\theta})}{a(\\chi_2)} \\chi^2 
-     \\left(
-          - \\frac{1}{s_2} + \\mathcal{R}(s_2) \\mathcal{H}(\\chi_2) (f(\\chi_2) - 1)
-     \\right)
-```
-
-The computation is made applying [`trapz`](@ref) (see the 
-[Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_GNC_Doppler_IntegratedGP`.
+##########################################################################################92
 
 
-## Inputs
 
-- `s1` and `s2`: comovign distances where the function must be evaluated
-
-- `y`: the cosine of the angle between the two points `P1` and `P2`
-
-- `cosmo::Cosmology`: cosmology to be used in this computation
-
-
-## Optional arguments 
-
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
-  with small numbers;
-
-- `N_χs::Int = 100`: number of points to be used for sampling the integral
-  along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
-  with `N_χs ≥ 50` the result is stable.
-
-
-See also: [`integrand_ξ_GNC_Doppler_IntegratedGP`](@ref), [`int_on_mu_Doppler_IntegratedGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
-"""
 function ξ_GNC_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
      en::Float64 = 1e6, N_χs::Int = 100, obs::Union{Bool, Symbol} = :noobsvel)
 
