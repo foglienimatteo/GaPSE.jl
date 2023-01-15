@@ -19,37 +19,37 @@
 
 
 function integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
-     P1::Point, P2::Point,
-     y, cosmo::Cosmology; obs::Union{Bool,Symbol}=:noobsvel)
+  P1::Point, P2::Point,
+  y, cosmo::Cosmology; obs::Union{Bool,Symbol}=:noobsvel)
 
-     s1, ℛ_s1 = P1.comdist, P1.ℛ_GNC
-     s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
-     χ1, D1, a1, ℋ1, f1 = IP1.comdist, IP1.D, IP1.a, IP1.ℋ, IP1.f
-     χ2, D2, a2, ℋ2, f2 = IP2.comdist, IP2.D, IP2.a, IP2.ℋ, IP2.f
-     s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b
-     Ω_M0 = cosmo.params.Ω_M0
+  s1, ℛ_s1 = P1.comdist, P1.ℛ_GNC
+  s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
+  χ1, D1, a1, ℋ1, f1 = IP1.comdist, IP1.D, IP1.a, IP1.ℋ, IP1.f
+  χ2, D2, a2, ℋ2, f2 = IP2.comdist, IP2.D, IP2.a, IP2.ℋ, IP2.f
+  s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b
+  Ω_M0 = cosmo.params.Ω_M0
 
-     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-     Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
+  Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
+  Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
 
-     factor = 9 * Δχ^4 * ℋ0^4 * Ω_M0^2 * D1 * D2 / (s1 * s2 * a1 * a2)
-     parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2
-     parenth_2 = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2
+  factor = 9 * Δχ^4 * ℋ0^4 * Ω_M0^2 * D1 * D2 / (s1 * s2 * a1 * a2)
+  parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2
+  parenth_2 = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2
 
-     I04_tilde = cosmo.tools.I04_tilde(Δχ)
+  I04_tilde = cosmo.tools.I04_tilde(Δχ)
 
-     return factor * parenth_1 * parenth_2 * I04_tilde
+  return factor * parenth_1 * parenth_2 * I04_tilde
 end
 
 function integrand_ξ_GNC_IntegratedGP(
-     χ1::Float64, χ2::Float64,
-     s1::Float64, s2::Float64,
-     y, cosmo::Cosmology;
-     kwargs...)
+  χ1::Float64, χ2::Float64,
+  s1::Float64, s2::Float64,
+  y, cosmo::Cosmology;
+  kwargs...)
 
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
-     return integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+  P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+  IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
+  return integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
 end
 
 
@@ -169,14 +169,14 @@ where:
 In this TPCF there are no observer terms. The `obs` keyword is inserted only for compatibility with 
 the other GNC TPCFs.
 
-This function is used inside `ξ_GNC_IntegratedGP` with the [`trapz`](@ref) from the 
+This function is used inside `ξ_GNC_IntegratedGP` with [`trapz`](@ref) from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 
 ## Inputs
 
-- `P1::Point` and `P2::Point`, or `s1` and `s2`: `Point`/comoving distances where the 
-  TPCF has to be calculated; they contain all the 
+-  `IP1::Point`, `IP2::Point`, `P1::Point`, `P2::Point` or `χ1`, `χ2`, `s1`, `s2`: `Point`/comoving 
+  distances where the TPCF has to be calculated; they contain all the 
   data of interest needed for this calculus (comoving distance, growth factor and so on).
   
 - `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
@@ -208,51 +208,51 @@ integrand_ξ_GNC_IntegratedGP
 
 
 function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64=1e10, N_χs_2::Int=100, obs::Union{Bool,Symbol}=:noobsvel)
+  en::Float64=1e10, N_χs_2::Int=100, obs::Union{Bool,Symbol}=:noobsvel)
 
-     #adim_χs = range(1e-12, 1, N_χs)
-     #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
+  #adim_χs = range(1e-12, 1, N_χs)
+  #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
-     χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
-     χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
+  χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
+  χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
 
-     IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-     IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
+  IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+  IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-     int_ξ_igp = [
-          en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; obs=obs)
-          for IP1 in IP1s, IP2 in IP2s
-     ]
+  int_ξ_igp = [
+    en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; obs=obs)
+    for IP1 in IP1s, IP2 in IP2s
+  ]
 
-     res = trapz((χ1s, χ2s), int_ξ_igp)
-     #println("res = $res")
+  res = trapz((χ1s, χ2s), int_ξ_igp)
+  #println("res = $res")
 
-     #=
-     χ1s = [x for x in range(0, P1.comdist, length = N_χs)[begin+1:end]]
-     l = Int(floor(N_χs/2))
-     matrix_χ2s = [begin
-          a = [x for x in range(0, P2.comdist, length=l)[begin+1:end]];
-          b = [x for x in range(x1-focus, x1+focus, length=l)];
-          vcat(a[a.<x1-focus], b, a[a.>x1+focus])
-          end for x1 in χ1s]
+  #=
+  χ1s = [x for x in range(0, P1.comdist, length = N_χs)[begin+1:end]]
+  l = Int(floor(N_χs/2))
+  matrix_χ2s = [begin
+       a = [x for x in range(0, P2.comdist, length=l)[begin+1:end]];
+       b = [x for x in range(x1-focus, x1+focus, length=l)];
+       vcat(a[a.<x1-focus], b, a[a.>x1+focus])
+       end for x1 in χ1s]
 
-     IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-     matrix_IP2s = [[GaPSE.Point(x, cosmo) for x in y] for y in matrix_χ2s]
-     matrix_int_ξs = [
-          [en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo) 
-          for IP2 in matrix_IP2s[i]]
-          for (i,IP1) in enumerate(IP1s)]
+  IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+  matrix_IP2s = [[GaPSE.Point(x, cosmo) for x in y] for y in matrix_χ2s]
+  matrix_int_ξs = [
+       [en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo) 
+       for IP2 in matrix_IP2s[i]]
+       for (i,IP1) in enumerate(IP1s)]
 
-     vec_trapz = [trapz(χ2s,int_ξs) for (χ2s,int_ξs) in zip(matrix_χ2s, matrix_int_ξs)]
-     res = trapz(χ1s, vec_trapz)
-     =#
-     return res / en
+  vec_trapz = [trapz(χ2s,int_ξs) for (χ2s,int_ξs) in zip(matrix_χ2s, matrix_int_ξs)]
+  res = trapz(χ1s, vec_trapz)
+  =#
+  return res / en
 end
 
 
 function ξ_GNC_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_GNC_IntegratedGP(P1, P2, y, cosmo; kwargs...)
+  P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+  return ξ_GNC_IntegratedGP(P1, P2, y, cosmo; kwargs...)
 end
 
 
@@ -360,7 +360,7 @@ where:
 In this TPCF there are no observer terms. The `obs` keyword is inserted only for compatibility with 
 the other GNC TPCFs.
 
-This function is computed integrating `integrand_ξ_GNC_IntegratedGP` with the [`trapz`](@ref) from the 
+This function is computed integrating `integrand_ξ_GNC_IntegratedGP` with [`trapz`](@ref) from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 
