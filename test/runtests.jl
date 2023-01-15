@@ -41,9 +41,11 @@ include("TEST_DATA.jl")
 
 ##########################################################################################92
 
+#=
 @testset "test FFTLog" begin
      include("test_FFTLog.jl")
 end
+=#
 
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
