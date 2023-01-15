@@ -109,9 +109,12 @@ See also: [`AbstractPlan`](@ref)
     plan_rfft::FFTW.rFFTWPlan = plan_rfft(randn(1024))
     plan_irfft =
         plan_irfft(
-            randn(Complex{Float64}, 2, Int((original_length + n_extrap_low + n_extrap_high + 2 * n_pad) / 2) + 1),
-            original_length + n_extrap_low + n_extrap_high + 2 * n_pad,
-            2
+              randn(
+                    Complex{Float64}, 2,
+                    Int((original_length + n_extrap_low + n_extrap_high + 2 * n_pad) / 2) + 1
+              ),
+              original_length + n_extrap_low + n_extrap_high + 2 * n_pad,
+              2
         )
 end
 
