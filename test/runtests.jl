@@ -211,7 +211,6 @@ end
      include("test_PNG.jl")
 end
 
-@test 1==2 
 
 ################################### TEST LUMINOSITY DISTANCE PERTURBATIONS ###############92
 

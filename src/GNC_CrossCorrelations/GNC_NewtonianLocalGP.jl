@@ -88,7 +88,7 @@ end
           kwargs...) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
-Newtonial and the Local Gravitational Potential (GP) effects arising from the Galaxy Number Counts (GNC).
+Newtonian and the Local Gravitational Potential (GP) effects arising from the Galaxy Number Counts (GNC).
 
 In the first method, you should pass the two `Point` (`P1` and `P2`) where to 
 evaluate the function, while in the second method (that internally recalls the first) 
