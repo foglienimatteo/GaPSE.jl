@@ -10,7 +10,14 @@
 
 GaPSE (Galaxy Power Spectrum Estimator) is a software for cosmological computations written in the [Julia Programming Language](https://julialang.org).
 
-It's currently under construction! 
+IMPORTANT NOTE: This is a work-in-progress project! As a consequence, currently in this pre-release:
+- it's possible to compute the multipoles ($L=1,2,3,...$) of the effects we'll show next, but some of the Galaxy Number Counts multipoles converge very slowly, so their computation is not still ready. The monopoles ($L=0$) computations instead do not give any problem with `quad`;
+- you can't go further than $z \simeq 1.5$;
+- the code functions are well documented; check the github pages website https://cosmofico97.github.io/GaPSE/stable if you can't see correctly the analytical expressions written in the docstrings. However, the Two-Point Correlation Functions docstrings of the groups `LD`, `GNCxLD` and `LDxGNC` (see below for explanation) are still missing; 
+- few people used this code, so bugs are behind the corner; don't esitate to raise the finger to point out them! 
+
+
+
 
 ## Brief description
 
