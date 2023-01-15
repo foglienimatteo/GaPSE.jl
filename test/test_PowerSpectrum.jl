@@ -18,13 +18,13 @@
 #
 
 
-
 @testset "test TwoFAST PS_multipole" begin
      RTOL = 1e-3
      kwargs_ps = Dict(:epl => true, :pr => false, :alg => :twofast,
           :N_left => 12, :N_right => 12,
           :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
-          :int_s_min => 1e-4, :int_s_max => 1e4)
+          :int_s_min => 1e-4, :int_s_max => 1e4,
+          :cut_first_n => 0, :cut_last_n => 0)
 
      @testset "with F" begin
           @testset "monopole" begin
@@ -91,13 +91,14 @@
      end
 end
 
-#=
+
 @testset "test TwoFAST print_PS_multipole first method" begin
      RTOL = 1e-3
      kwargs_ps = Dict(:epl => true, :pr => false, :alg => :twofast,
           :N_left => 12, :N_right => 12,
           :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
-          :int_s_min => 1e-4, :int_s_max => 1e4)
+          :int_s_min => 1e-4, :int_s_max => 1e4,
+          :cut_first_n => 0, :cut_last_n => 0)
 
      @testset "with F" begin
           @testset "monopole" begin
@@ -202,7 +203,8 @@ end
      kwargs_ps = Dict(:epl => true, :pr => false, :alg => :twofast,
           :N_left => 12, :N_right => 12,
           :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
-          :int_s_min => 1e-4, :int_s_max => 1e4)
+          :int_s_min => 1e-4, :int_s_max => 1e4, 
+          :cut_first_n => 0, :cut_last_n => 0)
 
      @testset "with F" begin
           @testset "monopole" begin
@@ -346,7 +348,8 @@ end
      kwargs_ps = Dict(:epl => true, :pr => false, :alg => :twofast,
           :N_left => 12, :N_right => 12,
           :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
-          :int_s_min => 1e-4, :int_s_max => 1e4)
+          :int_s_min => 1e-4, :int_s_max => 1e4,
+          :cut_first_n => 0, :cut_last_n => 0)
 
      @testset "test PS LD" begin
           L = 0
@@ -511,9 +514,10 @@ end
 
 @testset "test FFTLog PS_multipole" begin
      RTOL = 1e-3
-    kwargs_ps = Dict(:pr => false, :twofast => false,
+    kwargs_ps = Dict(:pr => false, :alg => :fftlog,
          :ν => 1.5, :n_extrap_low => 500,
-         :n_extrap_high => 500, :n_pad => 500)
+         :n_extrap_high => 500, :n_pad => 500,
+         :cut_first_n => 0, :cut_last_n => 0)
 
      @testset "with F" begin
           @testset "monopole" begin
@@ -583,9 +587,10 @@ end
 
 @testset "test FFTLog print_PS_multipole first method" begin
      RTOL = 1e-3
-     kwargs_ps = Dict(:pr => false, :twofast => false,
+     kwargs_ps = Dict(:pr => false, :alg => :fftlog,
           :ν => 1.5, :n_extrap_low => 500,
-          :n_extrap_high => 500, :n_pad => 500)
+          :n_extrap_high => 500, :n_pad => 500,
+          :cut_first_n => 0, :cut_last_n => 0)
 
      @testset "with F" begin
           @testset "monopole" begin
@@ -687,9 +692,10 @@ end
 
 @testset "test FFTLog print_PS_multipole second method" begin
      RTOL = 1e-3
-     kwargs_ps = Dict(:pr => false, :twofast => false,
+     kwargs_ps = Dict(:pr => false, :alg => :fftlog,
           :ν => 1.5, :n_extrap_low => 500,
-          :n_extrap_high => 500, :n_pad => 500)
+          :n_extrap_high => 500, :n_pad => 500,
+          :cut_first_n => 0, :cut_last_n => 0)
 
      @testset "with F" begin
           @testset "monopole" begin
@@ -830,9 +836,10 @@ end
           rm(name)
      end
 
-     kwargs_ps = Dict(:pr => false, :twofast => false,
+     kwargs_ps = Dict(:pr => false, :alg => :fftlog,
           :ν => 1.5, :n_extrap_low => 500,
-          :n_extrap_high => 500, :n_pad => 500)
+          :n_extrap_high => 500, :n_pad => 500,
+          :cut_first_n => 0, :cut_last_n => 0)
 
      @testset "test PS LD" begin
           L = 0
@@ -990,4 +997,3 @@ end
      end
 end
 
-=#
