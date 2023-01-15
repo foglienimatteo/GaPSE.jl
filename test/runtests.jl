@@ -40,7 +40,7 @@ const HUBBLE_0 = 1e5 / 299792458.0
 include("TEST_DATA.jl")
 
 ##########################################################################################92
-#=
+
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
@@ -79,7 +79,6 @@ end
      include("test_WindowFIntegrated.jl")
 end
 
-@test 1==2
 
 @testset "test Dicts" begin
      include("test_Dicts.jl")
@@ -89,7 +88,7 @@ end
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
 end
-=#
+
 
 ################################### COSMOLOGY IMPLEMENTATION #############################92
 
@@ -188,7 +187,7 @@ SS_LDxGNC = 10 .^ range(0, log10(2.0 * COSMO.s_max), length=100);
 
 ################################### TEST PLANE-PARALLEL APPROXIMATIONS ###################92
 
-#=
+
 @testset "test PPDoppler" begin
      include("test_PPDoppler.jl")
 end
@@ -200,7 +199,7 @@ end
 @testset "test PPXiGalaxies" begin
      include("test_PPXiGalaxies.jl")
 end
-=#
+
 
 
 
