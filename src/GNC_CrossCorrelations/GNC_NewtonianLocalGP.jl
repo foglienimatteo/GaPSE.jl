@@ -18,37 +18,6 @@
 #
 
 
-@doc raw"""
-     ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
-
-Return the LocalGP-LocalGP cross-correlation function concerning the perturbed
-luminosity distance, defined as follows:
-
-```math
-\\xi^{v_{\\parallel}\\phi} (s_1, s_2, \\cos{\\theta}) = 
-     \\frac{3}{2 a(s_2)} \\mathcal{H}(s_1) f(s_1) D(s_1)
-     \\mathcal{R}(s_1) \\mathcal{H}_0^2 \\Omega_{M0} D(s_2)
-     (1 + \\mathcal{R}(s_2)) (s_2\\cos{\\theta} - s_1) s^2 I^3_1(s)
-```
-where ``\\mathcal{H} = a H``,
-``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2`` and :
-
-```math
-I^n_l(s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} q^2 \\, P(q) \\, \\frac{j_l(qs)}{(q s)^n}
-```
-
-## Inputs
-
-- `P1::Point` and `P2::Point`: `Point` where the CF has to be calculated; they contain all the 
-  data of interest needed for this calculus (comoving distance, growth factor and so on)
-     
-- `y`: the cosine of the angle between the two points `P1` and `P2`
-
-- `cosmo::Cosmology`: cosmology to be used in this computation
-
-
-See also: [`Point`](@ref), [`Cosmology`](@ref)
-"""
 function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
      s1, D1, f1 = P1.comdist, P1.D, P1.f
      s2, D2, f2, a2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ, P2.ℛ_GNC
@@ -109,6 +78,170 @@ function ξ_GNC_Newtonian_LocalGP(s1, s2, y, cosmo::Cosmology; obs::Union{Bool, 
 end
 
 
+"""
+     ξ_GNC_Newtonian_LocalGP(
+          P1::Point, P2::Point, y, cosmo::Cosmology; 
+          obs::Union{Bool, Symbol} = :noobsvel
+          ) ::Float64
+
+     ξ_GNC_Newtonian_LocalGP(s1, s2, y, cosmo::Cosmology;
+          kwargs...) ::Float64
+
+Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
+Newtonian and the Local Gravitational Potential (GP) effects arising from the Galaxy Number Counts (GNC).
+
+In the first method, you should pass the two `Point` (`P1` and `P2`) where to 
+evaluate the function, while in the second method (that internally recalls the first) 
+you must provide the two corresponding comoving distances `s1` and `s2`.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
+
+The analytical expression of this term is the following:
+
+```math
+\\begin{split}
+    \\xi^{\\delta \\phi}( s_1 , s_2, y ) &= 
+    D_1 D_2 J^{\\delta \\phi}_{\\alpha} \\left[ 
+        J^{\\delta \\phi}_{\\beta} 
+        \\left(
+            \\frac{1}{30} I_0^0 (s) + 
+            \\frac{1}{21} I_2^0 (s) +
+            \\frac{1}{70} I_4^0 (s) 
+        \\right) +
+        J^{\\delta \\phi}_{20} I_0^2 (s)
+    \\right] \\nonumber \\\\
+    & + D_1 J^{\\delta \\phi}_{\\gamma} \\left[ 
+        J^{\\delta \\phi}_{31} I^3_{1} (s_1) +
+        J^{\\delta \\phi}_{11} I^1_{1} (s_1) +  
+        J^{\\delta \\phi}_{13} I^1_{3} (s_1) 
+        \\right] 
+\\end{split}
+```
+
+
+where
+
+```math
+\\begin{split}
+    J^{\\delta \\phi}_{\\alpha} &=
+    \\frac{1}{3 a_2} \\left[ 
+        2 f_2 a_2 \\mathcal{H}_2^2 (\\mathit{f}_{\\mathrm{evo}, 2} - 3) +
+        3 \\mathcal{H}_0^2 \\Omega_{\\mathrm{M}0} (f_2 + \\mathcal{R}_2 + 5 s_{\\mathrm{b}, 2}  - 2)
+    \\right] 
+    \\, , \\\\
+    %%%%%%%%%%%%%%%%%%%%%
+    J^{\\delta \\phi}_{\\beta} &=
+    f_1 \\left[ 
+        (3 y^2 - 1) s_2^2 - 4 y s_1 s_2 + 2 s_1^2
+    \\right] 
+    \\, , \\\\
+    %%%%%%%%%%%%%%%%%%%%%
+    J^{\\delta \\phi}_{\\gamma} &=
+    \\frac{\\mathcal{H}_0 s_1^2}{2 s_2} \\left[ 
+        2 f_0 (\\mathcal{H}_0 s_2 \\mathcal{R}_2 + 5 s_{\\mathrm{b}, 2}  - 2) - 
+        3 \\mathcal{H}_0 s_2 \\mathcal{R}_2
+    \\right] 
+    \\, , \\\\
+    %%%%%%%%%%%%%%%%%%%%%
+    J^{\\delta \\phi}_{20} &= 
+    - \\frac{1}{2}(3 b_1 + f_1) (s_1^2 + s_2^2 - 2 y s_1 s_2)
+    \\, , \\\\
+    %%%%%%%%%%%%%%%%%%%%%
+    J^{\\delta \\phi}_{31} &= - (3 b_1 + f_1) 
+    \\, , \\\\
+    %%%%%%%%%%%%%%%%%%%%%
+    J^{\\delta \\phi}_{11} &=
+    J^{\\delta \\phi}_{13} = \\frac{1}{5}(b_1 + f_1) 
+    \\, .
+\\end{split}
+```
+
+where:
+
+- ``s_1`` and ``s_2`` are comoving distances;
+
+- ``D_1 = D(s_1)``, ... is the linear growth factor (evaluated in ``s_1``);
+
+- ``a_1 = a(s_1)``, ... is the scale factor (evaluated in ``s_1``);
+
+- ``f_1 = f(s_1)``, ... is the linear growth rate (evaluated in ``s_1``);
+
+- ``\\mathcal{H}_1 = \\mathcal{H}(s_1)``, ... is the comoving 
+  Hubble distances (evaluated in ``s_1``);
+
+- ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``;
+
+- ``\\mathcal{R}_1 = \\mathcal{R}(s_1)``, ... is 
+  computed by `func_ℛ_GNC` in `cosmo::Cosmology` (and evaluated in ``s_1`` );
+  the definition of ``\\mathcal{R}(s)`` is the following:
+  ```math
+  \\mathcal{R}(s) = 5 s_{\\mathrm{b}}(s) + \\frac{2 - 5 s_{\\mathrm{b}}(s)}{\\mathcal{H}(s) \\, s} +  
+  \\frac{\\dot{\\mathcal{H}}(s)}{\\mathcal{H}(s)^2} - \\mathit{f}_{\\mathrm{evo}} \\quad ;
+  ```
+
+- ``b_1 = b(s_1)``, ``s_{\\mathrm{b}, 1} = s_{\\mathrm{b}}(s_1)``, ``\\mathit{f}_{\\mathrm{evo}}``, ... : 
+  galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold), 
+  and evolution bias (the first two evaluated in ``s_1``); they are
+  all stored in `cosmo`;
+
+- ``\\Omega_{\\mathrm{M}0} = \\Omega_{\\mathrm{cdm}} + \\Omega_{\\mathrm{b}}`` is the sum of 
+  cold-dark-matter and barionic density parameters (again, stored in `cosmo`);
+
+- ``I_\\ell^n`` and ``\\sigma_i`` are defined as
+  ```math
+  I_\\ell^n(s) = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_\\ell(qs)}{(qs)^n} \\quad , 
+  \\quad \\sigma_i = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^{2-i} \\, P(q)
+  ```
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`) 
+  and ``j_\\ell`` as spherical Bessel function of order ``\\ell``;
+
+- ``\\tilde{I}_0^4`` is defined as
+  ```math
+  \\tilde{I}_0^4 = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_0(qs) - 1}{(qs)^4}
+  ``` 
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`) 
+  and ``j_\\ell`` as spherical Bessel function of order ``\\ell``;
+
+- ``\\mathcal{H}_0``, ``f_0`` and so on are evaluated at the observer position (i.e. at present day);
+
+- ``\\Delta\\chi_1 := \\sqrt{\\chi_1^2 + s_2^2-2\\,\\chi_1\\,s_2\\,y}`` and 
+  ``\\Delta\\chi_2 := \\sqrt{s_1^2 + \\chi_2^2-2\\,s_1\\,\\chi_2\\,y}``;
+
+- ``s=\\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}`` and 
+  ``\\Delta\\chi := \\sqrt{\\chi_1^2 + \\chi_2^2-2\\,\\chi_1\\,\\chi_2\\,y}``.
+
+In this TPCF, the term proportional to only``D(s_1)`` is an observer term 
+(while the term proportional to ``D(s_1) \\, D(s_2)`` is not), but does not depend 
+on the observer velocitz. Consequently, if you set `obs = :yes`, `obs = true` or
+even `obs = :noobsvel` both of them will computed, while for `obs = :no` or `obs = false`
+only the first one will be taken into account.
+
+## Inputs
+
+- `P1::Point` and `P2::Point`, or `s1` and `s2`: `Point`/comoving distances where the 
+  TPCF has to be calculated; they contain all the 
+  data of interest needed for this calculus (comoving distance, growth factor and so on).
+  
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
+
+- `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
+  used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
+
+## Keyword Arguments
+
+- `obs::Union{Bool,Symbol} = :noobsvel` : do you want to consider the observer terms in the computation of the 
+  chosen GNC TPCF effect?
+  - `:yes` or `true` -> all the observer effects will be considered
+  - `:no` or `false` -> no observer term will be taken into account
+  - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
+    will be neglected, the other ones will be taken into account
+
+See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
+[`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref)
+"""
+ξ_GNC_Newtonian_LocalGP
 
 
 ##########################################################################################92
@@ -119,6 +252,36 @@ end
 
 
 
+
+"""
+     ξ_GNC_LocalGP_Newtonian(s1, s2, y, cosmo::Cosmology; kwargs...) = 
+          ξ_GNC_Newtonian_LocalGP(s2, s1, y, cosmo; kwargs...)
+
+Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
+Local Gravitational Potential (GP) and the Newtonian effects arising from the Galaxy Number Counts (GNC).
+
+It's computed through the symmetric function `ξ_GNC_Newtonian_LocalGP`; check its documentation for
+more details about the analytical expression and the keyword arguments.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
+
+
+## Inputs
+
+- `s1` and `s2`: comoving distances where the TPCF has to be calculated;
+  
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
+
+- `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
+  used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
+
+## Keyword Arguments
+
+- `kwargs...` : Keyword arguments to be passed to the symmetric TPCF
+
+See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
+[`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),
+[`ξ_GNC_Newtonian_LocalGP`](@ref)
+"""
 function ξ_GNC_LocalGP_Newtonian(s1, s2, y, cosmo::Cosmology; kwargs...)
      ξ_GNC_Newtonian_LocalGP(s2, s1, y, cosmo; kwargs...)
 end

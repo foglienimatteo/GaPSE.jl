@@ -1,8 +1,18 @@
 # HEAD
 
+- Made the docstrings for almost all the functions in the code; only the `LD`, `GNCxLD` and `LDxGNC` TPCFs are huge holes in this picture
+
+- Improved the structure of the functions that manage the Integrated Window Function (`print_map_F` and `WindowF` in particular); some options have changed name
+  
+- Improved the structure of the functions that manage the Integrated Window Function (`print_map_IntegratedF` and `WindowFIntegrated` in particular); some options have changed name
+
+- Improved the code for `PS_multipole` and associated functions; some options have changed name
+
+# VERSION 0.5.0
+
 - Implemented tests.
 
-- Added the `PNG.jl` source code file for the analysis of the Primrodial Non-Gaussianites
+- Added the `PNG.jl` source code file for the analysis of the Primordial Non-Gaussianites
 
 - Calibrated the integrals on `χ` for some of the GNC terms
 

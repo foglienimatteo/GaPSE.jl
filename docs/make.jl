@@ -4,28 +4,31 @@ using Documenter
 using GaPSE
 
 Documenter.makedocs(
-     format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true"),
-     modules = [GaPSE],
-     sitename = "GaPSE.jl",
-     pages = [
+     format=Documenter.HTML(prettyurls=get(ENV, "CI", nothing) == "true"),
+     modules=[GaPSE],
+     sitename="GaPSE.jl",
+     pages=[
           "Introduction" => "index.md",
           "The basic structure" => [
                "Background Data" => "BackgroundData.md",
                "Cosmology Parameters" => "CosmoParams.md",
                "Cosmology Struct" => "Cosmology.md",
           ],
-          "The F window function" => "WindowF.md",
-          "GR effect TPCFs" => [
-               "Auto Correlations" => "AutoCorrelations.md",
-               "CrossCorrelations" => "CrossCorrelations.md",
+          "The window function F and its integration" => [
+               "Window F" => "WindowF.md",
+               "Integrated Window F" => "WindowFIntegrated.md",
           ],
-          "Calculating TPCFs and PSs" =>[
-                    "Xi Multipoles" => "XiMultipoles.md",
-                    "Sum Xi Multipoles" => "SumXiMultipoles.md",
-                    "Power Spectrum Multipoles" => "PowerSpectrum.md",
+          "Calculating TPCFs multipoles" => [
+               "GNC" => "GNC_Correlations.md",
+               "LD" => "LD_Correlations.md",
+               "GNCxLD" => "GNCxLD_Correlations.md",
+               "LDxGNC" => "GNCxLD_Correlations.md",
           ],
+          "Calculating TPCFs with the PP Approximation" => "PlaneParallelApprox.md",
+          "Calculating Power Spectra" => "PowerSpectrum.md",
+          "implication on PNG" => "PNG.md",
           "Utilities" => [
-               "Dictionaries and names" => "Dicts.md", 
+               "Dictionaries and names" => "Dicts.md",
                "Mathematical Utilities" => "MathUtils.md",
                "Cosmology Utilities" => "CosmoUtils.md",
                "Input Power Spectrum Tools" => "IPSTools.md",

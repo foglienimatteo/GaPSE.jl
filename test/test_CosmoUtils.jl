@@ -66,3 +66,15 @@ end
 
      @test isapprox(GaPSE.A(S_MIN, S_MAX, π / 2), 9.740426295429418e6, rtol=RTOL)
 end
+
+
+@testset "corresponding_redshift" begin
+     RTOL = 1e-5
+
+     @test_throws AssertionError GaPSE.corresponding_redshift(-1.0, 2, FILE_BACKGROUND)
+     @test_throws AssertionError GaPSE.corresponding_redshift(1.0, 0.0, FILE_BACKGROUND)
+
+     @test isapprox(GaPSE.corresponding_redshift(0.1, 2, FILE_BACKGROUND), 0.20521035318209763; rtol=RTOL)
+     @test isapprox(GaPSE.corresponding_redshift(0.1, 1, FILE_BACKGROUND), 0.09999999998047998; rtol=RTOL)
+     @test isapprox(GaPSE.corresponding_redshift(2.0, 2, FILE_BACKGROUND), 16.015246541511207; rtol=RTOL)
+end

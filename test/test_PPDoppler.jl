@@ -20,7 +20,7 @@
 
 
 
-@testset "test map_ξ_PPD_multipole" begin
+@testset "test map_ξ_PPDoppler_multipole" begin
      RTOL = 1e-3
      kwargs_xis_PP = Dict(
           :pr => false, :enhancer => 1e8,
@@ -37,7 +37,7 @@
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               calc_ss, calc_xis = GaPSE.map_ξ_PPD_multipole(COSMO,
+               calc_ss, calc_xis = GaPSE.map_ξ_PPDoppler_multipole(COSMO,
                     10 .^ range(0, 3, length=300); use_windows=true,
                     L=L, kwargs_xis_PP...)
 
@@ -53,7 +53,7 @@
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               calc_ss, calc_xis = GaPSE.map_ξ_PPD_multipole(COSMO,
+               calc_ss, calc_xis = GaPSE.map_ξ_PPDoppler_multipole(COSMO,
                     10 .^ range(0, 3, length=300); use_windows=true,
                     L=L, kwargs_xis_PP...)
 
@@ -71,7 +71,7 @@
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               calc_ss, calc_xis = GaPSE.map_ξ_PPD_multipole(COSMO,
+               calc_ss, calc_xis = GaPSE.map_ξ_PPDoppler_multipole(COSMO,
                     10 .^ range(0, 3, length=300); use_windows=false,
                     L=L, kwargs_xis_PP...)
 
@@ -87,7 +87,7 @@
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               calc_ss, calc_xis = GaPSE.map_ξ_PPD_multipole(COSMO,
+               calc_ss, calc_xis = GaPSE.map_ξ_PPDoppler_multipole(COSMO,
                     10 .^ range(0, 3, length=300); use_windows=false,
                     L=L, kwargs_xis_PP...)
 
@@ -104,7 +104,7 @@ end
 
 
 
-@testset "test print_map_ξ_PPD_multipole" begin
+@testset "test print_map_ξ_PPDoppler_multipole" begin
      RTOL = 1e-3
      kwargs_xis_PP = Dict(
           :pr => false, :enhancer => 1e8,
@@ -124,7 +124,7 @@ end
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               GaPSE.print_map_ξ_PPD_multipole(COSMO, name,
+               GaPSE.print_map_ξ_PPDoppler_multipole(COSMO, name,
                     10 .^ range(0, 3, length=300); use_windows=true,
                     L=L, kwargs_xis_PP...)
 
@@ -149,7 +149,7 @@ end
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               GaPSE.print_map_ξ_PPD_multipole(COSMO, name,
+               GaPSE.print_map_ξ_PPDoppler_multipole(COSMO, name,
                     10 .^ range(0, 3, length=300); use_windows=true,
                     L=L, kwargs_xis_PP...)
 
@@ -176,7 +176,7 @@ end
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               GaPSE.print_map_ξ_PPD_multipole(COSMO, name,
+               GaPSE.print_map_ξ_PPDoppler_multipole(COSMO, name,
                     10 .^ range(0, 3, length=300); use_windows=false,
                     L=L, kwargs_xis_PP...)
 
@@ -201,7 +201,7 @@ end
                ss = convert(Vector{Float64}, table[:, 1])
                xis = convert(Vector{Float64}, table[:, 2])
 
-               GaPSE.print_map_ξ_PPD_multipole(COSMO, name,
+               GaPSE.print_map_ξ_PPDoppler_multipole(COSMO, name,
                     10 .^ range(0, 3, length=300); use_windows=false,
                     L=L, kwargs_xis_PP...)
 

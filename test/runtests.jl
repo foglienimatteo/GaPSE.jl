@@ -19,7 +19,7 @@
 
 
 using GaPSE, Test
-using Dierckx, DelimitedFiles, QuadGK, Suppressor
+using Dierckx, DelimitedFiles, QuadGK, Suppressor, NPZ
 
 
 const FILE_F_MAP = "datatest/F_REFERENCE_pi2.txt"
@@ -40,6 +40,11 @@ const HUBBLE_0 = 1e5 / 299792458.0
 include("TEST_DATA.jl")
 
 ##########################################################################################92
+
+
+@testset "test FFTLog" begin
+     include("test_FFTLog.jl")
+end
 
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
@@ -65,6 +70,7 @@ end
      include("test_CosmoParams.jl")
 end
 
+
 @testset "test Cosmology" begin
      include("test_Cosmology.jl")
 end
@@ -73,13 +79,16 @@ end
      include("test_WindowF.jl")
 end
 
+
 @testset "test WindowFIntegrated" begin
      include("test_WindowFIntegrated.jl")
 end
 
+
 @testset "test Dicts" begin
      include("test_Dicts.jl")
 end
+
 
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
@@ -99,11 +108,13 @@ const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
      IPSTools_opts=Dict(
           :N => 1024, :fit_min => 0.05, :fit_max => 0.5,
           :con => true, :k_min => 1e-8, :k_max => 10.0,
-     ),
+     )
+     #=
      WFI_opts=Dict(:llim => 0.0, :rlim => Inf, :N => 1000,
           :trap => true, :rtol => 1e-2, :atol => 0.0,
           :ss_start => 0.0, :ss_step => 21.768735478453323,
           :ss_stop => 0.0)
+     =#
 )
 
 const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP, FILE_IF_MAP)
@@ -182,6 +193,7 @@ SS_LDxGNC = 10 .^ range(0, log10(2.0 * COSMO.s_max), length=100);
 
 ################################### TEST PLANE-PARALLEL APPROXIMATIONS ###################92
 
+
 @testset "test PPDoppler" begin
      include("test_PPDoppler.jl")
 end
@@ -197,6 +209,7 @@ end
 
 
 
+
 ################################### TEST PRIMORDIAL NON-GAUSSIANITES #####################92
 
 
@@ -207,8 +220,8 @@ end
 
 ################################### TEST LUMINOSITY DISTANCE PERTURBATIONS ###############92
 
-ss_LD_L0_noF, xis_sum_LD_L0_noF, all_xis_LD_L0_noF = 
-     GaPSE.readxyall("datatest/LD_SumXiMultipoles/xis_LD_L0_noF.txt", comments = true)
+ss_LD_L0_noF, xis_sum_LD_L0_noF, all_xis_LD_L0_noF =
+     GaPSE.readxyall("datatest/LD_SumXiMultipoles/xis_LD_L0_noF.txt", comments=true)
 
 @testset "test LD_AutoDoppler" begin
      include("test_LD_AutoCorrelations/test_LD_AutoDoppler.jl")
@@ -277,8 +290,8 @@ end
 
 ################################### TEST RELATIVISTIC GALAXY NUMBER COUNTS ###############92
 
-ss_GNC_L0_noF_noobs, xis_sum_GNC_L0_noF_noobs, all_xis_GNC_L0_noF_noobs = 
-     GaPSE.readxyall("datatest/GNC_SumXiMultipoles/xis_GNC_L0_noF_noobs.txt", comments = true)
+ss_GNC_L0_noF_noobs, xis_sum_GNC_L0_noF_noobs, all_xis_GNC_L0_noF_noobs =
+     GaPSE.readxyall("datatest/GNC_SumXiMultipoles/xis_GNC_L0_noF_noobs.txt", comments=true)
 ss_GNC_L0_noF_noobsvel, xis_sum_GNC_L0_noF_noobsvel, all_xis_GNC_L0_noF_noobsvel =
      GaPSE.readxyall("datatest/GNC_SumXiMultipoles/xis_GNC_L0_noF_noobsvel.txt", comments=true)
 ss_GNC_L0_noF_withobs, xis_sum_GNC_L0_noF_withobs, all_xis_GNC_L0_noF_withobs =
@@ -375,12 +388,12 @@ end
 ##### TEST RELATIVISTIC GALAXY NUMBER COUNTS X LUMINOSITY DISTANCE PERT. and viceversa ###92
 
 
-ss_GNCxLD_L0_noF, xis_sum_GNCxLD_L0_noF, all_xis_GNCxLD_L0_noF = 
+ss_GNCxLD_L0_noF, xis_sum_GNCxLD_L0_noF, all_xis_GNCxLD_L0_noF =
      GaPSE.readxyall("datatest/GNCxLD_SumXiMultipoles/xis_GNCxLD_L0_noF.txt",
-          comments = true);
-ss_LDxGNC_L0_noF, xis_sum_LDxGNC_L0_noF, all_xis_LDxGNC_L0_noF = 
+          comments=true);
+ss_LDxGNC_L0_noF, xis_sum_LDxGNC_L0_noF, all_xis_LDxGNC_L0_noF =
      GaPSE.readxyall("datatest/LDxGNC_SumXiMultipoles/xis_LDxGNC_L0_noF.txt",
-          comments = true);
+          comments=true);
 
 
 @testset "test GNCxLD_NewtonDoppler" begin

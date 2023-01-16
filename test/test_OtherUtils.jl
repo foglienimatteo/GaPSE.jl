@@ -25,13 +25,14 @@ end
 
 @testset "test check_compatible_dicts" begin
      REF = Dict(
-          :N => 1024::Integer, :fit_min => 0.05::Float64,
+          :N => 1024::Integer, :fit_min => 0.05::Float64, #:llim => nothing::Union{Real,Nothing},
           :fit_max => 0.5::Float64, :con => true::Bool, :name => "file_name.txt"::String)
 
      var = 3.0
      @test_throws AssertionError GaPSE.check_compatible_dicts(REF, Dict(:ma => 1.0, :con => true), "x")
      @test_throws AssertionError GaPSE.check_compatible_dicts(REF, Dict(var => 1.0))
      @test_throws AssertionError GaPSE.check_compatible_dicts(REF, Dict("con" => true))
+     #@test_throws AssertionError GaPSE.check_compatible_dicts(REF, Dict(:llim => :val))
 
      @test_throws AssertionError GaPSE.check_compatible_dicts(REF, Dict(:con => 1.0), "x")
      @test_throws AssertionError GaPSE.check_compatible_dicts(REF, Dict(:con => true, :N => 3.14))
@@ -42,6 +43,9 @@ end
      @test isnothing(GaPSE.check_compatible_dicts(REF, Dict(:fit_min => 1, :fit_max => 17.43), "x"))
      @test isnothing(GaPSE.check_compatible_dicts(REF, Dict(:fit_min => 1e-2, :fit_max => 17)))
      @test isnothing(GaPSE.check_compatible_dicts(REF, Dict()))
+     #@test isnothing(GaPSE.check_compatible_dicts(REF, Dict(:llim => 3.0)))
+     #@test isnothing(GaPSE.check_compatible_dicts(REF, Dict(:llim => nothing)))
+     #@test isnothing(GaPSE.check_compatible_dicts(REF, Dict(:llim => 3)))
 end
 
 

@@ -110,7 +110,7 @@ It is internally used in `Cosmology.`
   $(NAMES_BACKGROUND)
 
 - `h = 0.7` : the adimensional hubble constant. By default, CLASS background data are measured with
-  it nuymerically expressed (so distances are measured in `Mpc`, for example), while this code works
+  it numerically expressed (so distances are measured in `Mpc`, for example), while this code works
   with `h` in the unit of measure (so distances are measured in `Mpc/h`, for example).
   Change this value to `1.0` if the input data do not have this issue, or to your value of interest 
   (`0.67`, `0.5`, ...).

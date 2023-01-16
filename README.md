@@ -1,17 +1,23 @@
-# GaPSE
+# GaPSE - a model for the Galaxy Power Spectrum Estimator
 
-![julia-version](https://img.shields.io/badge/julia_version-v1.7-9558B2?style=flat&logo=julia) 
+![julia-version](https://img.shields.io/badge/julia_version-v1.8-9558B2?style=flat&logo=julia) 
 ![package-version](https://img.shields.io/github/v/release/cosmofico97/GaPSE?include_prereleases)
 ![CI-build](https://img.shields.io/github/workflow/status/cosmofico97/GaPSE/Unit%20tests)
 ![size](https://img.shields.io/github/repo-size/cosmofico97/GaPSE) 
 ![license]( https://img.shields.io/github/license/cosmofico97/GaPSE)
 [![codecov](https://codecov.io/gh/cosmofico97/GaPSE/branch/main/graph/badge.svg?token=67GIZ9RA8Y)](https://codecov.io/gh/cosmofico97/GaPSE)
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://cosmofico97.github.io/GaPSE/stable) 
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://cosmofico97.github.io/GaPSE/dev) 
 
 GaPSE (Galaxy Power Spectrum Estimator) is a software for cosmological computations written in the [Julia Programming Language](https://julialang.org).
 
-It's currently under construction! 
+IMPORTANT NOTE: This is a work-in-progress project! As a consequence, currently in this pre-release:
+- it's possible to compute the multipoles ($L=1,2,3,...$) of the effects we'll show next, but some of the Galaxy Number Counts multipoles converge very slowly, so their computation is not still ready. The monopoles ($L=0$) computations instead do not give any problem with `quad`;
+- you can't go further than $z \simeq 1.5$;
+- the code functions are well documented; check the github pages website https://cosmofico97.github.io/GaPSE/stable if you can't see correctly the analytical expressions written in the docstrings. However, the Two-Point Correlation Functions docstrings of the groups `LD`, `GNCxLD` and `LDxGNC` (see below for explanation) are still missing; 
+- few people used this code, so bugs are behind the corner; don't esitate to raise the finger to point out them! 
+
+
+
 
 ## Brief description
 
@@ -44,8 +50,8 @@ or download the source code from the github repository https://github.com/cosmof
 
 ## Execution
 
-The only mandatory instrument to run the code is a Julia REPL with version ≥ 1.7. 
-You can write whatever instructions inside the file `GaPSE-exe.jl` and then run it
+The only mandatory instrument to run the code is a Julia REPL with version ≥ 1.8. 
+You can write whatever instruction inside the file `GaPSE-exe.jl` and then run it
 in the command line:
 
 ```bash
