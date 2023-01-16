@@ -39,7 +39,7 @@ This function makes a for-loop on the `GaPSE.GR_EFFECTS_GNC` strings, calling
 `ξ_GNC_multipole` for each of them. To each string corresponds pretty intuitively one of the 
 25 GNC effects. They are currently, in order:
 
-`$(string(GaPSE.GR_EFFECTS_GNC .* " , "...))`
+`$(string(GR_EFFECTS_GNC .* " , "...))`
 
 ## Inputs
 
@@ -146,7 +146,7 @@ This function makes a for-loop on the `GaPSE.GR_EFFECTS_GNC` strings, calling
 `map_ξ_GNC_multipole` for each of them. To each string corresponds pretty intuitively one of the 
 25 GNC effects. They are currently, in order:
 
-`$(string(GaPSE.GR_EFFECTS_GNC .* " , "...))`
+`$(string(GR_EFFECTS_GNC .* " , "...))`
 
 ## Inputs
 
@@ -278,7 +278,7 @@ This function makes a for-loop on the `GaPSE.GR_EFFECTS_GNC` strings, calling
 `map_ξ_GNC_multipole` for each of them. To each string corresponds pretty intuitively one of the 
 25 GNC effects. They are currently, in order:
 
-`$(string(GaPSE.GR_EFFECTS_GNC .* " , "...))`
+`$(string(GR_EFFECTS_GNC .* " , "...))`
 
 ## Inputs
 

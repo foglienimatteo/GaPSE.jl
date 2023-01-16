@@ -107,7 +107,7 @@ It is internally used in `Cosmology.`
 - `names = NAMES_BACKGROUND` : the column names of the `file`. If the colum order change from
   the default one `NAMES_BACKGROUND`, you must set as input the vector of string with the correct
   one, with the SAME names. They are, with the default order:\n
-  $(NAMES_BACKGROUND)
+  `$(string(NAMES_BACKGROUND .* " , "...))`
 
 - `h = 0.7` : the adimensional hubble constant. By default, CLASS background data are measured with
   it numerically expressed (so distances are measured in `Mpc`, for example), while this code works
@@ -129,12 +129,12 @@ struct BackgroundData
      ℋ_p::Vector{Float64}
 
      function BackgroundData(file::String, z_max;
-          names = NAMES_BACKGROUND, h = 0.7)
+          names=NAMES_BACKGROUND, h=0.7)
 
           I_redshift = findfirst(x -> x == "z", names)
           I_comdist = findfirst(x -> x == "comov. dist.", names)
 
-          data = readdlm(file, comments = true)
+          data = readdlm(file, comments=true)
 
           #=
           N_z_MAX = findfirst(z -> z <= z_max, data[:, I_redshift]) - 1
@@ -154,7 +154,7 @@ struct BackgroundData
 
           com_H = data_dict["H [1/Mpc]"] ./ h ./ (1.0 .+ data_dict["z"])
           conf_time = data_dict["conf. time [Mpc]"] .* h
-          spline_com_H = Spline1D(reverse(conf_time), reverse(com_H); bc = "nearest")
+          spline_com_H = Spline1D(reverse(conf_time), reverse(com_H); bc="nearest")
           com_H_p = [Dierckx.derivative(spline_com_H, t) for t in conf_time]
 
           new(

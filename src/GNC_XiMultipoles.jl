@@ -90,11 +90,11 @@ In the former method you have to pass as an input the GNC `effect` function you 
 to integrate, while in the (recommended) latter one it's necessary to specify the
 name of the GNC TPCF term among the following:
 
-`$(string(GaPSE.GR_EFFECTS_GNC .* " , "...))`
+`$(string(GR_EFFECTS_GNC .* " , "...))`
 
 to which correspond the following functions, respectively:
 
-`$(string(string.(GaPSE.VEC_ξs_GNC) .* " , "...))`
+`$(string(string.(VEC_ξs_GNC) .* " , "...))`
 
 Internally, the second method recall the first, so all the keyword arguments are in common.
 
@@ -246,11 +246,11 @@ In the former method you have to pass as an input the GNC `effect` function you 
 to integrate, while in the (recommended) latter one it's necessary to specify the
 name of the GNC TPCF term among the following:
 
-`$(string(GaPSE.GR_EFFECTS_GNC .* " , "...))`
+`$(string(GR_EFFECTS_GNC .* " , "...))`
 
 to which correspond the following functions:
 
-`$(string(string.(GaPSE.VEC_ξs_GNC) .* " , "...))`
+`$(string(string.(VEC_ξs_GNC) .* " , "...))`
 
 Internally, the second method recall the first, so all the keyword arguments are in common.
 
@@ -377,11 +377,11 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`. The inve
 - `effect::Union{String,Function}` : the GR effect TPCF you want to consider; you may
   specify the name of the effect as one of the following strings (recommended):
 
-  `$(string(GaPSE.GR_EFFECTS_GNC .* " , "...))`
+  `$(string(GR_EFFECTS_GNC .* " , "...))`
   
   or directly the name of the function among the following: 
   
-  `$(string(string.(GaPSE.VEC_ξs_GNC) .* " , "...))`
+  `$(string(string.(VEC_ξs_GNC) .* " , "...))`
 
 - `ss` : vector/range of `s` values where the function must be evaluated; if `ss = nothing`, 
   it is set `ss = 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log)`. This is why it is returned 
@@ -598,11 +598,11 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`. The inve
 - `effect::Union{String,Function}` : the GR effect TPCF you want to consider; you may
   specify the name of the effect as one of the following strings (recommended):
 
-  `$(string(GaPSE.GR_EFFECTS_GNC .* " , "...))`
+  `$(string(GR_EFFECTS_GNC .* " , "...))`
   
   or directly the name of the function among the following: 
   
-  `$(string(string.(GaPSE.VEC_ξs_GNC) .* " , "...))`
+  `$(string(string.(VEC_ξs_GNC) .* " , "...))`
 
 - `out::String` : name of the file where the results must be stored.
 

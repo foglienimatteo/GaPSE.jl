@@ -1,5 +1,8 @@
 # HEAD
 
+
+# VERSION 0.6.0
+
 - Made the docstrings for almost all the functions in the code; only the `LD`, `GNCxLD` and `LDxGNC` TPCFs are huge holes in this picture
 
 - Improved the structure of the functions that manage the Integrated Window Function (`print_map_F` and `WindowF` in particular); some options have changed name

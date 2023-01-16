@@ -4,12 +4,12 @@ DocTestSetup = quote
 end
 ```
 
-# The F window function
+# The Integrated Window Function 
 
 ```@docs
 GaPSE.integrated_F_quadgk
 GaPSE.integrated_F_trapz
 GaPSE.print_map_IntegratedF
 GaPSE.WindowFIntegrated
-GaPSE.spline_IntegratedF
+GaPSE.spline_integrF
 ```

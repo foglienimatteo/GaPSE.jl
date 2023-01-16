@@ -54,7 +54,7 @@ Store the Input Power Spectrum.
 - `r_si, r_b, r_a :: Float64` : coefficient for the spurious power-law 
   ``y = f(x) = a + b \\, x^s`` for the RIGHT edge; when an input value `x > right` is
   given, the returned one is obtained from `power_law` with this coefficients (
-  where, of course, `r_si` is the exponent, `r_b`` the coefficient and `r_a` the 
+  where, of course, `r_si` is the exponent, `r_b` the coefficient and `r_a` the 
   spurious adding constant). 
   NOTE: for numerical issues, only the "pure" power-law ``y = f(x) = b + x^s`` can be used. 
   In other words, it always set `r_a = 0.0`.

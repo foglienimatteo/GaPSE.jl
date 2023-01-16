@@ -4,7 +4,7 @@ DocTestSetup = quote
 end
 ```
 
-# The F window function
+# The Window Function F
 
 ```@docs
 GaPSE.DEFAULT_FMAP_OPTS_hcub

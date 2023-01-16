@@ -4,17 +4,9 @@ DocTestSetup = quote
 end
 ```
 
-# Two-Point Auto-Correlation Functions
+# LDxGNC TPCFs
 
-```@docs
-GaPSE.ξ_LDxGNC_Newtonian
-GaPSE.ξ_LDxGNC_Doppler
-GaPSE.ξ_LDxGNC_Lensing
-GaPSE.ξ_LDxGNC_LocalGP
-GaPSE.ξ_LDxGNC_IntegratedGP
-```
-
-# Two-Point Cross-Correlation Functions
+## Two-Point Cross-Correlation Functions
 
 ```@docs
 GaPSE.ξ_LDxGNC_Doppler_Newtonian
@@ -40,7 +32,7 @@ GaPSE.ξ_LDxGNC_IntegratedGP_IntegrateGP
 ```
 
 
-# Two-Point Cross-Correlation Function multipoles
+## Two-Point Cross-Correlation Function multipoles
 
 ```@docs
 GaPSE.integrand_ξ_LDxGNC_multipole
@@ -49,7 +41,7 @@ GaPSE.map_ξ_LDxGNC_multipole
 GaPSE.print_map_ξ_LDxGNC_multipole
 ```
 
-# Two-Point Cross-Correlation Function Sum multipoles
+## Two-Point Cross-Correlation Function Sum multipoles
 
 ```@docs
 GaPSE.sum_ξ_LDxGNC_multipole

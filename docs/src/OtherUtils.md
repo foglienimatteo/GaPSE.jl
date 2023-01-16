@@ -19,7 +19,6 @@ GaPSE.check_fileisingroup
 GaPSE.number_to_string
 GaPSE.vecstring_to_vecnumbers
 GaPSE.readxy
-GaPSE.readxy
 GaPSE.readxall
 GaPSE.readxyall
 GaPSE.sample_subdivision_begin

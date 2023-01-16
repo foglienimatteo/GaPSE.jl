@@ -98,7 +98,7 @@ associated TPCF `DICT_GR_ξs_LD[effect]` from `VEC_ξs_LD`.
 
 ## Example
 
-```jldoctest
+```julia
 julia> GaPSE.DICT_GR_ξs_LD["auto_doppler"]
 ξ_LD_Doppler
 ```
@@ -116,7 +116,7 @@ associated index position in that vector.
 
 ## Example
 
-```jldoctest
+```julia
 julia> GaPSE.INDEX_GR_EFFECT_LD["auto_doppler"]
 1
 ```
@@ -135,7 +135,7 @@ associated key string `effect`.
 
 ## Example
 
-```jldoctest
+```julia
 julia> GaPSE.DICT_GR_ξs_LD[1]
 "auto_doppler"
 ```
@@ -273,7 +273,7 @@ associated TPCF `DICT_GR_ξs_GNC[effect]` from `VEC_ξs_GNC`.
 
 ## Example
 
-```jldoctest
+```julia
 julia> GaPSE.DICT_GR_ξs_GNC["auto_doppler"]
 ξ_GNC_Doppler
 ```
@@ -285,14 +285,14 @@ const DICT_GR_ξs_GNC = Dict([k => v for (k, v) in zip(GR_EFFECTS_GNC, VEC_ξs_G
 
 
 """
-     const DICT_ξs_GR_GNC::Dict{Function,String}
+     const DICT_GR_ξs_GNC::Dict{Function,String}
 
 For an input key TPCF function `func` from `VEC_ξs_GNC`, return the 
-associated string `DICT_ξs_GR_GNC[func]` from `GR_EFFECTS_GNC`,
+associated string `DICT_GR_ξs_GNC[func]` from `GR_EFFECTS_GNC`,
 
 ## Example
 
-```jldoctest
+```julia
 julia> GaPSE.DICT_GR_ξs_GNC[ξ_GNC_Doppler]
 "auto_doppler"
 ```
@@ -310,7 +310,7 @@ associated index position in that vector.
 
 ## Example
 
-```jldoctest
+```julia
 julia> GaPSE.INDEX_GR_EFFECT_GNC["auto_doppler"]
 1
 ```
@@ -329,7 +329,7 @@ associated key string `effect`.
 
 ## Example
 
-```jldoctest
+```julia
 julia> GaPSE.DICT_GR_ξs_GNC[1]
 "auto_doppler"
 ```
@@ -642,7 +642,7 @@ associated TPCF `DICT_GR_ξs_GNCxLD[effect]` from `VEC_ξs_GNCxLD`.
 
 ## Example
 
-```jldoctest
+```julia
 julia> GaPSE.DICT_GR_ξs_GNCxLD["lensing_doppler"]
 ξ_GNCxLD_Lensing_Doppler
 ```
@@ -660,7 +660,7 @@ associated TPCF `DICT_GR_ξs_LDxGNC[effect]` from `VEC_ξs_v`.
 
 ## Example
 
-```jldoctest
+```julia
 julia> GaPSE.DICT_GR_ξs_LDxGNC["lensing_doppler"]
 ξ_LDxGNC_Lensing_Doppler
 ```
@@ -681,7 +681,7 @@ associated index position in that vector.
 
 ## Example
 
-```jldoctest
+```julia
 julia> GaPSE.INDEX_GR_EFFECT_GNCxLD["newton_lensing"]
 2
 ```
@@ -700,7 +700,7 @@ associated index position in that vector.
 
 ## Example
 
-```jldoctest
+```julia
 julia> GaPSE.INDEX_GR_EFFECT_LDxGNC["lensing_newton"]
 2
 ```
@@ -722,7 +722,7 @@ associated key string `effect`.
 
 ## Example
 
-```jldoctest
+```julia
 julia> GaPSE.DICT_GR_ξs_GNCxLD[2]
 "newton_doppler"
 ```
@@ -741,7 +741,7 @@ associated key string `effect`.
 
 ## Example
 
-```jldoctest
+```julia
 julia> GaPSE.DICT_GR_ξs_LDxGNC[2]
 "doppler_newton"
 ```

@@ -29,7 +29,7 @@
 The default values to be used for the `F` function when you
 want to perform the computation with `hcubature`.
 
-See also: [`integrand_F`](@ref), [`F_hcub`](@ref), [`map_F`](@ref)
+See also: [`integrand_F`](@ref), [`F_hcub`](@ref), [`print_map_F`](@ref)
 """
 const DEFAULT_FMAP_OPTS_hcub = Dict(
      :θ_max => π / 2.0::Float64,
@@ -53,7 +53,7 @@ const DEFAULT_FMAP_OPTS_hcub = Dict(
 The default values to be used for the `F` function when you
 want to perform the computation with `trap`.
 
-See also: [`integrand_F`](@ref), [`F_trap`](@ref), [`map_F`](@ref)
+See also: [`integrand_F`](@ref), [`F_trap`](@ref), [`print_map_F`](@ref)
 """
 const DEFAULT_FMAP_OPTS_trap = Dict(
      :θ_max => π / 2.0::Float64,
@@ -102,7 +102,7 @@ becomes negative, but computationally might happen that ``\\mathrm{den}`` result
 very small negative number (for instance `-1.2368946523-18`); in this case `tolerance`
 solve the problem, returning 0 if ``0<-\\mathrm{den}< \\mathrm{tolerance}``
 
-See also: [`F`](@ref), [`map_F`](@ref)
+See also: [`F`](@ref), [`print_map_F`](@ref)
 """
 function integrand_F(θ_1, θ, x, μ, θ_max; tolerance=1e-10)
      if (x * cos(θ) + cos(θ_1)) / √(x^2 + 1 + 2 * x * μ) - cos(θ_max) > 0 &&
@@ -169,7 +169,7 @@ NOTE: for computational efficiency and stability, it is highly recommended to us
 the other function`F_trap`, based on the trapezoidal rule, in order to compute
 this function.
 
-See also:  [`F_trap`](@ref), [`map_F`](@ref), [`integrand_F`](@ref), 
+See also:  [`F_trap`](@ref), [`print_map_F`](@ref), [`integrand_F`](@ref), 
 [`check_compatible_dicts`](@ref)
 """
 function F_hcub(x, μ; θ_max=π / 2, tolerance=1e-10, atol=1e-2, rtol=1e-5, kwargs...)
@@ -221,7 +221,7 @@ NOTE: there is another function, called `F_hcub`, that performs this calculus.
 Nevertheless, for computational efficiency and stability, it is highly recommended to use 
 to use this one.
 
-See also:  [`F_hcub`](@ref), [`map_F`](@ref), [`integrand_F`](@ref), 
+See also:  [`F_hcub`](@ref), [`print_map_F`](@ref), [`integrand_F`](@ref), 
 [`check_compatible_dicts`](@ref)
 """
 function F_trap(x, μ; θ_max=π / 2, N::Int=300, en=1.0,

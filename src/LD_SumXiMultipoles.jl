@@ -38,7 +38,7 @@ This function makes a for-loop on the `GaPSE.GR_EFFECTS_LD` strings, calling
 `ξ_LD_multipole` for each of them. To each string corresponds pretty intuitively one of the 
 16 LD effects. They are currently, in order:
 
-`$(string(GaPSE.GR_EFFECTS_LD .* " , "...))`
+`$(string(GR_EFFECTS_LD .* " , "...))`
 
 ## Inputs
 
@@ -137,7 +137,7 @@ This function makes a for-loop on the `GaPSE.GR_EFFECTS_LD` strings, calling
 `map_ξ_LD_multipole` for each of them. To each string corresponds pretty intuitively one of the 
 16 LD effects. They are currently, in order:
 
-`$(string(GaPSE.GR_EFFECTS_LD .* " , "...))`
+`$(string(GR_EFFECTS_LD .* " , "...))`
 
 ## Inputs
 
@@ -261,7 +261,7 @@ This function makes a for-loop on the `GaPSE.GR_EFFECTS_LD` strings, calling
 `map_ξ_LD_multipole` for each of them. To each string corresponds pretty intuitively one of the 
 16 LD effects. They are currently, in order:
 
-`$(string(GaPSE.GR_EFFECTS_LD .* " , "...))`
+`$(string(GR_EFFECTS_LD .* " , "...))`
 
 ## Inputs
 

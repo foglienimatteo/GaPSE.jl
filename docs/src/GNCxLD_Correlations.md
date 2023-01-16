@@ -4,7 +4,9 @@ DocTestSetup = quote
 end
 ```
 
-# Two-Point Cross-Correlation Functions
+# GNCxLD TPCFs
+
+## Two-Point Cross-Correlation Functions
 
 ```@docs
 GaPSE.ξ_GNCxLD_Newtonian_Doppler
@@ -30,7 +32,7 @@ GaPSE.ξ_GNCxLD_IntegratedGP_IntegratedGP
 ```
 
 
-# Two-Point Cross-Correlation Function multipoles
+## Two-Point Cross-Correlation Function multipoles
 
 ```@docs
 GaPSE.integrand_ξ_GNCxLD_multipole
@@ -39,7 +41,7 @@ GaPSE.map_ξ_GNCxLD_multipole
 GaPSE.print_map_ξ_GNCxLD_multipole
 ```
 
-# Two-Point Cross-Correlation Function Sum multipoles
+## Two-Point Cross-Correlation Function Sum multipoles
 
 ```@docs
 GaPSE.sum_ξ_GNCxLD_multipole

@@ -4,7 +4,10 @@ DocTestSetup = quote
 end
 ```
 
-# The GNC Doppler TPCF in the Plane Parallel Approximation
+# The Plane Parallel Approximation
+
+
+## The GNC Doppler TPCF in the Plane Parallel Approximation
 
 ```@docs
 GaPSE.ξ_PPDoppler_L0
@@ -17,7 +20,7 @@ GaPSE.print_map_ξ_PPDoppler_multipole
 ```
 
 
-# The Galaxy TPCF term in the Plane Parallel Approximation
+## The Galaxy TPCF term in the Plane Parallel Approximation
 
 ```@docs
 GaPSE.ξ_PPGalaxies_L0
