@@ -19,25 +19,25 @@
 
 function PS_multipole(ss, fs; alg::Symbol=:fftlog, kwargs...)
 
-     if alg == :twofast
-          return TwoFAST_PS_multipole(ss, fs; kwargs...)
+  if alg == :twofast
+    return TwoFAST_PS_multipole(ss, fs; kwargs...)
 
-     elseif alg == :fftlog
-          return FFTLog_PS_multipole(ss, fs; kwargs...)
+  elseif alg == :fftlog
+    return FFTLog_PS_multipole(ss, fs; kwargs...)
 
-     else
-          throw(AssertionError(
-               "The algorithm ':$alg' does not exist! The available ones are:\n" *
-               "\t ':fftlog' (default), ':twofast' ."
-          ))
-     end
+  else
+    throw(AssertionError(
+      "The algorithm ':$alg' does not exist! The available ones are:\n" *
+      "\t ':fftlog' (default), ':twofast' ."
+    ))
+  end
 end
 
 
 function PS_multipole(input::String; comments=true, kwargs...)
-     ss, fs = GaPSE.readxy(input; comments=comments)
+  ss, fs = GaPSE.readxy(input; comments=comments)
 
-     return PS_multipole(ss, fs; kwargs...)
+  return PS_multipole(ss, fs; kwargs...)
 end
 
 
@@ -162,53 +162,53 @@ PS_multipole
 
 
 function print_PS_multipole(ss, fs, out::String;
-    L::Int=0, pr::Bool=true, alg::Symbol=:fftlog, kwargs...)
+  L::Int=0, pr::Bool=true, alg::Symbol=:fftlog, kwargs...)
 
-     check_parent_directory(out)
-     check_namefile(out)
+  check_parent_directory(out)
+  check_namefile(out)
 
-     pr && println("""\nI'm computing the PS_multipole from the two input vectors.""")
+  pr && println("""\nI'm computing the PS_multipole from the two input vectors.""")
 
-     time_1 = time()
-     vec = PS_multipole(ss, fs; L=L, pr=pr, alg=alg, kwargs...)
-     time_2 = time()
+  time_1 = time()
+  vec = PS_multipole(ss, fs; L=L, pr=pr, alg=alg, kwargs...)
+  time_2 = time()
 
-     N = length(vec[1])
+  N = length(vec[1])
 
-     isfile(out) && run(`rm $out`)
-      open(out, "w") do io
-          println(io, BRAND)
+  isfile(out) && run(`rm $out`)
+  open(out, "w") do io
+    println(io, BRAND)
 
-          println(io, "# Power Spectrum Multipole computation from two input vectors.")
-          println(io, "#\n# For this PS_multipole computation we set: ")
-          println(io, "# \t multipole degree in consideration L = $L")
-          println(io, "# \t algorithm chosen for the computation: :$alg")
-          println(io, "# \t #points used in Fourier transform N = $N")
-          println(io, "# computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
-          print(io, "# kwards passed to \"print_PS_multipole\": ")
+    println(io, "# Power Spectrum Multipole computation from two input vectors.")
+    println(io, "#\n# For this PS_multipole computation we set: ")
+    println(io, "# \t multipole degree in consideration L = $L")
+    println(io, "# \t algorithm chosen for the computation: :$alg")
+    println(io, "# \t #points used in Fourier transform N = $N")
+    println(io, "# computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
+    print(io, "# kwards passed to \"print_PS_multipole\": ")
 
-          if isempty(kwargs)
-               println(io, "none")
-          else
-               print(io, "\n")
-               for key in keys(kwargs)
-                    println(io, "# \t\t$(key) = $(kwargs[key])")
-               end
-          end
-          println(io, "# ")
-          println(io, "# k [h_0/Mpc] \t \t  P [(Mpc/h_0)^3]")
-          for (k, pk) in zip(vec[1], vec[2])
-               println(io, "$k \t " * GaPSE.number_to_string(pk))
-          end
-     end
+    if isempty(kwargs)
+      println(io, "none")
+    else
+      print(io, "\n")
+      for key in keys(kwargs)
+        println(io, "# \t\t$(key) = $(kwargs[key])")
+      end
+    end
+    println(io, "# ")
+    println(io, "# k [h_0/Mpc] \t \t  P [(Mpc/h_0)^3]")
+    for (k, pk) in zip(vec[1], vec[2])
+      println(io, "$k \t " * GaPSE.number_to_string(pk))
+    end
+  end
 end
 
 
 function print_PS_multipole(input::String, out::String;
-     comments=true, kwargs...)
-     ss, fs = GaPSE.readxy(input; comments=comments)
+  comments=true, kwargs...)
+  ss, fs = GaPSE.readxy(input; comments=comments)
 
-     print_PS_multipole(ss, fs, out; kwargs...)
+  print_PS_multipole(ss, fs, out; kwargs...)
 end
 
 
@@ -366,53 +366,53 @@ The specific ones for `alg = :twofast` are:
 See also: [`EPLs`](@ref), [`PS_multipole`](@ref)
 """
 function all_PS_multipole(input::String,
-     group::String=VALID_GROUPS[end];
-     L::Int=0, pr::Bool=true,
-     alg::Symbol=:fftlog, kwargs...)
+  group::String=VALID_GROUPS[end];
+  L::Int=0, pr::Bool=true,
+  alg::Symbol=:fftlog, kwargs...)
 
-     check_group(group; valid_groups=VALID_GROUPS)
-     check_fileisingroup(input, group)
+  check_group(group; valid_groups=VALID_GROUPS)
+  check_fileisingroup(input, group)
 
-     pr && begin
-          print("\nI'm computing the PS_multipole from the file \"$input\"")
-          if group == "GNC"
-               println("for the Galaxy Number Counts.")
-          elseif group == "LD"
-               println("for the Luminosity Distance perturbations.")
-          elseif group == "GNCxLD"
-               println("for the cross correlations between " *
-                       "Galaxy Number Counts and Luminosity Distance perturbations.")
-          elseif group == "LDxGNC"
-               println("for the cross correlations between " *
-                       "Luminosity Distance perturbations and Galaxy Number Counts.")
-          else
-               println("(no specific group considered).")
-          end
-     end
+  pr && begin
+    print("\nI'm computing the PS_multipole from the file \"$input\"")
+    if group == "GNC"
+      println("for the Galaxy Number Counts.")
+    elseif group == "LD"
+      println("for the Luminosity Distance perturbations.")
+    elseif group == "GNCxLD"
+      println("for the cross correlations between " *
+              "Galaxy Number Counts and Luminosity Distance perturbations.")
+    elseif group == "LDxGNC"
+      println("for the cross correlations between " *
+              "Luminosity Distance perturbations and Galaxy Number Counts.")
+    else
+      println("(no specific group considered).")
+    end
+  end
 
-     time_1 = time()
+  time_1 = time()
 
-     ks, VEC = if alg == :twofast
-          TwoFAST_all_PS_multipole(input,
-               group; L=L, pr=false, kwargs...)
+  ks, VEC = if alg == :twofast
+    TwoFAST_all_PS_multipole(input,
+      group; L=L, pr=false, kwargs...)
 
-     elseif alg == :fftlog
-          FFTLog_all_PS_multipole(input,
-               group; L=L, pr=false, kwargs...)
+  elseif alg == :fftlog
+    FFTLog_all_PS_multipole(input,
+      group; L=L, pr=false, kwargs...)
 
-     else
-          throw(AssertionError(
-               "The algorithm ':$alg' does not exist! The available ones are:\n" *
-               "\t ':fftlog' (default), ':twofast' ."
-          ))
-     end
+  else
+    throw(AssertionError(
+      "The algorithm ':$alg' does not exist! The available ones are:\n" *
+      "\t ':fftlog' (default), ':twofast' ."
+    ))
+  end
 
 
-     time_2 = time()
+  time_2 = time()
 
-     pr && println("\ntime needed for all the Power Spectra L = $L computation [in s] = $(time_2-time_1)\n")
+  pr && println("\ntime needed for all the Power Spectra L = $L computation [in s] = $(time_2-time_1)\n")
 
-     return ks, VEC
+  return ks, VEC
 end
 
 
@@ -489,106 +489,106 @@ The specific ones for `alg = :twofast` are:
 See also: [`EPLs`](@ref), [`PS_multipole`](@ref)
 """
 function print_all_PS_multipole(input::String, out::String,
-     group::String=VALID_GROUPS[end];
-     L::Int=0, pr::Bool=true,
-     alg::Symbol=:fftlog,
-     kwargs...)
+  group::String=VALID_GROUPS[end];
+  L::Int=0, pr::Bool=true,
+  alg::Symbol=:fftlog,
+  kwargs...)
 
-     check_parent_directory(out)
-     check_namefile(out)
-     check_group(group; valid_groups=VALID_GROUPS)
-     check_fileisingroup(input, group)
+  check_parent_directory(out)
+  check_namefile(out)
+  check_group(group; valid_groups=VALID_GROUPS)
+  check_fileisingroup(input, group)
 
-     pr && begin
-          print("\nI'm computing the PS_multipole from the file \"$input\"")
-          if group == "GNC"
-               println("for the Galaxy Number Counts.")
-          elseif group == "LD"
-               println("for the Luminosity Distance perturbations.")
-          elseif group == "GNCxLD"
-               println("for the cross correlations between " *
-                       "Galaxy Number Counts and Luminosity Distance perturbations.")
-          elseif group == "LDxGNC"
-               println("for the cross correlations between " *
-                       "Luminosity Distance perturbations and Galaxy Number Counts.")
-          else
-               println("(no specific group considered).")
-          end
-     end
+  pr && begin
+    print("\nI'm computing the PS_multipole from the file \"$input\"")
+    if group == "GNC"
+      println("for the Galaxy Number Counts.")
+    elseif group == "LD"
+      println("for the Luminosity Distance perturbations.")
+    elseif group == "GNCxLD"
+      println("for the cross correlations between " *
+              "Galaxy Number Counts and Luminosity Distance perturbations.")
+    elseif group == "LDxGNC"
+      println("for the cross correlations between " *
+              "Luminosity Distance perturbations and Galaxy Number Counts.")
+    else
+      println("(no specific group considered).")
+    end
+  end
 
-     time_1 = time()
+  time_1 = time()
 
-     ks, VEC = all_PS_multipole(input, group;
-          alg=alg, L=L, pr=false, kwargs...)
+  ks, VEC = all_PS_multipole(input, group;
+    alg=alg, L=L, pr=false, kwargs...)
 
-     time_2 = time()
+  time_2 = time()
 
-     N = length(ks)
+  N = length(ks)
 
-     pr && println("\ntime needed for all the Power Spectra computation [in s] = $(time_2-time_1)\n")
+  pr && println("\ntime needed for all the Power Spectra computation [in s] = $(time_2-time_1)\n")
 
-     isfile(out) && run(`rm $out`)
-     open(out, "w") do io
-          println(io, BRAND)
+  isfile(out) && run(`rm $out`)
+  open(out, "w") do io
+    println(io, BRAND)
 
-          print(io, "#\n# Power Spectra Multipole computation ")
-          if group == "GNC"
-               println(io, "for the Galaxy Number Counts GR effect" *
-                           "\n# from the file: $input")
-          elseif group == "LD"
-               println(io, "for the Luminosity Distance perturbations GR effect" *
-                           "\n# from the file: $input")
-          elseif group == "GNCxLD"
-               println(io, "for the cross correlations between \n#" *
-                           "Galaxy Number Counts and Luminosity Distance perturbations " *
-                           "from the file:\n# $input")
-          elseif group == "LDxGNC"
-               println(io, "for the cross correlations between \n#" *
-                           "Luminosity Distance perturbations and Galaxy Number Counts " *
-                           "from the file:\n# $input")
-          else
-               println(io, "without any specific group considered" *
-                           "\n# from the file: $input")
-          end
+    print(io, "#\n# Power Spectra Multipole computation ")
+    if group == "GNC"
+      println(io, "for the Galaxy Number Counts GR effect" *
+                  "\n# from the file: $input")
+    elseif group == "LD"
+      println(io, "for the Luminosity Distance perturbations GR effect" *
+                  "\n# from the file: $input")
+    elseif group == "GNCxLD"
+      println(io, "for the cross correlations between \n#" *
+                  "Galaxy Number Counts and Luminosity Distance perturbations " *
+                  "from the file:\n# $input")
+    elseif group == "LDxGNC"
+      println(io, "for the cross correlations between \n#" *
+                  "Luminosity Distance perturbations and Galaxy Number Counts " *
+                  "from the file:\n# $input")
+    else
+      println(io, "without any specific group considered" *
+                  "\n# from the file: $input")
+    end
 
-          println(io, "#\n# For this PS_multipole computation we set: ")
-          println(io, "# \t multipole degree in consideration L = $L")
-          println(io, "# \t algorithm chosen for the computation: :$alg")
-          println(io, "# \t #points used in Fourier transform N = $N")
-          println(io, "# overall computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
-          print(io, "# kwards passed to \"print_all_PS_multipole\": ")
+    println(io, "#\n# For this PS_multipole computation we set: ")
+    println(io, "# \t multipole degree in consideration L = $L")
+    println(io, "# \t algorithm chosen for the computation: :$alg")
+    println(io, "# \t #points used in Fourier transform N = $N")
+    println(io, "# overall computational time needed (in s) : $(@sprintf("%.4f", time_2-time_1))")
+    print(io, "# kwards passed to \"print_all_PS_multipole\": ")
 
-          if isempty(kwargs)
-               println(io, "none")
-          else
-               print(io, "\n")
-               for key in keys(kwargs)
-                    println(io, "# \t\t$(key) = $(kwargs[key])")
-               end
-          end
-          println(io, "# ")
-          println(io, "# (all the following Power Spectra are measured in (Mpc/h_0)^3)")
+    if isempty(kwargs)
+      println(io, "none")
+    else
+      print(io, "\n")
+      for key in keys(kwargs)
+        println(io, "# \t\t$(key) = $(kwargs[key])")
+      end
+    end
+    println(io, "# ")
+    println(io, "# (all the following Power Spectra are measured in (Mpc/h_0)^3)")
 
-          if group ≠ VALID_GROUPS[end]
-               effs = group == "GNC" ? GR_EFFECTS_GNC :
-                      group == "LD" ? GR_EFFECTS_LD :
-                      group == "GNCxLD" ? GR_EFFECTS_GNCxLD :
-                      group == "LDxGNC" ? GR_EFFECTS_LDxGNC :
-                      throw(ErrorException("how did you arrive here???"))
+    if group ≠ VALID_GROUPS[end]
+      effs = group == "GNC" ? GR_EFFECTS_GNC :
+             group == "LD" ? GR_EFFECTS_LD :
+             group == "GNCxLD" ? GR_EFFECTS_GNCxLD :
+             group == "LDxGNC" ? GR_EFFECTS_LDxGNC :
+             throw(ErrorException("how did you arrive here???"))
 
-               println(io, "# 1: k [h_0/Mpc] \t 2: P_SUM \t " *
-                           join([string(i) for i in 3:length(effs)+2] .*
-                                ": P_" .* effs .* " \t "))
-          else
-               println(io, "# 1: k [h_0/Mpc] \t" *
-                           join([string(i) for i in 2:length(VEC)+1] .*
-                                ": P_" .*
-                                [string(i) for i in 2:length(VEC)+1] .* " \t ")
-               )
-          end
+      println(io, "# 1: k [h_0/Mpc] \t 2: P_SUM \t " *
+                  join([string(i) for i in 3:length(effs)+2] .*
+                       ": P_" .* effs .* " \t "))
+    else
+      println(io, "# 1: k [h_0/Mpc] \t" *
+                  join([string(i) for i in 2:length(VEC)+1] .*
+                       ": P_" .*
+                       [string(i) for i in 2:length(VEC)+1] .* " \t ")
+      )
+    end
 
-          for (i, k) in enumerate(ks)
-               println(io, "$k \t" * join([GaPSE.number_to_string(v[i]) * " \t " for v in VEC]))
-          end
-     end
+    for (i, k) in enumerate(ks)
+      println(io, "$k \t" * join([GaPSE.number_to_string(v[i]) * " \t " for v in VEC]))
+    end
+  end
 end

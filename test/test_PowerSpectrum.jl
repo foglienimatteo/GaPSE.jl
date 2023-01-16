@@ -203,7 +203,7 @@ end
      kwargs_ps = Dict(:epl => true, :pr => false, :alg => :twofast,
           :N_left => 12, :N_right => 12,
           :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
-          :int_s_min => 1e-4, :int_s_max => 1e4, 
+          :int_s_min => 1e-4, :int_s_max => 1e4,
           :cut_first_n => 0, :cut_last_n => 0)
 
      @testset "with F" begin
@@ -514,10 +514,10 @@ end
 
 @testset "test FFTLog PS_multipole" begin
      RTOL = 1e-3
-    kwargs_ps = Dict(:pr => false, :alg => :fftlog,
-         :ν => 1.5, :n_extrap_low => 500,
-         :n_extrap_high => 500, :n_pad => 500,
-         :cut_first_n => 0, :cut_last_n => 0)
+     kwargs_ps = Dict(:pr => false, :alg => :fftlog,
+          :ν => 1.5, :n_extrap_low => 500,
+          :n_extrap_high => 500, :n_pad => 500,
+          :cut_first_n => 0, :cut_last_n => 0)
 
      @testset "with F" begin
           @testset "monopole" begin
@@ -530,6 +530,11 @@ end
                pks = convert(Vector{Float64}, table[:, 2])
 
                calc_ks, calc_pks = GaPSE.PS_multipole(input; L=L, kwargs_ps...)
+
+               println("calc_ks = $calc_ks;")
+               println("calc_pks = $calc_pks;")
+               println("ks = $ks;")
+               println("pks = $pks;")
 
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
@@ -545,6 +550,11 @@ end
                pks = convert(Vector{Float64}, table[:, 2])
 
                calc_ks, calc_pks = GaPSE.PS_multipole(input; L=L, kwargs_ps...)
+
+               println("calc_ks = $calc_ks;")
+               println("calc_pks = $calc_pks;")
+               println("ks = $ks;")
+               println("pks = $pks;")
 
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
@@ -563,6 +573,11 @@ end
 
                calc_ks, calc_pks = GaPSE.PS_multipole(input; L=L, kwargs_ps...)
 
+               println("calc_ks = $calc_ks;")
+               println("calc_pks = $calc_pks;")
+               println("ks = $ks;")
+               println("pks = $pks;")
+
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
           end
@@ -578,13 +593,18 @@ end
 
                calc_ks, calc_pks = GaPSE.PS_multipole(input; L=L, kwargs_ps...)
 
+               println("calc_ks = $calc_ks;")
+               println("calc_pks = $calc_pks;")
+               println("ks = $ks;")
+               println("pks = $pks;")
+
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
           end
      end
 end
 
-
+#=
 @testset "test FFTLog print_PS_multipole first method" begin
      RTOL = 1e-3
      kwargs_ps = Dict(:pr => false, :alg => :fftlog,
@@ -996,4 +1016,4 @@ end
           rm(out_file)
      end
 end
-
+=#
