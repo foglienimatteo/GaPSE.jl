@@ -91,7 +91,6 @@
      end
 end
 
-
 @testset "test TwoFAST print_PS_multipole first method" begin
      RTOL = 1e-3
      kwargs_ps = Dict(:epl => true, :pr => false, :alg => :twofast,
@@ -354,8 +353,8 @@ end
      @testset "test PS LD" begin
           L = 0
           group = "LD"
-          input = "datatest/Power_Spectrum/map_sum_xi_$group" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/map_sum_ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
+          input = "datatest/Power_Spectrum/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/Power_Spectrum/ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
           out_file = "calc_pk_L$L" * "_TwoFAST.txt"
 
           isfile(out_file) && rm(out_file)
@@ -385,8 +384,8 @@ end
      @testset "test PS GNC" begin
           L = 0
           group = "GNC"
-          input = "datatest/Power_Spectrum/map_sum_xi_$group" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/map_sum_ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
+          input = "datatest/Power_Spectrum/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/Power_Spectrum/ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
           out_file = "calc_pk_L$L" * "_TwoFAST.txt"
 
           isfile(out_file) && rm(out_file)
@@ -416,8 +415,8 @@ end
      @testset "test PS GNCxLD" begin
           L = 0
           group = "GNCxLD"
-          input = "datatest/Power_Spectrum/map_sum_xi_$group" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/map_sum_ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
+          input = "datatest/Power_Spectrum/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/Power_Spectrum/ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
           out_file = "calc_pk_L$L" * "_TwoFAST.txt"
 
           isfile(out_file) && rm(out_file)
@@ -447,8 +446,8 @@ end
      @testset "test PS LDxGNC" begin
           L = 0
           group = "LDxGNC"
-          input = "datatest/Power_Spectrum/map_sum_xi_$group" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/map_sum_ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
+          input = "datatest/Power_Spectrum/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/Power_Spectrum/ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
           out_file = "calc_pk_L$L" * "_TwoFAST.txt"
 
           isfile(out_file) && rm(out_file)
@@ -478,8 +477,8 @@ end
      @testset "test PS generic" begin
           L = 0
           group = "generic"
-          input = "datatest/Power_Spectrum/map_sum_xi_LD" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/map_sum_ps_LD" * "_L$L" * "_noF_TwoFAST.txt"
+          input = "datatest/Power_Spectrum/xis_LD" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/Power_Spectrum/ps_LD" * "_L$L" * "_noF_TwoFAST.txt"
           out_file = "calc_pk_L$L" * "_TwoFAST.txt"
 
           isfile(out_file) && rm(out_file)
@@ -507,6 +506,8 @@ end
      end
 end
 
+
+
 ####################################################################################################92 
 
 
@@ -531,10 +532,10 @@ end
 
                calc_ks, calc_pks = GaPSE.PS_multipole(input; L=L, kwargs_ps...)
 
-               println("calc_ks = $calc_ks;")
-               println("calc_pks = $calc_pks;")
-               println("ks = $ks;")
-               println("pks = $pks;")
+               #println("calc_ks = $calc_ks;")
+               #println("calc_pks = $calc_pks;")
+               #println("ks = $ks;")
+               #println("pks = $pks;")
 
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
@@ -551,10 +552,10 @@ end
 
                calc_ks, calc_pks = GaPSE.PS_multipole(input; L=L, kwargs_ps...)
 
-               println("calc_ks = $calc_ks;")
-               println("calc_pks = $calc_pks;")
-               println("ks = $ks;")
-               println("pks = $pks;")
+               #println("calc_ks = $calc_ks;")
+               #println("calc_pks = $calc_pks;")
+               #println("ks = $ks;")
+               #println("pks = $pks;")
 
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
@@ -573,10 +574,10 @@ end
 
                calc_ks, calc_pks = GaPSE.PS_multipole(input; L=L, kwargs_ps...)
 
-               println("calc_ks = $calc_ks;")
-               println("calc_pks = $calc_pks;")
-               println("ks = $ks;")
-               println("pks = $pks;")
+               #println("calc_ks = $calc_ks;")
+               #println("calc_pks = $calc_pks;")
+               #println("ks = $ks;")
+               #println("pks = $pks;")
 
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
@@ -593,10 +594,10 @@ end
 
                calc_ks, calc_pks = GaPSE.PS_multipole(input; L=L, kwargs_ps...)
 
-               println("calc_ks = $calc_ks;")
-               println("calc_pks = $calc_pks;")
-               println("ks = $ks;")
-               println("pks = $pks;")
+               #println("calc_ks = $calc_ks;")
+               #println("calc_pks = $calc_pks;")
+               #println("ks = $ks;")
+               #println("pks = $pks;")
 
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
@@ -604,7 +605,6 @@ end
      end
 end
 
-#=
 @testset "test FFTLog print_PS_multipole first method" begin
      RTOL = 1e-3
      kwargs_ps = Dict(:pr => false, :alg => :fftlog,
@@ -864,8 +864,8 @@ end
      @testset "test PS LD" begin
           L = 0
           group = "LD"
-          input = "datatest/Power_Spectrum/map_sum_xi_$group" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/map_sum_ps_$group" * "_L$L" * "_noF_FFTLog.txt"
+          input = "datatest/Power_Spectrum/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/Power_Spectrum/ps_$group" * "_L$L" * "_noF_FFTLog.txt"
           out_file = "calc_pk_L$L" * "_FFTLog.txt"
 
           isfile(out_file) && rm(out_file)
@@ -895,8 +895,8 @@ end
      @testset "test PS GNC" begin
           L = 0
           group = "GNC"
-          input = "datatest/Power_Spectrum/map_sum_xi_$group" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/map_sum_ps_$group" * "_L$L" * "_noF_FFTLog.txt"
+          input = "datatest/Power_Spectrum/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/Power_Spectrum/ps_$group" * "_L$L" * "_noF_FFTLog.txt"
           out_file = "calc_pk_L$L" * "_FFTLog.txt"
 
           isfile(out_file) && rm(out_file)
@@ -926,8 +926,8 @@ end
      @testset "test PS GNCxLD" begin
           L = 0
           group = "GNCxLD"
-          input = "datatest/Power_Spectrum/map_sum_xi_$group" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/map_sum_ps_$group" * "_L$L" * "_noF_FFTLog.txt"
+          input = "datatest/Power_Spectrum/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/Power_Spectrum/ps_$group" * "_L$L" * "_noF_FFTLog.txt"
           out_file = "calc_pk_L$L" * "_FFTLog.txt"
 
           isfile(out_file) && rm(out_file)
@@ -957,8 +957,8 @@ end
      @testset "test PS LDxGNC" begin
           L = 0
           group = "LDxGNC"
-          input = "datatest/Power_Spectrum/map_sum_xi_$group" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/map_sum_ps_$group" * "_L$L" * "_noF_FFTLog.txt"
+          input = "datatest/Power_Spectrum/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/Power_Spectrum/ps_$group" * "_L$L" * "_noF_FFTLog.txt"
           out_file = "calc_pk_L$L" * "_FFTLog.txt"
 
           isfile(out_file) && rm(out_file)
@@ -988,8 +988,8 @@ end
      @testset "test PS generic" begin
           L = 0
           group = "generic"
-          input = "datatest/Power_Spectrum/map_sum_xi_LD" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/map_sum_ps_LD" * "_L$L" * "_noF_FFTLog.txt"
+          input = "datatest/Power_Spectrum/xis_LD" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/Power_Spectrum/ps_LD" * "_L$L" * "_noF_FFTLog.txt"
           out_file = "calc_pk_L$L" * "_FFTLog.txt"
 
           isfile(out_file) && rm(out_file)
@@ -1016,4 +1016,4 @@ end
           rm(out_file)
      end
 end
-=#
+

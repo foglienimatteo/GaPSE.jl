@@ -71,8 +71,6 @@ function FFTLog_PS_multipole(ss, xis;
      SS = ss[a:b]
      XIS = xis[a:b] .* SS .^ 3
 
-     SS, XIS = ss, xis
-
      new_ν = if isnothing(ν)
           #l_si, l_b, l_a = GaPSE.power_law_from_data(SS, XIS, [1.0, 1.0], SS[begin], SS[begin+10])
           #r_si, r_b, r_a = GaPSE.power_law_from_data(SS, XIS, [1.0, 1.0], SS[end-10], SS[end])
@@ -205,7 +203,7 @@ function FFTLog_all_PS_multipole(input::String,
      end
 
 
-     #a, b = 1 + cut_first_n, length(ss) - cut_last_n
+     a, b = 1 + cut_first_n, length(ss) - cut_last_n
      #=
 
      SS = ss[a:b]
@@ -225,7 +223,7 @@ function FFTLog_all_PS_multipole(input::String,
      end
      =#
 
-     plan = SingleBesselPlan(x=ss,
+     plan = SingleBesselPlan(x=ss[a:b],
           n_extrap_low=n_extrap_low, ν=1.1,
           n_extrap_high=n_extrap_high, n_pad=n_pad)
      prepare_FFTLog!(plan, [L])

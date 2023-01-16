@@ -46,13 +46,6 @@ include("TEST_DATA.jl")
      include("test_FFTLog.jl")
 end
 
-
-@testset "test PowerSpectrum" begin
-     include("test_PowerSpectrum.jl")
-end
-
-@test 1 == 2
-
 @testset "test MathUtils" begin
      include("test_MathUtils.jl")
 end
@@ -100,6 +93,7 @@ end
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
 end
+
 
 
 ################################### COSMOLOGY IMPLEMENTATION #############################92
