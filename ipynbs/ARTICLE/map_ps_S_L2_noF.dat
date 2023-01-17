@@ -8,7 +8,7 @@
 # 	 multipole degree in consideration L = 2
 # 	 algorithm chosen for the computation: :fftlog
 # 	 #points used in Fourier transform N = 500
-# computational time needed (in s) : 0.0011
+# computational time needed (in s) : 0.0010
 # kwards passed to "print_PS_multipole": 
 # 		ν = 1.5
 # 		cut_first_n = 0
