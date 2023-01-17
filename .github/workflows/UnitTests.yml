@@ -20,7 +20,7 @@
 
 name: Unit tests
 
-on: [push]
+#on: [push]
 
 #on:
 #  release:
