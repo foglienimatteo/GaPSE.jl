@@ -1,5 +1,6 @@
 # HEAD
 
+- creation of the package `GaPSE.jl`
 
 # VERSION 0.6.0
 
