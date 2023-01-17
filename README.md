@@ -63,7 +63,18 @@ Currentlt, this package is not in the Julia package registries. Assuming that yo
   or manually download the source code from the url https://github.com/cosmofico97/GaPSE.jl (Code > Download Zip)
 
 - go inside the directory of GaPSE (`$ cd GaPSE.jl` in the shell) 
+
+Inside the directory, there is a file called `install_gapse.jl`, which is a Julia file conceived for downloading and installing all the dependencies of GaPSE. You can run it by typing in the terminal:
+
+```bash
+     $ julia install_gapse.jl
+```
+If there are no error messages at the end of the installations, than GaPSE is corretly configured and you can start to use it!
   
+
+
+NOTE: instead of using the `install_gapse.jl` script, you can also do the same in a more interactive way, if you prefer:
+
 - open a Julia REPL session and activate the project; you can achieve that opening the REPL with 
   ```bash
   $ julia --activate=.

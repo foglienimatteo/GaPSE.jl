@@ -317,7 +317,7 @@ julia> GaPSE.INDEX_GR_EFFECT_GNC["auto_doppler"]
 
 See also: [`GR_EFFECTS_GNC`](@ref)
 """
-const INDEX_GR_EFFECT_GNC = Dict([name => i for (i, name) in
+const  = Dict([name => i for (i, name) in
                                   enumerate(GR_EFFECTS_GNC)]...)
 
 
