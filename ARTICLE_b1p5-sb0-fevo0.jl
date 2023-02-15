@@ -19,8 +19,8 @@
 
 using Pkg
 
-PATH_TO_GAPSE = "../../GaPSE/"
-Pkg.activate(normpath(PATH_TO_GAPSE))
+PATH_TO_GAPSE = "./"
+Pkg.activate(normpath(PATH_TO_GAPSE)) # or @__DIR__
 using GaPSE
 
 
