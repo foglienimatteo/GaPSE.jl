@@ -76,8 +76,8 @@ with length `N + n_extrap_low + n_extrap_right`.
 It is not assumed that the spacing is the same in the two edges of the data.
 """
 function _logextrap(x::Vector, n_extrap_low::Int, n_extrap_high::Int)
-     d_ln_x_low = log(x[2] / x[1])
-     d_ln_x_high = log(reverse(x)[1] / reverse(x)[2])
+     d_ln_x_low = x[2] / x[1] > 0 ? log(x[2] / x[1]) : log(x[2] / x[1])
+     d_ln_x_high = reverse(x)[1] / reverse(x)[2] > 0 ? log(reverse(x)[1] / reverse(x)[2]) : log(reverse(x)[2] / reverse(x)[3])
      X = x
      if n_extrap_low != 0
           X = vcat(x[1] .* exp.(d_ln_x_low .* Array(-n_extrap_low:-1)), X)
