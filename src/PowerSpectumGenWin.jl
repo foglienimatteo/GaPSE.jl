@@ -57,7 +57,7 @@ struct GenericWindow
                     for col in eachcol(table[:, 2:end])]
 
           for col in all
-               @assert length(ss) == length(col) "the colums must have all the same length"
+               @assert length(ss) == length(col) "the columns must have all the same length"
           end
 
           splines = [Spline1D(ss, col; bc="error") for col in all]
@@ -68,45 +68,111 @@ end
 
 
 
+"""
+     create_file_for_XiMultipoles(out::String, names::Vector{String}, 
+          effect::Union{String, Integer}, group::String="GNC"; 
+          comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
 
-function create_file_for_XiMultipoles(names::Vector{Strings}, effect::String, group::String="GNC"; 
+Read the column number `effect` (if is an integer) or the one corresponding to the GR effect `effect`
+for the input group `group` (if is a String) from all the filenames in `names`, and save them in a
+file named `òut`.
+The first column of the output file is the same as the first column of the first filename in `names`; it
+is however checked internally if they are the same for all the files.
+The following columns of the output file follow the order in `names`.
+
+"""
+function create_file_for_XiMultipoles(out::String, names::Vector{String}, 
+          effect::Union{String, Integer}, group::String="GNC"; 
           comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
      
      @assert length(names) > 0 "at least one file name must be given!"
+    
+     if typeof(effect) <: Integer
+          @assert effect > 1 "if you pass effect as number, it must"*
+               " be an integer > 1, not $effect !"
+        
+     elseif group == "GNC" 
+          error = "$effect is not a valid GR effect name.\n" *
+               "Valid GR effect names are the following:\n" *
+               string(GaPSE.GR_EFFECTS_GNC .* " , "...)
+          @assert (effect ∈ GaPSE.GR_EFFECTS_GNC) error
 
-     if group == "GNC"
-          println(io, "for the Galaxy Number Counts GR effect" *
-                         "\n# from the file: $input")
      elseif group == "LD"
-          println(io, "for the Luminosity Distance perturbations GR effect" *
-                         "\n# from the file: $input")
+          error = "$effect is not a valid GR effect name.\n" *
+               "Valid GR effect names are the following:\n" *
+               string(GaPSE.GR_EFFECTS_LD .* " , "...)
+          @assert (effect ∈ GaPSE.GR_EFFECTS_LD) error
+
      elseif group == "GNCxLD"
-          println(io, "for the cross correlations between \n#" *
-                         "Galaxy Number Counts and Luminosity Distance perturbations " *
-                         "from the file:\n# $input")
+          error = "$effect is not a valid GR effect name.\n" *
+               "Valid GR effect names are the following:\n" *
+               string(GaPSE.GR_EFFECTS_GNCxLD .* " , "...)
+          @assert (effect ∈ GaPSE.GR_EFFECTS_GNCxLD) error
+
      elseif group == "LDxGNC"
-          println(io, "for the cross correlations between \n#" *
-                         "Luminosity Distance perturbations and Galaxy Number Counts " *
-                         "from the file:\n# $input")
+          error = "$effect is not a valid GR effect name.\n" *
+               "Valid GR effect names are the following:\n" *
+               string(GaPSE.GR_EFFECTS_LDxGNC .* " , "...)
+          @assert (effect ∈ GaPSE.GR_EFFECTS_LDxGNC) error
+
      else
-          println(io, "without any specific group considered" *
-                         "\n# from the file: $input")
+          throw(AssertionError("string name for the group $group not valid!"))
      end
 
-     error = "$effect is not a valid GR effect name.\n" *
-             "Valid GR effect names are the following:\n" *
-             string(GaPSE.GR_EFFECTS_LD .* " , "...)
-     @assert (effect ∈ GaPSE.GR_EFFECTS_LD) error
+
+     index = (typeof(effect) <: Integer) ? begin effect 
+        end : (group == "GNC") ? begin GaPSE.INDEX_GR_EFFECT_GNC[effect] +2
+        end : (group == "LD") ? begin GaPSE.INDEX_GR_EFFECT_LD[effect] + 2
+        end : (group == "GNCxLD") ? begin GaPSE.INDEX_GR_EFFECT_GNCxLD[effect] + 2
+        end : (group == "LDxGNC") ? begin GaPSE.INDEX_GR_EFFECT_LDxGNC[effect] + 2
+          end : throw(AssertionError("how dare you???"))
 
      table = readdlm(names[1], comments=comments)
-     ss = vecstring_to_vecnumbers(table[:, 1]; dt=xdt)
-     all = [vecstring_to_vecnumbers(col; dt=ydt)
-               for col in eachcol(table[:, 2:end])]
+     ss = GaPSE.vecstring_to_vecnumbers(table[:, 1]; dt=xdt)
 
-     for col in all
-          @assert length(ss) == length(col) "the colums must have all the same length"
+     ALL = [
+          begin 
+               ops = readdlm(name, comments=comments)
+               here_ss = GaPSE.vecstring_to_vecnumbers(ops[:, 1]; dt=xdt)
+               col = GaPSE.vecstring_to_vecnumbers(ops[:, index]; dt=ydt)
+               @assert length(ss) == length(col) "the columns must have all the same length, $name differs!"
+               @assert all(ss .≈ here_ss) "the ss must have all the same values, $name differs!"
+               col
+          end for name in names]
+
+     open(out, "w") do io
+          println(io, GaPSE.BRAND)
+          println(io, "#\n# This is a table containing the multipoles of the Two-Point Correlation Function (TPCF) ")
+  
+        EFFECT = typeof(effect) == String ? effect : "[not given, provied only the index $effect]"
+          if group == "GNC"
+               println(io, "# for the Galaxy Number Counts GR effect $EFFECT" *
+                              "\n#  taken from the files:")
+          elseif group == "LD"
+               println(io, "# for the Luminosity Distance perturbations GR effect $EFFECT" *
+                              "\n# taken from the files:")
+          elseif group == "GNCxLD"
+               println(io, "# for the cross correlations between " *
+                              "Galaxy Number Counts and Luminosity Distance perturbations \n#" *
+                              "effect $EFFECT taken from the files:")
+          elseif group == "LDxGNC"
+               println(io, "# for the cross correlations between " *
+                              "Luminosity Distance perturbations and Galaxy Number Counts \n#" *
+                              "effect $EFFECT taken from the files:")
+          else
+               throw(AssertionError("how dare you!"))
+          end
+
+          for (i,name) in enumerate(names)
+               println(io, "#   - L = $(i-1) : $name")
+          end
+
+          println(io, "#\n# s [Mpc/h_0] \t" .* join(["xi_{L=$(i-1)} \t " for i in 1:length(names)]) )
+           for (i, s) in enumerate(ss)
+               println(io, "$s \t " *
+                              join([" $(v[i]) \t " for v in ALL]))
+          end
      end
-
 end
 
 
@@ -142,7 +208,7 @@ struct XiMultipoles
                     for col in eachcol(table[:, 2:end])]
 
           for col in all
-               @assert length(ss) == length(col) "the colums must have all the same length"
+               @assert length(ss) == length(col) "the columns must have all the same length"
           end
 
           new(ss, all)
