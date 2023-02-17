@@ -1,0 +1,17 @@
+###############
+#    GaPSE    #
+############### 
+#
+#
+# This is a table containing the multipoles of the Two-Point Correlation Function (TPCF) 
+# for the Luminosity Distance perturbations GR effect auto_doppler
+# taken from the files:
+#   - L = 0 : /Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/LD_SumXiMultipoles/xis_LD_L0_lob_noF_specific_ss.txt
+#   - L = 1 : /Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/LD_SumXiMultipoles/xis_LD_L1_lob_noF_specific_ss.txt
+#   - L = 2 : /Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/LD_SumXiMultipoles/xis_LD_L2_lob_noF_specific_ss.txt
+#   - L = 3 : /Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/LD_SumXiMultipoles/xis_LD_L3_lob_noF_specific_ss.txt
+#
+# s [Mpc/h_0] 	xi_{L=0} 	 xi_{L=1} 	 xi_{L=2} 	 xi_{L=3} 	 
+10.0 	  3.10836472962597e-5 	  -7.966808360980966e-7 	  -4.6068645441643295e-6 	  1.3282710425038282e-7 	 
+500.0 	  4.1646196309222906e-7 	  -8.233284097953764e-7 	  2.597194064816308e-7 	  -2.3976130941355977e-7 	 
+1000.0 	  3.704292883636438e-8 	  -9.309904464719758e-8 	  1.523769406762764e-8 	  -4.118488449226515e-9 	 
