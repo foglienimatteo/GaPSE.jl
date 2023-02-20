@@ -11,10 +11,11 @@
 GaPSE (Galaxy Power Spectrum Estimator) is a software for cosmological computations written in the [Julia Programming Language](https://julialang.org).
 
 IMPORTANT NOTE: This is a work-in-progress project! As a consequence, currently in this pre-release:
-- it's possible to compute the multipoles ($L=1,2,3,...$) of the effects we'll show next, but some of the Galaxy Number Counts multipoles converge very slowly, so their computation is not still ready. The monopoles ($L=0$) computations instead do not give any problem with `quad`;
+- it is possible to compute the power spectrum/correlation function multipoles with L=1,2,3,... of the effects we'll show next, but some of the Galaxy Number Counts multipoles converge very slowly, so their computation is not still ready. The monopole (L=0)  computations instead do not give any problem with `quad`;
 - you can't go further than $z \simeq 1.5$;
 - the code functions are well documented; check the github pages website https://cosmofico97.github.io/GaPSE/stable if you can't see correctly the analytical expressions written in the docstrings. However, the Two-Point Correlation Functions docstrings of the groups `LD`, `GNCxLD` and `LDxGNC` (see below for explanation) are still missing; 
-- few people used this code, so bugs are behind the corner; don't esitate to raise the finger to point out them (see in the section below)! 
+- few people used this code, so bugs are behind the corner; do not hesitate to raise the finger to point out them (see in the section below)! 
+- if you use this code, please read the [Using this code](##using-this-code) section below
 
 ## Table of Contents
 
@@ -25,6 +26,7 @@ IMPORTANT NOTE: This is a work-in-progress project! As a consequence, currently 
   - [Usage](#usage)
   - [Dependencies](#dependencies)
   - [How to report bugs, suggest improvements and/or contribute](#how-to-report-bugs-suggest-improvements-andor-contribute)
+  - [Using this code](#using-this-code)
   - [Licence](#licence)
   - [References](#references)
 
@@ -52,7 +54,7 @@ This project, and the analytical expressions used for the TPCFs, are based on th
 
 ## Installation
 
-Currentlt, this package is not in the Julia package registries. Assuming that you have already installed a coompatible Julia version, the simplest way to install this software is then the following:
+Currently, this package is not in the Julia package registries. Assuming that you have already installed a coompatible Julia version, the simplest way to install this software is then the following:
 
 - in the terminal, go to the directory you want to install this package;
   
@@ -120,7 +122,7 @@ GaPSE.jl makes extensive use of the following packages:
 
 ## How to report bugs, suggest improvements and/or contribute
 
-As already mentioned above, this is a WIP project used mostly by the authors themselves, and so bugs are behind the corner. If you discover one of them, or if you would like to make a suggestion about a possible new feature that the code might implement, do not hesitate to contact the authors via email (matteo.foglieni@lrz.de) or fork the repository and open a pull request like follows:
+As already mentioned above, this is a WIP project used mostly by the authors themselves, and so bugs are behind the corner. If you discover one of them, or if you would like to make a suggestion about a possible new feature that the code might implement, do not hesitate to contact the authors via email (<matteo.foglieni@lrz.de>) or fork the repository and open a pull request like follows:
 
 - fork the project: on the top of the GaPSE.jl Github page, go to Fork > Create a new Fork
 - download your forked repository from your GitHub profile
@@ -129,13 +131,23 @@ As already mentioned above, this is a WIP project used mostly by the authors the
 - commit your changes in that branch: in the terminal, run `$ git commit -m 'added the feature <your-feature-name>'`
 - push:  in the terminal, run `$ git push origin feature/<your-feature-name>`
 - open a Pull Request for that branch
-  
+
+
+## Using this code
+
+If you use GaPSE to compute the galaxy power spectrum/correlation function please refer to the two following papers:
+
+- Castorina, Di Dio, _The observed galaxy power spectrum in General Relativity_ (2022), Journal of Cosmology and Astroparticle Physics, DOI: 10.1088/1475-7516/2022/01/061, url: https://doi.org/10.1088/1475-7516/2022/01/061
+
+- Foglieni, Pantiri, Di Dio, Castorina,  _The large scale limit of the observed galaxy power spectrum_ (2023)
+
+If you also use the code to compute the perturbations in the luminosity distance, please refer also to
+
+- Pantiri, Foglieni, Di Dio, Castorina,  _The power spectrum of luminosity distance fluctuations in General Relativity_ (2023) [in preparation]
 
 ## Licence
 
 This software is under the [GNU 3.0 General Public Licence](https://www.gnu.org/licenses/gpl-3.0.en.html). See the file [LICENCE.md](./LICENCE.md).
-
-
 
 ## References
 <a id="1">[1]</a> 

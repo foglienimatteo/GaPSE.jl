@@ -207,7 +207,7 @@ struct XiMultipoles
           all = [vecstring_to_vecnumbers(col; dt=ydt)
                     for col in eachcol(table[:, 2:end])]
 
-          for col in all
+          for c`ol in all
                @assert length(ss) == length(col) "the columns must have all the same length"
           end
 
