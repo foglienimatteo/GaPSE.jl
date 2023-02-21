@@ -41,6 +41,9 @@ include("TEST_DATA.jl")
 
 ##########################################################################################92
 
+@testset "test PowerSpectrumGenWin" begin
+     include("test_PowerSpectrumGenWin.jl")
+end
 
 @testset "test FFTLog" begin
      include("test_FFTLog.jl")
