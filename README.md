@@ -1,19 +1,19 @@
 # GaPSE - a model for the Galaxy Power Spectrum Estimator
 
 ![julia-version](https://img.shields.io/badge/julia_version-v1.8-9558B2?style=flat&logo=julia) 
-![package-version](https://img.shields.io/github/v/release/foglienimatteo/GaPSE?include_prereleases)
-![CI-build](https://img.shields.io/github/workflow/status/foglienimatteo/GaPSE/Unit%20tests)
-![size](https://img.shields.io/github/repo-size/foglienimatteo/GaPSE) 
-![license]( https://img.shields.io/github/license/foglienimatteo/GaPSE)
-[![codecov](https://codecov.io/gh/foglienimatteo/GaPSE/branch/main/graph/badge.svg?token=67GIZ9RA8Y)](https://codecov.io/gh/foglienimatteo/GaPSE)
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://foglienimatteo.github.io/GaPSE/stable) 
+![package-version](https://img.shields.io/github/v/release/foglienimatteo/GaPSE.jl?include_prereleases)
+![CI-build](https://img.shields.io/github/workflow/status/foglienimatteo/GaPSE.jl/Unit%20tests)
+![size](https://img.shields.io/github/repo-size/foglienimatteo/GaPSE.jl) 
+![license]( https://img.shields.io/github/license/foglienimatteo/GaPSE.jl)
+[![codecov](https://codecov.io/gh/foglienimatteo/GaPSE.jl/branch/main/graph/badge.svg?token=67GIZ9RA8Y)](https://codecov.io/gh/foglienimatteo/GaPSE.jl)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://foglienimatteo.github.io/GaPSE.jl/stable) 
 
 GaPSE (Galaxy Power Spectrum Estimator) is a software for cosmological computations written in the [Julia Programming Language](https://julialang.org).
 
 IMPORTANT NOTE: This is a work-in-progress project! As a consequence, currently in this pre-release:
 - it is possible to compute the power spectrum/correlation function multipoles with L=1,2,3,... of the effects we'll show next, but some of the Galaxy Number Counts multipoles converge very slowly, so their computation is not still ready. The monopole (L=0)  computations instead do not give any problem with `quad`;
 - you can't go further than $z \simeq 1.5$;
-- the code functions are well documented; check the github pages website https://foglienimatteo.github.io/GaPSE/stable if you can't see correctly the analytical expressions written in the docstrings. However, the Two-Point Correlation Functions docstrings of the groups `LD`, `GNCxLD` and `LDxGNC` (see below for explanation) are still missing; 
+- the code functions are well documented; check the github pages website https://foglienimatteo.github.io/GaPSE.jl/stable if you can't see correctly the analytical expressions written in the docstrings. However, the Two-Point Correlation Functions docstrings of the groups `LD`, `GNCxLD` and `LDxGNC` (see below for explanation) are still missing; 
 - few people used this code, so bugs are behind the corner; do not hesitate to raise the finger to point out them (see in the [How to report bugs, suggest improvements and/or contribute](#how-to-report-bugs-suggest-improvements-andor-contribute) section below)!
 - if you use this code, please read the [Using this code](##using-this-code) section below
 
@@ -94,7 +94,7 @@ There are three ways in order to use this code:
 
 - you can write whatever instruction inside the file `GaPSE-exe.jl` and then run in the command line
   ```bash
-     $ julia GaPSE.jl
+     $ julia GaPSE-exe.jl
   ```
 
 - you can open a Julia REPL session, include the code with
