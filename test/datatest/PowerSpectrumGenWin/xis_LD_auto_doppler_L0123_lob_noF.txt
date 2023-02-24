@@ -6,10 +6,10 @@
 # This is a table containing the multipoles of the Two-Point Correlation Function (TPCF) 
 # for the Luminosity Distance perturbations GR effect [not given, provied only the index 2]
 # taken from the files:
-#   - L = 0 : /Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/LD_doppler_multipoles/xi_LD_auto_doppler_lobatto_noF_L0.txt
-#   - L = 1 : /Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/LD_doppler_multipoles/xi_LD_auto_doppler_lobatto_noF_L1.txt
-#   - L = 2 : /Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/LD_doppler_multipoles/xi_LD_auto_doppler_lobatto_noF_L2.txt
-#   - L = 3 : /Users/matteofoglieni/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/LD_doppler_multipoles/xi_LD_auto_doppler_lobatto_noF_L3.txt
+#   - L = 0 : ../GaPSE/test/datatest/LD_doppler_multipoles/xi_LD_auto_doppler_lobatto_noF_L0.txt
+#   - L = 1 : ../GaPSE/test/datatest/LD_doppler_multipoles/xi_LD_auto_doppler_lobatto_noF_L1.txt
+#   - L = 2 : ../GaPSE/test/datatest/LD_doppler_multipoles/xi_LD_auto_doppler_lobatto_noF_L2.txt
+#   - L = 3 : ../GaPSE/test/datatest/LD_doppler_multipoles/xi_LD_auto_doppler_lobatto_noF_L3.txt
 #
 # s [Mpc/h_0] 	xi_{L=0} 	 xi_{L=1} 	 xi_{L=2} 	 xi_{L=3} 	 
 1.0 	  3.9977805621175355e-5 	  -1.0039388477792223e-7 	  -4.070362470534673e-7 	  1.1733547234757503e-9 	 
