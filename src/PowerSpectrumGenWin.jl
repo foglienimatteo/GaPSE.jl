@@ -225,31 +225,35 @@ end
 
 
 
-function PS_multipole_GenWin(ximult::XiMultipoles, genwin::GenericWindow;
-          alg::Symbol=:fftlog, L::Int=0,
-          cut_first_n::Int=0, cut_last_n::Int=0,
-          kwargs...)
+function PS_multipole_GenWin(
+     ximult::Union{XiMultipoles,String}, genwin::Union{GenericWindow,String};
+     alg::Symbol=:fftlog, L::Int=0,
+     cut_first_n::Int=0, cut_last_n::Int=0,
+     kwargs...)
 
      @assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
      @assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
      @assert cut_first_n + cut_last_n < length(ss) "cut_first_n + cut_last_n < length(ss) must hold!"
 
+     XIMULT = typeof(ximult) == String ? XiMultipoles(ximult) : ximult
+     GENWIN = typeof(genwin) == String ? GenericWindow(genwin) : genwin
+
      a, b = 1 + cut_first_n, length(ss) - cut_last_n
-     SS, VEC_FS = ximult.comdist[a:b], [vec[a:b] for vec in ximult.multipoles]
+     SS, VEC_FS = XIMULT.comdist[a:b], [vec[a:b] for vec in XIMULT.multipoles]
 
      if alg == :twofast
 
-          ks, _ = TwoFAST_PS_multipole(SS, VEC_FS[1]; cut_first_n=0, cut_last_n=0, kwargs...)
+          ks, _ = GaPSE.TwoFAST_PS_multipole(SS, VEC_FS[1]; cut_first_n=0, cut_last_n=0, kwargs...)
           res = zeros(length(ks))
 
-          for l in 0:length(ximult.multipoles)-1, l1 in 0:length(genwin.splines)-1
+          for l in 0:length(XIMULT.multipoles)-1, l1 in 0:length(GENWIN.splines)-1
 
                w3j = convert(Float64, wigner3j(L, l, l1, 0, 0, 0))
 
                if (w3j ≈ 0.0) == false
-                    qls = [genwin.splines[l1+1] for s in SS]
-                    _, pks = TwoFAST_PS_multipole(SS, VEC_FS[l+1] .* qls; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
-                    global res += w3j .* pks
+                    qls = [GENWIN.splines[l1+1](s) for s in SS]
+                    _, pks = GaPSE.TwoFAST_PS_multipole(SS, VEC_FS[l+1] .* qls; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
+                    res += w3j .* pks
                end
           end
 
@@ -257,17 +261,17 @@ function PS_multipole_GenWin(ximult::XiMultipoles, genwin::GenericWindow;
 
      elseif alg == :fftlog
 
-          ks, _ = FFTLog_PS_multipole(SS, VEC_FS[1]; cut_first_n=0, cut_last_n=0, kwargs...)
+          ks, _ = GaPSE.FFTLog_PS_multipole(SS, VEC_FS[1]; cut_first_n=0, cut_last_n=0, kwargs...)
           res = zeros(length(ks))
 
-          for l in 0:length(ximult.multipoles)-1, l1 in 0:length(genwin.splines)-1
+          for l in 0:length(XIMULT.multipoles)-1, l1 in 0:length(GENWIN.splines)-1
 
                w3j = convert(Float64, wigner3j(L, l, l1, 0, 0, 0))
 
                if (w3j ≈ 0.0) == false
-                    qls = [genwin.splines[l1+1] for s in SS]
-                    _, pks = FFTLog_PS_multipole(SS, VEC_FS[l+1] .* qls; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
-                    global res += w3j .* pks
+                    qls = [GENWIN.splines[l1+1](s) for s in SS]
+                    _, pks = GaPSE.FFTLog_PS_multipole(SS, VEC_FS[l+1] .* qls; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
+                    res += w3j .* pks
                end
           end
 
