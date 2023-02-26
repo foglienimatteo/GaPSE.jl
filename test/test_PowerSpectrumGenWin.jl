@@ -20,7 +20,7 @@
 
 @testset "test create_file_for_XiMultipoles" begin
      RTOL = 1e-5
-     
+
      @testset "first" begin
           name = "datatest/PowerSpectrumGenWin/xis_LD_L0123_lob_noF_specific_ss.txt"
           calc_name = "spec_ss.txt"
@@ -31,14 +31,14 @@
                "xis_LD_L1_lob_noF_specific_ss.txt",
                "xis_LD_L2_lob_noF_specific_ss.txt",
                "xis_LD_L3_lob_noF_specific_ss.txt",
-               ]
+          ]
 
           GaPSE.create_file_for_XiMultipoles(calc_name, names, "auto_doppler", "LD")
           calc_ss, calc_all_xis = GaPSE.readxall(name)
 
           ss, all_xis = GaPSE.readxall(name)
-          @test all(isapprox(t,c; rtol = RTOL) for (t,c) in zip(ss, calc_ss))
-          @test all(isapprox(t,c; rtol = RTOL) for (t,c) in zip(all_xis, calc_all_xis))
+          @test all(isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss))
+          @test all(isapprox(t, c; rtol=RTOL) for (t, c) in zip(all_xis, calc_all_xis))
 
           rm(calc_name)
      end
@@ -60,9 +60,9 @@
           calc_ss, calc_all_xis = GaPSE.readxall(name)
 
           ss, all_xis = GaPSE.readxall(name)
-          @test all(isapprox(t,c; rtol = RTOL) for (t,c) in zip(ss, calc_ss))
+          @test all(isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss))
           for (col, calc_col) in zip(all_xis, calc_all_xis)
-               @test all(isapprox(t,c; rtol = RTOL) for (t,c) in zip(col, calc_col))
+               @test all(isapprox(t, c; rtol=RTOL) for (t, c) in zip(col, calc_col))
           end
 
           rm(calc_name)
@@ -78,11 +78,28 @@ end
 
      ximult = GaPSE.XiMultipoles(name)
 
-     @test all(isapprox(t,c; rtol = RTOL) for (t,c) in zip(ss, ximult.comdist))
+     @test all(isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, ximult.comdist))
      for (col, calc_col) in zip(all_xis, ximult.multipoles)
-          @test all(isapprox(t,c; rtol = RTOL) for (t,c) in zip(col, calc_col))
+          @test all(isapprox(t, c; rtol=RTOL) for (t, c) in zip(col, calc_col))
      end
 
 
 end
 
+
+@testset "test PS_multipole_GenWin" begin
+
+     xi_filenames = "datatest/" .* [
+          "xis_GNC_L0_noF_noobsvel_GenWin.txt",
+          "xis_GNC_L1_noF_noobsvel_GenWin.txt",
+          "xis_GNC_L2_noF_noobsvel_GenWin.txt",
+          "xis_GNC_L3_noF_noobsvel_GenWin.txt", 
+          "xis_GNC_L0_noF_noobsvel_GenWin.txt",
+     ]
+     
+     name = "calc_xis_sum_GNC_L01234_noF_noobsvel.txt"
+     isfile(name) && rm(name)
+     GaPSE.create_file_for_XiMultipoles(name, xi_filenames, 2, "GNC")
+
+     rm(name)
+end
