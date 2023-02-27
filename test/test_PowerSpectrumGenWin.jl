@@ -95,7 +95,7 @@ end
           "xis_GNC_L1_noF_noobsvel_GenWin.txt",
           "xis_GNC_L2_noF_noobsvel_GenWin.txt",
           "xis_GNC_L3_noF_noobsvel_GenWin.txt",
-          "xis_GNC_L0_noF_noobsvel_GenWin.txt",
+          "xis_GNC_L4_noF_noobsvel_GenWin.txt",
      ]
 
      calc_name_file_ximultipoles = "calc_xis_sum_GNC_L01234_noF_noobsvel.txt"
@@ -104,32 +104,51 @@ end
      GaPSE.create_file_for_XiMultipoles(calc_name_file_ximultipoles, xi_filenames, 2, "GNC")
 
 
-     ps_kwargs(alg::Symbol=:fftlog) = alg == :twofast ?
-                                      Dict(
-          :alg => :twofast, :epl => true, :pr => false,
-          :N_left => 12, :N_right => 12,
-          :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
-          :int_s_min => 1e0, :int_s_max => 1200.0,
-          :cut_first_n => 0, :cut_last_n => 0
-     ) : alg == :fftlog ?
-                                      Dict(
-          :alg => :fftlog, :pr => true, :ν => 1.5,
-          :n_extrap_low => 0, :n_extrap_high => 0,
-          :n_pad => 500, :cut_first_n => 0, :cut_last_n => 0,
-     ) : throw(AssertionError("alg = :fftlog (recommended) or alg = :twofast !"))
-     tf = :fftlog
+     ps_kwargs(alg::Symbol=:fftlog) = alg == :twofast ? begin
+          Dict(
+               :alg => :twofast, :epl => false, :pr => false,
+               :N_left => 12, :N_right => 12,
+               :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
+               :int_s_min => 1e0, :int_s_max => 1200.0,
+               :cut_first_n => 0, :cut_last_n => 0
+          )
+     end : alg == :fftlog ? begin
+          Dict(
+               :alg => :fftlog, :pr => true, :ν => 1.5,
+               :n_extrap_low => 0, :n_extrap_high => 0,
+               :n_pad => 500, :cut_first_n => 0, :cut_last_n => 0,
+          )
+     end : throw(AssertionError("alg = :fftlog (recommended) or alg = :twofast !"))
 
-     ks_fftlog, pks_fftlog = GaPSE.PS_multipole_GenWin(calc_name_file_ximultipoles, name_file_Qmultipoles;
-          L=0, ps_kwargs(:fftlog)...)
+     @testset "fftlog" begin
+          ks_fftlog, pks_fftlog = GaPSE.PS_multipole_GenWin(calc_name_file_ximultipoles, name_file_Qmultipoles;
+               L=0, ps_kwargs(:fftlog)...)
 
-     true_ks_fftlog, true_pks_fftlog, _ = GaPSE.readxyall("datatest/PowerSpectrumGenWin/ps_GNC_L0_withF_noobsvel_GenWin.txt")
+          true_ks_fftlog, true_pks_fftlog, _ = GaPSE.readxyall("datatest/PowerSpectrumGenWin/ps_GNC_L0_withF_noobsvel_GenWin_fftlog.txt")
 
-     @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks_fftlog, true_ks_fftlog)])
-     @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks_fftlog, true_pks_fftlog)])
+          @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks_fftlog, true_ks_fftlog)])
+          @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks_fftlog, true_pks_fftlog)])
 
-     println("ks=$ks_fftlog;")
-     println("pks_fftlog=$pks_fftlog;")
-     println("true_pks_fftlog=$true_pks_fftlog;")
+          #println("ks=$ks_fftlog;")
+          #println("pks_fftlog=$pks_fftlog;")
+          #println("true_pks_fftlog=$true_pks_fftlog;")
+
+     end
+
+     @testset "twofast" begin
+          ks_twofast, pks_twofast = GaPSE.PS_multipole_GenWin(calc_name_file_ximultipoles, name_file_Qmultipoles;
+               L=0, ps_kwargs(:twofast)...)
+
+          true_ks_twofast, true_pks_twofast, _ = GaPSE.readxyall("datatest/PowerSpectrumGenWin/ps_GNC_L0_withF_noobsvel_GenWin_twofast.txt")
+
+          @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks_twofast, true_ks_twofast)])
+          @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks_twofast, true_pks_twofast)])
+
+          #println("ks=$ks_twofast;")
+          #println("pks_twofast=$pks_twofast;")
+          #println("true_pks_twofast=$true_pks_twofast;")
+
+     end
 
      rm(calc_name_file_ximultipoles)
 end

@@ -481,7 +481,7 @@ function PS_multipole_GenWin(
                end
           end
 
-          _, pks = GaPSE.FFTLog_PS_multipole(SS, res; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
+          _, pks = GaPSE.TwoFAST_PS_multipole(SS, res; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
 
           return ks, pks
 

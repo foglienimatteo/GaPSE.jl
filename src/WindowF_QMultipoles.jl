@@ -149,6 +149,7 @@ function print_map_WindowFIntegrated_multipole(
      GaPSE.check_namefile(out)
 
      @assert L_max ≥ 0 "L_max must be ≥ 0!"
+     @assert haskey(kwargs, :L)==false "you must not provide here the keyword L, use L_max instead!"
      @assert 0.0 < s_min < s_max " 0.0 < s_min < s_max must hold!"
      @assert all(ss .≥ 0.0) "All ss must be ≥ 0.0!"
      #@assert ss[begin] ≈ 0.0 "Why don't you start sampling from s=0 instead from s=$(ss[begin])?"

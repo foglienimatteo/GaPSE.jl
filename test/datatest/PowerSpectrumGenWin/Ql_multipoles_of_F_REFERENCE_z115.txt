@@ -9,8 +9,14 @@
 # F(x, \mu) is the window function considered (for its analytical definition, check the code).
 #
 #
-# Time needed for this computation [in s]: 54.9950897693634
+# Time needed for this computation [in s]: 60.10437202453613
 # The keyword arguments were:
+# 		alg = lobatto
+# 		N_lob = 100
+# 		N_trap = 200
+# 		atol_quad = 0.0
+# 		rtol_quad = 0.01
+# 		enhancer = 1.0e6
 #
 # s [h_0^{-1} Mpc] 	 Q_{l_1=0} 	 Q_{l_1=1} 	 Q_{l_1=2} 	 Q_{l_1=3} 	 Q_{l_1=4} 	 
 1.0 	 4.1857800000750543e11 	 -4.377435879373042e7 	 -5.084259164821501e8 	 1.2380785453994218e6 	 -3.641597411371149e8 	 

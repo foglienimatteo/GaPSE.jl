@@ -159,6 +159,7 @@ include("PS_FFTLog.jl")
 include("PS_TwoFAST.jl")
 include("PowerSpectrum.jl")
 include("PowerSpectrumGenWin.jl")
+include("WindowF_QMultipoles.jl")
 
 
 function parameters_used(io::IO, cosmo::Cosmology; logo::Bool=true)
