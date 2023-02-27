@@ -88,6 +88,7 @@ end
 
 
 @testset "test PS_multipole_GenWin" begin
+     RTOL = 1e-2
 
      xi_filenames = "datatest/PowerSpectrumGenWin/" .* [
           "xis_GNC_L0_noF_noobsvel_GenWin.txt",
@@ -129,5 +130,3 @@ end
      rm(calc_name_file_ximultipoles)
 end
 
-
-@test 1==2
