@@ -54,7 +54,7 @@ struct GenericWindow
           table = readdlm(file, comments=comments)
           ss = vecstring_to_vecnumbers(table[:, 1]; dt=xdt)
           all = [vecstring_to_vecnumbers(col; dt=ydt)
-                    for col in eachcol(table[:, 2:end])]
+                 for col in eachcol(table[:, 2:end])]
 
           for col in all
                @assert length(ss) == length(col) "the columns must have all the same length"
@@ -73,65 +73,115 @@ end
           effect::Union{String, Integer}, group::String="GNC"; 
           comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
 
-Read the column number `effect` (if is an integer) or the one corresponding to the GR effect `effect`
-for the input group `group` (if is a String) from all the filenames in `names`, and save them in a
-file named `òut`.
-The first column of the output file is the same as the first column of the first filename in `names`; it
-is however checked internally if they are the same for all the files.
-The following columns of the output file follow the order in `names`.
+Read the column number `effect` (if is an Integer) or the one corresponding to the GR effect `effect`
+for the input group `group` (if is a String) from all the filenames stored in the Vector `names`, 
+and save them in a file named `out`.
 
+The first column of `out` will be the same as the first column of the first filename in `names`; it
+is however checked internally if the first column of all the other files coincides with this one.
+The following columns of `out` follow the order in `names`. Note that `effect`, if passed as Integer,
+must be > 1 (because 1 is the index of the first column, used as x-axis).
+
+`group` must be one among the following: $(GaPSE.VALID_GROUPS)
+If `group=$(GaPSE.VALID_GROUPS[end])`, then `effect` must be an integer (because 
+you are not selecting a specific effect in one of the native GaPSE groups).
+
+`xdt` and `ydt` are the data types to be used for respectively the first column and the 2-3-4-... columns 
+of `out`.
+Set `comments=true` if the files in `names` start with a header that must be skipped (its lines must start with
+#, otherwise they will not be recognised as comments).
+
+## Example
+
+julia> run(`cat file_1.txt`)
+# Generic comment line
+# of the file_1.txt
+1.0  0.999999  0.34545   0.00991
+...  ...       ...       ...
+
+julia> run(`cat file_2.txt`)
+# same, for file_2.txt
+1.0  0.58244  0.12123    0.000154
+...  ...       ...       ...
+
+julia> create_file_for_XiMultipoles("mix.txt", ["file_1.txt", "file_2.txt"], 3, "generic");
+julia> run(`cat mix.txt`)
+###############
+#    GaPSE    #
+############### 
+#
+#
+# This is a table containing the multipoles of the Two-Point Correlation Function (TPCF) 
+# for a generic group effect [not given, provied only the index 2] taken from the files:
+#   - L = 0 : file_1.txt
+#   - L = 1 : file_2.txt
+#
+# s [Mpc/h_0] 	xi_{L=0} 	 xi_{L=1} 		 
+1.0   0.34545   0.12123 
+...   ...       ...
 """
-function create_file_for_XiMultipoles(out::String, names::Vector{String}, 
-          effect::Union{String, Integer}, group::String="GNC"; 
-          comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
-     
+function create_file_for_XiMultipoles(out::String, names::Vector{String},
+     effect::Union{String,Integer}, group::String="GNC";
+     comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
+
      @assert length(names) > 0 "at least one file name must be given!"
-    
+     @assert group ∈ VALID_GROUPS "group must be one among $(VALID_GROUPS); $group is not valid!"
+
      if typeof(effect) <: Integer
-          @assert effect > 1 "if you pass effect as number, it must"*
-               " be an integer > 1, not $effect !"
-        
-     elseif group == "GNC" 
+          @assert effect > 1 "if you pass effect as number, it must" *
+                             " be an integer > 1, not $effect !"
+
+     elseif group == "GNC"
           error = "$effect is not a valid GR effect name.\n" *
-               "Valid GR effect names are the following:\n" *
-               string(GaPSE.GR_EFFECTS_GNC .* " , "...)
+                  "Valid GR effect names are the following:\n" *
+                  string(GaPSE.GR_EFFECTS_GNC .* " , "...)
           @assert (effect ∈ GaPSE.GR_EFFECTS_GNC) error
 
      elseif group == "LD"
           error = "$effect is not a valid GR effect name.\n" *
-               "Valid GR effect names are the following:\n" *
-               string(GaPSE.GR_EFFECTS_LD .* " , "...)
+                  "Valid GR effect names are the following:\n" *
+                  string(GaPSE.GR_EFFECTS_LD .* " , "...)
           @assert (effect ∈ GaPSE.GR_EFFECTS_LD) error
 
      elseif group == "GNCxLD"
           error = "$effect is not a valid GR effect name.\n" *
-               "Valid GR effect names are the following:\n" *
-               string(GaPSE.GR_EFFECTS_GNCxLD .* " , "...)
+                  "Valid GR effect names are the following:\n" *
+                  string(GaPSE.GR_EFFECTS_GNCxLD .* " , "...)
           @assert (effect ∈ GaPSE.GR_EFFECTS_GNCxLD) error
 
      elseif group == "LDxGNC"
           error = "$effect is not a valid GR effect name.\n" *
-               "Valid GR effect names are the following:\n" *
-               string(GaPSE.GR_EFFECTS_LDxGNC .* " , "...)
+                  "Valid GR effect names are the following:\n" *
+                  string(GaPSE.GR_EFFECTS_LDxGNC .* " , "...)
           @assert (effect ∈ GaPSE.GR_EFFECTS_LDxGNC) error
 
+     elseif group == "generic"
+          throw(AssertionError(
+               """if you set group="generic", you should't give in input a string (because 
+               you are not selecting a specific effect in a group) but an integer for effect."""
+          ))
      else
-          throw(AssertionError("string name for the group $group not valid!"))
+          throw(AssertionError("how did you arrive here?"))
      end
 
 
-     index = (typeof(effect) <: Integer) ? begin effect 
-        end : (group == "GNC") ? begin GaPSE.INDEX_GR_EFFECT_GNC[effect] +2
-        end : (group == "LD") ? begin GaPSE.INDEX_GR_EFFECT_LD[effect] + 2
-        end : (group == "GNCxLD") ? begin GaPSE.INDEX_GR_EFFECT_GNCxLD[effect] + 2
-        end : (group == "LDxGNC") ? begin GaPSE.INDEX_GR_EFFECT_LDxGNC[effect] + 2
-          end : throw(AssertionError("how dare you???"))
+     index = (typeof(effect) <: Integer || group == "generic") ? begin
+          effect
+     end : (group == "GNC") ? begin
+          GaPSE.INDEX_GR_EFFECT_GNC[effect] + 2
+     end : (group == "LD") ? begin
+          GaPSE.INDEX_GR_EFFECT_LD[effect] + 2
+     end : (group == "GNCxLD") ? begin
+          GaPSE.INDEX_GR_EFFECT_GNCxLD[effect] + 2
+     end : (group == "LDxGNC") ? begin
+          GaPSE.INDEX_GR_EFFECT_LDxGNC[effect] + 2
+     end : throw(AssertionError("how did you arrive here?"))
 
      table = readdlm(names[1], comments=comments)
      ss = GaPSE.vecstring_to_vecnumbers(table[:, 1]; dt=xdt)
 
      ALL = [
-          begin 
+          begin
                ops = readdlm(name, comments=comments)
                here_ss = GaPSE.vecstring_to_vecnumbers(ops[:, 1]; dt=xdt)
                col = GaPSE.vecstring_to_vecnumbers(ops[:, index]; dt=ydt)
@@ -143,34 +193,37 @@ function create_file_for_XiMultipoles(out::String, names::Vector{String},
      open(out, "w") do io
           println(io, GaPSE.BRAND)
           println(io, "#\n# This is a table containing the multipoles of the Two-Point Correlation Function (TPCF) ")
-  
-        EFFECT = typeof(effect) == String ? effect : "[not given, provied only the index $effect]"
+
+          EFFECT = typeof(effect) == String ? effect : "[not given, provied only the index $effect]"
           if group == "GNC"
                println(io, "# for the Galaxy Number Counts GR effect $EFFECT" *
-                              "\n#  taken from the files:")
+                           "\n#  taken from the files:")
           elseif group == "LD"
                println(io, "# for the Luminosity Distance perturbations GR effect $EFFECT" *
-                              "\n# taken from the files:")
+                           "\n# taken from the files:")
           elseif group == "GNCxLD"
                println(io, "# for the cross correlations between " *
-                              "Galaxy Number Counts and Luminosity Distance perturbations \n#" *
-                              "effect $EFFECT taken from the files:")
+                           "Galaxy Number Counts and Luminosity Distance perturbations \n#" *
+                           "effect $EFFECT taken from the files:")
           elseif group == "LDxGNC"
                println(io, "# for the cross correlations between " *
-                              "Luminosity Distance perturbations and Galaxy Number Counts \n#" *
-                              "effect $EFFECT taken from the files:")
+                           "Luminosity Distance perturbations and Galaxy Number Counts \n#" *
+                           "effect $EFFECT taken from the files:")
+          elseif group == "generic"
+               println(io, "# for a generic group " *
+                           "effect $EFFECT taken from the files:")
           else
-               throw(AssertionError("how dare you!"))
+               throw(AssertionError("how did you arrive here?"))
           end
 
-          for (i,name) in enumerate(names)
+          for (i, name) in enumerate(names)
                println(io, "#   - L = $(i-1) : $name")
           end
 
-          println(io, "#\n# s [Mpc/h_0] \t" .* join(["xi_{L=$(i-1)} \t " for i in 1:length(names)]) )
-           for (i, s) in enumerate(ss)
+          println(io, "#\n# s [Mpc/h_0] \t" .* join(["xi_{L=$(i-1)} \t " for i in 1:length(names)]))
+          for (i, s) in enumerate(ss)
                println(io, "$s \t " *
-                              join([" $(v[i]) \t " for v in ALL]))
+                           join([" $(v[i]) \t " for v in ALL]))
           end
      end
 end
@@ -205,7 +258,7 @@ struct XiMultipoles
           table = readdlm(file, comments=comments)
           ss = vecstring_to_vecnumbers(table[:, 1]; dt=xdt)
           all = [vecstring_to_vecnumbers(col; dt=ydt)
-                    for col in eachcol(table[:, 2:end])]
+                 for col in eachcol(table[:, 2:end])]
 
           for col in all
                @assert length(ss) == length(col) "the columns must have all the same length"

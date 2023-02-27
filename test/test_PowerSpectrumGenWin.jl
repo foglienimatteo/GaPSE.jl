@@ -89,7 +89,7 @@ end
 
 @testset "test PS_multipole_GenWin" begin
 
-     xi_filenames = "datatest/" .* [
+     xi_filenames = "datatest/PowerSpectrumGenWin/" .* [
           "xis_GNC_L0_noF_noobsvel_GenWin.txt",
           "xis_GNC_L1_noF_noobsvel_GenWin.txt",
           "xis_GNC_L2_noF_noobsvel_GenWin.txt",
