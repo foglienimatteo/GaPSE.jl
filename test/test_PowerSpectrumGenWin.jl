@@ -127,6 +127,10 @@ end
      @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks_fftlog, true_ks_fftlog)])
      @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks_fftlog, true_pks_fftlog)])
 
+     println("ks=$ks_fftlog;")
+     println("pks_fftlog=$pks_fftlog;")
+     println("true_pks_fftlog=$true_pks_fftlog;")
+
      rm(calc_name_file_ximultipoles)
 end
 
