@@ -41,14 +41,6 @@ include("TEST_DATA.jl")
 
 ##########################################################################################92
 
-@testset "test PowerSpectrumGenWin" begin
-     include("test_PowerSpectrumGenWin.jl")
-end
-
-@testset "test WindowF_QMultipoles" begin
-     include("test_WindowF_QMultipoles.jl")
-end
-
 @testset "test FFTLog" begin
      include("test_FFTLog.jl")
 end
@@ -99,6 +91,15 @@ end
 
 @testset "test PowerSpectrum" begin
      include("test_PowerSpectrum.jl")
+end
+
+
+@testset "test PowerSpectrumGenWin" begin
+     include("test_PowerSpectrumGenWin.jl")
+end
+
+@testset "test WindowF_QMultipoles" begin
+     include("test_WindowF_QMultipoles.jl")
 end
 
 

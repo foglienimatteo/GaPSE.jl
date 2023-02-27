@@ -2,7 +2,7 @@
 
 ![julia-version](https://img.shields.io/badge/julia_version-v1.8-9558B2?style=flat&logo=julia) 
 ![package-version](https://img.shields.io/github/v/release/foglienimatteo/GaPSE.jl?include_prereleases)
-![CI-build](https://img.shields.io/github/workflow/status/foglienimatteo/GaPSE.jl/Unit%20tests)
+![CI-build](https://img.shields.io/github/actions/workflow/status/foglienimatteo/GaPSE.jl/UnitTests.yml)
 ![size](https://img.shields.io/github/repo-size/foglienimatteo/GaPSE.jl) 
 ![license]( https://img.shields.io/github/license/foglienimatteo/GaPSE.jl)
 [![codecov](https://codecov.io/gh/foglienimatteo/GaPSE.jl/branch/main/graph/badge.svg?token=67GIZ9RA8Y)](https://codecov.io/gh/foglienimatteo/GaPSE.jl)
@@ -11,7 +11,7 @@
 GaPSE (Galaxy Power Spectrum Estimator) is a software for cosmological computations written in the [Julia Programming Language](https://julialang.org).
 
 IMPORTANT NOTE: This is a work-in-progress project! As a consequence, currently in this pre-release:
-- it is possible to compute the power spectrum/correlation function multipoles with L=1,2,3,... of the effects we'll show next, but some of the Galaxy Number Counts multipoles converge very slowly, so their computation is not still ready. The monopole (L=0)  computations instead do not give any problem with `quad`;
+- it is possible to compute the power spectrum/correlation function multipoles with L=1,2,3,... of the effects we'll show next, but few of the Galaxy Number Counts multipole effects converge very slowly, so their computation is not still 100% ready. However, the monopole (L=0) computations do not have any problem with `quad`, and even the sum of the GNC is not affected at all (because the slowly convergent terms are numerically insignificant);
 - you can't go further than $z \simeq 1.5$;
 - the code functions are well documented; check the github pages website https://foglienimatteo.github.io/GaPSE.jl/stable if you can't see correctly the analytical expressions written in the docstrings. However, the Two-Point Correlation Functions docstrings of the groups `LD`, `GNCxLD` and `LDxGNC` (see below for explanation) are still missing; 
 - few people used this code, so bugs are behind the corner; do not hesitate to raise the finger to point out them (see in the [How to report bugs, suggest improvements and/or contribute](#how-to-report-bugs-suggest-improvements-andor-contribute) section below)!

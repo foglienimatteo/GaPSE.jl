@@ -23,7 +23,7 @@
 
      for (s, res) in zip([1.0, 100.0, 1000.0, 2500.0], results)
           val = GaPSE.WindowFIntegrated_multipole(s, windowfint;
-               s_min=COSMO.s_min, s_max=COSMO.s_max,
+               s_min=2312.5774317555542, s_max=3054.483020067565, 
                L=0, alg=:lobatto, N_lob=100, N_trap=200, atol_quad=0.0, rtol_quad=1e-2, enhancer=1e6)
           @test isapprox(val, res, rtol=1e-4)
      end
@@ -35,7 +35,7 @@ end
      calc_name_file_Qmultipoles = "calc_Ql_multipoles_of_F_REFERENCE_z115.txt"
      isfile(calc_name_file_Qmultipoles) && rm(calc_name_file_Qmultipoles)
 
-     GaPSE.print_map_WindowFIntegrated_multipole(windowfint, "test/datatest/PowerSpectrumGenwin/Ql_multipoles_of_F_REFERENCE_z115.txt",
+     GaPSE.print_map_WindowFIntegrated_multipole(windowfint, calc_name_file_Qmultipoles,
           "datatest/WideA_ZA_background.dat"; z_min=1.0, z_max=1.5, st=1.0, N=1000, pr=true, L_max=4,
           alg=:lobatto, N_lob=100, N_trap=200, atol_quad=0.0, rtol_quad=1e-2, enhancer=1e6, h_0=0.7)
 
@@ -46,4 +46,6 @@ end
      for (qls,calc_qls) in zip(all_Q_l1, calc_all_Q_l1)
           @test all([isapprox(t, c, rtol=1e-4) for (t,c) in zip(qls,calc_qls) ])
      end
+
+     rm(calc_name_file_Qmultipoles)
 end

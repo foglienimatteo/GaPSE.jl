@@ -9,7 +9,7 @@
 # F(x, \mu) is the window function considered (for its analytical definition, check the code).
 #
 #
-# Time needed for this computation [in s]: 60.10437202453613
+# Time needed for this computation [in s]: 57.11073684692383
 # The keyword arguments were:
 # 		alg = lobatto
 # 		N_lob = 100
