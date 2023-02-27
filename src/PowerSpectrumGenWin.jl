@@ -277,7 +277,157 @@ end
 
 
 
+"""
+     PS_multipole_GenWin(
+          ximult::Union{XiMultipoles,String}, genwin::Union{GenericWindow,String};
+          alg::Symbol=:fftlog, L::Int=0,
+          cut_first_n::Int=0, cut_last_n::Int=0,
+          kwargs...)
 
+Return the `L`-order Power Spectrum (PS) multipole for a generic window function, through the
+following Fast Fourier Transform and the effective redshift approximation:
+
+```math
+     \\left\\langle \\hat{P}_L(k) \\right\\rangle = 
+          \\frac{2 L + 1}{A} (-i)^L
+          \\sum_{\\ell=0}^{\\infty} 
+          \\sum_{\\ell_1=0}^{\\infty} 
+          \\begin{pmatrix}
+               L & \\ell & \\ell_1 \\\\
+               0 & 0 & 0
+          \\end{pmatrix}^2
+          \\int_0^{\\infty}\\!\\mathrm{d} s \\, s^2 \\, \\xi_\\ell(s, s_{\\rm eff}) \\, 
+          j_L(k s) \\, Q_{\\ell_1}(s) \\, ,
+```
+
+where:
+- ``\\left\\langle \\hat{P}_L(k) \\right\\rangle`` is the order ``L`` Power Spectrum of the effect we 
+  are interested in; we are basing this expression on the Yamamoto estimator (see Yamamoto (2000) and 
+  Yamamoto (2006))
+- ``A`` is a normalization constant
+- the 2x3 matrix represents the Wigner-3j symbols
+- ``\\xi_\\ell`` is the order ``\\ell`` multipole of the Two-Point Correlation Function (TPCF)
+- ``j_L`` is the spherical Bessel function of order ``L``
+- ``s_{\\mathrm{eff}}`` is the comoving distance associated with the effective redshift (see the 
+  `TUTORIAL.ipynb` notebook)
+
+``Q_{\\ell_1}`` can be easily estimated with FFT methods:
+
+```math
+\\begin{split}
+    Q_{\\ell_1}(s) &:= \\int_0^{\\infty}\\mathrm{d}s_1 \\; s_1^2 \\;
+    \\phi(s_1) \\; F_{\\ell_1}(s_1, s) \\\\
+    F_{\\ell_1} (s_1 , s) &:= 
+    \\int_{4\\pi} \\mathrm{d}\\Omega_{\\mathbf{\\hat{s}}} \\,  
+    \\int_{4\\pi} \\mathrm{d}\\Omega_{\\mathbf{\\hat{s}}_1} \\,
+    \\phi(s_2) \\, W(\\mathbf{\\hat{s}}_1) \\, W(\\mathbf{\\hat{s}}_2) \\,
+    \\mathcal{L}_{\\ell_1}(\\mathbf{\\hat{s}} \\cdot \\mathbf{\\hat{s}}_1)  \\, .
+\\end{split}
+```
+
+where:
+- ``\\mathcal{L}_{\\ell_1}`` is the Legendre polynomial of order ``\\ell_1``
+- ``\\mathrm{d}\\Omega_{\\mathbf{\\hat{s}}}`` is the infinitesimal solid angle pointing in the 
+  direction of the versor ``\\mathbf{\\hat{s}}``
+- ``\\phi(s)`` and  ``W(\\mathbf{\\hat{s}})`` are respectively the radial and angular part of your 
+  window function (we remember that we assumed that such separability of the window function is possible)
+
+Check Eq.(2.13) of Castorina, Di Dio for the theoretical explanation of this formula.
+     
+Currenlty, there are two algorithms you can choose in order to perform the computation; you can choose 
+which one to use through the keyword value `alg`:
+- `alg = :fftlog` (default and recommended option) will employ the [FFTLog](https://github.com/marcobonici/FFTLog.jl) 
+  algorithm.
+- `alg = :twofast` will employ the TwoFAST `xicalc` function of the [TwoFAST](https://github.com/hsgg/TwoFAST.jl) 
+  Julia package. Note that in the computation the integration range ``0\\leq s \\leq \\infty`` 
+  is reduced to `int_s_min ≤ s ≤ int_s_max`. This alogrithm is not the ideal choise, because TwoFAST is conceived
+  for the direction PS -> TPCF, while is not 100% trustworthy for the other way round.
+
+IMPORTANT: no matter which algorithm you choose, you will need to give the input data in a
+LOGARITHMICALLY DISTRIBUTED scale. A linear distribution does not fit for the algorithms to apply.
+
+
+## Inputs
+
+- `ximult::Union{XiMultipoles,String}` : Two-Point Correlation functions to be used in the computation. You can
+  provide either a `XiMultipoles` struct containing them or the String filename where they are stored (that will 
+  be internally open with `XiMultipoles` too). 
+  The file must have a structure analogous to the `genwin` one (see the next Inputs item). You can use 
+  `create_file_for_XiMultipoles` to produce such a file.
+
+- `genwin::Union{GenericWindow,String}` : multipoles ``Q_{\\ell_1}`` of the generic window function you want 
+  to consider. You can provide either a `GenericWindow` struct containing them or the String filename 
+  where they are stored (that will be internally open with `GenericWindow` too). 
+  The file must have the following structure
+  ```text
+     \$ cat Ql_multipoles.txt 
+     # Any comment line in the file must start with a #
+     # you can have how many comment lines you want in the header; they 
+     # will be all skipped.
+     # Then you must provide in blank space separated columns:
+     # - as first column, the comoving distance values, measured in Mpc/h_0
+     # - from the second column onwards, all the Q_{\ell_1} multipoles you want;
+     #   they must be ordered followinf the ascending multipole order (so \ell_1 = 0
+     #   must be the 2 column), and you can go as further as you want in the multipole
+     #   order
+     # 
+     # s [Mpc/h_0] 	 Q_{l1=0} 	 Q_{l1=1} 	 Q_{l1=2} 	 ...
+     1.0 	0.9999999999999999 	 1.445269850978461e-7 	 0.000011917268941324522	...
+     21.0	0.9832914433168294 	 -0.0025537781362117177  -0.0033199998619560947	    ...
+     41.0	0.9669175943095181 	 -0.004923364937797496 	 -0.006463561496567318	    ... 	
+     ... 	... 				 ... 					 ...
+  ```
+
+
+##  Optional arguments
+
+Depending on the algorithm you choose, the options would change. The options in common are:
+- `pr::Bool=true` : want to print the automatic messages to the screen?
+- `L::Int=0` : which multipole order should I use for this computation? IT MUST MATCH 
+  THE MULTIPOLE ORDER OF THE INPUT TPCF!
+- `cut_first_n::Int=0` and `cut_last_n::Int=0` : you can cout the first and/or last n elements
+  of the input data, if they are highly irregular.
+
+The specific ones for `alg = :fftlog` are:
+- `ν::Union{Float64,Nothing} = nothing` : bias parameter, i.e. exponent used to "balance" the curve;
+  if `nothing`, will be set automatically to `1.5`
+- `n_extrap_low::Int = 500` and `n_extrap_high::Int = 500` : number of points to concatenate on the left/right
+  of the input x-axis `ss` vector, logarithmically distributed with the same ratio of the left/right-edge
+  elements of `ss`.
+- `n_pad::Int = 500` : number of zeros to be concatenated both on the left and
+  on the right of the input function. They stabilize a lot the algorithm.
+
+The specific ones for `alg = :twofast` are:
+- `epl::Bool=true` : do you want to extend the edges of the input vectors using two fitted
+  power-laws (obtained from `EPLs`)
+- `N_left::Int = 12` and `N_right::Int = 12` : number of points from left
+  right edges to be used for the power law fitting in `EPLs`. They matters only
+  if in the given input file ξ is not defined until the extremes of integration
+  `int_s_min` and `int_s_max`.
+- `int_s_min::Float64 = 1e-1` and `int_s_max::Float64 = 1e3`: extremes of integration; if `epl`
+  is set to `false`, their values will be automatically set to `min(ss...)` and `max(ss...)`
+  respectively. Their values do matter only if `epl=true`. 
+- `p0_left=[-2.0, 1.0]` and `p0_right=[-2.0, 1.0]`: vectors with the initial values for the left/right 
+  power-law fitting of `EPLs`; the power-law is in the form ``y = f(x) = b * x^s``, so the first vector 
+  value is the initial value of ``s`` (and of course the second is the one of ``b``).
+- `k0::Union{Nothing,Float64} = nothing` : starting point for the `xicalc` function; if `nothing`, 
+  it will be set `k0 = 1.0 / max(ss...)`
+- `right::Union{Float64,Nothing} = nothing` : do you want to cut the output elements with 
+  `ks .> right`? if set to `nothing`, no cut will be done.
+- `N::Int = 1024` : number of points to be used in Fourier transform 
+
+## Returns
+
+A `Tuple{Vector{Float64}, Vector{Float64}}` with:
+- the `k` values vector as first element;
+- the correspoding PS `pk` values vector as second one.
+
+
+See also: [`create_file_for_XiMultipoles`](@ref), [`XiMultipoles`](@ref), 
+[`GenericWindow`](@ref),
+[`V_survey`](@ref), [`A`](@ref), [`A_prime`](@ref),
+[`EPLs`](@ref),  [`print_PS_multipole`](@ref)
+"""
 function PS_multipole_GenWin(
      ximult::Union{XiMultipoles,String}, genwin::Union{GenericWindow,String};
      alg::Symbol=:fftlog, L::Int=0,
@@ -286,12 +436,13 @@ function PS_multipole_GenWin(
 
      @assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
      @assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
-     @assert cut_first_n + cut_last_n < length(ss) "cut_first_n + cut_last_n < length(ss) must hold!"
 
      XIMULT = typeof(ximult) == String ? XiMultipoles(ximult) : ximult
      GENWIN = typeof(genwin) == String ? GenericWindow(genwin) : genwin
 
-     a, b = 1 + cut_first_n, length(ss) - cut_last_n
+     @assert cut_first_n + cut_last_n < length(XIMULT.comdist) "cut_first_n + cut_last_n < length(XIMULT.comdist) must hold!"
+
+     a, b = 1 + cut_first_n, length(XIMULT.comdist) - cut_last_n
      SS, VEC_FS = XIMULT.comdist[a:b], [vec[a:b] for vec in XIMULT.multipoles]
 
      if alg == :twofast
@@ -299,6 +450,7 @@ function PS_multipole_GenWin(
           ks, _ = GaPSE.TwoFAST_PS_multipole(SS, VEC_FS[1]; cut_first_n=0, cut_last_n=0, kwargs...)
           res = zeros(length(ks))
 
+          #=
           for l in 0:length(XIMULT.multipoles)-1, l1 in 0:length(GENWIN.splines)-1
 
                w3j = convert(Float64, wigner3j(L, l, l1, 0, 0, 0))
@@ -306,16 +458,15 @@ function PS_multipole_GenWin(
                if (w3j ≈ 0.0) == false
                     qls = [GENWIN.splines[l1+1](s) for s in SS]
                     _, pks = GaPSE.TwoFAST_PS_multipole(SS, VEC_FS[l+1] .* qls; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
-                    res += w3j .* pks
+                    res += w3j^2 .* (2.0 * l1 + 1.0) .* VEC_FS[l+1] .* qls
+                    #s_index = findfirst(x->x>1000.0, SS)
+                    #println("(L,l,l1)=($L,$l,$l1) \t s = $(SS[s_index]) \t w3j = $w3j")
+                    #println("res=$(res[s_index]) \t xis=$(VEC_FS[l+1][s_index]) \t qls=$(qls[s_index])\n")
                end
           end
 
           return ks, res
-
-     elseif alg == :fftlog
-
-          ks, _ = GaPSE.FFTLog_PS_multipole(SS, VEC_FS[1]; cut_first_n=0, cut_last_n=0, kwargs...)
-          res = zeros(length(ks))
+          =#
 
           for l in 0:length(XIMULT.multipoles)-1, l1 in 0:length(GENWIN.splines)-1
 
@@ -323,12 +474,56 @@ function PS_multipole_GenWin(
 
                if (w3j ≈ 0.0) == false
                     qls = [GENWIN.splines[l1+1](s) for s in SS]
+                    res += w3j^2 .* (2.0 * l1 + 1.0) .* VEC_FS[l+1] .* qls
+                    #s_index = findfirst(x->x>1000.0, SS)
+                    #println("(L,l,l1)=($L,$l,$l1) \t s = $(SS[s_index]) \t w3j = $w3j")
+                    #println("res=$(res[s_index]) \t xis=$(VEC_FS[l+1][s_index]) \t qls=$(qls[s_index])\n")
+               end
+          end
+
+          _, pks = GaPSE.FFTLog_PS_multipole(SS, res; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
+
+          return ks, pks
+
+     elseif alg == :fftlog
+
+          ks, _ = GaPSE.FFTLog_PS_multipole(SS, VEC_FS[1]; cut_first_n=0, cut_last_n=0, kwargs...)
+          res = zeros(length(ks))
+
+          #=
+          for l in 0:length(XIMULT.multipoles)-1, l1 in 0:length(GENWIN.splines)-1
+
+               w3j = convert(Float64, wigner3j(L, l, l1, 0, 0, 0))
+
+               if (w3j ≈ 0.0) == false
+                    qls = [GENWIN.splines[l1+1](s) for s in SS]
                     _, pks = GaPSE.FFTLog_PS_multipole(SS, VEC_FS[l+1] .* qls; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
-                    res += w3j .* pks
+                    res += w3j^2 .* (2.0 * l1 + 1.0) .* VEC_FS[l+1] .* qls
+                    #s_index = findfirst(x->x>1000.0, SS)
+                    #println("(L,l,l1)=($L,$l,$l1) \t s = $(SS[s_index]) \t w3j = $w3j")
+                    #println("res=$(res[s_index]) \t xis=$(VEC_FS[l+1][s_index]) \t qls=$(qls[s_index])\n")
                end
           end
 
           return ks, res
+          =#
+
+          for l in 0:length(XIMULT.multipoles)-1, l1 in 0:length(GENWIN.splines)-1
+
+               w3j = convert(Float64, wigner3j(L, l, l1, 0, 0, 0))
+
+               if (w3j ≈ 0.0) == false
+                    qls = [GENWIN.splines[l1+1](s) for s in SS]
+                    res += w3j^2 .* (2.0 * l1 + 1.0) .* VEC_FS[l+1] .* qls
+                    #s_index = findfirst(x->x>1000.0, SS)
+                    #println("(L,l,l1)=($L,$l,$l1) \t s = $(SS[s_index]) \t w3j = $w3j")
+                    #println("res=$(res[s_index]) \t xis=$(VEC_FS[l+1][s_index]) \t qls=$(qls[s_index])\n")
+               end
+          end
+
+          _, pks = GaPSE.FFTLog_PS_multipole(SS, res; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
+
+          return ks, pks
 
      else
           throw(AssertionError(
