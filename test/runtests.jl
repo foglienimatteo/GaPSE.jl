@@ -45,6 +45,10 @@ include("TEST_DATA.jl")
      include("test_PowerSpectrumGenWin.jl")
 end
 
+@testset "test WindowF_QMultipoles" begin
+     include("test_WindowF_QMultipoles.jl")
+end
+
 @testset "test FFTLog" begin
      include("test_FFTLog.jl")
 end
