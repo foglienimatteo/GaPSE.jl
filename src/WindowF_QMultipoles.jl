@@ -18,14 +18,86 @@
 #
 
 
+"""
+     WindowFIntegrated_multipole(
+          s, windowfint::GaPSE.WindowFIntegrated;
+          s_min, s_max,
+          L::Int=0, alg::Symbol=:lobatto,
+          N_lob::Int=100, N_trap::Int=200,
+          atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
+          enhancer::Float64=1e6,
+          )
+
+Evaluate the multipole of order `L` of the input Integrated Window Function `windowfint` in the 
+input comoving distance `s`. 
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
+
+The analytical expression of the Integrated Window Function multipole ``Q_{\\ell_1}`` is the following:
+
+```math
+Q_{\\ell_1}(s) = 
+    \\int_{-1}^{1} \\mathrm{d}\\mu \\; \\mathcal{L}_{\\ell_1}(\\mu) 
+    \\; \\mathcal{F}(s, \\mu)
+```
+
+where ``\\mathcal{L}_{\\ell_1}`` is the Legendre polynomial of order ``\\ell_1``, ``\\mu`` the 
+cosine angle, 
+
+```math
+\\mathcal{F}(s, \\mu) = 
+    \\int_0^\\infty \\mathrm{d}s_1 \\, \\phi(s_1) \\,  
+    \\phi\\left(\\sqrt{s_1^2 + s^2 + 2 \\, s_1 \\, s \\, \\mu}\\right) 
+    \\, F\\left(\\frac{s}{s_1}, \\mu \\right)
+```
+
+the integrated window function associated to the window function ``F\\left(\\frac{s}{s_1}, \\mu \\right)``
+(check the docstring of `WindowF` for its definition) and ``\\phi`` the radial window function, obtained by 
+`ϕ`.
+
+
+## Optional arguments
+
+- `s_min` and `s_max` (mandatory keyword arguments) : min and max comoving distance of the survey;
+  their values will be internally used by 
+
+- `L::Int = 0`: order of the Legendre polynomial to be used
+
+- `alg::Symbol = :lobatto` : algorithm to be used for the integration; the valid options 
+  are (other values will lead to `AssertionError`):
+  - `:quad` -> the integration over ``\\mu`` will be preformed through the Julia function `quadgk` 
+  from the [`QuadGK.jl`](https://github.com/JuliaMath/QuadGK.jl) Julia package, that uses an adaptive 
+  Gauss-Kronrod quadrature.
+  - `:trap` -> the integration over ``\\mu`` will be preformed through the Julia function `trapz` 
+  from the [`Trapz.jl`](https://github.com/francescoalemanno/Trapz.jl) Julia package, that uses the
+  simple trapezoidal rulae.
+  - `:lobatto` -> the integration over ``\\mu`` will be preformed through the Julia function `gausslobatto` 
+  from the [`FastGaussQuadrature.jl`](https://github.com/JuliaApproximation/FastGaussQuadrature.jl) Julia package, 
+  that uses the Gauss-Lobatto quadrature. 
+
+- `N_lob::Int = 100` : number of points to be used in the sampling made by the function `trapz`.
+  Note that these options will have an effect only if you se `alg = :quad`.
+
+- `N_trap::Int = 200` : number of points to be used in the sampling made by the function `trapz`.
+  Note that these options will have an effect only if you se `alg = :quad`.
+
+- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+  to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
+  because the time for evaluation increase quickly.
+  Note that these options will have an effect only if you se `alg = :quad`.
+
+- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+  the returned value is NOT modified by this value, because after a multiplication
+  the internal result is divided by `enhancer`.
+
+See also: [`WindowFIntegrated`](@ref), [`WindowF`](@ref), [`ϕ`](@ref)
+"""
 function WindowFIntegrated_multipole(
      s, windowfint::GaPSE.WindowFIntegrated;
      s_min, s_max,
      L::Int=0, alg::Symbol=:lobatto,
      N_lob::Int=100, N_trap::Int=200,
      atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
-     enhancer::Float64=1e6,
-     kwargs...)
+     enhancer::Float64=1e6)
 
      @assert alg ∈ GaPSE.VALID_INTEGRATION_ALGORITHM ":$alg is not a valid Symbol for \"alg\"; they are: \n\t" *
                                                      "$(":".*string.(VALID_INTEGRATION_ALGORITHM) .* vcat([" , " for i in 1:length(VALID_INTEGRATION_ALGORITHM)-1], " .")... )"
@@ -189,27 +261,30 @@ end
 
 
 """
-     WindowFIntegrated_multipole(
+     print_map_WindowFIntegrated_multipole(
           ss::Vector{Float64},
           windowFint::Union{String,GaPSE.WindowFIntegrated}, out::String;
           s_min, s_max,
-          pr::Bool=true, L_max::Int=4, kwargs...)
+          pr::Bool=true, L_max::Int=4, alg::Symbol=:lobatto,
+          N_lob::Int=100, N_trap::Int=200,
+          atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
+          enhancer::Float64=1e6)
 
-     WindowFIntegrated_multipole(
+     print_map_WindowFIntegrated_multipole(
           s_zs::Vector{Float64},
           windowFint::Union{String,GaPSE.WindowFIntegrated}, out::String,
           file_data::String; z_min, z_max,
           names_bg=GaPSE.NAMES_BACKGROUND, h_0=0.7, kwargs...))
 
-     WindowFIntegrated_multipole(
+     print_map_WindowFIntegrated_multipole(
           windowFint::Union{String,GaPSE.WindowFIntegrated}, out::String,
           file_data::String; z_min, z_max,
           names_bg=GaPSE.NAMES_BACKGROUND, h_0=0.7, N::Int=100, 
           m::Float64=2.1, st::Float64=0.0, kwargs...)
 
 Evaluate the integrated window function multipoles ``Q_{\\ell_1}(s)`` in a vector of ``s`` values for all
-the multipoles ``0 ≤ \\ell_1 ≤ L_\\mathrm{max}``, and print the results in the `out` file.
-
+the multipoles ``0 \\leq \\ell_1 \\leq L_\\mathrm{max}``, and print the results in the `out` file.
+The computation of the multipole is performed through `WindowFIntegrated_multipole`.
 
 The first method takes as input:
 - `ss::Vector{Float64}` :  the vector of s points where to 
@@ -254,22 +329,75 @@ Legendre polynomial of order ``\\ell_1`` and ``\\mathcal{F}(x, μ)`` the
 integrated window function. Check the documentation of `WindowFIntegrated` for its definition.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
+## Example
+
+julia> windowfint = GaPSE.WindowFIntegrated(PATH_TO_GAPSE*"data/IntegrF_REFERENCE_pi2_z115.txt");
+julia> GaPSE.print_map_WindowFIntegrated_multipole(windowfint, "my_Ql_multipoles.txt", 
+    PATH_TO_GAPSE*"data/WideA_ZA_background.dat"; z_min = 1.0, z_max=1.5, st = 1.0, N=500, pr=false)
+julia> run(`head -n 20  \$(DIR*"my_Ql_multipoles.txt")`)
+###############
+#    GaPSE    #
+############### 
+#
+# This is an integration map of the Q_{l_1} multipoles, defined as:
+#      Q_{l_1}(s_1, s \\mu) = \\int_{-1}^{+1} \\mathrm{d}\\mu \\mathcal{L}_{l_1}(\\mu) \\mathcal{F}(s, \\mu)
+#      \\mathcal{F}(s, \\mu) = \\int_0^{\\infty} \\mathrm{d}s_1 s_1^2 \\phi(s_1) \\phi(\\sqrt(s_1^2 + s^2 + 2 s_1 s \\mu)) F(s/s_1, \\mu)
+# where \\mathcal{L}_{l_1}(\\mu) is tre Legendre polynomial if order l1 and
+# F(x, \\mu) is the window function considered (for its analytical definition, check the code).
+#
+#
+# Time needed for this computation [in s]: 27.256186962127686
+# The keyword arguments were:
+#
+# s [h_0^{-1} Mpc] 	 Q_{l_1=0} 	 Q_{l_1=1} 	 Q_{l_1=2} 	 Q_{l_1=3} 	 Q_{l_1=4} 	 
+1.0 	 4.1857800000750543e11 	 -4.377435879373042e7 	 -5.084259164821501e8 	 1.2380785453994218e6 	 -3.641597411371149e8 	 
+13.852533751787348 	 4.1473071900503394e11 	 -6.063857839848524e8 	 -1.342493986435839e9 	 1.7150523594728626e7 	 -2.0225033264194965e8
+...            ...            ...            ...            ...            ...
+
+
 ## Optional arguments
 
 As optional arguments of the first method:
 
-- `alg::Symbol = :trap` : algorithm to be used for the integration; the valid options are `:quad`
-  (that will recall `integrated_F_quadgk`) and `:trap` (that will recall `integrated_F_trapz`);
-  other values will lead to `AssertionError`
-- `N::Int = 1000` : number of points to be used for the sampling of `trapz`; it's useless if you set
-  `alg = :quad`;
-- `rtol=1e-2` and `atol=0.0` : relative and absoute tolerance for `quadgk`; they are useless if you set
-  `alg = :trap`;
+- `s_min` and `s_max` (mandatory keyword arguments) : min and max comoving distance of the survey;
+  their values will be internally used by 
+
 - `pr::Bool = true` : do you want to see the progress-bar of the computation?
 
+- `L_max::Int64 = 4` : maximum multipole order to be computed
+
+- `alg::Symbol = :lobatto` : algorithm to be used for the integration; the valid options 
+  are (other values will lead to `AssertionError`):
+  - `:quad` -> the integration over ``\\mu`` will be preformed through the Julia function `quadgk` 
+  from the [`QuadGK.jl`](https://github.com/JuliaMath/QuadGK.jl) Julia package, that uses an adaptive 
+  Gauss-Kronrod quadrature.
+  - `:trap` -> the integration over ``\\mu`` will be preformed through the Julia function `trapz` 
+  from the [`Trapz.jl`](https://github.com/francescoalemanno/Trapz.jl) Julia package, that uses the
+  simple trapezoidal rulae.
+  - `:lobatto` -> the integration over ``\\mu`` will be preformed through the Julia function `gausslobatto` 
+  from the [`FastGaussQuadrature.jl`](https://github.com/JuliaApproximation/FastGaussQuadrature.jl) Julia package, 
+  that uses the Gauss-Lobatto quadrature. 
+
+- `N_lob::Int = 100` : number of points to be used in the sampling made by the function `trapz`.
+  Note that these options will have an effect only if you se `alg = :quad`.
+
+- `N_trap::Int = 200` : number of points to be used in the sampling made by the function `trapz`.
+  Note that these options will have an effect only if you se `alg = :quad`.
+
+- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+  to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
+  because the time for evaluation increase quickly.
+  Note that these options will have an effect only if you se `alg = :quad`.
+
+- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+  the returned value is NOT modified by this value, because after a multiplication
+  the internal result is divided by `enhancer`.
+
 The optional arguments given to the second method will be directly given to the first one.
-The only two exceptions are options relative to the background data, managed internally by the struct
-`BackgroundData`:
+The only two exceptions are:
+
+- `s_min` and `s_max` (mandatory keyword arguments) : min and max redshift of the survey;
+  their values will be internally coverted to comoving distances and passed to the first method
 
 - `names = NAMES_BACKGROUND` : the column names of the `file_data`. If the colum order change from
   the default one `NAMES_BACKGROUND`, you must set as input the vector of string with the correct
@@ -282,9 +410,21 @@ The only two exceptions are options relative to the background data, managed int
   Change this value to `1.0` if the input data do not have this issue, or to your value of interest 
   (`0.67`, `0.5`, ...).
 
-See also: [`integrated_F_quadgk`](@ref), [`integrated_F_trapz`](@ref),
-[`ϕ`](@ref), [`WindowF`](@ref), [`WindowFIntegrated`](@ref),
-[`BackgroundData`](@ref)
+
+The optional arguments given to the third method will be directly given to the first one again.
+The only two exceptions are:
+
+- `names_bg=GaPSE.NAMES_BACKGROUND` and `h_0=0.7` : same as for the second method
+
+- `N::Int=100` : number of points to be used in the liearly spaced comoving distance vector
+
+- `st::Float64=0.0` : starting comoving distance of the vector
+
+- `m:Float64 = 2.1` : coefficient that set the maximum comoving distance of the vector, equals to ``m * s_max``,
+  where `s_max` is the comoving distance associated to the redhsift `z_max`
+
+See also:  [`WindowFIntegrated_multipole`](@ref), [`WindowFIntegrated`](@ref), 
+[`WindowF`](@ref), [`ϕ`](@ref), [`BackgroundData`](@ref)
 """
 print_map_WindowFIntegrated_multipole
 

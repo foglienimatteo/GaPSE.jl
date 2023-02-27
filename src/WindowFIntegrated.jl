@@ -386,6 +386,18 @@ The only two exceptions are options relative to the background data, managed int
   Change this value to `1.0` if the input data do not have this issue, or to your value of interest 
   (`0.67`, `0.5`, ...).
 
+The optional arguments given to the third method will be directly given to the first one again.
+The only two exceptions are:
+
+- `names_bg=GaPSE.NAMES_BACKGROUND` and `h_0=0.7` : same as for the second method
+
+- `N_ss::Int=100` : number of points to be used in the liearly spaced comoving distance vector
+
+- `st::Float64=0.0` : starting comoving distance of the vector
+
+- `m:Float64 = 2.1` : coefficient that set the maximum comoving distance of the vector, equals to ``m * s_max``,
+  where `s_max` is the comoving distance associated to the redhsift `z_max`
+
 See also: [`integrated_F_quadgk`](@ref), [`integrated_F_trapz`](@ref),
 [`ϕ`](@ref), [`WindowF`](@ref), [`WindowFIntegrated`](@ref),
 [`BackgroundData`](@ref)
