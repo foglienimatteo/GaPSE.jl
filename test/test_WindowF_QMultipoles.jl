@@ -69,8 +69,8 @@ end
           cs = GaPSE.CosmoSplines("datatest/WideA_ZA_background.dat", 0.05, 0.20; h=0.7, s_lim = 0.01, s_b = 0.0, 𝑓_evo = 0.0)
 
           GaPSE.print_map_WindowFIntegrated_multipole(cs.z_of_s.(ss), windowfint, calc_name_file_Qmultipoles,
-               "datatest/WideA_ZA_background.dat"; z_min=0.05, z_max=0.20, st=1.0, N=1000, pr=false, L_max=4,
-               alg=:quad, N_lob=100, N_trap=200, atol_quad=0.0, rtol_quad=1e-2, enhancer=1e6, h_0=0.7, m=2.1)
+               "datatest/WideA_ZA_background.dat"; z_min=0.05, z_max=0.20, pr=false, L_max=4,
+               alg=:quad, N_lob=100, N_trap=200, atol_quad=0.0, rtol_quad=1e-2, enhancer=1e6, h_0=0.7)
 
           calc_ss, calc_all_Q_l1 = GaPSE.readxall(calc_name_file_Qmultipoles)
 
