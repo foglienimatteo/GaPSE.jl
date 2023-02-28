@@ -970,7 +970,6 @@ end
 
           ks, all_pks = GaPSE.readxall(true_pk; comments= true, xdt=ComplexF64, ydt=ComplexF64) 
 
-
           in_table = readdlm(input; comments=true)
           in_ss = convert(Vector{Float64}, in_table[:, 1])
           in_xis = convert(Vector{Float64}, in_table[:, 2])

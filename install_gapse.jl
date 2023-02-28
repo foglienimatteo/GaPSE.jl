@@ -17,31 +17,6 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-#=
-"ArbNumerics",
-"AssociatedLegendrePolynomials",
-"DelimitedFiles",
-"Dierckx",
-"Documenter",
-"FFTW",
-"FastGaussQuadrature",
-"GridInterpolations",
-"HCubature",
-"IJulia",
-"LegendrePolynomials",
-"LinearAlgebra",
-"LsqFit",
-"NPZ",
-"Printf",
-"ProgressMeter",
-"QuadGK",
-"SpecialFunctions",
-"Suppressor",
-"Test",
-"Trapz",
-"TwoFAST",
-"WignerSymbols",
-=#
 
 using Pkg
 Pkg.activate(normpath(@__DIR__))

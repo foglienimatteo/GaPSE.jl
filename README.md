@@ -66,7 +66,7 @@ Currently, this package is not in the Julia package registries. Assuming that yo
 
 - go inside the directory of GaPSE (`$ cd GaPSE.jl` in the shell) 
 
-Inside the directory, there is a file called `install_gapse.jl`, which is a Julia file conceived for downloading and installing all the dependencies of GaPSE. You can run it by typing in the terminal:
+Inside the directory, there is a file called `install_gapse.jl`, which is a Julia script conceived for downloading and installing all the dependencies of GaPSE. You can run it by typing in the terminal:
 
 ```bash
      $ julia install_gapse.jl
@@ -94,7 +94,7 @@ There are three ways in order to use this code:
 
 - you can write whatever instruction inside the file `GaPSE-exe.jl` and then run in the command line
   ```bash
-     $ julia GaPSE-exe.jl
+    $ julia GaPSE-exe.jl
   ```
 
 - you can open a Julia REPL session, include the code with
@@ -105,7 +105,15 @@ There are three ways in order to use this code:
 
 - you can run the same `include("<path-to-GaPSE.jl-directory>/src/GaPSE.jl")` command in a Jupyter Notebook, and use the code functions inside it. This is by far the most confortable way.
 
-Some `.ipynb`s are already provided in the directory `ipynbs` , and we encourage you to follow the `TUTORIAL.ipynb` file first. The basic structure of the code and the most important functions are there presented.
+Some `.ipynb`s are already provided in the directory `ipynbs` :
+- we encourage you to follow the `ipynbs/TUTORIAL.ipynb` file first. The basic structure of the code and the most important functions are there presented
+- `ipynbs/Computations_b1p5-sb0-fevo0.ipynb` explains the analytical Primordial Non-Gaussianities model we use here, compute its contribution in the redshift bin $1.0 \leq z \leq 1.5$ and compare it with the GNC effects, all using our toy-model window function with angular opening $\theta_{\rm max} = \pi/2$
+- `ipynbs/Generic_Window.ipynb` explains how to use GaPSE with a generic Window Function of your choice
+- the `ipynbs/Computations_b1p5-sb0-fevo0.jl` Julia file its the translation into script of `ipynbs/Computations_b1p5-sb0-fevo0.ipynb`; you can easily run it from the command line with:
+  ```bash
+    $ julia Computations_b1p5-sb0-fevo0.jl
+  ```
+
 The code is well tested and documented: almost each struct/function has a docstring that you can easily access in Julia with `?<name-of-the-struct/function>`, and there is an acitive GitHub Pages website with the [latest stable documentation](https://foglienimatteo.github.io/GaPSE/stable).
 
 ## Dependencies

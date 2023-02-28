@@ -28,7 +28,7 @@ const global B = 1.5     # Galaxy bias
 const global S_B = 0.0   # Magnification bias
 const global F_EVO = 0.0 # Evolution bias
 const global filenames_appendix = "_b1p5-sb0-fevo0"
-COMPUTE_XIS_GNC = false
+COMPUTE_XIS_GNC = false # set this to true if you want to compute the TPCFs of the GNC!
 # This is the directory name where to put the files computed in the 
 # following steps; makes sure that it's name ends with "/" !
 DIR = "ARTICLE" * filenames_appendix * "/"
