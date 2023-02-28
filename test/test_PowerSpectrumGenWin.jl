@@ -21,6 +21,27 @@
 @testset "test create_file_for_XiMultipoles" begin
      RTOL = 1e-5
 
+     @testset "zeros" begin
+          name = "datatest/PowerSpectrumGenWin/xis_LD_L0123_lob_noF_specific_ss.txt"
+          calc_name = "spec_ss.txt"
+          isfile(calc_name) && rm(calc_name)
+
+          names = "datatest/LD_SumXiMultipoles/" .* [
+               "xis_LD_L0_lob_noF_specific_ss.txt",
+               "xis_LD_L1_lob_noF_specific_ss.txt",
+               "xis_LD_L2_lob_noF_specific_ss.txt",
+               "xis_LD_L3_lob_noF_specific_ss.txt",
+          ]
+
+          @test_throws AssertionError GaPSE.create_file_for_XiMultipoles(calc_name, names, 1, "LDxGNC")
+          @test_throws AssertionError GaPSE.create_file_for_XiMultipoles(calc_name, names, "newton_doppler", "LD")
+          @test_throws AssertionError GaPSE.create_file_for_XiMultipoles(calc_name, names, "idk", "GNC")
+          @test_throws AssertionError GaPSE.create_file_for_XiMultipoles(calc_name, names, "auto_newton", "LDxGNC")
+          @test_throws AssertionError GaPSE.create_file_for_XiMultipoles(calc_name, names, "auto_newton", "GNCxLD")
+
+          isfile(calc_name) && rm(calc_name)
+     end
+
      @testset "first" begin
           name = "datatest/PowerSpectrumGenWin/xis_LD_L0123_lob_noF_specific_ss.txt"
           calc_name = "spec_ss.txt"
