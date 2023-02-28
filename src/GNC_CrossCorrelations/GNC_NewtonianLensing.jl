@@ -19,64 +19,64 @@
 
 
 function integrand_ξ_GNC_Newtonian_Lensing(
-  IP::Point, P1::Point, P2::Point,
-  y, cosmo::Cosmology; Δχ_min::Float64=1e-1,
-  obs::Union{Bool,Symbol}=:noobsvel)
+     IP::Point, P1::Point, P2::Point,
+     y, cosmo::Cosmology; Δχ_min::Float64=1e-1,
+     obs::Union{Bool,Symbol}=:noobsvel)
 
-  s1, D_s1, f_s1 = P1.comdist, P1.D, P1.f
-  s2 = P2.comdist
-  χ2, D2, a2 = IP.comdist, IP.D, IP.a
-  s_b_s2 = cosmo.params.s_b
-  b_s1 = cosmo.params.b
-  Ω_M0 = cosmo.params.Ω_M0
+     s1, D_s1, f_s1 = P1.comdist, P1.D, P1.f
+     s2 = P2.comdist
+     χ2, D2, a2 = IP.comdist, IP.D, IP.a
+     s_b_s2 = cosmo.params.s_b
+     b_s1 = cosmo.params.b
+     Ω_M0 = cosmo.params.Ω_M0
 
-  Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-  Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
+     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
+     Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
 
-  common = D_s1 * ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) * (5 * s_b_s2 - 2) / (a2 * s2)
+     common = D_s1 * ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) * (5 * s_b_s2 - 2) / (a2 * s2)
 
-  if Δχ2 ≥ Δχ_min
-    new_J00 = 1 / 5 * (f_s1 * χ2 * (3 * y^2 - 1) - 3 * y * s1 * f_s1 - 5 * y * s1 * b_s1)
-    new_J02 = 1 / (14 * Δχ2^2) * (
-      7 * s1 * b_s1 * (-2 * χ2^2 * y + χ2 * s1 * (y^2 + 3) - 2 * y * s1^2) +
-      f_s1 * (
-        4 * χ2^3 * (3 * y^2 - 1) - 2 * χ2^2 * y * s1 * (3 * y^2 + 8)
-        +
-        χ2 * s1^2 * (9 * y^2 + 11) - 6 * y * s1^3
-      )
-    )
-    new_J04 = 3 / (70 * Δχ2^4) * f_s1 * (
-                χ2^5 * (6 * y^2 - 2) + 6 * χ2^4 * y * s1 * (y^2 - 3)
-                -
-                χ2^3 * s1^2 * (y^4 + 12 * y^2 - 21)
-                +
-                2 * χ2^2 * y * s1^3 * (y^2 + 3) - 12 * χ2 * s1^4
-                +
-                4 * y * s1^5
-              )
+     if Δχ2 ≥ Δχ_min
+          new_J00 = 1 / 5 * (f_s1 * χ2 * (3 * y^2 - 1) - 3 * y * s1 * f_s1 - 5 * y * s1 * b_s1)
+          new_J02 = 1 / (14 * Δχ2^2) * (
+               7 * s1 * b_s1 * (-2 * χ2^2 * y + χ2 * s1 * (y^2 + 3) - 2 * y * s1^2) +
+               f_s1 * (
+               4 * χ2^3 * (3 * y^2 - 1) - 2 * χ2^2 * y * s1 * (3 * y^2 + 8)
+               +
+               χ2 * s1^2 * (9 * y^2 + 11) - 6 * y * s1^3
+               )
+          )
+          new_J04 = 3 / (70 * Δχ2^4) * f_s1 * (
+               χ2^5 * (6 * y^2 - 2) + 6 * χ2^4 * y * s1 * (y^2 - 3)
+               -
+               χ2^3 * s1^2 * (y^4 + 12 * y^2 - 21)
+               +
+               2 * χ2^2 * y * s1^3 * (y^2 + 3) - 12 * χ2 * s1^4
+               +
+               4 * y * s1^5
+          )
 
-    I00 = cosmo.tools.I00(Δχ2)
-    I20 = cosmo.tools.I20(Δχ2)
-    I40 = cosmo.tools.I40(Δχ2)
+          I00 = cosmo.tools.I00(Δχ2)
+          I20 = cosmo.tools.I20(Δχ2)
+          I40 = cosmo.tools.I40(Δχ2)
 
-    return common * (new_J00 * I00 + new_J02 * I20 + new_J04 * I40)
+          return common * (new_J00 * I00 + new_J02 * I20 + new_J04 * I40)
 
-  else
-    #return - 2.0 / 3.0 * Δχ2 * f(Δχ2) * D(Δχ2) * cosmo.tools.σ_2^2.0
-    #return - 2.0 / 3.0 * common * χ2 * f_s1 * cosmo.tools.σ_2^2
-    return -common * s1 * (f_s1 + 5 * b_s1) * cosmo.tools.σ_0 / 5.0
-  end
+     else
+          #return - 2.0 / 3.0 * Δχ2 * f(Δχ2) * D(Δχ2) * cosmo.tools.σ_2^2.0
+          #return - 2.0 / 3.0 * common * χ2 * f_s1 * cosmo.tools.σ_2^2
+          return -common * s1 * (f_s1 + 5 * b_s1) * cosmo.tools.σ_0 / 5.0
+     end
 end
 
 
 function integrand_ξ_GNC_Newtonian_Lensing(
-  χ2::Float64, s1::Float64, s2::Float64,
-  y, cosmo::Cosmology;
-  kwargs...)
+     χ2::Float64, s1::Float64, s2::Float64,
+     y, cosmo::Cosmology;
+     kwargs...)
 
-  P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-  IP = Point(χ2, cosmo)
-  return integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; kwargs...)
+     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+     IP = Point(χ2, cosmo)
+     return integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
@@ -108,13 +108,13 @@ The analytical expression of this integrand is the following:
 
 ```math
 \\begin{equation}
-    f^{\\delta\\kappa} (\\chi_2, s_1, s_2, y) =
-    D_1 J^{\\delta \\kappa}_{\\alpha}
-    \\left[ 
-        J^{\\delta \\kappa}_{00} I_0^0 ( \\Delta\\chi_2 ) + 
-        J^{\\delta \\kappa}_{02} I_2^0 ( \\Delta \\chi_2 ) + 
-        J^{\\delta \\kappa}_{04} I_4^0 ( \\Delta \\chi_2 ) 
-    \\right] \\, ,
+     f^{\\delta\\kappa} (\\chi_2, s_1, s_2, y) =
+     D_1 J^{\\delta \\kappa}_{\\alpha}
+     \\left[ 
+          J^{\\delta \\kappa}_{00} I_0^0 ( \\Delta\\chi_2 ) + 
+          J^{\\delta \\kappa}_{02} I_2^0 ( \\Delta \\chi_2 ) + 
+          J^{\\delta \\kappa}_{04} I_4^0 ( \\Delta \\chi_2 ) 
+     \\right] \\, ,
 \\end{equation}
 ```
 
@@ -122,52 +122,52 @@ where
 
 ```math
 \\begin{split}
-    J^{\\delta \\kappa}_{\\alpha} &=
-    \\frac{
-        \\mathcal{H}_0 ^2 \\Omega_{\\mathrm{M}0} D (\\chi_2)
-    }{
-        a(\\chi_2 ) s_2
-    } 
-    (\\chi_2 - s_2 ) (5s_{\\mathrm{b}, 2} - 2) 
-    \\, , \\\\
-    %%%%%%%%%%%%%%%%%%%%%%%%
-    J^{\\delta \\kappa}_{00} &=
-        \\frac{1}{5}
-        \\left[
-            (3 y^2 - 1) \\chi_2 f_1 - y s_1(3 f_1 + 5 b_1) 
-        \\right] 
-    \\, , \\\\
-    %%%%%%%%%%%%%%%%%%%%%%%%
-    J^{\\delta \\kappa}_{02} &=
-        \\frac{1}{14 \\Delta\\chi_2^2} 
-        \\left\\{
-            4 f_1 (3 y^2 - 1) \\chi_2^3 - 
-            2 y 
-            \\left[
-                (3 y^2 + 8) f_1 + 7 b_1
-            \\right] s_1 \\chi_2^2 +
-            \\right. \\nonumber \\\\
-            &\\left.\\qquad \\qquad\\qquad
-            \\left[
-                (9 y^2 + 11) f_1 - 7 (y^2 + 3) b_1
-            \\right] s_1^2 \\chi_2 -
-            2 y \\left[7 b_1 + 3 f_1 \\right] s_1^3
-        \\right\\} 
-    \\, , \\\\
-    %%%%%%%%%%%%%%%%%%%%%%%%
-    J^{\\delta \\kappa}_{04} &=
-    \\frac{f_1}{70 \\Delta\\chi_2^4 }
-    \\left\\{
-        (6 y^2 - 2) \\chi_2^5 +
-        6 y (y^2 - 3) s_1 \\chi_2^4 -
-        (y^4 + 12 y^2 - 21) s_1^2 \\chi_2^3 +
-        \\right.\\nonumber \\\\
-        &\\left.\\qquad\\qquad\\qquad
-        2 y (y^2 + 3) s_1^3 \\chi_2^2 -
-        12 \\chi_2 s_1^4 + 
-        4 y s_1 ^5
-    \\right\\} 
-    \\, .
+     J^{\\delta \\kappa}_{\\alpha} &=
+     \\frac{
+          \\mathcal{H}_0 ^2 \\Omega_{\\mathrm{M}0} D (\\chi_2)
+     }{
+          a(\\chi_2 ) s_2
+     } 
+     (\\chi_2 - s_2 ) (5s_{\\mathrm{b}, 2} - 2) 
+     \\, , \\\\
+     %%%%%%%%%%%%%%%%%%%%%%%%
+     J^{\\delta \\kappa}_{00} &=
+          \\frac{1}{5}
+          \\left[
+               (3 y^2 - 1) \\chi_2 f_1 - y s_1(3 f_1 + 5 b_1) 
+          \\right] 
+     \\, , \\\\
+     %%%%%%%%%%%%%%%%%%%%%%%%
+     J^{\\delta \\kappa}_{02} &=
+          \\frac{1}{14 \\Delta\\chi_2^2} 
+          \\left\\{
+               4 f_1 (3 y^2 - 1) \\chi_2^3 - 
+               2 y 
+               \\left[
+                    (3 y^2 + 8) f_1 + 7 b_1
+               \\right] s_1 \\chi_2^2 +
+               \\right. \\nonumber \\\\
+               &\\left.\\qquad \\qquad\\qquad
+               \\left[
+                    (9 y^2 + 11) f_1 - 7 (y^2 + 3) b_1
+               \\right] s_1^2 \\chi_2 -
+               2 y \\left[7 b_1 + 3 f_1 \\right] s_1^3
+          \\right\\} 
+     \\, , \\\\
+     %%%%%%%%%%%%%%%%%%%%%%%%
+     J^{\\delta \\kappa}_{04} &=
+     \\frac{f_1}{70 \\Delta\\chi_2^4 }
+     \\left\\{
+          (6 y^2 - 2) \\chi_2^5 +
+          6 y (y^2 - 3) s_1 \\chi_2^4 -
+          (y^4 + 12 y^2 - 21) s_1^2 \\chi_2^3 +
+          \\right.\\nonumber \\\\
+          &\\left.\\qquad\\qquad\\qquad
+          2 y (y^2 + 3) s_1^3 \\chi_2^2 -
+          12 \\chi_2 s_1^4 + 
+          4 y s_1 ^5
+     \\right\\} 
+     \\, .
 \\end{split}
 ```
 
@@ -259,13 +259,13 @@ This function is used inside `ξ_GNC_Newton_Lensing` with the [`trapz`](@ref) fr
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
-      \\lim_{\\Delta \\chi_2 \\to 0^{+}} 
-      \\left(
-          J_{00}^{\\delta \\kappa} \\, I^0_0(\\Delta \\chi_2 ) + 
-          J_{02}^{\\delta \\kappa} \\, I^0_2(\\Delta \\chi_2 ) + 
-          J_{04}^{\\delta \\kappa} \\, I^4_0(\\Delta \\chi_2 ) 
-      \\right) = 
-      - \\frac{1}{5} \\, s_1 \\left(f_1 + 5 b_1\\right) \\, \\sigma_0
+     \\lim_{\\Delta \\chi_2 \\to 0^{+}} 
+     \\left(
+     J_{00}^{\\delta \\kappa} \\, I^0_0(\\Delta \\chi_2 ) + 
+     J_{02}^{\\delta \\kappa} \\, I^0_2(\\Delta \\chi_2 ) + 
+     J_{04}^{\\delta \\kappa} \\, I^4_0(\\Delta \\chi_2 ) 
+     \\right) = 
+     - \\frac{1}{5} \\, s_1 \\left(f_1 + 5 b_1\\right) \\, \\sigma_0
   ```
 
   So, when it happens that ``\\Delta \\chi_2 < \\Delta\\chi_\\mathrm{min}``, the function considers this limit
@@ -285,42 +285,41 @@ integrand_ξ_GNC_Newtonian_Lensing
 
 
 function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
-  en::Float64=1e6, N_χs::Int=100, Δχ_min::Float64=1e-1,
-  obs::Union{Bool,Symbol}=:noobsvel, suit_sampling::Bool=true)
+     en::Float64=1e6, N_χs::Int=100, Δχ_min::Float64=1e-1,
+     obs::Union{Bool,Symbol}=:noobsvel, suit_sampling::Bool=true)
 
-  STARTING = 0.0
-  frac_begin, frac_middle, FRAC_s = 0.6, 0.6, 0.10
+     STARTING = 0.0
+     frac_begin, frac_middle, FRAC_s = 0.6, 0.6, 0.10
 
-  χ2s = if suit_sampling == false
-    s2 .* range(STARTING, 1.0, length=N_χs)
-  else
+     χ2s = if suit_sampling == false
+     s2 .* range(STARTING, 1.0, length=N_χs)
+     else
+          if s2 < (1.0 - FRAC_s) * s1
+               s2 .* range(STARTING, 1.0, length=N_χs)
 
-    if s2 < (1.0 - FRAC_s) * s1
-      s2 .* range(STARTING, 1.0, length=N_χs)
+          elseif (1.0 - FRAC_s) * s1 ≤ s2 ≤ (1.0 + FRAC_s) * s1
+               GaPSE.sample_subdivision_begin(STARTING, (1.0 - FRAC_s) * s1, s2;
+               frac_begin=frac_begin, N=N_χs, ass=false)
 
-    elseif (1.0 - FRAC_s) * s1 ≤ s2 ≤ (1.0 + FRAC_s) * s1
-      GaPSE.sample_subdivision_begin(STARTING, (1.0 - FRAC_s) * s1, s2;
-        frac_begin=frac_begin, N=N_χs, ass=false)
+          elseif (1.0 + FRAC_s) * s1 < s2
+               GaPSE.sample_subdivision_middle(
+               STARTING, (1.0 - FRAC_s) * s1, (1.0 + FRAC_s) * s1, s2;
+               frac_middle=frac_middle, N=N_χs, ass=false
+               )
+          else
+               throw(AssertionError("how the hell did you arrived here?"))
+          end
+     end
 
-    elseif (1.0 + FRAC_s) * s1 < s2
-      GaPSE.sample_subdivision_middle(
-        STARTING, (1.0 - FRAC_s) * s1, (1.0 + FRAC_s) * s1, s2;
-        frac_middle=frac_middle, N=N_χs, ass=false
-      )
-    else
-      throw(AssertionError("how the hell did you arrived here?"))
-    end
-  end
+     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
+     IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-  P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-  IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
+     int_ξs = [
+     en * GaPSE.integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; obs=obs, Δχ_min=Δχ_min)
+     for IP in IPs
+     ]
 
-  int_ξs = [
-    en * GaPSE.integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; obs=obs, Δχ_min=Δχ_min)
-    for IP in IPs
-  ]
-
-  return trapz(χ2s, int_ξs) / en
+     return trapz(χ2s, int_ξs) / en
 end
 
 
@@ -340,14 +339,14 @@ The analytical expression of this term is the following:
 
 ```math
 \\begin{equation}
-    \\xi^{\\delta \\kappa} ( s_1 , s_2, y ) =
-    D_1  \\int_0^{s_2}\\mathrm{d} \\chi_2
-    J^{\\delta \\kappa}_{\\alpha}
-    \\left[ 
-        J^{\\delta \\kappa}_{00} I_0^0 ( \\Delta\\chi_2 ) + 
-        J^{\\delta \\kappa}_{02} I_2^0 ( \\Delta \\chi_2 ) + 
-        J^{\\delta \\kappa}_{04} I_4^0 ( \\Delta \\chi_2 ) 
-    \\right] \\, ,
+     \\xi^{\\delta \\kappa} ( s_1 , s_2, y ) =
+     D_1  \\int_0^{s_2}\\mathrm{d} \\chi_2
+     J^{\\delta \\kappa}_{\\alpha}
+     \\left[ 
+          J^{\\delta \\kappa}_{00} I_0^0 ( \\Delta\\chi_2 ) + 
+          J^{\\delta \\kappa}_{02} I_2^0 ( \\Delta \\chi_2 ) + 
+          J^{\\delta \\kappa}_{04} I_4^0 ( \\Delta \\chi_2 ) 
+     \\right] \\, ,
 \\end{equation}
 ```
 
@@ -355,52 +354,52 @@ where
 
 ```math
 \\begin{split}
-    J^{\\delta \\kappa}_{\\alpha} &=
-    \\frac{
-        \\mathcal{H}_0 ^2 \\Omega_{\\mathrm{M}0} D (\\chi_2)
-    }{
-        a(\\chi_2 ) s_2
-    } 
-    (\\chi_2 - s_2 ) (5s_{\\mathrm{b}, 2} - 2) 
-    \\, , \\\\
-    %%%%%%%%%%%%%%%%%%%%%%%%
-    J^{\\delta \\kappa}_{00} &=
-        \\frac{1}{5}
-        \\left[
-            (3 y^2 - 1) \\chi_2 f_1 - y s_1(3 f_1 + 5 b_1) 
-        \\right] 
-    \\, , \\\\
-    %%%%%%%%%%%%%%%%%%%%%%%%
-    J^{\\delta \\kappa}_{02} &=
-        \\frac{1}{14 \\Delta\\chi_2^2} 
-        \\left\\{
-            4 f_1 (3 y^2 - 1) \\chi_2^3 - 
-            2 y 
-            \\left[
-                (3 y^2 + 8) f_1 + 7 b_1
-            \\right] s_1 \\chi_2^2 +
-            \\right. \\nonumber \\\\
-            &\\left.\\qquad \\qquad\\qquad
-            \\left[
-                (9 y^2 + 11) f_1 - 7 (y^2 + 3) b_1
-            \\right] s_1^2 \\chi_2 -
-            2 y \\left[7 b_1 + 3 f_1 \\right] s_1^3
-        \\right\\} 
-    \\, , \\\\
-    %%%%%%%%%%%%%%%%%%%%%%%%
-    J^{\\delta \\kappa}_{04} &=
-    \\frac{f_1}{70 \\Delta\\chi_2^4 }
-    \\left\\{
-        (6 y^2 - 2) \\chi_2^5 +
-        6 y (y^2 - 3) s_1 \\chi_2^4 -
-        (y^4 + 12 y^2 - 21) s_1^2 \\chi_2^3 +
-        \\right.\\nonumber \\\\
-        &\\left.\\qquad\\qquad\\qquad
-        2 y (y^2 + 3) s_1^3 \\chi_2^2 -
-        12 \\chi_2 s_1^4 + 
-        4 y s_1 ^5
-    \\right\\} 
-    \\, .
+     J^{\\delta \\kappa}_{\\alpha} &=
+     \\frac{
+          \\mathcal{H}_0 ^2 \\Omega_{\\mathrm{M}0} D (\\chi_2)
+     }{
+          a(\\chi_2 ) s_2
+     } 
+     (\\chi_2 - s_2 ) (5s_{\\mathrm{b}, 2} - 2) 
+     \\, , \\\\
+     %%%%%%%%%%%%%%%%%%%%%%%%
+     J^{\\delta \\kappa}_{00} &=
+          \\frac{1}{5}
+          \\left[
+               (3 y^2 - 1) \\chi_2 f_1 - y s_1(3 f_1 + 5 b_1) 
+          \\right] 
+     \\, , \\\\
+     %%%%%%%%%%%%%%%%%%%%%%%%
+     J^{\\delta \\kappa}_{02} &=
+          \\frac{1}{14 \\Delta\\chi_2^2} 
+          \\left\\{
+               4 f_1 (3 y^2 - 1) \\chi_2^3 - 
+               2 y 
+               \\left[
+                    (3 y^2 + 8) f_1 + 7 b_1
+               \\right] s_1 \\chi_2^2 +
+               \\right. \\nonumber \\\\
+               &\\left.\\qquad \\qquad\\qquad
+               \\left[
+                    (9 y^2 + 11) f_1 - 7 (y^2 + 3) b_1
+               \\right] s_1^2 \\chi_2 -
+               2 y \\left[7 b_1 + 3 f_1 \\right] s_1^3
+          \\right\\} 
+     \\, , \\\\
+     %%%%%%%%%%%%%%%%%%%%%%%%
+     J^{\\delta \\kappa}_{04} &=
+     \\frac{f_1}{70 \\Delta\\chi_2^4 }
+     \\left\\{
+          (6 y^2 - 2) \\chi_2^5 +
+          6 y (y^2 - 3) s_1 \\chi_2^4 -
+          (y^4 + 12 y^2 - 21) s_1^2 \\chi_2^3 +
+          \\right.\\nonumber \\\\
+          &\\left.\\qquad\\qquad\\qquad
+          2 y (y^2 + 3) s_1^3 \\chi_2^2 -
+          12 \\chi_2 s_1^4 + 
+          4 y s_1 ^5
+     \\right\\} 
+     \\, .
 \\end{split}
 ```
 
@@ -485,13 +484,13 @@ This function is computed integrating `integrand_ξ_GNC_Newtonian_Lensing` with 
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
-      \\lim_{\\Delta \\chi_2 \\to 0^{+}} 
-      \\left(
-          J_{00}^{\\delta \\kappa} \\, I^0_0(\\Delta \\chi_2 ) + 
-          J_{02}^{\\delta \\kappa} \\, I^0_2(\\Delta \\chi_2 ) + 
-          J_{04}^{\\delta \\kappa} \\, I^4_0(\\Delta \\chi_2 ) 
-      \\right) = 
-      - \\frac{1}{5} \\, s_1 \\left(f_1 + 5 b_1\\right) \\, \\sigma_0
+     \\lim_{\\Delta \\chi_2 \\to 0^{+}} 
+     \\left(
+     J_{00}^{\\delta \\kappa} \\, I^0_0(\\Delta \\chi_2 ) + 
+     J_{02}^{\\delta \\kappa} \\, I^0_2(\\Delta \\chi_2 ) + 
+     J_{04}^{\\delta \\kappa} \\, I^4_0(\\Delta \\chi_2 ) 
+     \\right) = 
+     - \\frac{1}{5} \\, s_1 \\left(f_1 + 5 b_1\\right) \\, \\sigma_0
   ```
 
   So, when it happens that ``\\Delta \\chi_2 < \\Delta\\chi_\\mathrm{min}``, the function considers this limit
@@ -550,5 +549,5 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`ξ_GNC_Newtonian_Lensing`](@ref)
 """
 function ξ_GNC_Lensing_Newtonian(s1, s2, y, cosmo::Cosmology; kwargs...)
-  ξ_GNC_Newtonian_Lensing(s2, s1, y, cosmo; kwargs...)
+     ξ_GNC_Newtonian_Lensing(s2, s1, y, cosmo; kwargs...)
 end

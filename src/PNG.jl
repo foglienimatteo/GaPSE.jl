@@ -141,7 +141,8 @@ in Fourier space:
 
 - `bf=1.0` : value of the degenerate product ``b_{\\phi} f_{\\rm NL}``.
 - `D = 1.0` : value of the linear growth factor ``D`` at present day; inside this function, 
-  it is multiplied for a constant ``q`` in order to get ``q \\, D = ``  
+  it is multiplied for a constant ``q = 0.779017`` in order to normalize ``D(z)`` to 1/(1+z) 
+  in matter domination, i.e. such that ``q \\, D(z) \\, (1+z) = 1`` at ``z=20``  
 
 
 See also: [`TF`](@ref)

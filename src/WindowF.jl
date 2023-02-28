@@ -659,3 +659,61 @@ function print_map_F(out::String, windowF::WindowF)
           end
      end
 end
+
+
+##########################################################################################92
+
+
+
+#function integrand_PhiTimesWindowF_multipole(s1, s, μ, phi::Function, windowf::WindowF; L::Int=0)
+#     return Pl(μ, L) *  phi(√(s1^2 + s^2 + 2 * s1 * s * μ)) *  spline_F(s/s1, μ, windowf)
+#end
+
+
+function PhiTimesWindowF(s1, s, μ, phi::Function, windowf::WindowF)
+     return phi(√(s1^2 + s^2 + 2 * s1 * s * μ)) * spline_F(s / s1, μ, windowf)
+end
+
+function PhiTimesWindowF_multipole(
+     s1, s, phi::Function, windowf::WindowF;
+     L::Int=0, alg::Symbol=:lobatto,
+     N_lob::Int=100, N_trap::Int=200,
+     atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
+     enhancer::Float64=1e6,
+     kwargs...)
+
+     @assert alg ∈ VALID_INTEGRATION_ALGORITHM ":$alg is not a valid Symbol for \"alg\"; they are: \n\t" *
+          "$(":".*string.(VALID_INTEGRATION_ALGORITHM) .* vcat([" , " for i in 1:length(VALID_INTEGRATION_ALGORITHM)-1], " .")... )"
+
+     @assert N_trap > 2 "N_trap must be >2,  N_trap = $N_trap is not!"
+     @assert N_lob > 2 "N_lob must be >2,  N_lob = $N_lob is not!"
+     @assert atol_quad ≥ 0.0 "atol_quad must be ≥ 0.0,  atol_quad = $atol_quad is not!"
+     @assert rtol_quad ≥ 0.0 "rtol_trap must be ≥ 0.0,  rtol_quad = $rtol_quad is not!"
+     @assert L ≥ 0 "L must be ≥ 0, L = $L is not!"
+
+
+     orig_f(μ) = enhancer * PhiTimesWindowF(s1, s, μ, phi, windowf) * Pl(μ, L)
+
+     int = if alg == :lobatto
+          xs, ws = gausslobatto(N_lob)
+          dot(ws, orig_f.(xs))
+
+     elseif alg == :quad
+          quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=atol_quad, rtol=rtol_quad)[1]
+
+     elseif alg == :trap
+          μs = union(
+               range(-1.0, -0.98, length=Int(ceil(N_trap / 3) + 1)),
+               range(-0.98, 0.98, length=Int(ceil(N_trap / 3) + 1)),
+               range(0.98, 1.0, length=Int(ceil(N_trap / 3) + 1))
+          )
+          #μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_trap)
+          orig_fs = orig_f.(μs)
+          trapz(μs, orig_fs)
+
+     else
+          throw(AssertionError("how the hell did you arrive here?"))
+     end
+
+     return int / enhancer
+end
