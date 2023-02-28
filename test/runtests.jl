@@ -89,13 +89,13 @@ end
 end
 
 
-@testset "test PowerSpectrum" begin
-     include("test_PowerSpectrum.jl")
+@testset "test PowerSpectra" begin
+     include("test_PowerSpectra.jl")
 end
 
 
-@testset "test PowerSpectrumGenWin" begin
-     include("test_PowerSpectrumGenWin.jl")
+@testset "test PowerSpectraGenWin" begin
+     include("test_PowerSpectraGenWin.jl")
 end
 
 @testset "test WindowF_QMultipoles" begin

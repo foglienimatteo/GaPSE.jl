@@ -1,3 +1,4 @@
+
 # -*- encoding: utf-8 -*-
 #
 # This file is part of GaPSE
@@ -69,8 +70,8 @@ following Fast Fourier Transform and the effective redshift approximation:
 
 ```math
 P_L(k) = \\frac{2 L + 1}{A^{'}} (-i)^L \\, \\phi(s_\\mathrm{eff}) \\int_0^\\infty 
-        \\mathrm{d} s \\; s^2 \\, j_L(ks) \\, f_\\mathrm{in}(s) \\; ,
-        \\quad \\; A^{'} = \\frac{1}{4\\,\\pi}
+     \\mathrm{d} s \\; s^2 \\, j_L(ks) \\, f_\\mathrm{in}(s) \\; ,
+     \\quad \\; A^{'} = \\frac{1}{4\\,\\pi}
 ```
 
 
@@ -133,16 +134,16 @@ The analytical expression previously showed can be easily obtained from the
 standard one:
 ```math
 \\begin{split}
-    P_L(k) = &\\frac{2 L + 1}{A} (-i)^L \\, 
-        \\int_0^\\infty \\mathrm{d} s_1 \\; s_1^2 
-        \\int_0^\\infty \\mathrm{d} s \\; s^2 
-        \\int_{-1}^{+1} \\mathrm{d} \\mu \\;
-        j_L(ks) \\, \\xi(s_1, s, \\mu) \\, \\phi(s_1) \\, \\phi(s_2) \\,
-        \\mathcal{L}_L(\\mu) F\\left(\\frac{s}{s_1}, \\mu \\right) \\\\
-        &\\mathrm{with} \\; \\;s_2 = s_2(s_1, s, μ) = \\sqrt{s_1^2 + s^2 + 2s_1s\\mu}
-        \\; 
-        , \\quad A(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max}) 
-        \\frac{
+     P_L(k) = &\\frac{2 L + 1}{A} (-i)^L \\, 
+          \\int_0^\\infty \\mathrm{d} s_1 \\; s_1^2 
+          \\int_0^\\infty \\mathrm{d} s \\; s^2 
+          \\int_{-1}^{+1} \\mathrm{d} \\mu \\;
+          j_L(ks) \\, \\xi(s_1, s, \\mu) \\, \\phi(s_1) \\, \\phi(s_2) \\,
+          \\mathcal{L}_L(\\mu) F\\left(\\frac{s}{s_1}, \\mu \\right) \\\\
+          &\\mathrm{with} \\; \\;s_2 = s_2(s_1, s, μ) = \\sqrt{s_1^2 + s^2 + 2s_1s\\mu}
+          \\; 
+          , \\quad A(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max}) 
+          \\frac{
           V(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})
           }{4 \\, \\pi^2}
 \\end{split}
@@ -152,8 +153,8 @@ with the definition
 
 ```math
 f_\\mathrm{in}(s_1, s) =  \\int_{-1}^{+1} \\mathrm{d} \\mu \\;
-        \\xi(s_1, s, \\mu) \\, \\phi(s_2) \\,
-        \\mathcal{L}_L(\\mu) \\, F\\left(\\frac{s}{s_1}, \\mu \\right)
+     \\xi(s_1, s, \\mu) \\, \\phi(s_2) \\,
+     \\mathcal{L}_L(\\mu) \\, F\\left(\\frac{s}{s_1}, \\mu \\right)
 ```
 and the application of the effective redshift approximation.
 
@@ -593,6 +594,7 @@ function print_all_PS_multipole(input::String, out::String,
                println(io, "# 1: k [h_0/Mpc] \t 2: P_SUM \t " *
                            join([string(i) for i in 3:length(effs)+2] .*
                                 ": P_" .* effs .* " \t "))
+
           else
                println(io, "# 1: k [h_0/Mpc] \t" *
                            join([string(i) for i in 2:length(VEC)+1] .*

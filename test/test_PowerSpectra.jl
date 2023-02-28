@@ -20,13 +20,13 @@
 
 @testset "test TwoFAST PS_multipole" begin
      RTOL = 1e-3
-     kwargs_ps = Dict(:epl => true, :pr => false, :alg => :twofast,
+     kwargs_ps = Dict(:epl => true, :pr => true, :alg => :twofast,
           :N_left => 12, :N_right => 12,
           :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
           :int_s_min => 1e-4, :int_s_max => 1e4,
           :cut_first_n => 0, :cut_last_n => 0)
 
-     @testset "with F" begin
+     @testset "L=0, with F" begin
           @testset "monopole" begin
                L = 0
                input = "datatest/Power_Spectrum/xi_LD_auto_doppler_withF_L$L" * ".txt"
@@ -58,7 +58,45 @@
           end
      end
 
-     @testset "without F" begin
+     kwargs_ps = Dict(:epl => true, :pr => false, :alg => :twofast,
+          :N_left => 12, :N_right => 12,
+          :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
+          :int_s_min => 1e-4, :int_s_max => 1e4,
+          :cut_first_n => 0, :cut_last_n => 0)
+
+     @testset "L=0, without F" begin
+          @testset "monopole" begin
+               L = 0
+               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
+               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_noF_L$L" * "_TwoFAST.txt"
+
+               table = readdlm(true_pk; comments=true)
+               ks = convert(Vector{Float64}, table[:, 1])
+               pks = convert(Vector{Float64}, table[:, 2])
+
+               calc_ks, calc_pks = GaPSE.PS_multipole(input; L=L, kwargs_ps...)
+
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
+          end
+
+          @testset "quadrupole" begin
+               L = 2
+               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
+               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_noF_L$L" * "_TwoFAST.txt"
+
+               table = readdlm(true_pk; comments=true)
+               ks = convert(Vector{Float64}, table[:, 1])
+               pks = convert(Vector{Float64}, table[:, 2])
+
+               calc_ks, calc_pks = GaPSE.PS_multipole(input; L=L, kwargs_ps...)
+
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
+          end
+     end
+
+     @testset "L=1, without F" begin
           @testset "monopole" begin
                L = 0
                input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
@@ -561,6 +599,11 @@ end
                @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
           end
      end
+
+     kwargs_ps = Dict(:pr => true, :alg => :fftlog,
+          :ν => 1.5, :n_extrap_low => 500,
+          :n_extrap_high => 500, :n_pad => 500,
+          :cut_first_n => 0, :cut_last_n => 0)
 
      @testset "without F" begin
           @testset "monopole" begin

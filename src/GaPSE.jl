@@ -157,8 +157,8 @@ include("LDxGNC_XiMultipoles.jl")
 include("LDxGNC_SumXiMultipoles.jl")
 include("PS_FFTLog.jl")
 include("PS_TwoFAST.jl")
-include("PowerSpectrum.jl")
-include("PowerSpectrumGenWin.jl")
+include("PowerSpectra.jl")
+include("PowerSpectraGenWin.jl")
 include("WindowF_QMultipoles.jl")
 
 
