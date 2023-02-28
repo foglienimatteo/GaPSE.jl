@@ -29,8 +29,8 @@
      @testset "L=0, with F" begin
           @testset "monopole" begin
                L = 0
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_withF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_withF_L$L" * "_TwoFAST.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_withF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_withF_L$L" * "_TwoFAST.txt"
 
                table = readdlm(true_pk; comments=true)
                ks = convert(Vector{Float64}, table[:, 1])
@@ -44,8 +44,8 @@
 
           @testset "quadrupole" begin
                L = 2
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_withF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_withF_L$L" * "_TwoFAST.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_withF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_withF_L$L" * "_TwoFAST.txt"
 
                table = readdlm(true_pk; comments=true)
                ks = convert(Vector{Float64}, table[:, 1])
@@ -67,8 +67,8 @@
      @testset "L=0, without F" begin
           @testset "monopole" begin
                L = 0
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_noF_L$L" * "_TwoFAST.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_noF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_noF_L$L" * "_TwoFAST.txt"
 
                table = readdlm(true_pk; comments=true)
                ks = convert(Vector{Float64}, table[:, 1])
@@ -82,40 +82,8 @@
 
           @testset "quadrupole" begin
                L = 2
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_noF_L$L" * "_TwoFAST.txt"
-
-               table = readdlm(true_pk; comments=true)
-               ks = convert(Vector{Float64}, table[:, 1])
-               pks = convert(Vector{Float64}, table[:, 2])
-
-               calc_ks, calc_pks = GaPSE.PS_multipole(input; L=L, kwargs_ps...)
-
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
-          end
-     end
-
-     @testset "L=1, without F" begin
-          @testset "monopole" begin
-               L = 0
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_noF_L$L" * "_TwoFAST.txt"
-
-               table = readdlm(true_pk; comments=true)
-               ks = convert(Vector{Float64}, table[:, 1])
-               pks = convert(Vector{Float64}, table[:, 2])
-
-               calc_ks, calc_pks = GaPSE.PS_multipole(input; L=L, kwargs_ps...)
-
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
-          end
-
-          @testset "quadrupole" begin
-               L = 2
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_noF_L$L" * "_TwoFAST.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_noF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_noF_L$L" * "_TwoFAST.txt"
 
                table = readdlm(true_pk; comments=true)
                ks = convert(Vector{Float64}, table[:, 1])
@@ -140,8 +108,8 @@ end
      @testset "with F" begin
           @testset "monopole" begin
                L = 0
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_withF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_withF_L$L" * "_TwoFAST.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_withF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_withF_L$L" * "_TwoFAST.txt"
                out_file = "calc_pk_auto_doppler_withF_L$L" * "_TwoFAST.txt"
 
                isfile(out_file) && rm(out_file)
@@ -163,8 +131,8 @@ end
 
           @testset "quadrupole" begin
                L = 2
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_withF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_withF_L$L" * "_TwoFAST.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_withF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_withF_L$L" * "_TwoFAST.txt"
                out_file = "calc_pk_auto_doppler_withF_L$L" * "_TwoFAST.txt"
 
                isfile(out_file) && rm(out_file)
@@ -188,8 +156,8 @@ end
      @testset "without F" begin
           @testset "monopole" begin
                L = 0
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_noF_L$L" * "_TwoFAST.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_noF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_noF_L$L" * "_TwoFAST.txt"
                out_file = "calc_pk_auto_doppler_noF_L$L" * "_TwoFAST.txt"
 
                isfile(out_file) && rm(out_file)
@@ -211,12 +179,12 @@ end
 
           @testset "quadrupole" begin
                L = 2
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_noF_L$L" * "_TwoFAST.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_noF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_noF_L$L" * "_TwoFAST.txt"
                out_file = "calc_pk_auto_doppler_noF_L$L" * "_TwoFAST.txt"
 
                isfile(out_file) && rm(out_file)
-               "datatest/Power_Spectrum/x"
+               "datatest/PowerSpectra/x"
 
                table = readdlm(true_pk; comments=true)
                ks = convert(Vector{Float64}, table[:, 1])
@@ -246,8 +214,8 @@ end
      @testset "with F" begin
           @testset "monopole" begin
                L = 0
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_withF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_withF_L$L" * "_TwoFAST.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_withF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_withF_L$L" * "_TwoFAST.txt"
                out_file = "calc_pk_auto_doppler_withF_L$L" * "_TwoFAST.txt"
 
                isfile(out_file) && rm(out_file)
@@ -273,8 +241,8 @@ end
 
           @testset "quadrupole" begin
                L = 2
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_withF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_withF_L$L" * "_TwoFAST.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_withF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_withF_L$L" * "_TwoFAST.txt"
                out_file = "calc_pk_auto_doppler_withF_L$L" * "_TwoFAST.txt"
 
                isfile(out_file) && rm(out_file)
@@ -301,8 +269,8 @@ end
      @testset "without F" begin
           @testset "monopole" begin
                L = 0
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_noF_L$L" * "_TwoFAST.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_noF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_noF_L$L" * "_TwoFAST.txt"
                out_file = "calc_pk_auto_doppler_noF_L$L" * "_TwoFAST.txt"
 
                isfile(out_file) && rm(out_file)
@@ -327,12 +295,12 @@ end
 
           @testset "quadrupole" begin
                L = 2
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_noF_L$L" * "_TwoFAST.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_noF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_noF_L$L" * "_TwoFAST.txt"
                out_file = "calc_pk_auto_doppler_noF_L$L" * "_TwoFAST.txt"
 
                isfile(out_file) && rm(out_file)
-               "datatest/Power_Spectrum/x"
+               "datatest/PowerSpectra/x"
 
                table = readdlm(true_pk; comments=true)
                ks = convert(Vector{Float64}, table[:, 1])
@@ -382,7 +350,7 @@ end
           rm(name)
      end
 
-     kwargs_ps = Dict(:epl => true, :pr => false, :alg => :twofast,
+     kwargs_ps = Dict(:epl => true, :pr => true, :alg => :twofast,
           :N_left => 12, :N_right => 12,
           :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
           :int_s_min => 1e-4, :int_s_max => 1e4,
@@ -391,8 +359,8 @@ end
      @testset "test PS LD" begin
           L = 0
           group = "LD"
-          input = "datatest/Power_Spectrum/xis_$group" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
+          input = "datatest/PowerSpectra/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/PowerSpectra/ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
           out_file = "calc_pk_L$L" * "_TwoFAST.txt"
 
           isfile(out_file) && rm(out_file)
@@ -419,11 +387,11 @@ end
           rm(out_file)
      end
 
-     @testset "test PS GNC" begin
+     @testset "test PS GNC L=0" begin
           L = 0
           group = "GNC"
-          input = "datatest/Power_Spectrum/xis_$group" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
+          input = "datatest/PowerSpectra/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/PowerSpectra/ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
           out_file = "calc_pk_L$L" * "_TwoFAST.txt"
 
           isfile(out_file) && rm(out_file)
@@ -442,6 +410,31 @@ end
           calc_ks = convert(Vector{Float64}, calc_table[:, 1])
           calc_all_pks = [convert(Vector{Float64}, col)
                           for col in eachcol(calc_table[:, 2:end])]
+
+          @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
+          for (calc_pks, pks) in zip(all_pks, calc_all_pks)
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
+          end
+          rm(out_file)
+     end
+
+     @testset "test PS GNC L=1" begin
+          L = 1
+          group = "GNC"
+          input = "datatest/PowerSpectra/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/PowerSpectra/ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
+          out_file = "calc_pk_L$L" * "_TwoFAST.txt"
+
+          isfile(out_file) && rm(out_file)
+
+          ks, all_pks = GaPSE.readxall(true_pk; comments= true, xdt=ComplexF64, ydt=ComplexF64) 
+
+
+          in_table = readdlm(input; comments=true)
+          in_ss = convert(Vector{Float64}, in_table[:, 1])
+          in_xis = convert(Vector{Float64}, in_table[:, 2])
+          GaPSE.print_all_PS_multipole(input, out_file, group; L=L, kwargs_ps...)
+          calc_ks, calc_all_pks = GaPSE.readxall(out_file; comments= true, xdt=ComplexF64, ydt=ComplexF64) 
 
           @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
           for (calc_pks, pks) in zip(all_pks, calc_all_pks)
@@ -453,8 +446,8 @@ end
      @testset "test PS GNCxLD" begin
           L = 0
           group = "GNCxLD"
-          input = "datatest/Power_Spectrum/xis_$group" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
+          input = "datatest/PowerSpectra/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/PowerSpectra/ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
           out_file = "calc_pk_L$L" * "_TwoFAST.txt"
 
           isfile(out_file) && rm(out_file)
@@ -484,8 +477,8 @@ end
      @testset "test PS LDxGNC" begin
           L = 0
           group = "LDxGNC"
-          input = "datatest/Power_Spectrum/xis_$group" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
+          input = "datatest/PowerSpectra/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/PowerSpectra/ps_$group" * "_L$L" * "_noF_TwoFAST.txt"
           out_file = "calc_pk_L$L" * "_TwoFAST.txt"
 
           isfile(out_file) && rm(out_file)
@@ -515,8 +508,8 @@ end
      @testset "test PS generic" begin
           L = 0
           group = "generic"
-          input = "datatest/Power_Spectrum/xis_LD" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/ps_LD" * "_L$L" * "_noF_TwoFAST.txt"
+          input = "datatest/PowerSpectra/xis_LD" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/PowerSpectra/ps_LD" * "_L$L" * "_noF_TwoFAST.txt"
           out_file = "calc_pk_L$L" * "_TwoFAST.txt"
 
           isfile(out_file) && rm(out_file)
@@ -561,8 +554,8 @@ end
      @testset "with F" begin
           @testset "monopole" begin
                L = 0
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_withF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_withF_L$L" * "_FFTLog.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_withF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_withF_L$L" * "_FFTLog.txt"
 
                table = readdlm(true_pk; comments=true)
                ks = convert(Vector{Float64}, table[:, 1])
@@ -581,8 +574,8 @@ end
 
           @testset "quadrupole" begin
                L = 2
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_withF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_withF_L$L" * "_FFTLog.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_withF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_withF_L$L" * "_FFTLog.txt"
 
                table = readdlm(true_pk; comments=true)
                ks = convert(Vector{Float64}, table[:, 1])
@@ -608,8 +601,8 @@ end
      @testset "without F" begin
           @testset "monopole" begin
                L = 0
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_noF_L$L" * "_FFTLog.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_noF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_noF_L$L" * "_FFTLog.txt"
 
                table = readdlm(true_pk; comments=true)
                ks = convert(Vector{Float64}, table[:, 1])
@@ -628,8 +621,8 @@ end
 
           @testset "quadrupole" begin
                L = 2
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_noF_L$L" * "_FFTLog.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_noF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_noF_L$L" * "_FFTLog.txt"
 
                table = readdlm(true_pk; comments=true)
                ks = convert(Vector{Float64}, table[:, 1])
@@ -658,8 +651,8 @@ end
      @testset "with F" begin
           @testset "monopole" begin
                L = 0
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_withF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_withF_L$L" * "_FFTLog.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_withF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_withF_L$L" * "_FFTLog.txt"
                out_file = "calc_pk_auto_doppler_withF_L$L" * "_FFTLog.txt"
 
                isfile(out_file) && rm(out_file)
@@ -681,8 +674,8 @@ end
 
           @testset "quadrupole" begin
                L = 2
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_withF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_withF_L$L" * "_FFTLog.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_withF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_withF_L$L" * "_FFTLog.txt"
                out_file = "calc_pk_auto_doppler_withF_L$L" * "_FFTLog.txt"
 
                isfile(out_file) && rm(out_file)
@@ -706,8 +699,8 @@ end
      @testset "without F" begin
           @testset "monopole" begin
                L = 0
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_noF_L$L" * "_FFTLog.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_noF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_noF_L$L" * "_FFTLog.txt"
                out_file = "calc_pk_auto_doppler_noF_L$L" * "_FFTLog.txt"
 
                isfile(out_file) && rm(out_file)
@@ -729,12 +722,12 @@ end
 
           @testset "quadrupole" begin
                L = 2
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_noF_L$L" * "_FFTLog.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_noF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_noF_L$L" * "_FFTLog.txt"
                out_file = "calc_pk_auto_doppler_noF_L$L" * "_FFTLog.txt"
 
                isfile(out_file) && rm(out_file)
-               "datatest/Power_Spectrum/x"
+               "datatest/PowerSpectra/x"
 
                table = readdlm(true_pk; comments=true)
                ks = convert(Vector{Float64}, table[:, 1])
@@ -763,8 +756,8 @@ end
      @testset "with F" begin
           @testset "monopole" begin
                L = 0
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_withF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_withF_L$L" * "_FFTLog.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_withF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_withF_L$L" * "_FFTLog.txt"
                out_file = "calc_pk_auto_doppler_withF_L$L" * "_FFTLog.txt"
 
                isfile(out_file) && rm(out_file)
@@ -790,8 +783,8 @@ end
 
           @testset "quadrupole" begin
                L = 2
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_withF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_withF_L$L" * "_FFTLog.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_withF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_withF_L$L" * "_FFTLog.txt"
                out_file = "calc_pk_auto_doppler_withF_L$L" * "_FFTLog.txt"
 
                isfile(out_file) && rm(out_file)
@@ -818,8 +811,8 @@ end
      @testset "without F" begin
           @testset "monopole" begin
                L = 0
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_noF_L$L" * "_FFTLog.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_noF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_noF_L$L" * "_FFTLog.txt"
                out_file = "calc_pk_auto_doppler_noF_L$L" * "_FFTLog.txt"
 
                isfile(out_file) && rm(out_file)
@@ -844,12 +837,12 @@ end
 
           @testset "quadrupole" begin
                L = 2
-               input = "datatest/Power_Spectrum/xi_LD_auto_doppler_noF_L$L" * ".txt"
-               true_pk = "datatest/Power_Spectrum/ps_LD_auto_doppler_noF_L$L" * "_FFTLog.txt"
+               input = "datatest/PowerSpectra/xi_LD_auto_doppler_noF_L$L" * ".txt"
+               true_pk = "datatest/PowerSpectra/ps_LD_auto_doppler_noF_L$L" * "_FFTLog.txt"
                out_file = "calc_pk_auto_doppler_noF_L$L" * "_FFTLog.txt"
 
                isfile(out_file) && rm(out_file)
-               "datatest/Power_Spectrum/x"
+               "datatest/PowerSpectra/x"
 
                table = readdlm(true_pk; comments=true)
                ks = convert(Vector{Float64}, table[:, 1])
@@ -907,8 +900,8 @@ end
      @testset "test PS LD" begin
           L = 0
           group = "LD"
-          input = "datatest/Power_Spectrum/xis_$group" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/ps_$group" * "_L$L" * "_noF_FFTLog.txt"
+          input = "datatest/PowerSpectra/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/PowerSpectra/ps_$group" * "_L$L" * "_noF_FFTLog.txt"
           out_file = "calc_pk_L$L" * "_FFTLog.txt"
 
           isfile(out_file) && rm(out_file)
@@ -935,11 +928,11 @@ end
           rm(out_file)
      end
 
-     @testset "test PS GNC" begin
+     @testset "test PS GNC L=0" begin
           L = 0
           group = "GNC"
-          input = "datatest/Power_Spectrum/xis_$group" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/ps_$group" * "_L$L" * "_noF_FFTLog.txt"
+          input = "datatest/PowerSpectra/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/PowerSpectra/ps_$group" * "_L$L" * "_noF_FFTLog.txt"
           out_file = "calc_pk_L$L" * "_FFTLog.txt"
 
           isfile(out_file) && rm(out_file)
@@ -958,6 +951,31 @@ end
           calc_ks = convert(Vector{Float64}, calc_table[:, 1])
           calc_all_pks = [convert(Vector{Float64}, col)
                           for col in eachcol(calc_table[:, 2:end])]
+
+          @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
+          for (calc_pks, pks) in zip(all_pks, calc_all_pks)
+               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(pks, calc_pks)])
+          end
+          rm(out_file)
+     end
+
+     @testset "test PS GNC L=1" begin
+          L = 1
+          group = "GNC"
+          input = "datatest/PowerSpectra/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/PowerSpectra/ps_$group" * "_L$L" * "_noF_FFTLog.txt"
+          out_file = "calc_pk_L$L" * "_FFTLog.txt"
+
+          isfile(out_file) && rm(out_file)
+
+          ks, all_pks = GaPSE.readxall(true_pk; comments= true, xdt=ComplexF64, ydt=ComplexF64) 
+
+
+          in_table = readdlm(input; comments=true)
+          in_ss = convert(Vector{Float64}, in_table[:, 1])
+          in_xis = convert(Vector{Float64}, in_table[:, 2])
+          GaPSE.print_all_PS_multipole(input, out_file, group; L=L, kwargs_ps...)
+          calc_ks, calc_all_pks = GaPSE.readxall(out_file; comments= true, xdt=ComplexF64, ydt=ComplexF64) 
 
           @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ks, calc_ks)])
           for (calc_pks, pks) in zip(all_pks, calc_all_pks)
@@ -969,8 +987,8 @@ end
      @testset "test PS GNCxLD" begin
           L = 0
           group = "GNCxLD"
-          input = "datatest/Power_Spectrum/xis_$group" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/ps_$group" * "_L$L" * "_noF_FFTLog.txt"
+          input = "datatest/PowerSpectra/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/PowerSpectra/ps_$group" * "_L$L" * "_noF_FFTLog.txt"
           out_file = "calc_pk_L$L" * "_FFTLog.txt"
 
           isfile(out_file) && rm(out_file)
@@ -1000,8 +1018,8 @@ end
      @testset "test PS LDxGNC" begin
           L = 0
           group = "LDxGNC"
-          input = "datatest/Power_Spectrum/xis_$group" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/ps_$group" * "_L$L" * "_noF_FFTLog.txt"
+          input = "datatest/PowerSpectra/xis_$group" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/PowerSpectra/ps_$group" * "_L$L" * "_noF_FFTLog.txt"
           out_file = "calc_pk_L$L" * "_FFTLog.txt"
 
           isfile(out_file) && rm(out_file)
@@ -1031,8 +1049,8 @@ end
      @testset "test PS generic" begin
           L = 0
           group = "generic"
-          input = "datatest/Power_Spectrum/xis_LD" * "_L$L" * "_noF.txt"
-          true_pk = "datatest/Power_Spectrum/ps_LD" * "_L$L" * "_noF_FFTLog.txt"
+          input = "datatest/PowerSpectra/xis_LD" * "_L$L" * "_noF.txt"
+          true_pk = "datatest/PowerSpectra/ps_LD" * "_L$L" * "_noF_FFTLog.txt"
           out_file = "calc_pk_L$L" * "_FFTLog.txt"
 
           isfile(out_file) && rm(out_file)
