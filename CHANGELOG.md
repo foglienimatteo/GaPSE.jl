@@ -1,9 +1,11 @@
 # HEAD
 
+# VERSION 0.7.0
+
+- added `ipynb/Computations_b1p5-sb0-fevo0.ipynb`, `Computations_b1p5-sb0-fevo0.jl` and `Generic_Window.jl` for the analysis of the PNG, even with a generic window function
+
 - added `src/PowerSpectraGenWin.jl` and `src/WindowF_QMultipoles.jl`: now it's possible to compute the PS for a generic window!
-
-- added `ipynb/Computations_b1p5-sb0-fevo0.ipynb`, `Computations_b1p5-sb0-fevo0.jl` and `Generic_Window.jl`
-
+  
 - renamed `src/PowerSpectrum.jl` to `src/PowerSpectra.jl`
 
 - creation of the package `GaPSE.jl`; it will still take a while
