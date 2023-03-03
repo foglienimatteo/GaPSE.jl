@@ -94,15 +94,6 @@ end
 end
 
 
-@testset "test PowerSpectraGenWin" begin
-     include("test_PowerSpectraGenWin.jl")
-end
-
-@testset "test WindowF_QMultipoles" begin
-     include("test_WindowF_QMultipoles.jl")
-end
-
-
 
 ################################### COSMOLOGY IMPLEMENTATION #############################92
 

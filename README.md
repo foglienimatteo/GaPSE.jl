@@ -10,17 +10,20 @@
 
 GaPSE (Galaxy Power Spectrum Estimator) is a software for cosmological computations written in the [Julia Programming Language](https://julialang.org).
 
-IMPORTANT NOTE: This is a work-in-progress project! As a consequence, currently in this pre-release:
-- it is possible to compute the power spectrum/correlation function multipoles with L=1,2,3,... of the effects we'll show next, but 2 effects among the Galaxy Number Counts multipoles (Newton-Lensing and Lensing-Newton) converge very slowly, so their computation is not still 100% ready. However, the monopole (L=0) computations do not have any problem with `quad`, and even the GNC sum for higher order multipoles is not affected;
+## Important Remarks
+
+This is a work-in-progress project! As a consequence, currently in this pre-release:
+- The monopole (L=0) computations of the Galaxy Number Counts (GNC) correlation functions with `quad` integration and their corresponding Power Spectra (PS) with `:fftlog` have been tested extensively. It is also possible to compute their correlation function multipoles $L=1,2,3,...$. However, the `:lobatto` integration still leads to small numerical oscillations, and two terms (Newton-Lensing and Lensing-Newton) converge very slowly (i.e. you must use a high`N_lob` number of points). However, this problems are suppresed when you employ the azymuthally symmetric window function of this code (`use_windows=true`) and consider the power spectrum sum of all these effects;
 - you can't go further than $z \simeq 1.5$;
-- The Power Spectrum computations with `:twofast` do not work properly, you should always prefer `:fftog`. However, due to the fact that with `:fftlog` you must specify manually the bias parameter, the Power Spectra of a whole group of terms creates FFT oscillations in the smallest ones. The leading ones and the sum are not however affected.  
+- The PS computations are by default made with the Julia package [FFTLog](https://github.com/marcobonici/FFTLog.jl). However, due to the fact that with `:fftlog` you must specify manually the bias parameter, the Power Spectra of a whole group of terms creates artificial FFT oscillations in some of them. The leading ones and the sum are not however affected. The PS code structure gives also the option to implement other routines for this computation, and one with [TwoFAST](https://github.com/hsgg/TwoFAST.jl)[[5]](#1) is sketched (but not yet tested and reliable).
 - the code functions are well documented; check the github pages website https://foglienimatteo.github.io/GaPSE.jl/stable if you can't see correctly the analytical expressions written in the docstrings. However, the Two-Point Correlation Functions docstrings of the groups `LD`, `GNCxLD` and `LDxGNC` (see below for explanation) are still missing; 
-- few people used this code, so bugs are behind the corner; do not hesitate to raise the finger to point out them (see in the [How to report bugs, suggest improvements and/or contribute](#how-to-report-bugs-suggest-improvements-andor-contribute) section below)!
+- few people used this code, so bugs are behind the corner; do not hesitate to raise the finger to point them out (see in the [How to report bugs, suggest improvements and/or contribute](#how-to-report-bugs-suggest-improvements-andor-contribute) section below)!
 - if you use this code, please read the [Using this code](##using-this-code) section below
 
 ## Table of Contents
 
 - [GaPSE - a model for the Galaxy Power Spectrum Estimator](#gapse---a-model-for-the-galaxy-power-spectrum-estimator)
+  - [Important Remarks](#important-remarks)
   - [Table of Contents](#table-of-contents)
   - [Brief description](#brief-description)
   - [Installation](#installation)
@@ -55,7 +58,7 @@ This project, and the analytical expressions used for the TPCFs, are based on th
 
 ## Installation
 
-Currently, this package is not in the Julia package registries. Assuming that you have already installed a coompatible Julia version, the simplest way to install this software is then the following:
+Currently, this package is not in the Julia package registries. Assuming that you have already installed a compatible Julia version, the simplest way to install this software is then the following:
 
 - in the terminal, go to the directory you want to install this package;
   
