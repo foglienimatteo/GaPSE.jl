@@ -13,10 +13,10 @@ GaPSE (Galaxy Power Spectrum Estimator) is a software for cosmological computati
 ## Important Remarks
 
 This is a work-in-progress project! As a consequence, currently in this pre-release:
-- The monopole (L=0) computations of the Galaxy Number Counts (GNC) correlation functions with `quad` integration and their corresponding Power Spectra (PS) with `:fftlog` have been tested extensively. It is also possible to compute their correlation function multipoles $L=1,2,3,...$. However, the `:lobatto` integration still leads to small numerical oscillations, and two terms (Newton-Lensing and Lensing-Newton) converge very slowly (i.e. you must use a high`N_lob` number of points). However, this problems are suppresed when you employ the azymuthally symmetric window function of this code (`use_windows=true`) and consider the power spectrum sum of all these effects;
+- The monopole (L=0) computations of the Galaxy Number Counts (GNC) correlation functions with `quad` integration and their corresponding Power Spectra (PS) with `:fftlog` have been tested extensively. It is also possible to compute their correlation function multipoles $L=1,2,3,...$ . However, the `:lobatto` integration still leads to small numerical oscillations, and two terms (Newton-Lensing and Lensing-Newton) converge very slowly (i.e. you must use a high`N_lob` number of points). These problems are nevertheless suppresed when you employ the azymuthally symmetric window function of this code (`use_windows=true`) and consider the power spectrum sum of all these effects;
 - you can't go further than $z \simeq 1.5$;
-- The PS computations are by default made with the Julia package [FFTLog](https://github.com/marcobonici/FFTLog.jl). However, due to the fact that with `:fftlog` you must specify manually the bias parameter, the Power Spectra of a whole group of terms creates artificial FFT oscillations in some of them. The leading ones and the sum are not however affected. The PS code structure gives also the option to implement other routines for this computation, and one with [TwoFAST](https://github.com/hsgg/TwoFAST.jl)[[5]](#1) is sketched (but not yet tested and reliable).
-- the code functions are well documented; check the github pages website https://foglienimatteo.github.io/GaPSE.jl/stable if you can't see correctly the analytical expressions written in the docstrings. However, the Two-Point Correlation Functions docstrings of the groups `LD`, `GNCxLD` and `LDxGNC` (see below for explanation) are still missing; 
+- The PS computations are by default made with the Julia package [FFTLog](https://github.com/marcobonici/FFTLog.jl). Due to the fact that with `:fftlog` you must specify manually the bias parameter, the Power Spectra computations of a whole group of terms create artificial FFT oscillations in some of them. However, the leading ones and the sum are not affected. The PS code structure gives also the option to implement other routines for this computation, and one with [TwoFAST](https://github.com/hsgg/TwoFAST.jl)[[5]](#1) is sketched (but not yet tested and reliable).
+- the code functions are well documented; check the github pages website https://foglienimatteo.github.io/GaPSE.jl/stable if you cannot see correctly the analytical expressions written in the docstrings. The Two-Point Correlation Functions docstrings of the groups `LD`, `GNCxLD` and `LDxGNC` (see below for explanation) are still missing; 
 - few people used this code, so bugs are behind the corner; do not hesitate to raise the finger to point them out (see in the [How to report bugs, suggest improvements and/or contribute](#how-to-report-bugs-suggest-improvements-andor-contribute) section below)!
 - if you use this code, please read the [Using this code](##using-this-code) section below
 
@@ -53,6 +53,7 @@ Given the matter Power Spectrum (PS) at redshift $z=0$ and the background quanti
 - the Doppler and matter TPCFs in the plane-parallel approximation.
 
 All these calculations can be performed both with and without a survey window function. The code implements also a toy-survey with azymuthal symmetry.
+The multipoles computations are tested for $0 \leq L \leq 4$.
 
 This project, and the analytical expressions used for the TPCFs, are based on the article of Emanuele Castorina and Enea Di Dio [[3]](#1). 
 
