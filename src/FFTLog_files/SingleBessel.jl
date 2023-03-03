@@ -224,7 +224,8 @@ function _eval_y!(plan::Union{SingleBesselPlan,HankelPlan}, ell::Vector)
      plan.fy_corr = zeros(size(plan.y))
 
      @inbounds for myl in 1:length(ell)
-          plan.y[myl, :] = (ell[myl] + 1) ./ plan.x #1.0 ./ plan.x 
+          #plan.y[myl, :] = (ell[myl] + 1) ./ plan.x
+          plan.y[myl, :] = 1.0 ./ plan.x
           plan.fy_corr[myl, :] =
                plan.y[myl, :] .^ (-plan.ν) .* sqrt(π) ./ 4
      end

@@ -5,13 +5,13 @@
 #
 # Power Spectra Multipole computation for the cross correlations between 
 #Galaxy Number Counts and Luminosity Distance perturbations from the file:
-# /Users/di75tom/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/Power_Spectrum/xis_GNCxLD_L0_noF.txt
+# /Users/di75tom/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/PowerSpectra/xis_GNCxLD_L0_noF.txt
 #
 # For this PS_multipole computation we set: 
 # 	 multipole degree in consideration L = 0
 # 	 algorithm chosen for the computation: :fftlog
 # 	 #points used in Fourier transform N = 300
-# overall computational time needed (in s) : 0.0215
+# overall computational time needed (in s) : 0.0207
 # kwards passed to "print_all_PS_multipole": 
 # 		ν = 1.5
 # 		cut_first_n = 0

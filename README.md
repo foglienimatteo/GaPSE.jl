@@ -112,13 +112,14 @@ There are three ways in order to use this code:
 Some `.ipynb`s are already provided in the directory `ipynbs` :
 - we encourage you to follow the `ipynbs/TUTORIAL.ipynb` file first. The basic structure of the code and the most important functions are there presented
 - `ipynbs/Computations_b1p5-sb0-fevo0.ipynb` explains the analytical Primordial Non-Gaussianities model we use here, compute its contribution in the redshift bin $1.0 \leq z \leq 1.5$ and compare it with the GNC effects, all using our toy-model window function with angular opening $\theta_{\rm max} = \pi/2$
-- `ipynbs/Generic_Window.ipynb` explains how to use GaPSE with a generic Window Function of your choice
-- the `ipynbs/Computations_b1p5-sb0-fevo0.jl` Julia file its the translation into script of `ipynbs/Computations_b1p5-sb0-fevo0.ipynb`; you can easily run it from the command line with:
+- `ipynbs/PS_L01234.ipynb` computes the TPCFs and PS sum of the GNC effects for the multipole orders $L=0,1,2,3,4$. 
+- the `ipynbs/Computations_b1p5-sb0-fevo0.jl` and `ipynbs/PS_L01234.jl` Julia files are the translation into scripts of the correspinding ipynbs; you can easily run it from the command line with:
   ```bash
-    $ julia Computations_b1p5-sb0-fevo0.jl
+    $ julia <scriptname.jl>
   ```
+  The other scripts`ipynbs/PS_L01234_pt0.jl`, ..., `ipynbs/PS_L01234_pt0.jl` allow you to speed up the `ipynbs/PS_L01234.jl` computations, running them in different terminals.
 
-The code is well tested and documented: almost each struct/function has a docstring that you can easily access in Julia with `?<name-of-the-struct/function>`, and there is an acitive GitHub Pages website with the [latest stable documentation](https://foglienimatteo.github.io/GaPSE/stable).
+The code is well tested and documented: almost each struct/function has a docstring that you can easily access in Julia with `?<name-of-the-struct/function>`, and there is an active GitHub Pages website with the [latest stable documentation](https://foglienimatteo.github.io/GaPSE/stable).
 
 ## Dependencies
 
