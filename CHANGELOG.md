@@ -1,16 +1,22 @@
-# HEAD
+## HEAD
 
-# VERSION 0.7.0
+
+## development branch qls
 
 - added `ipynb/Computations_b1p5-sb0-fevo0.ipynb`, `Computations_b1p5-sb0-fevo0.jl` and `Generic_Window.jl` for the analysis of the PNG, even with a generic window function
 
 - added `src/PowerSpectraGenWin.jl` and `src/WindowF_QMultipoles.jl`: now it's possible to compute the PS for a generic window!
-  
+
+
+## VERSION 0.7.0
+
+- huge improvements on docstrings and API.
+
 - renamed `src/PowerSpectrum.jl` to `src/PowerSpectra.jl`
 
 - creation of the package `GaPSE.jl`; it will still take a while
 
-# VERSION 0.6.0
+## VERSION 0.6.0
 
 - Made the docstrings for almost all the functions in the code; only the `LD`, `GNCxLD` and `LDxGNC` TPCFs are huge holes in this picture
 
@@ -20,7 +26,7 @@
 
 - Improved the code for `PS_multipole` and associated functions; some options have changed name
 
-# VERSION 0.5.0
+## VERSION 0.5.0
 
 - Implemented tests.
 
@@ -30,7 +36,7 @@
 
 - Now you can compute the integral on `μ` (for `GNC`, `LD`,  `GNCxLD` and `LDxGNC` TPCFs) through three algorithms,and you can specify with one to use with the keyword argument `alg`:  `:quad`, `:lobatto`, and `:trap`.
 
-# VERSION 0.4.0
+## VERSION 0.4.0
 
 - Added tests for all the previous features.
 
@@ -57,7 +63,7 @@
   -  `print_map_sum_ξ_multipole` in `print_map_sum_ξ_LD_multipole`;
 
 
-# VERSION 0.3.0
+## VERSION 0.3.0
 
 - Added the functions for the evaluation of the Doppler auto-CF with the Plane-Parallel approximation and their tests
 
@@ -66,7 +72,7 @@
 - Added tests for PS evaluation
 
 
-# VERSION 0.2.0
+## VERSION 0.2.0
 
 - Modified the `CosmoParams` struct: now you should pass dictionaries for `InputPS` and `IPSTools` options
 
@@ -82,7 +88,7 @@
 
 
 
-# VERSION 0.1.0
+## VERSION 0.1.0
 
 Created the basic structure of the program, with the structs `WindowF`, `InputPS`, `CosmoParams` and `Cosmology`.
 It's possible to:
