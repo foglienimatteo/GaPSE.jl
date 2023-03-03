@@ -18,6 +18,7 @@ IMPORTANT NOTE: This is a work-in-progress project! As a consequence, currently 
 - few people used this code, so bugs are behind the corner; do not hesitate to raise the finger to point out them (see in the [How to report bugs, suggest improvements and/or contribute](#how-to-report-bugs-suggest-improvements-andor-contribute) section below)!
 - if you use this code, please read the [Using this code](##using-this-code) section below
 
+
 ## Table of Contents
 
 - [GaPSE - a model for the Galaxy Power Spectrum Estimator](#gapse---a-model-for-the-galaxy-power-spectrum-estimator)
