@@ -307,7 +307,7 @@ function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
                frac_middle=frac_middle, N=N_χs, ass=false
                )
           else
-               throw(AssertionError("how the hell did you arrived here?"))
+               throw(AssertionError("how did you arrived here?"))
           end
      end
 

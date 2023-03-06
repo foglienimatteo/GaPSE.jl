@@ -168,7 +168,7 @@ function main()
                GaPSE.print_map_sum_ξ_GNC_multipole(
                     cosmo, DIR * vec_name_xis_GNC_noF_noobs_file[i],
                     10 .^ range(0, log10(2 * cosmo.s_max), length=500);
-                    use_windows=true, L=L, alg=:lobatto, obs=:no,
+                    use_windows=true, L=L, alg=:quad, obs=:no,
                     single=true, enhancer=1e8,
                     N_trap=200, N_lob=500, atol_quad=0.0, rtol_quad=1e-2,
                     N_χs=100, N_χs_2=60

@@ -113,7 +113,7 @@ There are three ways in order to use this code:
 Some `.ipynb`s are already provided in the directory `ipynbs` :
 - we encourage you to follow the `ipynbs/TUTORIAL.ipynb` file first. The basic structure of the code and the most important functions are there presented
 - `ipynbs/Computations_b1p5-sb0-fevo0.ipynb` explains the analytical Primordial Non-Gaussianities model we use here, compute its contribution in the redshift bin $1.0 \leq z \leq 1.5$ and compare it with the GNC effects, all using our toy-model window function with angular opening $\theta_{\rm max} = \pi/2$
-- `ipynbs/PS_L01234.ipynb` computes the TPCFs and PS sum of the GNC effects for the multipole orders $L=0,1,2,3,4$. 
+- `ipynbs/PS_L01234.ipynb` computes the TPCFs and PS sum of the GNC effects for the multipole orders $L=0,1,2,3,4$, and compare them to the Galaxies Plain-Parallel approximation ones. 
 - the `ipynbs/Computations_b1p5-sb0-fevo0.jl` and `ipynbs/PS_L01234.jl` Julia files are the translation into scripts of the correspinding ipynbs; you can easily run it from the command line with:
   ```bash
     $ julia <scriptname.jl>
@@ -153,7 +153,7 @@ If you use GaPSE to compute the galaxy power spectrum/correlation function pleas
 
 - Castorina, Di Dio, _The observed galaxy power spectrum in General Relativity_ (2022), Journal of Cosmology and Astroparticle Physics, DOI: 10.1088/1475-7516/2022/01/061, url: https://doi.org/10.1088/1475-7516/2022/01/061
 
-- Foglieni, Pantiri, Di Dio, Castorina,  _The large scale limit of the observed galaxy power spectrum_ (2023)
+- Foglieni, Pantiri, Di Dio, Castorina,  _The large scale limit of the observed galaxy power spectrum_ (2023), ArXiv Number 4774051, url: 
 
 If you also use the code to compute the perturbations in the luminosity distance, please refer also to
 

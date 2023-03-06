@@ -712,7 +712,7 @@ function PhiTimesWindowF_multipole(
           trapz(μs, orig_fs)
 
      else
-          throw(AssertionError("how the hell did you arrive here?"))
+          throw(AssertionError("how did you arrive here?"))
      end
 
      return int / enhancer
