@@ -40,20 +40,20 @@ function integrand_ξ_GNC_Newtonian_Lensing(
           new_J02 = 1 / (14 * Δχ2^2) * (
                7 * s1 * b_s1 * (-2 * χ2^2 * y + χ2 * s1 * (y^2 + 3) - 2 * y * s1^2) +
                f_s1 * (
-               4 * χ2^3 * (3 * y^2 - 1) - 2 * χ2^2 * y * s1 * (3 * y^2 + 8)
-               +
-               χ2 * s1^2 * (9 * y^2 + 11) - 6 * y * s1^3
+                    4 * χ2^3 * (3 * y^2 - 1) - 2 * χ2^2 * y * s1 * (3 * y^2 + 8)
+                    +
+                    χ2 * s1^2 * (9 * y^2 + 11) - 6 * y * s1^3
                )
           )
           new_J04 = 3 / (70 * Δχ2^4) * f_s1 * (
-               χ2^5 * (6 * y^2 - 2) + 6 * χ2^4 * y * s1 * (y^2 - 3)
-               -
-               χ2^3 * s1^2 * (y^4 + 12 * y^2 - 21)
-               +
-               2 * χ2^2 * y * s1^3 * (y^2 + 3) - 12 * χ2 * s1^4
-               +
-               4 * y * s1^5
-          )
+                         χ2^5 * (6 * y^2 - 2) + 6 * χ2^4 * y * s1 * (y^2 - 3)
+                         -
+                         χ2^3 * s1^2 * (y^4 + 12 * y^2 - 21)
+                         +
+                         2 * χ2^2 * y * s1^3 * (y^2 + 3) - 12 * χ2 * s1^4
+                         +
+                         4 * y * s1^5
+                    )
 
           I00 = cosmo.tools.I00(Δχ2)
           I20 = cosmo.tools.I20(Δχ2)
@@ -182,7 +182,7 @@ where:
 - ``f_1 = f(s_1)``, ... is the linear growth rate (evaluated in ``s_1``);
 
 - ``\\mathcal{H}_1 = \\mathcal{H}(s_1)``, ... is the comoving 
-  Hubble distances (evaluated in ``s_1``);
+  Hubble parameter (evaluated in ``s_1``, ...);
 
 - ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``;
 
@@ -250,10 +250,10 @@ This function is used inside `ξ_GNC_Newton_Lensing` with the [`trapz`](@ref) fr
 
 - `obs::Union{Bool,Symbol} = :noobsvel` : do you want to consider the observer terms in the computation of the 
   chosen GNC TPCF effect?
-  - `:yes` or `true` -> all the observer effects will be considered
-  - `:no` or `false` -> no observer term will be taken into account
+  - `:yes` or `true` -> all the observer terms will be considered;
+  - `:no` or `false` -> no observer term will be taken into account;
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
-    will be neglected, the other ones will be taken into account
+    will be neglected, the other ones will be taken into account.
 
 - `Δχ_min::Float64 = 1e-4` : when ``\\Delta\\chi_2 = \\sqrt{s_1^2 + \\chi_2^2 - 2 \\, s_1 \\chi_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
@@ -292,19 +292,19 @@ function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
      frac_begin, frac_middle, FRAC_s = 0.6, 0.6, 0.10
 
      χ2s = if suit_sampling == false
-     s2 .* range(STARTING, 1.0, length=N_χs)
+          s2 .* range(STARTING, 1.0, length=N_χs)
      else
           if s2 < (1.0 - FRAC_s) * s1
                s2 .* range(STARTING, 1.0, length=N_χs)
 
           elseif (1.0 - FRAC_s) * s1 ≤ s2 ≤ (1.0 + FRAC_s) * s1
                GaPSE.sample_subdivision_begin(STARTING, (1.0 - FRAC_s) * s1, s2;
-               frac_begin=frac_begin, N=N_χs, ass=false)
+                    frac_begin=frac_begin, N=N_χs, ass=false)
 
           elseif (1.0 + FRAC_s) * s1 < s2
                GaPSE.sample_subdivision_middle(
-               STARTING, (1.0 - FRAC_s) * s1, (1.0 + FRAC_s) * s1, s2;
-               frac_middle=frac_middle, N=N_χs, ass=false
+                    STARTING, (1.0 - FRAC_s) * s1, (1.0 + FRAC_s) * s1, s2;
+                    frac_middle=frac_middle, N=N_χs, ass=false
                )
           else
                throw(AssertionError("how did you arrived here?"))
@@ -315,8 +315,8 @@ function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
      IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
      int_ξs = [
-     en * GaPSE.integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; obs=obs, Δχ_min=Δχ_min)
-     for IP in IPs
+          en * GaPSE.integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; obs=obs, Δχ_min=Δχ_min)
+          for IP in IPs
      ]
 
      return trapz(χ2s, int_ξs) / en
@@ -414,7 +414,7 @@ where:
 - ``f_1 = f(s_1)``, ... is the linear growth rate (evaluated in ``s_1``);
 
 - ``\\mathcal{H}_1 = \\mathcal{H}(s_1)``, ... is the comoving 
-  Hubble distances (evaluated in ``s_1``);
+  Hubble parameter (evaluated in ``s_1``, ...);
 
 - ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``;
 
@@ -468,14 +468,21 @@ This function is computed integrating `integrand_ξ_GNC_Newtonian_Lensing` with 
 
 ## Inputs
 
-- `s1` and `s2`: comoving distances where the TPCF has to be calculated.
+- `s1` and `s2`: comoving distances where the TPCF has to be calculated;
   
-- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer;
 
 - `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
   used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
 
 ## Keyword Arguments
+
+- `obs::Union{Bool,Symbol} = :noobsvel` : do you want to consider the observer terms in the computation of the 
+  chosen GNC TPCF effect?
+  - `:yes` or `true` -> all the observer terms will be considered;
+  - `:no` or `false` -> no observer term will be taken into account;
+  - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
+    will be neglected, the other ones will be taken into account.
 
 - `en::Float64 = 1e6`: just a float number used in order to deal better 
   with small numbers;
@@ -535,14 +542,14 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 - `s1` and `s2`: comoving distances where the TPCF has to be calculated;
   
-- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer;
 
 - `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
   used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
 
 ## Keyword Arguments
 
-- `kwargs...` : Keyword arguments to be passed to the symmetric TPCF
+- `kwargs...` : Keyword arguments to be passed to the symmetric TPCF.
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
 [`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),
