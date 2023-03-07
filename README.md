@@ -13,8 +13,8 @@ GaPSE (Galaxy Power Spectrum Estimator) is a software for cosmological computati
 ## Important Remarks
 
 This is a work-in-progress project! As a consequence, currently in this pre-release:
-- The monopole (L=0) computations of the Galaxy Number Counts (GNC) correlation functions with `quad` integration and their corresponding Power Spectra (PS) with `:fftlog` have been tested extensively. It is also possible to compute their correlation function multipoles $L=1,2,3,...$ . However, the `:lobatto` integration still leads to small numerical oscillations, and two terms (Newton-Lensing and Lensing-Newton) converge very slowly (i.e. you must use a high`N_lob` number of points). These problems are nevertheless suppresed when you employ the azymuthally symmetric window function of this code (`use_windows=true`) and consider the power spectrum sum of all these effects;
-- you can't go further than $z \simeq 1.5$;
+- The monopole (L=0) computations of the Galaxy Number Counts (GNC) correlation functions with `quad` integration and their corresponding Power Spectra (PS) with `:fftlog` have been tested extensively. It is also possible to compute their correlation function multipoles $L=1,2,3,...$  with `:lobatto` integration. However, `:lobatto` still leads to small numerical oscillations, and two terms (Newton-Lensing and Lensing-Newton) converge very slowly (i.e. you must use a high `N_lob` number of points). These problems are nevertheless suppresed when you employ the azymuthally symmetric window function of this code (`use_windows=true`) and consider the power spectrum sum of all these effects;
+- you cannot go further than $z \simeq 1.5$;
 - The PS computations are by default made with the Julia package [FFTLog](https://github.com/marcobonici/FFTLog.jl). Due to the fact that with `:fftlog` you must specify manually the bias parameter, the Power Spectra computations of a whole group of terms create artificial FFT oscillations in some of them. However, the leading ones and the sum are not affected. The PS code structure gives also the option to implement other routines for this computation, and one with [TwoFAST](https://github.com/hsgg/TwoFAST.jl)[[5]](#1) is sketched (but not yet tested and reliable).
 - the code functions are well documented; check the github pages website https://foglienimatteo.github.io/GaPSE.jl/stable if you cannot see correctly the analytical expressions written in the docstrings. The Two-Point Correlation Functions docstrings of the groups `LD`, `GNCxLD` and `LDxGNC` (see below for explanation) are still missing; 
 - few people used this code, so bugs are behind the corner; do not hesitate to raise the finger to point them out (see in the [How to report bugs, suggest improvements and/or contribute](#how-to-report-bugs-suggest-improvements-andor-contribute) section below)!
@@ -52,14 +52,14 @@ Given the matter Power Spectrum (PS) at redshift $z=0$ and the background quanti
 
 - the Doppler and matter TPCFs in the plane-parallel approximation.
 
-All these calculations can be performed both with and without a survey window function. The code implements also a toy-survey with azymuthal symmetry.
-The multipoles computations are tested for $0 \leq L \leq 4$.
+All these calculations can be performed both with and without an azymuthally symmetric window function, that the code allows to compute for a given redshift bin and angular opening.
+The multipole computations are tested for $0 \leq L \leq 4$.
 
 This project, and the analytical expressions used for the TPCFs, are based on the article of Emanuele Castorina and Enea Di Dio [[3]](#1). 
 
 ## Installation
 
-Currently, this package is not in the Julia package registries. Assuming that you have already installed a compatible Julia version, the simplest way to install this software is then the following:
+Currently, this package is not in the Julia package registries. Assuming that you have already installed a compatible Julia version (1.8.x), the simplest way to install this software is then the following:
 
 - in the terminal, go to the directory you want to install this package;
   
@@ -76,7 +76,8 @@ Inside the directory, there is a file called `install_gapse.jl`, which is a Juli
 ```bash
      $ julia install_gapse.jl
 ```
-If there are no error messages at the end of the installations, than GaPSE is corretly configured and you can start to use it!
+
+If there are no error messages at the end of the installation, then GaPSE is corretly configured and you can start to use it!
   
 
 
@@ -94,7 +95,7 @@ NOTE: instead of using the `install_gapse.jl` script, you can also do the same i
 
 ## Usage
 
-The only mandatory instrument to run the code is a Julia REPL with version ≥ 1.8. 
+The only mandatory instrument to run the code is a Julia REPL with version 1.8.x . 
 There are three ways in order to use this code:
 
 - you can write whatever instruction inside the file `GaPSE-exe.jl` and then run in the command line
@@ -112,7 +113,7 @@ There are three ways in order to use this code:
 
 Some `.ipynb`s are already provided in the directory `ipynbs` :
 - we encourage you to follow the `ipynbs/TUTORIAL.ipynb` file first. The basic structure of the code and the most important functions are there presented
-- `ipynbs/Computations_b1p5-sb0-fevo0.ipynb` explains the analytical Primordial Non-Gaussianities model we use here, compute its contribution in the redshift bin $1.0 \leq z \leq 1.5$ and compare it with the GNC effects, all using our toy-model window function with angular opening $\theta_{\rm max} = \pi/2$
+- `ipynbs/Computations_b1p5-sb0-fevo0.ipynb` explains the analytical Primordial Non-Gaussianities model we use here, computes its contribution in the redshift bin $1.0 \leq z \leq 1.5$ and compares it with the GNC effects, all using our azymuthally symmetric window function with angular opening $\theta_{\rm max} = \pi/2$
 - `ipynbs/PS_L01234.ipynb` computes the TPCFs and PS sum of the GNC effects for the multipole orders $L=0,1,2,3,4$, and compare them to the Galaxies Plain-Parallel approximation ones. 
 - the `ipynbs/Computations_b1p5-sb0-fevo0.jl` and `ipynbs/PS_L01234.jl` Julia files are the translation into scripts of the correspinding ipynbs; you can easily run it from the command line with:
   ```bash
@@ -130,7 +131,7 @@ GaPSE.jl makes extensive use of the following packages:
 - [Dierckx](https://github.com/kbarbary/Dierckx.jl) and [GridInterpolations](https://github.com/sisl/GridInterpolations.jl) for 1D and 2D Splines respectively
 - [LsqFit](https://github.com/JuliaNLSolvers/LsqFit.jl) for basic least-squares fitting
 - [QuadGK](https://github.com/JuliaMath/QuadGK.jl), [Trapz](https://github.com/francescoalemanno/Trapz.jl) and [FastGaussQuadrature](https://github.com/JuliaApproximation/FastGaussQuadrature.jl) for preforming 1D integrations, and [HCubature](https://github.com/JuliaMath/HCubature.jl) for the 2D ones
-- [ArbNumerics](https://github.com/JeffreySarnoff/ArbNumerics.jl), [AssociatedLegendrePolynomials](https://github.com/jmert/AssociatedLegendrePolynomials.jl), [LegendrePolynomials](https://github.com/jishnub/LegendrePolynomials.jl) and [SpecialFunctions](https://github.com/JuliaMath/SpecialFunctions.jl) for mathematical function evaluations, especially for the Legendre Polinomials $\mathcal{L}_{\ell}(x)$ and the Gamma function $ \Gamma(x) $
+- [ArbNumerics](https://github.com/JeffreySarnoff/ArbNumerics.jl), [AssociatedLegendrePolynomials](https://github.com/jmert/AssociatedLegendrePolynomials.jl), [LegendrePolynomials](https://github.com/jishnub/LegendrePolynomials.jl) and [SpecialFunctions](https://github.com/JuliaMath/SpecialFunctions.jl) for mathematical function evaluations, especially for the Legendre Polinomials $\mathcal{L}_{\ell}(x)$ and the Gamma function $\Gamma(x)$
 - other native Julia packages: [DelimitedFiles](https://github.com/JuliaData/DelimitedFiles.jl), [Documenter](https://github.com/JuliaDocs/Documenter.jl), [IJulia](https://github.com/JuliaLang/IJulia.jl), [LinearAlgebra](https://github.com/JuliaLang/julia/tree/master/stdlib/LinearAlgebra), [NPZ](https://github.com/fhs/NPZ.jl), [Printf](https://github.com/JuliaLang/julia/tree/master/stdlib/Printf), [ProgressMeter](https://github.com/timholy/ProgressMeter.jl), [Suppressor](https://github.com/JuliaIO/Suppressor.jl), [Test](https://github.com/JuliaLang/julia/tree/master/stdlib/Test)
 
 
@@ -153,7 +154,7 @@ If you use GaPSE to compute the galaxy power spectrum/correlation function pleas
 
 - Castorina, Di Dio, _The observed galaxy power spectrum in General Relativity_ (2022), Journal of Cosmology and Astroparticle Physics, DOI: 10.1088/1475-7516/2022/01/061, url: https://doi.org/10.1088/1475-7516/2022/01/061
 
-- Foglieni, Pantiri, Di Dio, Castorina,  _The large scale limit of the observed galaxy power spectrum_ (2023), ArXiv Number 4774051, url: 
+- Foglieni, Pantiri, Di Dio, Castorina,  _The large scale limit of the observed galaxy power spectrum_ (2023), ArXiv number 2303.03142, url: https://arxiv.org/abs/2303.03142
 
 If you also use the code to compute the perturbations in the luminosity distance, please refer also to
 
