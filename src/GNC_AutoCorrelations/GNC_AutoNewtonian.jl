@@ -20,10 +20,11 @@
 
 function ξ_GNC_Newtonian(P1::Point, P2::Point, y, cosmo::Cosmology; 
 	b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
-    ℛ1=nothing, ℛ2=nothing, obs::Union{Bool,Symbol}=:noobsvel)
+    s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 	
 	s1, D1, f1 = P1.comdist, P1.D, P1.f
 	s2, D2, f2 = P2.comdist, P2.D, P2.f
+	
 	b1 = isnothing(b1) ? cosmo.params.b1 : b1
 	b2 = isnothing(b2) ? cosmo.params.b2 : b2
 
@@ -63,7 +64,7 @@ end
 """
 	ξ_GNC_Newtonian(P1::Point, P2::Point, y, cosmo::Cosmology; 
 		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, ℛ1=nothing, ℛ2=nothing,
+		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
 		obs::Union{Bool, Symbol} = :noobsvel) ::Float64
 
 	ξ_GNC_Newtonian(s1, s2, y, cosmo::Cosmology; 

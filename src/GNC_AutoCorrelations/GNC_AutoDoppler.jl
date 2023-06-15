@@ -20,14 +20,19 @@
 
 function ξ_GNC_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology; 
 	b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
-	ℛ1=nothing, ℛ2=nothing, obs::Union{Bool,Symbol}=:noobsvel)
+	s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
 	s1, D1, f1, ℋ1 = P1.comdist, P1.D, P1.f, P1.ℋ
 	s2, D2, f2, ℋ2 = P2.comdist, P2.D, P2.f, P2.ℋ
-	ℛ1 = isnothing(ℛ1) ? P1.ℛ_GNC : ℛ1
-	ℛ2 = isnothing(ℛ2) ? P2.ℛ_GNC : ℛ2
+
 	s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
 	s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+	
+    s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
+    ℛ1 = func_ℛ_GNC(s1, ℋ1, cosmo.ℋ_p_of_s(s1); s_b=s_b1, 𝑓_evo=𝑓_evo1, s_lim=s_lim)
+    ℛ2 = func_ℛ_GNC(s2, ℋ2, cosmo.ℋ_p_of_s(s2); s_b=s_b2, 𝑓_evo=𝑓_evo2, s_lim=s_lim)
 
 	Δs = s(P1.comdist, P2.comdist, y)
 	common = D1 * D2 * f1 * f2 * ℛ1 * ℛ2 * ℋ1 * ℋ2
@@ -83,7 +88,7 @@ end
 """
 	ξ_GNC_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology;
 		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, ℛ1=nothing, ℛ2=nothing,
+		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
 		obs::Union{Bool, Symbol} = :noobsvel) ::Float64
 
 	ξ_GNC_Doppler(s1, s2, y, cosmo::Cosmology; 

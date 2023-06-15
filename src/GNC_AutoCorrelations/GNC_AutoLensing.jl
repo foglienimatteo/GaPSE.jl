@@ -24,15 +24,16 @@ function integrand_ξ_GNC_Lensing(
 	P1::Point, P2::Point,
 	y, cosmo::Cosmology; Δχ_min::Float64=1e-1, 
 	b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
-	ℛ1=nothing, ℛ2=nothing, obs::Union{Bool,Symbol}=:noobsvel)
+	s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
 	s1 = P1.comdist
 	s2 = P2.comdist
 	χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
 	χ2, D2, a2 = IP2.comdist, IP2.D, IP2.a
+
+	Ω_M0 = cosmo.params.Ω_M0
 	s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
 	s_b_s2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
-	Ω_M0 = cosmo.params.Ω_M0
 
 	Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
 	Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
@@ -90,8 +91,7 @@ end
 		y, cosmo::Cosmology;
 		Δχ_min::Float64=1e-1, b1=nothing, b2=nothing, 
 		s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
-		ℛ1=nothing, ℛ2=nothing, 
-		obs::Union{Bool,Symbol}=:noobsvel
+		s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel
 		) ::Float64
 
 	integrand_ξ_GNC_Lensing(
@@ -312,11 +312,10 @@ end
 
 """
 	ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-		s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
-		ℛ1=nothing, ℛ2=nothing, 
-		obs::Union{Bool,Symbol}=:noobsvel,
 		en::Float64 = 1e6, Δχ_min::Float64 = 1e-1,
-		N_χs_2::Int = 100) ::Float64
+		N_χs_2::Int = 100,
+		s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
+		s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel,) ::Float64
 
 	ξ_GNC_Lensing(s1, s2, y, cosmo::Cosmology; 
 		kwargs...) ::Float64

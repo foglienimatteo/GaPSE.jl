@@ -22,16 +22,22 @@
 function integrand_ξ_GNC_Doppler_IntegratedGP(
 	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
-    ℛ1=nothing, ℛ2=nothing, obs::Union{Bool,Symbol}=:noobsvel)
+    s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
 	s1, D_s1, f_s1, ℋ_s1 = P1.comdist, P1.D, P1.f, P1.ℋ
 	s2 = P2.comdist
-    ℛ_s1 = isnothing(ℛ1) ? P1.ℛ_GNC : ℛ1
-    ℛ_s2 = isnothing(ℛ2) ? P2.ℛ_GNC : ℛ2
 	χ2, D2, a2, f2, ℋ2 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
+
+	Ω_M0 = cosmo.params.Ω_M0
     s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
     s_b_s2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
-	Ω_M0 = cosmo.params.Ω_M0
+    𝑓_evo_s1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo_s2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+
+    s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
+    ℛ_s1 = func_ℛ_GNC(s1, ℋ1, cosmo.ℋ_p_of_s(s1); s_b=s_b_s1, 𝑓_evo=𝑓_evo_s1, s_lim=s_lim)
+    ℛ_s2 = func_ℛ_GNC(s2, ℋ2, cosmo.ℋ_p_of_s(s2); s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
+
 
 	Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
 	Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
@@ -86,7 +92,7 @@ end
 	integrand_ξ_GNC_Doppler_IntegratedGP(
 		IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
 		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, ℛ1=nothing, ℛ2=nothing,
+		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
 		obs::Union{Bool,Symbol}=:noobsvel
 		) ::Float64
 
@@ -254,7 +260,7 @@ integrand_ξ_GNC_Doppler_IntegratedGP
 		s1, s2, y, cosmo::Cosmology;
 		en::Float64=1e6, N_χs::Int=100, 
 		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, ℛ1=nothing, ℛ2=nothing,
+		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
 		obs::Union{Bool,Symbol}=:noobsvel
 		) ::Float64
 
@@ -438,8 +444,10 @@ end
 
 
 """
-	ξ_GNC_IntegratedGP_Doppler(s1, s2, y, cosmo::Cosmology; kwargs...) = 
-		ξ_GNC_Doppler_IntegratedGP(s2, s1, y, cosmo; kwargs...)
+	ξ_GNC_IntegratedGP_Doppler(s1, s2, y, cosmo::Cosmology; 
+		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
+		obs::Union{Bool,Symbol}=:noobsvel ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Integrated Gravitational Potential (GP) and the Doppler effects arising from the Galaxy Number Counts (GNC).
@@ -468,7 +476,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 """
 function ξ_GNC_IntegratedGP_Doppler(s1, s2, y, cosmo::Cosmology; 
     	b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
-    	ℛ1=nothing, ℛ2=nothing, kwargs...)
+    	s_lim=nothing, kwargs...)
 
     b1 = isnothing(b1) ? cosmo.params.b1 : b1
     b2 = isnothing(b2) ? cosmo.params.b2 : b2
@@ -476,12 +484,10 @@ function ξ_GNC_IntegratedGP_Doppler(s1, s2, y, cosmo::Cosmology;
     s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
     𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
     𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
-    ℛ1 = isnothing(ℛ1) ? P1.ℛ_GNC : ℛ1
-    ℛ2 = isnothing(ℛ2) ? P2.ℛ_GNC : ℛ2
 
     ξ_GNC_Doppler_IntegratedGP(s2, s1, y, cosmo; 
 		b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1, 
-		𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, ℛ1=ℛ2, ℛ2=ℛ1,
+		𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim,
 		kwargs...)
 end
 

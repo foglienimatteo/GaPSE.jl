@@ -21,17 +21,23 @@
 function integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
     P1::Point, P2::Point, y, cosmo::Cosmology; 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
-    ℛ1=nothing, ℛ2=nothing, obs::Union{Bool,Symbol}=:noobsvel)
+    s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
     s1 = P1.comdist
     s2 = P2.comdist
-    ℛ_s1 = isnothing(ℛ1) ? P1.ℛ_GNC : ℛ1
-    ℛ_s2 = isnothing(ℛ2) ? P2.ℛ_GNC : ℛ2
     χ1, D1, a1, ℋ1, f1 = IP1.comdist, IP1.D, IP1.a, IP1.ℋ, IP1.f
     χ2, D2, a2, ℋ2, f2 = IP2.comdist, IP2.D, IP2.a, IP2.ℋ, IP2.f
+
+    Ω_M0 = cosmo.params.Ω_M0
     s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
     s_b_s2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
-    Ω_M0 = cosmo.params.Ω_M0
+    𝑓_evo_s1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo_s2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+
+    s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
+    ℛ_s1 = func_ℛ_GNC(s1, ℋ1, cosmo.ℋ_p_of_s(s1); s_b=s_b_s1, 𝑓_evo=𝑓_evo_s1, s_lim=s_lim)
+    ℛ_s2 = func_ℛ_GNC(s2, ℋ2, cosmo.ℋ_p_of_s(s2); s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
+
 
     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
     Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
@@ -64,7 +70,7 @@ end
 		P1::Point, P2::Point,
 		y, cosmo::Cosmology; 
 		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, ℛ1=nothing, ℛ2=nothing,
+		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
 		obs::Union{Bool,Symbol}=:noobsvel
 		) ::Float64
 
@@ -268,7 +274,7 @@ end
 		P1::Point, P2::Point, y, cosmo::Cosmology;
 		en::Float64=1e10, N_χs_2::Int=100, 
 		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, ℛ1=nothing, ℛ2=nothing,
+		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
 		obs::Union{Bool,Symbol}=:noobsvel
 		) ::Float64
 
