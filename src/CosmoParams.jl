@@ -111,7 +111,8 @@ const DEFAULT_WFI_OPTS = Dict(
           Ω_M0::Float64
           h_0::Float64
 
-          b::Float64
+          b1::Float64
+          b2::Float64
           s_b::Float64
           𝑓_evo::Float64
 
@@ -138,7 +139,9 @@ matter of concerns for the `Cosmology` we are interested in.
 
 - `h_0::Float64` : today's Hubble adimensional parameter (`H_0 = h_0 * 100 km/(s * Mpc)`).
 
-- `b::Float64` : galaxy bias.
+- `b1::Float64` and `b2::Float64` : galaxy biases; you can choose to define both of them (if you are interested
+  in the analysis of two galaxy species) or only the former (and leave the latter as `nothing`, it will be set equal
+  to the former) .
 
 - `s_b::Float64` : magnification bias, i.e. the slope of the luminosity function at the luminosity threshold.
 
@@ -178,6 +181,7 @@ matter of concerns for the `Cosmology` we are interested in.
 
      CosmoParams(z_min, z_max, θ_max;
           Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70, s_lim = 1e-2,
+          b1=1.0, b2=nothing, s_b=0.0, 𝑓_evo=0.0,
           IPS_opts::Dict = Dict{Symbol,Any}(),
           IPSTools_opts::Dict = Dict{Symbol,Any}()
      )
@@ -217,7 +221,8 @@ struct CosmoParams
      Ω_M0::Float64
      h_0::Float64
 
-     b::Float64
+     b1::Float64
+     b2::Float64
      s_b::Float64
      𝑓_evo::Float64
 
@@ -229,7 +234,7 @@ struct CosmoParams
 
      function CosmoParams(z_min, z_max, θ_max;
           Ω_b=0.0489, Ω_cdm=0.251020, h_0=0.70, s_lim=1e-2,
-          b=1.0, s_b=0.0, 𝑓_evo=0.0,
+          b1=1.0, b2=nothing, s_b=0.0, 𝑓_evo=0.0,
           IPS_opts::Dict=Dict{Symbol,Any}(),
           IPSTools_opts::Dict=Dict{Symbol,Any}()
           #WFI_opts::Dict=Dict{Symbol,Any}()
@@ -267,7 +272,9 @@ struct CosmoParams
           @assert 1e-2 ≤ IPSTools[:fit_min] < IPSTools[:fit_max] < 10.0 " 1e-2 " *
                                                                         "≤ fit_min < fit_max < 10.0 must hold!"
 
-          @assert b > 0.0 " b > 0 must hold!"
+          @assert b1 > 0.0 " b1 > 0 must hold!"
+          real_b2 = isnothing(b2) ? b1 : b2
+          @assert real_b2 > 0.0 " b2 > 0 must hold!"
 
           #=
           @assert isnothing(WFI[:llim]) || 0.0 ≤ WFI[:llim] " 0.0 ≤ llim must hold!"
@@ -280,7 +287,7 @@ struct CosmoParams
 
           new(z_min, z_max, θ_max,
                Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0,
-               b, s_b, 𝑓_evo,
+               b1, real_b2, s_b, 𝑓_evo,
                s_lim,
                IPS, IPSTools,
                #WFI

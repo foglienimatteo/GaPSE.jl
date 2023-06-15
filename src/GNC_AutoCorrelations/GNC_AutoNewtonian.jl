@@ -18,10 +18,11 @@
 #
 
 
-function ξ_GNC_Newtonian(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Union{Bool,Symbol}=:noobsvel)
+function ξ_GNC_Newtonian(P1::Point, P2::Point, y, cosmo::Cosmology; b1=nothing, b2=nothing, obs::Union{Bool,Symbol}=:noobsvel)
      s1, D1, f1 = P1.comdist, P1.D, P1.f
      s2, D2, f2 = P2.comdist, P2.D, P2.f
-     b1, b2 = cosmo.params.b, cosmo.params.b
+     b1 = isnothing(b1) ? cosmo.params.b1 : b1
+     b2 = isnothing(b2) ? cosmo.params.b2 : b2
 
      Δs = s(s1, s2, y)
 
