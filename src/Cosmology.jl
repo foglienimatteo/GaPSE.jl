@@ -231,18 +231,18 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 - `windowF::WindowF` : the window function ``F``, defined as:
   ```math
-     \\begin{split}
-     F(x,\\mu; \\theta_\\mathrm{max}) = & \\;4\\pi 
-     \\int_0^{\\theta_\\mathrm{max}} \\mathrm{d}\\theta_1 \\int_0^\\pi \\mathrm{d} \\theta \\; 
-     \\, \\Theta\\left(\\frac
-          {x \\cos \\theta + \\cos \\theta_1}{\\sqrt{x^1+2+2x\\mu}} - 
-          \\cos(\\theta_\\mathrm{max}) 
-          \\right) 
-     \\, \\Theta(\\mu-\\cos(\\theta+\\theta_1)) \\\\
-     &\\Theta(\\cos(\\theta - \\theta_1)-\\mu) \\;
-     \\frac{\\sin\\theta\\sin\\theta_1}
-          {\\sqrt{(\\sin\\theta\\sin\\theta_1)^2-(\\cos\\theta\\cos\\theta_1-\\mu)^2}}
-     \\end{split}
+    \\begin{split}
+    F(x,\\mu; \\theta_\\mathrm{max}) = & \\;4\\pi 
+    \\int_0^{\\theta_\\mathrm{max}} \\mathrm{d}\\theta_1 \\int_0^\\pi \\mathrm{d} \\theta \\; 
+    \\, \\Theta\\left(\\frac
+        {x \\cos \\theta + \\cos \\theta_1}{\\sqrt{x^1+2+2x\\mu}} - 
+        \\cos(\\theta_\\mathrm{max}) 
+        \\right) 
+    \\, \\Theta(\\mu-\\cos(\\theta+\\theta_1)) \\\\
+    &\\Theta(\\cos(\\theta - \\theta_1)-\\mu) \\;
+    \\frac{\\sin\\theta\\sin\\theta_1}
+        {\\sqrt{(\\sin\\theta\\sin\\theta_1)^2-(\\cos\\theta\\cos\\theta_1-\\mu)^2}}
+    \\end{split}
   ```
 
 - `windowFint::WindowFIntegrated` : the Integrated Window Function ``\\mathcal{F}``, defined as:
@@ -444,17 +444,17 @@ end
 
 
 """
-     Point(
-          z::Float64
-          comdist::Float64
-          D::Float64
-          f::Float64
-          ℋ::Float64
-          ℋ_p::Float64
-          ℛ_LD::Float64
-          ℛ_GNC::Float64
-          a::Float64
-          )
+    Point(
+        z::Float64
+        comdist::Float64
+        D::Float64
+        f::Float64
+        ℋ::Float64
+        ℋ_p::Float64
+        ℛ_LD::Float64
+        ℛ_GNC::Float64
+        a::Float64
+        )
      
 A point in the Universe, placed at redshift `z` from us.
 It contains all the relevant cosmological information at that redshift, respectively:

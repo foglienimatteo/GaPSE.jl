@@ -69,6 +69,3 @@
 end
 
 
-@testset "test_Point" begin
-     P = GaPSE.Point
-end
