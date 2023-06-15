@@ -19,66 +19,76 @@
 
 
 function integrand_ξ_GNC_LocalGP_IntegratedGP(
-     IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology; obs::Union{Bool,Symbol}=:noobsvel)
+	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
+    s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
-     s1, D_s1, f_s1, a_s1, ℋ_s1, ℛ_s1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ, P1.ℛ_GNC
-     s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
-     χ2, D2, a2, f2, ℋ2 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
-     s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b
-     𝑓_evo_s1 = cosmo.params.𝑓_evo
-     Ω_M0 = cosmo.params.Ω_M0
+	s1, D_s1, f_s1, a_s1, ℋ_s1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ
+	s2 = P2.comdist
+	χ2, D2, a2, f2, ℋ2 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
 
-     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-     Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
+    Ω_M0 = cosmo.params.Ω_M0
+    s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    s_b_s2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo_s1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo_s2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
 
-     factor = 3 * ℋ0^2 * Ω_M0 * D2 * (s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2) / (2 * s2 * a2)
-     parenth = 2 * f_s1 * ℋ_s1^2 * a_s1 * (𝑓_evo_s1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f_s1 + ℛ_s1 + 5 * s_b_s1 - 2)
+    s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
+    ℛ_s1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b_s1, 𝑓_evo=𝑓_evo_s1, s_lim=s_lim)
+    ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
-     I04_tilde = cosmo.tools.I04_tilde(Δχ2)
+	Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
+	Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
 
-     if obs == false || obs == :no
-          return Δχ2^4 / a_s1 * D_s1 * factor * parenth * I04_tilde
+	factor = 3 * ℋ0^2 * Ω_M0 * D2 * (s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2) / (2 * s2 * a2)
+	parenth = 2 * f_s1 * ℋ_s1^2 * a_s1 * (𝑓_evo_s1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f_s1 + ℛ_s1 + 5 * s_b_s1 - 2)
 
-     elseif obs == true || obs == :yes || obs == :noobsvel
-          #### New observer terms #########
+	I04_tilde = cosmo.tools.I04_tilde(Δχ2)
 
-          I04_tilde_χ2 = cosmo.tools.I04_tilde(χ2)
+	if obs == false || obs == :no
+		return Δχ2^4 / a_s1 * D_s1 * factor * parenth * I04_tilde
 
-          obs_terms = ℋ0 * χ2^4 / s1 * factor * (ℋ0 * s1 * ℛ_s1 * (2 * f0 - 3 * Ω_M0) + 2 * f0 * (5 * s_b_s1 - 2)) * I04_tilde_χ2
+	elseif obs == true || obs == :yes || obs == :noobsvel
+		#### New observer terms #########
 
-          #################################
+		I04_tilde_χ2 = cosmo.tools.I04_tilde(χ2)
 
-          return Δχ2^4 / a_s1 * D_s1 * factor * parenth * I04_tilde + obs_terms
-     else
-          throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t" *
-                               "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )"
-          ))
-     end
+		obs_terms = ℋ0 * χ2^4 / s1 * factor * (ℋ0 * s1 * ℛ_s1 * (2 * f0 - 3 * Ω_M0) + 2 * f0 * (5 * s_b_s1 - 2)) * I04_tilde_χ2
+
+		#################################
+
+		return Δχ2^4 / a_s1 * D_s1 * factor * parenth * I04_tilde + obs_terms
+	else
+		throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t" *
+							"$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )"
+		))
+	end
 end
 
 
 function integrand_ξ_GNC_LocalGP_IntegratedGP(
-     χ2::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology;
-     kwargs...)
+	χ2::Float64, s1::Float64, s2::Float64,
+	y, cosmo::Cosmology;
+	kwargs...)
 
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP = Point(χ2, cosmo)
-     return integrand_ξ_GNC_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
+	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+	IP = Point(χ2, cosmo)
+	return integrand_ξ_GNC_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 """
-     integrand_ξ_GNC_LocalGP_IntegratedGP(
-          IP::Point, P1::Point, P2::Point,
-          y, cosmo::Cosmology; 
-          obs::Union{Bool,Symbol}=:noobsvel
-          ) ::Float64
+	integrand_ξ_GNC_LocalGP_IntegratedGP(
+		IP::Point, P1::Point, P2::Point,
+		y, cosmo::Cosmology; 
+		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+		obs::Union{Bool,Symbol}=:noobsvel
+		) ::Float64
 
-     integrand_ξ_GNC_LocalGP_IntegratedGP(
-          χ2::Float64, s1::Float64, s2::Float64,
-          y, cosmo::Cosmology;
-          kwargs... )::Float64
+	integrand_ξ_GNC_LocalGP_IntegratedGP(
+		χ2::Float64, s1::Float64, s2::Float64,
+		y, cosmo::Cosmology;
+		kwargs... )::Float64
 
 Return the integrand of the Two-Point Correlation Function (TPCF) given 
 by the cross correlation between the Local Gravitational Potential (GP) 
@@ -236,11 +246,13 @@ integrand_ξ_GNC_LocalGP_IntegratedGP
 
 
 """
-     ξ_GNC_LocalGP_IntegratedGP(
-          s1, s2, y, cosmo::Cosmology;
-          en::Float64=1e6, N_χs::Int=100, 
-          obs::Union{Bool,Symbol}=:noobsvel
-          ) ::Float64
+	ξ_GNC_LocalGP_IntegratedGP(
+		s1, s2, y, cosmo::Cosmology;
+		en::Float64=1e6, N_χs::Int=100, 
+		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+		obs::Union{Bool,Symbol}=:noobsvel
+		) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given 
 by the cross correlation between the Local Gravitational Potential (GP) 
@@ -400,21 +412,21 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`integrand_ξ_GNC_LocalGP_IntegratedGP`](@ref)
 """
 function ξ_GNC_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-     en::Float64=1e6, N_χs::Int=100, obs::Union{Bool,Symbol}=:noobsvel)
+	en::Float64=1e6, N_χs::Int=100, kwargs...)
 
-     χ2s = s2 .* range(1e-6, 1, length=N_χs)
+	χ2s = s2 .* range(1e-6, 1, length=N_χs)
 
-     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-     IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
+	P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
+	IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-     int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; obs=obs)
-          for IP in IPs
-     ]
+	int_ξs = [
+		en * GaPSE.integrand_ξ_GNC_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
+		for IP in IPs
+	]
 
-     res = trapz(χ2s, int_ξs)
-     #println("res = $res")
-     return res / en
+	res = trapz(χ2s, int_ξs)
+	#println("res = $res")
+	return res / en
 end
 
 
@@ -429,8 +441,12 @@ end
 
 
 """
-     ξ_GNC_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...) = 
-          ξ_GNC_LocalGP_IntegratedGP(s2, s1, y, cosmo; kwargs...)
+    ξ_GNC_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology; 
+	 	en::Float64=1e6, N_χs::Int=100, 
+		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+		obs::Union{Bool,Symbol}=:noobsvel
+		) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Integrated Gravitational Potential (GP) and the Local Gravitational Potential (GP) 
@@ -458,7 +474,18 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),
 [`ξ_GNC_LocalGP_IntegratedGP`](@ref)
 """
-function ξ_GNC_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_GNC_LocalGP_IntegratedGP(s2, s1, y, cosmo; kwargs...)
+function ξ_GNC_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
+    s_lim=nothing, kwargs...)
+    
+    b1 = isnothing(b1) ? cosmo.params.b1 : b1
+    b2 = isnothing(b2) ? cosmo.params.b2 : b2
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+
+    ξ_GNC_LocalGP_IntegratedGP(s2, s1, y, cosmo; b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
+        𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end
 

@@ -62,12 +62,12 @@ end
 
 
 function integrand_ξ_GNC_Lensing_LocalGP(
-     χ1::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology; lwargs...)
+	χ1::Float64, s1::Float64, s2::Float64,
+	y, cosmo::Cosmology; kwargs...)
 
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP = Point(χ1, cosmo)
-     return integrand_ξ_GNC_Lensing_LocalGP(IP, P1, P2, y, cosmo; kwargs...)
+	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+	IP = Point(χ1, cosmo)
+	return integrand_ξ_GNC_Lensing_LocalGP(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
