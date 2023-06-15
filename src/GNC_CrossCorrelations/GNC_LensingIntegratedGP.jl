@@ -21,31 +21,39 @@
 
 
 function integrand_ξ_GNC_Lensing_IntegratedGP(
-     IP1::Point, IP2::Point,
-     P1::Point, P2::Point,
-     y, cosmo::Cosmology; obs::Union{Bool,Symbol}=:noobsvel)
+	IP1::Point, IP2::Point,
+	P1::Point, P2::Point,
+	y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
+    s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
-     s1 = P1.comdist
-     s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
-     χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
-     χ2, D2, a2, f2, ℋ2 = IP2.comdist, IP2.D, IP2.a, IP2.f, IP2.ℋ
-     s_b_s2 = cosmo.params.s_b
-     Ω_M0 = cosmo.params.Ω_M0
+	s1 = P1.comdist
+	s2 = P2.comdist
+	χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
+	χ2, D2, a2, f2, ℋ2 = IP2.comdist, IP2.D, IP2.a, IP2.f, IP2.ℋ
 
-     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-     Δχ = √(Δχ_square) > 0 ? √(Δχ_square) : 0
+	Ω_M0 = cosmo.params.Ω_M0
+	s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+	s_b_s2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+	𝑓_evo_s2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
 
-     denomin = a1 * a2 * s1 * s2
-     common = 9 * χ2 * ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (5 * s_b_s2 - 2)
-     parenth = ℋ2 * ℛ_s2 * s2 * (f2 - 1) - 5 * s_b_s2 + 2
+	s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
+	ℛ_s2 = func_ℛ_GNC(s2, ℋ2, cosmo.ℋ_p_of_s(s2); s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
-     new_J31 = y * Δχ^2
-     new_J22 = χ1 * χ2 * (y^2 - 1) / 2
+	Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
+	Δχ = √(Δχ_square) > 0 ? √(Δχ_square) : 0
 
-     I13 = cosmo.tools.I13(Δχ)
-     I22 = cosmo.tools.I22(Δχ)
+	denomin = a1 * a2 * s1 * s2
+	common = 9 * χ2 * ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (5 * s_b_s2 - 2)
+	parenth = ℋ2 * ℛ_s2 * s2 * (f2 - 1) - 5 * s_b_s2 + 2
 
-     return common * parenth * (new_J22 * I22 + new_J31 * I13) / denomin
+	new_J31 = y * Δχ^2
+	new_J22 = χ1 * χ2 * (y^2 - 1) / 2
+
+	I13 = cosmo.tools.I13(Δχ)
+	I22 = cosmo.tools.I22(Δχ)
+
+	return common * parenth * (new_J22 * I22 + new_J31 * I13) / denomin
 end
 
 
@@ -232,43 +240,45 @@ end
 
 
 function ξ_GNC_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64=1e6, N_χs_2::Int=100, obs::Union{Bool,Symbol}=:noobsvel)
+	en::Float64=1e6, N_χs_2::Int=100, kwargs...)
 
-     χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
-     χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
+	χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
+	χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
 
-     IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-     IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
+	IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+	IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-     int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_Lensing_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; obs=obs)
-          for IP1 in IP1s, IP2 in IP2s
-     ]
+	int_ξs = [
+		en * GaPSE.integrand_ξ_GNC_Lensing_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+		for IP1 in IP1s, IP2 in IP2s
+	]
 
-     res = trapz((χ1s, χ2s), int_ξs)
-     #println("res = $res")
-     return res / en
+	res = trapz((χ1s, χ2s), int_ξs)
+	#println("res = $res")
+	return res / en
 end
 
 
 
 function ξ_GNC_Lensing_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_GNC_Lensing_IntegratedGP(P1, P2, y, cosmo; kwargs...)
+	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+	return ξ_GNC_Lensing_IntegratedGP(P1, P2, y, cosmo; kwargs...)
 end
 
 
 
 """
-     ξ_GNC_Lensing_IntegratedGP(
-          P1::Point, P2::Point, y, cosmo::Cosmology;
-          en::Float64=1e6, N_χs_2::Int=100, 
-          obs::Union{Bool,Symbol}=:noobsvel
-          ) ::Float64
+	ξ_GNC_Lensing_IntegratedGP(
+		P1::Point, P2::Point, y, cosmo::Cosmology;
+		en::Float64=1e6, N_χs_2::Int=100,
+		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
+		obs::Union{Bool,Symbol}=:noobsvel
+		) ::Float64
 
-     ξ_GNC_Lensing_IntegratedGP(
-          s1, s2, y, cosmo::Cosmology; 
-          kwargs...) ::Float64
+	ξ_GNC_Lensing_IntegratedGP(
+		s1, s2, y, cosmo::Cosmology; 
+		kwargs...) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given 
 by the cross correlation between the Lensing
@@ -427,8 +437,11 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 
 
 """
-     ξ_GNC_IntegratedGP_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...) = 
-          ξ_GNC_Lensing_IntegratedGP(s2, s1, y, cosmo; kwargs...)
+    ξ_GNC_IntegratedGP_Lensing(s1, s2, y, cosmo::Cosmology; 
+		en::Float64=1e6, N_χs_2::Int=100,
+	 	b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
+		obs::Union{Bool,Symbol}=:noobsvel ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Integrated Gravitational Potential (GP) and the Lensing effects arising from the Galaxy Number Counts (GNC).
@@ -455,7 +468,18 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),
 [`ξ_GNC_Lensing_IntegratedGP`](@ref)
 """
-function ξ_GNC_IntegratedGP_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_GNC_Lensing_IntegratedGP(s2, s1, y, cosmo; kwargs...)
+function ξ_GNC_IntegratedGP_Lensing(s1, s2, y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
+    s_lim=nothing, kwargs...)
+
+    b1 = isnothing(b1) ? cosmo.params.b1 : b1
+    b2 = isnothing(b2) ? cosmo.params.b2 : b2
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+
+    ξ_GNC_Lensing_IntegratedGP(s2, s1, y, cosmo; b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
+        𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end
 
