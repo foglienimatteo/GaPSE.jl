@@ -29,10 +29,10 @@ function ξ_GNC_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology;
 	s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
     𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
     𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
-	
+
     s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
-    ℛ1 = func_ℛ_GNC(s1, ℋ1, cosmo.ℋ_p_of_s(s1); s_b=s_b1, 𝑓_evo=𝑓_evo1, s_lim=s_lim)
-    ℛ2 = func_ℛ_GNC(s2, ℋ2, cosmo.ℋ_p_of_s(s2); s_b=s_b2, 𝑓_evo=𝑓_evo2, s_lim=s_lim)
+    ℛ1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b1, 𝑓_evo=𝑓_evo1, s_lim=s_lim)
+    ℛ2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b2, 𝑓_evo=𝑓_evo2, s_lim=s_lim)
 
 	Δs = s(P1.comdist, P2.comdist, y)
 	common = D1 * D2 * f1 * f2 * ℛ1 * ℛ2 * ℋ1 * ℋ2

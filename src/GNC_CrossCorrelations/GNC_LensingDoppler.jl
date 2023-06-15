@@ -27,7 +27,7 @@ function integrand_ξ_GNC_Lensing_Doppler(
 
 
 	s1 = P1.comdist
-	s2, D_s2, f_s2, ℋ_s2, ℛ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_GNC
+	s2, D_s2, f_s2, ℋ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ
 	χ1, D1, a1 = IP.comdist, IP.D, IP.a
 
 	Ω_M0 = cosmo.params.Ω_M0
@@ -36,7 +36,7 @@ function integrand_ξ_GNC_Lensing_Doppler(
     𝑓_evo_s2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
 
     s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
-    ℛ_s2 = func_ℛ_GNC(s2, ℋ2, cosmo.ℋ_p_of_s(s2); s_b=s_b2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
+    ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
 	Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
 	Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0

@@ -38,7 +38,7 @@ function integrand_ξ_GNC_Lensing_IntegratedGP(
 	𝑓_evo_s2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
 
 	s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
-	ℛ_s2 = func_ℛ_GNC(s2, ℋ2, cosmo.ℋ_p_of_s(s2); s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
+    ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
 	Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
 	Δχ = √(Δχ_square) > 0 ? √(Δχ_square) : 0
