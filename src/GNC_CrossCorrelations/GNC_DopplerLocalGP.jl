@@ -22,11 +22,11 @@
 function ξ_GNC_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
-	
-	s1, D1, f1, ℋ1 = P1.comdist, P1.D, P1.f, P1.ℋ
-	s2, D2, f2, a2, ℋ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ
+    
+    s1, D1, f1, ℋ1 = P1.comdist, P1.D, P1.f, P1.ℋ
+    s2, D2, f2, a2, ℋ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ
 
-	Ω_M0 = cosmo.params.Ω_M0
+    Ω_M0 = cosmo.params.Ω_M0
     s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
     s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
     𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
@@ -36,85 +36,85 @@ function ξ_GNC_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology;
     ℛ1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b1, 𝑓_evo=𝑓_evo1, s_lim=s_lim)
     ℛ2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b2, 𝑓_evo=𝑓_evo2, s_lim=s_lim)
 
-	Δs = s(s1, s2, y)
+    Δs = s(s1, s2, y)
 
-	common = Δs^2 * f1 * ℋ1 * ℛ1 * (s1 - y * s2) / a2
-	parenth = 2 * f2 * a2 * ℋ2^2 * (𝑓_evo2 - 3) + 3 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5 * s_b2 - 2)
+    common = Δs^2 * f1 * ℋ1 * ℛ1 * (s1 - y * s2) / a2
+    parenth = 2 * f2 * a2 * ℋ2^2 * (𝑓_evo2 - 3) + 3 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5 * s_b2 - 2)
 
-	I00 = cosmo.tools.I00(Δs)
-	I20 = cosmo.tools.I20(Δs)
-	I40 = cosmo.tools.I40(Δs)
-	I02 = cosmo.tools.I02(Δs)
+    I00 = cosmo.tools.I00(Δs)
+    I20 = cosmo.tools.I20(Δs)
+    I40 = cosmo.tools.I40(Δs)
+    I02 = cosmo.tools.I02(Δs)
 
-	if obs == false || obs == :no
-		return D1 * D2 * common * parenth * (
-					-1 / 90 * I00 - 1 / 63 * I20
-					-
-					1 / 210 * I40 - 1 / 6 * I02
-				)
-	elseif obs == true || obs == :yes
-		#### New observer terms #########
+    if obs == false || obs == :no
+        return D1 * D2 * common * parenth * (
+                    -1 / 90 * I00 - 1 / 63 * I20
+                    -
+                    1 / 210 * I40 - 1 / 6 * I02
+                )
+    elseif obs == true || obs == :yes
+        #### New observer terms #########
 
-		I13_s1 = cosmo.tools.I13(s1)
-		I13_s2 = cosmo.tools.I13(s2)
+        I13_s1 = cosmo.tools.I13(s1)
+        I13_s2 = cosmo.tools.I13(s2)
 
-		J31_a = ℋ0 * s1^3 * f1 * ℋ1 * ℛ1 * (ℋ0 * s2 * ℛ2 * (3 * Ω_M0 - 2 * f0) + 2 * f0 * (2 - 5 * s_b2)) / (2 * s2)
-		J31_b = -y * f0 * ℋ0 * s2^3 * (ℛ1 - 5 * s_b1 + 2) / (2 * a2) * parenth
+        J31_a = ℋ0 * s1^3 * f1 * ℋ1 * ℛ1 * (ℋ0 * s2 * ℛ2 * (3 * Ω_M0 - 2 * f0) + 2 * f0 * (2 - 5 * s_b2)) / (2 * s2)
+        J31_b = -y * f0 * ℋ0 * s2^3 * (ℛ1 - 5 * s_b1 + 2) / (2 * a2) * parenth
 
-		obs_terms = D1 * J31_a * I13_s1 + D2 * J31_b * I13_s2
+        obs_terms = D1 * J31_a * I13_s1 + D2 * J31_b * I13_s2
 
-		#################################
+        #################################
 
-		return D1 * D2 * common * parenth * (
-					-1 / 90 * I00 - 1 / 63 * I20
-					-
-					1 / 210 * I40 - 1 / 6 * I02
-				) + obs_terms
+        return D1 * D2 * common * parenth * (
+                    -1 / 90 * I00 - 1 / 63 * I20
+                    -
+                    1 / 210 * I40 - 1 / 6 * I02
+                ) + obs_terms
 
-	elseif obs == :noobsvel
-		#### New observer terms #########
+    elseif obs == :noobsvel
+        #### New observer terms #########
 
-		I13_s1 = cosmo.tools.I13(s1)
+        I13_s1 = cosmo.tools.I13(s1)
 
-		J31_a = ℋ0 * s1^3 * f1 * ℋ1 * ℛ1 * (ℋ0 * s2 * ℛ2 * (3 * Ω_M0 - 2 * f0) + 2 * f0 * (2 - 5 * s_b2)) / (2 * s2)
+        J31_a = ℋ0 * s1^3 * f1 * ℋ1 * ℛ1 * (ℋ0 * s2 * ℛ2 * (3 * Ω_M0 - 2 * f0) + 2 * f0 * (2 - 5 * s_b2)) / (2 * s2)
 
-		obs_terms = D1 * J31_a * I13_s1
+        obs_terms = D1 * J31_a * I13_s1
 
-		#################################
+        #################################
 
-		return D1 * D2 * common * parenth * (
-					-1 / 90 * I00 - 1 / 63 * I20
-					-
-					1 / 210 * I40 - 1 / 6 * I02
-				) + obs_terms
+        return D1 * D2 * common * parenth * (
+                    -1 / 90 * I00 - 1 / 63 * I20
+                    -
+                    1 / 210 * I40 - 1 / 6 * I02
+                ) + obs_terms
 
-	else
-		throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t" *
-							"$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )"
-		))
-	end
+    else
+        throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t" *
+                            "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )"
+        ))
+    end
 end
 
 
 
 
 function ξ_GNC_Doppler_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-	return ξ_GNC_Doppler_LocalGP(P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    return ξ_GNC_Doppler_LocalGP(P1, P2, y, cosmo; kwargs...)
 end
 
 
 """
-	ξ_GNC_Doppler_LocalGP(
-		P1::Point, P2::Point, y, cosmo::Cosmology; 
-		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
-		obs::Union{Bool,Symbol}=:noobsvel
-		) ::Float64
+    ξ_GNC_Doppler_LocalGP(
+        P1::Point, P2::Point, y, cosmo::Cosmology; 
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        obs::Union{Bool,Symbol}=:noobsvel
+        ) ::Float64
 
-	ξ_GNC_Doppler_LocalGP(
-		s1, s2, y, cosmo::Cosmology; 
-		kwargs...) ::Float64
+    ξ_GNC_Doppler_LocalGP(
+        s1, s2, y, cosmo::Cosmology; 
+        kwargs...) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Doppler and the Local Gravitational Potential (GP) effects arising from the Galaxy Number Counts (GNC).
@@ -280,10 +280,10 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 
 
 """
-	ξ_GNC_LocalGP_Doppler(s1, s2, y, cosmo::Cosmology; 
-		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing,
-    	s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel ) ::Float64 
+    ξ_GNC_LocalGP_Doppler(s1, s2, y, cosmo::Cosmology; 
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing,
+        s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel ) ::Float64 
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Local Gravitational Potential (GP) and the Doppler effects arising from the Galaxy Number Counts (GNC).

@@ -19,13 +19,13 @@
 
 
 function integrand_ξ_GNC_Newtonian_IntegratedGP(
-	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
-	s1, D_s1, f_s1 = P1.comdist, P1.D, P1.f
-	s2 = P2.comdist
-	χ2, D2, f2, a2, ℋ2 = IP.comdist, IP.D, IP.f, IP.a, IP.ℋ
+    s1, D_s1, f_s1 = P1.comdist, P1.D, P1.f
+    s2 = P2.comdist
+    χ2, D2, f2, a2, ℋ2 = IP.comdist, IP.D, IP.f, IP.a, IP.ℋ
 
     Ω_M0 = cosmo.params.Ω_M0
     b_s1 = isnothing(b1) ? cosmo.params.b1 : b1
@@ -35,53 +35,53 @@ function integrand_ξ_GNC_Newtonian_IntegratedGP(
     s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
     ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
-	Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-	Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
+    Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
+    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
 
-	common = D_s1 * ℋ0^2 * Ω_M0 * D2 / (a2 * s2) * (s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2)
-	factor = f_s1 * ((3 * y^2 - 1) * χ2^2 - 4 * y * s1 * χ2 + 2 * s1^2)
+    common = D_s1 * ℋ0^2 * Ω_M0 * D2 / (a2 * s2) * (s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2)
+    factor = f_s1 * ((3 * y^2 - 1) * χ2^2 - 4 * y * s1 * χ2 + 2 * s1^2)
 
-	J20 = -Δχ2^2 * (3 * b_s1 + f_s1)
+    J20 = -Δχ2^2 * (3 * b_s1 + f_s1)
 
 
-	I00 = cosmo.tools.I00(Δχ2)
-	I20 = cosmo.tools.I20(Δχ2)
-	I40 = cosmo.tools.I40(Δχ2)
-	I02 = cosmo.tools.I02(Δχ2)
+    I00 = cosmo.tools.I00(Δχ2)
+    I20 = cosmo.tools.I20(Δχ2)
+    I40 = cosmo.tools.I40(Δχ2)
+    I02 = cosmo.tools.I02(Δχ2)
 
-	return common * (
-		factor * (1 / 15 * I00 + 2 / 21 * I20 + 1 / 35 * I40)
-		+
-		J20 * I02
-	)
+    return common * (
+        factor * (1 / 15 * I00 + 2 / 21 * I20 + 1 / 35 * I40)
+        +
+        J20 * I02
+    )
 end
 
 
 function integrand_ξ_GNC_Newtonian_IntegratedGP(
-	χ2::Float64, s1::Float64, s2::Float64,
-	y, cosmo::Cosmology;
-	kwargs...)
+    χ2::Float64, s1::Float64, s2::Float64,
+    y, cosmo::Cosmology;
+    kwargs...)
 
-	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-	IP = Point(χ2, cosmo)
-	return integrand_ξ_GNC_Newtonian_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    IP = Point(χ2, cosmo)
+    return integrand_ξ_GNC_Newtonian_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
 
 """
-	integrand_ξ_GNC_Newtonian_IntegratedGP(
-		IP::Point, P1::Point, P2::Point,
-		y, cosmo::Cosmology; 
-		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
-		obs::Union{Bool,Symbol}=:noobsvel
-		) ::Float64
+    integrand_ξ_GNC_Newtonian_IntegratedGP(
+        IP::Point, P1::Point, P2::Point,
+        y, cosmo::Cosmology; 
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        obs::Union{Bool,Symbol}=:noobsvel
+        ) ::Float64
 
-	integrand_ξ_GNC_Newtonian_IntegratedGP(
-		χ2::Float64, s1::Float64, s2::Float64,
-		y, cosmo::Cosmology;
-		kwargs... )::Float64
+    integrand_ξ_GNC_Newtonian_IntegratedGP(
+        χ2::Float64, s1::Float64, s2::Float64,
+        y, cosmo::Cosmology;
+        kwargs... )::Float64
 
 Return the integrand of the Two-Point Correlation Function (TPCF) given 
 by the cross correlation between the Newtonian and the Integrated Gravitational 
@@ -237,8 +237,8 @@ integrand_ξ_GNC_Newtonian_IntegratedGP
     ξ_GNC_Newtonian_IntegratedGP(
         s1, s2, y, cosmo::Cosmology;
         en::Float64=1e6, N_χs::Int=100, 
-		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
         obs::Union{Bool,Symbol}=:noobsvel
         ) ::Float64
 
@@ -389,21 +389,21 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`integrand_ξ_GNC_Newtonian_IntegratedGP`](@ref)
 """
 function ξ_GNC_Newtonian_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-	en::Float64=1e6, N_χs::Int=100, kwargs...)
+    en::Float64=1e6, N_χs::Int=100, kwargs...)
 
-	χ2s = s2 .* range(1e-6, 1, length=N_χs)
+    χ2s = s2 .* range(1e-6, 1, length=N_χs)
 
-	P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-	IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
+    P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
+    IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-	int_ξs = [
-		en * GaPSE.integrand_ξ_GNC_Newtonian_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
-		for IP in IPs
-	]
+    int_ξs = [
+        en * GaPSE.integrand_ξ_GNC_Newtonian_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
+        for IP in IPs
+    ]
 
-	res = trapz(χ2s, int_ξs)
-	#println("res = $res")
-	return res / en
+    res = trapz(χ2s, int_ξs)
+    #println("res = $res")
+    return res / en
 end
 
 
@@ -418,9 +418,9 @@ end
 
 """
     ξ_GNC_IntegratedGP_Newtonian(s1, s2, y, cosmo::Cosmology; 
-	    en::Float64=1e6, N_χs::Int=100, 
-		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        en::Float64=1e6, N_χs::Int=100, 
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
         obs::Union{Bool,Symbol}=:noobsvel ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
@@ -449,7 +449,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`ξ_GNC_Newtonian_IntegratedGP`](@ref)
 """
 function ξ_GNC_IntegratedGP_Newtonian(s1, s2, y, cosmo::Cosmology; 
-	b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, kwargs...)
 
     b1 = isnothing(b1) ? cosmo.params.b1 : b1

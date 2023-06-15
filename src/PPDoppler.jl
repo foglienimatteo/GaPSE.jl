@@ -18,21 +18,21 @@
 #
 
 function ξ_PPDoppler_L0(P::Point, cosmo::Cosmology)
-     Peff = Point(cosmo.s_eff, cosmo)
-     D, f, ℋ, ℛ = Peff.D, Peff.f, Peff.ℋ, Peff.ℛ_LD
-     s = P.comdist
+    Peff = Point(cosmo.s_eff, cosmo)
+    D, f, ℋ, ℛ = Peff.D, Peff.f, Peff.ℋ, Peff.ℛ_LD
+    s = P.comdist
 
-     1.0 / 3.0 * f^2 * ℋ^2 * ℛ^2 * D^2 * s^2 * cosmo.tools.I02(s)
+    1.0 / 3.0 * f^2 * ℋ^2 * ℛ^2 * D^2 * s^2 * cosmo.tools.I02(s)
 end
 
 function ξ_PPDoppler_L0(s1, cosmo::Cosmology)
-     P1 = Point(s1, cosmo)
-     return ξ_PPDoppler_L0(P1, cosmo)
+    P1 = Point(s1, cosmo)
+    return ξ_PPDoppler_L0(P1, cosmo)
 end
 
 """
-     ξ_PPDoppler_L0(P::Point, cosmo::Cosmology)
-     ξ_PPDoppler_L0(s, cosmo::Cosmology)
+    ξ_PPDoppler_L0(P::Point, cosmo::Cosmology)
+    ξ_PPDoppler_L0(s, cosmo::Cosmology)
 
 Return the value of the Two-Point Correlation Function (TPCF) monopole of the Doppler
 effect in the Plane-Parallel approximation.
@@ -72,15 +72,15 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`func_ℛ_LD`](@ref),
 ξ_PPDoppler_L0
 
 function ξ_PPDoppler_L2(P::Point, cosmo::Cosmology)
-     Peff = Point(cosmo.s_eff, cosmo)
-     D, f, ℋ, ℛ = Peff.D, Peff.f, Peff.ℋ, Peff.ℛ_LD
-     s = P.comdist
-     -2.0 / 3.0 * f^2 * ℋ^2 * ℛ^2 * D^2 * s^2 * cosmo.tools.I22(s)
+    Peff = Point(cosmo.s_eff, cosmo)
+    D, f, ℋ, ℛ = Peff.D, Peff.f, Peff.ℋ, Peff.ℛ_LD
+    s = P.comdist
+    -2.0 / 3.0 * f^2 * ℋ^2 * ℛ^2 * D^2 * s^2 * cosmo.tools.I22(s)
 end
 
 function ξ_PPDoppler_L2(s1, cosmo::Cosmology)
-     P1 = Point(s1, cosmo)
-     return ξ_PPDoppler_L2(P1, cosmo)
+    P1 = Point(s1, cosmo)
+    return ξ_PPDoppler_L2(P1, cosmo)
 end
 
 """
@@ -126,7 +126,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`func_ℛ_LD`](@ref),
 ξ_PPDoppler_L2
 
 """
-     ξ_PPDoppler(s, μ, cosmo::Cosmology)
+    ξ_PPDoppler(s, μ, cosmo::Cosmology)
 
 Return the value of the Two-Point Correlation Function (TPCF) of the Doppler effect
 in the Plane-Parallel approximation in the given comoving distance `s` and cosine
@@ -169,7 +169,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref),
 [`map_ξ_PPDoppler_multipole`](@ref), [`print_map_ξ_PPDoppler_multipole`](@ref)
 """
 function ξ_PPDoppler(s1, y, cosmo::Cosmology)
-     return ξ_PPDoppler_L0(s1, cosmo) + ξ_PPDoppler_L2(s1, cosmo) * Pl(y, 2)
+    return ξ_PPDoppler_L0(s1, cosmo) + ξ_PPDoppler_L2(s1, cosmo) * Pl(y, 2)
 end
 
 
@@ -178,16 +178,16 @@ end
 
 
 """
-     integrand_ξ_PPDoppler_multipole(s, μ, cosmo::Cosmology;
-          L::Int=0, use_windows::Bool=true)
+    integrand_ξ_PPDoppler_multipole(s, μ, cosmo::Cosmology;
+        L::Int=0, use_windows::Bool=true)
 
 Return the integrand on ``\\mu = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}`` 
 of the Doppler effect Two-Point Correlation Function (TPCF) in the Plane Parallel (PP) 
 approximation, i.e. the following function ``f(s, \\mu)``:
 
 ```math
-     f_L(s, \\mu) = \\xi^{\\mathrm{pp}, v_{\\parallel}} \\left(s, \\mu\\right) 
-          \\, \\mathcal{L}_L(\\mu) \\, \\times 
+    f_L(s, \\mu) = \\xi^{\\mathrm{pp}, v_{\\parallel}} \\left(s, \\mu\\right) 
+        \\, \\mathcal{L}_L(\\mu) \\, \\times 
     \\begin{cases} 
         \\frac{1}{\\mathcal{N}}\\mathcal{F}(s, \\mu) \\quad \\mathrm{use\\_windows == true} \\\\
         1 \\quad\\quad \\mathrm{use\\_windows == false}
@@ -221,23 +221,23 @@ See also:[`ξ_PPDoppler`](@ref), [`ξ_PPDoppler_multipole`](@ref),
 [`WindowFIntegrated`](@ref), [`Cosmology`](@ref), 
 """
 function integrand_ξ_PPDoppler_multipole(s, μ, cosmo::Cosmology;
-     L::Int=0, use_windows::Bool=true)
+    L::Int=0, use_windows::Bool=true)
 
-     res = if use_windows == true
-          #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
-          int = ξ_PPDoppler(s, μ, cosmo)
-          #println("int = $int")
-          int .* (spline_integrF(s, μ, cosmo.windowFint) / cosmo.WFI_norm * Pl(μ, L))
-     else
-          #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
-          int = ξ_PPDoppler(s, μ, cosmo)
-          #println("int = $int")
-          #println( "Pl(μ, L) = $(Pl(μ, L))")
-          int .* Pl(μ, L)
-     end
+    res = if use_windows == true
+        #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
+        int = ξ_PPDoppler(s, μ, cosmo)
+        #println("int = $int")
+        int .* (spline_integrF(s, μ, cosmo.windowFint) / cosmo.WFI_norm * Pl(μ, L))
+    else
+        #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
+        int = ξ_PPDoppler(s, μ, cosmo)
+        #println("int = $int")
+        #println( "Pl(μ, L) = $(Pl(μ, L))")
+        int .* Pl(μ, L)
+    end
 
-     #println("res = $res")
-     return (2.0 * L + 1.0) / 2.0 * res
+    #println("res = $res")
+    return (2.0 * L + 1.0) / 2.0 * res
 end
 
 
@@ -245,12 +245,12 @@ end
 
 
 """
-     ξ_PPDoppler_multipole(
-          s, cosmo::Cosmology;
-          L::Int = 0, use_windows::Bool = true,
-          atol_quad::Float64 = 0.0,
-          rtol_quad::Float64 = 1e-2,
-          enhancer::Float64 = 1e6 ) ::Float64
+    ξ_PPDoppler_multipole(
+        s, cosmo::Cosmology;
+        L::Int = 0, use_windows::Bool = true,
+        atol_quad::Float64 = 0.0,
+        rtol_quad::Float64 = 1e-2,
+        enhancer::Float64 = 1e6 ) ::Float64
 
 
 Evaluate the multipole of order `L` of the Doppler effect Two-Point Correlation Function (TPCF) in the Plane 
@@ -303,19 +303,19 @@ See also: [`ξ_PPDoppler`](@ref), [`integrand_ξ_PPDoppler_multipole`](@ref),
 [`WindowFIntegrated`](@ref), [`Cosmology`](@ref), 
 """
 function ξ_PPDoppler_multipole(
-     s, cosmo::Cosmology;
-     L::Int=0,
-     use_windows::Bool=true,
-     enhancer::Float64=1e6,
-     atol_quad::Float64=0.0,
-     rtol_quad::Float64=1e-2)
+    s, cosmo::Cosmology;
+    L::Int=0,
+    use_windows::Bool=true,
+    enhancer::Float64=1e6,
+    atol_quad::Float64=0.0,
+    rtol_quad::Float64=1e-2)
 
-     orig_f(μ) = enhancer * integrand_ξ_PPDoppler_multipole(s, μ, cosmo;
-          L=L, use_windows=use_windows)
+    orig_f(μ) = enhancer * integrand_ξ_PPDoppler_multipole(s, μ, cosmo;
+        L=L, use_windows=use_windows)
 
-     int = quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=atol_quad, rtol=rtol_quad)[1]
+    int = quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=atol_quad, rtol=rtol_quad)[1]
 
-     return int / enhancer
+    return int / enhancer
 end
 
 
@@ -325,15 +325,15 @@ end
 
 
 """
-     map_ξ_PPDoppler_multipole(
-          cosmo::Cosmology, ss = nothing;
-          L::Int = 0, use_windows::Bool = true,
-          atol_quad::Float64 = 0.0,
-          rtol_quad::Float64 = 1e-2,
-          enhancer::Float64 = 1e6,
-          pr::Bool = true,
-          N_log::Int = 1000,
-          kwargs...) ::Tuple{Vector{Float64}, Vector{Float64}}
+    map_ξ_PPDoppler_multipole(
+        cosmo::Cosmology, ss = nothing;
+        L::Int = 0, use_windows::Bool = true,
+        atol_quad::Float64 = 0.0,
+        rtol_quad::Float64 = 1e-2,
+        enhancer::Float64 = 1e6,
+        pr::Bool = true,
+        N_log::Int = 1000,
+        kwargs...) ::Tuple{Vector{Float64}, Vector{Float64}}
 
 
 Evaluate the multipole of order `L` of the Doppler effect Two-Point Correlation Function (TPCF) in the Plane 
@@ -344,9 +344,9 @@ If `ss = nothing`, it is set `ss = 10 .^ range(0, log10(2 * cosmo.s_max), length
 The function evaluated is then the following ``\\xi^{\\mathrm{pp, g}} (s)``:
 
 ```math
-     \\xi^{\\mathrm{pp}, v_{\\parallel}} (s) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
+    \\xi^{\\mathrm{pp}, v_{\\parallel}} (s) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
     \\xi^{\\mathrm{pp}, v_{\\parallel}} \\left(s, \\mu\\right) 
-          \\, \\mathcal{L}_L(\\mu) \\, \\times 
+        \\, \\mathcal{L}_L(\\mu) \\, \\times 
     \\begin{cases} 
         \\frac{1}{\\mathcal{N}}\\mathcal{F}(s, \\mu) \\quad \\mathrm{use\\_windows == true} \\\\
         1 \\quad\\quad \\mathrm{use\\_windows == false}
@@ -405,27 +405,24 @@ See also: [`ξ_PPDoppler`](@ref), [`integrand_ξ_PPDoppler_multipole`](@ref),
 [`ξ_PPDoppler_multipole`](@ref), [`print_map_ξ_PPDoppler_multipole`](@ref)
 [`WindowFIntegrated`](@ref), [`Cosmology`](@ref), 
 """
-function map_ξ_PPDoppler_multipole(cosmo::Cosmology,
-     ss=nothing;
-     pr::Bool=true,
-     N_log::Int=1000,
-     L::Int=0,
-     kwargs...)
+function map_ξ_PPDoppler_multipole(
+    cosmo::Cosmology, ss=nothing;
+    pr::Bool=true, N_log::Int=1000, L::Int=0, kwargs...)
 
-     t1 = time()
-     v_ss = isnothing(ss) ? 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log) : ss
-     xis = pr ? begin
-          @showprogress "PP Doppler, L=$L: " [
-               ξ_PPDoppler_multipole(s, cosmo; L=L, kwargs...) for s in v_ss
-          ]
-     end : [
-          ξ_PPDoppler_multipole(s, cosmo; L=L, kwargs...) for s in v_ss
-     ]
+    t1 = time()
+    v_ss = isnothing(ss) ? 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log) : ss
+    xis = pr ? begin
+        @showprogress "PP Doppler, L=$L: " [
+            ξ_PPDoppler_multipole(s, cosmo; L=L, kwargs...) for s in v_ss
+        ]
+    end : [
+        ξ_PPDoppler_multipole(s, cosmo; L=L, kwargs...) for s in v_ss
+    ]
 
-     t2 = time()
-     pr && println("\ntime needed for map_ξ_PPDoppler_multipole for PPDoppler " *
-                   "[in s] = $(@sprintf("%.5f", t2-t1)) ")
-     return (v_ss, xis)
+    t2 = time()
+    pr && println("\ntime needed for map_ξ_PPDoppler_multipole for PPDoppler " *
+                "[in s] = $(@sprintf("%.5f", t2-t1)) ")
+    return (v_ss, xis)
 end
 
 
@@ -434,16 +431,16 @@ end
 
 
 """
-     print_map_ξ_PPDoppler_multipole(
-          cosmo::Cosmology, out::String,
-          ss = nothing;
-          L::Int = 0, use_windows::Bool = true,
-          atol_quad::Float64 = 0.0,
-          rtol_quad::Float64 = 1e-2,
-          enhancer::Float64 = 1e6,
-          pr::Bool = true,
-          N_log::Int = 1000,
-          kwargs...)
+    print_map_ξ_PPDoppler_multipole(
+        cosmo::Cosmology, out::String,
+        ss = nothing;
+        L::Int = 0, use_windows::Bool = true,
+        atol_quad::Float64 = 0.0,
+        rtol_quad::Float64 = 1e-2,
+        enhancer::Float64 = 1e6,
+        pr::Bool = true,
+        N_log::Int = 1000,
+        kwargs...)
      
 
 Evaluate the multipole of order `L` of the Doppler effect Two-Point Correlation Function (TPCF) in the Plane 
@@ -513,36 +510,36 @@ See also: [`ξ_PPDoppler`](@ref), [`integrand_ξ_PPDoppler_multipole`](@ref),
 [`WindowFIntegrated`](@ref), [`Cosmology`](@ref), 
 """
 function print_map_ξ_PPDoppler_multipole(
-     cosmo::Cosmology,
-     out::String,
-     ss=nothing;
-     L::Int=0,
-     kwargs...)
+    cosmo::Cosmology,
+    out::String,
+    ss=nothing;
+    L::Int=0,
+    kwargs...)
 
-     t1 = time()
-     vec = map_ξ_PPDoppler_multipole(cosmo, ss; L=L, kwargs...)
-     t2 = time()
+    t1 = time()
+    vec = map_ξ_PPDoppler_multipole(cosmo, ss; L=L, kwargs...)
+    t2 = time()
 
-     isfile(out) && run(`rm $out`)
-     open(out, "w") do io
-          println(io, "# This is an integration map on mu of the ξ L=$L multipole concerning the PP Doppler.")
-          parameters_used(io, cosmo)
-          println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
-          print(io, "# kwards passed: ")
+    isfile(out) && run(`rm $out`)
+    open(out, "w") do io
+        println(io, "# This is an integration map on mu of the ξ L=$L multipole concerning the PP Doppler.")
+        parameters_used(io, cosmo)
+        println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
+        print(io, "# kwards passed: ")
 
-          println(io, "\n# \t\tL = $L")
-          if !isempty(kwargs)
-               for key in keys(kwargs)
-                    println(io, "# \t\t$(key) = $(kwargs[key])")
-               end
-          end
+        println(io, "\n# \t\tL = $L")
+        if !isempty(kwargs)
+            for key in keys(kwargs)
+                println(io, "# \t\t$(key) = $(kwargs[key])")
+            end
+        end
 
-          println(io, "# ")
-          println(io, "# s [Mpc/h_0] \t \t xi")
-          for (s, xi) in zip(vec[1], vec[2])
-               println(io, "$s \t $xi")
-          end
-     end
+        println(io, "# ")
+        println(io, "# s [Mpc/h_0] \t \t xi")
+        for (s, xi) in zip(vec[1], vec[2])
+            println(io, "$s \t $xi")
+        end
+    end
 end
 
 

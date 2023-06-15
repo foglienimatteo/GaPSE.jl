@@ -22,8 +22,8 @@ function ξ_GNC_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology;
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool, Symbol} = :noobsvel)
 
-	s1, D1, f1 = P1.comdist, P1.D, P1.f
-	s2, D2, f2, ℋ2 = P2.comdist, P2.D, P2.f, P2.ℋ
+    s1, D1, f1 = P1.comdist, P1.D, P1.f
+    s2, D2, f2, ℋ2 = P2.comdist, P2.D, P2.f, P2.ℋ
 
     b1 = isnothing(b1) ? cosmo.params.b1 : b1
     s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
@@ -32,72 +32,72 @@ function ξ_GNC_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology;
     s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
     ℛ2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b2, 𝑓_evo=𝑓_evo2, s_lim=s_lim)
 
-	Δs = s(s1, s2, y)
+    Δs = s(s1, s2, y)
 
-	common = D1 * D2 * f2 * ℋ2 * ℛ2
+    common = D1 * D2 * f2 * ℋ2 * ℛ2
 
-	J00 = 1 / 15 * (5 * b1 * (s2 - y * s1) + f1 * (2 * y^2 * s2 - 3 * y * s1 + s2))
-	J02 = 1 / (21 * Δs^2) * (
-		7 * b1 * (y * s1 - s2) * (2 * y * s1 * s2 - s1^2 - s2^2) +
-		f1 * (
-			(10 * y^2 - 1) * s1^2 * s2
-			-
-			y * (5 * y^2 + 4) * s1 * s2^2
-			+
-			(y^2 + 2) * s2^3 - 3 * y * s1^3
-		)
-	)
-	J04 = 1 / (35 * Δs^2) * f1 * (
-			-2 * (y^2 + 2) * s1^2 * s2
-			+ y * (y^2 + 5) * s1 * s2^2
-			+ (1 - 3 * y^2) * s2^3 + 2 * y * s1^3
-		)
+    J00 = 1 / 15 * (5 * b1 * (s2 - y * s1) + f1 * (2 * y^2 * s2 - 3 * y * s1 + s2))
+    J02 = 1 / (21 * Δs^2) * (
+        7 * b1 * (y * s1 - s2) * (2 * y * s1 * s2 - s1^2 - s2^2) +
+        f1 * (
+            (10 * y^2 - 1) * s1^2 * s2
+            -
+            y * (5 * y^2 + 4) * s1 * s2^2
+            +
+            (y^2 + 2) * s2^3 - 3 * y * s1^3
+        )
+    )
+    J04 = 1 / (35 * Δs^2) * f1 * (
+            -2 * (y^2 + 2) * s1^2 * s2
+            + y * (y^2 + 5) * s1 * s2^2
+            + (1 - 3 * y^2) * s2^3 + 2 * y * s1^3
+        )
 
-	I00 = cosmo.tools.I00(Δs)
-	I20 = cosmo.tools.I20(Δs)
-	I40 = cosmo.tools.I40(Δs)
+    I00 = cosmo.tools.I00(Δs)
+    I20 = cosmo.tools.I20(Δs)
+    I40 = cosmo.tools.I40(Δs)
 
-	if obs == false || obs == :no || obs == :noobsvel
-		return common * (J00 * I00 + J02 * I20 + J04 * I40)
-		
-	elseif obs == true || obs == :yes
-		#### New observer terms #########
+    if obs == false || obs == :no || obs == :noobsvel
+        return common * (J00 * I00 + J02 * I20 + J04 * I40)
+        
+    elseif obs == true || obs == :yes
+        #### New observer terms #########
 
-		I31_s1 = cosmo.tools.I31(s1)
-		I11_s1 = cosmo.tools.I11(s1)
+        I31_s1 = cosmo.tools.I31(s1)
+        I11_s1 = cosmo.tools.I11(s1)
 
-		obs_common = 1 / 5 * y * f0 * ℋ0 * s1 * (ℛ2 - 5 * s_b2 + 2)
+        obs_common = 1 / 5 * y * f0 * ℋ0 * s1 * (ℛ2 - 5 * s_b2 + 2)
 
-		obs_terms = D1 * obs_common * ((5 * b1 + 3 * f1) * I11_s1 - 2 * f1 * I31_s1)
+        obs_terms = D1 * obs_common * ((5 * b1 + 3 * f1) * I11_s1 - 2 * f1 * I31_s1)
 
-		#################################
+        #################################
 
-		return common * (J00 * I00 + J02 * I20 + J04 * I40) + obs_terms
-	else
-		throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
-			"$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
-			))
-	end
+        return common * (J00 * I00 + J02 * I20 + J04 * I40) + obs_terms
+    else
+        throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
+            "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
+            ))
+    end
 end
 
 
 function ξ_GNC_Newtonian_Doppler(s1, s2, y, cosmo::Cosmology; kwargs...)
-	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-	return ξ_GNC_Newtonian_Doppler(P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    return ξ_GNC_Newtonian_Doppler(P1, P2, y, cosmo; kwargs...)
 end
 
 
 
 """
-	ξ_GNC_Newtonian_Doppler(
-		P1::Point, P2::Point, y, cosmo::Cosmology; 
-		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing,
-		s_lim=nothing, obs::Union{Bool, Symbol} = :noobsvel
-		) ::Float64
+    ξ_GNC_Newtonian_Doppler(
+        P1::Point, P2::Point, y, cosmo::Cosmology; 
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing,
+        s_lim=nothing, obs::Union{Bool, Symbol} = :noobsvel
+        ) ::Float64
 
-	ξ_GNC_Newtonian_Doppler(s1, s2, y, cosmo::Cosmology;
-		kwargs...) ::Float64
+    ξ_GNC_Newtonian_Doppler(s1, s2, y, cosmo::Cosmology;
+        kwargs...) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Newtonian and the Doppler effects arising from the Galaxy Number Counts (GNC).
@@ -278,10 +278,10 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 
 """
     ξ_GNC_Doppler_Newtonian(s1, s2, y, cosmo::Cosmology; 
-		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
-		obs::Union{Bool, Symbol} = :noobsvel
-		) ::Float64
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
+        obs::Union{Bool, Symbol} = :noobsvel
+        ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Doppler and the Newtonian effects arising from the Galaxy Number Counts (GNC).

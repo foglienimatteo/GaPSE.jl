@@ -20,13 +20,13 @@
 
 
 function integrand_ξ_GNC_Lensing_LocalGP(
-	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
-	s1 = P1.comdist
-	s2, D_s2, f_s2, a_s2, ℋ_s2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ
-	χ1, D1, a1 = IP.comdist, IP.D, IP.a
+    s1 = P1.comdist
+    s2, D_s2, f_s2, a_s2, ℋ_s2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ
+    χ1, D1, a1 = IP.comdist, IP.D, IP.a
 
     Ω_M0 = cosmo.params.Ω_M0
     s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
@@ -36,54 +36,54 @@ function integrand_ξ_GNC_Lensing_LocalGP(
     s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
     ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
-	Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
-	Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0
+    Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
+    Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0
 
-	common = D_s2 * ℋ0^2 * Ω_M0 * s2 * D1 * (χ1 - s1) * (5 * s_b_s1 - 2) * (
-				2 * f_s2 * a_s2 * ℋ_s2^2 * (𝑓_evo_s2 - 3)
-				+
-				3 * ℋ0^2 * Ω_M0 * (f_s2 + ℛ_s2 + 5 * s_b_s2 - 2)
-			) / (a1 * a_s2 * s1)
-	factor = 2 * y * χ1^2 - χ1 * s2 * (y^2 + 3) + 2 * y * s2^2
+    common = D_s2 * ℋ0^2 * Ω_M0 * s2 * D1 * (χ1 - s1) * (5 * s_b_s1 - 2) * (
+                2 * f_s2 * a_s2 * ℋ_s2^2 * (𝑓_evo_s2 - 3)
+                +
+                3 * ℋ0^2 * Ω_M0 * (f_s2 + ℛ_s2 + 5 * s_b_s2 - 2)
+            ) / (a1 * a_s2 * s1)
+    factor = 2 * y * χ1^2 - χ1 * s2 * (y^2 + 3) + 2 * y * s2^2
 
-	J20 = 1 / 2 * y * Δχ1^2
+    J20 = 1 / 2 * y * Δχ1^2
 
-	I00 = cosmo.tools.I00(Δχ1)
-	I20 = cosmo.tools.I20(Δχ1)
-	I40 = cosmo.tools.I40(Δχ1)
-	I02 = cosmo.tools.I02(Δχ1)
+    I00 = cosmo.tools.I00(Δχ1)
+    I20 = cosmo.tools.I20(Δχ1)
+    I40 = cosmo.tools.I40(Δχ1)
+    I02 = cosmo.tools.I02(Δχ1)
 
-	return common * (
-		factor * (1 / 60 * I00 + 1 / 42 * I20 + 1 / 140 * I40)
-		+
-		J20 * I02
-	)
+    return common * (
+        factor * (1 / 60 * I00 + 1 / 42 * I20 + 1 / 140 * I40)
+        +
+        J20 * I02
+    )
 end
 
 
 function integrand_ξ_GNC_Lensing_LocalGP(
-	χ1::Float64, s1::Float64, s2::Float64,
-	y, cosmo::Cosmology; kwargs...)
+    χ1::Float64, s1::Float64, s2::Float64,
+    y, cosmo::Cosmology; kwargs...)
 
-	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-	IP = Point(χ1, cosmo)
-	return integrand_ξ_GNC_Lensing_LocalGP(IP, P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    IP = Point(χ1, cosmo)
+    return integrand_ξ_GNC_Lensing_LocalGP(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
 """
-	integrand_ξ_GNC_Lensing_LocalGP(
-		IP::Point, P1::Point, P2::Point,
-		y, cosmo::Cosmology;
-		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
-		obs::Union{Bool,Symbol}=:noobsvel
-		) ::Float64
+    integrand_ξ_GNC_Lensing_LocalGP(
+        IP::Point, P1::Point, P2::Point,
+        y, cosmo::Cosmology;
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
+        obs::Union{Bool,Symbol}=:noobsvel
+        ) ::Float64
 
-	integrand_ξ_GNC_Lensing_LocalGP(
-		χ1::Float64, s1::Float64, s2::Float64,
-		y, cosmo::Cosmology;
-		kwargs... )::Float64
+    integrand_ξ_GNC_Lensing_LocalGP(
+        χ1::Float64, s1::Float64, s2::Float64,
+        y, cosmo::Cosmology;
+        kwargs... )::Float64
 
 Return the integrand of the Two-Point Correlation Function (TPCF) given 
 by the cross correlation between the Lensing
@@ -237,13 +237,13 @@ integrand_ξ_GNC_Lensing_LocalGP
 
 
 """
-	ξ_GNC_Lensing_LocalGP(
-		s1, s2, y, cosmo::Cosmology;
-		en::Float64=1e6, N_χs::Int=100,
-		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
-		obs::Union{Bool,Symbol}=:noobsvel
-		) ::Float64
+    ξ_GNC_Lensing_LocalGP(
+        s1, s2, y, cosmo::Cosmology;
+        en::Float64=1e6, N_χs::Int=100,
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
+        obs::Union{Bool,Symbol}=:noobsvel
+        ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given 
 by the cross correlation between the Lensing
@@ -423,10 +423,10 @@ end
 
 """
     ξ_GNC_LocalGP_Lensing(s1, s2, y, cosmo::Cosmology; 
-	 	en::Float64=1e6, N_χs::Int=100,
-		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
-		obs::Union{Bool,Symbol}=:noobsvel) ::Float64
+         en::Float64=1e6, N_χs::Int=100,
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
+        obs::Union{Bool,Symbol}=:noobsvel) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Local Gravitational Potential (GP) and the Lensing effects arising from the Galaxy Number Counts (GNC).
@@ -454,7 +454,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`ξ_GNC_Lensing_LocalGP`](@ref)
 """
 function ξ_GNC_LocalGP_Lensing(s1, s2, y, cosmo::Cosmology; 
-	b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, kwargs...)
 
     b1 = isnothing(b1) ? cosmo.params.b1 : b1
@@ -463,7 +463,7 @@ function ξ_GNC_LocalGP_Lensing(s1, s2, y, cosmo::Cosmology;
     s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
     𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
     𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
-	
+    
     ξ_GNC_Lensing_LocalGP(s2, s1, y, cosmo; b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
         𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end

@@ -20,76 +20,76 @@
 
 
 function integrand_ξ_GNC_Lensing_Doppler(
-	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel,
-	Δχ_min::Float64=1e-1)
+    Δχ_min::Float64=1e-1)
 
 
-	s1 = P1.comdist
-	s2, D_s2, f_s2, ℋ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ
-	χ1, D1, a1 = IP.comdist, IP.D, IP.a
+    s1 = P1.comdist
+    s2, D_s2, f_s2, ℋ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ
+    χ1, D1, a1 = IP.comdist, IP.D, IP.a
 
-	Ω_M0 = cosmo.params.Ω_M0
+    Ω_M0 = cosmo.params.Ω_M0
     s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
     s_b_s2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
     𝑓_evo_s2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
 
     s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
-    ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
+    ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
-	Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
-	Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0
+    Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
+    Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0
 
-	common = ℋ0^2 * Ω_M0 * D1 * (χ1 - s1) * (5 * s_b_s1 - 2) / (s1 * a1)
-	factor = D_s2 * f_s2 * ℋ_s2 * ℛ_s2
+    common = ℋ0^2 * Ω_M0 * D1 * (χ1 - s1) * (5 * s_b_s1 - 2) / (s1 * a1)
+    factor = D_s2 * f_s2 * ℋ_s2 * ℛ_s2
 
-	first_part = if Δχ1 ≥ Δχ_min
-		new_J00 = 1 / 15 * (χ1^2 * y + χ1 * s2 * (4 * y^2 - 3) - 2 * y * s2^2)
-		new_J02 = 1 / (42 * Δχ1^2) * (
-			4 * χ1^4 * y + 4 * χ1^3 * (2 * y^2 - 3) * s2
-			+ χ1^2 * y * (11 - 23 * y^2) * s2^2
-			+ χ1 * (23 * y^2 - 3) * s2^3 - 8 * y * s2^4)
-		new_J04 = 1 / (70 * Δχ1^2) * (
-			2 * χ1^4 * y + 2 * χ1^3 * (2 * y^2 - 3) * s2
-			-
-			χ1^2 * y * (y^2 + 5) * s2^2
-			+
-			χ1 * (y^2 + 9) * s2^3 - 4 * y * s2^4)
-		new_J20 = y * Δχ1^2
+    first_part = if Δχ1 ≥ Δχ_min
+        new_J00 = 1 / 15 * (χ1^2 * y + χ1 * s2 * (4 * y^2 - 3) - 2 * y * s2^2)
+        new_J02 = 1 / (42 * Δχ1^2) * (
+            4 * χ1^4 * y + 4 * χ1^3 * (2 * y^2 - 3) * s2
+            + χ1^2 * y * (11 - 23 * y^2) * s2^2
+            + χ1 * (23 * y^2 - 3) * s2^3 - 8 * y * s2^4)
+        new_J04 = 1 / (70 * Δχ1^2) * (
+            2 * χ1^4 * y + 2 * χ1^3 * (2 * y^2 - 3) * s2
+            -
+            χ1^2 * y * (y^2 + 5) * s2^2
+            +
+            χ1 * (y^2 + 9) * s2^3 - 4 * y * s2^4)
+        new_J20 = y * Δχ1^2
 
-		I00 = cosmo.tools.I00(Δχ1)
-		I20 = cosmo.tools.I20(Δχ1)
-		I40 = cosmo.tools.I40(Δχ1)
-		I02 = cosmo.tools.I02(Δχ1)
+        I00 = cosmo.tools.I00(Δχ1)
+        I20 = cosmo.tools.I20(Δχ1)
+        I40 = cosmo.tools.I40(Δχ1)
+        I02 = cosmo.tools.I02(Δχ1)
 
-		common * factor * (
-			new_J00 * I00 + new_J02 * I20 +
-			new_J04 * I40 + new_J20 * I02
-		)
-	else
-		common * factor * cosmo.tools.σ_2
-	end
+        common * factor * (
+            new_J00 * I00 + new_J02 * I20 +
+            new_J04 * I40 + new_J20 * I02
+        )
+    else
+        common * factor * cosmo.tools.σ_2
+    end
 
 
-	if obs == false || obs == :no || obs == :noobsvel
-		return first_part
+    if obs == false || obs == :no || obs == :noobsvel
+        return first_part
 
-	elseif obs == true || obs == :yes
-		#### New observer terms #########
+    elseif obs == true || obs == :yes
+        #### New observer terms #########
 
-		I13_χ1 = cosmo.tools.I13(χ1)
+        I13_χ1 = cosmo.tools.I13(χ1)
 
-		obs_terms = -3 * χ1^2 * y * f0 * ℋ0 * (ℛ_s2 - 5 * s_b_s2 + 2) * common * I13_χ1
+        obs_terms = -3 * χ1^2 * y * f0 * ℋ0 * (ℛ_s2 - 5 * s_b_s2 + 2) * common * I13_χ1
 
-		#################################     
+        #################################     
 
-		return first_part + obs_terms
-	else
-		throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t" *
-							"$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )"
-		))
-	end
+        return first_part + obs_terms
+    else
+        throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t" *
+                            "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )"
+        ))
+    end
 
 end
 
@@ -104,17 +104,17 @@ function integrand_ξ_GNC_Lensing_Doppler(
 end
 
 """
-	integrand_ξ_GNC_Lensing_Doppler(
-		IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
-		Δχ_min::Float64=1e-1, b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
-		obs::Union{Bool,Symbol}=:noobsvel
-		) ::Float64
+    integrand_ξ_GNC_Lensing_Doppler(
+        IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+        Δχ_min::Float64=1e-1, b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
+        obs::Union{Bool,Symbol}=:noobsvel
+        ) ::Float64
 
-	integrand_ξ_GNC_Lensing_Doppler(
-		χ1::Float64, s1::Float64, s2::Float64,
-		y, cosmo::Cosmology;
-		kwargs... )::Float64
+    integrand_ξ_GNC_Lensing_Doppler(
+        χ1::Float64, s1::Float64, s2::Float64,
+        y, cosmo::Cosmology;
+        kwargs... )::Float64
 
 Return the integrand of the Two-Point Correlation Function (TPCF) given 
 by the cross correlation between the Lensing
@@ -311,14 +311,14 @@ integrand_ξ_GNC_Lensing_Doppler
 
 
 """
-	ξ_GNC_Lensing_Doppler(
-		s1, s2, y, cosmo::Cosmology;
-		en::Float64=1e6, N_χs::Int=100, 
-		Δχ_min::Float64=1e-1,
-		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
-		obs::Union{Bool,Symbol}=:noobsvel,
-		) ::Float64
+    ξ_GNC_Lensing_Doppler(
+        s1, s2, y, cosmo::Cosmology;
+        en::Float64=1e6, N_χs::Int=100, 
+        Δχ_min::Float64=1e-1,
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
+        obs::Union{Bool,Symbol}=:noobsvel,
+        ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given 
 by the cross correlation between the Lensing
@@ -544,10 +544,10 @@ end
 
 """
     ξ_GNC_Doppler_Lensing(s1, s2, y, cosmo::Cosmology;
-		en::Float64=1e6, N_χs::Int=100, Δχ_min::Float64=1e-1
-		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
-		obs::Union{Bool,Symbol}=:noobsvel ) ::Float64
+        en::Float64=1e6, N_χs::Int=100, Δχ_min::Float64=1e-1
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
+        obs::Union{Bool,Symbol}=:noobsvel ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Doppler and the Lensing effects arising from the Galaxy Number Counts (GNC).
@@ -575,8 +575,8 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`ξ_GNC_Lensing_Doppler`](@ref)
 """
 function ξ_GNC_Doppler_Lensing(s1, s2, y, cosmo::Cosmology; 
-    	b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
-    	𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
 
     b1 = isnothing(b1) ? cosmo.params.b1 : b1
     b2 = isnothing(b2) ? cosmo.params.b2 : b2
@@ -585,7 +585,7 @@ function ξ_GNC_Doppler_Lensing(s1, s2, y, cosmo::Cosmology;
     𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
     𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
     
-	ξ_GNC_Lensing_Doppler(s2, s1, y, cosmo; b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
+    ξ_GNC_Lensing_Doppler(s2, s1, y, cosmo; b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
         𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end
 

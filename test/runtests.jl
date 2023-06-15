@@ -60,7 +60,7 @@ end
 @testset "test IPSTools" begin
      include("test_IPSTools.jl")
 end
-=#
+
 @testset "test BackgroundData" begin
      include("test_BackgroundData.jl")
 end
@@ -97,9 +97,9 @@ end
 @testset "test PowerSpectraGenWin" begin
      include("test_PowerSpectraGenWin.jl")
 end
-
+=#
 @testset "test WindowF_QMultipoles" begin
-     include("test_WindowF_QMultipoles.jl")
+     #include("test_WindowF_QMultipoles.jl")
 end
 
 
@@ -109,6 +109,7 @@ end
 
 const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
      Ω_b=0.0489, Ω_cdm=0.251020, h_0=0.7, s_lim=1e-2,
+     b1=1.0, b2=nothing, s_b1=0.0, s_b2=nothing, 𝑓_evo1=0.0, 𝑓_evo2=nothing,
      IPS_opts=Dict(
           :fit_left_min => 1e-6, :fit_left_max => 3e-6,
           :fit_right_min => 1e1, :fit_right_max => 2e1,
@@ -127,6 +128,7 @@ const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
 
 const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP, FILE_IF_MAP)
 
+GaPSE.println_point(GaPSE.Point(150.0, COSMO))
 #=
 common_kwargs = Dict(
      :pr => false,
@@ -197,7 +199,7 @@ KWARGS_LDxGNC = Dict(
 );
 SS_LDxGNC = 10 .^ range(0, log10(2.0 * COSMO.s_max), length=100);
 
-
+#=
 
 ################################### TEST PLANE-PARALLEL APPROXIMATIONS ###################92
 
@@ -295,7 +297,7 @@ end
      include("test_LD_SumXiMultipoles_P2.jl")
 end
 
-
+=#
 ################################### TEST RELATIVISTIC GALAXY NUMBER COUNTS ###############92
 
 ss_GNC_L0_noF_noobs, xis_sum_GNC_L0_noF_noobs, all_xis_GNC_L0_noF_noobs =

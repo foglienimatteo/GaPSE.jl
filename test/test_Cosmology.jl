@@ -68,3 +68,7 @@
      @test all(isapprox(cosmo.ℋ_of_s.(COM_DIST), COM_H, rtol = RTOL))
 end
 
+
+@testset "test_Point" begin
+     P = GaPSE.Point
+end

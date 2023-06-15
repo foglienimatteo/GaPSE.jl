@@ -19,18 +19,18 @@
 
 
 function ξ_PPGalaxies_L0(P::Point, cosmo::Cosmology)
-     b = cosmo.params.b
-     s = P.comdist
+    b = cosmo.params.b
+    s = P.comdist
 
-     Peff = Point(cosmo.s_eff, cosmo)
-     D, f = Peff.D, Peff.f
+    Peff = Point(cosmo.s_eff, cosmo)
+    D, f = Peff.D, Peff.f
 
-     (b^2 + 2 * b * f / 3 + f^2 / 5) * D^2 * cosmo.tools.I00(s)
+    (b^2 + 2 * b * f / 3 + f^2 / 5) * D^2 * cosmo.tools.I00(s)
 end
 
 function ξ_PPGalaxies_L0(s, cosmo::Cosmology)
-     P = Point(s, cosmo)
-     return ξ_PPGalaxies_L0(P, cosmo)
+    P = Point(s, cosmo)
+    return ξ_PPGalaxies_L0(P, cosmo)
 end
 
 

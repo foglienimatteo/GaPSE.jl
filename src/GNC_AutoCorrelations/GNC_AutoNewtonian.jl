@@ -19,56 +19,56 @@
 
 
 function ξ_GNC_Newtonian(P1::Point, P2::Point, y, cosmo::Cosmology; 
-	b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
-	
-	s1, D1, f1 = P1.comdist, P1.D, P1.f
-	s2, D2, f2 = P2.comdist, P2.D, P2.f
-	
-	b1 = isnothing(b1) ? cosmo.params.b1 : b1
-	b2 = isnothing(b2) ? cosmo.params.b2 : b2
+    
+    s1, D1, f1 = P1.comdist, P1.D, P1.f
+    s2, D2, f2 = P2.comdist, P2.D, P2.f
+    
+    b1 = isnothing(b1) ? cosmo.params.b1 : b1
+    b2 = isnothing(b2) ? cosmo.params.b2 : b2
 
-	Δs = s(s1, s2, y)
+    Δs = s(s1, s2, y)
 
-	J00 = 1 / 15 * (15 * b1 * b2 + 5 * (b1 * f2 + b2 * f1) + (2 * y^2 + 1) * f1 * f2)
-	J02 = -1 / (21 * Δs^2) * (
-		s1^2 * (14 * b2 * f1 + 7 * b1 * f2 * (3 * y^2 - 1) + (11 * y^2 + 1) * f1 * f2)
-		+
-		s2^2 * (14 * b1 * f2 + 7 * b2 * f1 * (3 * y^2 - 1) + (11 * y^2 + 1) * f1 * f2)
-		-
-		4 * y * s1 * s2 * (7 * (b2 * f1 + b1 * f2) + (y^2 + 5) * f1 * f2)
-	)
-	J04 = f1 * f2 / (35 * Δs^4) * (
-		4 * (3 * y^2 - 1) * (s1^4 + s2^4)
-		+
-		3 * (3 + y^2)^2 * s1^2 * s2^2
-		-
-		8 * y * s1 * s2 * (s1^2 + s2^2) * (3 + y^2)
-	)
+    J00 = 1 / 15 * (15 * b1 * b2 + 5 * (b1 * f2 + b2 * f1) + (2 * y^2 + 1) * f1 * f2)
+    J02 = -1 / (21 * Δs^2) * (
+        s1^2 * (14 * b2 * f1 + 7 * b1 * f2 * (3 * y^2 - 1) + (11 * y^2 + 1) * f1 * f2)
+        +
+        s2^2 * (14 * b1 * f2 + 7 * b2 * f1 * (3 * y^2 - 1) + (11 * y^2 + 1) * f1 * f2)
+        -
+        4 * y * s1 * s2 * (7 * (b2 * f1 + b1 * f2) + (y^2 + 5) * f1 * f2)
+    )
+    J04 = f1 * f2 / (35 * Δs^4) * (
+        4 * (3 * y^2 - 1) * (s1^4 + s2^4)
+        +
+        3 * (3 + y^2)^2 * s1^2 * s2^2
+        -
+        8 * y * s1 * s2 * (s1^2 + s2^2) * (3 + y^2)
+    )
 
-	I00 = cosmo.tools.I00(Δs)
-	I20 = cosmo.tools.I20(Δs)
-	I40 = cosmo.tools.I40(Δs)
+    I00 = cosmo.tools.I00(Δs)
+    I20 = cosmo.tools.I20(Δs)
+    I40 = cosmo.tools.I40(Δs)
 
-	res = D1 * D2 * (J00 * I00 + J02 * I20 + J04 * I40)
+    res = D1 * D2 * (J00 * I00 + J02 * I20 + J04 * I40)
 
-	return res
+    return res
 end
 
 
 function ξ_GNC_Newtonian(s1, s2, y, cosmo::Cosmology; kwargs...)
-	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-	return ξ_GNC_Newtonian(P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    return ξ_GNC_Newtonian(P1, P2, y, cosmo; kwargs...)
 end
 
 """
-	ξ_GNC_Newtonian(P1::Point, P2::Point, y, cosmo::Cosmology; 
-		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
-		obs::Union{Bool, Symbol} = :noobsvel) ::Float64
+    ξ_GNC_Newtonian(P1::Point, P2::Point, y, cosmo::Cosmology; 
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        obs::Union{Bool, Symbol} = :noobsvel) ::Float64
 
-	ξ_GNC_Newtonian(s1, s2, y, cosmo::Cosmology; 
-		kwargs...) ::Float64
+    ξ_GNC_Newtonian(s1, s2, y, cosmo::Cosmology; 
+        kwargs...) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) of the Newtonian auto-correlation effect
 arising from the Galaxy Number Counts (GNC).
