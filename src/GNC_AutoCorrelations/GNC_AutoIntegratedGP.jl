@@ -19,54 +19,60 @@
 
 
 function integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
-  P1::Point, P2::Point,
-  y, cosmo::Cosmology; obs::Union{Bool,Symbol}=:noobsvel)
+    P1::Point, P2::Point, y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
+    ℛ1=nothing, ℛ2=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
-  s1, ℛ_s1 = P1.comdist, P1.ℛ_GNC
-  s2, ℛ_s2 = P2.comdist, P2.ℛ_GNC
-  χ1, D1, a1, ℋ1, f1 = IP1.comdist, IP1.D, IP1.a, IP1.ℋ, IP1.f
-  χ2, D2, a2, ℋ2, f2 = IP2.comdist, IP2.D, IP2.a, IP2.ℋ, IP2.f
-  s_b_s1, s_b_s2 = cosmo.params.s_b, cosmo.params.s_b
-  Ω_M0 = cosmo.params.Ω_M0
+    s1 = P1.comdist
+    s2 = P2.comdist
+    ℛ_s1 = isnothing(ℛ1) ? P1.ℛ_GNC : ℛ1
+    ℛ_s2 = isnothing(ℛ2) ? P2.ℛ_GNC : ℛ2
+    χ1, D1, a1, ℋ1, f1 = IP1.comdist, IP1.D, IP1.a, IP1.ℋ, IP1.f
+    χ2, D2, a2, ℋ2, f2 = IP2.comdist, IP2.D, IP2.a, IP2.ℋ, IP2.f
+    s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    s_b_s2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    Ω_M0 = cosmo.params.Ω_M0
 
-  Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-  Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
+    Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
+    Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
 
-  factor = 9 * Δχ^4 * ℋ0^4 * Ω_M0^2 * D1 * D2 / (s1 * s2 * a1 * a2)
-  parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2
-  parenth_2 = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2
+    factor = 9 * Δχ^4 * ℋ0^4 * Ω_M0^2 * D1 * D2 / (s1 * s2 * a1 * a2)
+    parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2
+    parenth_2 = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2
 
-  I04_tilde = cosmo.tools.I04_tilde(Δχ)
+    I04_tilde = cosmo.tools.I04_tilde(Δχ)
 
-  return factor * parenth_1 * parenth_2 * I04_tilde
+    return factor * parenth_1 * parenth_2 * I04_tilde
 end
 
 function integrand_ξ_GNC_IntegratedGP(
-  χ1::Float64, χ2::Float64,
-  s1::Float64, s2::Float64,
-  y, cosmo::Cosmology;
-  kwargs...)
+	χ1::Float64, χ2::Float64,
+	s1::Float64, s2::Float64,
+	y, cosmo::Cosmology;
+	kwargs...)
 
-  P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-  IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
-  return integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+	IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
+	return integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
 end
 
 
 
 """
-     integrand_ξ_GNC_IntegratedGP(
-          IP1::Point, IP2::Point,
-          P1::Point, P2::Point,
-          y, cosmo::Cosmology; 
-          obs::Union{Bool,Symbol}=:noobsvel
-          ) ::Float64
+	integrand_ξ_GNC_IntegratedGP(
+		IP1::Point, IP2::Point,
+		P1::Point, P2::Point,
+		y, cosmo::Cosmology; 
+		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+		𝑓_evo1=nothing, 𝑓_evo2=nothing, ℛ1=nothing, ℛ2=nothing,
+		obs::Union{Bool,Symbol}=:noobsvel
+		) ::Float64
 
-     integrand_ξ_GNC_IntegratedGP(
-          χ1::Float64, χ2::Float64,
-          s1::Float64, s2::Float64,
-          y, cosmo::Cosmology;
-          kwargs...) ::Float64
+	integrand_ξ_GNC_IntegratedGP(
+		χ1::Float64, χ2::Float64,
+		s1::Float64, s2::Float64,
+		y, cosmo::Cosmology;
+		kwargs...) ::Float64
 
 Return the integrand of the Two-Point Correlation Function (TPCF) of the 
 Integrated Gravitational Potential (GP) auto-correlation effect 
@@ -208,7 +214,7 @@ integrand_ξ_GNC_IntegratedGP
 
 
 function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-  en::Float64=1e10, N_χs_2::Int=100, obs::Union{Bool,Symbol}=:noobsvel)
+  en::Float64=1e10, N_χs_2::Int=100, kwargs...)
 
   #adim_χs = range(1e-12, 1, N_χs)
   #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
@@ -220,7 +226,7 @@ function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
   IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
   int_ξ_igp = [
-    en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; obs=obs)
+    en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
     for IP1 in IP1s, IP2 in IP2s
   ]
 
@@ -251,21 +257,23 @@ end
 
 
 function ξ_GNC_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-  P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-  return ξ_GNC_IntegratedGP(P1, P2, y, cosmo; kwargs...)
+	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+	return ξ_GNC_IntegratedGP(P1, P2, y, cosmo; kwargs...)
 end
 
 
 
 """
-     ξ_GNC_IntegratedGP(
-          P1::Point, P2::Point, y, cosmo::Cosmology;
-          en::Float64=1e10, N_χs_2::Int=100, 
-          obs::Union{Bool,Symbol}=:noobsvel
-          ) ::Float64
+	ξ_GNC_IntegratedGP(
+		P1::Point, P2::Point, y, cosmo::Cosmology;
+		en::Float64=1e10, N_χs_2::Int=100, 
+		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+		𝑓_evo1=nothing, 𝑓_evo2=nothing, ℛ1=nothing, ℛ2=nothing,
+		obs::Union{Bool,Symbol}=:noobsvel
+		) ::Float64
 
-     ξ_GNC_IntegratedGP(s1, s2, y, cosmo::Cosmology; 
-          kwargs...) ::Float64
+	ξ_GNC_IntegratedGP(s1, s2, y, cosmo::Cosmology; 
+		kwargs...) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) of the Integrated
 Gravitational Potential (GP) auto-correlation effect

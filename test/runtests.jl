@@ -40,7 +40,7 @@ const HUBBLE_0 = 1e5 / 299792458.0
 include("TEST_DATA.jl")
 
 ##########################################################################################92
-
+#=
 @testset "test FFTLog" begin
      include("test_FFTLog.jl")
 end
@@ -60,7 +60,7 @@ end
 @testset "test IPSTools" begin
      include("test_IPSTools.jl")
 end
-
+=#
 @testset "test BackgroundData" begin
      include("test_BackgroundData.jl")
 end

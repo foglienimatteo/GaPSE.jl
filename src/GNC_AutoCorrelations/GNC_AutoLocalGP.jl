@@ -18,64 +18,70 @@
 #
 
 
-function ξ_GNC_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
+function ξ_GNC_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
+	b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
+	ℛ1=nothing, ℛ2=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
-     s1, D1, f1, a1, ℛ1, ℋ1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℛ_GNC, P1.ℋ
-     s2, D2, f2, a2, ℛ2, ℋ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℛ_GNC, P2.ℋ
-     s_b1, s_b2 = cosmo.params.s_b, cosmo.params.s_b
-     𝑓_evo1, 𝑓_evo2 = cosmo.params.𝑓_evo, cosmo.params.𝑓_evo
-     Ω_M0 = cosmo.params.Ω_M0
+	s1, D1, f1, a1, ℋ1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ
+	s2, D2, f2, a2, ℋ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ
+    ℛ1 = isnothing(ℛ1) ? P1.ℛ_GNC : ℛ1
+    ℛ2 = isnothing(ℛ2) ? P2.ℛ_GNC : ℛ2
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+	Ω_M0 = cosmo.params.Ω_M0
 
-     Δs = s(s1, s2, y)
+	Δs = s(s1, s2, y)
 
-     factor = 1 / 4 * Δs^4 * D1 * D2 / (a1 * a2)
-     parenth_1 = 2 * f2 * ℋ2^2 * a2 * (𝑓_evo2 - 3) + 3 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5 * s_b2 - 2)
-     parenth_2 = 2 * f1 * ℋ1^2 * a1 * (𝑓_evo1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f1 + ℛ1 + 5 * s_b1 - 2)
+	factor = 1 / 4 * Δs^4 * D1 * D2 / (a1 * a2)
+	parenth_1 = 2 * f2 * ℋ2^2 * a2 * (𝑓_evo2 - 3) + 3 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5 * s_b2 - 2)
+	parenth_2 = 2 * f1 * ℋ1^2 * a1 * (𝑓_evo1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f1 + ℛ1 + 5 * s_b1 - 2)
 
-     I04_tilde = cosmo.tools.I04_tilde(Δs)
+	I04_tilde = cosmo.tools.I04_tilde(Δs)
 
 
-     if obs == false || obs == :no
-          return factor * parenth_1 * parenth_2 * I04_tilde
+	if obs == false || obs == :no
+		return factor * parenth_1 * parenth_2 * I04_tilde
 
-     elseif obs == true || obs == :yes || obs == :noobsvel
+	elseif obs == true || obs == :yes || obs == :noobsvel
 
-          #### New observer terms #########
+		#### New observer terms #########
 
-          I04_tilde_s1 = cosmo.tools.I04_tilde(s1)
-          I04_tilde_s2 = cosmo.tools.I04_tilde(s2)
-          #σ4 = cosmo.tools.σ_4
+		I04_tilde_s1 = cosmo.tools.I04_tilde(s1)
+		I04_tilde_s2 = cosmo.tools.I04_tilde(s2)
+		#σ4 = cosmo.tools.σ_4
 
-          obs_common_1 = ℋ0 * s1 * ℛ1 * (2 * f0 - 3 * Ω_M0) + 2 * f0 * (5 * s_b1 - 2)
-          obs_common_2 = ℋ0 * s2 * ℛ2 * (2 * f0 - 3 * Ω_M0) + 2 * f0 * (5 * s_b2 - 2)
+		obs_common_1 = ℋ0 * s1 * ℛ1 * (2 * f0 - 3 * Ω_M0) + 2 * f0 * (5 * s_b1 - 2)
+		obs_common_2 = ℋ0 * s2 * ℛ2 * (2 * f0 - 3 * Ω_M0) + 2 * f0 * (5 * s_b2 - 2)
 
-          
-          #J_σ4 = ℋ0^2 / (4 * s1 * s2) * obs_common_1 * obs_common_2
+		
+		#J_σ4 = ℋ0^2 / (4 * s1 * s2) * obs_common_1 * obs_common_2
 
-          obs_parenth_1 = ℋ0 * s1^4 / (4 * s2 * a1) * (2 * a1 * ℋ1^2 * f1 * (𝑓_evo1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f1 + ℛ1 + 5 * s_b1 - 2))
-          obs_parenth_2 = ℋ0 * s2^4 / (4 * s1 * a2) * (2 * a2 * ℋ2^2 * f2 * (𝑓_evo2 - 3) + 3 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5 * s_b2 - 2))
+		obs_parenth_1 = ℋ0 * s1^4 / (4 * s2 * a1) * (2 * a1 * ℋ1^2 * f1 * (𝑓_evo1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f1 + ℛ1 + 5 * s_b1 - 2))
+		obs_parenth_2 = ℋ0 * s2^4 / (4 * s1 * a2) * (2 * a2 * ℋ2^2 * f2 * (𝑓_evo2 - 3) + 3 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5 * s_b2 - 2))
 
-          obs_terms = D2 * obs_common_1 * obs_parenth_2 * I04_tilde_s2 + 
-                    D1 * obs_common_2 * obs_parenth_1 * I04_tilde_s1 #+ J_σ4 * σ4
+		obs_terms = D2 * obs_common_1 * obs_parenth_2 * I04_tilde_s2 + 
+				D1 * obs_common_2 * obs_parenth_1 * I04_tilde_s1 #+ J_σ4 * σ4
 
-          # Note: The intergal I04 has been substitute everywhere with I04_tilde (check its documentation 
-          # for the difference) and the term J_σ4 * σ4 has been commented out. These two facts relìy on the
-          # Infra-Red Divergence cancellation described in the paper of Castorina and Di Dio. 
+		# Note: The intergal I04 has been substitute everywhere with I04_tilde (check its documentation 
+		# for the difference) and the term J_σ4 * σ4 has been commented out. These two facts relìy on the
+		# Infra-Red Divergence cancellation described in the paper of Castorina and Di Dio. 
 
-          #################################
+		#################################
 
-          return factor * parenth_1 * parenth_2 * I04_tilde + obs_terms
-     else
-          throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
-               "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
-               ))
-     end
+		return factor * parenth_1 * parenth_2 * I04_tilde + obs_terms
+	else
+		throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
+			"$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
+			))
+	end
 end
 
 
 function ξ_GNC_LocalGP(s1, s2, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_GNC_LocalGP(P1, P2, y, cosmo; obs = obs)
+	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+	return ξ_GNC_LocalGP(P1, P2, y, cosmo; obs = obs)
 end
 
 """

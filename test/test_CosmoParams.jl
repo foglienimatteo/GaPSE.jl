@@ -32,6 +32,8 @@
           @test_throws AssertionError GaPSE.CosmoParams(0.5, 1.0, π / 2.0; Ω_cdm = 243)
           @test_throws AssertionError GaPSE.CosmoParams(0.5, 1.0, π / 2.0; h_0 = 0.0)
           @test_throws AssertionError GaPSE.CosmoParams(0.5, 1.0, π / 2.0; h_0 = 1.5)
+          @test_throws AssertionError GaPSE.CosmoParams(0.5, 1.0, π / 2.0; b1=-1.5)
+          @test_throws AssertionError GaPSE.CosmoParams(0.5, 1.0, π / 2.0; b2=0)
 
           @test_throws AssertionError GaPSE.CosmoParams(0.5, 1.0, π / 2.0;
                IPS_opts = Dict())
@@ -132,6 +134,67 @@
           #     @test params.WFI[k] ≈ GaPSE.DEFAULT_WFI_OPTS[k]
           #end
      end
-end
 
+     @testset "third" begin
+          z_min, z_max, θ_max = 0.05, 0.20, π / 2.0
+          Ω_b, Ω_cdm, h_0 = 0.023, 0.34, 0.99
+          s_lim = 1e-3
+          b1, b2 = 1.2, nothing
+          s_b1, s_b2 = 2.2, nothing
+          𝑓_evo1, 𝑓_evo2 = 3.2, nothing
+
+          A = Dict(:fit_left_min => 1e-20, :fit_right_min => 0.7)
+          B = Dict(:N => 12, :con => false)
+          #C = Dict(:N => 1234, :rtol => 1e-3, :ss_step => 10.0)
+
+          params = GaPSE.CosmoParams(z_min, z_max, θ_max;
+               Ω_b=Ω_b, Ω_cdm=Ω_cdm, h_0=h_0, s_lim=s_lim,
+               b1=b1, b2=b2, s_b1=s_b1, s_b2=s_b2, 𝑓_evo1=𝑓_evo1, 𝑓_evo2=𝑓_evo2
+          )
+
+          @test params.h_0 ≈ h_0
+          @test params.Ω_b ≈ Ω_b
+          @test params.Ω_cdm ≈ Ω_cdm
+          @test params.Ω_M0 ≈ Ω_b + Ω_cdm
+          @test params.s_lim ≈ s_lim
+
+          @test params.b1 ≈ b1
+          @test params.b2 ≈ b1
+          @test params.s_b1 ≈ s_b1
+          @test params.s_b2 ≈ s_b1
+          @test params.𝑓_evo1 ≈ 𝑓_evo1
+          @test params.𝑓_evo2 ≈ 𝑓_evo1
+     end
+
+     @testset "fourth" begin
+          z_min, z_max, θ_max = 0.05, 0.20, π / 2.0
+          Ω_b, Ω_cdm, h_0 = 0.023, 0.34, 0.99
+          s_lim = 1e-3
+          b1, b2 = 1.2, 27.3
+          s_b1, s_b2 = 2.2, π
+          𝑓_evo1, 𝑓_evo2 = 3.2, -3.1
+
+          A = Dict(:fit_left_min => 1e-20, :fit_right_min => 0.7)
+          B = Dict(:N => 12, :con => false)
+          #C = Dict(:N => 1234, :rtol => 1e-3, :ss_step => 10.0)
+
+          params = GaPSE.CosmoParams(z_min, z_max, θ_max;
+               Ω_b=Ω_b, Ω_cdm=Ω_cdm, h_0=h_0, s_lim=s_lim,
+               b1=b1, b2=b2, s_b1=s_b1, s_b2=s_b2, 𝑓_evo1=𝑓_evo1, 𝑓_evo2=𝑓_evo2
+          )
+
+          @test params.h_0 ≈ h_0
+          @test params.Ω_b ≈ Ω_b
+          @test params.Ω_cdm ≈ Ω_cdm
+          @test params.Ω_M0 ≈ Ω_b + Ω_cdm
+          @test params.s_lim ≈ s_lim
+
+          @test params.b1 ≈ b1
+          @test params.b2 ≈ b2
+          @test params.s_b1 ≈ s_b1
+          @test params.s_b2 ≈ s_b2
+          @test params.𝑓_evo1 ≈ 𝑓_evo1
+          @test params.𝑓_evo2 ≈ 𝑓_evo2
+     end
+end
 

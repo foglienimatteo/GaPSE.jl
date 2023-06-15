@@ -65,7 +65,6 @@ const DEFAULT_IPSTOOLS_OPTS = Dict(
      :k_max => 10.0::Float64,
 )
 
-
 #=
 """
      const DEFAULT_WFI_OPTS = Dict(
@@ -113,8 +112,10 @@ const DEFAULT_WFI_OPTS = Dict(
 
           b1::Float64
           b2::Float64
-          s_b::Float64
-          𝑓_evo::Float64
+          s_b1::Float64
+          s_b2::Float64
+          𝑓_evo1::Float64
+          𝑓_evo2::Float64
 
           s_lim::Float64
 
@@ -141,11 +142,15 @@ matter of concerns for the `Cosmology` we are interested in.
 
 - `b1::Float64` and `b2::Float64` : galaxy biases; you can choose to define both of them (if you are interested
   in the analysis of two galaxy species) or only the former (and leave the latter as `nothing`, it will be set equal
-  to the former) .
+  to the former).
 
-- `s_b::Float64` : magnification bias, i.e. the slope of the luminosity function at the luminosity threshold.
+- `s_b1::Float64` and  `s_b2::Float64`: magnification bias, i.e. the slope of the luminosity function at the luminosity threshold; 
+  you can choose to define both of them (if you are interested in the analysis of two galaxy species) or only 
+  the former (and leave the latter as `nothing`, it will be set equal to the former).
 
-- `𝑓_evo::Float64` : evolution bias.
+- `𝑓_evo::Float64` : evolution bias; you can choose to define both of them (if you are interested
+  in the analysis of two galaxy species) or only the former (and leave the latter as `nothing`, it will be set equal
+  to the former).
 
 - `s_lim::Float64` : the lower-bound value for the functions `func_ℛ_LD` and `func_ℛ_GNC`; it is necessary, because
   `ℛ_LD` and `ℛ_GNC` blows up for ``s \\rightarrow 0^{+}``. Consequently, if the `func_ℛ_LD`/`func_ℛ_GNC` input value is 
@@ -181,7 +186,7 @@ matter of concerns for the `Cosmology` we are interested in.
 
      CosmoParams(z_min, z_max, θ_max;
           Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70, s_lim = 1e-2,
-          b1=1.0, b2=nothing, s_b=0.0, 𝑓_evo=0.0,
+          b1=1.0, b2=nothing, s_b1=0.0, s_b2=nothing, 𝑓_evo1=0.0, 𝑓_evo2=nothing,
           IPS_opts::Dict = Dict{Symbol,Any}(),
           IPSTools_opts::Dict = Dict{Symbol,Any}()
      )
@@ -223,8 +228,10 @@ struct CosmoParams
 
      b1::Float64
      b2::Float64
-     s_b::Float64
-     𝑓_evo::Float64
+     s_b1::Float64
+     s_b2::Float64
+     𝑓_evo1::Float64
+     𝑓_evo2::Float64
 
      s_lim::Float64
 
@@ -234,7 +241,7 @@ struct CosmoParams
 
      function CosmoParams(z_min, z_max, θ_max;
           Ω_b=0.0489, Ω_cdm=0.251020, h_0=0.70, s_lim=1e-2,
-          b1=1.0, b2=nothing, s_b=0.0, 𝑓_evo=0.0,
+          b1=1.0, b2=nothing, s_b1=0.0, s_b2=nothing, 𝑓_evo1=0.0, 𝑓_evo2=nothing,
           IPS_opts::Dict=Dict{Symbol,Any}(),
           IPSTools_opts::Dict=Dict{Symbol,Any}()
           #WFI_opts::Dict=Dict{Symbol,Any}()
@@ -273,8 +280,11 @@ struct CosmoParams
                                                                         "≤ fit_min < fit_max < 10.0 must hold!"
 
           @assert b1 > 0.0 " b1 > 0 must hold!"
-          real_b2 = isnothing(b2) ? b1 : b2
-          @assert real_b2 > 0.0 " b2 > 0 must hold!"
+          b2 = isnothing(b2) ? b1 : b2
+          @assert b2 > 0.0 " b2 > 0 must hold!"
+
+          s_b2 = isnothing(s_b2) ? s_b1 : s_b2
+          𝑓_evo2 = isnothing(𝑓_evo2) ? 𝑓_evo1 : 𝑓_evo2
 
           #=
           @assert isnothing(WFI[:llim]) || 0.0 ≤ WFI[:llim] " 0.0 ≤ llim must hold!"
@@ -287,7 +297,7 @@ struct CosmoParams
 
           new(z_min, z_max, θ_max,
                Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0,
-               b1, real_b2, s_b, 𝑓_evo,
+               b1, b2, s_b1, s_b2, 𝑓_evo1, 𝑓_evo2,
                s_lim,
                IPS, IPSTools,
                #WFI

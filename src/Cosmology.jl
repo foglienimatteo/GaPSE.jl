@@ -111,7 +111,8 @@ struct CosmoSplines
      ℋ_of_s::Dierckx.Spline1D
      ℋ_p_of_s::Dierckx.Spline1D
      ℛ_LD_of_s::Dierckx.Spline1D
-     ℛ_GNC_of_s::Dierckx.Spline1D
+     ℛ_GNC1_of_s::Dierckx.Spline1D
+     ℛ_GNC2_of_s::Dierckx.Spline1D
 
      s_of_z::Dierckx.Spline1D
 
@@ -126,17 +127,22 @@ struct CosmoSplines
      z_max::Float64
      h::Float64
      s_lim::Float64
-     s_b::Float64
-     𝑓_evo::Float64
+
+     s_b1::Float64
+     𝑓_evo1::Float64
+     s_b2::Float64
+     𝑓_evo2::Float64
 
      function CosmoSplines(
                file_data::String, z_min, z_max; 
                names::Vector{String} = NAMES_BACKGROUND, h=0.7, 
-               s_lim = 0.01, s_b = 0.0,
-               𝑓_evo = 0.0
+               s_lim = 0.01, s_b1=0.0, s_b2=nothing,
+               𝑓_evo1=0.0, 𝑓_evo2=nothing
                )
 
           BD = BackgroundData(file_data, z_max; names=names, h=h)
+          s_b2 = isnothing(s_b2) ? s_b1 : s_b2
+          𝑓_evo2 = isnothing(𝑓_evo2) ? 𝑓_evo1 : 𝑓_evo2
 
           z_of_s = Spline1D(BD.comdist, BD.z; bc="error")
           s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
@@ -154,19 +160,23 @@ struct CosmoSplines
           ℛ_LDs = [func_ℛ_LD(s, ℋ_of_s(s); s_lim=s_lim) for s in ss]
           ℛ_LD_of_s = Spline1D(vcat(0.0, ss), vcat(ℛ_LDs[begin], ℛ_LDs); bc="error")
 
-          ℛ_GNCs = [func_ℛ_GNC(s, ℋ_of_s(s), ℋ_p_of_s(s);
-               s_b=s_b, 𝑓_evo=𝑓_evo, s_lim=s_lim) for s in ss]
-          ℛ_GNC_of_s = Spline1D(vcat(0.0, ss), vcat(ℛ_GNCs[begin], ℛ_GNCs); bc="error")
+          ℛ_GNC1s = [func_ℛ_GNC(s, ℋ_of_s(s), ℋ_p_of_s(s);
+               s_b=s_b1, 𝑓_evo=𝑓_evo1, s_lim=s_lim) for s in ss]
+          ℛ_GNC1_of_s = Spline1D(vcat(0.0, ss), vcat(ℛ_GNC1s[begin], ℛ_GNC1s); bc="error")
+          ℛ_GNC2s = [func_ℛ_GNC(s, ℋ_of_s(s), ℋ_p_of_s(s);
+               s_b=s_b2, 𝑓_evo=𝑓_evo2, s_lim=s_lim) for s in ss]
+          ℛ_GNC2_of_s = Spline1D(vcat(0.0, ss), vcat(ℛ_GNC2s[begin], ℛ_GNC2s); bc="error")
 
           s_min = s_of_z(z_min)
           s_max = s_of_z(z_max)
           z_eff = GaPSE.func_z_eff(s_min, s_max, z_of_s)
           s_eff = s_of_z(z_eff)
 
-          new(z_of_s, D_of_s, f_of_s, ℋ_of_s, ℋ_p_of_s, ℛ_LD_of_s, ℛ_GNC_of_s,
+          new(z_of_s, D_of_s, f_of_s, ℋ_of_s, ℋ_p_of_s, ℛ_LD_of_s, ℛ_GNC1_of_s, ℛ_GNC2_of_s,
                s_of_z,
                z_eff, s_min, s_max, s_eff,
-               file_data, names, z_min, z_max, h, s_lim, s_b, 𝑓_evo)
+               file_data, names, z_min, z_max, h, s_lim, 
+               s_b1, s_b2, 𝑓_evo1, 𝑓_evo2)
      end
 end
 
@@ -188,7 +198,8 @@ end
           ℋ_of_s::Dierckx.Spline1D
           ℋ_p_of_s::Dierckx.Spline1D
           ℛ_LD_of_s::Dierckx.Spline1D
-          ℛ_GNC_of_s::Dierckx.Spline1D
+          ℛ_GNC1_of_s::Dierckx.Spline1D
+          ℛ_GNC2_of_s::Dierckx.Spline1D
 
           s_of_z::Dierckx.Spline1D
 
@@ -250,7 +261,7 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
   \\mathcal{F}\\left(s = 10 \\, h_0^{-1}\\, \\mathrm{Mpc}, \\mu\\right) 
   ```
 
-- `z_of_s, D_of_s, f_of_s, ℋ_of_s, ℋ_p_of_s, ℛ_LD_of_s, ℛ_GNC_of_s ::Dierckx.Spline1D` :
+- `z_of_s, D_of_s, f_of_s, ℋ_of_s, ℋ_p_of_s, ℛ_LD_of_s, ℛ_GNC1_of_s, ℛ_GNC2_of_s ::Dierckx.Spline1D` :
   splines obtained from the data stored by `BackgroundData` applied to the input background 
   data file. Given an input comoving distance `s`, they return the corresponding value of,
   respectively:
@@ -278,6 +289,9 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
   of the comoving Hubble parameter wrt the comoving time ``\\tau``.
   It's spline is obtained in a sample of point given by 
   `10.0 .^ range(-4, log10(max(comdist...)), length=1000)`.
+  NOTE: there are two of these splines in case you are taking into account two galaxies species (which
+  have different values for galaxy, magnification and evolutionary biases); if you don't (i.e. you set only
+  the first species values in `CosmoParams`) the two splines coincide.
 
 - `s_of_z ::Dierckx.Spline1D` : spline that returns the value of the comoving distance `s`
   corresponding to an input redshift `z`. Also this spline is obtained from the data stored by 
@@ -352,7 +366,8 @@ struct Cosmology
      ℋ_of_s::Dierckx.Spline1D
      ℋ_p_of_s::Dierckx.Spline1D
      ℛ_LD_of_s::Dierckx.Spline1D
-     ℛ_GNC_of_s::Dierckx.Spline1D
+     ℛ_GNC1_of_s::Dierckx.Spline1D
+     ℛ_GNC2_of_s::Dierckx.Spline1D
 
      s_of_z::Dierckx.Spline1D
 
@@ -390,7 +405,8 @@ struct Cosmology
           CS = CosmoSplines(file_data, params.z_min, params.z_max; 
                names=names_bg, h=params.h_0, 
                s_lim = params.s_lim, 
-               s_b = params.s_b, 𝑓_evo = params.𝑓_evo);
+               s_b1=params.s_b1, s_b2=params.s_b2, 
+               𝑓_evo1=params.𝑓_evo1, 𝑓_evo2=params.𝑓_evo2)
 
           vol = V_survey(CS.s_min, CS.s_max, params.θ_max)
 
@@ -413,7 +429,7 @@ struct Cosmology
                windowF,
                windowFintegrated,
                WFI_norm,
-               CS.z_of_s, CS.D_of_s, CS.f_of_s, CS.ℋ_of_s, CS.ℋ_p_of_s, CS.ℛ_LD_of_s, CS.ℛ_GNC_of_s,
+               CS.z_of_s, CS.D_of_s, CS.f_of_s, CS.ℋ_of_s, CS.ℋ_p_of_s, CS.ℛ_LD_of_s, CS.ℛ_GNC1_of_s, CS.ℛ_GNC2_of_s,
                CS.s_of_z,
                CS.z_eff, CS.s_min, CS.s_max, CS.s_eff,
                vol,
