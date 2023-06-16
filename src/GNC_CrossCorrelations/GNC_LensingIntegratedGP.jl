@@ -44,7 +44,7 @@ function integrand_ξ_GNC_Lensing_IntegratedGP(
     Δχ = √(Δχ_square) > 0 ? √(Δχ_square) : 0
 
     denomin = a1 * a2 * s1 * s2
-    common = 9 * χ2 * ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (5 * s_b_s2 - 2)
+    common = 9 * χ2 * ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (5 * s_b_s1 - 2)
     parenth = ℋ2 * ℛ_s2 * s2 * (f2 - 1) - 5 * s_b_s2 + 2
 
     new_J31 = y * Δχ^2
