@@ -18,46 +18,46 @@
 #
 
 @testset "test xi GNCxLD newton_doppler L = 0" begin
-     effect = "newton_doppler"
-     L = 0
+    effect = "newton_doppler"
+    L = 0
 
-     ss = ss_GNCxLD_L0_noF
-     xis = all_xis_GNCxLD_L0_noF[GaPSE.INDEX_GR_EFFECT_GNCxLD[effect]]
+    ss = ss_GNCxLD_L0_noF
+    xis = all_xis_GNCxLD_L0_noF[GaPSE.INDEX_GR_EFFECT_GNCxLD[effect]]
 
-     name = "calc_xi_" * effect * "_GNCxLD_L$L" * ".txt"
-     isfile(name) && rm(name)
-     GaPSE.print_map_ξ_GNCxLD_multipole(COSMO, name, effect, SS_GNCxLD;
-          L = L, alg = :quad, GaPSE.specif_kwargs_GNCxLD(effect, KWARGS_GNCxLD)...)
+    name = "calc_xi_" * effect * "_GNCxLD_L$L" * ".txt"
+    isfile(name) && rm(name)
+    GaPSE.print_map_ξ_GNCxLD_multipole(COSMO, name, effect, SS_GNCxLD;
+        L = L, alg = :quad, GaPSE.specif_kwargs_GNCxLD(effect, KWARGS_GNCxLD)...)
 
-     calc_table = readdlm(name; comments = true)
-     calc_ss = convert(Vector{Float64}, calc_table[:, 1])
-     calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+    calc_table = readdlm(name; comments = true)
+    calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+    calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-     @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
-     @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+    @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
+    @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
 
-     rm(name)
+    rm(name)
 end
 
 @testset "test xi LDxGNC doppler_newton L = 0" begin
-     effect = "doppler_newton"
-     L = 0
+    effect = "doppler_newton"
+    L = 0
 
-     ss = ss_LDxGNC_L0_noF
-     xis = all_xis_LDxGNC_L0_noF[GaPSE.INDEX_GR_EFFECT_LDxGNC[effect]]
+    ss = ss_LDxGNC_L0_noF
+    xis = all_xis_LDxGNC_L0_noF[GaPSE.INDEX_GR_EFFECT_LDxGNC[effect]]
 
-     name = "calc_xi_" * effect * "_LDxGNC_L$L" * ".txt"
-     isfile(name) && rm(name)
-     GaPSE.print_map_ξ_LDxGNC_multipole(COSMO, name, effect, SS_LDxGNC;
-          L = L, alg = :quad, GaPSE.specif_kwargs_LDxGNC(effect, KWARGS_LDxGNC)...)
+    name = "calc_xi_" * effect * "_LDxGNC_L$L" * ".txt"
+    isfile(name) && rm(name)
+    GaPSE.print_map_ξ_LDxGNC_multipole(COSMO, name, effect, SS_LDxGNC;
+        L = L, alg = :quad, GaPSE.specif_kwargs_LDxGNC(effect, KWARGS_LDxGNC)...)
 
-     calc_table = readdlm(name; comments = true)
-     calc_ss = convert(Vector{Float64}, calc_table[:, 1])
-     calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+    calc_table = readdlm(name; comments = true)
+    calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+    calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-     @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
-     @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+    @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
+    @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
 
-     rm(name)
+    rm(name)
 end
 

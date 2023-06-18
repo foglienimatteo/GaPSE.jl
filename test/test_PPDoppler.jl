@@ -21,80 +21,80 @@
 
 
 @testset "test map_ξ_PPDoppler_multipole" begin
-     RTOL = 1e-3
-     kwargs_xis_PP = Dict(
-          :pr => false, :enhancer => 1e8,
-          :atol_quad => 0.0, :rtol_quad => 1e-2,
-          :N_log => 100,
-     )
+    RTOL = 1e-3
+    kwargs_xis_PP = Dict(
+        :pr => false, :enhancer => 1e8,
+        :atol_quad => 0.0, :rtol_quad => 1e-2,
+        :N_log => 100,
+    )
 
-     @testset "with F" begin
-          @testset "monopole" begin
-               L = 0
-               true_xi = "datatest/pp_doppler/xi_ppdoppler_withF_L$L" * ".txt"
+    @testset "with F" begin
+        @testset "monopole" begin
+            L = 0
+            true_xi = "datatest/pp_doppler/xi_ppdoppler_withF_L$L" * ".txt"
 
-               table = readdlm(true_xi; comments=true)
-               ss = convert(Vector{Float64}, table[:, 1])
-               xis = convert(Vector{Float64}, table[:, 2])
+            table = readdlm(true_xi; comments=true)
+            ss = convert(Vector{Float64}, table[:, 1])
+            xis = convert(Vector{Float64}, table[:, 2])
 
-               calc_ss, calc_xis = GaPSE.map_ξ_PPDoppler_multipole(COSMO,
-                    10 .^ range(0, 3, length=300); use_windows=true,
-                    L=L, kwargs_xis_PP...)
+            calc_ss, calc_xis = GaPSE.map_ξ_PPDoppler_multipole(COSMO,
+                10 .^ range(0, 3, length=300); use_windows=true,
+                L=L, kwargs_xis_PP...)
 
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
-          end
+            @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
+            @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
+        end
 
-          @testset "quadrupole" begin
-               L = 2
-               true_xi = "datatest/pp_doppler/xi_ppdoppler_withF_L$L" * ".txt"
+        @testset "quadrupole" begin
+            L = 2
+            true_xi = "datatest/pp_doppler/xi_ppdoppler_withF_L$L" * ".txt"
 
-               table = readdlm(true_xi; comments=true)
-               ss = convert(Vector{Float64}, table[:, 1])
-               xis = convert(Vector{Float64}, table[:, 2])
+            table = readdlm(true_xi; comments=true)
+            ss = convert(Vector{Float64}, table[:, 1])
+            xis = convert(Vector{Float64}, table[:, 2])
 
-               calc_ss, calc_xis = GaPSE.map_ξ_PPDoppler_multipole(COSMO,
-                    10 .^ range(0, 3, length=300); use_windows=true,
-                    L=L, kwargs_xis_PP...)
+            calc_ss, calc_xis = GaPSE.map_ξ_PPDoppler_multipole(COSMO,
+                10 .^ range(0, 3, length=300); use_windows=true,
+                L=L, kwargs_xis_PP...)
 
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
-          end
-     end
+            @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
+            @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
+        end
+    end
 
-     @testset "without F" begin
-          @testset "monopole" begin
-               L = 0
-               true_xi = "datatest/pp_doppler/xi_ppdoppler_noF_L$L" * ".txt"
+    @testset "without F" begin
+        @testset "monopole" begin
+            L = 0
+            true_xi = "datatest/pp_doppler/xi_ppdoppler_noF_L$L" * ".txt"
 
-               table = readdlm(true_xi; comments=true)
-               ss = convert(Vector{Float64}, table[:, 1])
-               xis = convert(Vector{Float64}, table[:, 2])
+            table = readdlm(true_xi; comments=true)
+            ss = convert(Vector{Float64}, table[:, 1])
+            xis = convert(Vector{Float64}, table[:, 2])
 
-               calc_ss, calc_xis = GaPSE.map_ξ_PPDoppler_multipole(COSMO,
-                    10 .^ range(0, 3, length=300); use_windows=false,
-                    L=L, kwargs_xis_PP...)
+            calc_ss, calc_xis = GaPSE.map_ξ_PPDoppler_multipole(COSMO,
+                10 .^ range(0, 3, length=300); use_windows=false,
+                L=L, kwargs_xis_PP...)
 
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
-          end
+            @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
+            @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
+        end
 
-          @testset "quadrupole" begin
-               L = 2
-               true_xi = "datatest/pp_doppler/xi_ppdoppler_noF_L$L" * ".txt"
+        @testset "quadrupole" begin
+            L = 2
+            true_xi = "datatest/pp_doppler/xi_ppdoppler_noF_L$L" * ".txt"
 
-               table = readdlm(true_xi; comments=true)
-               ss = convert(Vector{Float64}, table[:, 1])
-               xis = convert(Vector{Float64}, table[:, 2])
+            table = readdlm(true_xi; comments=true)
+            ss = convert(Vector{Float64}, table[:, 1])
+            xis = convert(Vector{Float64}, table[:, 2])
 
-               calc_ss, calc_xis = GaPSE.map_ξ_PPDoppler_multipole(COSMO,
-                    10 .^ range(0, 3, length=300); use_windows=false,
-                    L=L, kwargs_xis_PP...)
+            calc_ss, calc_xis = GaPSE.map_ξ_PPDoppler_multipole(COSMO,
+                10 .^ range(0, 3, length=300); use_windows=false,
+                L=L, kwargs_xis_PP...)
 
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
-          end
-     end
+            @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
+            @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
+        end
+    end
 end
 
 
@@ -105,115 +105,115 @@ end
 
 
 @testset "test print_map_ξ_PPDoppler_multipole" begin
-     RTOL = 1e-3
-     kwargs_xis_PP = Dict(
-          :pr => false, :enhancer => 1e8,
-          :atol_quad => 0.0, :rtol_quad => 1e-2,
-          :N_log => 100,
-     )
+    RTOL = 1e-3
+    kwargs_xis_PP = Dict(
+        :pr => false, :enhancer => 1e8,
+        :atol_quad => 0.0, :rtol_quad => 1e-2,
+        :N_log => 100,
+    )
 
-     @testset "with F" begin
-          @testset "monopole" begin
-               L = 0
-               name = "calc_xi_ppdoppler_withF_L$L" * ".txt"
-               true_xi = "datatest/pp_doppler/xi_ppdoppler_withF_L$L" * ".txt"
+    @testset "with F" begin
+        @testset "monopole" begin
+            L = 0
+            name = "calc_xi_ppdoppler_withF_L$L" * ".txt"
+            true_xi = "datatest/pp_doppler/xi_ppdoppler_withF_L$L" * ".txt"
 
-               isfile(name) && rm(name)
+            isfile(name) && rm(name)
 
-               table = readdlm(true_xi; comments=true)
-               ss = convert(Vector{Float64}, table[:, 1])
-               xis = convert(Vector{Float64}, table[:, 2])
+            table = readdlm(true_xi; comments=true)
+            ss = convert(Vector{Float64}, table[:, 1])
+            xis = convert(Vector{Float64}, table[:, 2])
 
-               GaPSE.print_map_ξ_PPDoppler_multipole(COSMO, name,
-                    10 .^ range(0, 3, length=300); use_windows=true,
-                    L=L, kwargs_xis_PP...)
+            GaPSE.print_map_ξ_PPDoppler_multipole(COSMO, name,
+                10 .^ range(0, 3, length=300); use_windows=true,
+                L=L, kwargs_xis_PP...)
 
-               calc_table = readdlm(true_xi; comments=true)
-               calc_ss = convert(Vector{Float64}, calc_table[:, 1])
-               calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+            calc_table = readdlm(true_xi; comments=true)
+            calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+            calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
+            @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
+            @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
 
-               rm(name)
-          end
+            rm(name)
+        end
 
-          @testset "quadrupole" begin
-               L = 2
-               name = "calc_xi_ppdoppler_withF_L$L" * ".txt"
-               true_xi = "datatest/pp_doppler/xi_ppdoppler_withF_L$L" * ".txt"
+        @testset "quadrupole" begin
+            L = 2
+            name = "calc_xi_ppdoppler_withF_L$L" * ".txt"
+            true_xi = "datatest/pp_doppler/xi_ppdoppler_withF_L$L" * ".txt"
 
-               isfile(name) && rm(name)
+            isfile(name) && rm(name)
 
-               table = readdlm(true_xi; comments=true)
-               ss = convert(Vector{Float64}, table[:, 1])
-               xis = convert(Vector{Float64}, table[:, 2])
+            table = readdlm(true_xi; comments=true)
+            ss = convert(Vector{Float64}, table[:, 1])
+            xis = convert(Vector{Float64}, table[:, 2])
 
-               GaPSE.print_map_ξ_PPDoppler_multipole(COSMO, name,
-                    10 .^ range(0, 3, length=300); use_windows=true,
-                    L=L, kwargs_xis_PP...)
+            GaPSE.print_map_ξ_PPDoppler_multipole(COSMO, name,
+                10 .^ range(0, 3, length=300); use_windows=true,
+                L=L, kwargs_xis_PP...)
 
-               calc_table = readdlm(true_xi; comments=true)
-               calc_ss = convert(Vector{Float64}, calc_table[:, 1])
-               calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+            calc_table = readdlm(true_xi; comments=true)
+            calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+            calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
+            @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
+            @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
 
-               rm(name)
-          end
-     end
+            rm(name)
+        end
+    end
 
-     @testset "without F" begin
-          @testset "monopole" begin
-               L = 0
-               name = "calc_xi_ppdoppler_noF_L$L" * ".txt"
-               true_xi = "datatest/pp_doppler/xi_ppdoppler_noF_L$L" * ".txt"
+    @testset "without F" begin
+        @testset "monopole" begin
+            L = 0
+            name = "calc_xi_ppdoppler_noF_L$L" * ".txt"
+            true_xi = "datatest/pp_doppler/xi_ppdoppler_noF_L$L" * ".txt"
 
-               isfile(name) && rm(name)
+            isfile(name) && rm(name)
 
-               table = readdlm(true_xi; comments=true)
-               ss = convert(Vector{Float64}, table[:, 1])
-               xis = convert(Vector{Float64}, table[:, 2])
+            table = readdlm(true_xi; comments=true)
+            ss = convert(Vector{Float64}, table[:, 1])
+            xis = convert(Vector{Float64}, table[:, 2])
 
-               GaPSE.print_map_ξ_PPDoppler_multipole(COSMO, name,
-                    10 .^ range(0, 3, length=300); use_windows=false,
-                    L=L, kwargs_xis_PP...)
+            GaPSE.print_map_ξ_PPDoppler_multipole(COSMO, name,
+                10 .^ range(0, 3, length=300); use_windows=false,
+                L=L, kwargs_xis_PP...)
 
-               calc_table = readdlm(true_xi; comments=true)
-               calc_ss = convert(Vector{Float64}, calc_table[:, 1])
-               calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+            calc_table = readdlm(true_xi; comments=true)
+            calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+            calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
+            @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
+            @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
 
-               rm(name)
-          end
+            rm(name)
+        end
 
-          @testset "quadrupole" begin
-               L = 2
-               name = "calc_xi_ppdoppler_noF_L$L" * ".txt"
-               true_xi = "datatest/pp_doppler/xi_ppdoppler_noF_L$L" * ".txt"
+        @testset "quadrupole" begin
+            L = 2
+            name = "calc_xi_ppdoppler_noF_L$L" * ".txt"
+            true_xi = "datatest/pp_doppler/xi_ppdoppler_noF_L$L" * ".txt"
 
-               isfile(name) && rm(name)
+            isfile(name) && rm(name)
 
-               table = readdlm(true_xi; comments=true)
-               ss = convert(Vector{Float64}, table[:, 1])
-               xis = convert(Vector{Float64}, table[:, 2])
+            table = readdlm(true_xi; comments=true)
+            ss = convert(Vector{Float64}, table[:, 1])
+            xis = convert(Vector{Float64}, table[:, 2])
 
-               GaPSE.print_map_ξ_PPDoppler_multipole(COSMO, name,
-                    10 .^ range(0, 3, length=300); use_windows=false,
-                    L=L, kwargs_xis_PP...)
+            GaPSE.print_map_ξ_PPDoppler_multipole(COSMO, name,
+                10 .^ range(0, 3, length=300); use_windows=false,
+                L=L, kwargs_xis_PP...)
 
-               calc_table = readdlm(true_xi; comments=true)
-               calc_ss = convert(Vector{Float64}, calc_table[:, 1])
-               calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+            calc_table = readdlm(true_xi; comments=true)
+            calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+            calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
-               @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
+            @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(ss, calc_ss)])
+            @test all([isapprox(t, c; rtol=RTOL) for (t, c) in zip(xis, calc_xis)])
 
-               rm(name)
-          end
-     end
+            rm(name)
+        end
+    end
 end
 

@@ -19,52 +19,52 @@
 
 
 @testset "test  specif_kwargs_LD" begin
-     kwargs = Dict(:N_χs_2 => 200 , :en => 1e6, :N_χs=> 150)
-     @test_throws AssertionError GaPSE.specif_kwargs_LD("ciao", kwargs)
-     @test_throws AssertionError GaPSE.specif_kwargs_LD("auto_newton", kwargs)
-     @test_throws AssertionError GaPSE.specif_kwargs_LD("newton_localgp", kwargs)
+    kwargs = Dict(:N_χs_2 => 200 , :en => 1e6, :N_χs=> 150)
+    @test_throws AssertionError GaPSE.specif_kwargs_LD("ciao", kwargs)
+    @test_throws AssertionError GaPSE.specif_kwargs_LD("auto_newton", kwargs)
+    @test_throws AssertionError GaPSE.specif_kwargs_LD("newton_localgp", kwargs)
 
-     @test GaPSE.specif_kwargs_LD("auto_doppler", kwargs) == Dict()
-     @test GaPSE.specif_kwargs_LD("auto_lensing", kwargs) == Dict(:N_χs_2 => 200 , :en => 1e6)
-     @test GaPSE.specif_kwargs_LD("localgp_lensing", kwargs) == Dict(:N_χs => 150 , :en => 1e6)
+    @test GaPSE.specif_kwargs_LD("auto_doppler", kwargs) == Dict()
+    @test GaPSE.specif_kwargs_LD("auto_lensing", kwargs) == Dict(:N_χs_2 => 200 , :en => 1e6)
+    @test GaPSE.specif_kwargs_LD("localgp_lensing", kwargs) == Dict(:N_χs => 150 , :en => 1e6)
 end
 
 @testset "test  specif_kwargs_GNC" begin
-     kwargs = Dict(:N_χs_2 => 200 , :en => 1e6, :N_χs=> 150)
-     @test_throws AssertionError GaPSE.specif_kwargs_GNC("ciao", kwargs)
-     @test_throws AssertionError GaPSE.specif_kwargs_GNC("automatic_newton", kwargs)
-     @test_throws AssertionError GaPSE.specif_kwargs_GNC("newtonian_localgp", kwargs)
+    kwargs = Dict(:N_χs_2 => 200 , :en => 1e6, :N_χs=> 150)
+    @test_throws AssertionError GaPSE.specif_kwargs_GNC("ciao", kwargs)
+    @test_throws AssertionError GaPSE.specif_kwargs_GNC("automatic_newton", kwargs)
+    @test_throws AssertionError GaPSE.specif_kwargs_GNC("newtonian_localgp", kwargs)
 
-     @test GaPSE.specif_kwargs_GNC("auto_doppler", kwargs) == Dict()
-     @test GaPSE.specif_kwargs_GNC("auto_lensing", kwargs) == Dict(:N_χs_2 => 200 , :en => 1e6)
-     @test GaPSE.specif_kwargs_GNC("integratedgp_lensing", kwargs) == Dict(:N_χs_2 => 200 , :en => 1e6)
-     @test GaPSE.specif_kwargs_GNC("localgp_lensing", kwargs) == Dict(:N_χs => 150 , :en => 1e6)
-     @test GaPSE.specif_kwargs_GNC("localgp_newton", kwargs) == Dict()
+    @test GaPSE.specif_kwargs_GNC("auto_doppler", kwargs) == Dict()
+    @test GaPSE.specif_kwargs_GNC("auto_lensing", kwargs) == Dict(:N_χs_2 => 200 , :en => 1e6)
+    @test GaPSE.specif_kwargs_GNC("integratedgp_lensing", kwargs) == Dict(:N_χs_2 => 200 , :en => 1e6)
+    @test GaPSE.specif_kwargs_GNC("localgp_lensing", kwargs) == Dict(:N_χs => 150 , :en => 1e6)
+    @test GaPSE.specif_kwargs_GNC("localgp_newton", kwargs) == Dict()
 end
 
 @testset "test  specif_kwargs_GNCxLD" begin
-     kwargs = Dict(:N_χs_2 => 200 , :en => 1e6, :N_χs=> 150)
-     @test_throws AssertionError GaPSE.specif_kwargs_GNCxLD("ciao", kwargs)
-     @test_throws AssertionError GaPSE.specif_kwargs_GNCxLD("auto_newton", kwargs)
-     @test_throws AssertionError GaPSE.specif_kwargs_GNCxLD("newtonian_localgp", kwargs)
+    kwargs = Dict(:N_χs_2 => 200 , :en => 1e6, :N_χs=> 150)
+    @test_throws AssertionError GaPSE.specif_kwargs_GNCxLD("ciao", kwargs)
+    @test_throws AssertionError GaPSE.specif_kwargs_GNCxLD("auto_newton", kwargs)
+    @test_throws AssertionError GaPSE.specif_kwargs_GNCxLD("newtonian_localgp", kwargs)
 
-     @test GaPSE.specif_kwargs_GNCxLD("doppler_doppler", kwargs) == Dict()
-     @test GaPSE.specif_kwargs_GNCxLD("lensing_lensing", kwargs) == Dict(:N_χs_2 => 200 , :en => 1e6)
-     @test GaPSE.specif_kwargs_GNCxLD("integratedgp_lensing", kwargs) == Dict(:N_χs_2 => 200 , :en => 1e6)
-     @test GaPSE.specif_kwargs_GNCxLD("localgp_lensing", kwargs) == Dict(:N_χs => 150 , :en => 1e6)
-     @test GaPSE.specif_kwargs_GNCxLD("newton_integratedgp", kwargs) == Dict(:N_χs => 150 , :en => 1e6)
+    @test GaPSE.specif_kwargs_GNCxLD("doppler_doppler", kwargs) == Dict()
+    @test GaPSE.specif_kwargs_GNCxLD("lensing_lensing", kwargs) == Dict(:N_χs_2 => 200 , :en => 1e6)
+    @test GaPSE.specif_kwargs_GNCxLD("integratedgp_lensing", kwargs) == Dict(:N_χs_2 => 200 , :en => 1e6)
+    @test GaPSE.specif_kwargs_GNCxLD("localgp_lensing", kwargs) == Dict(:N_χs => 150 , :en => 1e6)
+    @test GaPSE.specif_kwargs_GNCxLD("newton_integratedgp", kwargs) == Dict(:N_χs => 150 , :en => 1e6)
 end
 
 @testset "test  specif_kwargs_LDxGNC" begin
-     kwargs = Dict(:N_χs_2 => 200 , :en => 1e6, :N_χs=> 150)
-     @test_throws AssertionError GaPSE.specif_kwargs_LDxGNC("ciao", kwargs)
-     @test_throws AssertionError GaPSE.specif_kwargs_LDxGNC("auto_newton", kwargs)
-     @test_throws AssertionError GaPSE.specif_kwargs_LDxGNC("newtonian_localgp", kwargs)
+    kwargs = Dict(:N_χs_2 => 200 , :en => 1e6, :N_χs=> 150)
+    @test_throws AssertionError GaPSE.specif_kwargs_LDxGNC("ciao", kwargs)
+    @test_throws AssertionError GaPSE.specif_kwargs_LDxGNC("auto_newton", kwargs)
+    @test_throws AssertionError GaPSE.specif_kwargs_LDxGNC("newtonian_localgp", kwargs)
 
-     @test GaPSE.specif_kwargs_LDxGNC("localgp_doppler", kwargs) == Dict()
-     @test GaPSE.specif_kwargs_LDxGNC("lensing_lensing", kwargs) == Dict(:N_χs_2 => 200 , :en => 1e6)
-     @test GaPSE.specif_kwargs_LDxGNC("integratedgp_lensing", kwargs) == Dict(:N_χs_2 => 200 , :en => 1e6)
-     @test GaPSE.specif_kwargs_LDxGNC("localgp_lensing", kwargs) == Dict(:N_χs => 150 , :en => 1e6)
-     @test GaPSE.specif_kwargs_LDxGNC("integratedgp_newton", kwargs) == Dict(:N_χs => 150 , :en => 1e6)
+    @test GaPSE.specif_kwargs_LDxGNC("localgp_doppler", kwargs) == Dict()
+    @test GaPSE.specif_kwargs_LDxGNC("lensing_lensing", kwargs) == Dict(:N_χs_2 => 200 , :en => 1e6)
+    @test GaPSE.specif_kwargs_LDxGNC("integratedgp_lensing", kwargs) == Dict(:N_χs_2 => 200 , :en => 1e6)
+    @test GaPSE.specif_kwargs_LDxGNC("localgp_lensing", kwargs) == Dict(:N_χs => 150 , :en => 1e6)
+    @test GaPSE.specif_kwargs_LDxGNC("integratedgp_newton", kwargs) == Dict(:N_χs => 150 , :en => 1e6)
 end
 

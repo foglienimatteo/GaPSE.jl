@@ -18,79 +18,79 @@
 #
 
 @testset "test xi lensing_localgp L = 0 no observer terms" begin
-     effect = "lensing_localgp"
-     L = 0
+    effect = "lensing_localgp"
+    L = 0
 
-     ss = ss_GNC_L0_noF_noobs
-     xis = all_xis_GNC_L0_noF_noobs[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
+    ss = ss_GNC_L0_noF_noobs
+    xis = all_xis_GNC_L0_noF_noobs[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
 
-     name = "calc_xi_" * effect * "_GNC_L$L" * ".txt"
-     isfile(name) && rm(name)
-     GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, SS_GNC;
-          L = L, alg = :quad, obs = :no, GaPSE.specif_kwargs_GNC(effect, KWARGS_GNC)...)
+    name = "calc_xi_" * effect * "_GNC_L$L" * ".txt"
+    isfile(name) && rm(name)
+    GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, SS_GNC;
+        L = L, alg = :quad, obs = :no, GaPSE.specif_kwargs_GNC(effect, KWARGS_GNC)...)
 
-     calc_table = readdlm(name; comments = true)
-     calc_ss = convert(Vector{Float64}, calc_table[:, 1])
-     calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+    calc_table = readdlm(name; comments = true)
+    calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+    calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-     @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
-     @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+    @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
+    @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
 
-     rm(name)
+    rm(name)
 
-     #println("xis = $xis ;")
-     #println("calc_xis = $calc_xis ;")
+    #println("xis = $xis ;")
+    #println("calc_xis = $calc_xis ;")
 end
 
 
 @testset "test xi lensing_localgp L = 0 no observer velocity terms" begin
-     effect = "lensing_localgp"
-     L = 0
+    effect = "lensing_localgp"
+    L = 0
 
-     ss = ss_GNC_L0_noF_noobsvel
-     xis = all_xis_GNC_L0_noF_noobsvel[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
+    ss = ss_GNC_L0_noF_noobsvel
+    xis = all_xis_GNC_L0_noF_noobsvel[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
 
-     name = "calc_xi_" * effect * "_GNC_L$L" * ".txt"
-     isfile(name) && rm(name)
-     GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, SS_GNC;
-          L = L, alg = :quad, obs = :noobsvel, GaPSE.specif_kwargs_GNC(effect, KWARGS_GNC)...)
+    name = "calc_xi_" * effect * "_GNC_L$L" * ".txt"
+    isfile(name) && rm(name)
+    GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, SS_GNC;
+        L = L, alg = :quad, obs = :noobsvel, GaPSE.specif_kwargs_GNC(effect, KWARGS_GNC)...)
 
-     calc_table = readdlm(name; comments = true)
-     calc_ss = convert(Vector{Float64}, calc_table[:, 1])
-     calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+    calc_table = readdlm(name; comments = true)
+    calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+    calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-     @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
-     @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+    @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
+    @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
 
-     rm(name)
+    rm(name)
 
-     #println("xis = $xis ;")
-     #println("calc_xis = $calc_xis ;")
+    #println("xis = $xis ;")
+    #println("calc_xis = $calc_xis ;")
 end
 
 @testset "test xi lensing_localgp L = 0 with observer terms" begin
-     effect = "lensing_localgp"
-     L = 0
+    effect = "lensing_localgp"
+    L = 0
 
-     ss = ss_GNC_L0_noF_withobs
-     xis = all_xis_GNC_L0_noF_withobs[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
+    ss = ss_GNC_L0_noF_withobs
+    xis = all_xis_GNC_L0_noF_withobs[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
 
-     name = "calc_xi_" * effect * "_GNC_L$L" * ".txt"
-     isfile(name) && rm(name)
-     GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, SS_GNC;
-          L = L, alg = :quad, obs = :yes, GaPSE.specif_kwargs_GNC(effect, KWARGS_GNC)...)
+    name = "calc_xi_" * effect * "_GNC_L$L" * ".txt"
+    isfile(name) && rm(name)
+    GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, SS_GNC;
+        L = L, alg = :quad, obs = :yes, GaPSE.specif_kwargs_GNC(effect, KWARGS_GNC)...)
 
-     calc_table = readdlm(name; comments = true)
-     calc_ss = convert(Vector{Float64}, calc_table[:, 1])
-     calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+    calc_table = readdlm(name; comments = true)
+    calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+    calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-     @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
-     @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+    @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
+    @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
 
-     rm(name)
+    rm(name)
 
-     #println("xis = $xis ;")
-     #println("calc_xis = $calc_xis ;")
+    #println("xis = $xis ;")
+    #println("calc_xis = $calc_xis ;")
 end
 
 
@@ -102,78 +102,78 @@ end
 
 
 @testset "test xi localgp_lensing L = 0 no observer terms" begin
-     effect = "localgp_lensing"
-     L = 0
+    effect = "localgp_lensing"
+    L = 0
 
-     ss = ss_GNC_L0_noF_noobs
-     xis = all_xis_GNC_L0_noF_noobs[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
+    ss = ss_GNC_L0_noF_noobs
+    xis = all_xis_GNC_L0_noF_noobs[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
 
-     name = "calc_xi_" * effect * "_GNC_L$L" * ".txt"
-     isfile(name) && rm(name)
-     GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, SS_GNC;
-          L = L, alg = :quad, obs = :no, GaPSE.specif_kwargs_GNC(effect, KWARGS_GNC)...)
+    name = "calc_xi_" * effect * "_GNC_L$L" * ".txt"
+    isfile(name) && rm(name)
+    GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, SS_GNC;
+        L = L, alg = :quad, obs = :no, GaPSE.specif_kwargs_GNC(effect, KWARGS_GNC)...)
 
-     calc_table = readdlm(name; comments = true)
-     calc_ss = convert(Vector{Float64}, calc_table[:, 1])
-     calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+    calc_table = readdlm(name; comments = true)
+    calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+    calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-     @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
-     @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+    @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
+    @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
 
-     rm(name)
+    rm(name)
 
-     #println("xis = $xis ;")
-     #println("calc_xis = $calc_xis ;")
+    #println("xis = $xis ;")
+    #println("calc_xis = $calc_xis ;")
 end
 
 
 @testset "test xi localgp_lensing L = 0 no observer velocity terms" begin
-     effect = "localgp_lensing"
-     L = 0
+    effect = "localgp_lensing"
+    L = 0
 
-     ss = ss_GNC_L0_noF_noobsvel
-     xis = all_xis_GNC_L0_noF_noobsvel[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
+    ss = ss_GNC_L0_noF_noobsvel
+    xis = all_xis_GNC_L0_noF_noobsvel[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
 
-     name = "calc_xi_" * effect * "_GNC_L$L" * ".txt"
-     isfile(name) && rm(name)
-     GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, SS_GNC;
-          L = L, alg = :quad, obs = :noobsvel, GaPSE.specif_kwargs_GNC(effect, KWARGS_GNC)...)
+    name = "calc_xi_" * effect * "_GNC_L$L" * ".txt"
+    isfile(name) && rm(name)
+    GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, SS_GNC;
+        L = L, alg = :quad, obs = :noobsvel, GaPSE.specif_kwargs_GNC(effect, KWARGS_GNC)...)
 
-     calc_table = readdlm(name; comments = true)
-     calc_ss = convert(Vector{Float64}, calc_table[:, 1])
-     calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+    calc_table = readdlm(name; comments = true)
+    calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+    calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-     @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
-     @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+    @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
+    @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
 
-     rm(name)
+    rm(name)
 
-     #println("xis = $xis ;")
-     #println("calc_xis = $calc_xis ;")
+    #println("xis = $xis ;")
+    #println("calc_xis = $calc_xis ;")
 end
 
 
 @testset "test xi localgp_lensing L = 0 with observer terms" begin
-     effect = "localgp_lensing"
-     L = 0
+    effect = "localgp_lensing"
+    L = 0
 
-     ss = ss_GNC_L0_noF_withobs
-     xis = all_xis_GNC_L0_noF_withobs[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
+    ss = ss_GNC_L0_noF_withobs
+    xis = all_xis_GNC_L0_noF_withobs[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
 
-     name = "calc_xi_" * effect * "_GNC_L$L" * ".txt"
-     isfile(name) && rm(name)
-     GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, SS_GNC;
-          L = L, alg = :quad, obs = :yes, GaPSE.specif_kwargs_GNC(effect, KWARGS_GNC)...)
+    name = "calc_xi_" * effect * "_GNC_L$L" * ".txt"
+    isfile(name) && rm(name)
+    GaPSE.print_map_ξ_GNC_multipole(COSMO, name, effect, SS_GNC;
+        L = L, alg = :quad, obs = :yes, GaPSE.specif_kwargs_GNC(effect, KWARGS_GNC)...)
 
-     calc_table = readdlm(name; comments = true)
-     calc_ss = convert(Vector{Float64}, calc_table[:, 1])
-     calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+    calc_table = readdlm(name; comments = true)
+    calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+    calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-     @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
-     @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+    @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
+    @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
 
-     rm(name)
+    rm(name)
 
-     #println("xis = $xis ;")
-     #println("calc_xis = $calc_xis ;")
+    #println("xis = $xis ;")
+    #println("calc_xis = $calc_xis ;")
 end
