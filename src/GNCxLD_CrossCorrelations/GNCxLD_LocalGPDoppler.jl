@@ -18,8 +18,10 @@
 #
 
 
-@doc raw"""
-     ξ_GNCxLD_LocalGP_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
+"""
+    ξ_GNCxLD_LocalGP_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology
+		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    	𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing) :: Float64
 
 Return the Doppler-LocalGP cross-correlation function concerning the perturbed
 luminosity distance, defined as follows:
@@ -49,33 +51,40 @@ I^n_l(s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} q^2 \\, P(q) \\, \\frac
 
 See also: [`Point`](@ref), [`Cosmology`](@ref)
 """
-function ξ_GNCxLD_LocalGP_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
-     s1, D1, f1, a1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ, P1.ℛ_GNC
-     s2, D2, f2, ℋ2, ℜ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
-     𝑓_evo1 = cosmo.params.𝑓_evo
-     s_b_s1 = cosmo.params.s_b
-     Ω_M0 = cosmo.params.Ω_M0
+function ξ_GNCxLD_LocalGP_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology;
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
-     Δs = s(s1, s2, y)
+	s1, D1, f1, a1, ℋ1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ
+	s2, D2, f2, ℋ2, ℜ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
 
-     common = - Δs^2 * f2 * ℋ2 * ℜ2 * (y * s1 - s2) / a1
-     parenth = 2 * f1 * a1 * ℋ1^2 * (𝑓_evo1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f1 + ℛ1 + 5 * s_b_s1 - 2)
+	Ω_M0 = cosmo.params.Ω_M0
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
 
-     I00 = cosmo.tools.I00(Δs)
-     I20 = cosmo.tools.I20(Δs)
-     I40 = cosmo.tools.I40(Δs)
-     I02 = cosmo.tools.I02(Δs)
+    s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
+    ℛ1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b1, 𝑓_evo=𝑓_evo1, s_lim=s_lim)
 
-     return D1 * D2 * common * parenth * (
-          1 / 90 * I00 + 1 / 63 * I20 
-          + 1 / 210 * I40 + 1 / 6 * I02
-          )
+	Δs = s(s1, s2, y)
+
+	common = - Δs^2 * f2 * ℋ2 * ℜ2 * (y * s1 - s2) / a1
+	parenth = 2 * f1 * a1 * ℋ1^2 * (𝑓_evo1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f1 + ℛ1 + 5 * s_b1 - 2)
+
+	I00 = cosmo.tools.I00(Δs)
+	I20 = cosmo.tools.I20(Δs)
+	I40 = cosmo.tools.I40(Δs)
+	I02 = cosmo.tools.I02(Δs)
+
+	return D1 * D2 * common * parenth * (
+		1 / 90 * I00 + 1 / 63 * I20 
+		+ 1 / 210 * I40 + 1 / 6 * I02
+		)
 end
 
 
-function ξ_GNCxLD_LocalGP_Doppler(s1, s2, y, cosmo::Cosmology)
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_GNCxLD_LocalGP_Doppler(P1, P2, y, cosmo)
+function ξ_GNCxLD_LocalGP_Doppler(s1, s2, y, cosmo::Cosmology; kwargs...)
+	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+	return ξ_GNCxLD_LocalGP_Doppler(P1, P2, y, cosmo; kwargs...)
 end
 
 
@@ -89,7 +98,19 @@ end
 
 
 
-function ξ_LDxGNC_Doppler_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_GNCxLD_LocalGP_Doppler(s2, s1, y, cosmo; kwargs...)
+function ξ_LDxGNC_Doppler_LocalGP(s1, s2, y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
+    
+    b1 = isnothing(b1) ? cosmo.params.b1 : b1
+    b2 = isnothing(b2) ? cosmo.params.b2 : b2
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+
+	ξ_GNCxLD_LocalGP_Doppler(s2, s1, y, cosmo; 
+        b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
+        𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end
 

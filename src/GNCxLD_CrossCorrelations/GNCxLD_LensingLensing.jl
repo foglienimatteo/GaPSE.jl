@@ -20,10 +20,10 @@
 
 
 """
-     integrand_ξ_GNCxLD_Lensing_Lensing(
-          IP1::Point, IP2::Point,
-          P1::Point, P2::Point,
-          y, cosmo::Cosmology) :: Float64
+    integrand_ξ_GNCxLD_Lensing_Lensing(
+        IP1::Point, IP2::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,) :: Float64
 
 Return the integrand of the Lensing auto-correlation function 
 ``\\xi^{\\kappa\\kappa} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
@@ -33,11 +33,11 @@ Return the integrand of the Lensing auto-correlation function
 f(s_1, s_2, y, \\chi_1, \\chi_2) = 
 \\frac{1}{2}
 \\frac{
-     \\mathcal{H}_0^4 \\Omega_{ \\mathrm{M0}}^2 D_1 D_2 (\\chi_1 - s_1)(\\chi_2 - s_2)
+    \\mathcal{H}_0^4 \\Omega_{ \\mathrm{M0}}^2 D_1 D_2 (\\chi_1 - s_1)(\\chi_2 - s_2)
 }{
-     s_1 s_2 a(\\chi_1) a(\\chi_2) }
+    s_1 s_2 a(\\chi_1) a(\\chi_2) }
 (J_{00} \\, I^0_0(\\chi) + J_{02} \\, I^0_2(\\chi) + 
-     J_{31} \\, I^3_1(\\chi) + J_{22} \\, I^2_2(\\chi))
+    J_{31} \\, I^3_1(\\chi) + J_{22} \\, I^2_2(\\chi))
 ```
 
 where ``D_1 = D(\\chi_1)``, ``D_2 = D(\\chi_2)`` and so on, ``\\mathcal{H} = a H``, 
@@ -48,14 +48,14 @@ and the ``J`` coefficients are given by
 ```math
 \\begin{align*}
     J_{00} & = - \\frac{3 \\chi_1^2 \\chi_2^2}{4 \\chi^4} (y^2 - 1) 
-               (8 y (\\chi_1^2 + \\chi_2^2) - 9 \\chi_1 \\chi_2 y^2 - 7 \\chi_1 \\chi_2) \\\\
+                (8 y (\\chi_1^2 + \\chi_2^2) - 9 \\chi_1 \\chi_2 y^2 - 7 \\chi_1 \\chi_2) \\\\
     J_{02} & = - \\frac{3 \\chi_1^2 \\chi_2^2}{2 \\chi^4} (y^2 - 1)
-               (4 y (\\chi_1^2 + \\chi_2^2) - 3 \\chi_1 \\chi_2 y^2 - 5 \\chi_1 \\chi_2) \\\\
+                (4 y (\\chi_1^2 + \\chi_2^2) - 3 \\chi_1 \\chi_2 y^2 - 5 \\chi_1 \\chi_2) \\\\
     J_{31} & = 9 y \\chi^2 \\\\
     J_{22} & = \\frac{9 \\chi_1 \\chi_2}{4 \\chi^4}
-               [ 2 (\\chi_1^4 + \\chi_2^4) (7 y^2 - 3) 
-                 - 16 y \\chi_1 \\chi_2 (\\chi_1^2 + \\chi_2^2) (y^2+1) 
-               + \\chi_1^2 \\chi_2^2 (11 y^4 + 14 y^2 + 23)]
+                [ 2 (\\chi_1^4 + \\chi_2^4) (7 y^2 - 3) 
+                - 16 y \\chi_1 \\chi_2 (\\chi_1^2 + \\chi_2^2) (y^2+1) 
+                + \\chi_1^2 \\chi_2^2 (11 y^4 + 14 y^2 + 23)]
 \\end{align*}
 ```
 
@@ -78,9 +78,9 @@ and the ``J`` coefficients are given by
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
-     \\lim_{\\chi\\to0^{+}} (J_{00} \\, I^0_0(\\chi) + J_{02} \\, I^0_2(\\chi) + 
-          J_{31} \\, I^3_1(\\chi) + J_{22} \\, I^2_2(\\chi)) = 
-          \\frac{4}{15} \\, (5 \\, \\sigma_2 + \\frac{2}{3} \\, σ_0 \\,s_1^2 \\, \\chi_2^2)
+    \\lim_{\\chi\\to0^{+}} (J_{00} \\, I^0_0(\\chi) + J_{02} \\, I^0_2(\\chi) + 
+        J_{31} \\, I^3_1(\\chi) + J_{22} \\, I^2_2(\\chi)) = 
+        \\frac{4}{15} \\, (5 \\, \\sigma_2 + \\frac{2}{3} \\, σ_0 \\,s_1^2 \\, \\chi_2^2)
   ```
 
   So, when it happens that ``\\chi < \\Delta\\chi_\\mathrm{min}``, the function considers this limit
@@ -92,96 +92,91 @@ See also: [`ξ_GNCxLD_Lensing_Lensing`](@ref), [`integrand_on_mu_Lensing`](@ref)
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function integrand_ξ_GNCxLD_Lensing_Lensing(
-     IP1::Point, IP2::Point,
-     P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+    IP1::Point, IP2::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
-     s1 = P1.comdist
-     s2 = P2.comdist
-     χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
-     χ2, D2, a2 = IP2.comdist, IP2.D, IP2.a
-     s_b_s1 = cosmo.params.s_b
-     Ω_M0 = cosmo.params.Ω_M0
+    s1 = P1.comdist
+    s2 = P2.comdist
+    χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
+    χ2, D2, a2 = IP2.comdist, IP2.D, IP2.a
 
-     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-     Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
+    Ω_M0 = cosmo.params.Ω_M0
+    s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
 
-     denomin = s1 * s2 * a1 * a2
-     factor = - ℋ0^4 * Ω_M0^2 * D1 * (s1 - χ1) * D2 * (s2 - χ2) * (5 * s_b_s1 - 2)
+    Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
+    Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
 
-     χ1χ2 = χ1 * χ2
+    denomin = s1 * s2 * a1 * a2
+    factor = - ℋ0^4 * Ω_M0^2 * D1 * (s1 - χ1) * D2 * (s2 - χ2) * (5 * s_b_s1 - 2)
 
-     new_J00 = - 3/4 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
-     new_J02 = - 3/2 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
-     new_J31 = 9 * y * Δχ^2
-     new_J22 = 9/4 * χ1χ2 / Δχ^4 * (
-          2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)
-          - 16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
-          + χ1χ2^2 * (11y^4 + 14y^2 + 23)
-     )
+    χ1χ2 = χ1 * χ2
 
-     I00 = cosmo.tools.I00(Δχ)
-     I20 = cosmo.tools.I20(Δχ)
-     I13 = cosmo.tools.I13(Δχ)
-     I22 = cosmo.tools.I22(Δχ)
+    new_J00 = - 3/4 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
+    new_J02 = - 3/2 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
+    new_J31 = 9 * y * Δχ^2
+    new_J22 = 9/4 * χ1χ2 / Δχ^4 * (
+        2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)
+        - 16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
+        + χ1χ2^2 * (11y^4 + 14y^2 + 23)
+    )
 
-     res = new_J00 * I00 + new_J02 * I20 + new_J31 * I13 + new_J22 * I22
+    I00 = cosmo.tools.I00(Δχ)
+    I20 = cosmo.tools.I20(Δχ)
+    I13 = cosmo.tools.I13(Δχ)
+    I22 = cosmo.tools.I22(Δχ)
 
-     return factor / denomin * res
+    res = new_J00 * I00 + new_J02 * I20 + new_J31 * I13 + new_J22 * I22
+
+    return factor / denomin * res
 end
 
 function integrand_ξ_GNCxLD_Lensing_Lensing(
-     χ1::Float64, χ2::Float64,
-     s1::Float64, s2::Float64,
-     y, cosmo::Cosmology;
-     kwargs...)
+    χ1::Float64, χ2::Float64,
+    s1::Float64, s2::Float64,
+    y, cosmo::Cosmology;
+    kwargs...)
 
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
-     return integrand_ξ_GNCxLD_Lensing_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
+    return integrand_ξ_GNCxLD_Lensing_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
 end
 
-#=
-function func_Δχ_min(s1, s2, y; frac = 1e-4)
-     Δs = s(s1, s2, y)
-     return frac * Δs
-end
-=#
 
 function ξ_GNCxLD_Lensing_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs_2::Int = 100)
+    en::Float64=1e6, N_χs_2::Int=100, kwargs...)
 
-     χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
-     χ2s = P2.comdist .* range(1e-6, 1.0, length = N_χs_2 + 7)
+    χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
+    χ2s = P2.comdist .* range(1e-6, 1.0, length = N_χs_2 + 7)
 
-     IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-     IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
+    IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+    IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-     int_ξ_Lensings = [
-          en * GaPSE.integrand_ξ_GNCxLD_Lensing_Lensing(IP1, IP2, P1, P2, y, cosmo)
-          for IP1 in IP1s, IP2 in IP2s
-     ]
+    int_ξ_Lensings = [
+        en * GaPSE.integrand_ξ_GNCxLD_Lensing_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+        for IP1 in IP1s, IP2 in IP2s
+    ]
 
-     res = trapz((χ1s, χ2s), int_ξ_Lensings)
-     #println("res = $res")
-     return res / en
+    res = trapz((χ1s, χ2s), int_ξ_Lensings)
+    #println("res = $res")
+    return res / en
 end
 
 
 function ξ_GNCxLD_Lensing_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_GNCxLD_Lensing_Lensing(P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    return ξ_GNCxLD_Lensing_Lensing(P1, P2, y, cosmo; kwargs...)
 end
 
 
 
 """
-     ξ_GNCxLD_Lensing_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-          en::Float64 = 1e6,
-          N_χs::Int = 100) :: Float64
+    ξ_GNCxLD_Lensing_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
+        en::Float64 = 1e6, N_χs::Int = 100,
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) :: Float64
 
-     ξ_GNCxLD_Lensing_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...) = 
-          ξ_GNCxLD_Lensing_Lensing(Point(s1, cosmo), Point(s2, cosmo), y, cosmo; kwargs...)
+    ξ_GNCxLD_Lensing_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
 
           
 Return the Lensing auto-correlation function 
@@ -272,7 +267,19 @@ See also: [`integrand_ξ_GNCxLD_Lensing_Lensing`](@ref), [`integrand_on_mu_Lensi
 
 
 
-function ξ_LDxGNC_Lensing_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_GNCxLD_Lensing_Lensing(s2, s1, y, cosmo; kwargs...)
+function ξ_LDxGNC_Lensing_Lensing(s1, s2, y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
+    
+    b1 = isnothing(b1) ? cosmo.params.b1 : b1
+    b2 = isnothing(b2) ? cosmo.params.b2 : b2
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+
+	ξ_GNCxLD_Lensing_Lensing(s2, s1, y, cosmo; 
+        b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
+        𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end
 

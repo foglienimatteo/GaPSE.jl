@@ -19,9 +19,9 @@
 
 
 """
-     integrand_ξ_GNCxLD_Lensing_LocalGP(
-          IP::Point, P1::Point, P2::Point,
-          y, cosmo::Cosmology) :: Float64
+	integrand_ξ_GNCxLD_Lensing_LocalGP(
+		IP::Point, P1::Point, P2::Point,
+		y, cosmo::Cosmology) :: Float64
 
 Return the integrand of the Lensing-LocalGP cross-correlation function 
 ``\\xi^{\\kappa \\phi} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
@@ -29,11 +29,11 @@ Return the integrand of the Lensing-LocalGP cross-correlation function
 
 ```math
 f(s_1, s_2, y, \\chi_1, \\chi_2) = 
-     \\frac{
-          9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(s_2) (1 + \\mathcal{R}(s_2)) s_2
-     }{4 a(s_2) s_1} 
-     \\frac{D(\\chi_1)(s_1 - \\chi_1) }{a(\\chi_1)}
-     \\left( J_{31} I^3_1(\\Delta\\chi_1) +  J_{22} I^2_2(\\Delta\\chi_1) \\right)
+	\\frac{
+		9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(s_2) (1 + \\mathcal{R}(s_2)) s_2
+	}{4 a(s_2) s_1} 
+	\\frac{D(\\chi_1)(s_1 - \\chi_1) }{a(\\chi_1)}
+	\\left( J_{31} I^3_1(\\Delta\\chi_1) +  J_{22} I^2_2(\\Delta\\chi_1) \\right)
 ```
 
 where ``\\mathcal{H} = a H``, 
@@ -43,8 +43,8 @@ and the ``J`` coefficients are given by
 
 ```math
 \\begin{align*}
-     J_{31} & = -2 y \\Delta\\chi_1^2 \\\\
-     J_{22} & = \\chi_1 s_2 (1 - y^2)
+	J_{31} & = -2 y \\Delta\\chi_1^2 \\\\
+	J_{22} & = \\chi_1 s_2 (1 - y^2)
 \\end{align*}
 ```
 
@@ -65,53 +65,56 @@ See also: [`ξ_GNCxLD_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_LocalGP`](@re
 [`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
 function integrand_ξ_GNCxLD_Lensing_LocalGP(
-     IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
-     s1 = P1.comdist
-     s2, D_s2, a_s2, ℜ_s2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
-     χ1, D1, a1 = IP.comdist, IP.D, IP.a
-     s_b_s1 = cosmo.params.s_b
-     Ω_M0 = cosmo.params.Ω_M0
+	s1 = P1.comdist
+	s2, D_s2, a_s2, ℜ_s2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
+	χ1, D1, a1 = IP.comdist, IP.D, IP.a
 
-     Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
-     Δχ1 = Δχ1_square > 0.0 ? √(Δχ1_square) : 0.0
+	Ω_M0 = cosmo.params.Ω_M0
+    s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
 
-     common = - 9 * ℋ0^4 * Ω_M0^2 * D_s2 * (1 + ℜ_s2) * s2 * (5 * s_b_s1 - 2) / (4 * a_s2 * s1)
-     factor = D1 * (s1 - χ1) / a1
+	Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
+	Δχ1 = Δχ1_square > 0.0 ? √(Δχ1_square) : 0.0
 
-     new_J31 = -2 * y * Δχ1^2
-     new_J22 = χ1 * s2 * (1 - y^2)
+	common = - 9 * ℋ0^4 * Ω_M0^2 * D_s2 * (1 + ℜ_s2) * s2 * (5 * s_b_s1 - 2) / (4 * a_s2 * s1)
+	factor = D1 * (s1 - χ1) / a1
 
-     I13 = cosmo.tools.I13(Δχ1)
-     I22 = cosmo.tools.I22(Δχ1)
+	new_J31 = -2 * y * Δχ1^2
+	new_J22 = χ1 * s2 * (1 - y^2)
 
-     #println("J00 = $new_J00, \\t I00(Δχ1) = $(I00)")
-     #println("J02 = $new_J02, \\t I20(Δχ1) = $(I20)")
-     #println("J31 = $new_J31, \\t I13(Δχ1) = $(I13)")
-     #println("J22 = $new_J22, \\t I22(Δχ1) = $(I22)")
+	I13 = cosmo.tools.I13(Δχ1)
+	I22 = cosmo.tools.I22(Δχ1)
 
-     parenth = (new_J31 * I13 + new_J22 * I22)
+	#println("J00 = $new_J00, \\t I00(Δχ1) = $(I00)")
+	#println("J02 = $new_J02, \\t I20(Δχ1) = $(I20)")
+	#println("J31 = $new_J31, \\t I13(Δχ1) = $(I13)")
+	#println("J22 = $new_J22, \\t I22(Δχ1) = $(I22)")
 
-     first = common * factor * parenth
+	parenth = (new_J31 * I13 + new_J22 * I22)
 
-     return first
+	first = common * factor * parenth
+
+	return first
 end
 
 
 function integrand_ξ_GNCxLD_Lensing_LocalGP(
-     χ1::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology)
+	χ1::Float64, s1::Float64, s2::Float64, y, cosmo::Cosmology; kwargs...)
 
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP = Point(χ1, cosmo)
-     return integrand_ξ_GNCxLD_Lensing_LocalGP(IP, P1, P2, y, cosmo)
+	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+	IP = Point(χ1, cosmo)
+	return integrand_ξ_GNCxLD_Lensing_LocalGP(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
 """
-     ξ_GNCxLD_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
-          en::Float64 = 1e6, N_χs::Int = 100):: Float64
+	ξ_GNCxLD_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
+		en::Float64 = 1e6, N_χs::Int = 100, 
+		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    	𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ):: Float64
 
 Return the Lensing-LocalGP cross-correlation function 
 ``\\xi^{\\kappa \\phi} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
@@ -119,11 +122,11 @@ luminosity distance, defined as follows:
     
 ```math
 \\xi^{\\kappa \\phi} (s_1, s_2, \\cos{\\theta}) = 
-     \\frac{
-          9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(s_2) (1 + \\mathcal{R}(s_2)) s_2
-     }{4 a(s_2) s_1} 
-     \\int_0^{s_1} \\mathrm{d}\\chi_1 \\frac{D(\\chi_1)(s_1 - \\chi_1) }{a(\\chi_1)}
-     \\left( J_{31} I^3_1(\\Delta\\chi_1) +  J_{22} I^2_2(\\Delta\\chi_1) \\right)
+	\\frac{
+		9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(s_2) (1 + \\mathcal{R}(s_2)) s_2
+	}{4 a(s_2) s_1} 
+	\\int_0^{s_1} \\mathrm{d}\\chi_1 \\frac{D(\\chi_1)(s_1 - \\chi_1) }{a(\\chi_1)}
+	\\left( J_{31} I^3_1(\\Delta\\chi_1) +  J_{22} I^2_2(\\Delta\\chi_1) \\right)
 ```
 
 where ``\\mathcal{H} = a H``, 
@@ -133,8 +136,8 @@ and the ``J`` coefficients are given by
 
 ```math
 \\begin{align*}
-     J_{31} & = -2 y \\Delta\\chi_1^2 \\\\
-     J_{22} & = \\chi_1 s_2 (1 - y^2)
+	J_{31} & = -2 y \\Delta\\chi_1^2 \\\\
+	J_{22} & = \\chi_1 s_2 (1 - y^2)
 \\end{align*}
 ```
 
@@ -166,21 +169,21 @@ See also: [`integrand_ξ_GNCxLD_Lensing_LocalGP`](@ref), [`int_on_mu_Lensing_Loc
 [`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
 function ξ_GNCxLD_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Int = 100)
+    en::Float64 = 1e6, N_χs::Int = 100, kwargs...)
 
-     χ1s = s1 .* range(1e-6, 1.0, length = N_χs)
+	χ1s = s1 .* range(1e-6, 1.0, length = N_χs)
 
-     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-     IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
+	P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
+	IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
-     int_ξs = [
-          en * GaPSE.integrand_ξ_GNCxLD_Lensing_LocalGP(IP, P1, P2, y, cosmo)
-          for IP in IPs
-     ]
+	int_ξs = [
+		en * GaPSE.integrand_ξ_GNCxLD_Lensing_LocalGP(IP, P1, P2, y, cosmo; kwargs...)
+		for IP in IPs
+	]
 
-     res = trapz(χ1s, int_ξs)
-     #println("res = $res")
-     return res / en
+	res = trapz(χ1s, int_ξs)
+	#println("res = $res")
+	return res / en
 end
 
 
@@ -193,6 +196,18 @@ end
 
 
 
-function ξ_LDxGNC_LocalGP_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_GNCxLD_Lensing_LocalGP(s2, s1, y, cosmo; kwargs...)
+function ξ_LDxGNC_LocalGP_Lensing(s1, s2, y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
+    
+    b1 = isnothing(b1) ? cosmo.params.b1 : b1
+    b2 = isnothing(b2) ? cosmo.params.b2 : b2
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+	
+	ξ_GNCxLD_Lensing_LocalGP(s2, s1, y, cosmo; 
+        b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
+        𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end

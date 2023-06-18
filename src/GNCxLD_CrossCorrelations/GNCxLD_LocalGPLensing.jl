@@ -65,66 +65,73 @@ See also: [`ξ_GNCxLD_LocalGP_Lensing`](@ref), [`int_on_mu_Lensing_LocalGP`](@re
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function integrand_ξ_GNCxLD_LocalGP_Lensing(
-     IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
+	b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
-     s1, D_s1, f_s1, a_s1, ℋ_s1, ℛ_s1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ, P1.ℛ_GNC
-     s2 = P2.comdist
-     χ2, D2, a2 = IP.comdist, IP.D, IP.a
-     s_b_s1 = cosmo.params.s_b
-     𝑓_evo_s1 = cosmo.params.𝑓_evo
-     Ω_M0 = cosmo.params.Ω_M0
+	s1, D_s1, f_s1, a_s1, ℋ_s1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ
+	s2 = P2.comdist
+	χ2, D2, a2 = IP.comdist, IP.D, IP.a
 
-     Δχ2_square = χ2^2 + s1^2 - 2 * χ2 * s1 * y
-     Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
+    Ω_M0 = cosmo.params.Ω_M0
+    s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    𝑓_evo_s1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
 
-     common = - D_s1 * ℋ0^2 * Ω_M0 * s1 * D2 * (χ2 - s2) * (
-                   2 * f_s1 * a_s1 * ℋ_s1^2 * (𝑓_evo_s1 - 3)
-                   +
-                   3 * ℋ0^2 * Ω_M0 * (f_s1 + ℛ_s1 + 5 * s_b_s1 - 2)
-              ) / (a2 * a_s1 * s2)
-     factor = 2 * y * χ2^2 - χ2 * s1 * (y^2 + 3) + 2 * y * s1^2
+    s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
+    ℛ_s1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b_s1, 𝑓_evo=𝑓_evo_s1, s_lim=s_lim)
 
-     J20 = 1 / 2 * y * Δχ2^2
+	Δχ2_square = χ2^2 + s1^2 - 2 * χ2 * s1 * y
+	Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
 
-     I00 = cosmo.tools.I00(Δχ2)
-     I20 = cosmo.tools.I20(Δχ2)
-     I40 = cosmo.tools.I40(Δχ2)
-     I02 = cosmo.tools.I02(Δχ2)
+	common = - D_s1 * ℋ0^2 * Ω_M0 * s1 * D2 * (χ2 - s2) * (
+				2 * f_s1 * a_s1 * ℋ_s1^2 * (𝑓_evo_s1 - 3)
+				+
+				3 * ℋ0^2 * Ω_M0 * (f_s1 + ℛ_s1 + 5 * s_b_s1 - 2)
+			) / (a2 * a_s1 * s2)
+	factor = 2 * y * χ2^2 - χ2 * s1 * (y^2 + 3) + 2 * y * s1^2
 
-     return common * (
-          factor * (1 / 60 * I00 + 1 / 42 * I20 + 1 / 140 * I40)
-          +
-          J20 * I02
-     )
+	J20 = 1 / 2 * y * Δχ2^2
+
+	I00 = cosmo.tools.I00(Δχ2)
+	I20 = cosmo.tools.I20(Δχ2)
+	I40 = cosmo.tools.I40(Δχ2)
+	I02 = cosmo.tools.I02(Δχ2)
+
+	return common * (
+		factor * (1 / 60 * I00 + 1 / 42 * I20 + 1 / 140 * I40)
+		+
+		J20 * I02
+	)
 end
 
 
 function integrand_ξ_GNCxLD_LocalGP_Lensing(
-     χ2::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology)
+	χ2::Float64, s1::Float64, s2::Float64,
+	y, cosmo::Cosmology; kwargs...)
 
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP = Point(χ2, cosmo)
-     return integrand_ξ_GNCxLD_LocalGP_Lensing(IP, P1, P2, y, cosmo)
+	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+	IP = Point(χ2, cosmo)
+	return integrand_ξ_GNCxLD_LocalGP_Lensing(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
 """
-     ξ_GNCxLD_LocalGP_Lensing(s1, s2, y, cosmo::Cosmology;
-          en::Float64 = 1e6, N_χs::Int = 100):: Float64
+	ξ_GNCxLD_LocalGP_Lensing(s1, s2, y, cosmo::Cosmology;
+		en::Float64 = 1e6, N_χs::Int = 100,
+		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    	𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
 Return the Lensing-LocalGP cross-correlation function 
 ``\\xi^{\\kappa \\phi} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
 luminosity distance, defined as follows:
-    
+
 ```math
 \\xi^{\\kappa \\phi} (s_1, s_2, \\cos{\\theta}) = 
-     \\frac{
-          9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(s_2) (1 + \\mathcal{R}(s_2)) s_2
-     }{4 a(s_2) s_1} 
-     \\int_0^{s_1} \\mathrm{d}\\chi_1 \\frac{D(\\chi_1)(s_1 - \\chi_1) }{a(\\chi_1)}
-     \\left( J_{31} I^3_1(\\Delta\\chi_1) +  J_{22} I^2_2(\\Delta\\chi_1) \\right)
+	\\frac{
+		9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(s_2) (1 + \\mathcal{R}(s_2)) s_2
+	}{4 a(s_2) s_1} 
+	\\int_0^{s_1} \\mathrm{d}\\chi_1 \\frac{D(\\chi_1)(s_1 - \\chi_1) }{a(\\chi_1)}
+	\\left( J_{31} I^3_1(\\Delta\\chi_1) +  J_{22} I^2_2(\\Delta\\chi_1) \\right)
 ```
 
 where ``\\mathcal{H} = a H``, 
@@ -134,8 +141,8 @@ and the ``J`` coefficients are given by
 
 ```math
 \\begin{align*}
-     J_{31} & = -2 y \\Delta\\chi_1^2 \\\\
-     J_{22} & = \\chi_1 s_2 (1 - y^2)
+	J_{31} & = -2 y \\Delta\\chi_1^2 \\\\
+	J_{22} & = \\chi_1 s_2 (1 - y^2)
 \\end{align*}
 ```
 
@@ -167,21 +174,21 @@ See also: [`integrand_ξ_GNCxLD_LocalGP_Lensing`](@ref), [`int_on_mu_Lensing_Loc
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNCxLD_LocalGP_Lensing(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Int = 100)
+	en::Float64 = 1e6, N_χs::Int = 100, kwargs...)
 
-     χ2s = s2 .* range(1e-6, 1.0, length = N_χs)
+	χ2s = s2 .* range(1e-6, 1.0, length = N_χs)
 
-     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-     IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
+	P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
+	IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-     int_ξs = [
-          en * GaPSE.integrand_ξ_GNCxLD_LocalGP_Lensing(IP, P1, P2, y, cosmo)
-          for IP in IPs
-     ]
+	int_ξs = [
+		en * GaPSE.integrand_ξ_GNCxLD_LocalGP_Lensing(IP, P1, P2, y, cosmo; kwargs...)
+		for IP in IPs
+	]
 
-     res = trapz(χ2s, int_ξs)
-     #println("res = $res")
-     return res / en
+	res = trapz(χ2s, int_ξs)
+	#println("res = $res")
+	return res / en
 end
 
 
@@ -194,8 +201,20 @@ end
 
 
 
-function ξ_LDxGNC_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_GNCxLD_LocalGP_Lensing(s2, s1, y, cosmo; kwargs...)
+function ξ_LDxGNC_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
+
+    b1 = isnothing(b1) ? cosmo.params.b1 : b1
+    b2 = isnothing(b2) ? cosmo.params.b2 : b2
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+	
+	ξ_GNCxLD_LocalGP_Lensing(s2, s1, y, cosmo; 
+        b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
+        𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end
 
 

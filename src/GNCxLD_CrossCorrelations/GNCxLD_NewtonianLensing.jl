@@ -18,10 +18,11 @@
 #
 
 
-@doc raw"""
-     integrand_ξ_GNCxLD_Newtonian_Lensing(
-          IP::Point, P1::Point, P2::Point,
-          y, cosmo::Cosmology) :: Float64
+"""
+    integrand_ξ_GNCxLD_Newtonian_Lensing(
+        IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
 Return the integrand of the Doppler-LocalGP cross-correlation function 
 ``\\xi^{v_{\\parallel}\\int\\phi} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
@@ -29,8 +30,8 @@ Return the integrand of the Doppler-LocalGP cross-correlation function
 
 ```math
 f(s_1, s_2, y, \\chi_1, \\chi_2) = 
-     3 \\mathcal{H}(s_1) f(s_1) D(s_1) \\mathcal{H_0}^2 \\Omega_{M0} 
-     \\mathcal{R}(s_1) J_{31} I^3_1(\\chi)
+    3 \\mathcal{H}(s_1) f(s_1) D(s_1) \\mathcal{H_0}^2 \\Omega_{M0} 
+    \\mathcal{R}(s_1) J_{31} I^3_1(\\chi)
 ```
 where ``\\mathcal{H} = a H``, 
 ``\\chi = \\sqrt{s_1^2 + \\chi_2^2 - 2 s_1 \\chi_2 \\cos{\\theta}}``, 
@@ -39,10 +40,10 @@ and:
 
 ```math
 J_{31} = 
-     \\frac{D(\\chi_2) (s_1 - \\chi_2 \\cos{\\theta})}{a(\\chi_2)} \\chi^2 
-     \\left(
-          \\frac{1}{s_2} - \\mathcal{R}(s_2) \\mathcal{H}(\\chi_2) (f(\\chi_2) - 1)
-     \\right)
+    \\frac{D(\\chi_2) (s_1 - \\chi_2 \\cos{\\theta})}{a(\\chi_2)} \\chi^2 
+    \\left(
+        \\frac{1}{s_2} - \\mathcal{R}(s_2) \\mathcal{H}(\\chi_2) (f(\\chi_2) - 1)
+    \\right)
 ```
 
 ## Inputs
@@ -62,61 +63,64 @@ See also: [`ξ_GNCxLD_Newtonian_Lensing`](@ref), [`int_on_mu_Newtonian_Lensing`]
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function integrand_ξ_GNCxLD_Newtonian_Lensing(
-     IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
-     s1, D_s1, f_s1 = P1.comdist, P1.D, P1.f
-     s2 = P2.comdist
-     χ2, D2, a2 = IP.comdist, IP.D, IP.a
-     b_s1 = cosmo.params.b
-     Ω_M0 = cosmo.params.Ω_M0
+    s1, D_s1, f_s1 = P1.comdist, P1.D, P1.f
+    s2 = P2.comdist
+    χ2, D2, a2 = IP.comdist, IP.D, IP.a
 
-     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-     Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
+    Ω_M0 = cosmo.params.Ω_M0
+    b_s1 = isnothing(b1) ? cosmo.params.b1 : b1
 
-     common = - D_s1 * ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) / (a2 * s2)
+    Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
+    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
 
-     new_J00 = 1 / 5 * (f_s1 * χ2 * (3 * y^2 - 1) - 3 * y * s1 * f_s1 - 5 * y * s1 * b_s1)
-     new_J02 = 1 / (14 * Δχ2^2) * (
-          7 * s1 * b_s1 * (-2 * χ2^2 * y + χ2 * s1 * (y^2 + 3) - 2 * y * s1^2) +
-          f_s1 * (
-               4 * χ2^3 * (3 * y^2 - 1) - 2 * χ2^2 * y * s1 * (3 * y^2 + 8)
-               +
-               χ2 * s1^2 * (9 * y^2 + 11) - 6 * y * s1^3
-          )
-     )
-     new_J04 = 3 / (70 * Δχ2^4) * f_s1 * (
-                    χ2^5 * (6 * y^2 - 2) + 6 * χ2^4 * y * s1 * (y^2 - 3)
-                    -
-                    χ2^3 * s1^2 * (y^4 + 12 * y^2 - 21)
-                    +
-                    2 * χ2^2 * y * s1^3 * (y^2 + 3) - 12 * χ2 * s1^4
-                    +
-                    4 * y * s1^5
-               )
+    common = - D_s1 * ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) / (a2 * s2)
 
-     I00 = cosmo.tools.I00(Δχ2)
-     I20 = cosmo.tools.I20(Δχ2)
-     I40 = cosmo.tools.I40(Δχ2)
+    new_J00 = 1 / 5 * (f_s1 * χ2 * (3 * y^2 - 1) - 3 * y * s1 * f_s1 - 5 * y * s1 * b_s1)
+    new_J02 = 1 / (14 * Δχ2^2) * (
+        7 * s1 * b_s1 * (-2 * χ2^2 * y + χ2 * s1 * (y^2 + 3) - 2 * y * s1^2) +
+        f_s1 * (
+            4 * χ2^3 * (3 * y^2 - 1) - 2 * χ2^2 * y * s1 * (3 * y^2 + 8)
+            +
+            χ2 * s1^2 * (9 * y^2 + 11) - 6 * y * s1^3
+        )
+    )
+    new_J04 = 3 / (70 * Δχ2^4) * f_s1 * (
+            χ2^5 * (6 * y^2 - 2) + 6 * χ2^4 * y * s1 * (y^2 - 3)
+            -
+            χ2^3 * s1^2 * (y^4 + 12 * y^2 - 21)
+            +
+            2 * χ2^2 * y * s1^3 * (y^2 + 3) - 12 * χ2 * s1^4
+            +
+            4 * y * s1^5
+        )
 
-     return common * (new_J00 * I00 + new_J02 * I20 + new_J04 * I40)
+    I00 = cosmo.tools.I00(Δχ2)
+    I20 = cosmo.tools.I20(Δχ2)
+    I40 = cosmo.tools.I40(Δχ2)
+
+    return common * (new_J00 * I00 + new_J02 * I20 + new_J04 * I40)
 end
 
 
 function integrand_ξ_GNCxLD_Newtonian_Lensing(
-     χ2::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology;
-     kwargs...)
+    χ2::Float64, s1::Float64, s2::Float64,
+    y, cosmo::Cosmology; kwargs...)
 
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP = Point(χ2, cosmo)
-     return integrand_ξ_GNCxLD_Newtonian_Lensing(IP, P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    IP = Point(χ2, cosmo)
+    return integrand_ξ_GNCxLD_Newtonian_Lensing(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
-@doc raw"""
-     ξ_GNCxLD_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
-          en::Float64 = 1e6, N_χs::Int = 100):: Float64
+"""
+    ξ_GNCxLD_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
+        en::Float64 = 1e6, N_χs::Int = 100, 
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
 Return the Doppler-LocalGP cross-correlation function 
 ``\\xi^{v_{\\parallel}\\int\\phi} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
@@ -124,8 +128,8 @@ luminosity distance, defined as follows:
     
 ```math
 \\xi^{v_{\\parallel}\\int\\phi} (s_1, s_2, \\cos{\\theta}) = 
-     3 \\mathcal{H}(s_1) f(s_1) D(s_1) \\mathcal{H_0}^2 \\Omega_{M0} \\mathcal{R}(s_1) 
-     \\int_0^{s_2} \\mathrm{d}\\chi_2 \\,  J_{31} \\,  I^3_1(\\chi)
+    3 \\mathcal{H}(s_1) f(s_1) D(s_1) \\mathcal{H_0}^2 \\Omega_{M0} \\mathcal{R}(s_1) 
+    \\int_0^{s_2} \\mathrm{d}\\chi_2 \\,  J_{31} \\,  I^3_1(\\chi)
 ```
 
 where ``\\mathcal{H} = a H``, 
@@ -135,10 +139,10 @@ and:
 
 ```math
 J_{31} = 
-     \\frac{D(\\chi_2) (s_1 - \\chi_2 \\cos{\\theta})}{a(\\chi_2)} \\chi^2 
-     \\left(
-          - \\frac{1}{s_2} + \\mathcal{R}(s_2) \\mathcal{H}(\\chi_2) (f(\\chi_2) - 1)
-     \\right)
+    \\frac{D(\\chi_2) (s_1 - \\chi_2 \\cos{\\theta})}{a(\\chi_2)} \\chi^2 
+    \\left(
+        - \\frac{1}{s_2} + \\mathcal{R}(s_2) \\mathcal{H}(\\chi_2) (f(\\chi_2) - 1)
+    \\right)
 ```
 
 The computation is made applying [`trapz`](@ref) (see the 
@@ -169,21 +173,21 @@ See also: [`integrand_ξ_GNCxLD_Newtonian_Lensing`](@ref), [`int_on_mu_Newtonian
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNCxLD_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Int = 100)
+    en::Float64 = 1e6, N_χs::Int = 100, kwargs...)
 
-     χ2s = s2 .* range(1e-6, 1.0, length = N_χs)
+    χ2s = s2 .* range(1e-6, 1.0, length = N_χs)
 
-     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-     IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
+    P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
+    IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-     int_ξs = [
-          en * GaPSE.integrand_ξ_GNCxLD_Newtonian_Lensing(IP, P1, P2, y, cosmo)
-          for IP in IPs
-     ]
+    int_ξs = [
+        en * GaPSE.integrand_ξ_GNCxLD_Newtonian_Lensing(IP, P1, P2, y, cosmo; kwargs...)
+        for IP in IPs
+    ]
 
-     res = trapz(χ2s, int_ξs)
-     #println("res = $res")
-     return res / en
+    res = trapz(χ2s, int_ξs)
+    #println("res = $res")
+    return res / en
 end
 
 
@@ -196,7 +200,19 @@ end
 
 
 
-function ξ_LDxGNC_Lensing_Newtonian(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_GNCxLD_Newtonian_Lensing(s2, s1, y, cosmo; kwargs...)
+function ξ_LDxGNC_Lensing_Newtonian(s1, s2, y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
+
+    b1 = isnothing(b1) ? cosmo.params.b1 : b1
+    b2 = isnothing(b2) ? cosmo.params.b2 : b2
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+
+    ξ_GNCxLD_Newtonian_Lensing(s2, s1, y, cosmo;
+        b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
+        𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end
 

@@ -262,5 +262,6 @@ function ξ_LDxGNC_Doppler_Lensing(s1, s2, y, cosmo::Cosmology;
     ξ_GNCxLD_Lensing_Doppler(s2, s1, y, cosmo; 
         b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
         𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
+
 end
 
