@@ -18,10 +18,11 @@
 #
 
 
-@doc raw"""
-     integrand_ξ_GNCxLD_Doppler_Lensing(
-          IP::Point, P1::Point, P2::Point,
-          y, cosmo::Cosmology) :: Float64
+"""
+	integrand_ξ_GNCxLD_Doppler_Lensing(
+		IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) :: Float64
 
 Return the integrand of the Lensing-Doppler cross-correlation function 
 ``\\xi^{\\kappa v_{\\parallel}} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
@@ -29,12 +30,12 @@ Return the integrand of the Lensing-Doppler cross-correlation function
 
 ```math
 f(s_1, s_2, y, \\chi_1, \\chi_2) = 
-     \\mathcal{H}_0^2 \\Omega_{M0} D(s_2) f(s_2) \\mathcal{H}(s_2) \\mathcal{R}(s_2) 
-     \\frac{ D(\\chi_1) (\\chi_1 - s_1) }{a(\\chi_1) s_1} 
-     \\left(
-          J_{00} I^0_0(\\Delta\\chi_1) + J_{02} I^0_2(\\Delta\\chi_1) 
-          + J_{04} I^0_4(\\Delta\\chi_1) + J_{20} I^2_0(\\Delta\\chi_1)
-     \\right)
+	\\mathcal{H}_0^2 \\Omega_{M0} D(s_2) f(s_2) \\mathcal{H}(s_2) \\mathcal{R}(s_2) 
+	\\frac{ D(\\chi_1) (\\chi_1 - s_1) }{a(\\chi_1) s_1} 
+	\\left(
+		J_{00} I^0_0(\\Delta\\chi_1) + J_{02} I^0_2(\\Delta\\chi_1) 
+		+ J_{04} I^0_4(\\Delta\\chi_1) + J_{20} I^2_0(\\Delta\\chi_1)
+	\\right)
 ```
 
 where ``\\mathcal{H} = a H``, 
@@ -44,14 +45,14 @@ and the ``J`` coefficients are given by
 
 ```math
 \\begin{align*}
-     J_{00} & = \\frac{1}{15}(\\chi_1^2 y + \\chi_1(4 y^2 - 3) s_2 - 2 y s_2^2) \\\\
-     J_{02} & = \\frac{1}{42 \\Delta\\chi_1^2} 
-          (4 \\chi_1^4 y + 4 \\chi_1^3 (2 y^2 - 3) s_2 + \\chi_1^2 y (11 - 23 y^2) s_2^2 + 
-          \\chi_1 (23 y^2 - 3) s_2^3 - 8 y s_2^4) \\\\
-     J_{04} & = \\frac{1}{70 \\Delta\\chi_1^2}
-          (2 \\chi_1^4 y + 2 \\chi_1^3 (2y^2 - 3) s_2 - \\chi_1^2 y (y^2 + 5) s_2^2 + 
-          \\chi_1 (y^2 + 9) s_2^3 - 4 y s_2^4) \\\\
-     J_{20} & = y \\Delta\\chi_1^2
+	J_{00} & = \\frac{1}{15}(\\chi_1^2 y + \\chi_1(4 y^2 - 3) s_2 - 2 y s_2^2) \\\\
+	J_{02} & = \\frac{1}{42 \\Delta\\chi_1^2} 
+		(4 \\chi_1^4 y + 4 \\chi_1^3 (2 y^2 - 3) s_2 + \\chi_1^2 y (11 - 23 y^2) s_2^2 + 
+		\\chi_1 (23 y^2 - 3) s_2^3 - 8 y s_2^4) \\\\
+	J_{04} & = \\frac{1}{70 \\Delta\\chi_1^2}
+		(2 \\chi_1^4 y + 2 \\chi_1^3 (2y^2 - 3) s_2 - \\chi_1^2 y (y^2 + 5) s_2^2 + 
+		\\chi_1 (y^2 + 9) s_2^3 - 4 y s_2^4) \\\\
+	J_{20} & = y \\Delta\\chi_1^2
 \\end{align*}
 ```
 
@@ -72,72 +73,80 @@ See also: [`ξ_GNCxLD_Doppler_Lensing`](@ref), [`int_on_mu_Lensing_Doppler`](@re
 [`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
 function integrand_ξ_GNCxLD_Doppler_Lensing(
-     IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
-     s1, D_s1, f_s1, ℋ_s1, ℛ_s1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_GNC
-     s2 = P2.comdist
-     χ2, D2, a2 = IP.comdist, IP.D, IP.a
-     Ω_M0 = cosmo.params.Ω_M0
+    s1, D_s1, f_s1, ℋ_s1 = P1.comdist, P1.D, P1.f, P1.ℋ
+    s2 = P2.comdist
+    χ2, D2, a2 = IP.comdist, IP.D, IP.a
 
+    Ω_M0 = cosmo.params.Ω_M0
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
 
-     Δχ2_square = χ2^2 + s1^2 - 2 * χ2 * s1 * y
-     Δχ2 = Δχ2_square > 0.0 ? √(Δχ2_square) : 0.0
+    s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
+    ℛ_s1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b1, 𝑓_evo=𝑓_evo1, s_lim=s_lim)
 
-     common = - ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) / (s2 * a2)
-     factor = D_s1 * f_s1 * ℋ_s1 * ℛ_s1
+    Δχ2_square = χ2^2 + s1^2 - 2 * χ2 * s1 * y
+    Δχ2 = Δχ2_square > 0.0 ? √(Δχ2_square) : 0.0
 
-     new_J00 = 1.0 / 15.0 * (χ2^2 * y + χ2 * (4 * y^2 - 3) * s1 - 2 * y * s1^2)
-     new_J02 = 1.0 / (42 * Δχ2^2) * (
-          4 * χ2^4 * y + 4 * χ2^3 * (2 * y^2 - 3) * s1
-          + χ2^2 * y * (11 - 23 * y^2) * s1^2
-          + χ2 * (23 * y^2 - 3) * s1^3 - 8 * y * s1^4)
-     new_J04 = 1.0 / (70 * Δχ2^2) * (
-          2 * χ2^4 * y + 2 * χ2^3 * (2 * y^2 - 3) * s1
-          -
-          χ2^2 * y * (y^2 + 5) * s1^2
-          +
-          χ2 * (y^2 + 9) * s1^3 - 4 * y * s1^4)
-     new_J20 = y * Δχ2^2
+    common = - ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) / (s2 * a2)
+    factor = D_s1 * f_s1 * ℋ_s1 * ℛ_s1
 
-     I00 = cosmo.tools.I00(Δχ2)
-     I20 = cosmo.tools.I20(Δχ2)
-     I40 = cosmo.tools.I40(Δχ2)
-     I02 = cosmo.tools.I02(Δχ2)
+    new_J00 = 1.0 / 15.0 * (χ2^2 * y + χ2 * (4 * y^2 - 3) * s1 - 2 * y * s1^2)
+    new_J02 = 1.0 / (42 * Δχ2^2) * (
+        4 * χ2^4 * y + 4 * χ2^3 * (2 * y^2 - 3) * s1
+        + χ2^2 * y * (11 - 23 * y^2) * s1^2
+        + χ2 * (23 * y^2 - 3) * s1^3 - 8 * y * s1^4)
+    new_J04 = 1.0 / (70 * Δχ2^2) * (
+        2 * χ2^4 * y + 2 * χ2^3 * (2 * y^2 - 3) * s1
+        -
+        χ2^2 * y * (y^2 + 5) * s1^2
+        +
+        χ2 * (y^2 + 9) * s1^3 - 4 * y * s1^4)
+    new_J20 = y * Δχ2^2
 
-     #println("J00 = $new_J00, \t I00(Δχ2) = $(I00)")
-     #println("J02 = $new_J02, \t I20(Δχ2) = $(I20)")
-     #println("J31 = $new_J31, \t I13(Δχ2) = $(I13)")
-     #println("J22 = $new_J22, \t I22(Δχ2) = $(I22)")
+    I00 = cosmo.tools.I00(Δχ2)
+    I20 = cosmo.tools.I20(Δχ2)
+    I40 = cosmo.tools.I40(Δχ2)
+    I02 = cosmo.tools.I02(Δχ2)
 
-     parenth = (
-          new_J00 * I00 + new_J02 * I20 +
-          new_J04 * I40 + new_J20 * I02
-     )
+    #println("J00 = $new_J00, \t I00(Δχ2) = $(I00)")
+    #println("J02 = $new_J02, \t I20(Δχ2) = $(I20)")
+    #println("J31 = $new_J31, \t I13(Δχ2) = $(I13)")
+    #println("J22 = $new_J22, \t I22(Δχ2) = $(I22)")
 
-     first = common * factor * parenth
+    parenth = (
+        new_J00 * I00 + new_J02 * I20 +
+        new_J04 * I40 + new_J20 * I02
+    )
 
-     #new_J31 = -3 * χ2^2 * y * f0 * ℋ0
-     #I13 = cosmo.tools.I13(χ2)
-     #second = new_J31 * I13 * common
+    first = common * factor * parenth
 
-     return first
+    #new_J31 = -3 * χ2^2 * y * f0 * ℋ0
+    #I13 = cosmo.tools.I13(χ2)
+    #second = new_J31 * I13 * common
+
+    return first
 end
 
 
 function integrand_ξ_GNCxLD_Doppler_Lensing(
-     χ2::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology)
+    χ2::Float64, s1::Float64, s2::Float64,
+    y, cosmo::Cosmology; kwargs...)
 
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP = Point(χ2, cosmo)
-     return integrand_ξ_GNCxLD_Doppler_Lensing(IP, P1, P2, y, cosmo)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    IP = Point(χ2, cosmo)
+    return integrand_ξ_GNCxLD_Doppler_Lensing(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
 """
-     ξ_GNCxLD_Doppler_Lensing(s1, s2, y, cosmo::Cosmology;
-          en::Float64 = 1e6, N_χs::Int = 100):: Float64
+    ξ_GNCxLD_Doppler_Lensing(s1, s2, y, cosmo::Cosmology;
+        en::Float64 = 1e6, N_χs::Int = 100,
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ):: Float64
 
 Return the Lensing-Doppler cross-correlation function 
 ``\\xi^{\\kappa v_{\\parallel}} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
@@ -145,13 +154,13 @@ luminosity distance, defined as follows:
     
 ```math
 \\xi^{\\kappa v_{\\parallel}} (s_1, s_2, \\cos{\\theta}) = 
-     \\mathcal{H}_0^2 \\Omega_{M0} D(s_2) f(s_2) \\mathcal{H}(s_2) \\mathcal{R}(s_2) 
-     \\int_0^{s_1} \\mathrm{d} \\chi_1 
-     \\frac{ D(\\chi_1) (\\chi_1 - s_1) }{a(\\chi_1) s_1} 
-     \\left(
-          J_{00} I^0_0(\\Delta\\chi_1) + J_{02} I^0_2(\\Delta\\chi_1) 
-          + J_{04} I^0_4(\\Delta\\chi_1) + J_{20} I^2_0(\\Delta\\chi_1)
-     \\right)
+    \\mathcal{H}_0^2 \\Omega_{M0} D(s_2) f(s_2) \\mathcal{H}(s_2) \\mathcal{R}(s_2) 
+    \\int_0^{s_1} \\mathrm{d} \\chi_1 
+    \\frac{ D(\\chi_1) (\\chi_1 - s_1) }{a(\\chi_1) s_1} 
+    \\left(
+        J_{00} I^0_0(\\Delta\\chi_1) + J_{02} I^0_2(\\Delta\\chi_1) 
+        + J_{04} I^0_4(\\Delta\\chi_1) + J_{20} I^2_0(\\Delta\\chi_1)
+    \\right)
 ```
 
 where ``\\mathcal{H} = a H``, 
@@ -161,14 +170,14 @@ and the ``J`` coefficients are given by:
 
 ```math
 \\begin{align*}
-     J_{00} & = \\frac{1}{15}(\\chi_1^2 y + \\chi_1(4 y^2 - 3) s_2 - 2 y s_2^2) \\\\
-     J_{02} & = \\frac{1}{42 \\Delta\\chi_1^2} 
-          (4 \\chi_1^4 y + 4 \\chi_1^3 (2 y^2 - 3) s_2 + \\chi_1^2 y (11 - 23 y^2) s_2^2 + 
-          \\chi_1 (23 y^2 - 3) s_2^3 - 8 y s_2^4) \\\\
-     J_{04} & = \\frac{1}{70 \\Delta\\chi_1^2}
-          (2 \\chi_1^4 y + 2 \\chi_1^3 (2y^2 - 3) s_2 - \\chi_1^2 y (y^2 + 5) s_2^2 + 
-          \\chi_1 (y^2 + 9) s_2^3 - 4 y s_2^4) \\\\
-     J_{20} & = y \\Delta\\chi_1^2
+    J_{00} & = \\frac{1}{15}(\\chi_1^2 y + \\chi_1(4 y^2 - 3) s_2 - 2 y s_2^2) \\\\
+    J_{02} & = \\frac{1}{42 \\Delta\\chi_1^2} 
+        (4 \\chi_1^4 y + 4 \\chi_1^3 (2 y^2 - 3) s_2 + \\chi_1^2 y (11 - 23 y^2) s_2^2 + 
+        \\chi_1 (23 y^2 - 3) s_2^3 - 8 y s_2^4) \\\\
+    J_{04} & = \\frac{1}{70 \\Delta\\chi_1^2}
+        (2 \\chi_1^4 y + 2 \\chi_1^3 (2y^2 - 3) s_2 - \\chi_1^2 y (y^2 + 5) s_2^2 + 
+        \\chi_1 (y^2 + 9) s_2^3 - 4 y s_2^4) \\\\
+    J_{20} & = y \\Delta\\chi_1^2
 \\end{align*}
 ```
 
@@ -213,21 +222,21 @@ See also: [`integrand_ξ_GNCxLD_Doppler_Lensing`](@ref), [`int_on_mu_Lensing_Dop
 [`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
 function ξ_GNCxLD_Doppler_Lensing(s1, s2, y, cosmo::Cosmology;
-     en::Float64=1e6, N_χs::Int=100)
+    en::Float64=1e6, N_χs::Int=100, kwargs...)
 
-     χ2s = s2 .* range(1e-6, 1.0, length = N_χs)
+    χ2s = s2 .* range(1e-6, 1.0, length = N_χs)
 
-     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-     IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
+    P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
+    IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-     int_ξs = [
-          en * GaPSE.integrand_ξ_GNCxLD_Doppler_Lensing(IP, P1, P2, y, cosmo)
-          for IP in IPs
-     ]
+    int_ξs = [
+        en * GaPSE.integrand_ξ_GNCxLD_Doppler_Lensing(IP, P1, P2, y, cosmo; kwargs...)
+        for IP in IPs
+    ]
 
-     res = trapz(χ2s, int_ξs)
-     #println("res = $res")
-     return res / en
+    res = trapz(χ2s, int_ξs)
+    #println("res = $res")
+    return res / en
 end
 
 
@@ -240,8 +249,20 @@ end
 
 
 
-function ξ_LDxGNC_Lensing_Doppler(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_GNCxLD_Doppler_Lensing(s2, s1, y, cosmo; kwargs...)
+function ξ_LDxGNC_Lensing_Doppler(s1, s2, y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
+
+    b1 = isnothing(b1) ? cosmo.params.b1 : b1
+    b2 = isnothing(b2) ? cosmo.params.b2 : b2
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+    
+    ξ_GNCxLD_Doppler_Lensing(s2, s1, y, cosmo; 
+        b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
+        𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end
 
 

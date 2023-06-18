@@ -19,9 +19,9 @@
 
 
 """
-     integrand_ξ_GNCxLD_IntegratedGP_LocalGP(
-          IP::Point, P1::Point, P2::Point,
-          y, cosmo::Cosmology) :: Float64
+    integrand_ξ_GNCxLD_IntegratedGP_LocalGP(
+        IP::Point, P1::Point, P2::Point,
+        y, cosmo::Cosmology) :: Float64
 
 Return the integrand of the LocalGP-IntegratedGP cross-correlation function 
 ``\\xi^{\\phi\\int\\phi} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
@@ -29,11 +29,11 @@ Return the integrand of the LocalGP-IntegratedGP cross-correlation function
 
 ```math
 f(s_1, s_2, y, \\chi_1, \\chi_2) = 
-     \\frac{9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(s_1) (\\mathcal{R}(s_1) +1)}{2 a(s_1)} 
-     \\frac{D(\\chi_2) \\Delta\\chi_2^4}{ a(\\chi_2)}
-     \\left(
-          \\mathcal{H}(\\chi_2)( f(\\chi_2) - 1) \\mathcal{R}(s_2) - \\frac{1}{s_2}
-     \\right) \\tilde{I}^4_0(\\Delta\\chi_2)
+    \\frac{9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(s_1) (\\mathcal{R}(s_1) +1)}{2 a(s_1)} 
+    \\frac{D(\\chi_2) \\Delta\\chi_2^4}{ a(\\chi_2)}
+    \\left(
+        \\mathcal{H}(\\chi_2)( f(\\chi_2) - 1) \\mathcal{R}(s_2) - \\frac{1}{s_2}
+    \\right) \\tilde{I}^4_0(\\Delta\\chi_2)
 ```
 where ``\\mathcal{H} = a H``, 
 ``\\Delta\\chi_2 = \\sqrt{s_1^2 + \\chi_2^2 - 2 s_1 \\chi_2 \\cos{\\theta}}``, 
@@ -56,41 +56,46 @@ See also: [`ξ_GNCxLD_IntegratedGP_LocalGP`](@ref), [`int_on_mu_LocalGP_Integrat
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function integrand_ξ_GNCxLD_IntegratedGP_LocalGP(
-     IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
-     s1, ℛ_s1 = P1.comdist, P1.ℛ_GNC
-     s2, D_s2, a_s2, ℜ_s2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
-     χ1, D1, a1, f1, ℋ1 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
-     s_b_s1 = cosmo.params.s_b
-     Ω_M0 = cosmo.params.Ω_M0
+    s1 = P1.comdist
+    s2, D_s2, a_s2, ℜ_s2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
+    χ1, D1, a1, f1, ℋ1 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
 
-     Δχ1_square = s2^2 + χ1^2 - 2 * s2 * χ1 * y
-     Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0
+    Ω_M0 = cosmo.params.Ω_M0
+    s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    𝑓_evo_s1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
 
-     factor = - 9 / 2 * D_s2 * Δχ1^4 * ℋ0^4 * Ω_M0^2 * D1 * (1 + ℜ_s2) / (s1 * a1 * a_s2)
-     parenth = (s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2) 
+    s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
+    ℛ_s1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b_s1, 𝑓_evo=𝑓_evo_s1, s_lim=s_lim)
 
-     I04_tilde = cosmo.tools.I04_tilde(Δχ1)
+    Δχ1_square = s2^2 + χ1^2 - 2 * s2 * χ1 * y
+    Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0
 
-     return factor * parenth * I04_tilde
+    factor = - 9 / 2 * D_s2 * Δχ1^4 * ℋ0^4 * Ω_M0^2 * D1 * (1 + ℜ_s2) / (s1 * a1 * a_s2)
+    parenth = (s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2) 
+
+    I04_tilde = cosmo.tools.I04_tilde(Δχ1)
+
+    return factor * parenth * I04_tilde
 end
 
 
 function integrand_ξ_GNCxLD_IntegratedGP_LocalGP(
-     χ1::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology;
-     kwargs...)
+    χ1::Float64, s1::Float64, s2::Float64,
+    y, cosmo::Cosmology; kwargs...)
 
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP = Point(χ1, cosmo)
-     return integrand_ξ_GNCxLD_IntegratedGP_LocalGP(IP, P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    IP = Point(χ1, cosmo)
+    return integrand_ξ_GNCxLD_IntegratedGP_LocalGP(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
 """
-     ξ_GNCxLD_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology;
-          en::Float64 = 1e6, N_χs::Int = 100):: Float64
+    ξ_GNCxLD_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology;
+        en::Float64 = 1e6, N_χs::Int = 100):: Float64
 
 Return the LocalGP-IntegratedGP cross-correlation function 
 ``\\xi^{v_{\\parallel}\\int \\phi} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
@@ -136,21 +141,21 @@ See also: [`integrand_ξ_GNCxLD_IntegratedGP_LocalGP`](@ref), [`int_on_mu_LocalG
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function ξ_GNCxLD_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology;
-     en::Float64 = 1e6, N_χs::Int = 100)
+    en::Float64 = 1e6, N_χs::Int = 100, kwargs...)
 
-     χ1s = s1 .* range(1e-6, 1.0, length = N_χs)
+    χ1s = s1 .* range(1e-6, 1.0, length = N_χs)
 
-     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-     IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
+    P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
+    IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
-     int_ξs = [
-          en * GaPSE.integrand_ξ_GNCxLD_IntegratedGP_LocalGP(IP, P1, P2, y, cosmo)
-          for IP in IPs
-     ]
+    int_ξs = [
+        en * GaPSE.integrand_ξ_GNCxLD_IntegratedGP_LocalGP(IP, P1, P2, y, cosmo; kwargs...)
+        for IP in IPs
+    ]
 
-     res = trapz(χ1s, int_ξs)
-     #println("res = $res")
-     return res / en
+    res = trapz(χ1s, int_ξs)
+    #println("res = $res")
+    return res / en
 end
 
 
@@ -162,8 +167,20 @@ end
 
 
 
-function ξ_LDxGNC_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_GNCxLD_IntegratedGP_LocalGP(s2, s1, y, cosmo; kwargs...)
+function ξ_LDxGNC_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
+
+    b1 = isnothing(b1) ? cosmo.params.b1 : b1
+    b2 = isnothing(b2) ? cosmo.params.b2 : b2
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+
+    ξ_GNCxLD_IntegratedGP_LocalGP(s2, s1, y, cosmo; 
+        b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
+        𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end
 
 

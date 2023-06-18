@@ -19,9 +19,10 @@
 
 
 """
-     integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1::Point, IP2::Point,
-          P1::Point, P2::Point,
-          y, cosmo::Cosmology) :: Float64
+    integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1::Point, IP2::Point,
+        P1::Point, P2::Point, y, cosmo::Cosmology;
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) :: Float64
 
 Return the integrand of the integrated gravitational potential 
 auto-correlation function ``\\xi^{\\int\\phi\\int\\phi} (s_1, s_2, \\cos{\\theta})``, 
@@ -34,14 +35,14 @@ where ``\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\, \\chi_2 \\, y} 
 ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2`` and:
 ```math
 \\begin{split}
-     &J_{40}(s_1, s_2, y, \\chi_1, \\chi_2)  = 
-          \\frac{
-                    9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(\\chi_1) D(\\chi_2) \\chi^4
-          }{    a(\\chi_1) a(\\chi_2) s_1 s_2} 
-          (s_2 \\mathcal{H}(\\chi_2) \\mathcal{R}(s_2) (f(\\chi_2)-1) - 1) 
-          (s_1 \\mathcal{H}(\\chi_1) \\mathcal{R}(s_1) (f(\\chi_1)-1) - 1)\\\\[5pt]
-     &\\tilde{I}^4_0 (s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} 
-          q^2 \\, P(q) \\, \\frac{j_0(q s) - 1}{(q s)^4}
+    &J_{40}(s_1, s_2, y, \\chi_1, \\chi_2)  = 
+        \\frac{
+                9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(\\chi_1) D(\\chi_2) \\chi^4
+        }{    a(\\chi_1) a(\\chi_2) s_1 s_2} 
+        (s_2 \\mathcal{H}(\\chi_2) \\mathcal{R}(s_2) (f(\\chi_2)-1) - 1) 
+        (s_1 \\mathcal{H}(\\chi_1) \\mathcal{R}(s_1) (f(\\chi_1)-1) - 1)\\\\[5pt]
+    &\\tilde{I}^4_0 (s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} 
+        q^2 \\, P(q) \\, \\frac{j_0(q s) - 1}{(q s)^4}
 \\end{split}
 ```
 
@@ -63,84 +64,90 @@ See also: [`ξ_GNCxLD_IntegratedGP_IntegratedGP`](@ref), [`integrand_on_mu_Integ
 [`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
 """
 function integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1::Point, IP2::Point,
-     P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+    P1::Point, P2::Point, y, cosmo::Cosmology;
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
-     s1, ℛ_s1 = P1.comdist, P1.ℛ_GNC
-     s2, ℜ_s2 = P2.comdist, P2.ℛ_LD 
-     χ1, D1, a1, ℋ1, f1 = IP1.comdist, IP1.D, IP1.a, IP1.ℋ, IP1.f
-     χ2, D2, a2, ℋ2, f2 = IP2.comdist, IP2.D, IP2.a, IP2.ℋ, IP2.f
-     s_b_s1 = cosmo.params.s_b
-     Ω_M0 = cosmo.params.Ω_M0
+    s1 = P1.comdist
+    s2, ℜ_s2 = P2.comdist, P2.ℛ_LD 
+    χ1, D1, a1, ℋ1, f1 = IP1.comdist, IP1.D, IP1.a, IP1.ℋ, IP1.f
+    χ2, D2, a2, ℋ2, f2 = IP2.comdist, IP2.D, IP2.a, IP2.ℋ, IP2.f
 
-     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-     Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
+    Ω_M0 = cosmo.params.Ω_M0
+    s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    𝑓_evo_s1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
 
-     factor = - 9 * Δχ^4 * ℋ0^4 * Ω_M0^2 * D1 * D2 / (s1 * s2 * a1 * a2)
-     parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2
-     parenth_2 = s2 * ℋ2 * ℜ_s2 * (f2 - 1) - 1
+    s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
+    ℛ_s1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b_s1, 𝑓_evo=𝑓_evo_s1, s_lim=s_lim)
 
-     I04_tilde = cosmo.tools.I04_tilde(Δχ)
+    Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
+    Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
 
-     return factor * parenth_1 * parenth_2 * I04_tilde
+    factor = - 9 * Δχ^4 * ℋ0^4 * Ω_M0^2 * D1 * D2 / (s1 * s2 * a1 * a2)
+    parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2
+    parenth_2 = s2 * ℋ2 * ℜ_s2 * (f2 - 1) - 1
+
+    I04_tilde = cosmo.tools.I04_tilde(Δχ)
+
+    return factor * parenth_1 * parenth_2 * I04_tilde
 end
 
 
 
 function ξ_GNCxLD_IntegratedGP_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e10, N_χs_2::Int = 100)
+    en::Float64 = 1e10, N_χs_2::Int = 100, kwargs...)
 
-     χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
-     χ2s = P2.comdist .* range(1e-6, 1.0, length = N_χs_2 + 7)
+    χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
+    χ2s = P2.comdist .* range(1e-6, 1.0, length = N_χs_2 + 7)
 
-     IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-     IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
+    IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+    IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-     int_ξ_igp = [
-          en * GaPSE.integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1, IP2, P1, P2, y, cosmo)
-          for IP1 in IP1s, IP2 in IP2s
-     ]
+    int_ξ_igp = [
+        en * GaPSE.integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+        for IP1 in IP1s, IP2 in IP2s
+    ]
 
-     res = trapz((χ1s, χ2s), int_ξ_igp)
-     #println("res = $res")
+    res = trapz((χ1s, χ2s), int_ξ_igp)
+    #println("res = $res")
 
-     #=
-     χ1s = [x for x in range(0, P1.comdist, length = N_χs)[begin+1:end]]
-     l = Int(floor(N_χs/2))
-     matrix_χ2s = [begin
-          a = [x for x in range(0, P2.comdist, length=l)[begin+1:end]];
-          b = [x for x in range(x1-focus, x1+focus, length=l)];
-          vcat(a[a.<x1-focus], b, a[a.>x1+focus])
-          end for x1 in χ1s]
+    #=
+    χ1s = [x for x in range(0, P1.comdist, length = N_χs)[begin+1:end]]
+    l = Int(floor(N_χs/2))
+    matrix_χ2s = [begin
+        a = [x for x in range(0, P2.comdist, length=l)[begin+1:end]];
+        b = [x for x in range(x1-focus, x1+focus, length=l)];
+        vcat(a[a.<x1-focus], b, a[a.>x1+focus])
+        end for x1 in χ1s]
 
-     IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-     matrix_IP2s = [[GaPSE.Point(x, cosmo) for x in y] for y in matrix_χ2s]
-     matrix_int_ξs = [
-          [en * GaPSE.integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1, IP2, P1, P2, y, cosmo) 
-          for IP2 in matrix_IP2s[i]]
-          for (i,IP1) in enumerate(IP1s)]
-     
-     vec_trapz = [trapz(χ2s,int_ξs) for (χ2s,int_ξs) in zip(matrix_χ2s, matrix_int_ξs)]
-     res = trapz(χ1s, vec_trapz)
-     =#
-     return res / en
+    IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+    matrix_IP2s = [[GaPSE.Point(x, cosmo) for x in y] for y in matrix_χ2s]
+    matrix_int_ξs = [
+        [en * GaPSE.integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1, IP2, P1, P2, y, cosmo) 
+        for IP2 in matrix_IP2s[i]]
+        for (i,IP1) in enumerate(IP1s)]
+    
+    vec_trapz = [trapz(χ2s,int_ξs) for (χ2s,int_ξs) in zip(matrix_χ2s, matrix_int_ξs)]
+    res = trapz(χ1s, vec_trapz)
+    =#
+    return res / en
 end
 
 
 function ξ_GNCxLD_IntegratedGP_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_GNCxLD_IntegratedGP_IntegratedGP(P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    return ξ_GNCxLD_IntegratedGP_IntegratedGP(P1, P2, y, cosmo; kwargs...)
 end
 
 
 
 """
-     ξ_GNCxLD_IntegratedGP_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
-          en::Float64 = 1e10,
-          N_χs::Int = 100) :: Float64
+    ξ_GNCxLD_IntegratedGP_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
+        en::Float64 = 1e10, N_χs::Int = 100,
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) :: Float64
 
-     ξ_GNCxLD_IntegratedGP_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...) = 
-          ξ_GNCxLD_IntegratedGP_IntegratedGP(Point(s1, cosmo), Point(s2, cosmo), y, cosmo; kwargs...)
+    ξ_GNCxLD_IntegratedGP_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
 
 Return the integrated gravitational potential auto-correlation function 
 ``\\xi^{\\int\\phi\\int\\phi}(s_1, s_2, \\cos{\\theta})`` concerning the perturbed
@@ -148,21 +155,21 @@ luminosity distance, defined as follows:
     
 ```math
 \\xi^{\\int\\phi\\int\\phi} (s_1, s_2, \\cos{\\theta}) = 
-     \\int_0^{s_1} \\mathrm{d} \\chi_1 \\int_0^{s_2}\\mathrm{d} \\chi_2 \\;
-     J_{40}(s_1, s_2, y, \\chi_1, \\chi_2) \\, \\tilde{I}^4_0(\\chi)
+    \\int_0^{s_1} \\mathrm{d} \\chi_1 \\int_0^{s_2}\\mathrm{d} \\chi_2 \\;
+    J_{40}(s_1, s_2, y, \\chi_1, \\chi_2) \\, \\tilde{I}^4_0(\\chi)
 ```
 where ``\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\, \\chi_2 \\, y} ``,
 ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2`` and:
 ```math
 \\begin{split}
-     &J_{40}(s_1, s_2, y, \\chi_1, \\chi_2)  = 
-          \\frac{
-               9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(\\chi_1) D(\\chi_2) \\chi^4
-          }{    a(\\chi_1) a(\\chi_2) s_1 s_2} 
-          (s_2 \\mathcal{H}(\\chi_2) \\mathcal{R}(s_2) (f(\\chi_2)-1) - 1) 
-          (s_1 \\mathcal{H}(\\chi_1) \\mathcal{R}(s_1) (f(\\chi_1)-1) - 1)\\\\[5pt]
-     &\\tilde{I}^4_0 (s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} 
-          q^2 \\, P(q) \\, \\frac{j_0(q s) - 1}{(q s)^4}
+    &J_{40}(s_1, s_2, y, \\chi_1, \\chi_2)  = 
+        \\frac{
+            9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(\\chi_1) D(\\chi_2) \\chi^4
+        }{    a(\\chi_1) a(\\chi_2) s_1 s_2} 
+        (s_2 \\mathcal{H}(\\chi_2) \\mathcal{R}(s_2) (f(\\chi_2)-1) - 1) 
+        (s_1 \\mathcal{H}(\\chi_1) \\mathcal{R}(s_1) (f(\\chi_1)-1) - 1)\\\\[5pt]
+    &\\tilde{I}^4_0 (s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} 
+        q^2 \\, P(q) \\, \\frac{j_0(q s) - 1}{(q s)^4}
 \\end{split}
 ```
 and ``P(q)`` is the input power spectrum.
@@ -205,6 +212,18 @@ See also: [`integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP`](@ref), [`integrand_o
 
 
 
-function ξ_LDxGNC_IntegratedGP_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_GNCxLD_IntegratedGP_IntegratedGP(s2, s1, y, cosmo; kwargs...)
+function ξ_LDxGNC_IntegratedGP_IntegratedGP(s1, s2, y, cosmo::Cosmology; 
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
+    
+    b1 = isnothing(b1) ? cosmo.params.b1 : b1
+    b2 = isnothing(b2) ? cosmo.params.b2 : b2
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+
+    ξ_GNCxLD_IntegratedGP_IntegratedGP(s2, s1, y, cosmo; 
+        b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
+        𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end
