@@ -20,8 +20,8 @@
 
 """
     ξ_GNCxLD_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-		b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
-        𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim) :: Float64
+		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
 Return the Doppler-LocalGP cross-correlation function concerning the perturbed
 luminosity distance, defined as follows:
@@ -92,8 +92,8 @@ end
 
 
 function ξ_LDxGNC_LocalGP_Doppler(s1, s2, y, cosmo::Cosmology; 
-	b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
-    s_lim=nothing, kwargs...)
+	b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
 
     b1 = isnothing(b1) ? cosmo.params.b1 : b1
     b2 = isnothing(b2) ? cosmo.params.b2 : b2

@@ -56,7 +56,7 @@ end
 		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     	𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
-	ξ_GNCxLD_LocalGP_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...) ::Float64
+	ξ_GNCxLD_LocalGP_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs... ) ::Float64
 
 Return the local gravitational potential auto-correlation function concerning the perturbed
 luminosity distance, defined as follows:

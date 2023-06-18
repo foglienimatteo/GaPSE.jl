@@ -22,7 +22,7 @@
     integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1::Point, IP2::Point,
         P1::Point, P2::Point, y, cosmo::Cosmology;
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) :: Float64
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
 Return the integrand of the integrated gravitational potential 
 auto-correlation function ``\\xi^{\\int\\phi\\int\\phi} (s_1, s_2, \\cos{\\theta})``, 
@@ -145,7 +145,7 @@ end
     ξ_GNCxLD_IntegratedGP_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
         en::Float64 = 1e10, N_χs::Int = 100,
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) :: Float64
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
     ξ_GNCxLD_IntegratedGP_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
 

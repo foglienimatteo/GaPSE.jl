@@ -19,8 +19,8 @@
 
 
 function ξ_GNCxLD_Doppler_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology;
-    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
-    s_lim=nothing)
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
     s1, D1, f1, ℋ1 = P1.comdist, P1.D, P1.f, P1.ℋ
     s2, D2, f2, ℋ2, ℜ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
@@ -57,9 +57,9 @@ end
 """
     ξ_GNCxLD_Doppler_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology;
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing) :: Float64
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing) ::Float64
 
-    ξ_GNCxLD_Doppler_Doppler(s1, s2, y, cosmo::Cosmology; kwargs...)
+    ξ_GNCxLD_Doppler_Doppler(s1, s2, y, cosmo::Cosmology; kwargs...) ::Float64
 
 Return the Doppler auto-correlation function concerning the perturbed
 luminosity distance, defined as follows:
@@ -105,8 +105,8 @@ See also: [`Point`](@ref), [`Cosmology`](@ref)
 
 
 function ξ_LDxGNC_Doppler_Doppler(s1, s2, y, cosmo::Cosmology; 
-        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
-        s_lim=nothing, kwargs...)
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
 
     b1 = isnothing(b1) ? cosmo.params.b1 : b1
     b2 = isnothing(b2) ? cosmo.params.b2 : b2

@@ -21,16 +21,16 @@
 """
     ξ_GNCxLD_Newtonian_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology;
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
-        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing) ::Float64
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
 Return the cross-correlation function between the Galaxy Number Counts standard 
 Newtonian and the Luminosity Distance perturbation Doppler effects, defined as follows:
 
 ```math
 \\xi^{v_{\\parallel}\\phi} (s_1, s_2, \\cos{\\theta}) = 
-     \\frac{3}{2 a(s_2)} \\mathcal{H}(s_1) f(s_1) D(s_1)
-     \\mathcal{R}(s_1) \\mathcal{H}_0^2 \\Omega_{M0} D(s_2)
-     (1 + \\mathcal{R}(s_2)) (s_2\\cos{\\theta} - s_1) s^2 I^3_1(s)
+    \\frac{3}{2 a(s_2)} \\mathcal{H}(s_1) f(s_1) D(s_1)
+    \\mathcal{R}(s_1) \\mathcal{H}_0^2 \\Omega_{M0} D(s_2)
+    (1 + \\mathcal{R}(s_2)) (s_2\\cos{\\theta} - s_1) s^2 I^3_1(s)
 ```
 where ``\\mathcal{H} = a H``,
 ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2`` and :

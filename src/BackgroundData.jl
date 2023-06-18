@@ -18,18 +18,18 @@
 #
 
 """
-     const f0 :: Float64
+    const f0 :: Float64
 
 Linear growth rate at present time. Its value is equal to:
 ```math
-     f_0 \\simeq 0.5126998572951
+    f_0 \\simeq 0.5126998572951
 ```
 """
 const f0 = 5.126998572951e-01
 
 
 """
-     const D0 :: Float64
+    const D0 :: Float64
 
 Linear growth factor at present time. Its value is equal to:
 ```math
@@ -40,7 +40,7 @@ const D0 = 1.0
 
 
 """
-     const ℋ0 :: Float64
+    const ℋ0 :: Float64
 
 Comoving Hubble constant at present time. Its value is, in natural system
 (where the speed of light c=1): 
@@ -54,16 +54,16 @@ const ℋ0 = 3.3356409519815204e-4 # h_0/Mpc
 
 
 """
-     BackgroundData(
-          z::Vector{Float64}
-          conftime::Vector{Float64}
-          comdist::Vector{Float64}
-          angdist::Vector{Float64}
-          lumdist::Vector{Float64}
-          D::Vector{Float64}
-          f::Vector{Float64}
-          ℋ::Vector{Float64}
-          ℋ_p::Vector{Float64})
+    BackgroundData(
+        z::Vector{Float64}
+        conftime::Vector{Float64}
+        comdist::Vector{Float64}
+        angdist::Vector{Float64}
+        lumdist::Vector{Float64}
+        D::Vector{Float64}
+        f::Vector{Float64}
+        ℋ::Vector{Float64}
+        ℋ_p::Vector{Float64})
 
 Struct that contains all the relevant cosmological information for
 future computations.
@@ -118,57 +118,57 @@ It is internally used in `Cosmology.`
 See also: [`CosmoParams`](@ref), [`Cosmology`](@ref)
 """
 struct BackgroundData
-     z::Vector{Float64}
-     conftime::Vector{Float64}
-     comdist::Vector{Float64}
-     angdist::Vector{Float64}
-     lumdist::Vector{Float64}
-     D::Vector{Float64}
-     f::Vector{Float64}
-     ℋ::Vector{Float64}
-     ℋ_p::Vector{Float64}
+    z::Vector{Float64}
+    conftime::Vector{Float64}
+    comdist::Vector{Float64}
+    angdist::Vector{Float64}
+    lumdist::Vector{Float64}
+    D::Vector{Float64}
+    f::Vector{Float64}
+    ℋ::Vector{Float64}
+    ℋ_p::Vector{Float64}
 
-     function BackgroundData(file::String, z_max;
-          names=NAMES_BACKGROUND, h=0.7)
+    function BackgroundData(file::String, z_max;
+        names=NAMES_BACKGROUND, h=0.7)
 
-          I_redshift = findfirst(x -> x == "z", names)
-          I_comdist = findfirst(x -> x == "comov. dist.", names)
+        I_redshift = findfirst(x -> x == "z", names)
+        I_comdist = findfirst(x -> x == "comov. dist.", names)
 
-          data = readdlm(file, comments=true)
+        data = readdlm(file, comments=true)
 
-          #=
-          N_z_MAX = findfirst(z -> z <= z_max, data[:, I_redshift]) - 1
-          println("N_z_MAX = $N_z_MAX")
-          com_dist_z_MAX = data[:, I_comdist][N_z_MAX]
-          println("com_dist_z_MAX  = $com_dist_z_MAX ")
-          N_3_com_dist_z_MAX = findfirst(s -> s <= 3.0 * com_dist_z_MAX, data[:, I_comdist]) - 1
-          println("N_3_com_dist_z_MAX  = $N_3_com_dist_z_MAX ")
+        #=
+        N_z_MAX = findfirst(z -> z <= z_max, data[:, I_redshift]) - 1
+        println("N_z_MAX = $N_z_MAX")
+        com_dist_z_MAX = data[:, I_comdist][N_z_MAX]
+        println("com_dist_z_MAX  = $com_dist_z_MAX ")
+        N_3_com_dist_z_MAX = findfirst(s -> s <= 3.0 * com_dist_z_MAX, data[:, I_comdist]) - 1
+        println("N_3_com_dist_z_MAX  = $N_3_com_dist_z_MAX ")
 
-          data_dict = Dict([name => reverse(data[:, i][N_3_com_dist_z_MAX:end])
-                            for (i, name) in enumerate(names)]...)
-          =#
+        data_dict = Dict([name => reverse(data[:, i][N_3_com_dist_z_MAX:end])
+                        for (i, name) in enumerate(names)]...)
+        =#
 
-          N_z_MAX = findfirst(z -> z <= 1000.0, data[:, I_redshift]) - 1
-          data_dict = Dict([name => reverse(data[:, i][N_z_MAX:end])
-                            for (i, name) in enumerate(names)]...)
+        N_z_MAX = findfirst(z -> z <= 1000.0, data[:, I_redshift]) - 1
+        data_dict = Dict([name => reverse(data[:, i][N_z_MAX:end])
+                        for (i, name) in enumerate(names)]...)
 
-          com_H = data_dict["H [1/Mpc]"] ./ h ./ (1.0 .+ data_dict["z"])
-          conf_time = data_dict["conf. time [Mpc]"] .* h
-          spline_com_H = Spline1D(reverse(conf_time), reverse(com_H); bc="nearest")
-          com_H_p = [Dierckx.derivative(spline_com_H, t) for t in conf_time]
+        com_H = data_dict["H [1/Mpc]"] ./ h ./ (1.0 .+ data_dict["z"])
+        conf_time = data_dict["conf. time [Mpc]"] .* h
+        spline_com_H = Spline1D(reverse(conf_time), reverse(com_H); bc="nearest")
+        com_H_p = [Dierckx.derivative(spline_com_H, t) for t in conf_time]
 
-          new(
-               data_dict["z"],
-               conf_time,
-               data_dict["comov. dist."] .* h,
-               data_dict["ang.diam.dist."] .* h,
-               data_dict["lum. dist."] .* h,
-               data_dict["gr.fac. D"],
-               data_dict["gr.fac. f"],
-               com_H,
-               com_H_p,
-          )
-     end
+        new(
+            data_dict["z"],
+            conf_time,
+            data_dict["comov. dist."] .* h,
+            data_dict["ang.diam.dist."] .* h,
+            data_dict["lum. dist."] .* h,
+            data_dict["gr.fac. D"],
+            data_dict["gr.fac. f"],
+            com_H,
+            com_H_p,
+        )
+    end
 end
 
 

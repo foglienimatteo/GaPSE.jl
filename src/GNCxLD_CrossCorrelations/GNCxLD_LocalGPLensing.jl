@@ -19,9 +19,10 @@
 
 
 """
-     integrand_ξ_GNCxLD_LocalGP_Lensing(
-          IP::Point, P1::Point, P2::Point,
-          y, cosmo::Cosmology) :: Float64
+    integrand_ξ_GNCxLD_LocalGP_Lensing(
+        IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing) ::Float64
 
 Return the integrand of the Lensing-LocalGP cross-correlation function 
 ``\\xi^{\\kappa \\phi} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
@@ -29,11 +30,11 @@ Return the integrand of the Lensing-LocalGP cross-correlation function
 
 ```math
 f(s_1, s_2, y, \\chi_1, \\chi_2) = 
-     \\frac{
-          9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(s_2) (1 + \\mathcal{R}(s_2)) s_2
-     }{4 a(s_2) s_1} 
-     \\frac{D(\\chi_1)(s_1 - \\chi_1) }{a(\\chi_1)}
-     \\left( J_{31} I^3_1(\\Delta\\chi_1) +  J_{22} I^2_2(\\Delta\\chi_1) \\right)
+    \\frac{
+        9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(s_2) (1 + \\mathcal{R}(s_2)) s_2
+    }{4 a(s_2) s_1} 
+    \\frac{D(\\chi_1)(s_1 - \\chi_1) }{a(\\chi_1)}
+    \\left( J_{31} I^3_1(\\Delta\\chi_1) +  J_{22} I^2_2(\\Delta\\chi_1) \\right)
 ```
 
 where ``\\mathcal{H} = a H``, 
@@ -43,8 +44,8 @@ and the ``J`` coefficients are given by
 
 ```math
 \\begin{align*}
-     J_{31} & = -2 y \\Delta\\chi_1^2 \\\\
-     J_{22} & = \\chi_1 s_2 (1 - y^2)
+    J_{31} & = -2 y \\Delta\\chi_1^2 \\\\
+    J_{22} & = \\chi_1 s_2 (1 - y^2)
 \\end{align*}
 ```
 

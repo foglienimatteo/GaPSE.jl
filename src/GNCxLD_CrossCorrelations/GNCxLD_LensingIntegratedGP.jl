@@ -24,7 +24,7 @@
 		IP1::Point, IP2::Point, P1::Point, P2::Point,
 		y, cosmo::Cosmology;
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
-        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) :: Float64
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
 Return the integrand of theLensing-IntegratedGP cross-correlation function 
 ``\\xi^{\\kappa\\int\\phi} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
@@ -114,7 +114,7 @@ end
     ξ_GNCxLD_Lensing_IntegratedGP(s1, s2, y, cosmo::Cosmology;
         en::Float64 = 1e6, N_χs::Int = 100,
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
-        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing) :: Float64
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
 Return theLensing-IntegratedGP cross-correlation function 
 ``\\xi^{\\kappa\\int\\phi} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
@@ -172,8 +172,7 @@ See also: [`integrand_ξ_GNCxLD_Lensing_IntegratedGP`](@ref), [`integrand_on_mu_
 """
 function ξ_GNCxLD_Lensing_IntegratedGP(
     P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::Float64 = 1e6, N_χs_2::Int = 100,
-    kwargs...)
+    en::Float64 = 1e6, N_χs_2::Int = 100, kwargs...)
 
     χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
     χ2s = P2.comdist .* range(1e-6, 1.0, length = N_χs_2 + 7)

@@ -59,7 +59,7 @@ function ξ_GNCxLD_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology;
     s2, D2, a2, ℜ2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
 
     Ω_M0 = cosmo.params.Ω_M0
-    b_s1 = isnothing(b1) ? cosmo.params.b1 : b1
+    b1 = isnothing(b1) ? cosmo.params.b1 : b1
 
     Δs = s(s1, s2, y)
 

@@ -22,7 +22,7 @@
 	integrand_ξ_GNCxLD_IntegratedGP_Doppler(
 		IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,) :: Float64
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
 Return the integrand of the Doppler-LocalGP cross-correlation function 
 ``\\xi^{v_{\\parallel}\\int\\phi} (s_1, s_2, \\cos{\\theta})``, i.e. the function 
@@ -63,8 +63,9 @@ See also: [`ξ_GNCxLD_IntegratedGP_Doppler`](@ref), [`int_on_mu_Doppler_Integrat
 [`integral_on_mu`](@ref), [`ξ_LD_multipole`](@ref)
 """
 function integrand_ξ_GNCxLD_IntegratedGP_Doppler(
-	IP::Point, P1::Point, P2::Point,
-	y, cosmo::Cosmology)
+	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
 	s1 = P1.comdist
 	s2, D_s2, f_s2, ℋ_s2, ℜ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
@@ -93,8 +94,7 @@ end
 
 function integrand_ξ_GNCxLD_IntegratedGP_Doppler(
     χ1::Float64, s1::Float64, s2::Float64,
-    y, cosmo::Cosmology;
-    kwargs...)
+    y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP = Point(χ1, cosmo)
@@ -106,7 +106,7 @@ end
     ξ_GNCxLD_IntegratedGP_Doppler(s1, s2, y, cosmo::Cosmology;
         en::Float64 = 1e6, N_χs::Int = 100, 
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ):: Float64
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
 Return the Doppler-LocalGP cross-correlation function 
 ``\\xi^{v_{\\parallel}\\int\\phi} (s_1, s_2, \\cos{\\theta})`` concerning the perturbed
@@ -188,8 +188,8 @@ end
 
 
 function ξ_LDxGNC_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology; 
-    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
-    s_lim=nothing, kwargs...)
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
     
     b1 = isnothing(b1) ? cosmo.params.b1 : b1
     b2 = isnothing(b2) ? cosmo.params.b2 : b2

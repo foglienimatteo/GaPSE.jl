@@ -67,7 +67,7 @@ of the [QuadGK.jl](https://github.com/JuliaMath/QuadGK.jl) Julia package.
 See also: [`ϕ`](@ref), [`W`](@ref)
 """
 function func_z_eff(s_min, s_max, z_of_s)
-     3.0 / (s_max^3 - s_min^3) * quadgk(s -> s^2 * z_of_s(s), s_min, s_max)[1]
+    3.0 / (s_max^3 - s_min^3) * quadgk(s -> s^2 * z_of_s(s), s_min, s_max)[1]
 end
 
 
@@ -207,14 +207,14 @@ end
 
 
 """
-     A(s_min, s_max, θ_max) ::Float64
+    A(s_min, s_max, θ_max) ::Float64
 
 Return the Power Spectrum multipole normalization coefficient `A`, i.e.:
 ```math
-     A(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})= 
-     \\frac{
-          V(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})
-     }{4 \\, \\pi^2}
+    A(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})= 
+    \\frac{
+        V(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})
+    }{4 \\, \\pi^2}
 ```
 where ``V(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})`` is the 
 survey volume.
@@ -231,12 +231,12 @@ end
 
 
 """
-     A_prime :: Float64
+    A_prime :: Float64
 
 It's the Power Spectrum multipole normalization coefficient ``A^{'}``, i.e.:
 ```math
-     A^{'} = \\frac{3 \\, A}{ (s_\\mathrm{max}^3 - s_\\mathrm{min}^3)} = 
-     \\frac{1}{4\\,\\pi}
+    A^{'} = \\frac{3 \\, A}{ (s_\\mathrm{max}^3 - s_\\mathrm{min}^3)} = 
+    \\frac{1}{4\\,\\pi}
 ```
 
 See also: [`A`](@ref), [`V_survey`](@ref)

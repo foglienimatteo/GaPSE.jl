@@ -20,7 +20,7 @@
 
 
 """
-     mutable struct SingleBesselPlan{T,C} <: AbstractPlan
+    mutable struct SingleBesselPlan{T,C} <: AbstractPlan
 
 This struct contains all the elements necessary to evaluate the integral 
 with one Bessel function.
@@ -107,40 +107,40 @@ the compelte list and their default values:
 See also: [`AbstractPlan`](@ref)
 """
 @kwdef mutable struct SingleBesselPlan{T,C} <: AbstractPlan
-     x::Vector{T}
-     y::Matrix{T} = zeros(10, 10)
-     fy::Matrix{T} = zeros(10, 10)
-     hm::Matrix{C} = zeros(ComplexF64, 10, 10)
-     hm_corr::Matrix{C} = zeros(ComplexF64, 10, 10)
-     d_ln_x::T = log(x[2] / x[1])
-     fy_corr::Matrix{T} = zeros(10, 10)
-     original_length::Int = length(x)
-     gl::Matrix{C} = zeros(ComplexF64, 100, 100)
-     ν::T = 1.01
-     n_extrap_low::Int = 0
-     n_extrap_high::Int = 0
-     c_window_width::T = 0.25
-     n_pad::Int = 0
-     n::Int = 0
-     N::Int = original_length + n_extrap_low + n_extrap_high + 2 * n_pad
-     m::Vector{T} = zeros(N)
-     cm::Vector{C} = zeros(ComplexF64, N)
-     ηm::Vector{T} = zeros(N)
-     plan_rfft::FFTW.rFFTWPlan = plan_rfft(randn(1024))
-     plan_irfft =
-          plan_irfft(
-               randn(
-                    Complex{Float64}, 2,
-                    Int((original_length + n_extrap_low + n_extrap_high + 2 * n_pad) / 2) + 1
-               ),
-               original_length + n_extrap_low + n_extrap_high + 2 * n_pad,
-               2
-          )
+    x::Vector{T}
+    y::Matrix{T} = zeros(10, 10)
+    fy::Matrix{T} = zeros(10, 10)
+    hm::Matrix{C} = zeros(ComplexF64, 10, 10)
+    hm_corr::Matrix{C} = zeros(ComplexF64, 10, 10)
+    d_ln_x::T = log(x[2] / x[1])
+    fy_corr::Matrix{T} = zeros(10, 10)
+    original_length::Int = length(x)
+    gl::Matrix{C} = zeros(ComplexF64, 100, 100)
+    ν::T = 1.01
+    n_extrap_low::Int = 0
+    n_extrap_high::Int = 0
+    c_window_width::T = 0.25
+    n_pad::Int = 0
+    n::Int = 0
+    N::Int = original_length + n_extrap_low + n_extrap_high + 2 * n_pad
+    m::Vector{T} = zeros(N)
+    cm::Vector{C} = zeros(ComplexF64, N)
+    ηm::Vector{T} = zeros(N)
+    plan_rfft::FFTW.rFFTWPlan = plan_rfft(randn(1024))
+    plan_irfft =
+        plan_irfft(
+            randn(
+                Complex{Float64}, 2,
+                Int((original_length + n_extrap_low + n_extrap_high + 2 * n_pad) / 2) + 1
+            ),
+            original_length + n_extrap_low + n_extrap_high + 2 * n_pad,
+            2
+        )
 end
 
 
 """
-     mutable struct HankelPlan{T,C} <: AbstractPlan
+    mutable struct HankelPlan{T,C} <: AbstractPlan
 
 A specific type of FFTLogPlan designed for the Hankel transform.
 Its arguments are the same of `SingleBesselPlan`, checks its documentation for
@@ -149,29 +149,29 @@ more information.
 See also: [`SingleBesselPlan`](@ref), [`AbstractPlan`](@ref)
 """
 @kwdef mutable struct HankelPlan{T,C} <: AbstractPlan
-     x::Vector{T}
-     y::Matrix{T} = zeros(10, 10)
-     fy::Matrix{T} = zeros(10, 10)
-     hm::Matrix{C} = zeros(ComplexF64, 10, 10)
-     hm_corr::Matrix{C} = zeros(ComplexF64, 10, 10)
-     d_ln_x::T = log(x[2] / x[1])
-     fy_corr::Matrix{T} = zeros(10, 10)
-     original_length::Int = length(x)
-     gl::Matrix{C} = zeros(ComplexF64, 100, 100)
-     ν::T = 1.01
-     n_extrap_low::Int = 0
-     n_extrap_high::Int = 0
-     c_window_width::T = 0.25
-     n_pad::Int = 0
-     n::Int = 0
-     N::Int = original_length + n_extrap_low + n_extrap_high + 2 * n_pad
-     m::Vector{T} = zeros(N)
-     cm::Vector{C} = zeros(ComplexF64, N)
-     ηm::Vector{T} = zeros(N)
-     plan_rfft::FFTW.rFFTWPlan = plan_rfft(randn(1024))
-     plan_irfft = plan_irfft(randn(Complex{Float64}, 2,
-               Int((original_length + n_extrap_low + n_extrap_high + 2 * n_pad) / 2) + 1),
-          original_length + n_extrap_low + n_extrap_high + 2 * n_pad, 2)
+    x::Vector{T}
+    y::Matrix{T} = zeros(10, 10)
+    fy::Matrix{T} = zeros(10, 10)
+    hm::Matrix{C} = zeros(ComplexF64, 10, 10)
+    hm_corr::Matrix{C} = zeros(ComplexF64, 10, 10)
+    d_ln_x::T = log(x[2] / x[1])
+    fy_corr::Matrix{T} = zeros(10, 10)
+    original_length::Int = length(x)
+    gl::Matrix{C} = zeros(ComplexF64, 100, 100)
+    ν::T = 1.01
+    n_extrap_low::Int = 0
+    n_extrap_high::Int = 0
+    c_window_width::T = 0.25
+    n_pad::Int = 0
+    n::Int = 0
+    N::Int = original_length + n_extrap_low + n_extrap_high + 2 * n_pad
+    m::Vector{T} = zeros(N)
+    cm::Vector{C} = zeros(ComplexF64, N)
+    ηm::Vector{T} = zeros(N)
+    plan_rfft::FFTW.rFFTWPlan = plan_rfft(randn(1024))
+    plan_irfft = plan_irfft(randn(Complex{Float64}, 2,
+            Int((original_length + n_extrap_low + n_extrap_high + 2 * n_pad) / 2) + 1),
+        original_length + n_extrap_low + n_extrap_high + 2 * n_pad, 2)
 end
 
 
@@ -181,7 +181,7 @@ end
 
 
 """
-     _eval_gl(ell, z::Vector, n::Int )::Vector
+    _eval_gl(ell, z::Vector, n::Int )::Vector
 
 Evaluate the ``g_{\\ell}`` coefficients, defined as
 ```math
@@ -193,18 +193,18 @@ g_{\\ell}^{(n)}(z) = (-1)^n \\, 2^{z-n} \\, \\frac{
 ```
 """
 function _eval_gl(ell, z::Vector, n::Int)
-     gl = ((-1)^n) .* 2 .^ (z .- n) .* gamma.((ell .+ z .- n) / 2) ./
-          gamma.((3 .+ ell .+ n .- z) / 2)
-     if n != 0
-          for i in 1:n
-               gl .*= (z .- i)
-          end
-     end
-     return gl
+    gl = ((-1)^n) .* 2 .^ (z .- n) .* gamma.((ell .+ z .- n) / 2) ./
+        gamma.((3 .+ ell .+ n .- z) / 2)
+    if n != 0
+        for i in 1:n
+            gl .*= (z .- i)
+        end
+    end
+    return gl
 end
 
 """
-     _eval_y!(plan::Union{SingleBesselPlan, HankelPlan}, ell::Vector)
+    _eval_y!(plan::Union{SingleBesselPlan, HankelPlan}, ell::Vector)
 
 Given an input `plan::Union{SingleBesselPlan, HankelPlan}`, compute the `y` values where the output 
 function will be evaluated and the coefficient ``K(y)`` outside the IFFT. They
@@ -218,25 +218,25 @@ and nothing is returned.
 See also: [`SingleBesselPlan`](@ref), [`HankelPlan`](@ref)
 """
 function _eval_y!(plan::Union{SingleBesselPlan,HankelPlan}, ell::Vector)
-     reverse!(plan.x)
+    reverse!(plan.x)
 
-     plan.y = zeros(length(ell), length(plan.x))
-     plan.fy_corr = zeros(size(plan.y))
+    plan.y = zeros(length(ell), length(plan.x))
+    plan.fy_corr = zeros(size(plan.y))
 
-     @inbounds for myl in 1:length(ell)
-          plan.y[myl, :] = (ell[myl] + 1) ./ plan.x #1.0 ./ plan.x 
-          plan.fy_corr[myl, :] =
-               plan.y[myl, :] .^ (-plan.ν) .* sqrt(π) ./ 4
-     end
+    @inbounds for myl in 1:length(ell)
+        plan.y[myl, :] = (ell[myl] + 1) ./ plan.x #1.0 ./ plan.x 
+        plan.fy_corr[myl, :] =
+            plan.y[myl, :] .^ (-plan.ν) .* sqrt(π) ./ 4
+    end
 
-     plan.fy = zeros(size(plan.y))
+    plan.fy = zeros(size(plan.y))
 
-     reverse!(plan.x)
+    reverse!(plan.x)
 end
 
 
 """
-     _eval_gl_hm!(plan::Union{SingleBesselPlan, HankelPlan}, ell::Vector)
+    _eval_gl_hm!(plan::Union{SingleBesselPlan, HankelPlan}, ell::Vector)
 
 Given an input `plan::Union{SingleBesselPlan, HankelPlan}`, compute the ``g_{\\ell}`` values and 
 the ``h_{m, \\mathrm{corr}}`` coefficents inside the IFFT. They are, respectively:
@@ -258,17 +258,17 @@ and nothing is returned.
 See also: [`SingleBesselPlan`](@ref), [`HankelPlan`](@ref)
 """
 function _eval_gl_hm!(plan::Union{SingleBesselPlan,HankelPlan}, ell::Vector)
-     z = plan.ν .+ im .* plan.ηm
-     plan.gl = zeros(length(ell), length(z))
+    z = plan.ν .+ im .* plan.ηm
+    plan.gl = zeros(length(ell), length(z))
 
-     plan.hm_corr = zeros(ComplexF64, length(ell), Int(plan.N / 2 + 1))
+    plan.hm_corr = zeros(ComplexF64, length(ell), Int(plan.N / 2 + 1))
 
-     @inbounds for myl in 1:length(ell)
-          plan.hm_corr[myl, :] =
-               (plan.x[1] .* plan.y[myl, 1]) .^ (-im .* plan.ηm)
-          plan.gl[myl, :] = _eval_gl(ell[myl], z, plan.n)
-     end
-     plan.hm = zeros(ComplexF64, size(plan.gl))
+    @inbounds for myl in 1:length(ell)
+        plan.hm_corr[myl, :] =
+            (plan.x[1] .* plan.y[myl, 1]) .^ (-im .* plan.ηm)
+        plan.gl[myl, :] = _eval_gl(ell[myl], z, plan.n)
+    end
+    plan.hm = zeros(ComplexF64, size(plan.gl))
 
 end
 
@@ -279,7 +279,7 @@ end
 
 
 """
-     prepare_FFTLog!(plan::Union{SingleBesselPlan, HankelPlan}, ell::Vector)
+    prepare_FFTLog!(plan::Union{SingleBesselPlan, HankelPlan}, ell::Vector)
 
 Given an input `plan::Union{SingleBesselPlan, HankelPlan}`, pre-plan an optimized real-input FFT for all
 the Bessel function orders stored in the vector `ell`.
@@ -293,31 +293,31 @@ In other words, it computes:
 See also: [`SingleBesselPlan`](@ref), [`HankelPlan`](@ref)
 """
 function prepare_FFTLog!(plan::Union{SingleBesselPlan,HankelPlan}, ell::Vector)
-     plan.x = _logextrap(plan.x, plan.n_extrap_low + plan.n_pad,
-          plan.n_extrap_high + plan.n_pad)
+    plan.x = _logextrap(plan.x, plan.n_extrap_low + plan.n_pad,
+        plan.n_extrap_high + plan.n_pad)
 
-     _eval_y!(plan, ell)
+    _eval_y!(plan, ell)
 
-     plan.m = Array(0:length(plan.x)/2)
-     _eval_ηm!(plan)
+    plan.m = Array(0:length(plan.x)/2)
+    _eval_ηm!(plan)
 
-     _eval_gl_hm!(plan, ell)
+    _eval_gl_hm!(plan, ell)
 
-     plan.plan_rfft = plan_rfft(plan.x)
-     plan.plan_irfft =
-          plan_irfft(
-               randn(
-                    Complex{Float64}, length(ell),
-                    Int((length(plan.x) / 2) + 1)
-               ),
-               plan.original_length + plan.n_extrap_low + plan.n_extrap_high + 2 * plan.n_pad,
-               2
-          )
+    plan.plan_rfft = plan_rfft(plan.x)
+    plan.plan_irfft =
+        plan_irfft(
+            randn(
+                Complex{Float64}, length(ell),
+                Int((length(plan.x) / 2) + 1)
+            ),
+            plan.original_length + plan.n_extrap_low + plan.n_extrap_high + 2 * plan.n_pad,
+            2
+        )
 end
 
 
 """
-     prepare_Hankel!(plan::HankelPlan, ell::Vector)
+    prepare_Hankel!(plan::HankelPlan, ell::Vector)
 
 Given an input `plan::HankelPlan`, pre-plan an optimized real-input FFT for all
 the Bessel function orders stored in the vector `ell` concerning an Hankel transform.
@@ -326,7 +326,7 @@ Same as `prepare_FFTLog`, checks its documentation for more information.
 See also: [`HankelPlan`](@ref),  [`prepare_FFTLog!`](@ref)
 """
 function prepare_Hankel!(hankplan::HankelPlan, ell::Vector)
-     prepare_FFTLog!(hankplan, ell .- 0.5)
+    prepare_FFTLog!(hankplan, ell .- 0.5)
 end
 
 
@@ -335,7 +335,7 @@ end
 
 
 """
-     get_y(plan::Union{SingleBesselPlan, HankelPlan})::Vector
+    get_y(plan::Union{SingleBesselPlan, HankelPlan})::Vector
 
 Return the computed `y` vector, containing the values where the transformed
 function will be evaluated.
@@ -343,7 +343,7 @@ function will be evaluated.
 See also: [`SingleBesselPlan`](@ref), [`HankelPlan`](@ref)
 """
 function get_y(plan::Union{SingleBesselPlan,HankelPlan})
-     return plan.y[:, plan.n_extrap_low+plan.n_pad+1:plan.n_extrap_low+
+    return plan.y[:, plan.n_extrap_low+plan.n_pad+1:plan.n_extrap_low+
                                                      plan.n_pad+plan.original_length]
 end
 
@@ -360,15 +360,15 @@ The result is both stored in `plan.fy` and retuned as output.
 See also: [`SingleBesselPlan`](@ref),[`HankelPlan`](@ref) 
 """
 function evaluate_FFTLog(plan::Union{SingleBesselPlan,HankelPlan}, fx)
-     fy = similar(get_y(plan))
-     evaluate_FFTLog!(fy, plan, fx)
-     return fy
+    fy = similar(get_y(plan))
+    evaluate_FFTLog!(fy, plan, fx)
+    return fy
 end
 
 
 
 """
-     evaluate_FFTLog!(fy, plan::Union{SingleBesselPlan, HankelPlan}, fx)
+    evaluate_FFTLog!(fy, plan::Union{SingleBesselPlan, HankelPlan}, fx)
 
 Given an input `plan::Union{SingleBesselPlan, HankelPlan}`, evaluate the FFT `fy` of the `fx` y-axis data
 on the basis of the parameters stored in `plan`.
@@ -377,21 +377,21 @@ The result is stored both in `plan.fy` and in the input `fy`.
 See also: [`SingleBesselPlan`](@ref), [`HankelPlan`](@ref)
 """
 function evaluate_FFTLog!(fy, plan::Union{SingleBesselPlan, HankelPlan}, fx)
-     fx = _logextrap(fx, plan.n_extrap_low,
-          plan.n_extrap_high)
-     fx = _zeropad(fx, plan.n_pad)
-     _eval_cm!(plan, fx)
+    fx = _logextrap(fx, plan.n_extrap_low,
+        plan.n_extrap_high)
+    fx = _zeropad(fx, plan.n_pad)
+    _eval_cm!(plan, fx)
 
-     @inbounds for myl in 1:length(plan.y[:, 1])
-          plan.hm[myl, :] = plan.cm .* @view plan.gl[myl, :]
-          plan.hm[myl, :] .*= @view plan.hm_corr[myl, :]
-     end
+    @inbounds for myl in 1:length(plan.y[:, 1])
+        plan.hm[myl, :] = plan.cm .* @view plan.gl[myl, :]
+        plan.hm[myl, :] .*= @view plan.hm_corr[myl, :]
+    end
 
-     plan.fy[:, :] .= plan.plan_irfft * conj!(plan.hm)
-     plan.fy[:, :] .*= @view plan.fy_corr[:, :]
+    plan.fy[:, :] .= plan.plan_irfft * conj!(plan.hm)
+    plan.fy[:, :] .*= @view plan.fy_corr[:, :]
 
-     fy[:, :] .= @view plan.fy[:, plan.n_extrap_low+plan.n_pad+
-                                  1:plan.n_extrap_low+plan.n_pad+plan.original_length]
+    fy[:, :] .= @view plan.fy[:, plan.n_extrap_low+plan.n_pad+
+                                1:plan.n_extrap_low+plan.n_pad+plan.original_length]
 end
 
 
@@ -405,11 +405,11 @@ The result is both stored in `plan.fy` and retuned as output.
 See also: [`HankelPlan`](@ref)
 """
 function evaluate_Hankel(hankplan::HankelPlan, fx)
-     fy = evaluate_FFTLog(hankplan, fx .* (
-          hankplan.x[hankplan.n_extrap_low+hankplan.n_pad+1:hankplan.n_extrap_low+
-                                                            hankplan.n_pad+hankplan.original_length]) .^ (5 / 2))
-     fy .*= sqrt.(2 * get_y(hankplan) / π)
-     return fy
+    fy = evaluate_FFTLog(hankplan, fx .* (
+        hankplan.x[hankplan.n_extrap_low+hankplan.n_pad+1:hankplan.n_extrap_low+
+                                                        hankplan.n_pad+hankplan.original_length]) .^ (5 / 2))
+    fy .*= sqrt.(2 * get_y(hankplan) / π)
+    return fy
 end
 
 """
@@ -422,11 +422,11 @@ The result is stored both in `plan.fy` and in the input `fy`.
 See also: [`HankelPlan`](@ref)
 """
 function evaluate_Hankel!(fy, hankplan::HankelPlan, fx)
-     evaluate_FFTLog!(fy, hankplan, fx .* (
-          hankplan.x[hankplan.n_extrap_low+hankplan.n_pad+1:hankplan.n_extrap_low+
-                                                            hankplan.n_pad+hankplan.original_length]) .^ (5 / 2))
-     fy .*= sqrt.(2 * get_y(hankplan) / π)
-     return fy
+    evaluate_FFTLog!(fy, hankplan, fx .* (
+        hankplan.x[hankplan.n_extrap_low+hankplan.n_pad+1:hankplan.n_extrap_low+
+                                                        hankplan.n_pad+hankplan.original_length]) .^ (5 / 2))
+    fy .*= sqrt.(2 * get_y(hankplan) / π)
+    return fy
 end
 
 

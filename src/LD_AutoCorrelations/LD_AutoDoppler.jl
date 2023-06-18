@@ -19,38 +19,38 @@
 
 
 function ξ_LD_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology)
-     s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_LD
-     s2, D2, f2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
+    s1, D1, f1, ℋ1, ℛ1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_LD
+    s2, D2, f2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
 
-     Δs = s(P1.comdist, P2.comdist, y)
-     prefac = D1 * D2 * f1 * f2 * ℛ1 * ℛ2 * ℋ1 * ℋ2
-     c1 = 3 * s1 * s2 - 2 * y * (s1^2 + s2^2) + s1 * s2 * y^2
+    Δs = s(P1.comdist, P2.comdist, y)
+    prefac = D1 * D2 * f1 * f2 * ℛ1 * ℛ2 * ℋ1 * ℋ2
+    c1 = 3 * s1 * s2 - 2 * y * (s1^2 + s2^2) + s1 * s2 * y^2
 
-     I00 = cosmo.tools.I00(Δs)
-     I20 = cosmo.tools.I20(Δs)
-     I40 = cosmo.tools.I40(Δs)
-     I02 = cosmo.tools.I02(Δs)
+    I00 = cosmo.tools.I00(Δs)
+    I20 = cosmo.tools.I20(Δs)
+    I40 = cosmo.tools.I40(Δs)
+    I02 = cosmo.tools.I02(Δs)
 
-     parenth = I00 / 45.0 + I20 / 31.5 + I40 / 105.0
+    parenth = I00 / 45.0 + I20 / 31.5 + I40 / 105.0
 
-     first = prefac * (c1 * parenth + I02 * y * Δs^2 / 3.0)
+    first = prefac * (c1 * parenth + I02 * y * Δs^2 / 3.0)
 
-     return first
+    return first
 end
 
 
 function ξ_LD_Doppler(s1, s2, y, cosmo::Cosmology)
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_LD_Doppler(P1, P2, y, cosmo)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    return ξ_LD_Doppler(P1, P2, y, cosmo)
 end
 
 
 
 """
-     ξ_LD_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
+    ξ_LD_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology) :: Float64
 
-     ξ_LD_Doppler(s1, s2, y, cosmo::Cosmology) = 
-          ξ_LD_Doppler(Point(s1, cosmo), Point(s2, cosmo), y, cosmo)
+    ξ_LD_Doppler(s1, s2, y, cosmo::Cosmology) = 
+        ξ_LD_Doppler(Point(s1, cosmo), Point(s2, cosmo), y, cosmo)
 
 Return the Doppler auto-correlation function concerning the perturbed
 luminosity distance, defined as follows:
