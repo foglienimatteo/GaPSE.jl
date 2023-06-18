@@ -31,7 +31,7 @@ function ξ_PPGalaxies_L0(P::Point, cosmo::Cosmology; b = nothing, sp::Int64=1)
 end
 
 function ξ_PPGalaxies_L0(s, cosmo::Cosmology; kwargs...)
-    P = Point(s, cosmo)
+     P = Point(s, cosmo)
     return ξ_PPGalaxies_L0(P, cosmo; kwargs...)
 end
 

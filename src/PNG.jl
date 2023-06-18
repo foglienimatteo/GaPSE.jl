@@ -20,17 +20,17 @@
 
 
 """
-     TF(
-          left_value::Float64
-          left::Float64
+    TF(
+        left_value::Float64
+        left::Float64
 
-          spline::Dierckx.Spline1D
+        spline::Dierckx.Spline1D
 
-          r_si::Float64
-          r_b::Float64
-          r_a::Float64
-          right::Float64
-          )
+        r_si::Float64
+        r_b::Float64
+        r_a::Float64
+        right::Float64
+        )
 
 Contains all the information useful in order to return the Transfer Function value from:
 - a spline inside the interval `left ≤ x ≤ right`
@@ -68,31 +68,31 @@ value and fit with `power_law_from_data` the last 15.
 See also: [`power_law_from_data`](@ref)
 """
 struct TF
-     left_value::Float64
-     left::Float64
+    left_value::Float64
+    left::Float64
 
-     spline::Dierckx.Spline1D
+    spline::Dierckx.Spline1D
 
-     r_si::Float64
-     r_b::Float64
-     r_a::Float64
-     right::Float64
+    r_si::Float64
+    r_b::Float64
+    r_a::Float64
+    right::Float64
 
 
-     function TF(ks, Tks)
-          left_val = sum(Tks[1:10]) / 10
-          r_si, r_b, r_a = power_law_from_data(
-               ks, Tks, [-2.0, 1.0], ks[end-15], ks[end]; con=false)
-          spline = Spline1D(ks, Tks; bc="error")
+    function TF(ks, Tks)
+        left_val = sum(Tks[1:10]) / 10
+        r_si, r_b, r_a = power_law_from_data(
+            ks, Tks, [-2.0, 1.0], ks[end-15], ks[end]; con=false)
+        spline = Spline1D(ks, Tks; bc="error")
 
-          new(left_val, ks[2], spline, r_si, r_b, r_a, ks[end])
-     end
+        new(left_val, ks[2], spline, r_si, r_b, r_a, ks[end])
+    end
 
 end;
 
 
 """
-     (f::TF)(x)
+    (f::TF)(x)
 
 Return the value of the `f::TF` as follows:
 ```math
@@ -113,21 +113,21 @@ where ``y_\\mathrm{left}``,``\\mathrm{left}``,
 See also: [`TF`](@ref)
 """
 function (tf::TF)(k)
-     if k < tf.left
-          return tf.left_value
-     elseif k > tf.right
-          return power_law(k, tf.r_si, tf.r_b, tf.r_a)
-     else
-          return tf.spline(k)
-     end
-end;
+    if k < tf.left
+        return tf.left_value
+    elseif k > tf.right
+        return power_law(k, tf.r_si, tf.r_b, tf.r_a)
+    else
+        return tf.spline(k)
+    end
+end
 
 
 ##########################################################################################92
 
 
 """
-     α_bias(k, tf::TF; bf=1.0, D=1.0, Ω_M0=0.29992)
+    α_bias(k, tf::TF; bf=1.0, D=1.0, Ω_M0=0.29992)
 
 Return the coefficient ``\\alpha_{\\rm bias}`` that relates the Non-Gaussian density fluctiations 
 ``\\delta_{\\rm NG}`` and the Non-Gaussian gravitational potential ``\\Phi_{\\rm NG}``
@@ -148,25 +148,25 @@ in Fourier space:
 See also: [`TF`](@ref)
 """
 function α_bias(k, tf::TF; bf=1.0, D=1.0, Ω_M0=0.29992)
-     return 1.5 * bf * Ω_M0 * (100 / 299792.458)^2 / (0.779017 * D * k^2 * tf(k))
+    return 1.5 * bf * Ω_M0 * (100 / 299792.458)^2 / (0.779017 * D * k^2 * tf(k))
 end
 
 
 
 """
-     IntegralIPSalpha(
-          l_si::Float64
-          l_b::Float64
-          l_a::Float64
-          left::Float64
+    IntegralIPSalpha(
+        l_si::Float64
+        l_b::Float64
+        l_a::Float64
+        left::Float64
 
-          spline::Dierckx.Spline1D
+        spline::Dierckx.Spline1D
 
-          r_si::Float64
-          r_b::Float64
-          r_a::Float64
-          right::Float64
-     )
+        r_si::Float64
+        r_b::Float64
+        r_a::Float64
+        right::Float64
+    )
 
 Contains all the information useful in order to return the value of the integral
 of the Input Power Spectrum weighted with the `α_bias` function. In other words,
@@ -212,10 +212,10 @@ where ``P(q)`` is the Input Power Spectrum and
 
 ## Constructors
 
-     IntegralIPSalpha(tf::TF, cosmo::Cosmology, l, n=0; D=nothing, bf=1.0,
-          N::Int=1024, kmin=1e-6, kmax=1e4, s0=1e-4,
-          fit_left_min=nothing, fit_left_max=nothing, p0_left=nothing,
-          fit_right_min=nothing, fit_right_max=nothing, p0_right=nothing)
+    IntegralIPSalpha(tf::TF, cosmo::Cosmology, l, n=0; D=nothing, bf=1.0,
+        N::Int=1024, kmin=1e-6, kmax=1e4, s0=1e-4,
+        fit_left_min=nothing, fit_left_max=nothing, p0_left=nothing,
+        fit_right_min=nothing, fit_right_max=nothing, p0_right=nothing)
 
 The integral obtained with this constructor is calculated through `xicalc`, and
 expanded with power-laws at the edges.
@@ -269,62 +269,62 @@ See also: [`power_law_from_data`](@ref), [`power_law`](@ref),
 [`Cosmology`](@ref), [`α_bias`](@ref)
 """
 struct IntegralIPSalpha
-     l_si::Float64
-     l_b::Float64
-     l_a::Float64
-     left::Float64
+    l_si::Float64
+    l_b::Float64
+    l_a::Float64
+    left::Float64
 
-     spline::Dierckx.Spline1D
+    spline::Dierckx.Spline1D
 
-     r_si::Float64
-     r_b::Float64
-     r_a::Float64
-     right::Float64
+    r_si::Float64
+    r_b::Float64
+    r_a::Float64
+    right::Float64
 
-     function IntegralIPSalpha(tf::TF, cosmo::Cosmology, l, n=0;
-          D=nothing, bf=1.0,
-          N::Int=1024, kmin=1e-6, kmax=1e4, s0=1e-4,
-          fit_left_min=nothing, fit_left_max=nothing, p0_left=nothing,
-          fit_right_min=nothing, fit_right_max=nothing, p0_right=nothing)
+    function IntegralIPSalpha(tf::TF, cosmo::Cosmology, l, n=0;
+        D=nothing, bf=1.0,
+        N::Int=1024, kmin=1e-6, kmax=1e4, s0=1e-4,
+        fit_left_min=nothing, fit_left_max=nothing, p0_left=nothing,
+        fit_right_min=nothing, fit_right_max=nothing, p0_right=nothing)
 
-          DD = isnothing(D) ? cosmo.D_of_s(cosmo.s_eff) : D
-          Ω_M00 = cosmo.params.Ω_M0
+        DD = isnothing(D) ? cosmo.D_of_s(cosmo.s_eff) : D
+        Ω_M00 = cosmo.params.Ω_M0
 
-          rs, xis = xicalc(k -> cosmo.IPS(k) * α_bias(k, tf; bf=bf, D=DD, Ω_M0=Ω_M00), l, n;
-               N=N, kmin=kmin, kmax=kmax, r0=s0)
+        rs, xis = xicalc(k -> cosmo.IPS(k) * α_bias(k, tf; bf=bf, D=DD, Ω_M0=Ω_M00), l, n;
+            N=N, kmin=kmin, kmax=kmax, r0=s0)
 
-          fit_left_MIN = !isnothing(fit_left_min) ? fit_left_min : begin
-               l ≈ 0.0 ? 5e-2 : l ≈ 2.0 ? 5e-1 : rs[2]
-          end
-          fit_left_MAX = !isnothing(fit_left_max) ? fit_left_max : begin
-               l ≈ 0.0 ? 1e-1 : l ≈ 2.0 ? 1e0 : rs[16]
-          end
-          p_0_left = isnothing(p0_left) ? [-1.0, 1.0] : p0_left
-          l_si, l_b, l_a = power_law_from_data(
-               rs, xis, p_0_left, fit_left_MIN, fit_left_MAX; con=false)
+        fit_left_MIN = !isnothing(fit_left_min) ? fit_left_min : begin
+            l ≈ 0.0 ? 5e-2 : l ≈ 2.0 ? 5e-1 : rs[2]
+        end
+        fit_left_MAX = !isnothing(fit_left_max) ? fit_left_max : begin
+            l ≈ 0.0 ? 1e-1 : l ≈ 2.0 ? 1e0 : rs[16]
+        end
+        p_0_left = isnothing(p0_left) ? [-1.0, 1.0] : p0_left
+        l_si, l_b, l_a = power_law_from_data(
+            rs, xis, p_0_left, fit_left_MIN, fit_left_MAX; con=false)
 
-          fit_right_MIN = isnothing(fit_right_min) ? rs[length(rs)-16] : fit_right_min
-          fit_right_MAX = isnothing(fit_right_max) ? rs[length(rs)-1] : fit_right_max
-          p_0_right = isnothing(p0_right) ? [-4.0, 1.0] : p0_right
-          r_si, r_b, r_a = power_law_from_data(
-               rs, xis, p_0_right, fit_right_MIN, fit_right_MAX; con=false)
+        fit_right_MIN = isnothing(fit_right_min) ? rs[length(rs)-16] : fit_right_min
+        fit_right_MAX = isnothing(fit_right_max) ? rs[length(rs)-1] : fit_right_max
+        p_0_right = isnothing(p0_right) ? [-4.0, 1.0] : p0_right
+        r_si, r_b, r_a = power_law_from_data(
+            rs, xis, p_0_right, fit_right_MIN, fit_right_MAX; con=false)
 
-          ind_left = findfirst(x -> x > fit_left_MIN, rs) - 1
-          ind_right = findfirst(x -> x >= fit_right_MAX, rs)
-          new_rs = vcat(rs[ind_left:ind_right])
-          new_Js = vcat(xis[ind_left:ind_right])
-          spline = Spline1D(new_rs, new_Js; bc="error")
+        ind_left = findfirst(x -> x > fit_left_MIN, rs) - 1
+        ind_right = findfirst(x -> x >= fit_right_MAX, rs)
+        new_rs = vcat(rs[ind_left:ind_right])
+        new_Js = vcat(xis[ind_left:ind_right])
+        spline = Spline1D(new_rs, new_Js; bc="error")
 
-          #println("\nleft = $l_si , $l_b , $l_a, $fit_left_min")
-          #println("right = $r_si , $r_b , $r_a, $fit_right_MAX\n")
+        #println("\nleft = $l_si , $l_b , $l_a, $fit_left_min")
+        #println("right = $r_si , $r_b , $r_a, $fit_right_MAX\n")
 
-          new(l_si, l_b, l_a, fit_left_MIN, spline, r_si, r_b, r_a, fit_right_MAX)
-     end
-end;
+        new(l_si, l_b, l_a, fit_left_MIN, spline, r_si, r_b, r_a, fit_right_MAX)
+    end
+end
 
 
 """
-     (f::IntegralIPSalpha)(x)
+    (f::IntegralIPSalpha)(x)
 
 Return the value of the `f::IntegralIPSalpha` as follows:
 ```math
@@ -345,14 +345,14 @@ where ``a_\\mathrm{L}``, ``b_\\mathrm{L}``, ``s_\\mathrm{L}``, ``\\mathrm{left}`
 See also: [`IntegralIPSalpha`](@ref)
 """
 function (Jl::IntegralIPSalpha)(x)
-     if x < Jl.left
-          return power_law(x, Jl.l_si, Jl.l_b, Jl.l_a)
-     elseif x > Jl.right
-          #warning("i am going too right! ")
-          return power_law(x, Jl.r_si, Jl.r_b, Jl.r_a)
-     else
-          return Jl.spline(x)
-     end
+    if x < Jl.left
+        return power_law(x, Jl.l_si, Jl.l_b, Jl.l_a)
+    elseif x > Jl.right
+        #warning("i am going too right! ")
+        return power_law(x, Jl.r_si, Jl.r_b, Jl.r_a)
+    else
+        return Jl.spline(x)
+    end
 end;
 
 
@@ -363,21 +363,21 @@ end;
 
 """
     CosmoParams(
-          D::Float64 
-          bf::Float64
+            D::Float64 
+            bf::Float64
 
-          flm_0::Float64 
-          flM_0::Float64 
-          kmin_0::Float64 
-          kmax_0::Float64  
-          N_0::Int
+            flm_0::Float64 
+            flM_0::Float64 
+            kmin_0::Float64 
+            kmax_0::Float64  
+            N_0::Int
 
-          flm_2::Float64  
-          flM_2::Float64 
-          kmin_2::Float64 
-          kmax_2::Float64  
-          N_2::Int
-     )
+            flm_2::Float64  
+            flM_2::Float64 
+            kmin_2::Float64 
+            kmax_2::Float64  
+            N_2::Int
+        )
 
 
 Struct that contains all the parameters and options that are 
@@ -404,13 +404,13 @@ matter of concerns for the `CosmoPNG` we are interested in.
 
 ## Constructors
 
-     function CosmoPNGParams(D; 
-          bf = 1.0,
-          flm_0 = 5e-2, flM_0 = 1e-1, s0_0 = 1e-4,
-          kmin_0 = 1e-6, kmax_0 = 1e4, N_0::Int = 1024,
-          flm_2 = 5e-1, flM_2 = 1e0, s0_2 = 1e-4,
-          kmin_2 = 1e-6, kmax_2 = 1e4, N_2::Int = 1024,
-          )
+    function CosmoPNGParams(D; 
+        bf = 1.0,
+        flm_0 = 5e-2, flM_0 = 1e-1, s0_0 = 1e-4,
+        kmin_0 = 1e-6, kmax_0 = 1e4, N_0::Int = 1024,
+        flm_2 = 5e-1, flM_2 = 1e0, s0_2 = 1e-4,
+        kmin_2 = 1e-6, kmax_2 = 1e4, N_2::Int = 1024,
+        )
      
 The associations are trivials.
 The only thing to be put attention on is that `D` is a MANDATORY argument, while
@@ -426,62 +426,62 @@ See also: [`Cosmology`](@ref), [`CosmoPNG`](@ref), [`IntegralIPSalpha`](@ref),
 [`α_bias`](@ref)
 """
 struct CosmoPNGParams
-     D::Float64
-     bf::Float64
+    D::Float64
+    bf::Float64
 
-     flm_0::Float64
-     flM_0::Float64
-     s0_0::Float64
-     kmin_0::Float64
-     kmax_0::Float64
-     N_0::Int
+    flm_0::Float64
+    flM_0::Float64
+    s0_0::Float64
+    kmin_0::Float64
+    kmax_0::Float64
+    N_0::Int
 
-     flm_2::Float64
-     flM_2::Float64
-     s0_2::Float64
-     kmin_2::Float64
-     kmax_2::Float64
-     N_2::Int
+    flm_2::Float64
+    flM_2::Float64
+    s0_2::Float64
+    kmin_2::Float64
+    kmax_2::Float64
+    N_2::Int
 
-     function CosmoPNGParams(D;
-          bf=1.0,
-          flm_0=5e-2, flM_0=1e-1, s0_0=1e-4,
-          kmin_0=1e-6, kmax_0=1e4, N_0::Int=1024,
-          flm_2=5e-1, flM_2=1e0, s0_2=1e-4,
-          kmin_2=1e-6, kmax_2=1e4, N_2::Int=1024
-     )
+    function CosmoPNGParams(D;
+        bf=1.0,
+        flm_0=5e-2, flM_0=1e-1, s0_0=1e-4,
+        kmin_0=1e-6, kmax_0=1e4, N_0::Int=1024,
+        flm_2=5e-1, flM_2=1e0, s0_2=1e-4,
+        kmin_2=1e-6, kmax_2=1e4, N_2::Int=1024
+    )
 
-          @assert D > 0.0 "D > 0.0 must hold!"
-          @assert bf > 0.0 "bf > 0.0 must hold!"
+        @assert D > 0.0 "D > 0.0 must hold!"
+        @assert bf > 0.0 "bf > 0.0 must hold!"
 
-          @assert N_0 > 10 "N_0 > 10 must hold!"
-          @assert 0.0 < flm_0 < flM_0 "0.0 < flm_0 < flM_0 must hold!"
-          @assert 0.0 < kmin_0 < kmax_0 "0.0 < kmin_0 < kmax_0 must hold!"
-          @assert kmin_0 < s0_0 < kmax_0 "kmin_0 < s0_0 < kmax_0 must hold!"
+        @assert N_0 > 10 "N_0 > 10 must hold!"
+        @assert 0.0 < flm_0 < flM_0 "0.0 < flm_0 < flM_0 must hold!"
+        @assert 0.0 < kmin_0 < kmax_0 "0.0 < kmin_0 < kmax_0 must hold!"
+        @assert kmin_0 < s0_0 < kmax_0 "kmin_0 < s0_0 < kmax_0 must hold!"
 
-          @assert N_2 > 10 "N_2 > 10 must hold!"
-          @assert 0.0 < flm_2 < flM_2 "0.0 < flm_2 < flM_2 must hold!"
-          @assert 0.0 < kmin_2 < kmax_2 "0.0 < kmin_2 < kmax_2 must hold!"
-          @assert kmin_2 < s0_2 < kmax_2 "kmin_2 < s0_2 < kmax_2 must hold!"
+        @assert N_2 > 10 "N_2 > 10 must hold!"
+        @assert 0.0 < flm_2 < flM_2 "0.0 < flm_2 < flM_2 must hold!"
+        @assert 0.0 < kmin_2 < kmax_2 "0.0 < kmin_2 < kmax_2 must hold!"
+        @assert kmin_2 < s0_2 < kmax_2 "kmin_2 < s0_2 < kmax_2 must hold!"
 
 
-          new(
-               D, bf,
-               flm_0, flM_0, s0_0, kmin_0, kmax_0, N_0,
-               flm_2, flM_2, s0_2, kmin_2, kmax_2, N_2,
-          )
-     end
+        new(
+            D, bf,
+            flm_0, flM_0, s0_0, kmin_0, kmax_0, N_0,
+            flm_2, flM_2, s0_2, kmin_2, kmax_2, N_2,
+        )
+    end
 end
 
 """
     CosmoPNG(
-          params::CosmoPNGParams
-          tf::TF
-          file_TF::String
+        params::CosmoPNGParams
+        tf::TF
+        file_TF::String
 
-          J0::IntegralIPSalpha
-          J2::IntegralIPSalpha
-          )
+        J0::IntegralIPSalpha
+        J2::IntegralIPSalpha
+        )
 
 Struct that contains all the information that may be used for the 
 Correlation Function computations of the Primordial Non-Gaussianities (PNG) signal.
@@ -540,10 +540,10 @@ struct CosmoPNG
     J2::IntegralIPSalpha
 
     function CosmoPNG(
-        pngparams::CosmoPNGParams,
-        cosmo::Cosmology, file_TF::String;
-        comments::Bool=true
-    )
+            pngparams::CosmoPNGParams,
+            cosmo::Cosmology, file_TF::String;
+            comments::Bool=true
+        )
 
         table = readdlm(file_TF; comments=comments)
         ks_tf = convert(Vector{Float64}, table[:, 1])

@@ -19,22 +19,22 @@
 
 
 """
-     GenericWindow(
-          comdist::Vector{Float64}
-          multipoles::Vector{Vector{Float64}}
-          splines::Vector{Dierckx.Spline1D}
-     )
+    GenericWindow(
+        comdist::Vector{Float64}
+        multipoles::Vector{Vector{Float64}}
+        splines::Vector{Dierckx.Spline1D}
+    )
 
 Stores the multipoles of a generic window function, computed as:
 ```math
-     Q_{\\ell_1} = \\int_0^{\\infty} \\mathrm{d}s_1 \\, s_1^2 \\, \\phi(s_1) \\, F_{\\ell_1}(s_1,s)
+    Q_{\\ell_1} = \\int_0^{\\infty} \\mathrm{d}s_1 \\, s_1^2 \\, \\phi(s_1) \\, F_{\\ell_1}(s_1,s)
 ```
 
 with some FFT algorithm. See Eq. (2.13) of Castorina, Di Dio (2021) for more details.
 
 ## Constructors
 
-     GenericWindow(file::String; comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
+    GenericWindow(file::String; comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
 
 Read the file `file` and create a `GenericWindow` struct having
 - as first element the comoving distances stored in the first column (with the input type `xdt`)
@@ -45,33 +45,33 @@ Read the file `file` and create a `GenericWindow` struct having
 If the file start with comments (lines starting with #), set `comments = true`.
 """
 struct GenericWindow
-     comdist::Vector{Float64}
-     multipoles::Vector{Vector{Float64}}
-     splines::Vector{Dierckx.Spline1D}
+    comdist::Vector{Float64}
+    multipoles::Vector{Vector{Float64}}
+    splines::Vector{Dierckx.Spline1D}
 
-     function GenericWindow(file::String; comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
+    function GenericWindow(file::String; comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
 
-          table = readdlm(file, comments=comments)
-          ss = vecstring_to_vecnumbers(table[:, 1]; dt=xdt)
-          all = [vecstring_to_vecnumbers(col; dt=ydt)
-                 for col in eachcol(table[:, 2:end])]
+        table = readdlm(file, comments=comments)
+        ss = vecstring_to_vecnumbers(table[:, 1]; dt=xdt)
+        all = [vecstring_to_vecnumbers(col; dt=ydt)
+                for col in eachcol(table[:, 2:end])]
 
-          for col in all
-               @assert length(ss) == length(col) "the columns must have all the same length"
-          end
+        for col in all
+            @assert length(ss) == length(col) "the columns must have all the same length"
+        end
 
-          splines = [Spline1D(ss, col; bc="error") for col in all]
+        splines = [Spline1D(ss, col; bc="error") for col in all]
 
-          new(ss, all, splines)
-     end
+        new(ss, all, splines)
+    end
 end
 
 
 
 """
-     create_file_for_XiMultipoles(out::String, names::Vector{String}, 
-          effect::Union{String, Integer}, group::String="GNC"; 
-          comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
+    create_file_for_XiMultipoles(out::String, names::Vector{String}, 
+        effect::Union{String, Integer}, group::String="GNC"; 
+        comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
 
 Read the column number `effect` (if is an Integer) or the one corresponding to the GR effect `effect`
 for the input group `group` (if is a String) from all the filenames stored in the Vector `names`, 
@@ -121,126 +121,126 @@ julia> run(`cat mix.txt`)
 ...   ...       ...
 """
 function create_file_for_XiMultipoles(out::String, names::Vector{String},
-     effect::Union{String,Integer}, group::String="GNC";
-     comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
+    effect::Union{String,Integer}, group::String="GNC";
+    comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
 
-     @assert length(names) > 0 "at least one file name must be given!"
-     @assert group ∈ VALID_GROUPS "group must be one among $(VALID_GROUPS); $group is not valid!"
+    @assert length(names) > 0 "at least one file name must be given!"
+    @assert group ∈ VALID_GROUPS "group must be one among $(VALID_GROUPS); $group is not valid!"
 
-     if typeof(effect) <: Integer
-          @assert effect > 1 "if you pass effect as number, it must" *
-                             " be an integer > 1, not $effect !"
+    if typeof(effect) <: Integer
+        @assert effect > 1 "if you pass effect as number, it must" *
+                            " be an integer > 1, not $effect !"
 
-     elseif group == "GNC"
-          error = "$effect is not a valid GR effect name.\n" *
-                  "Valid GR effect names are the following:\n" *
-                  string(GaPSE.GR_EFFECTS_GNC .* " , "...)
-          @assert (effect ∈ GaPSE.GR_EFFECTS_GNC) error
+    elseif group == "GNC"
+        error = "$effect is not a valid GR effect name.\n" *
+                "Valid GR effect names are the following:\n" *
+                string(GaPSE.GR_EFFECTS_GNC .* " , "...)
+        @assert (effect ∈ GaPSE.GR_EFFECTS_GNC) error
 
-     elseif group == "LD"
-          error = "$effect is not a valid GR effect name.\n" *
-                  "Valid GR effect names are the following:\n" *
-                  string(GaPSE.GR_EFFECTS_LD .* " , "...)
-          @assert (effect ∈ GaPSE.GR_EFFECTS_LD) error
+    elseif group == "LD"
+        error = "$effect is not a valid GR effect name.\n" *
+                "Valid GR effect names are the following:\n" *
+                string(GaPSE.GR_EFFECTS_LD .* " , "...)
+        @assert (effect ∈ GaPSE.GR_EFFECTS_LD) error
 
-     elseif group == "GNCxLD"
-          error = "$effect is not a valid GR effect name.\n" *
-                  "Valid GR effect names are the following:\n" *
-                  string(GaPSE.GR_EFFECTS_GNCxLD .* " , "...)
-          @assert (effect ∈ GaPSE.GR_EFFECTS_GNCxLD) error
+    elseif group == "GNCxLD"
+        error = "$effect is not a valid GR effect name.\n" *
+                "Valid GR effect names are the following:\n" *
+                string(GaPSE.GR_EFFECTS_GNCxLD .* " , "...)
+        @assert (effect ∈ GaPSE.GR_EFFECTS_GNCxLD) error
 
-     elseif group == "LDxGNC"
-          error = "$effect is not a valid GR effect name.\n" *
-                  "Valid GR effect names are the following:\n" *
-                  string(GaPSE.GR_EFFECTS_LDxGNC .* " , "...)
-          @assert (effect ∈ GaPSE.GR_EFFECTS_LDxGNC) error
+    elseif group == "LDxGNC"
+        error = "$effect is not a valid GR effect name.\n" *
+                "Valid GR effect names are the following:\n" *
+                string(GaPSE.GR_EFFECTS_LDxGNC .* " , "...)
+        @assert (effect ∈ GaPSE.GR_EFFECTS_LDxGNC) error
 
-     elseif group == "generic"
-          throw(AssertionError(
-               """if you set group="generic", you should't give in input a string (because 
-               you are not selecting a specific effect in a group) but an integer for effect."""
-          ))
-     else
-          throw(AssertionError("how did you arrive here?"))
-     end
+    elseif group == "generic"
+        throw(AssertionError(
+            """if you set group="generic", you should't give in input a string (because 
+            you are not selecting a specific effect in a group) but an integer for effect."""
+        ))
+    else
+        throw(AssertionError("how did you arrive here?"))
+    end
 
 
-     index = (typeof(effect) <: Integer || group == "generic") ? begin
-          effect
-     end : (group == "GNC") ? begin
-          GaPSE.INDEX_GR_EFFECT_GNC[effect] + 2
-     end : (group == "LD") ? begin
-          GaPSE.INDEX_GR_EFFECT_LD[effect] + 2
-     end : (group == "GNCxLD") ? begin
-          GaPSE.INDEX_GR_EFFECT_GNCxLD[effect] + 2
-     end : (group == "LDxGNC") ? begin
-          GaPSE.INDEX_GR_EFFECT_LDxGNC[effect] + 2
-     end : throw(AssertionError("how did you arrive here?"))
+    index = (typeof(effect) <: Integer || group == "generic") ? begin
+        effect
+    end : (group == "GNC") ? begin
+        GaPSE.INDEX_GR_EFFECT_GNC[effect] + 2
+    end : (group == "LD") ? begin
+        GaPSE.INDEX_GR_EFFECT_LD[effect] + 2
+    end : (group == "GNCxLD") ? begin
+        GaPSE.INDEX_GR_EFFECT_GNCxLD[effect] + 2
+    end : (group == "LDxGNC") ? begin
+        GaPSE.INDEX_GR_EFFECT_LDxGNC[effect] + 2
+    end : throw(AssertionError("how did you arrive here?"))
 
-     table = readdlm(names[1], comments=comments)
-     ss = GaPSE.vecstring_to_vecnumbers(table[:, 1]; dt=xdt)
+    table = readdlm(names[1], comments=comments)
+    ss = GaPSE.vecstring_to_vecnumbers(table[:, 1]; dt=xdt)
 
-     ALL = [
-          begin
-               ops = readdlm(name, comments=comments)
-               here_ss = GaPSE.vecstring_to_vecnumbers(ops[:, 1]; dt=xdt)
-               col = GaPSE.vecstring_to_vecnumbers(ops[:, index]; dt=ydt)
-               @assert length(ss) == length(col) "the columns must have all the same length, $name differs!"
-               @assert all(ss .≈ here_ss) "the ss must have all the same values, $name differs!"
-               col
-          end for name in names]
+    ALL = [
+        begin
+            ops = readdlm(name, comments=comments)
+            here_ss = GaPSE.vecstring_to_vecnumbers(ops[:, 1]; dt=xdt)
+            col = GaPSE.vecstring_to_vecnumbers(ops[:, index]; dt=ydt)
+            @assert length(ss) == length(col) "the columns must have all the same length, $name differs!"
+            @assert all(ss .≈ here_ss) "the ss must have all the same values, $name differs!"
+            col
+        end for name in names]
 
-     open(out, "w") do io
-          println(io, GaPSE.BRAND)
-          println(io, "#\n# This is a table containing the multipoles of the Two-Point Correlation Function (TPCF) ")
+    open(out, "w") do io
+        println(io, GaPSE.BRAND)
+        println(io, "#\n# This is a table containing the multipoles of the Two-Point Correlation Function (TPCF) ")
 
-          EFFECT = typeof(effect) == String ? effect : "[not given, provied only the index $effect]"
-          if group == "GNC"
-               println(io, "# for the Galaxy Number Counts GR effect $EFFECT" *
-                           "\n#  taken from the files:")
-          elseif group == "LD"
-               println(io, "# for the Luminosity Distance perturbations GR effect $EFFECT" *
-                           "\n# taken from the files:")
-          elseif group == "GNCxLD"
-               println(io, "# for the cross correlations between " *
-                           "Galaxy Number Counts and Luminosity Distance perturbations \n#" *
-                           "effect $EFFECT taken from the files:")
-          elseif group == "LDxGNC"
-               println(io, "# for the cross correlations between " *
-                           "Luminosity Distance perturbations and Galaxy Number Counts \n#" *
-                           "effect $EFFECT taken from the files:")
-          elseif group == "generic"
-               println(io, "# for a generic group " *
-                           "effect $EFFECT taken from the files:")
-          else
-               throw(AssertionError("how did you arrive here?"))
-          end
+        EFFECT = typeof(effect) == String ? effect : "[not given, provied only the index $effect]"
+        if group == "GNC"
+            println(io, "# for the Galaxy Number Counts GR effect $EFFECT" *
+                        "\n#  taken from the files:")
+        elseif group == "LD"
+            println(io, "# for the Luminosity Distance perturbations GR effect $EFFECT" *
+                        "\n# taken from the files:")
+        elseif group == "GNCxLD"
+            println(io, "# for the cross correlations between " *
+                        "Galaxy Number Counts and Luminosity Distance perturbations \n#" *
+                        "effect $EFFECT taken from the files:")
+        elseif group == "LDxGNC"
+            println(io, "# for the cross correlations between " *
+                        "Luminosity Distance perturbations and Galaxy Number Counts \n#" *
+                        "effect $EFFECT taken from the files:")
+        elseif group == "generic"
+            println(io, "# for a generic group " *
+                        "effect $EFFECT taken from the files:")
+        else
+            throw(AssertionError("how did you arrive here?"))
+        end
 
-          for (i, name) in enumerate(names)
-               println(io, "#   - L = $(i-1) : $name")
-          end
+        for (i, name) in enumerate(names)
+            println(io, "#   - L = $(i-1) : $name")
+        end
 
-          println(io, "#\n# s [Mpc/h_0] \t" .* join(["xi_{L=$(i-1)} \t " for i in 1:length(names)]))
-          for (i, s) in enumerate(ss)
-               println(io, "$s \t " *
-                           join([" $(v[i]) \t " for v in ALL]))
-          end
-     end
+        println(io, "#\n# s [Mpc/h_0] \t" .* join(["xi_{L=$(i-1)} \t " for i in 1:length(names)]))
+        for (i, s) in enumerate(ss)
+            println(io, "$s \t " *
+                        join([" $(v[i]) \t " for v in ALL]))
+        end
+    end
 end
 
 
 
 """
-     XiMultipoles(
-          comdist::Vector{Float64}
-          multipoles::Vector{Vector{Float64}}
-     )
+    XiMultipoles(
+        comdist::Vector{Float64}
+        multipoles::Vector{Vector{Float64}}
+    )
 
 Stores the multipoles of a generic Two-Point Correlation Function.
 
 ## Constructors
 
-     XiMultipoles(file::String; comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
+    XiMultipoles(file::String; comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
 
 Read the file `file` and create a `XiMultipoles` struct having
 - as first element the comoving distances stored in the first column (with the input type `xdt`)
@@ -250,22 +250,22 @@ Read the file `file` and create a `XiMultipoles` struct having
 If the file start with comments (lines starting with #), set `comments = true`.
 """
 struct XiMultipoles
-     comdist::Vector{Float64}
-     multipoles::Vector{Vector{Float64}}
+    comdist::Vector{Float64}
+    multipoles::Vector{Vector{Float64}}
 
-     function XiMultipoles(file::String; comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
+    function XiMultipoles(file::String; comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
 
-          table = readdlm(file, comments=comments)
-          ss = vecstring_to_vecnumbers(table[:, 1]; dt=xdt)
-          all = [vecstring_to_vecnumbers(col; dt=ydt)
-                 for col in eachcol(table[:, 2:end])]
+        table = readdlm(file, comments=comments)
+        ss = vecstring_to_vecnumbers(table[:, 1]; dt=xdt)
+        all = [vecstring_to_vecnumbers(col; dt=ydt)
+                for col in eachcol(table[:, 2:end])]
 
-          for col in all
-               @assert length(ss) == length(col) "the columns must have all the same length"
-          end
+        for col in all
+            @assert length(ss) == length(col) "the columns must have all the same length"
+        end
 
-          new(ss, all)
-     end
+        new(ss, all)
+    end
 end
 
 
@@ -278,26 +278,26 @@ end
 
 
 """
-     PS_multipole_GenWin(
-          ximult::Union{XiMultipoles,String}, genwin::Union{GenericWindow,String};
-          alg::Symbol=:fftlog, L::Int=0,
-          cut_first_n::Int=0, cut_last_n::Int=0,
-          kwargs...)
+    PS_multipole_GenWin(
+        ximult::Union{XiMultipoles,String}, genwin::Union{GenericWindow,String};
+        alg::Symbol=:fftlog, L::Int=0,
+        cut_first_n::Int=0, cut_last_n::Int=0,
+        kwargs...)
 
 Return the `L`-order Power Spectrum (PS) multipole for a generic window function, through the
 following Fast Fourier Transform and the effective redshift approximation:
 
 ```math
-     \\left\\langle \\hat{P}_L(k) \\right\\rangle = 
-          \\frac{2 L + 1}{A} (-i)^L
-          \\sum_{\\ell=0}^{\\infty} 
-          \\sum_{\\ell_1=0}^{\\infty} 
-          \\begin{pmatrix}
-               L & \\ell & \\ell_1 \\\\
-               0 & 0 & 0
-          \\end{pmatrix}^2
-          \\int_0^{\\infty}\\!\\mathrm{d} s \\, s^2 \\, \\xi_\\ell(s, s_{\\rm eff}) \\, 
-          j_L(k s) \\, Q_{\\ell_1}(s) \\, ,
+    \\left\\langle \\hat{P}_L(k) \\right\\rangle = 
+        \\frac{2 L + 1}{A} (-i)^L
+        \\sum_{\\ell=0}^{\\infty} 
+        \\sum_{\\ell_1=0}^{\\infty} 
+        \\begin{pmatrix}
+            L & \\ell & \\ell_1 \\\\
+            0 & 0 & 0
+        \\end{pmatrix}^2
+        \\int_0^{\\infty}\\!\\mathrm{d} s \\, s^2 \\, \\xi_\\ell(s, s_{\\rm eff}) \\, 
+        j_L(k s) \\, Q_{\\ell_1}(s) \\, ,
 ```
 
 where:
@@ -360,22 +360,22 @@ LOGARITHMICALLY DISTRIBUTED scale. A linear distribution does not fit for the al
   where they are stored (that will be internally open with `GenericWindow` too). 
   The file must have the following structure
   ```text
-     \$ cat Ql_multipoles.txt 
-     # Any comment line in the file must start with a #
-     # you can have how many comment lines you want in the header; they 
-     # will be all skipped.
-     # Then you must provide in blank space separated columns:
-     # - as first column, the comoving distance values, measured in Mpc/h_0
-     # - from the second column onwards, all the Q_{\ell_1} multipoles you want;
-     #   they must be ordered followinf the ascending multipole order (so \ell_1 = 0
-     #   must be the 2 column), and you can go as further as you want in the multipole
-     #   order
-     # 
-     # s [Mpc/h_0]      Q_{l1=0}      Q_{l1=1}      Q_{l1=2}      ...
-     1.0     0.9999999999999999      1.445269850978461e-7      0.000011917268941324522    ...
-     21.0    0.9832914433168294      -0.0025537781362117177  -0.0033199998619560947        ...
-     41.0    0.9669175943095181      -0.004923364937797496      -0.006463561496567318        ...     
-     ...     ...                  ...                      ...
+    \$ cat Ql_multipoles.txt 
+    # Any comment line in the file must start with a #
+    # you can have how many comment lines you want in the header; they 
+    # will be all skipped.
+    # Then you must provide in blank space separated columns:
+    # - as first column, the comoving distance values, measured in Mpc/h_0
+    # - from the second column onwards, all the Q_{\ell_1} multipoles you want;
+    #   they must be ordered followinf the ascending multipole order (so \ell_1 = 0
+    #   must be the 2 column), and you can go as further as you want in the multipole
+    #   order
+    # 
+    # s [Mpc/h_0]      Q_{l1=0}      Q_{l1=1}      Q_{l1=2}      ...
+    1.0     0.9999999999999999      1.445269850978461e-7      0.000011917268941324522    ...
+    21.0    0.9832914433168294      -0.0025537781362117177  -0.0033199998619560947        ...
+    41.0    0.9669175943095181      -0.004923364937797496      -0.006463561496567318        ...     
+    ...     ...                  ...                      ...
   ```
 
 
@@ -429,106 +429,106 @@ See also: [`create_file_for_XiMultipoles`](@ref), [`XiMultipoles`](@ref),
 [`EPLs`](@ref),  [`print_PS_multipole`](@ref)
 """
 function PS_multipole_GenWin(
-     ximult::Union{XiMultipoles,String}, genwin::Union{GenericWindow,String};
-     alg::Symbol=:fftlog, L::Int=0,
-     cut_first_n::Int=0, cut_last_n::Int=0,
-     kwargs...)
+    ximult::Union{XiMultipoles,String}, genwin::Union{GenericWindow,String};
+    alg::Symbol=:fftlog, L::Int=0,
+    cut_first_n::Int=0, cut_last_n::Int=0,
+    kwargs...)
 
-     @assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
-     @assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
+    @assert cut_first_n ≥ 0 "cut_first_n ≥ 0 must hold!"
+    @assert cut_last_n ≥ 0 "cut_last_n ≥ 0 must hold!"
 
-     XIMULT = typeof(ximult) == String ? XiMultipoles(ximult) : ximult
-     GENWIN = typeof(genwin) == String ? GenericWindow(genwin) : genwin
+    XIMULT = typeof(ximult) == String ? XiMultipoles(ximult) : ximult
+    GENWIN = typeof(genwin) == String ? GenericWindow(genwin) : genwin
 
-     @assert cut_first_n + cut_last_n < length(XIMULT.comdist) "cut_first_n + cut_last_n < length(XIMULT.comdist) must hold!"
+    @assert cut_first_n + cut_last_n < length(XIMULT.comdist) "cut_first_n + cut_last_n < length(XIMULT.comdist) must hold!"
 
-     a, b = 1 + cut_first_n, length(XIMULT.comdist) - cut_last_n
-     SS, VEC_FS = XIMULT.comdist[a:b], [vec[a:b] for vec in XIMULT.multipoles]
+    a, b = 1 + cut_first_n, length(XIMULT.comdist) - cut_last_n
+    SS, VEC_FS = XIMULT.comdist[a:b], [vec[a:b] for vec in XIMULT.multipoles]
 
-     if alg == :twofast
+    if alg == :twofast
 
-          ks, _ = GaPSE.TwoFAST_PS_multipole(SS, VEC_FS[1]; cut_first_n=0, cut_last_n=0, kwargs...)
-          res = zeros(length(ks))
+        ks, _ = GaPSE.TwoFAST_PS_multipole(SS, VEC_FS[1]; cut_first_n=0, cut_last_n=0, kwargs...)
+        res = zeros(length(ks))
 
-          #=
-          for l in 0:length(XIMULT.multipoles)-1, l1 in 0:length(GENWIN.splines)-1
+        #=
+        for l in 0:length(XIMULT.multipoles)-1, l1 in 0:length(GENWIN.splines)-1
 
-               w3j = convert(Float64, wigner3j(L, l, l1, 0, 0, 0))
+            w3j = convert(Float64, wigner3j(L, l, l1, 0, 0, 0))
 
-               if (w3j ≈ 0.0) == false
-                    qls = [GENWIN.splines[l1+1](s) for s in SS]
-                    _, pks = GaPSE.TwoFAST_PS_multipole(SS, VEC_FS[l+1] .* qls; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
-                    res += w3j^2 .* (2.0 * l1 + 1.0) .* VEC_FS[l+1] .* qls
-                    #s_index = findfirst(x->x>1000.0, SS)
-                    #println("(L,l,l1)=($L,$l,$l1) \t s = $(SS[s_index]) \t w3j = $w3j")
-                    #println("res=$(res[s_index]) \t xis=$(VEC_FS[l+1][s_index]) \t qls=$(qls[s_index])\n")
-               end
-          end
+            if (w3j ≈ 0.0) == false
+                qls = [GENWIN.splines[l1+1](s) for s in SS]
+                _, pks = GaPSE.TwoFAST_PS_multipole(SS, VEC_FS[l+1] .* qls; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
+                res += w3j^2 .* (2.0 * l1 + 1.0) .* VEC_FS[l+1] .* qls
+                #s_index = findfirst(x->x>1000.0, SS)
+                #println("(L,l,l1)=($L,$l,$l1) \t s = $(SS[s_index]) \t w3j = $w3j")
+                #println("res=$(res[s_index]) \t xis=$(VEC_FS[l+1][s_index]) \t qls=$(qls[s_index])\n")
+            end
+        end
 
-          return ks, res
-          =#
+        return ks, res
+        =#
 
-          for l in 0:length(XIMULT.multipoles)-1, l1 in 0:length(GENWIN.splines)-1
+        for l in 0:length(XIMULT.multipoles)-1, l1 in 0:length(GENWIN.splines)-1
 
-               w3j = convert(Float64, wigner3j(L, l, l1, 0, 0, 0))
+            w3j = convert(Float64, wigner3j(L, l, l1, 0, 0, 0))
 
-               if (w3j ≈ 0.0) == false
-                    qls = [GENWIN.splines[l1+1](s) for s in SS]
-                    res += w3j^2 .* (2.0 * l1 + 1.0) .* VEC_FS[l+1] .* qls
-                    #s_index = findfirst(x->x>1000.0, SS)
-                    #println("(L,l,l1)=($L,$l,$l1) \t s = $(SS[s_index]) \t w3j = $w3j")
-                    #println("res=$(res[s_index]) \t xis=$(VEC_FS[l+1][s_index]) \t qls=$(qls[s_index])\n")
-               end
-          end
+            if (w3j ≈ 0.0) == false
+                qls = [GENWIN.splines[l1+1](s) for s in SS]
+                res += w3j^2 .* (2.0 * l1 + 1.0) .* VEC_FS[l+1] .* qls
+                #s_index = findfirst(x->x>1000.0, SS)
+                #println("(L,l,l1)=($L,$l,$l1) \t s = $(SS[s_index]) \t w3j = $w3j")
+                #println("res=$(res[s_index]) \t xis=$(VEC_FS[l+1][s_index]) \t qls=$(qls[s_index])\n")
+            end
+        end
 
-          _, pks = GaPSE.TwoFAST_PS_multipole(SS, res; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
+        _, pks = GaPSE.TwoFAST_PS_multipole(SS, res; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
 
-          return ks, pks
+        return ks, pks
 
-     elseif alg == :fftlog
+    elseif alg == :fftlog
 
-          ks, _ = GaPSE.FFTLog_PS_multipole(SS, VEC_FS[1]; cut_first_n=0, cut_last_n=0, kwargs...)
-          res = zeros(length(ks))
+        ks, _ = GaPSE.FFTLog_PS_multipole(SS, VEC_FS[1]; cut_first_n=0, cut_last_n=0, kwargs...)
+        res = zeros(length(ks))
 
-          #=
-          for l in 0:length(XIMULT.multipoles)-1, l1 in 0:length(GENWIN.splines)-1
+        #=
+        for l in 0:length(XIMULT.multipoles)-1, l1 in 0:length(GENWIN.splines)-1
 
-               w3j = convert(Float64, wigner3j(L, l, l1, 0, 0, 0))
+            w3j = convert(Float64, wigner3j(L, l, l1, 0, 0, 0))
 
-               if (w3j ≈ 0.0) == false
-                    qls = [GENWIN.splines[l1+1](s) for s in SS]
-                    _, pks = GaPSE.FFTLog_PS_multipole(SS, VEC_FS[l+1] .* qls; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
-                    res += w3j^2 .* (2.0 * l1 + 1.0) .* VEC_FS[l+1] .* qls
-                    #s_index = findfirst(x->x>1000.0, SS)
-                    #println("(L,l,l1)=($L,$l,$l1) \t s = $(SS[s_index]) \t w3j = $w3j")
-                    #println("res=$(res[s_index]) \t xis=$(VEC_FS[l+1][s_index]) \t qls=$(qls[s_index])\n")
-               end
-          end
+            if (w3j ≈ 0.0) == false
+                qls = [GENWIN.splines[l1+1](s) for s in SS]
+                _, pks = GaPSE.FFTLog_PS_multipole(SS, VEC_FS[l+1] .* qls; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
+                res += w3j^2 .* (2.0 * l1 + 1.0) .* VEC_FS[l+1] .* qls
+                #s_index = findfirst(x->x>1000.0, SS)
+                #println("(L,l,l1)=($L,$l,$l1) \t s = $(SS[s_index]) \t w3j = $w3j")
+                #println("res=$(res[s_index]) \t xis=$(VEC_FS[l+1][s_index]) \t qls=$(qls[s_index])\n")
+            end
+        end
 
-          return ks, res
-          =#
+        return ks, res
+        =#
 
-          for l in 0:length(XIMULT.multipoles)-1, l1 in 0:length(GENWIN.splines)-1
+        for l in 0:length(XIMULT.multipoles)-1, l1 in 0:length(GENWIN.splines)-1
 
-               w3j = convert(Float64, wigner3j(L, l, l1, 0, 0, 0))
+            w3j = convert(Float64, wigner3j(L, l, l1, 0, 0, 0))
 
-               if (w3j ≈ 0.0) == false
-                    qls = [GENWIN.splines[l1+1](s) for s in SS]
-                    res += w3j^2 .* (2.0 * l1 + 1.0) .* VEC_FS[l+1] .* qls
-                    #s_index = findfirst(x->x>1000.0, SS)
-                    #println("(L,l,l1)=($L,$l,$l1) \t s = $(SS[s_index]) \t w3j = $w3j")
-                    #println("res=$(res[s_index]) \t xis=$(VEC_FS[l+1][s_index]) \t qls=$(qls[s_index])\n")
-               end
-          end
+            if (w3j ≈ 0.0) == false
+                qls = [GENWIN.splines[l1+1](s) for s in SS]
+                res += w3j^2 .* (2.0 * l1 + 1.0) .* VEC_FS[l+1] .* qls
+                #s_index = findfirst(x->x>1000.0, SS)
+                #println("(L,l,l1)=($L,$l,$l1) \t s = $(SS[s_index]) \t w3j = $w3j")
+                #println("res=$(res[s_index]) \t xis=$(VEC_FS[l+1][s_index]) \t qls=$(qls[s_index])\n")
+            end
+        end
 
-          _, pks = GaPSE.FFTLog_PS_multipole(SS, res; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
+        _, pks = GaPSE.FFTLog_PS_multipole(SS, res; L=L, cut_first_n=0, cut_last_n=0, kwargs...)
 
-          return ks, pks
+        return ks, pks
 
-     else
-          throw(AssertionError(
-               "The algorithm ':$alg' does not exist! The available ones are:\n" *
-               "\t ':fftlog' (default), ':twofast' ."
-          ))
-     end
+    else
+        throw(AssertionError(
+            "The algorithm ':$alg' does not exist! The available ones are:\n" *
+            "\t ':fftlog' (default), ':twofast' ."
+        ))
+    end
 end

@@ -18,13 +18,13 @@
 #
 
 """
-     DEFAULT_FMAP_OPTS_hcub = Dict(
-          :θ_max => π / 2.0::Float64, 
-          :tolerance => 1e-10::Float64, 
-          :rtol => 1e-2::Float64, 
-          :atol => 1e-3::Float64,
-          :pr => true::Bool,
-     )
+    DEFAULT_FMAP_OPTS_hcub = Dict(
+        :θ_max => π / 2.0::Float64, 
+        :tolerance => 1e-10::Float64, 
+        :rtol => 1e-2::Float64, 
+        :atol => 1e-3::Float64,
+        :pr => true::Bool,
+    )
 
 The default values to be used for the `F` function when you
 want to perform the computation with `hcubature`.
@@ -32,22 +32,22 @@ want to perform the computation with `hcubature`.
 See also: [`integrand_F`](@ref), [`F_hcub`](@ref), [`print_map_F`](@ref)
 """
 const DEFAULT_FMAP_OPTS_hcub = Dict(
-     :θ_max => π / 2.0::Float64,
-     :tolerance => 1e-10::Float64,
-     :rtol => 1e-2::Float64,
-     :atol => 1e-3::Float64,
-     :pr => true::Bool,
+    :θ_max => π / 2.0::Float64,
+    :tolerance => 1e-10::Float64,
+    :rtol => 1e-2::Float64,
+    :atol => 1e-3::Float64,
+    :pr => true::Bool,
 )
 
 
 """
-     DEFAULT_FMAP_OPTS_trap = Dict(
-          :θ_max => π / 2.0::Float64, 
-          :tolerance => 1e-10::Float64, 
-          :N => 300::Int64, 
-          :en => 1.0::Float64,
-          :pr => true::Bool,
-     )
+    DEFAULT_FMAP_OPTS_trap = Dict(
+        :θ_max => π / 2.0::Float64, 
+        :tolerance => 1e-10::Float64, 
+        :N => 300::Int64, 
+        :en => 1.0::Float64,
+        :pr => true::Bool,
+    )
 
 
 The default values to be used for the `F` function when you
@@ -56,11 +56,11 @@ want to perform the computation with `trap`.
 See also: [`integrand_F`](@ref), [`F_trap`](@ref), [`print_map_F`](@ref)
 """
 const DEFAULT_FMAP_OPTS_trap = Dict(
-     :θ_max => π / 2.0::Float64,
-     :tolerance => 1e-10::Float64,
-     :N => 300::Int64,
-     :en => 1.0::Float64,
-     :pr => true::Bool,
+    :θ_max => π / 2.0::Float64,
+    :tolerance => 1e-10::Float64,
+    :N => 300::Int64,
+    :en => 1.0::Float64,
+    :pr => true::Bool,
 )
 
 
@@ -105,30 +105,30 @@ solve the problem, returning 0 if ``0<-\\mathrm{den}< \\mathrm{tolerance}``
 See also: [`F`](@ref), [`print_map_F`](@ref)
 """
 function integrand_F(θ_1, θ, x, μ, θ_max; tolerance=1e-10)
-     if (x * cos(θ) + cos(θ_1)) / √(x^2 + 1 + 2 * x * μ) - cos(θ_max) > 0 &&
-        (μ - cos(θ + θ_1)) > 0 &&
-        (cos(θ - θ_1) - μ) > 0
+    if (x * cos(θ) + cos(θ_1)) / √(x^2 + 1 + 2 * x * μ) - cos(θ_max) > 0 &&
+    (μ - cos(θ + θ_1)) > 0 &&
+    (cos(θ - θ_1) - μ) > 0
 
-          den = (sin(θ) * sin(θ_1))^2 - (cos(θ) * cos(θ_1) - μ)^2
+        den = (sin(θ) * sin(θ_1))^2 - (cos(θ) * cos(θ_1) - μ)^2
 
-          if den > 0
-               return 4.0 * π * sin(θ_1) * sin(θ) / √den
-          elseif -den < tolerance
-               return 0.0
-          else
-               throw(ErrorException("the denominator has a problem, even with tolerance = $tolerance; den = $(den)"))
-          end
-     else
-          return 0.0
-     end
+        if den > 0
+            return 4.0 * π * sin(θ_1) * sin(θ) / √den
+        elseif -den < tolerance
+            return 0.0
+        else
+            throw(ErrorException("the denominator has a problem, even with tolerance = $tolerance; den = $(den)"))
+        end
+    else
+        return 0.0
+    end
 end;
 
 
 
 """
-     F_hcub(x, μ; θ_max = π/2, tolerance = 1e-10, 
-          atol = 1e-2, rtol = 1e-5, 
-          kwargs...) ::Tuple{Float64, Float64}
+    F_hcub(x, μ; θ_max = π/2, tolerance = 1e-10, 
+        atol = 1e-2, rtol = 1e-5, 
+        kwargs...) ::Tuple{Float64, Float64}
 
 Computes with `hcubature` the value of ``F(x,\\mu; \\theta_\\mathrm{max})``, 
 defined as follows:
@@ -173,18 +173,18 @@ See also:  [`F_trap`](@ref), [`print_map_F`](@ref), [`integrand_F`](@ref),
 [`check_compatible_dicts`](@ref)
 """
 function F_hcub(x, μ; θ_max=π / 2, tolerance=1e-10, atol=1e-2, rtol=1e-5, kwargs...)
-     my_int(var) = integrand_F(var[1], var[2], x, μ, θ_max; tolerance=tolerance)
-     a = [0.0, 0.0]
-     b = [θ_max, π]
-     return hcubature(my_int, a, b; rtol=rtol, atol=atol, kwargs...)
+    my_int(var) = integrand_F(var[1], var[2], x, μ, θ_max; tolerance=tolerance)
+    a = [0.0, 0.0]
+    b = [θ_max, π]
+    return hcubature(my_int, a, b; rtol=rtol, atol=atol, kwargs...)
 end;
 
 
 
 """
-     F_trap(x, μ; θ_max = π/2, tolerance = 1e-10, 
-          atol = 1e-2, rtol = 1e-5, 
-          kwargs...) ::Float64
+    F_trap(x, μ; θ_max = π/2, tolerance = 1e-10, 
+        atol = 1e-2, rtol = 1e-5, 
+        kwargs...) ::Float64
 
 Computes with `trap` the value of ``F(x,\\mu; \\theta_\\mathrm{max})``, 
 defined as follows:
@@ -224,240 +224,239 @@ to use this one.
 See also:  [`F_hcub`](@ref), [`print_map_F`](@ref), [`integrand_F`](@ref), 
 [`check_compatible_dicts`](@ref)
 """
-function F_trap(x, μ; θ_max=π / 2, N::Int=300, en=1.0,
-     tolerance=1e-13)
+function F_trap(x, μ; θ_max=π / 2, N::Int=300, en=1.0, tolerance=1e-13)
 
-     χ1s = θ_max .* range(0.0, 1.0, length=N)
-     χ2s = π .* range(0.0, 1.0, length=N + 7)
+    χ1s = θ_max .* range(0.0, 1.0, length=N)
+    χ2s = π .* range(0.0, 1.0, length=N + 7)
 
-     zs = [
-          en * integrand_F(χ1, χ2, x, μ, θ_max; tolerance=tolerance)
-          for χ1 in χ1s, χ2 in χ2s
-     ]
+    zs = [
+        en * integrand_F(χ1, χ2, x, μ, θ_max; tolerance=tolerance)
+        for χ1 in χ1s, χ2 in χ2s
+    ]
 
-     res = trapz((χ1s, χ2s), zs)
+    res = trapz((χ1s, χ2s), zs)
 
-     return res / en
+    return res / en
 end;
 
 
 function print_map_F(out::String, x_step::Float64=0.01, μ_step::Float64=0.01;
-     alg::Symbol=:trap, x1=0, x2=3, μ1=-1, μ2=1,
-     Fmap_opts::Dict=Dict{Symbol,Any}(), kwargs...)
+    alg::Symbol=:trap, x1=0, x2=3, μ1=-1, μ2=1,
+    Fmap_opts::Dict=Dict{Symbol,Any}(), kwargs...)
 
-     check_parent_directory(out)
-     check_namefile(out)
+    check_parent_directory(out)
+    check_namefile(out)
 
-     @assert x1 >= 0.0 "The lower limit of x must be >0, not $(x1)!"
-     @assert x2 > x1 "The upper limit of x must be > than the lower one, not $(x2)<=$(x1)!"
-     @assert x2 <= 10.0 "The upper limit of x must be <10, not $(x2)!"
-     @assert μ1 >= -1.0 "The lower limit of μ must be >=-1, not $(μ1)!"
-     @assert μ2 <= 1.0 "The upper limit of μ must be <=1, not $(μ2)!"
-     @assert μ2 > μ1 "The upper limit of μ must be > than the lower one, not $(μ2)<=$(μ1)!"
-     @assert 0 < x_step < 1 "The integration step of x must be 0<x_step<1, not $(x_step)!"
-     @assert 0 < μ_step < 1 "The integration step of μ must be 0<μ_step<1, not $(μ_step)!"
+    @assert x1 >= 0.0 "The lower limit of x must be >0, not $(x1)!"
+    @assert x2 > x1 "The upper limit of x must be > than the lower one, not $(x2)<=$(x1)!"
+    @assert x2 <= 10.0 "The upper limit of x must be <10, not $(x2)!"
+    @assert μ1 >= -1.0 "The lower limit of μ must be >=-1, not $(μ1)!"
+    @assert μ2 <= 1.0 "The upper limit of μ must be <=1, not $(μ2)!"
+    @assert μ2 > μ1 "The upper limit of μ must be > than the lower one, not $(μ2)<=$(μ1)!"
+    @assert 0 < x_step < 1 "The integration step of x must be 0<x_step<1, not $(x_step)!"
+    @assert 0 < μ_step < 1 "The integration step of μ must be 0<μ_step<1, not $(μ_step)!"
 
-     @assert typeof(Fmap_opts) <: Dict{Symbol,T1} where {T1}
-     "the keys of the Fmap_opts dict have to be Symbols (like :k_min, :N, ...)"
+    @assert typeof(Fmap_opts) <: Dict{Symbol,T1} where {T1}
+    "the keys of the Fmap_opts dict have to be Symbols (like :k_min, :N, ...)"
 
-     if alg == :trap
-          check_compatible_dicts(DEFAULT_FMAP_OPTS_trap, Fmap_opts, "Fmap_opts")
-     elseif alg == :hcub
-          check_compatible_dicts(DEFAULT_FMAP_OPTS_hcub, Fmap_opts, "Fmap_opts")
-     else
-          throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
-                               "choose between ':trap' and ':hcub' . "))
-     end
+    if alg == :trap
+        check_compatible_dicts(DEFAULT_FMAP_OPTS_trap, Fmap_opts, "Fmap_opts")
+    elseif alg == :hcub
+        check_compatible_dicts(DEFAULT_FMAP_OPTS_hcub, Fmap_opts, "Fmap_opts")
+    else
+        throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
+                            "choose between ':trap' and ':hcub' . "))
+    end
 
-     Fmap_dict = if alg == :trap
-          merge(DEFAULT_FMAP_OPTS_trap, Fmap_opts)
-     elseif alg == :hcub
-          merge(DEFAULT_FMAP_OPTS_hcub, Fmap_opts)
-     else
-          throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
-                               "choose between ':trap' and ':hcub' . "))
-     end
+    Fmap_dict = if alg == :trap
+        merge(DEFAULT_FMAP_OPTS_trap, Fmap_opts)
+    elseif alg == :hcub
+        merge(DEFAULT_FMAP_OPTS_hcub, Fmap_opts)
+    else
+        throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
+                            "choose between ':trap' and ':hcub' . "))
+    end
 
-     μs = μ1:μ_step:μ2
-     xs = x1:x_step:x2
-     xs_grid = [x for x = xs for μ = μs]
-     μs_grid = [μ for x = xs for μ = μs]
+    μs = μ1:μ_step:μ2
+    xs = x1:x_step:x2
+    xs_grid = [x for x = xs for μ = μs]
+    μs_grid = [μ for x = xs for μ = μs]
 
-     time_1 = time()
+    time_1 = time()
 
-     new_F(x, μ) =
-          if alg == :trap
-               F_trap(x, μ; θ_max=Fmap_dict[:θ_max],
-                    tolerance=Fmap_dict[:tolerance], N=Fmap_dict[:N],
-                    en=Fmap_dict[:en])
-          elseif alg == :hcub
-               F_hcub(x, μ; θ_max=Fmap_dict[:θ_max],
-                    tolerance=Fmap_dict[:tolerance], atol=Fmap_dict[:atol],
-                    rtol=Fmap_dict[:rtol], kwargs...)
-          else
-               throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
-                                    "choose between ':trap' and ':hcub' . "))
-          end
+    new_F(x, μ) =
+        if alg == :trap
+            F_trap(x, μ; θ_max=Fmap_dict[:θ_max],
+                tolerance=Fmap_dict[:tolerance], N=Fmap_dict[:N],
+                en=Fmap_dict[:en])
+        elseif alg == :hcub
+            F_hcub(x, μ; θ_max=Fmap_dict[:θ_max],
+                tolerance=Fmap_dict[:tolerance], atol=Fmap_dict[:atol],
+                rtol=Fmap_dict[:rtol], kwargs...)
+        else
+            throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
+                                "choose between ':trap' and ':hcub' . "))
+        end
 
-     Fs_grid = Fmap_dict[:pr] ? begin
-          @showprogress "window F evaluation: " map(new_F, xs_grid, μs_grid)
-     end : map(new_F, xs_grid, μs_grid)
+    Fs_grid = Fmap_dict[:pr] ? begin
+        @showprogress "window F evaluation: " map(new_F, xs_grid, μs_grid)
+    end : map(new_F, xs_grid, μs_grid)
 
-     time_2 = time()
+    time_2 = time()
 
-     #run(`rm $(out)`)
-     open(out, "w") do io
-          println(io, BRAND)
-          println(io, "# This is an integration map on μ and x of the window function F(x, μ)")
-          println(io, "# For its analytical definition, check the code.\n#")
-          println(io, "# Parameters used in this integration map:")
-          println(io, "# \t\tx_min = $(x1) \t x_max = $(x2) \t x_step = $(x_step)")
-          println(io, "# \t\tmu_min = $(μ1) \t mu_max = $(μ2) \t mu_step = $(μ_step)")
-          println(io, "# \t\talg = :$alg")
-          println(io, "# computational time (in s) : $(@sprintf("%.3f", time_2-time_1))")
-          println(io, "# kwards passed: ")
+    #run(`rm $(out)`)
+    open(out, "w") do io
+        println(io, BRAND)
+        println(io, "# This is an integration map on μ and x of the window function F(x, μ)")
+        println(io, "# For its analytical definition, check the code.\n#")
+        println(io, "# Parameters used in this integration map:")
+        println(io, "# \t\tx_min = $(x1) \t x_max = $(x2) \t x_step = $(x_step)")
+        println(io, "# \t\tmu_min = $(μ1) \t mu_max = $(μ2) \t mu_step = $(μ_step)")
+        println(io, "# \t\talg = :$alg")
+        println(io, "# computational time (in s) : $(@sprintf("%.3f", time_2-time_1))")
+        println(io, "# kwards passed: ")
 
-          for key in keys(Fmap_dict)
-               println(io, "# \t\t$(key) = $(Fmap_dict[key])")
-          end
+        for key in keys(Fmap_dict)
+            println(io, "# \t\t$(key) = $(Fmap_dict[key])")
+        end
 
-          if !isempty(kwargs)
-               for key in keys(kwargs)
-                    println(io, "# \t\t$(key) = $(kwargs[key])")
-               end
-          end
+        if !isempty(kwargs)
+            for key in keys(kwargs)
+                println(io, "# \t\t$(key) = $(kwargs[key])")
+            end
+        end
 
-          if alg == :trap
-               println(io, "#\n# x \t mu \t F")
-               for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
-                    println(io, "$x\t $μ \t $F")
-               end
-          elseif alg == :hcub
-               println(io, "#\n# x \t mu \t F \t F_error")
-               for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
-                    println(io, "$x\t $μ \t $(F[1]) \t $(F[2])")
-               end
-          else
-               throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
-                                    "choose between ':trap' and ':hcub' . "))
-          end
-     end
+        if alg == :trap
+            println(io, "#\n# x \t mu \t F")
+            for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
+                println(io, "$x\t $μ \t $F")
+            end
+        elseif alg == :hcub
+            println(io, "#\n# x \t mu \t F \t F_error")
+            for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
+                println(io, "$x\t $μ \t $(F[1]) \t $(F[2])")
+            end
+        else
+            throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
+                                "choose between ':trap' and ':hcub' . "))
+        end
+    end
 end
 
 
 
 function print_map_F(out::String, xs::Vector{Float64}, μs::Vector{Float64};
-     alg::Symbol=:trap, Fmap_opts::Dict=Dict{Symbol,Any}(), kwargs...)
+    alg::Symbol=:trap, Fmap_opts::Dict=Dict{Symbol,Any}(), kwargs...)
 
-     check_parent_directory(out)
-     check_namefile(out)
+    check_parent_directory(out)
+    check_namefile(out)
 
-     @assert all(xs .>= 0.0) "All xs must be >=0.0!"
-     @assert all([xs[i+1] > xs[i] for i in 1:(length(xs)-1)]) "xs must be a float vector of increasing values!"
-     @assert all(xs .<= 10.0) "All xs must be <=10.0!"
-     @assert all(μs .>= -1.0) "All μs must be >=-1.0!"
-     @assert all([μs[i+1] > μs[i] for i in 1:(length(μs)-1)]) "μs must be a float vector of increasing values!"
-     @assert all(μs .<= 1.0) "All μs must be <=1.0!"
+    @assert all(xs .>= 0.0) "All xs must be >=0.0!"
+    @assert all([xs[i+1] > xs[i] for i in 1:(length(xs)-1)]) "xs must be a float vector of increasing values!"
+    @assert all(xs .<= 10.0) "All xs must be <=10.0!"
+    @assert all(μs .>= -1.0) "All μs must be >=-1.0!"
+    @assert all([μs[i+1] > μs[i] for i in 1:(length(μs)-1)]) "μs must be a float vector of increasing values!"
+    @assert all(μs .<= 1.0) "All μs must be <=1.0!"
 
-     @assert typeof(Fmap_opts) <: Dict{Symbol,T1} where {T1}
-     "the keys of the Fmap_opts dict have to be Symbols (like :k_min, :N, ...)"
+    @assert typeof(Fmap_opts) <: Dict{Symbol,T1} where {T1}
+    "the keys of the Fmap_opts dict have to be Symbols (like :k_min, :N, ...)"
 
-     if alg == :trap
-          check_compatible_dicts(DEFAULT_FMAP_OPTS_trap, Fmap_opts, "Fmap_opts")
-     elseif alg == :hcub
-          check_compatible_dicts(DEFAULT_FMAP_OPTS_hcub, Fmap_opts, "Fmap_opts")
-     else
-          throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
-                               "choose between ':trap' and ':hcub' . "))
-     end
+    if alg == :trap
+        check_compatible_dicts(DEFAULT_FMAP_OPTS_trap, Fmap_opts, "Fmap_opts")
+    elseif alg == :hcub
+        check_compatible_dicts(DEFAULT_FMAP_OPTS_hcub, Fmap_opts, "Fmap_opts")
+    else
+        throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
+                            "choose between ':trap' and ':hcub' . "))
+    end
 
-     Fmap_dict = if alg == :trap
-          merge(DEFAULT_FMAP_OPTS_trap, Fmap_opts)
-     elseif alg == :hcub
-          merge(DEFAULT_FMAP_OPTS_hcub, Fmap_opts)
-     else
-          throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
-                               "choose between ':trap' and ':hcub' . "))
-     end
+    Fmap_dict = if alg == :trap
+        merge(DEFAULT_FMAP_OPTS_trap, Fmap_opts)
+    elseif alg == :hcub
+        merge(DEFAULT_FMAP_OPTS_hcub, Fmap_opts)
+    else
+        throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
+                            "choose between ':trap' and ':hcub' . "))
+    end
 
 
-     xs_grid = [x for x = xs for μ = μs]
-     μs_grid = [μ for x = xs for μ = μs]
+    xs_grid = [x for x = xs for μ = μs]
+    μs_grid = [μ for x = xs for μ = μs]
 
-     time_1 = time()
+    time_1 = time()
 
-     new_F(x, μ) =
-          if alg == :trap
-               F_trap(x, μ; θ_max=Fmap_dict[:θ_max],
-                    tolerance=Fmap_dict[:tolerance], N=Fmap_dict[:N],
-                    en=Fmap_dict[:en])
-          elseif alg == :hcub
-               F_hcub(x, μ; θ_max=Fmap_dict[:θ_max],
-                    tolerance=Fmap_dict[:tolerance], atol=Fmap_dict[:atol],
-                    rtol=Fmap_dict[:rtol], kwargs...)
-          else
-               throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
-                                    "choose between ':trap' and ':hcub' . "))
-          end
+    new_F(x, μ) =
+        if alg == :trap
+            F_trap(x, μ; θ_max=Fmap_dict[:θ_max],
+                tolerance=Fmap_dict[:tolerance], N=Fmap_dict[:N],
+                en=Fmap_dict[:en])
+        elseif alg == :hcub
+            F_hcub(x, μ; θ_max=Fmap_dict[:θ_max],
+                tolerance=Fmap_dict[:tolerance], atol=Fmap_dict[:atol],
+                rtol=Fmap_dict[:rtol], kwargs...)
+        else
+            throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
+                                "choose between ':trap' and ':hcub' . "))
+        end
 
-     Fs_grid = Fmap_dict[:pr] ? begin
-          @showprogress "window F evaluation: " map(new_F, xs_grid, μs_grid)
-     end : map(new_F, xs_grid, μs_grid)
+    Fs_grid = Fmap_dict[:pr] ? begin
+        @showprogress "window F evaluation: " map(new_F, xs_grid, μs_grid)
+    end : map(new_F, xs_grid, μs_grid)
 
-     time_2 = time()
+    time_2 = time()
 
-     (Fmap_dict[:pr]) && println("\ntime needed for print_map_F " *
-                                 "[in s] = $(@sprintf("%.5f", time_2-time_1)) \n")
+    (Fmap_dict[:pr]) && println("\ntime needed for print_map_F " *
+                                "[in s] = $(@sprintf("%.5f", time_2-time_1)) \n")
 
-     #run(`rm $(out)`)
-     open(out, "w") do io
-          println(io, BRAND)
-          println(io, "# This is an integration map on μ and x of the window function F(x, μ)")
-          println(io, "# For its analytical definition, check the code.\n#")
-          println(io, "# Parameters used in this integration map:")
-          println(io, "# computational time (in s) : $(@sprintf("%.3f", time_2-time_1))")
-          println(io, "# kwards passed: ")
-          println(io, "# \t\talg = :$alg")
+    #run(`rm $(out)`)
+    open(out, "w") do io
+        println(io, BRAND)
+        println(io, "# This is an integration map on μ and x of the window function F(x, μ)")
+        println(io, "# For its analytical definition, check the code.\n#")
+        println(io, "# Parameters used in this integration map:")
+        println(io, "# computational time (in s) : $(@sprintf("%.3f", time_2-time_1))")
+        println(io, "# kwards passed: ")
+        println(io, "# \t\talg = :$alg")
 
-          for key in keys(Fmap_dict)
-               println(io, "# \t\t$(key) = $(Fmap_dict[key])")
-          end
+        for key in keys(Fmap_dict)
+            println(io, "# \t\t$(key) = $(Fmap_dict[key])")
+        end
 
-          if !isempty(kwargs)
-               for key in keys(kwargs)
-                    println(io, "# \t\t$(key) = $(kwargs[key])")
-               end
-          end
+        if !isempty(kwargs)
+            for key in keys(kwargs)
+                println(io, "# \t\t$(key) = $(kwargs[key])")
+            end
+        end
 
-          if alg == :trap
-               println(io, "#\n# x \t mu \t F")
-               for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
-                    println(io, "$x\t $μ \t $F")
-               end
-          elseif alg == :hcub
-               println(io, "#\n# x \t mu \t F \t F_error")
-               for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
-                    println(io, "$x\t $μ \t $(F[1]) \t $(F[2])")
-               end
-          else
-               throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
-                                    "choose between ':trap' and ':hcub' . "))
-          end
-     end
+        if alg == :trap
+            println(io, "#\n# x \t mu \t F")
+            for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
+                println(io, "$x\t $μ \t $F")
+            end
+        elseif alg == :hcub
+            println(io, "#\n# x \t mu \t F \t F_error")
+            for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
+                println(io, "$x\t $μ \t $(F[1]) \t $(F[2])")
+            end
+        else
+            throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
+                                "choose between ':trap' and ':hcub' . "))
+        end
+    end
 end
 
 
 
 
 """
-     print_map_F(out::String, x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
-          alg::Symbol = :trap, x1 = 0, x2 = 3, μ1 = -1, μ2 = 1, 
-          Fmap_opts::Dict = Dict{Symbol,Any}(), 
-          kwargs...)
+    print_map_F(out::String, x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
+        alg::Symbol = :trap, x1 = 0, x2 = 3, μ1 = -1, μ2 = 1, 
+        Fmap_opts::Dict = Dict{Symbol,Any}(), 
+        kwargs...)
 
-     print_map_F(out::String, xs::Vector{Float64}, μs::Vector{Float64};
-          alg::Symbol = :trap, Fmap_opts::Dict = Dict{Symbol,Any}(),
-          kwargs...)
+    print_map_F(out::String, xs::Vector{Float64}, μs::Vector{Float64};
+        alg::Symbol = :trap, Fmap_opts::Dict = Dict{Symbol,Any}(),
+        kwargs...)
 
 Evaluate the window function ``F(x,\\mu; \\theta_\\mathrm{max})`` in a rectangual grid 
 of ``\\mu`` and ``x`` values, and print the results in the `out` file.
@@ -486,11 +485,11 @@ For example, if you set `trap == false` and:
 then the dictionary with all the options that will be passed to `F` will be:
 
 `Fmap_dict = merge(DEFAULT_FMAP_OPTS_hcub, Fmap_opts) = 
-     :θ_max => 2.0,           # CHANGED VALUE
-     :tolerance => 1e-5,      # CHANGED VALUE
-     :rtol => 1e-2,           # default
-     :atol => 1e-3,           # default
-     :pr => true,             # default
+    :θ_max => 2.0,           # CHANGED VALUE
+    :tolerance => 1e-5,      # CHANGED VALUE
+    :rtol => 1e-2,           # default
+    :atol => 1e-3,           # default
+    :pr => true,             # default
 )`
 
 Check the documentation of `DEFAULT_FMAP_OPTS_hcub` and `DEFAULT_FMAP_OPTS_trap`
@@ -572,34 +571,34 @@ because the constructor will recognise it. What does matter is the columns order
 See also: [`print_map_F`](@ref), [`F_trap`](@ref), [`spline_F`](@ref)
 """
 struct WindowF
-     xs::Vector{Float64}
-     μs::Vector{Float64}
-     Fs::Matrix{Float64}
+    xs::Vector{Float64}
+    μs::Vector{Float64}
+    Fs::Matrix{Float64}
 
 
-     function WindowF(file::String)
-          data = readdlm(file, comments=true)
-          xs, μs, Fs = data[:, 1], data[:, 2], data[:, 3]
-          @assert size(xs) == size(μs) == size(Fs) "xs, μs and Fs must have the same length!"
+    function WindowF(file::String)
+        data = readdlm(file, comments=true)
+        xs, μs, Fs = data[:, 1], data[:, 2], data[:, 3]
+        @assert size(xs) == size(μs) == size(Fs) "xs, μs and Fs must have the same length!"
 
-          new_xs = unique(xs)
-          new_μs = unique(μs)
-          new_Fs =
-               if xs[2] == xs[1] && μs[2] ≠ μs[1]
-                    transpose(reshape(Fs, (length(new_μs), length(new_xs))))
-               elseif xs[2] ≠ xs[1] && μs[2] == μs[1]
-                    reshape(Fs, (length(new_xs), length(new_μs)))
-               else
-                    throw(ErrorException("What kind of convenction for the file $file" *
-                                         " are you using? I do not recognise it."))
-               end
-          new(new_xs, new_μs, new_Fs)
-     end
+        new_xs = unique(xs)
+        new_μs = unique(μs)
+        new_Fs =
+            if xs[2] == xs[1] && μs[2] ≠ μs[1]
+                transpose(reshape(Fs, (length(new_μs), length(new_xs))))
+            elseif xs[2] ≠ xs[1] && μs[2] == μs[1]
+                reshape(Fs, (length(new_xs), length(new_μs)))
+            else
+                throw(ErrorException("What kind of convenction for the file $file" *
+                                        " are you using? I do not recognise it."))
+            end
+        new(new_xs, new_μs, new_Fs)
+    end
 end
 
 
 """
-     spline_F(x, μ, str::WindowF)) ::Float64
+    spline_F(x, μ, str::WindowF)) ::Float64
 
 Return the 2-dim spline value of ``F`` in the given `(x,μ)`, where
 ``F`` is defined in the input `WindowF`.
@@ -610,8 +609,8 @@ package.
 See also: [`WindowF`](@ref)
 """
 function spline_F(x, μ, str::WindowF)
-     grid = GridInterpolations.RectangleGrid(str.xs, str.μs)
-     GridInterpolations.interpolate(grid, reshape(str.Fs, (:, 1)), [x, μ])
+    grid = GridInterpolations.RectangleGrid(str.xs, str.μs)
+    GridInterpolations.interpolate(grid, reshape(str.Fs, (:, 1)), [x, μ])
 end
 
 #=
@@ -633,7 +632,7 @@ spline_F(x, μ) = GridInterpolations.interpolate(my_F_grid, _Fs, [μ, x])
 =#
 
 """
-     print_map_F(out::String, windowF::WindowF)
+    print_map_F(out::String, windowF::WindowF)
 
 Print the input Window Function `windowF` in the file `out`.
 
@@ -641,23 +640,23 @@ See also: [`WindowF`](@ref)
 """
 function print_map_F(out::String, windowF::WindowF)
 
-     check_parent_directory(out)
-     check_namefile(out)
+    check_parent_directory(out)
+    check_namefile(out)
 
-     xs_grid = [x for x in windowF.xs for μ in windowF.μs]
-     μs_grid = [μ for x in windowF.xs for μ in windowF.μs]
-     Fs_grid = reshape(transpose(windowF.Fs), (:,))
+    xs_grid = [x for x in windowF.xs for μ in windowF.μs]
+    μs_grid = [μ for x in windowF.xs for μ in windowF.μs]
+    Fs_grid = reshape(transpose(windowF.Fs), (:,))
 
-     open(out, "w") do io
-          println(io, BRAND)
-          println(io, "# This is an integration map on μ and x of the window function F(x, μ).")
-          println(io, "# For its analytical definition, check the code.")
+    open(out, "w") do io
+        println(io, BRAND)
+        println(io, "# This is an integration map on μ and x of the window function F(x, μ).")
+        println(io, "# For its analytical definition, check the code.")
 
-          println(io, "#\n# x \t mu \t F")
-          for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
-               println(io, "$x\t $μ \t $F")
-          end
-     end
+        println(io, "#\n# x \t mu \t F")
+        for (x, μ, F) in zip(xs_grid, μs_grid, Fs_grid)
+            println(io, "$x\t $μ \t $F")
+        end
+    end
 end
 
 
@@ -671,49 +670,49 @@ end
 
 
 function PhiTimesWindowF(s1, s, μ, phi::Function, windowf::WindowF)
-     return phi(√(s1^2 + s^2 + 2 * s1 * s * μ)) * spline_F(s / s1, μ, windowf)
+    return phi(√(s1^2 + s^2 + 2 * s1 * s * μ)) * spline_F(s / s1, μ, windowf)
 end
 
 function PhiTimesWindowF_multipole(
-     s1, s, phi::Function, windowf::WindowF;
-     L::Int=0, alg::Symbol=:lobatto,
-     N_lob::Int=100, N_trap::Int=200,
-     atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
-     enhancer::Float64=1e6,
-     kwargs...)
+    s1, s, phi::Function, windowf::WindowF;
+    L::Int=0, alg::Symbol=:lobatto,
+    N_lob::Int=100, N_trap::Int=200,
+    atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
+    enhancer::Float64=1e6,
+    kwargs...)
 
-     @assert alg ∈ VALID_INTEGRATION_ALGORITHM ":$alg is not a valid Symbol for \"alg\"; they are: \n\t" *
-          "$(":".*string.(VALID_INTEGRATION_ALGORITHM) .* vcat([" , " for i in 1:length(VALID_INTEGRATION_ALGORITHM)-1], " .")... )"
+    @assert alg ∈ VALID_INTEGRATION_ALGORITHM ":$alg is not a valid Symbol for \"alg\"; they are: \n\t" *
+        "$(":".*string.(VALID_INTEGRATION_ALGORITHM) .* vcat([" , " for i in 1:length(VALID_INTEGRATION_ALGORITHM)-1], " .")... )"
 
-     @assert N_trap > 2 "N_trap must be >2,  N_trap = $N_trap is not!"
-     @assert N_lob > 2 "N_lob must be >2,  N_lob = $N_lob is not!"
-     @assert atol_quad ≥ 0.0 "atol_quad must be ≥ 0.0,  atol_quad = $atol_quad is not!"
-     @assert rtol_quad ≥ 0.0 "rtol_trap must be ≥ 0.0,  rtol_quad = $rtol_quad is not!"
-     @assert L ≥ 0 "L must be ≥ 0, L = $L is not!"
+    @assert N_trap > 2 "N_trap must be >2,  N_trap = $N_trap is not!"
+    @assert N_lob > 2 "N_lob must be >2,  N_lob = $N_lob is not!"
+    @assert atol_quad ≥ 0.0 "atol_quad must be ≥ 0.0,  atol_quad = $atol_quad is not!"
+    @assert rtol_quad ≥ 0.0 "rtol_trap must be ≥ 0.0,  rtol_quad = $rtol_quad is not!"
+    @assert L ≥ 0 "L must be ≥ 0, L = $L is not!"
 
 
-     orig_f(μ) = enhancer * PhiTimesWindowF(s1, s, μ, phi, windowf) * Pl(μ, L)
+    orig_f(μ) = enhancer * PhiTimesWindowF(s1, s, μ, phi, windowf) * Pl(μ, L)
 
-     int = if alg == :lobatto
-          xs, ws = gausslobatto(N_lob)
-          dot(ws, orig_f.(xs))
+    int = if alg == :lobatto
+        xs, ws = gausslobatto(N_lob)
+        dot(ws, orig_f.(xs))
 
-     elseif alg == :quad
-          quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=atol_quad, rtol=rtol_quad)[1]
+    elseif alg == :quad
+        quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=atol_quad, rtol=rtol_quad)[1]
 
-     elseif alg == :trap
-          μs = union(
-               range(-1.0, -0.98, length=Int(ceil(N_trap / 3) + 1)),
-               range(-0.98, 0.98, length=Int(ceil(N_trap / 3) + 1)),
-               range(0.98, 1.0, length=Int(ceil(N_trap / 3) + 1))
-          )
-          #μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_trap)
-          orig_fs = orig_f.(μs)
-          trapz(μs, orig_fs)
+    elseif alg == :trap
+        μs = union(
+            range(-1.0, -0.98, length=Int(ceil(N_trap / 3) + 1)),
+            range(-0.98, 0.98, length=Int(ceil(N_trap / 3) + 1)),
+            range(0.98, 1.0, length=Int(ceil(N_trap / 3) + 1))
+        )
+        #μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_trap)
+        orig_fs = orig_f.(μs)
+        trapz(μs, orig_fs)
 
-     else
-          throw(AssertionError("how the hell did you arrive here?"))
-     end
+    else
+        throw(AssertionError("how the hell did you arrive here?"))
+    end
 
-     return int / enhancer
+    return int / enhancer
 end
