@@ -52,7 +52,7 @@ evaluate the function, while in the second method (that internally recalls the f
 you must provide the two corresponding comoving distances `s1` and `s2`.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
-The analytical expression of this integrand is the following:
+The analytical expression of this TPCF is the following:
 
 ```math
 \\begin{split}

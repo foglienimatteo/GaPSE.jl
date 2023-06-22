@@ -96,7 +96,7 @@ end
 
 Return the  integrand of the Two-Point Correlation Function (TPCF) given by 
 the cross correlation between the 
-Lensing and the Doppler (GP) effects arising from the Luminosity Distance (LD) perturbations.
+Lensing and the Doppler effects arising from the Luminosity Distance (LD) perturbations.
 
 In the first method, you should pass the two extreme `Point`s (`P1` and `P2`) and the 
 intermediate integrand `Point` (`IP`) where to 
@@ -230,6 +230,7 @@ This function is used inside `ξ_LD_Lensing_Doppler` with [`trapz`](@ref) from t
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_LD_multipole`](@ref), 
 [`map_ξ_LD_multipole`](@ref), [`print_map_ξ_LD_multipole`](@ref)
 """
+integrand_ξ_LD_Lensing_Doppler
 
 
 ##########################################################################################92
@@ -241,7 +242,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_LD_multipole`](@ref),
         en::Float64 = 1e6, N_χs::Int = 100 ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
-Lensing and the Doppler (GP) effects arising from the Luminosity Distance (LD) perturbations.
+Lensing and the Doppler effects arising from the Luminosity Distance (LD) perturbations.
 
 You must provide the two comoving distances `s1` and `s2` where to 
 evaluate the function.

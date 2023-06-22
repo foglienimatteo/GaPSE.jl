@@ -216,7 +216,7 @@ This function is used inside `ξ_LD_Lensing` with [`trapz`](@ref) from the
 
 ## Inputs
 
--  `IP1::Point`, `IP2::Point`, `P1::Point`, `P2::Point` or `χ1`, `χ2`, `s1`, `s2`: `Point`/comoving 
+- `IP1::Point`, `IP2::Point`, `P1::Point`, `P2::Point` or `χ1`, `χ2`, `s1`, `s2`: `Point`/comoving 
   distances where the TPCF has to be calculated; they contain all the 
   data of interest needed for this calculus (comoving distance, growth factor and so on).
   

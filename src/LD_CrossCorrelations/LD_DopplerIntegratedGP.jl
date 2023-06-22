@@ -95,7 +95,7 @@ The analytical expression of this integrand is the following:
 \\end{split}
 ```
 
-where
+with
 
 ```math
 \\begin{split}
@@ -203,7 +203,7 @@ You must provide the two comoving distances `s1` and `s2` where to
 evaluate the function.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
-The analytical expression of this integrand is the following:
+The analytical expression of this TPCF is the following:
 
 ```math
 \\begin{split}
