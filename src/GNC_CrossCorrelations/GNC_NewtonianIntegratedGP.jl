@@ -114,7 +114,7 @@ The analytical expression of this integrand is the following:
 \\end{split}
 ```
 
-where
+with
 
 ```math
 \\begin{split}
@@ -133,7 +133,7 @@ where
     %%%%%%%%%%%%%%%%%%%%%
     J^{\\delta \\int\\!\\phi}_{20} &=
     - \\Delta\\chi_2^2 ( 3 b_1 + f_1)
-    \\, .
+    \\, ,
 \\end{split}
 ```
 

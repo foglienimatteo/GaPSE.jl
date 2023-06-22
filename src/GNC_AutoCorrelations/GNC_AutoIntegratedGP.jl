@@ -99,7 +99,7 @@ The analytical expression of this integrand is the following:
 \\end{equation}
 ```
 
-where
+with
 
 ```math
 \\begin{split}
@@ -116,7 +116,7 @@ where
     &\\left[
         s_2 (f(\\chi_2) - 1) \\mathcal{H}(\\chi_2) \\mathcal{R}_2 - 5 s_{\\mathrm{b}, 2} + 2
     \\right]
-    \\, .
+    \\, ,
 \\end{split}
 ```
 
@@ -289,7 +289,7 @@ evaluate the function, while in the second method (that internally recalls the f
 you must provide the two corresponding comoving distances `s1` and `s2`.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
-The analytical expression of this term is the following:
+The analytical expression of this TPCF is the following:
 
 ```math
 \\begin{split}
@@ -300,7 +300,7 @@ The analytical expression of this term is the following:
 \\end{split}
 ```
 
-where
+with
 
 ```math
 \\begin{split}
@@ -317,7 +317,7 @@ where
     &\\left[
         s_2 (f(\\chi_2) - 1) \\mathcal{H}(\\chi_2) \\mathcal{R}_2 - 5 s_{\\mathrm{b},  2} + 2
     \\right]
-    \\, .
+    \\, ,
 \\end{split}
 ```
 

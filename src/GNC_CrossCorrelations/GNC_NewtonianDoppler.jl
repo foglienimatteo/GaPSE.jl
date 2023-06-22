@@ -107,7 +107,7 @@ evaluate the function, while in the second method (that internally recalls the f
 you must provide the two corresponding comoving distances `s1` and `s2`.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
-The analytical expression of this term is the following:
+The analytical expression of this TPCF is the following:
 
 ```math
 \\begin{split}
@@ -124,8 +124,7 @@ The analytical expression of this term is the following:
 \\end{split}
 ```
 
-
-where
+with
 
 ```math
 \\begin{split}
@@ -177,7 +176,7 @@ where
     \\, , \\\\
     %%%%%%%%%%%%%%%%%%%%%
     J^{\\delta v_{\\parallel}}_{13} &= -\\frac{2}{5} f_1 
-    \\, .
+    \\, ,
 \\end{split}
 ```
 

@@ -116,7 +116,7 @@ The analytical expression of this integrand is the following:
 \\end{split}
 ```
 
-where
+with
 
 ```math
 \\begin{split}
@@ -135,7 +135,7 @@ where
     2 y \\chi_1^2 - \\chi_1 s_2 (y^2 + 3) + 2 y s_2^2
     \\, ,\\\\
     %%%%%%%%%%%%%%%%%%%
-    J^{\\kappa \\phi}_{20} &= \\frac{1}{2} y \\Delta\\chi_1^2\\, .
+    J^{\\kappa \\phi}_{20} &= \\frac{1}{2} y \\Delta\\chi_1^2\\, ,
 \\end{split}
 ```
 
@@ -254,7 +254,7 @@ You must provide the two comoving distances `s1` and `s2` where to
 evaluate the function.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
-The analytical expression of this integrand is the following:
+The analytical expression of this TPCF is the following:
 
 ```math
 \\begin{split}
@@ -274,7 +274,7 @@ The analytical expression of this integrand is the following:
 \\end{split}
 ```
 
-where
+with
 
 ```math
 \\begin{split}
@@ -293,7 +293,7 @@ where
     2 y \\chi_1^2 - \\chi_1 s_2 (y^2 + 3) + 2 y s_2^2
     \\, ,\\\\
     %%%%%%%%%%%%%%%%%%%
-    J^{\\kappa \\phi}_{20} &= \\frac{1}{2} y \\Delta\\chi_1^2\\, .
+    J^{\\kappa \\phi}_{20} &= \\frac{1}{2} y \\Delta\\chi_1^2\\, ,
 \\end{split}
 ```
 

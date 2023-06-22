@@ -120,7 +120,7 @@ The analytical expression of this integrand is the following:
 \\end{equation}
 ```
 
-where
+with
 
 ```math
 \\begin{split}
@@ -169,7 +169,7 @@ where
         12 \\chi_2 s_1^4 + 
         4 y s_1 ^5
     \\right\\} 
-    \\, .
+    \\, ,
 \\end{split}
 ```
 
@@ -342,7 +342,7 @@ You must provide the two comoving distances `s1` and `s2` where to
 evaluate the function.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
-The analytical expression of this term is the following:
+The analytical expression of this TPCF is the following:
 
 ```math
 \\begin{equation}
@@ -357,7 +357,7 @@ The analytical expression of this term is the following:
 \\end{equation}
 ```
 
-where
+with
 
 ```math
 \\begin{split}
@@ -406,7 +406,7 @@ where
         12 \\chi_2 s_1^4 + 
         4 y s_1 ^5
     \\right\\} 
-    \\, .
+    \\, ,
 \\end{split}
 ```
 

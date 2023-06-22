@@ -20,7 +20,7 @@
 
 
 function integrand_ξ_GNC_Lensing(
-      IP1::Point, IP2::Point,
+    IP1::Point, IP2::Point,
     P1::Point, P2::Point,
     y, cosmo::Cosmology; Δχ_min::Float64=1e-1, 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
@@ -124,7 +124,7 @@ The analytical expression of this integrand is the following:
 \\end{equation}
 ```
 
-where
+with
 
 ```math
 \\begin{split}
@@ -165,7 +165,7 @@ where
         &\\left.\\qquad\\qquad\\qquad
         \\chi_1^2 \\chi_2^2 (11y^4 + 14y^2 + 23) 
     \\right] 
-    \\, .
+    \\, ,
 \\end{split}
 ```
 
@@ -328,7 +328,7 @@ evaluate the function, while in the second method (that internally recalls the f
 you must provide the two corresponding comoving distances `s1` and `s2`.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
-The analytical expression of this term is the following:
+The analytical expression of this TPCF is the following:
 
 ```math
 \\begin{split}
@@ -346,7 +346,7 @@ The analytical expression of this term is the following:
 \\end{split}
 ```
 
-where
+with
 
 ```math
 \\begin{split}
@@ -387,7 +387,7 @@ where
         &\\left.\\qquad\\qquad\\qquad
         \\chi_1^2 \\chi_2^2 (11y^4 + 14y^2 + 23) 
     \\right] 
-    \\, .
+    \\, ,
 \\end{split}
 ```
 
