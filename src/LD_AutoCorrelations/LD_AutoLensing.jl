@@ -289,10 +289,9 @@ end
 Return the Two-Point Correlation Function (TPCF) of the Lensing 
 auto-correlation effect arising from the Luminosity Distance (LD) perturbations.
 
-In the first method, you should pass the two extreme `Point`s (`P1` and `P2`) and the two 
-intermediate integrand `Point`s (`IP1` and `IP2`) where to 
-evaluate the function. In the second method (that internally recalls the first),
-you must provide the four corresponding comoving distances `s1`, `s2`, `χ1`, `χ2`.
+In the first method, you should pass the two `Point` (`P1` and `P2`) where to 
+evaluate the function, while in the second method (that internally recalls the first) 
+you must provide the two corresponding comoving distances `s1` and `s2`.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 The analytical expression of this term is the following:
