@@ -166,8 +166,6 @@ where:
 - `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
   used for the conversion `s` -> `Point`, and all the cosmological parameters ``\\Omega_{\\mathrm{M}0}``, ...
 
-## Keyword Arguments
-
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_LD_multipole`](@ref), 
 [`map_ξ_LD_multipole`](@ref), [`print_map_ξ_LD_multipole`](@ref)
