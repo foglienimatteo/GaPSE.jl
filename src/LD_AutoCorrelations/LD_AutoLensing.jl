@@ -430,7 +430,7 @@ This function is computed integrating `integrand_ξ_LD_Lensing` with [`trapz`](@
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
-  \\lim_{\\chi\\to 0^{+}} \\left(J^{\\kappa\\kappa}_{00} \\, I^0_0(\\Delta\\chi) + 
+  \\lim_{\\Delta\\chi\\to 0^{+}} \\left(J^{\\kappa\\kappa}_{00} \\, I^0_0(\\Delta\\chi) + 
         J^{\\kappa\\kappa}_{02} \\, I^0_2(\\Delta\\chi) + 
         J^{\\kappa\\kappa}_{31} \\, I^3_1(\\Delta\\chi) + J^{\\kappa\\kappa}_{22} \\, I^2_2(\\Delta\\chi)
         \\right) = 

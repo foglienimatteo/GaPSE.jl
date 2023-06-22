@@ -193,7 +193,37 @@ end
 ##########################################################################################92
 
 
+"""
+    ξ_LD_LocalGP_Lensing(
+        s1, s2, y, cosmo::Cosmology; 
+        kwargs... ) ::Float64
 
+Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
+Local Gravitational Potential (GP) and the Lensing effects arising from the 
+Luminosity Distance (LD) perturbations.
+
+It's computed through the symmetric function `ξ_LD_Lensing_LocalGP`; check its documentation for
+more details about the analytical expression and the keyword arguments.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
+
+
+## Inputs
+
+- `s1` and `s2`: comoving distances where the TPCF has to be calculated;
+  
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
+
+- `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
+  used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
+
+## Keyword Arguments
+
+- `kwargs...` : Keyword arguments to be passed to the symmetric TPCF
+
+See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_LD_multipole`](@ref), 
+[`map_ξ_LD_multipole`](@ref), [`print_map_ξ_LD_multipole`](@ref),
+[`ξ_LD_Lensing_LocalGP`](@ref)
+"""
 function ξ_LD_LocalGP_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...)
     ξ_LD_Lensing_LocalGP(s2, s1, y, cosmo; kwargs...)
 end
