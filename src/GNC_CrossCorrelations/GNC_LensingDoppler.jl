@@ -95,12 +95,12 @@ end
 
 
 function integrand_ξ_GNC_Lensing_Doppler(
-     χ1::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology; kwargs...)
+    χ1::Float64, s1::Float64, s2::Float64,
+    y, cosmo::Cosmology; kwargs...)
 
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP = Point(χ1, cosmo)
-     return integrand_ξ_GNC_Lensing_Doppler(IP, P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    IP = Point(χ1, cosmo)
+    return integrand_ξ_GNC_Lensing_Doppler(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 """
@@ -554,21 +554,21 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`integrand_ξ_GNC_Lensing_Doppler`](@ref)
 """
 function ξ_GNC_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
-     en::Float64=1e6, N_χs::Int=100, kwargs...)
+    en::Float64=1e6, N_χs::Int=100, kwargs...)
 
-     χ1s = s1 .* range(1e-6, 1, length=N_χs)
+    χ1s = s1 .* range(1e-6, 1, length=N_χs)
 
-     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-     IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
+    P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
+    IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
-     int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_Lensing_Doppler(IP, P1, P2, y, cosmo; kwargs...)
-          for IP in IPs
-     ]
+    int_ξs = [
+        en * GaPSE.integrand_ξ_GNC_Lensing_Doppler(IP, P1, P2, y, cosmo; kwargs...)
+        for IP in IPs
+    ]
 
-     res = trapz(χ1s, int_ξs)
-     #println("res = $res")
-     return res / en
+    res = trapz(χ1s, int_ξs)
+    #println("res = $res")
+    return res / en
 end
 
 
@@ -630,14 +630,3 @@ function ξ_GNC_Doppler_Lensing(s1, s2, y, cosmo::Cosmology;
     ξ_GNC_Lensing_Doppler(s2, s1, y, cosmo; b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
         𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end
-
-#=
-function integrand_ξ_GNC_Doppler_Lensing(
-     χ1::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology; kwargs...)
-
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP = Point(χ1, cosmo)
-     return integrand_ξ_GNC_Lensing_Doppler(IP, P2, P1, y, cosmo; kwargs...)
-end
-=#
