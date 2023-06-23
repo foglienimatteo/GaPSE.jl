@@ -55,9 +55,17 @@ end
 
 
 """
+    ξ_GNCxLD_Doppler_Doppler(
+        P1::Point, P2::Point, y, cosmo::Cosmology;
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
+
+    ξ_GNCxLD_Doppler_Doppler(
+        s1, s2, y, cosmo::Cosmology; 
+        kwargs... ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
-Doppler effect arising from the Galaxy Number Counts (GNC) and the Dopper one arising from
+Doppler effect arising from the Galaxy Number Counts (GNC) and the Doppler one arising from
 the Luminosity Distance (LD) perturbations.
 
 In the first method, you should pass the two `Point` (`P1` and `P2`) where to 
@@ -69,18 +77,18 @@ The analytical expression of this TPCF is the following:
 
 ```math
 \\begin{split}
-    \\xi^{v_{\\parallel} \\phi} ( s_1 , s_2, y ) &= 
-    D_1 D_2 J^{v_{\\parallel} \\phi}_{\\alpha}
-    \\left[ 
-        \\frac{1}{90} I_0^0 (s) +
-        \\frac{1}{63} I_2^0 (s) + 
-        \\frac{1}{210} I_4^0 (s) +
-        \\frac{1}{6} I_0^2 (s) 
-    \\right]
-    \\nonumber \\\\
-    & +
-    D_1 J^{v_{\\parallel} \\phi_0 }_{31} I^3_1 (s_1) +
-    D_2 J^{v_{\\parallel, 0} \\phi }_{31} I^3_1 (s_2) \\, ,
+    \\xi^{v_{\\parallel} v_{\\parallel}}( s_1, s_2 , y ) =
+    D_1 D_2 \\, \\mathfrak{J}_{\\alpha}^{v_{\\parallel} v_{\\parallel}}
+    \\left[  
+        \\mathfrak{J}_{\\beta}^{v_{\\parallel} v_{\\parallel}}
+        \\left( 
+            \\frac{1}{45} I_0^0(s) +
+            \\frac{2}{63} I_2^0 (s) + 
+            \\frac{1}{105} I_4^0(s)
+        \\right) +
+        \\mathfrak{J}^{v_{\\parallel} v_{\\parallel}}_{20} I_0^2 (s)
+    \\right] 
+    \\,  ,
 \\end{split}
 ```
 
@@ -88,33 +96,17 @@ with
 
 ```math
 \\begin{split}
-    J^{v_{\\parallel} \\phi}_{\\alpha} &=
-    \\frac{f_1 \\mathcal{H}_1 \\mathcal{R}_1 s^2}{a_2} (y s_2 - s_1) 
-    \\times\\\\
-    &\\qquad\\qquad\\qquad
-    \\left[ 
-        2 f_2 a_2 \\mathcal{H}_2^2 (\\mathit{f}_{\\mathrm{evo}, 2} - 3) + 
-        3 \\mathcal{H}_0^2 \\Omega_{\\mathrm{M}0} (f_2 + \\mathcal{R}_2 + 5 s_{\\mathrm{b}, 2} - 2)
-    \\right]
-    \\, , \\nonumber \\\\
-    %%%%%%%%%%%%%%%%%%%%
-    J^{v_{\\parallel} \\phi_0 }_{31} &=
-    \\frac{ f_1 \\mathcal{H}_1 \\mathcal{R}_1}{2 s_2} \\mathcal{H}_0 s_1^3 
-    \\left[ 
-        3 \\mathcal{H}_0 \\Omega_{\\mathrm{M}0} s_2 \\mathcal{R}_2 -
-        2 f_0 \\left( \\mathcal{H}_0 s_2 \\mathcal{R}_2 + 5 s_{\\mathrm{b}, 2} - 2 \\right)
-    \\right]
+    \\mathfrak{J}_{\\alpha}^{v_{\\parallel} v_{\\parallel}} &= 
+    - f_1 f_2\\mathcal{H}_1 \\mathcal{H}_2 \\mathcal{R}_1 \\mathfrak{R}_2
     \\, , \\\\
-    %%%%%%%%%%%%%%%%%%%%
-    J^{v_{\\parallel, 0} \\,  \\phi }_{31} &=
-    -\\frac{y f_0 \\mathcal{H}_0 s_2^3}{2 a_2} (\\mathcal{R}_1 - 5 s_{\\mathrm{b}, 1} + 2) 
-    \\times \\\\
-    &\\qquad\\qquad\\qquad
-    \\left[ 
-        2 a_2 f_2 \\mathcal{H}_2^2 (\\mathit{f}_{\\mathrm{evo}, 2} - 3) +
-        3 \\mathcal{H}_0^2 \\Omega_{\\mathrm{M}0} (f_2 + \\mathcal{R}_2 + 5 s_{\\mathrm{b}, 2} - 2)
-    \\right]
-    \\nonumber \\, .
+    %%%%%%%%%%%%%%
+    \\mathfrak{J}_{\\beta}^{v_{\\parallel} v_{\\parallel}} &= 
+    y^2 s_1 s_2 - 2 y (s_1^2 + s_2^2) + 3 s_1 s_2
+    \\, , \\\\
+    %%%%%%%%%%%%%%
+    \\mathfrak{J}_{20}^{v_{\\parallel} v_{\\parallel}}  &=
+    \\frac{1}{3} y s^2
+    \\, .
 \\end{split}
 ```
 
@@ -148,10 +140,10 @@ where:
   \\mathfrak{R}(s) = 1 - \\frac{1}{\\mathcal{H}(s) s} ;
   ```
 
-- ``b_1 = b(s_1)``, ``s_{\\mathrm{b}, 1} = s_{\\mathrm{b}}(s_1)``, ``\\mathit{f}_{\\mathrm{evo}}``, ... : 
+- ``b_1``, ``s_{\\mathrm{b}, 1}``, ``\\mathit{f}_{\\mathrm{evo}, 1}`` 
+  (and ``b_2``, ``s_{\\mathrm{b}, 2}``, ``\\mathit{f}_{\\mathrm{evo}, 2}``) : 
   galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold), 
-  and evolution bias (the first two evaluated in ``s_1``); they are
-  all stored in `cosmo`;
+  and evolution bias for the first (second) effect;
 
 - ``\\Omega_{\\mathrm{M}0} = \\Omega_{\\mathrm{cdm}} + \\Omega_{\\mathrm{b}}`` is the sum of 
   cold-dark-matter and barionic density parameters (again, stored in `cosmo`);
@@ -205,7 +197,6 @@ where:
   - the two sets of values should be different only if you are interested in studing two galaxy species;
   - only the required parameters for the chosen TPCF will be used, depending on its analytical expression;
     all the others will have no effect, we still inserted them for pragmatical code compatibilities. 
-  
 
 - `s_lim=nothing` : parameter used in order to avoid the divergence of the ``\\mathcal{R}`` and 
   ``\\mathfrak{R}`` denominators: when ``0 \\leq s \\leq s_\\mathrm{lim}`` the returned values are
@@ -216,11 +207,12 @@ where:
           \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} +  
           \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}_0^2} - \\mathit{f}_{\\mathrm{evo}} \\; .
   ```
+  If `nothing`, the fault value stored in `cosmo` will be considered.
 
 
-See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
-[`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref)
-"""\
+See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNCxLD_multipole`](@ref), 
+[`map_ξ_GNCxLD_multipole`](@ref), [`print_map_ξ_GNCxLD_multipole`](@ref)
+"""
 ξ_GNCxLD_Doppler_Doppler
 
 
@@ -232,7 +224,38 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 ##########################################################################################92
 
 
+"""
+    ξ_LDxGNC_Doppler_Doppler(s1, s2, y, cosmo::Cosmology;         
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        obs::Union{Bool, Symbol} = :noobsvel ) ::Float64
 
+Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
+Doppler effect arising from the Luminosity Distance (LD) perturbations and the Doppler 
+one arising from the Galaxy Number Counts (GNC).
+
+It's computed through the symmetric function `ξ_GNCxLD_Doppler_Doppler`; check its documentation for
+more details about the analytical expression and the keyword arguments.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
+
+
+## Inputs
+
+- `s1` and `s2`: comoving distances where the TPCF has to be calculated;
+  
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
+
+- `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
+  used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
+
+## Keyword Arguments
+
+- `kwargs...` : Keyword arguments to be passed to the symmetric TPCF
+
+See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
+[`map_ξ_LDxGNC_multipole`](@ref), [`print_map_ξ_LDxGNC_multipole`](@ref),
+[`ξ_LDxGNC_Newtonian_LocalGP`](@ref)
+"""
 function ξ_LDxGNC_Doppler_Doppler(s1, s2, y, cosmo::Cosmology; 
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)

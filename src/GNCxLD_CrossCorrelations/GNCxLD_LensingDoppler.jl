@@ -247,6 +247,38 @@ end
 
 
 
+"""
+    ξ_LDxGNC_Doppler_Lensing(s1, s2, y, cosmo::Cosmology;         
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        obs::Union{Bool, Symbol} = :noobsvel ) ::Float64
+
+Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the Doppler
+effect arising from the Luminosity Distance (LD) perturbations and 
+the Lensing one arising from the Galaxy Number Counts (GNC).
+
+It's computed through the symmetric function `ξ_GNCxLD_Lensing_Doppler`; check its documentation for
+more details about the analytical expression and the keyword arguments.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
+
+
+## Inputs
+
+- `s1` and `s2`: comoving distances where the TPCF has to be calculated;
+  
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
+
+- `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
+  used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
+
+## Keyword Arguments
+
+- `kwargs...` : Keyword arguments to be passed to the symmetric TPCF
+
+See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
+[`map_ξ_LDxGNC_multipole`](@ref), [`print_map_ξ_LDxGNC_multipole`](@ref),
+[`ξ_LDxGNC_Newtonian_LocalGP`](@ref)
+"""
 function ξ_LDxGNC_Doppler_Lensing(s1, s2, y, cosmo::Cosmology; 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)

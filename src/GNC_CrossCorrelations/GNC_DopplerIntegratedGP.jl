@@ -181,10 +181,10 @@ where:
   \\frac{\\dot{\\mathcal{H}}(s)}{\\mathcal{H}(s)^2} - \\mathit{f}_{\\mathrm{evo}} \\quad ;
   ```
 
-- ``b_1 = b(s_1)``, ``s_{\\mathrm{b}, 1} = s_{\\mathrm{b}}(s_1)``, ``\\mathit{f}_{\\mathrm{evo}}``, ... : 
+- ``b_1``, ``s_{\\mathrm{b}, 1}``, ``\\mathit{f}_{\\mathrm{evo}, 1}`` 
+  (and ``b_2``, ``s_{\\mathrm{b}, 2}``, ``\\mathit{f}_{\\mathrm{evo}, 2}``) : 
   galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold), 
-  and evolution bias (the first two evaluated in ``s_1``); they are
-  all stored in `cosmo`;
+  and evolution bias for the first (second) effect;
 
 - ``\\Omega_{\\mathrm{M}0} = \\Omega_{\\mathrm{cdm}} + \\Omega_{\\mathrm{b}}`` is the sum of 
   cold-dark-matter and barionic density parameters (again, stored in `cosmo`);
@@ -236,6 +236,27 @@ This function is used inside `ξ_GNC_Doppler_IntegratedGP` with [`trapz`](@ref) 
   used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
 
 ## Keyword Arguments
+
+- `b1=nothing`, `s_b1=nothing`, `𝑓_evo1=nothing` and `b2=nothing`, `s_b2=nothing`, `𝑓_evo2=nothing`:
+  galaxy, magnification and evolutionary biases respectively for the first and the second effect 
+  computed in this TPCF:
+  - if not set (i.e. if you leave the default value `nothing`) the values stored in the input `cosmo`
+    will be considered;
+  - if you set one or more values, they will override the `cosmo` ones in this computation;
+  - the two sets of values should be different only if you are interested in studing two galaxy species;
+  - only the required parameters for the chosen TPCF will be used, depending on its analytical expression;
+    all the others will have no effect, we still inserted them for pragmatical code compatibilities. 
+
+- `s_lim=nothing` : parameter used in order to avoid the divergence of the ``\\mathcal{R}`` and 
+  ``\\mathfrak{R}`` denominators: when ``0 \\leq s \\leq s_\\mathrm{lim}`` the returned values are
+  ```math
+  \\forall \\, s \\in [ 0, s_\\mathrm{lim} ] \\; : \\quad 
+      \\mathfrak{R}(s) = 1 - \\frac{1}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} \\; , \\quad
+      \\mathcal{R}(s) = 5 s_{\\mathrm{b}} + 
+          \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} +  
+          \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}_0^2} - \\mathit{f}_{\\mathrm{evo}} \\; .
+  ```
+  If `nothing`, the default value stored in `cosmo` will be considered.
 
 - `obs::Union{Bool,Symbol} = :noobsvel` : do you want to consider the observer terms in the computation of the 
   chosen GNC TPCF effect?
@@ -340,10 +361,10 @@ where:
   \\frac{\\dot{\\mathcal{H}}(s)}{\\mathcal{H}(s)^2} - \\mathit{f}_{\\mathrm{evo}} \\quad ;
   ```
 
-- ``b_1 = b(s_1)``, ``s_{\\mathrm{b}, 1} = s_{\\mathrm{b}}(s_1)``, ``\\mathit{f}_{\\mathrm{evo}}``, ... : 
+- ``b_1``, ``s_{\\mathrm{b}, 1}``, ``\\mathit{f}_{\\mathrm{evo}, 1}`` 
+  (and ``b_2``, ``s_{\\mathrm{b}, 2}``, ``\\mathit{f}_{\\mathrm{evo}, 2}``) : 
   galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold), 
-  and evolution bias (the first two evaluated in ``s_1``); they are
-  all stored in `cosmo`;
+  and evolution bias for the first (second) effect;
 
 - ``\\Omega_{\\mathrm{M}0} = \\Omega_{\\mathrm{cdm}} + \\Omega_{\\mathrm{b}}`` is the sum of 
   cold-dark-matter and barionic density parameters (again, stored in `cosmo`);
@@ -395,6 +416,27 @@ This function is computed integrating `integrand_ξ_GNC_Doppler_IntegratedGP` wi
   used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
 
 ## Keyword Arguments
+
+- `b1=nothing`, `s_b1=nothing`, `𝑓_evo1=nothing` and `b2=nothing`, `s_b2=nothing`, `𝑓_evo2=nothing`:
+  galaxy, magnification and evolutionary biases respectively for the first and the second effect 
+  computed in this TPCF:
+  - if not set (i.e. if you leave the default value `nothing`) the values stored in the input `cosmo`
+    will be considered;
+  - if you set one or more values, they will override the `cosmo` ones in this computation;
+  - the two sets of values should be different only if you are interested in studing two galaxy species;
+  - only the required parameters for the chosen TPCF will be used, depending on its analytical expression;
+    all the others will have no effect, we still inserted them for pragmatical code compatibilities. 
+
+- `s_lim=nothing` : parameter used in order to avoid the divergence of the ``\\mathcal{R}`` and 
+  ``\\mathfrak{R}`` denominators: when ``0 \\leq s \\leq s_\\mathrm{lim}`` the returned values are
+  ```math
+  \\forall \\, s \\in [ 0, s_\\mathrm{lim} ] \\; : \\quad 
+      \\mathfrak{R}(s) = 1 - \\frac{1}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} \\; , \\quad
+      \\mathcal{R}(s) = 5 s_{\\mathrm{b}} + 
+          \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} +  
+          \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}_0^2} - \\mathit{f}_{\\mathrm{evo}} \\; .
+  ```
+  If `nothing`, the default value stored in `cosmo` will be considered.
 
 - `obs::Union{Bool,Symbol} = :noobsvel` : do you want to consider the observer terms in the computation of the 
   chosen GNC TPCF effect?
