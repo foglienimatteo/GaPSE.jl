@@ -330,7 +330,7 @@ where:
 
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_LD_GNCxLD_IntegratedGP_Doppler`.
+the integrand function `integrand_ξ_GNCxLD_IntegratedGP_Doppler`.
 
 ## Inputs
 
