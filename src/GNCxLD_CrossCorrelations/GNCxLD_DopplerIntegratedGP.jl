@@ -177,7 +177,8 @@ This function is used inside `ξ_GNCxLD_Doppler_IntegratedGP` with the [`trapz`]
 
 ## Inputs
 
-- `s1` and `s2`: comoving distances where the TPCF has to be calculated; they contain all the 
+-  `IP::Point`, `P1::Point`, `P2::Point` or `χ2`,`s1`,`s2`: `Point`/comoving 
+  distances where the TPCF has to be calculated; they contain all the 
   data of interest needed for this calculus (comoving distance, growth factor and so on).
   
 - `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
