@@ -55,43 +55,172 @@ end
 
 
 """
-    ξ_GNCxLD_Doppler_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology;
-        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing) ::Float64
 
-    ξ_GNCxLD_Doppler_Doppler(s1, s2, y, cosmo::Cosmology; kwargs...) ::Float64
+Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
+Doppler effect arising from the Galaxy Number Counts (GNC) and the Dopper one arising from
+the Luminosity Distance (LD) perturbations.
 
-Return the Doppler auto-correlation function concerning the perturbed
-luminosity distance, defined as follows:
+In the first method, you should pass the two `Point` (`P1` and `P2`) where to 
+evaluate the function, while in the second method (that internally recalls the first) 
+you must provide the two corresponding comoving distances `s1` and `s2`.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
+
+The analytical expression of this TPCF is the following:
+
 ```math
-\\xi^{v_{\\parallel}v_{\\parallel}} (s_1, s_2, \\cos{\\theta}) 
-= D_1 D_2 f_1 f_2 \\mathcal{H}_1 \\mathcal{H}_2 \\mathcal{R}_1 \\mathcal{R}_2 
-(J_{00}\\, I^0_0(s) + J_{02}\\,I^0_2(s) + J_{04}\\,I^0_4(s) + J_{20}\\,I^2_0(s))
+\\begin{split}
+    \\xi^{v_{\\parallel} \\phi} ( s_1 , s_2, y ) &= 
+    D_1 D_2 J^{v_{\\parallel} \\phi}_{\\alpha}
+    \\left[ 
+        \\frac{1}{90} I_0^0 (s) +
+        \\frac{1}{63} I_2^0 (s) + 
+        \\frac{1}{210} I_4^0 (s) +
+        \\frac{1}{6} I_0^2 (s) 
+    \\right]
+    \\nonumber \\\\
+    & +
+    D_1 J^{v_{\\parallel} \\phi_0 }_{31} I^3_1 (s_1) +
+    D_2 J^{v_{\\parallel, 0} \\phi }_{31} I^3_1 (s_2) \\, ,
+\\end{split}
 ```
-where ``D_1 = D(s_1)``, ``D_2 = D(s_2)`` and so on, ``\\mathcal{H} = a H``, 
-``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2`` and 
-the J coefficients are given by:
+
+with
+
 ```math
-\\begin{align*}
-    J_{00} (s_1, s_2, y) & = \\frac{1}{45} (y^2 s_1 s_2 - 2y(s_1^2 + s_2^2) + 3s_1 s_2) \\\\
-    J_{02} (s_1, s_2, y) & = \\frac{2}{63} (y^2 s_1 s_2 - 2y(s_1^2 + s_2^2) + 3s_1 s_2) \\\\
-    J_{04} (s_1, s_2, y) & = \\frac{1}{105} (y^2 s_1 s_2 - 2y(s_1^2 + s_2^2) + 3s_1 s_2) \\\\
-    J_{20} (s_1, s_2, y) & = \\frac{1}{3} y s^2
-\\end{align*}
+\\begin{split}
+    J^{v_{\\parallel} \\phi}_{\\alpha} &=
+    \\frac{f_1 \\mathcal{H}_1 \\mathcal{R}_1 s^2}{a_2} (y s_2 - s_1) 
+    \\times\\\\
+    &\\qquad\\qquad\\qquad
+    \\left[ 
+        2 f_2 a_2 \\mathcal{H}_2^2 (\\mathit{f}_{\\mathrm{evo}, 2} - 3) + 
+        3 \\mathcal{H}_0^2 \\Omega_{\\mathrm{M}0} (f_2 + \\mathcal{R}_2 + 5 s_{\\mathrm{b}, 2} - 2)
+    \\right]
+    \\, , \\nonumber \\\\
+    %%%%%%%%%%%%%%%%%%%%
+    J^{v_{\\parallel} \\phi_0 }_{31} &=
+    \\frac{ f_1 \\mathcal{H}_1 \\mathcal{R}_1}{2 s_2} \\mathcal{H}_0 s_1^3 
+    \\left[ 
+        3 \\mathcal{H}_0 \\Omega_{\\mathrm{M}0} s_2 \\mathcal{R}_2 -
+        2 f_0 \\left( \\mathcal{H}_0 s_2 \\mathcal{R}_2 + 5 s_{\\mathrm{b}, 2} - 2 \\right)
+    \\right]
+    \\, , \\\\
+    %%%%%%%%%%%%%%%%%%%%
+    J^{v_{\\parallel, 0} \\,  \\phi }_{31} &=
+    -\\frac{y f_0 \\mathcal{H}_0 s_2^3}{2 a_2} (\\mathcal{R}_1 - 5 s_{\\mathrm{b}, 1} + 2) 
+    \\times \\\\
+    &\\qquad\\qquad\\qquad
+    \\left[ 
+        2 a_2 f_2 \\mathcal{H}_2^2 (\\mathit{f}_{\\mathrm{evo}, 2} - 3) +
+        3 \\mathcal{H}_0^2 \\Omega_{\\mathrm{M}0} (f_2 + \\mathcal{R}_2 + 5 s_{\\mathrm{b}, 2} - 2)
+    \\right]
+    \\nonumber \\, .
+\\end{split}
 ```
+
+where:
+
+- ``s_1`` and ``s_2`` are comoving distances;
+
+- ``D_1 = D(s_1)``, ... is the linear growth factor (evaluated in ``s_1``);
+
+- ``a_1 = a(s_1)``, ... is the scale factor (evaluated in ``s_1``);
+
+- ``f_1 = f(s_1)``, ... is the linear growth rate (evaluated in ``s_1``);
+
+- ``\\mathcal{H}_1 = \\mathcal{H}(s_1)``, ... is the comoving 
+  Hubble distances (evaluated in ``s_1``);
+
+- ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``;
+
+- ``\\mathcal{R}_1 = \\mathcal{R}(s_1)``, ... is 
+  computed by `func_ℛ_GNC` in `cosmo::Cosmology` (and evaluated in ``s_1`` );
+  the definition of ``\\mathcal{R}(s)`` is the following:
+  ```math
+  \\mathcal{R}(s) = 5 s_{\\mathrm{b}}(s) + \\frac{2 - 5 s_{\\mathrm{b}}(s)}{\\mathcal{H}(s) \\, s} +  
+  \\frac{\\dot{\\mathcal{H}}(s)}{\\mathcal{H}(s)^2} - \\mathit{f}_{\\mathrm{evo}} \\quad ;
+  ```
+
+- ``\\mathfrak{R}_1 = \\mathfrak{R}(s_1)``, ... is 
+  computed by `func_ℛ_LD` in `cosmo::Cosmology` (and evaluated in ``s_1`` );
+  the definition of ``\\mathcal{R}(s)`` is the following:
+  ```math
+  \\mathfrak{R}(s) = 1 - \\frac{1}{\\mathcal{H}(s) s} ;
+  ```
+
+- ``b_1 = b(s_1)``, ``s_{\\mathrm{b}, 1} = s_{\\mathrm{b}}(s_1)``, ``\\mathit{f}_{\\mathrm{evo}}``, ... : 
+  galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold), 
+  and evolution bias (the first two evaluated in ``s_1``); they are
+  all stored in `cosmo`;
+
+- ``\\Omega_{\\mathrm{M}0} = \\Omega_{\\mathrm{cdm}} + \\Omega_{\\mathrm{b}}`` is the sum of 
+  cold-dark-matter and barionic density parameters (again, stored in `cosmo`);
+
+- ``I_\\ell^n`` and ``\\sigma_i`` are defined as
+  ```math
+  I_\\ell^n(s) = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_\\ell(qs)}{(qs)^n} \\quad , 
+  \\quad \\sigma_i = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^{2-i} \\, P(q)
+  ```
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`) 
+  and ``j_\\ell`` as spherical Bessel function of order ``\\ell``;
+
+- ``\\tilde{I}_0^4`` is defined as
+  ```math
+  \\tilde{I}_0^4 = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_0(qs) - 1}{(qs)^4}
+  ``` 
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`) 
+  and ``j_\\ell`` as spherical Bessel function of order ``\\ell``;
+
+- ``\\mathcal{H}_0``, ``f_0`` and so on are evaluated at the observer position (i.e. at present day);
+
+- ``\\Delta\\chi_1 := \\sqrt{\\chi_1^2 + s_2^2-2\\,\\chi_1\\,s_2\\,y}`` and 
+  ``\\Delta\\chi_2 := \\sqrt{s_1^2 + \\chi_2^2-2\\,s_1\\,\\chi_2\\,y}``;
+
+- ``s=\\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}`` and 
+  ``\\Delta\\chi := \\sqrt{\\chi_1^2 + \\chi_2^2-2\\,\\chi_1\\,\\chi_2\\,y}``.
+
 
 ## Inputs
 
-- `P1::Point` and `P2::Point`: `Point` where the CF has to be calculated; they contain all the 
-  data of interest needed for this calculus (comoving distance, growth factor and so on)
-     
-- `y`: the cosine of the angle between the two points `P1` and `P2`
+- `P1::Point` and `P2::Point`, or `s1` and `s2`: `Point`/comoving distances where the 
+  TPCF has to be calculated; they contain all the 
+  data of interest needed for this calculus (comoving distance, growth factor and so on).
+  
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
 
-- `cosmo::Cosmology`: cosmology to be used in this computation
+- `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
+  used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
+
+## Keyword Arguments
+
+- `b1=nothing`, `s_b1=nothing`, `𝑓_evo1=nothing` and `b2=nothing`, `s_b2=nothing`, `𝑓_evo2=nothing`:
+  galaxy, magnification and evolutionary biases respectively for the first and the second effect 
+  computed in this TPCF:
+  - if not set (i.e. if you leave the default value `nothing`) the values stored in the input `cosmo`
+    will be considered;
+  - if you set one or more values, they will override the `cosmo` ones in this computation;
+  - the two sets of values should be different only if you are interested in studing two galaxy species;
+  - only the required parameters for the chosen TPCF will be used, depending on its analytical expression;
+    all the others will have no effect, we still inserted them for pragmatical code compatibilities. 
+  
+
+- `s_lim=nothing` : parameter used in order to avoid the divergence of the ``\\mathcal{R}`` and 
+  ``\\mathfrak{R}`` denominators: when ``0 \\leq s \\leq s_\\mathrm{lim}`` the returned values are
+  ```math
+  \\forall \\, s \\in [ 0, s_\\mathrm{lim} ] \\; : \\quad 
+      \\mathfrak{R}(s) = 1 - \\frac{1}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} \\; , \\quad
+      \\mathcal{R}(s) = 5 s_{\\mathrm{b}} + 
+          \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} +  
+          \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}_0^2} - \\mathit{f}_{\\mathrm{evo}} \\; .
+  ```
 
 
-See also: [`Point`](@ref), [`Cosmology`](@ref)
-"""
+See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
+[`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref)
+"""\
 ξ_GNCxLD_Doppler_Doppler
 
 

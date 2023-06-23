@@ -24,13 +24,13 @@
 Given in inpuit a comoving distance `s` and a comoving Hubble parameter `ℋ`, this
 function returns the following value:
 ```math
-\\mathscr{R}_\\mathrm{LD}(s, \\mathcal{H})=
-\\begin{cases}
-1 - \\frac{1}{\\mathcal{H} \\, s} \\; ,
-    \\quad s > s_\\mathrm{lim}\\\\
-1 - \\frac{1}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} \\; , 
-    \\quad \\quad 0 \\leq s \\leq s_\\mathrm{lim}
-\\end{cases}
+\\mathfrak{R}(s; s_{\\mathrm{lim}})=
+    \\begin{cases}
+    1 - \\frac{1}{\\mathcal{H} \\, s} \\; ,
+        \\quad s > s_\\mathrm{lim}\\\\
+    1 - \\frac{1}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} \\; , 
+        \\quad \\quad 0 \\leq s \\leq s_\\mathrm{lim}
+    \\end{cases}
 ```
 
 The ``0 \\leq s \\leq s_\\mathrm{lim}`` case is used in order to avoid 
@@ -62,16 +62,16 @@ its first derivative value `ℋ_p` wrt the comoving time ``\\tau``,
 this function returns the following value:
 
 ```math
-\\mathscr{R}_\\mathrm{GNC}(s, \\mathcal{H}; s_{\\mathrm{b}})=
-\\begin{cases}
-5 s_{\\mathrm{b}} + \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H} \\, s} +  
-    \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}^2} - \\mathit{f}_{\\mathrm{evo}}\\; ,
-\\quad s > s_\\mathrm{lim}\\\\
-1 - \\frac{1}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} 
-5 s_{\\mathrm{b}} + \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} +  
-    \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}_0^2} - \\mathit{f}_{\\mathrm{evo}}\\; , 
-    \\quad \\quad 0 \\leq s \\leq s_\\mathrm{lim}
-\\end{cases}
+\\mathcal{R}(s; s_{\\mathrm{lim}})=
+    \\begin{cases}
+        5 s_{\\mathrm{b}} + \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H} \\, s} +  
+            \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}^2} - \\mathit{f}_{\\mathrm{evo}}\\; ,
+            \\quad s > s_\\mathrm{lim}\\\\
+        5 s_{\\mathrm{b}} + 
+            \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} +  
+            \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}_0^2} - \\mathit{f}_{\\mathrm{evo}}\\; , 
+            \\quad \\quad 0 \\leq s \\leq s_\\mathrm{lim}
+    \\end{cases}
 ```
 
 where ``s_{\\mathrm{b}}`` is the magnification bias (i.e. the slope of the luminosity 
