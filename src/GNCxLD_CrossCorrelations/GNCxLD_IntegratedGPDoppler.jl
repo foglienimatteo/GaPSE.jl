@@ -77,16 +77,15 @@ one arising from the Luminosity Distance (LD) perturbations.
 In the first method, you should pass the two extreme `Point`s (`P1` and `P2`) and the 
 intermediate integrand `Point` (`IP`) where to 
 evaluate the function. In the second method (that internally recalls the first),
-you must provide the three corresponding comoving distances `s1`, `s2`, `χ1`.
+you must provide the three corresponding comoving distances `s1`, `s2`, `χ2`.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 The analytical expression of this integrand is the following:
 
 ```math
 \\begin{split}
-    \\xi^{\\int\\!\\phi \\, v_{\\parallel}} (s_1, s_2, y) =
-    D_2 \\int_0^{s_1} \\mathrm{d}\\chi_1 \\;
-    \\mathfrak{J}^{\\int\\!\\phi \\, v_{\\parallel}}_{31} \\,I_1^3(\\Delta\\chi_1) \\,
+    f^{\\int\\!\\phi \\, v_{\\parallel}} (\\chi_1, s_1, s_2, y) =
+    D_2 \\mathfrak{J}^{\\int\\!\\phi \\, v_{\\parallel}}_{31} \\,I_1^3(\\Delta\\chi_1) \\,
 \\end{split}
 ```
 
@@ -325,7 +324,6 @@ where:
 
 - ``s=\\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}`` and 
   ``\\Delta\\chi := \\sqrt{\\chi_1^2 + \\chi_2^2-2\\,\\chi_1\\,\\chi_2\\,y}``.
-
 
 
 The computation is made applying [`trapz`](@ref) (see the 

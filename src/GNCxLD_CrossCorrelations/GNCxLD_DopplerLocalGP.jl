@@ -60,10 +60,9 @@ Return the Two-Point Correlation Function (TPCF) given by the cross correlation
 between the Doppler effect arising from the Galaxy Number Counts (GNC) and the Local
 Gravitational Potential (GP) one arising from the Luminosity Distance (LD) perturbations.
 
-In the first method, you should pass the two extreme `Point`s (`P1` and `P2`) and the 
-intermediate integrand `Point` (`IP`) where to 
-evaluate the function. In the second method (that internally recalls the first),
-you must provide the three corresponding comoving distances `s1`, `s2`, `χ1`.
+In the first method, you should pass the two `Point` (`P1` and `P2`) where to 
+evaluate the function, while in the second method (that internally recalls the first) 
+you must provide the two corresponding comoving distances `s1` and `s2`.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 The analytical expression of this TPCF is the following:

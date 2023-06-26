@@ -82,16 +82,16 @@ Galaxy Number Counts (GNC) and the Lensing
 one arising from the Luminosity Distance (LD) perturbations.
 
 In the first method, you should pass the two extreme `Point`s (`P1` and `P2`) and the 
-intermediate integrand `Point` (`IP`) where to 
+two intermediate integrand `Point`s (`IP1` and `IP2`) where to 
 evaluate the function. In the second method (that internally recalls the first),
-you must provide the three corresponding comoving distances `s1`, `s2`, `χ1`.
+you must provide the three corresponding comoving distances `s1`, `s2`, `χ1`, `χ2`.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 The analytical expression of this integrand is the following:
 
 ```math
 \\begin{split}
-    f^{\\int\\!\\phi \\, \\kappa} ( s_1 , s_2, y ) = 
+    f^{\\int\\!\\phi \\, \\kappa} (\\chi_1, \\chi_2, s_1 , s_2, y ) = 
     \\mathfrak{J}_{\\alpha}^{\\int\\!\\phi \\, \\kappa} 
     \\left[ 
         \\mathfrak{J}_{31}^{\\int\\!\\phi \\, \\kappa} I_1^3 ( \\Delta \\chi ) +
@@ -195,7 +195,7 @@ This function is used inside `ξ_GNCxLD_IntegratedGP_Lensing` with the [`trapz`]
 
 ## Inputs
 
--  `IP::Point`, `P1::Point`, `P2::Point` or `χ1`,`s1`,`s2`: `Point`/comoving 
+-  `IP1::Point`, `IP2::Point`, `P1::Point`, `P2::Point` or `χ1`,`χ2`,`s1`,`s2`: `Point`/comoving 
   distances where the TPCF has to be calculated; they contain all the 
   data of interest needed for this calculus (comoving distance, growth factor and so on).
   
@@ -282,10 +282,9 @@ between the Integrated Gravitational Potential (GP) effect arising from the
 Galaxy Number Counts (GNC) and the Lensing
 one arising from the Luminosity Distance (LD) perturbations.
 
-In the first method, you should pass the two extreme `Point`s (`P1` and `P2`) and the 
-intermediate integrand `Point` (`IP`) where to 
+In the first method, you should pass the two extreme `Point`s (`P1` and `P2`) where to 
 evaluate the function. In the second method (that internally recalls the first),
-you must provide the three corresponding comoving distances `s1`, `s2`, `χ1`.
+you must provide the two corresponding comoving distances `s1`, `s2`.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 The analytical expression of this TPCF is the following:
@@ -399,7 +398,7 @@ the integrand function `integrand_ξ_GNCxLD_IntegratedGP_Lensing`.
 
 ## Inputs
 
--  `IP::Point`, `P1::Point`, `P2::Point` or `χ1`,`s1`,`s2`: `Point`/comoving 
+- `P1::Point`, `P2::Point` or `s1`,`s2`: `Point`/comoving 
   distances where the TPCF has to be calculated; they contain all the 
   data of interest needed for this calculus (comoving distance, growth factor and so on).
   

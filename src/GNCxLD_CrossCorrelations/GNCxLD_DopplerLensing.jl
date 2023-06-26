@@ -106,14 +106,14 @@ one arising from the Luminosity Distance (LD) perturbations.
 In the first method, you should pass the two extreme `Point`s (`P1` and `P2`) and the 
 intermediate integrand `Point` (`IP`) where to 
 evaluate the function. In the second method (that internally recalls the first),
-you must provide the three corresponding comoving distances `s1`, `s2`, `χ1`.
+you must provide the three corresponding comoving distances `s1`, `s2`, `χ2`.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 The analytical expression of this integrand is the following:
 
 ```math
 \\begin{split}
-    f^{v_{\\parallel}\\kappa} (s_1, s_2, y) =
+    f^{v_{\\parallel}\\kappa} (\\chi_2, s_1, s_2, y) =
     D_1 
     \\mathfrak{J}^{\\kappa v_{\\parallel}}_{\\alpha} \\times \\\\
     &\\left[

@@ -174,8 +174,6 @@ where:
 - ``s=\\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}`` and 
   ``\\Delta\\chi := \\sqrt{\\chi_1^2 + \\chi_2^2-2\\,\\chi_1\\,\\chi_2\\,y}``.
 
-
-
 This function is used inside `ξ_GNCxLD_IntegratedGP_IntegratedGP` with the [`trapz`](@ref) from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
@@ -287,10 +285,9 @@ between the Integrated Gravitational Potential (GP) effect arising from the
 Galaxy Number Counts (GNC) and the Integrated GP
 one arising from the Luminosity Distance (LD) perturbations.
 
-In the first method, you should pass the two extreme `Point`s (`P1` and `P2`) and the 
-two intermediate integrand `Point`s (`IP1` and `IP2`) where to 
+In the first method, you should pass the two extreme `Point`s (`P1` and `P2`) where to 
 evaluate the function. In the second method (that internally recalls the first),
-you must provide the three corresponding comoving distances `s1`, `s2`, `χ1`, `χ2`.
+you must provide the two corresponding comoving distances `s1`, `s2`.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 The analytical expression of this TPCF is the following:
@@ -389,15 +386,13 @@ where:
 - ``s=\\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}`` and 
   ``\\Delta\\chi := \\sqrt{\\chi_1^2 + \\chi_2^2-2\\,\\chi_1\\,\\chi_2\\,y}``.
 
-
-
 The computation is made applying [`trapz`](@ref) (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
 the integrand function `integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP`.
 
 ## Inputs
 
--  `IP1::Point`, `IP2::Point`, `P1::Point`, `P2::Point` or `χ1`,`χ2`,`s1`,`s2`: `Point`/comoving 
+- `P1::Point`, `P2::Point` or `s1`,`s2`: `Point`/comoving 
   distances where the TPCF has to be calculated; they contain all the 
   data of interest needed for this calculus (comoving distance, growth factor and so on).
   
