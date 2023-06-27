@@ -50,11 +50,11 @@ end
 
 
 """
-	ξ_GNCxLD_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-    	b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
+    ξ_GNCxLD_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology;
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
-	ξ_GNCxLD_Doppler_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs... ) ::Float64
+    ξ_GNCxLD_Doppler_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs... ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation 
 between the Doppler effect arising from the Galaxy Number Counts (GNC) and the Local
@@ -152,7 +152,8 @@ where:
 
 ## Inputs
 
-- `s1` and `s2`: comoving distances where the TPCF has to be calculated; they contain all the 
+- `P1::Point` and `P2::Point`, or `s1` and `s2`: `Point`/comoving distances where the 
+  TPCF has to be calculated; they contain all the 
   data of interest needed for this calculus (comoving distance, growth factor and so on).
   
 - `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer

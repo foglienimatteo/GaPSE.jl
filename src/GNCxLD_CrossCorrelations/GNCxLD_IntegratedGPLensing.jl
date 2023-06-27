@@ -267,15 +267,15 @@ end
 
 
 """
-	ξ_GNCxLD_IntegratedGP_Lensing(
-		s1, s2, y, cosmo::Cosmology;
-		en::Float64 = 1e6, N_χs::Int = 100,
-		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
-    	𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
+    ξ_GNCxLD_IntegratedGP_Lensing(
+        s1, s2, y, cosmo::Cosmology;
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
+        en::Float64 = 1e6, N_χs::Int = 100 ) ::Float64
 
-	ξ_GNCxLD_IntegratedGP_Lensing(
-		s1, s2, y, cosmo::Cosmology; 
-		kwargs... ) ::Float64
+    ξ_GNCxLD_IntegratedGP_Lensing(
+        s1, s2, y, cosmo::Cosmology; 
+        kwargs... ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation 
 between the Integrated Gravitational Potential (GP) effect arising from the 
@@ -440,13 +440,17 @@ the integrand function `integrand_ξ_GNCxLD_IntegratedGP_Lensing`.
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNCxLD_multipole`](@ref), 
 [`map_ξ_GNCxLD_multipole`](@ref), [`print_map_ξ_GNCxLD_multipole`](@ref)
 """
-func
+ξ_GNCxLD_IntegratedGP_Lensing
+
+
 
 ##########################################################################################92
 
 ##########################################################################################92
 
 ##########################################################################################92
+
+
 
 
 """

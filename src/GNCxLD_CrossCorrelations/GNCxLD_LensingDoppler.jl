@@ -283,7 +283,9 @@ integrand_ξ_GNCxLD_Lensing_Doppler
 """
     ξ_GNCxLD_Lensing_Doppler(
         s1, s2, y, cosmo::Cosmology;
-        en::Float64=1e6, N_χs::Int=100, kwargs... ) ::Float64 
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    	  𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        en::Float64=1e6, N_χs::Int=100 ) ::Float64 
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation 
 between the Lensing effect arising from the 

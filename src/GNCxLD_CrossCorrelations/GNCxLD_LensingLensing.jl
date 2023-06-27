@@ -296,7 +296,9 @@ end
 """
     ξ_GNCxLD_Lensing_Lensing(
         P1::Point, P2::Point, y, cosmo::Cosmology;
-        en::Float64=1e6, N_χs_2::Int=100, kwargs... ) ::Float64
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    	  𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        en::Float64=1e6, N_χs_2::Int=100 ) ::Float64
 
     ξ_GNCxLD_Lensing_Lensing(s1, s2, y, cosmo::Cosmology; kwargs... ) ::Float64
 
