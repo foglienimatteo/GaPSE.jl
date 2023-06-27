@@ -212,7 +212,8 @@ where:
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNCxLD_multipole`](@ref), 
 [`map_ξ_GNCxLD_multipole`](@ref), [`print_map_ξ_GNCxLD_multipole`](@ref)
 """
-func
+ξ_GNCxLD_Newtonian_LocalGP
+
 
 ##########################################################################################92
 

@@ -209,7 +209,6 @@ This function is used inside `ξ_GNCxLD_IntegratedGP_LocalGP` with the [`trapz`]
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNCxLD_multipole`](@ref), 
 [`map_ξ_GNCxLD_multipole`](@ref), [`print_map_ξ_GNCxLD_multipole`](@ref)
 """
-func
 integrand_ξ_GNCxLD_IntegratedGP_LocalGP
 
 

@@ -156,6 +156,9 @@ matter of concerns for the `Cosmology` we are interested in.
   `ℛ_LD` and `ℛ_GNC` blows up for ``s \\rightarrow 0^{+}``. Consequently, if the `func_ℛ_LD`/`func_ℛ_GNC` input value is 
   `0 ≤ s < s_lim`, the returned value is always `func_ℛ_LD(s_lim)`/`func_ℛ_GNC(s_lim)`.
 
+- `z_spline_lim::Float64` : the upper limit where to cut the cosmological splines (it will be used by `CosmoSplines`);
+  the recommended value is the recombination era (i.e. ``z \\simeq 1000 ``).
+
 - `IPS::Dict{Symbol,T1} where {T1}` : dictionary concerning all the options that should be 
   passed to `InputPS` in the contruction of a `Cosmology`. The allowed keys, with their default
   values, are stored in  `DEFAULT_IPS_OPTS`, and are the following:
@@ -185,7 +188,7 @@ matter of concerns for the `Cosmology` we are interested in.
 ## Constructors
 
     CosmoParams(z_min, z_max, θ_max;
-        Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70, s_lim = 1e-2,
+        Ω_b = 0.0489, Ω_cdm = 0.251020, h_0 = 0.70, s_lim = 1e-2, z_spline_lim = 1000.0,
         b1=1.0, b2=nothing, s_b1=0.0, s_b2=nothing, 𝑓_evo1=0.0, 𝑓_evo2=nothing,
         IPS_opts::Dict = Dict{Symbol,Any}(),
         IPSTools_opts::Dict = Dict{Symbol,Any}()
@@ -212,7 +215,7 @@ then the dictionary with all the options that will be passed to `IPSTools` will 
 and similar for `IPS_opts`.
 
 
-See also: [`Cosmology`](@ref), [`IPSTools`](@ref),  [`InputPS`](@ref), 
+See also: [`Cosmology`](@ref), [`CosmoSplines`](@ref), [`IPSTools`](@ref),  [`InputPS`](@ref), 
 [`func_ℛ_LD`](@ref), [`DEFAULT_IPSTOOLS_OPTS`](@ref), [`DEFAULT_IPS_OPTS`](@ref),
 [`DEFAULT_WFI_OPTS`](@ref), [`check_compatible_dicts`](@ref)
 """
@@ -234,18 +237,20 @@ struct CosmoParams
     𝑓_evo2::Float64
 
     s_lim::Float64
+    z_spline_lim::Float64
 
     IPS::Dict{Symbol,T1} where {T1}
     IPSTools::Dict{Symbol,T2} where {T2}
     #WFI::Dict{Symbol,T3} where {T3}
 
     function CosmoParams(z_min, z_max, θ_max;
-        Ω_b=0.0489, Ω_cdm=0.251020, h_0=0.70, s_lim=1e-2,
+        Ω_b=0.0489, Ω_cdm=0.251020, h_0=0.70, s_lim=1e-2, z_spline_lim=1000.0,
         b1=1.0, b2=nothing, s_b1=0.0, s_b2=nothing, 𝑓_evo1=0.0, 𝑓_evo2=nothing,
         IPS_opts::Dict=Dict{Symbol,Any}(),
         IPSTools_opts::Dict=Dict{Symbol,Any}()
         #WFI_opts::Dict=Dict{Symbol,Any}()
-    )
+        )
+
         str(n, a, b) = "the keys of the $n dict have to be Symbols (like :$a, :$b, ...)"
 
         @assert typeof(IPS_opts) <: Dict{Symbol,T1} where {T1} str("IPS_opts", "k_min", "N")
@@ -268,6 +273,7 @@ struct CosmoParams
         @assert 0.0 ≤ Ω_cdm ≤ 1.0 " 0.0 ≤ Ω_cdm ≤ 1.0 must hold!"
         @assert 0.0 < h_0 ≤ 1.0 " 0.0 < h_0 ≤ 1.0 must hold!"
         @assert 0.0 < s_lim < 10.0 "0.0 < s_lim < 10.0 must hold!"
+        @assert z_max < z_spline_lim < 1e6 "z_max < z_spline_lim < 1e6 must hold!"
 
         @assert 0.0 < IPS[:fit_left_min] < IPS[:fit_left_max] < 1e-1
         " 0 < fit_left_min < fit_left_max < 0.1 must hold!"
@@ -298,7 +304,7 @@ struct CosmoParams
         new(z_min, z_max, θ_max,
             Ω_b, Ω_cdm, Ω_cdm + Ω_b, h_0,
             b1, b2, s_b1, s_b2, 𝑓_evo1, 𝑓_evo2,
-            s_lim,
+            s_lim, z_spline_lim,
             IPS, IPSTools,
             #WFI
         )

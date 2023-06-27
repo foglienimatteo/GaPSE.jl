@@ -95,14 +95,13 @@ It is internally used in `Cosmology.`
 
 ## Constructors
 
-`BackgroundData(file::String, z_max; names = NAMES_BACKGROUND, h = 0.7)`
+`BackgroundData(file::String, z_spline_lim; names = NAMES_BACKGROUND, h = 0.7)`
 
 - `file::string` : input file where the data are stored; it is expected that such file
   is a background output of the CLASS program (link: https://github.com/lesgourg/class_public)
 
-- `z_max` : the maximum redhsift we are interested in our analysis. The constructor will
-  store the data necessary for a study only in `0 < z < z_max`, for optimisation purposes
-  (More precisely, the maximum distance stored will be `3*z_max`).
+- `z_spline_lim` : the maximum redhsift we are interested in our analysis. The constructor will
+  store the data necessary for a study only in `0 < z < z_spline_lim`, for optimisation purposes.
 
 - `names = NAMES_BACKGROUND` : the column names of the `file`. If the colum order change from
   the default one `NAMES_BACKGROUND`, you must set as input the vector of string with the correct
@@ -128,16 +127,19 @@ struct BackgroundData
     ℋ::Vector{Float64}
     ℋ_p::Vector{Float64}
 
-    function BackgroundData(file::String, z_max;
+    function BackgroundData(file::String, z_spline_lim;
         names=NAMES_BACKGROUND, h=0.7)
 
+        @assert 0.0 < h < 2.0 "h = $h is not a reasonable value, it should be 0 < h < 2 ."
+        @assert 0 < z_spline_lim < 1e6 "z_spline_lim = $z_spline_lim is not a reasonable value, 0 < z_spline_lim < 1e6 is."
+ 
         I_redshift = findfirst(x -> x == "z", names)
-        I_comdist = findfirst(x -> x == "comov. dist.", names)
+        #I_comdist = findfirst(x -> x == "comov. dist.", names)
 
         data = readdlm(file, comments=true)
 
         #=
-        N_z_MAX = findfirst(z -> z <= z_max, data[:, I_redshift]) - 1
+        N_z_MAX = findfirst(z -> z <= z_spline_lim, data[:, I_redshift]) - 1
         println("N_z_MAX = $N_z_MAX")
         com_dist_z_MAX = data[:, I_comdist][N_z_MAX]
         println("com_dist_z_MAX  = $com_dist_z_MAX ")
@@ -148,7 +150,7 @@ struct BackgroundData
                         for (i, name) in enumerate(names)]...)
         =#
 
-        N_z_MAX = findfirst(z -> z <= 1000.0, data[:, I_redshift]) - 1
+        N_z_MAX = findfirst(z -> z <= z_spline_lim, data[:, I_redshift]) - 1
         data_dict = Dict([name => reverse(data[:, i][N_z_MAX:end])
                         for (i, name) in enumerate(names)]...)
 

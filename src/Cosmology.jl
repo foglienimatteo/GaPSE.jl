@@ -129,6 +129,7 @@ end
         z_max::Float64
         h::Float64
         s_lim::Float64
+        z_spline_lim::Float64
 
         s_b1::Float64
         𝑓_evo1::Float64
@@ -144,7 +145,7 @@ It is used only inside the creation of a `Cosmology`, check its documentation fo
     CosmoSplines(
         file_data::String, z_min, z_max; 
         names::Vector{String} = NAMES_BACKGROUND, h=0.7, 
-        s_lim = 0.01, s_b1=0.0, s_b2=nothing,
+        s_lim = 0.01, z_spline_lim=1000.0, s_b1=0.0, s_b2=nothing,
         𝑓_evo1=0.0, 𝑓_evo2=nothing
         )
 
@@ -164,6 +165,9 @@ It is used only inside the creation of a `Cosmology`, check its documentation fo
 - `s_lim::Float64` : the lower-bound value for the functions `func_ℛ_LD` and `func_ℛ_GNC`; it is necessary, because
   `ℛ_LD` and `ℛ_GNC` blows up for ``s \\rightarrow 0^{+}``. Consequently, if the `func_ℛ_LD`/`func_ℛ_GNC` input value is 
   `0 ≤ s < s_lim`, the returned value is always `func_ℛ_LD(s_lim)`/`func_ℛ_GNC(s_lim)`.
+
+- `z_spline_lim::Float64` : the upper limit where to cut the cosmological splines (it will be used by `CosmoSplines`);
+  the recommended value is the recombination era (i.e. ``z \\simeq 1000 ``).
 
 - `s_b1::Float64` and  `s_b2::Float64`: magnification biases, i.e. the slope of the luminosity function at the luminosity threshold; 
   you can choose to define both of them (if you are interested in the analysis of two galaxy species) or only 
@@ -198,6 +202,7 @@ struct CosmoSplines
     z_max::Float64
     h::Float64
     s_lim::Float64
+    z_spline_lim::Float64
 
     s_b1::Float64
     𝑓_evo1::Float64
@@ -207,11 +212,11 @@ struct CosmoSplines
     function CosmoSplines(
             file_data::String, z_min, z_max; 
             names::Vector{String} = NAMES_BACKGROUND, h=0.7, 
-            s_lim = 0.01, s_b1=0.0, s_b2=nothing,
+            s_lim = 0.01, z_spline_lim=1000.0, s_b1=0.0, s_b2=nothing,
             𝑓_evo1=0.0, 𝑓_evo2=nothing
             )
 
-        BD = BackgroundData(file_data, z_max; names=names, h=h)
+        BD = BackgroundData(file_data, z_spline_lim; names=names, h=h)
         s_b2 = isnothing(s_b2) ? s_b1 : s_b2
         𝑓_evo2 = isnothing(𝑓_evo2) ? 𝑓_evo1 : 𝑓_evo2
 
@@ -246,7 +251,7 @@ struct CosmoSplines
         new(z_of_s, D_of_s, f_of_s, ℋ_of_s, ℋ_p_of_s, ℛ_LD_of_s, ℛ_GNC1_of_s, ℛ_GNC2_of_s,
             s_of_z,
             z_eff, s_min, s_max, s_eff,
-            file_data, names, z_min, z_max, h, s_lim, 
+            file_data, names, z_min, z_max, h, s_lim, z_spline_lim,
             s_b1, s_b2, 𝑓_evo1, 𝑓_evo2)
     end
 end
@@ -475,7 +480,7 @@ struct Cosmology
 
         CS = CosmoSplines(file_data, params.z_min, params.z_max; 
             names=names_bg, h=params.h_0, 
-            s_lim = params.s_lim, 
+            s_lim = params.s_lim, z_spline_lim = params.z_spline_lim,
             s_b1=params.s_b1, s_b2=params.s_b2, 
             𝑓_evo1=params.𝑓_evo1, 𝑓_evo2=params.𝑓_evo2)
 
