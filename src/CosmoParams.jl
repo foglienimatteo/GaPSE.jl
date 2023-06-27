@@ -144,11 +144,11 @@ matter of concerns for the `Cosmology` we are interested in.
   in the analysis of two galaxy species) or only the former (and leave the latter as `nothing`, it will be set equal
   to the former).
 
-- `s_b1::Float64` and  `s_b2::Float64`: magnification bias, i.e. the slope of the luminosity function at the luminosity threshold; 
+- `s_b1::Float64` and  `s_b2::Float64`: magnification biases, i.e. the slope of the luminosity function at the luminosity threshold; 
   you can choose to define both of them (if you are interested in the analysis of two galaxy species) or only 
   the former (and leave the latter as `nothing`, it will be set equal to the former).
 
-- `𝑓_evo::Float64` : evolution bias; you can choose to define both of them (if you are interested
+- `𝑓_evo1::Float64` and `𝑓_evo2::Float64`: evolution biases; you can choose to define both of them (if you are interested
   in the analysis of two galaxy species) or only the former (and leave the latter as `nothing`, it will be set equal
   to the former).
 

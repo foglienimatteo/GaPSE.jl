@@ -106,7 +106,8 @@ function main()
 
      params = GaPSE.CosmoParams(z_min, z_max, θ_max;
           Ω_b=0.0489, Ω_cdm=0.251020, h_0=0.70, s_lim=1e-2,
-          s_b=S_B, 𝑓_evo=F_EVO, b=B,
+          b1=B, s_b1=S_B, 𝑓_evo1=F_EVO, 
+          b2 = nothing, s_b2 = nothing, 𝑓_evo2 = nothing,
           IPS_opts=Dict(
                :fit_left_min => 1e-6, :fit_left_max => 3e-6,
                :fit_right_min => 1e1, :fit_right_max => 2e1),

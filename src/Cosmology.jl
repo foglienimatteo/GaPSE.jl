@@ -104,6 +104,77 @@ end
 
 
 
+
+"""
+    CosmoSplines(
+        z_of_s::Dierckx.Spline1D
+        D_of_s::Dierckx.Spline1D
+        f_of_s::Dierckx.Spline1D
+        ℋ_of_s::Dierckx.Spline1D
+        ℋ_p_of_s::Dierckx.Spline1D
+        ℛ_LD_of_s::Dierckx.Spline1D
+        ℛ_GNC1_of_s::Dierckx.Spline1D
+        ℛ_GNC2_of_s::Dierckx.Spline1D
+
+        s_of_z::Dierckx.Spline1D
+
+        z_eff::Float64
+        s_min::Float64
+        s_max::Float64
+        s_eff::Float64
+
+        file_data::String
+        names::Vector{String}
+        z_min::Float64
+        z_max::Float64
+        h::Float64
+        s_lim::Float64
+
+        s_b1::Float64
+        𝑓_evo1::Float64
+        s_b2::Float64
+        𝑓_evo2::Float64
+    )
+
+Struct that contains all the useful cosmological splines.
+It is used only inside the creation of a `Cosmology`, check its documentation for further information.
+
+## Constructors 
+
+    CosmoSplines(
+        file_data::String, z_min, z_max; 
+        names::Vector{String} = NAMES_BACKGROUND, h=0.7, 
+        s_lim = 0.01, s_b1=0.0, s_b2=nothing,
+        𝑓_evo1=0.0, 𝑓_evo2=nothing
+        )
+
+- `file_data::String` : file containing all the background data; it is expected that such file
+  is a background output of the [CLASS](link: https://github.com/lesgourg/class_public) code.
+  It is managed through the struct `BackgroundData`.
+
+- `z_min` and `z_max` : the minimum and maximum redshifts of the survey we want to study.
+
+- `names = NAMES_BACKGROUND` : the column names of the `file_data`. If the colum order change from
+  the default one `NAMES_BACKGROUND`, you must set as input the vector of string with the correct
+  one, with the SAME names. They are, with the default order:\n
+  $(GaPSE.NAMES_BACKGROUND)  
+
+- `h::Float64` : today's Hubble adimensional parameter (`H_0 = h * 100 km/(s * Mpc)`).
+
+- `s_lim::Float64` : the lower-bound value for the functions `func_ℛ_LD` and `func_ℛ_GNC`; it is necessary, because
+  `ℛ_LD` and `ℛ_GNC` blows up for ``s \\rightarrow 0^{+}``. Consequently, if the `func_ℛ_LD`/`func_ℛ_GNC` input value is 
+  `0 ≤ s < s_lim`, the returned value is always `func_ℛ_LD(s_lim)`/`func_ℛ_GNC(s_lim)`.
+
+- `s_b1::Float64` and  `s_b2::Float64`: magnification biases, i.e. the slope of the luminosity function at the luminosity threshold; 
+  you can choose to define both of them (if you are interested in the analysis of two galaxy species) or only 
+  the former (and leave the latter as `nothing`, it will be set equal to the former).
+
+- `𝑓_evo1::Float64` and `𝑓_evo2::Float64`: evolution biases; you can choose to define both of them (if you are interested
+  in the analysis of two galaxy species) or only the former (and leave the latter as `nothing`, it will be set equal
+  to the former).
+
+See also: [`Cosmology`](@ref)
+"""
 struct CosmoSplines
     z_of_s::Dierckx.Spline1D
     D_of_s::Dierckx.Spline1D
