@@ -22,6 +22,8 @@ function integrand_ξ_LDxGNC_multipole(s1, s, μ, effect::Function, cosmo::Cosmo
     L::Int=0, use_windows::Bool=true, kwargs...)
 
     s2_value = s2(s1, s, μ)
+    (cosmo.s_spline_lim ≥ s2_value) || (return 0.0)
+    
     y_value = y(s1, s, μ)
 
     res = if use_windows == true

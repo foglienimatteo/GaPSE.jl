@@ -130,6 +130,7 @@ end
         h::Float64
         s_lim::Float64
         z_spline_lim::Float64
+        s_spline_lim::Float64
 
         s_b1::Float64
         𝑓_evo1::Float64
@@ -169,6 +170,9 @@ It is used only inside the creation of a `Cosmology`, check its documentation fo
 - `z_spline_lim::Float64` : the upper limit where to cut the cosmological splines (it will be used by `CosmoSplines`);
   the recommended value is the recombination era (i.e. ``z \\simeq 1000 ``).
 
+- `s_spline_lim::Float64` : the comoving distance converted from the redshift `z_spline_lim` with the 
+  spline `s_of_z`;
+
 - `s_b1::Float64` and  `s_b2::Float64`: magnification biases, i.e. the slope of the luminosity function at the luminosity threshold; 
   you can choose to define both of them (if you are interested in the analysis of two galaxy species) or only 
   the former (and leave the latter as `nothing`, it will be set equal to the former).
@@ -203,6 +207,7 @@ struct CosmoSplines
     h::Float64
     s_lim::Float64
     z_spline_lim::Float64
+    s_spline_lim::Float64
 
     s_b1::Float64
     𝑓_evo1::Float64
@@ -212,8 +217,8 @@ struct CosmoSplines
     function CosmoSplines(
             file_data::String, z_min, z_max; 
             names::Vector{String} = NAMES_BACKGROUND, h=0.7, 
-            s_lim = 0.01, z_spline_lim=1000.0, s_b1=0.0, s_b2=nothing,
-            𝑓_evo1=0.0, 𝑓_evo2=nothing
+            s_lim = 0.01, z_spline_lim=1000.0, 
+            s_b1=0.0, s_b2=nothing, 𝑓_evo1=0.0, 𝑓_evo2=nothing
             )
 
         BD = BackgroundData(file_data, z_spline_lim; names=names, h=h)
@@ -247,11 +252,12 @@ struct CosmoSplines
         s_max = s_of_z(z_max)
         z_eff = GaPSE.func_z_eff(s_min, s_max, z_of_s)
         s_eff = s_of_z(z_eff)
+        s_spline_lim = s_of_z(z_spline_lim)
 
         new(z_of_s, D_of_s, f_of_s, ℋ_of_s, ℋ_p_of_s, ℛ_LD_of_s, ℛ_GNC1_of_s, ℛ_GNC2_of_s,
             s_of_z,
             z_eff, s_min, s_max, s_eff,
-            file_data, names, z_min, z_max, h, s_lim, z_spline_lim,
+            file_data, names, z_min, z_max, h, s_lim, z_spline_lim, s_spline_lim,
             s_b1, s_b2, 𝑓_evo1, 𝑓_evo2)
     end
 end
@@ -283,6 +289,7 @@ end
         s_min::Float64
         s_max::Float64
         s_eff::Float64
+        s_spline_lim::Float64
 
         volume::Float64
 
@@ -383,6 +390,10 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 - `s_eff::Float64` : the corresponding comoving distance to the computed effective 
   redshifts `z_eff`.
 
+- `s_spline_lim::Float64` : the comoving distance converted from the redshift `z_spline_lim` with the 
+  spline `s_of_z`; `z_spline_lim` is the upper limit where to cut the cosmological splines,
+  the recommended value is the recombination era (i.e. ``z \\simeq 1000 ``); it is set in `CosmoParams`.
+
 - `volume::Float64` : volume of this survey. It is computed applying the function `V_survey`
   with inputs `s_min`, `s_max` here stored and the `θ_max` in the input `CosmoParams`.
 
@@ -451,6 +462,7 @@ struct Cosmology
     s_min::Float64
     s_max::Float64
     s_eff::Float64
+    s_spline_lim::Float64
 
     volume::Float64
 
@@ -507,7 +519,7 @@ struct Cosmology
             WFI_norm,
             CS.z_of_s, CS.D_of_s, CS.f_of_s, CS.ℋ_of_s, CS.ℋ_p_of_s, CS.ℛ_LD_of_s, CS.ℛ_GNC1_of_s, CS.ℛ_GNC2_of_s,
             CS.s_of_z,
-            CS.z_eff, CS.s_min, CS.s_max, CS.s_eff,
+            CS.z_eff, CS.s_min, CS.s_max, CS.s_eff, CS.s_spline_lim,
             vol,
             file_data,
             file_ips,

@@ -24,7 +24,7 @@
 end
 
 @testset "test BackgroundData" begin
-    BD = GaPSE.BackgroundData(FILE_BACKGROUND, 0.2)
+    BD = GaPSE.BackgroundData(FILE_BACKGROUND, 1000.0)
     L = length(CONF_TIME)
 
     @test all(isapprox(BD.z[begin:L], ZS, rtol = 1e-8))

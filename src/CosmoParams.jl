@@ -118,6 +118,7 @@ const DEFAULT_WFI_OPTS = Dict(
         𝑓_evo2::Float64
 
         s_lim::Float64
+        z_spline_lim::Float64
 
         IPS::Dict{Symbol,T1} where {T1}
         IPSTools::Dict{Symbol,T2} where {T2}

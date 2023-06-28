@@ -105,7 +105,8 @@ function main()
      =#
 
      params = GaPSE.CosmoParams(z_min, z_max, θ_max;
-          Ω_b=0.0489, Ω_cdm=0.251020, h_0=0.70, s_lim=1e-2,
+          Ω_b=0.0489, Ω_cdm=0.251020, 
+          h_0 = 0.70, s_lim = 1e-2, z_spline_lim = 1000.0,
           b1=B, s_b1=S_B, 𝑓_evo1=F_EVO, 
           b2 = nothing, s_b2 = nothing, 𝑓_evo2 = nothing,
           IPS_opts=Dict(

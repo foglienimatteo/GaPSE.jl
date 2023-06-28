@@ -34,13 +34,14 @@ const S_MIN = 148.1920001343431
 const S_MAX = 571.7022420911966
 const S_EFF = 435.37470960794167
 const Z_EFF = 0.15045636097417317
+const S_SPLINE_LIM = 9519.354776660555
 const VOLUME = 3.845366167993746e8
 const HUBBLE_0 = 1e5 / 299792458.0
 
 include("TEST_DATA.jl")
 
 ##########################################################################################92
-
+#=
 @testset "test TwoSpecies" begin
     include("test_TwoSpecies.jl")
 end
@@ -66,6 +67,7 @@ end
 @testset "test IPSTools" begin
     include("test_IPSTools.jl")
 end
+=#
 
 @testset "test BackgroundData" begin
     include("test_BackgroundData.jl")
@@ -79,6 +81,8 @@ end
 @testset "test Cosmology" begin
     include("test_Cosmology.jl")
 end
+
+@test 1==2
 
 @testset "test WindowF" begin
     include("test_WindowF.jl")

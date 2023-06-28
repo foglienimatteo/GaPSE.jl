@@ -19,8 +19,8 @@
 
 
 @testset "test_Cosmology" begin
-    z_min, z_max, θ_max = 0.05, 0.20, π / 2.0
-    params = GaPSE.CosmoParams(z_min, z_max, θ_max; 𝑓_evo2=π)
+    #z_min, z_max, θ_max = 0.05, 0.20, π / 2.0
+    params = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0; 𝑓_evo2=π)
     cosmo = GaPSE.Cosmology(params, FILE_BACKGROUND,
         FILE_PS, FILE_F_MAP, FILE_IF_MAP)
 
@@ -53,6 +53,7 @@
     @test isapprox(cosmo.s_min, S_MIN, rtol = RTOL)
     @test isapprox(cosmo.s_max, S_MAX, rtol = RTOL)
     @test isapprox(cosmo.s_eff, S_EFF, rtol = RTOL)
+    @test isapprox(cosmo.s_spline_lim, S_SPLINE_LIM, rtol=RTOL)
 
     @test isapprox(cosmo.volume, VOLUME, rtol = RTOL)
 
