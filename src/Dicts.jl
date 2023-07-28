@@ -27,6 +27,21 @@ integration over the ``\\mu`` angle cosine.
 const VALID_INTEGRATION_ALGORITHM = [:lobatto, :quad, :trap]
 
 
+"""
+    const VALID_KWARGS_GNC = [
+        :L, :use_windows, :alg, :obs,
+        :N_trap, :N_lob, :atol_quad, :rtol_quad,
+        :N_χs :N_χs_2, :pr, :suit_sampling]
+
+Valid keyword argument names for the GNC function group.
+"""
+const VALID_KWARGS_GNC = [
+    :L, :use_windows, :alg, :obs,
+    :N_trap, :N_lob, :atol_quad, :rtol_quad,
+    :N_χs, :N_χs_2, :pr, :suit_sampling
+]
+
+
 ##################### PERTURBED LUMINOSITY DISTANCE #############################
 
 
@@ -352,9 +367,10 @@ const GR_EFFECTS_chi_di_GNC = [
 
 const GR_EFFECTS_chi_integrated_GNC = vcat(GR_EFFECTS_chi_si_GNC, GR_EFFECTS_chi_di_GNC)
 
-const chi_si_GNC_kwargs = [:N_χs, :en]
-const chi_di_GNC_kwargs = [:N_χs_2, :en]
+const chi_si_GNC_kwargs = [:N_χs, :en, :suit_sampling]
+const chi_di_GNC_kwargs = [:N_χs_2, :en, :suit_sampling]
 const chi_integrated_GNC_kwargs = union(chi_si_GNC_kwargs, chi_di_GNC_kwargs)
+
 
 function specif_kwargs_GNC(name::String, kwargs)
     error = "$name is not a valid GR effect name for galaxy number counts.\n" *

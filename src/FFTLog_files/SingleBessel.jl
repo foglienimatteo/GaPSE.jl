@@ -99,7 +99,7 @@ the compelte list and their default values:
 
 - `plan_irfft = 
         plan_irfft(
-            randn(Complex{Float64}, 2, Int((original_length + n_extrap_low + n_extrap_high + 2 * n_pad) / 2) + 1),
+            randn(Complex{Float64}, 2, Int(floor((original_length + n_extrap_low + n_extrap_high + 2 * n_pad)) / 2) + 1),
             original_length + n_extrap_low + n_extrap_high + 2 * n_pad, 
             2
         )` : 
@@ -131,7 +131,7 @@ See also: [`AbstractPlan`](@ref)
         plan_irfft(
             randn(
                 Complex{Float64}, 2,
-                Int((original_length + n_extrap_low + n_extrap_high + 2 * n_pad) / 2) + 1
+                Int(floor((original_length + n_extrap_low + n_extrap_high + 2 * n_pad) / 2)) + 1
             ),
             original_length + n_extrap_low + n_extrap_high + 2 * n_pad,
             2
@@ -170,7 +170,7 @@ See also: [`SingleBesselPlan`](@ref), [`AbstractPlan`](@ref)
     ηm::Vector{T} = zeros(N)
     plan_rfft::FFTW.rFFTWPlan = plan_rfft(randn(1024))
     plan_irfft = plan_irfft(randn(Complex{Float64}, 2,
-            Int((original_length + n_extrap_low + n_extrap_high + 2 * n_pad) / 2) + 1),
+            Int(floor((original_length + n_extrap_low + n_extrap_high + 2 * n_pad) / 2)) + 1),
         original_length + n_extrap_low + n_extrap_high + 2 * n_pad, 2)
 end
 
@@ -261,7 +261,7 @@ function _eval_gl_hm!(plan::Union{SingleBesselPlan,HankelPlan}, ell::Vector)
     z = plan.ν .+ im .* plan.ηm
     plan.gl = zeros(length(ell), length(z))
 
-    plan.hm_corr = zeros(ComplexF64, length(ell), Int(plan.N / 2 + 1))
+    plan.hm_corr = zeros(ComplexF64, length(ell), Int(floor(plan.N / 2) + 1))
 
     @inbounds for myl in 1:length(ell)
         plan.hm_corr[myl, :] =
@@ -308,7 +308,7 @@ function prepare_FFTLog!(plan::Union{SingleBesselPlan,HankelPlan}, ell::Vector)
         plan_irfft(
             randn(
                 Complex{Float64}, length(ell),
-                Int((length(plan.x) / 2) + 1)
+                Int(floor(length(plan.x) / 2) + 1)
             ),
             plan.original_length + plan.n_extrap_low + plan.n_extrap_high + 2 * plan.n_pad,
             2

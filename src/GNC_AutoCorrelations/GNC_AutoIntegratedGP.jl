@@ -240,45 +240,45 @@ integrand_ξ_GNC_IntegratedGP
 
 
 function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-  en::Float64=1e10, N_χs_2::Int=100, kwargs...)
+    en::Float64=1e10, N_χs_2::Int=100, suit_sampling::Bool=true, kwargs...)
 
-  #adim_χs = range(1e-12, 1, N_χs)
-  #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
+    #adim_χs = range(1e-12, 1, N_χs)
+    #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
-  χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
-  χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
+    χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
+    χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
 
-  IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-  IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
+    IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+    IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-  int_ξ_igp = [
-    en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
-    for IP1 in IP1s, IP2 in IP2s
-  ]
+    int_ξ_igp = [
+      en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+      for IP1 in IP1s, IP2 in IP2s
+    ]
 
-  res = trapz((χ1s, χ2s), int_ξ_igp)
-  #println("res = $res")
+    res = trapz((χ1s, χ2s), int_ξ_igp)
+    #println("res = $res")
 
-  #=
-  χ1s = [x for x in range(0, P1.comdist, length = N_χs)[begin+1:end]]
-  l = Int(floor(N_χs/2))
-  matrix_χ2s = [begin
-       a = [x for x in range(0, P2.comdist, length=l)[begin+1:end]];
-       b = [x for x in range(x1-focus, x1+focus, length=l)];
-       vcat(a[a.<x1-focus], b, a[a.>x1+focus])
-       end for x1 in χ1s]
+    #=
+    χ1s = [x for x in range(0, P1.comdist, length = N_χs)[begin+1:end]]
+    l = Int(floor(N_χs/2))
+    matrix_χ2s = [begin
+        a = [x for x in range(0, P2.comdist, length=l)[begin+1:end]];
+        b = [x for x in range(x1-focus, x1+focus, length=l)];
+        vcat(a[a.<x1-focus], b, a[a.>x1+focus])
+        end for x1 in χ1s]
 
-  IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-  matrix_IP2s = [[GaPSE.Point(x, cosmo) for x in y] for y in matrix_χ2s]
-  matrix_int_ξs = [
-       [en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo) 
-       for IP2 in matrix_IP2s[i]]
-       for (i,IP1) in enumerate(IP1s)]
+    IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+    matrix_IP2s = [[GaPSE.Point(x, cosmo) for x in y] for y in matrix_χ2s]
+    matrix_int_ξs = [
+        [en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo) 
+        for IP2 in matrix_IP2s[i]]
+        for (i,IP1) in enumerate(IP1s)]
 
-  vec_trapz = [trapz(χ2s,int_ξs) for (χ2s,int_ξs) in zip(matrix_χ2s, matrix_int_ξs)]
-  res = trapz(χ1s, vec_trapz)
-  =#
-  return res / en
+    vec_trapz = [trapz(χ2s,int_ξs) for (χ2s,int_ξs) in zip(matrix_χ2s, matrix_int_ξs)]
+    res = trapz(χ1s, vec_trapz)
+    =#
+    return res / en
 end
 
 
@@ -295,7 +295,8 @@ end
         en::Float64=1e10, N_χs_2::Int=100, 
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
-        obs::Union{Bool,Symbol}=:noobsvel
+        obs::Union{Bool,Symbol}=:noobsvel,
+        suit_sampling::Bool=true
         ) ::Float64
 
     ξ_GNC_IntegratedGP(s1, s2, y, cosmo::Cosmology; 
@@ -445,6 +446,11 @@ This function is computed integrating `integrand_ξ_GNC_IntegratedGP` with [`tra
 - `N_χs_2::Int = 100`: number of points to be used for sampling the integral
   along the ranges `(0, s1)` (for `χ1`) and `(0, s2)` (for `χ2`); it has been checked that
   with `N_χs_2 ≥ 50` the result is stable.
+
+- `suit_sampling::Bool = true` : this bool keyword can be found in all the TPCFs which have at least one `χ` integral;
+  it is conceived to enable a sampling of the `χ` integral(s) suited for the given TPCF; however, it actually have an
+  effect only in the TPCFs that have such a sampling implemented in the code.
+  Currently, only `ξ_GNC_Newtonian_Lensing` (and its simmetryc TPCF) has it.
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
 [`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),

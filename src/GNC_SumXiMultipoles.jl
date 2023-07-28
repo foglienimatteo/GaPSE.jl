@@ -111,10 +111,15 @@ See also: [`integrand_ξ_GNC_multipole`](@ref), [`ξ_GNC_multipole`](@ref),
 [`Cosmology`](@ref), [`GR_EFFECTS_GNC`](@ref)
 """
 function sum_ξ_GNC_multipole(s1, s, cosmo::Cosmology; kwargs...)
-     ALL = [ξ_GNC_multipole(s1, s, effect, cosmo; specif_kwargs_GNC(effect, kwargs)...)
-            for effect in GaPSE.GR_EFFECTS_GNC]
+    #for n in kwargs
+    #    @assert n.first ∈ GaPSE.VALID_KWARGS_GNC "$n.first is not one of the valid "*
+    #    "kwargs for the GNC TPCFs; they are: $(GaPSE.VALID_KWARGS_GNC)"  
+    #end
 
-     return sum(ALL), ALL
+    ALL = [ξ_GNC_multipole(s1, s, effect, cosmo; specif_kwargs_GNC(effect, kwargs)...)
+          for effect in GaPSE.GR_EFFECTS_GNC]
+
+    return sum(ALL), ALL
 end
 
 

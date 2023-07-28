@@ -40,13 +40,10 @@ const HUBBLE_0 = 1e5 / 299792458.0
 
 include("TEST_DATA.jl")
 
-##########################################################################################92
-#=
-@testset "test TwoSpecies" begin
-    include("test_TwoSpecies.jl")
-end
 
-@test 1==2
+
+##########################################################################################92
+
 
 @testset "test FFTLog" begin
     include("test_FFTLog.jl")
@@ -67,7 +64,7 @@ end
 @testset "test IPSTools" begin
     include("test_IPSTools.jl")
 end
-=#
+
 
 @testset "test BackgroundData" begin
     include("test_BackgroundData.jl")
@@ -77,12 +74,9 @@ end
     include("test_CosmoParams.jl")
 end
 
-
 @testset "test Cosmology" begin
     include("test_Cosmology.jl")
 end
-
-@test 1==2
 
 @testset "test WindowF" begin
     include("test_WindowF.jl")
@@ -108,9 +102,9 @@ end
     include("test_PowerSpectraGenWin.jl")
 end
 
-@testset "test WindowF_QMultipoles" begin
+#@testset "test WindowF_QMultipoles" begin
     #include("test_WindowF_QMultipoles.jl")
-end
+#end
 
 
 
@@ -137,7 +131,6 @@ const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
 )
 
 const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP, FILE_IF_MAP)
-
 
 @testset "test_Point" begin
     P = GaPSE.Point(150.0, COSMO)
@@ -554,5 +547,18 @@ end
 @testset "test LDxGNC_SumXiMultipoles_P2" begin
     include("test_LDxGNC_SumXiMultipoles_P2.jl")
 end
+
+##############################
+
+
+
+##### TEST TWO SPECIES GNC,GNCxLD and LDxGNC (L=0) #######################################92
+
+
+@testset "test TwoSpecies" begin
+    include("test_TwoSpecies.jl")
+end
+
+
 
 ##############################

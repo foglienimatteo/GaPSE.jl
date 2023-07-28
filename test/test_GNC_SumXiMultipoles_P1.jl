@@ -24,22 +24,17 @@ println("It will take a while, but do not worry: I'm working.")
 @testset "test sum_ξ_GNC_multipole no_window no observer terms" begin
     RTOL = 1.2e-2
     kwargs = Dict(
-        :use_windows => false,
+        :use_windows => false, 
         :enhancer => 1e8, :obs => :no,
         :N_trap => 30, :N_lob => 30,
         :atol_quad => 0.0, :rtol_quad => 1e-2,
-        :N_χs => 40, :N_χs_2 => 20,
+        :N_χs => 40, :N_χs_2 => 20, :suit_sampling => true,
     )
 
-    #=
-    @testset "zeros" begin
-        a_func(x) = x
-        @test_throws AssertionError GaPSE.sum_ξ_GNC_multipole(COSMO.s_eff, 10, COSMO;
-            L = 0, use_windows = false, SPLINE = true, kwargs...)
-        @test_throws AssertionError GaPSE.integral_on_mu(COSMO.s_eff, 10, a_func, COSMO;
-            L = 0, use_windows = false, SPLINE = true, kwargs...)
-    end
-    =#
+
+    #@testset "zeros" begin
+    #    @test_throws AssertionError GaPSE.sum_ξ_GNC_multipole(COSMO.s_eff, s, COSMO; n=1)
+    #end
 
     @testset "L = 0 no_window" begin
         L = 0

@@ -25,7 +25,7 @@ println("\n\nNow I start the tests on a new Cosmology with two galaxy species, i
 
 params_2species = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
     Ω_b=0.0489, Ω_cdm=0.251020, h_0=0.7, s_lim=1e-2,
-    b1=1.0, b2=1.6, s_b1=0.0, s_b2=1.4, 𝑓_evo1=0.0, 𝑓_evo2=40,
+    b1=1.0, b2=3.0, s_b1=0.3, s_b2=2.0, 𝑓_evo1=30.0, 𝑓_evo2=40.0,
     IPS_opts=Dict(
         :fit_left_min => 1e-6, :fit_left_max => 3e-6,
         :fit_right_min => 1e1, :fit_right_max => 2e1,
@@ -67,7 +67,7 @@ const ss_2species = 10 .^ range(0, log10(2.0 * cosmo_2species.s_max), length=100
     isfile(name) && rm(name)
 
     GaPSE.print_map_sum_ξ_GNC_multipole(cosmo_2species, name, ss_2species;
-        single=true, L=0, alg=:quad, kwargs...)
+        single=true, L=0, alg=:quad, suit_sampling = true, kwargs...)
     calc_ss_quad, calc_sums_quad, calc_xis_quad = GaPSE.readxyall(name, comments=true)
 
     @test all([isapprox(a, r, rtol=RTOL) for (a, r) in zip(res_xis_quad[1], calc_xis_quad[1])]) # auto_newton

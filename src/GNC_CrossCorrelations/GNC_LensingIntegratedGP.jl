@@ -261,7 +261,7 @@ end
 
 
 function ξ_GNC_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::Float64=1e6, N_χs_2::Int=100, kwargs...)
+    en::Float64=1e6, N_χs_2::Int=100, suit_sampling::Bool=true, kwargs...)
 
     χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
     χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
@@ -294,7 +294,8 @@ end
         en::Float64=1e6, N_χs_2::Int=100,
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
-        obs::Union{Bool,Symbol}=:noobsvel
+        obs::Union{Bool,Symbol}=:noobsvel,
+        suit_sampling::Bool=true
         ) ::Float64
 
     ξ_GNC_Lensing_IntegratedGP(
@@ -463,6 +464,11 @@ This function is computed from `integrand_ξ_GNC_Lensing_IntegratedGP` with [`tr
   along the ranges `(0, s1)` (for `χ1`) and `(0, s2)` (for `χ2`); it has been checked that
   with `N_χs_2 ≥ 50` the result is stable.
 
+- `suit_sampling::Bool = true` : this bool keyword can be found in all the TPCFs which have at least one `χ` integral;
+  it is conceived to enable a sampling of the `χ` integral(s) suited for the given TPCF; however, it actually have an
+  effect only in the TPCFs that have such a sampling implemented in the code.
+  Currently, only `ξ_GNC_Newtonian_Lensing` (and its simmetryc TPCF) has it.
+
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
 [`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),
@@ -481,9 +487,10 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 """
     ξ_GNC_IntegratedGP_Lensing(s1, s2, y, cosmo::Cosmology; 
         en::Float64=1e6, N_χs_2::Int=100,
-         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
-        obs::Union{Bool,Symbol}=:noobsvel ) ::Float64
+        obs::Union{Bool,Symbol}=:noobsvel,
+        suit_sampling::Bool=true ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Integrated Gravitational Potential (GP) and the Lensing effects arising from the Galaxy Number Counts (GNC).

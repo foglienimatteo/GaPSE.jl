@@ -30,16 +30,41 @@
 end
 
 @testset "test  specif_kwargs_GNC" begin
-    kwargs = Dict(:N_χs_2 => 200 , :en => 1e6, :N_χs=> 150)
+    kwargs = Dict(:N_lob => 20, :N_χs_2 => 200 , :en => 1e6, :N_χs => 150, :suit_sampling => false)
     @test_throws AssertionError GaPSE.specif_kwargs_GNC("ciao", kwargs)
     @test_throws AssertionError GaPSE.specif_kwargs_GNC("automatic_newton", kwargs)
     @test_throws AssertionError GaPSE.specif_kwargs_GNC("newtonian_localgp", kwargs)
 
-    @test GaPSE.specif_kwargs_GNC("auto_doppler", kwargs) == Dict()
-    @test GaPSE.specif_kwargs_GNC("auto_lensing", kwargs) == Dict(:N_χs_2 => 200 , :en => 1e6)
-    @test GaPSE.specif_kwargs_GNC("integratedgp_lensing", kwargs) == Dict(:N_χs_2 => 200 , :en => 1e6)
-    @test GaPSE.specif_kwargs_GNC("localgp_lensing", kwargs) == Dict(:N_χs => 150 , :en => 1e6)
-    @test GaPSE.specif_kwargs_GNC("localgp_newton", kwargs) == Dict()
+    @test GaPSE.specif_kwargs_GNC("auto_newton", kwargs) == Dict(:N_lob => 20)
+    @test GaPSE.specif_kwargs_GNC("auto_doppler", kwargs) == Dict(:N_lob => 20)
+    @test GaPSE.specif_kwargs_GNC("auto_lensing", kwargs) == Dict(:N_lob => 20,:N_χs_2 => 200, :en => 1e6, :suit_sampling => false)
+    @test GaPSE.specif_kwargs_GNC("auto_localgp", kwargs) == Dict(:N_lob => 20)
+    @test GaPSE.specif_kwargs_GNC("auto_integratedgp", kwargs) == Dict(:N_lob => 20, :N_χs_2 => 200, :en => 1e6, :suit_sampling => false)
+
+    @test GaPSE.specif_kwargs_GNC("newton_doppler", kwargs) == Dict(:N_lob => 20)
+    @test GaPSE.specif_kwargs_GNC("newton_lensing", kwargs) == Dict(:N_lob => 20, :N_χs => 150, :en => 1e6, :suit_sampling => false)
+    @test GaPSE.specif_kwargs_GNC("newton_localgp", kwargs) == Dict(:N_lob => 20)
+    @test GaPSE.specif_kwargs_GNC("newton_integratedgp", kwargs) == Dict(:N_lob => 20, :N_χs => 150, :en => 1e6, :suit_sampling => false)
+
+    @test GaPSE.specif_kwargs_GNC("doppler_newton", kwargs) == Dict(:N_lob => 20)
+    @test GaPSE.specif_kwargs_GNC("doppler_lensing", kwargs) == Dict(:N_lob => 20, :N_χs => 150, :en => 1e6, :suit_sampling => false)
+    @test GaPSE.specif_kwargs_GNC("doppler_localgp", kwargs) == Dict(:N_lob => 20)
+    @test GaPSE.specif_kwargs_GNC("doppler_integratedgp", kwargs) == Dict(:N_lob => 20, :N_χs => 150, :en => 1e6, :suit_sampling => false)
+
+    @test GaPSE.specif_kwargs_GNC("lensing_newton", kwargs) == Dict(:N_lob => 20, :N_χs => 150, :en => 1e6, :suit_sampling => false)
+    @test GaPSE.specif_kwargs_GNC("lensing_doppler", kwargs) == Dict(:N_lob => 20, :N_χs => 150, :en => 1e6, :suit_sampling => false)
+    @test GaPSE.specif_kwargs_GNC("lensing_localgp", kwargs) == Dict(:N_lob => 20, :N_χs => 150, :en => 1e6, :suit_sampling => false)
+    @test GaPSE.specif_kwargs_GNC("lensing_integratedgp", kwargs) == Dict(:N_lob => 20, :N_χs_2 => 200, :en => 1e6, :suit_sampling => false)
+
+    @test GaPSE.specif_kwargs_GNC("localgp_newton", kwargs) == Dict(:N_lob => 20)
+    @test GaPSE.specif_kwargs_GNC("localgp_doppler", kwargs) == Dict(:N_lob => 20)
+    @test GaPSE.specif_kwargs_GNC("localgp_lensing", kwargs) == Dict(:N_lob => 20, :N_χs => 150, :en => 1e6, :suit_sampling => false)
+    @test GaPSE.specif_kwargs_GNC("localgp_integratedgp", kwargs) == Dict(:N_lob => 20, :N_χs => 150, :en => 1e6, :suit_sampling => false)
+
+    @test GaPSE.specif_kwargs_GNC("integratedgp_newton", kwargs) == Dict(:N_lob => 20, :N_χs => 150, :en => 1e6, :suit_sampling => false)
+    @test GaPSE.specif_kwargs_GNC("integratedgp_doppler", kwargs) == Dict(:N_lob => 20, :N_χs => 150, :en => 1e6, :suit_sampling => false)
+    @test GaPSE.specif_kwargs_GNC("integratedgp_lensing", kwargs) == Dict(:N_lob => 20, :N_χs_2 => 200, :en => 1e6, :suit_sampling => false)
+    @test GaPSE.specif_kwargs_GNC("integratedgp_localgp", kwargs) == Dict(:N_lob => 20, :N_χs => 150, :en => 1e6, :suit_sampling => false)
 end
 
 @testset "test  specif_kwargs_GNCxLD" begin

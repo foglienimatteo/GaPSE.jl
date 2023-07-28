@@ -62,7 +62,6 @@ function integrand_ξ_GNC_Newtonian_Lensing(
         I40 = cosmo.tools.I40(Δχ2)
 
         return common * (new_J00 * I00 + new_J02 * I20 + new_J04 * I40)
-
     else
         #return - 2.0 / 3.0 * Δχ2 * f(Δχ2) * D(Δχ2) * cosmo.tools.σ_2^2.0
         #return - 2.0 / 3.0 * common * χ2 * f_s1 * cosmo.tools.σ_2^2
@@ -308,16 +307,14 @@ integrand_ξ_GNC_Newtonian_Lensing
 
 
 function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
-    en::Float64=1e6, N_χs::Int=100, Δχ_min::Float64=1e-1,
-    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
-    obs::Union{Bool,Symbol}=:noobsvel, suit_sampling::Bool=true)
+    en::Float64=1e6, N_χs::Int=100, suit_sampling::Bool=true,
+    kwargs...)
 
     STARTING = 0.0
     frac_begin, frac_middle, FRAC_s = 0.6, 0.6, 0.10
 
     χ2s = if suit_sampling == false
-    s2 .* range(STARTING, 1.0, length=N_χs)
+        s2 .* range(STARTING, 1.0, length=N_χs)
     else
         if s2 < (1.0 - FRAC_s) * s1
             s2 .* range(STARTING, 1.0, length=N_χs)
@@ -340,8 +337,8 @@ function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
     IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
     int_ξs = [
-    en * GaPSE.integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; obs=obs, Δχ_min=Δχ_min)
-    for IP in IPs
+        en * GaPSE.integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; kwargs...)
+        for IP in IPs
     ]
 
     return trapz(χ2s, int_ξs) / en
@@ -367,14 +364,14 @@ The analytical expression of this TPCF is the following:
 
 ```math
 \\begin{equation}
-     \\xi^{\\delta \\kappa} ( s_1 , s_2, y ) =
-     D_1  \\int_0^{s_2}\\mathrm{d} \\chi_2
-     J^{\\delta \\kappa}_{\\alpha}
-     \\left[ 
-          J^{\\delta \\kappa}_{00} I_0^0 ( \\Delta\\chi_2 ) + 
-          J^{\\delta \\kappa}_{02} I_2^0 ( \\Delta \\chi_2 ) + 
-          J^{\\delta \\kappa}_{04} I_4^0 ( \\Delta \\chi_2 ) 
-     \\right] \\, ,
+    \\xi^{\\delta \\kappa} ( s_1 , s_2, y ) =
+    D_1  \\int_0^{s_2}\\mathrm{d} \\chi_2
+    J^{\\delta \\kappa}_{\\alpha}
+    \\left[ 
+        J^{\\delta \\kappa}_{00} I_0^0 ( \\Delta\\chi_2 ) + 
+        J^{\\delta \\kappa}_{02} I_2^0 ( \\Delta \\chi_2 ) + 
+        J^{\\delta \\kappa}_{04} I_4^0 ( \\Delta \\chi_2 ) 
+    \\right] \\, ,
 \\end{equation}
 ```
 
@@ -550,7 +547,10 @@ This function is computed integrating `integrand_ξ_GNC_Newtonian_Lensing` with 
   along the range `(0, s2)` (for `χ2`); it has been checked that
   with `N_χs ≥ 100` the result is stable.
 
-- `suit_sampling::Bool = true` : 
+- `suit_sampling::Bool = true` : this bool keyword can be found in all the TPCFs which have at least one `χ` integral;
+  it is conceived to enable a sampling of the `χ` integral(s) suited for the given TPCF; however, it actually have an
+  effect only in the TPCFs that have such a sampling implemented in the code.
+  Currently, only `ξ_GNC_Newtonian_Lensing` (and its simmetryc TPCF) has it.
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
 [`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),

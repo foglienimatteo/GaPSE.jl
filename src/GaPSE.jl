@@ -177,9 +177,9 @@ function parameters_used(io::IO, cosmo::Cosmology; logo::Bool=true)
     println(io, "#\t Ω_b = $(cosmo.params.Ω_b) \t " *
                 "Ω_cdm = $(cosmo.params.Ω_cdm) \t Ω_M0 = $(cosmo.params.Ω_M0)")
     println(io, "#\t b1 = $(cosmo.params.b1) \t " *
-                "f_evo1 = $(cosmo.params.𝑓_evo1) \t s_b = $(cosmo.params.s_b1)")
+                "f_evo1 = $(cosmo.params.𝑓_evo1) \t s_b1 = $(cosmo.params.s_b1)")
     println(io, "#\t b2 = $(cosmo.params.b2) \t " *
-                "f_evo2 = $(cosmo.params.𝑓_evo2) \t s_b = $(cosmo.params.s_b2)")
+                "f_evo2 = $(cosmo.params.𝑓_evo2) \t s_b2 = $(cosmo.params.s_b2)")
     println(io, "#")
 
     println(io, "# - CosmoParams about the Input Power Spectrum: ")
