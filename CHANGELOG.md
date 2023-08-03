@@ -3,6 +3,13 @@
 
 ## development branch qls
 
+- IMPORTANT CHANGE: NOW YOU CAN GO FURTHER THAN `z=1.5`!
+
+- IMPORTANT CHANGE: TWO TRACERS IMPLEMENTATION!
+  Now you have two comsological biases sets `b1`, `s_b1`, `𝑓_evo1` and `b2`, `s_b2`, `𝑓_evo2` in the `CosmoParams` struct (you cannot specify anymore them as `b`, `s_b`, `𝑓_evo`);
+
+- added all the previously missing docstrings in `GNCxLD` and `LD` TPCFs;
+
 - added `ipynb/Computations_b1p5-sb0-fevo0.ipynb`, `Computations_b1p5-sb0-fevo0.jl` and `Generic_Window.jl` for the analysis of the PNG, even with a generic window function
 
 - added `src/PowerSpectraGenWin.jl` and `src/WindowF_QMultipoles.jl`: now it's possible to compute the PS for a generic window!
