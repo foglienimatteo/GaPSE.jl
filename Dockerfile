@@ -5,14 +5,15 @@ USER root
 
 COPY . /home/jovyan/GaPSE
 WORKDIR /home/jovyan/GaPSE
+RUN chown -R jovyan:users /home/jovyan/GaPSE
 
-USER root
+USER jovyan
+RUN pip3 install matplotlib
 RUN julia --project=. --eval 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
 RUN julia --project=. --eval 'using Pkg; for p in [  \
         "Plots", "LaTeXStrings", "PyPlot" \
     ]; \ 
     Pkg.add(p); end; Pkg.resolve()'
-USER jovyan
 
 #ENTRYPOINT ["/bin/bash"]
 

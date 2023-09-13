@@ -47,3 +47,4 @@ docs/build/
 *.dat
 *.pdf
 build.log
+newimage.sh
