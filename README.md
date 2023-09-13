@@ -84,7 +84,11 @@ Inside the directory, there is a file called `install_gapse.jl`, which is a Juli
 ```
 If there are no error messages at the end of the installations, than GaPSE is corretly configured and you can start to use it!
   
-
+NOTE: the packages that this script will install are the ones strictly required for GaPSE. The ipynbs we provide need however some more, as `Plots`, `LaTeXStrings` and `PyPlot` (which in turn requires a python kernel with `Matplotlib` installed); in case you don't have them, run with a terminal in this directory:
+```bash
+$ pip3 install matplotlib
+$ julia --activate=. --eval 'using Pkg; for p in ["Plots", "LaTeXStrings", "PyPlot"]; Pkg.add(p); end; Pkg.resolve()'
+```
 
 NOTE: instead of using the `install_gapse.jl` script, you can also do the same in a more interactive way, if you prefer:
 
@@ -191,6 +195,11 @@ GaPSE.jl makes extensive use of the following packages:
 - [QuadGK](https://github.com/JuliaMath/QuadGK.jl), [Trapz](https://github.com/francescoalemanno/Trapz.jl) and [FastGaussQuadrature](https://github.com/JuliaApproximation/FastGaussQuadrature.jl) for preforming 1D integrations, and [HCubature](https://github.com/JuliaMath/HCubature.jl) for the 2D ones
 - [ArbNumerics](https://github.com/JeffreySarnoff/ArbNumerics.jl), [AssociatedLegendrePolynomials](https://github.com/jmert/AssociatedLegendrePolynomials.jl), [LegendrePolynomials](https://github.com/jishnub/LegendrePolynomials.jl) and [SpecialFunctions](https://github.com/JuliaMath/SpecialFunctions.jl) for mathematical function evaluations, especially for the Legendre Polinomials $\mathcal{L}_{\ell}(x)$ and the Gamma function $ \Gamma(x) $
 - other native Julia packages: [DelimitedFiles](https://github.com/JuliaData/DelimitedFiles.jl), [Documenter](https://github.com/JuliaDocs/Documenter.jl), [IJulia](https://github.com/JuliaLang/IJulia.jl), [LinearAlgebra](https://github.com/JuliaLang/julia/tree/master/stdlib/LinearAlgebra), [NPZ](https://github.com/fhs/NPZ.jl), [Printf](https://github.com/JuliaLang/julia/tree/master/stdlib/Printf), [ProgressMeter](https://github.com/timholy/ProgressMeter.jl), [Suppressor](https://github.com/JuliaIO/Suppressor.jl), [Test](https://github.com/JuliaLang/julia/tree/master/stdlib/Test)
+
+Furthermore, the notebooks we provide in `ipynbs` use:
+- [Plots](https://github.com/JuliaPlots/Plots.jl) for the pure julian plots;
+- [LaTeXStrings](https://github.com/JuliaStrings/LaTeXStrings.jl) for the labels in LaTeX;
+- [PyPlot](https://github.com/JuliaPy/PyPlot.jl) for the julian plots in the python style; this package is based on the [Matplotlib](https://matplotlib.org) Python package, and it requires it in order to run properly.
 
 
 ## How to report bugs, suggest improvements and/or contribute
