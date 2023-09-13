@@ -131,7 +131,7 @@ The code is well tested and documented: almost each struct/function has a docstr
 
 The `Dockerfile` we provide in this directory is the one we used to create the container image corresponding to this GaPSE version.
 
-The images are saved in https://hub.docker.com/matteofoglieni/gapse and the tag is the same as the GaPSE version the container refers to + a latin letter (alphabetically orderer), to take into account different version of the Dockerfile which refer to the same GaPSE one.
+The images are saved in https://hub.docker.com/repository/docker/matteofoglieni/gapse/general and the tag is the same as the GaPSE version the container refers to + a latin letter (alphabetically orderer), to take into account different version of the Dockerfile which refer to the same GaPSE one.
 The latest container name is then `gapse:0.8.0a`.
 
 These containers have already installed all the Julia packages that GaPSE needs (i.e. the ones listed in `Project.toml`) + come others for the ipynbs (check the Dockerfile itself).
