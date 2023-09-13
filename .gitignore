@@ -46,3 +46,4 @@ docs/build/
 *.txt
 *.dat
 *.pdf
+build.log

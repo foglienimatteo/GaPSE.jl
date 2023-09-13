@@ -23,8 +23,10 @@ IMPORTANT NOTE: This is a work-in-progress project! As a consequence, currently 
 - [GaPSE - a model for the Galaxy Power Spectrum Estimator](#gapse---a-model-for-the-galaxy-power-spectrum-estimator)
   - [Table of Contents](#table-of-contents)
   - [Brief description](#brief-description)
-  - [Installation](#installation)
-  - [Usage](#usage)
+  - [Installation and Usage](#installation-and-usage)
+    - [traditional way: Installation](#traditional-way-installation)
+  - [traditional way: Usage](#traditional-way-usage)
+    - [Docker container: Installation and Usage](#docker-container-installation-and-usage)
   - [Dependencies](#dependencies)
   - [How to report bugs, suggest improvements and/or contribute](#how-to-report-bugs-suggest-improvements-andor-contribute)
   - [Using this code](#using-this-code)
@@ -53,11 +55,19 @@ All these calculations can be performed both with and without a survey window fu
 
 This project, and the analytical expressions used for the TPCFs, are based on the article of Emanuele Castorina and Enea Di Dio [[3]](#1). 
 
-## Installation
+## Installation and Usage
 
-Currently, this package is not in the Julia package registries. Assuming that you have already installed a coompatible Julia version, the simplest way to install this software is then the following:
+Currently, this package is not in the Julia package registries. 
+There are two main ways to install and use GaPSE on your local machine:
+-  the traditional way: you clone this gitrepo locally and you install the librarires that GaPSE needs in a suited Julia enviroment; it requires a compatible Julia version ≥1.8;
+-  using a Docker container (experimental): you pull and run the GaPSE container; it requires a [Docker](https://www.docker.com) installation.
 
-- in the terminal, go to the directory you want to install this package;
+
+### traditional way: Installation
+
+Assuming that you have already installed a coompatible Julia version, the simplest way to install this software is then the following:
+
+- in the terminal, go to the directory where you want to install this package;
   
 - clone this repository with Git
   ```bash
@@ -88,9 +98,9 @@ NOTE: instead of using the `install_gapse.jl` script, you can also do the same i
 
 - done! You can exit from the package mode (press the Backspace key on an empty line) and start to use GaPSE
 
-## Usage
 
-The only mandatory instrument to run the code is a Julia REPL with version ≥ 1.8. 
+## traditional way: Usage
+
 There are three ways in order to use this code:
 
 - you can write whatever instruction inside the file `GaPSE-exe.jl` and then run in the command line
@@ -116,6 +126,60 @@ Some `.ipynb`s are already provided in the directory `ipynbs` :
   ```
 
 The code is well tested and documented: almost each struct/function has a docstring that you can easily access in Julia with `?<name-of-the-struct/function>`, and there is an acitive GitHub Pages website with the [latest stable documentation](https://foglienimatteo.github.io/GaPSE/stable).
+
+### Docker container: Installation and Usage
+
+The `Dockerfile` we provide in this directory is the one we used to create the container image corresponding to this GaPSE version.
+
+The images are saved in https://hub.docker.com/matteofoglieni, and the name convenction is `gapse-julia-<juliaversion>` and the tag is the same as the GaPSE version the container refers to + a latin letter (alphabetically orderer), to take into account different version of the Dockerfile which refer to the same GaPSE one.
+The latest container name is then `gapse-julia-1.9.1:0.8.0a`.
+
+These containers have already installed all the Julia packages that GaPSE needs (i.e. the ones listed in `Project.toml`) + come others for the ipynbs (check the Dockerfile itself).
+
+Supposing that you have already installed Docker, so as to use GaPSE as a container:
+- download the image: 
+  ```bash
+  $ sudo docker pull 
+  ```
+- choose a free port where to access the JupyterLab of the container; we will use `10000`;
+- run the container with that port:
+  ```bash
+  $ sudo docker run -d -p 10000:8888 gapse-julia-1.9.1:0.8.0a
+  ```
+- get the logs of the container and copy the Jupyter token (in the following output is `531vbeb08567581944e486d47e1tee15683757086205da68`):
+  ```bash
+  $ sudo docker logs $(sudo docker ps -ql)
+  ...
+  [I 2023-09-13 12:51:47.960 ServerApp] Jupyter Server 2.7.0 is running at:
+  [I 2023-09-13 12:51:47.960 ServerApp] http://7b1ca9747263:8888/lab?token=531vbeb08567581944e486d47e1tee15683757086205da68
+  [I 2023-09-13 12:51:47.960 ServerApp]     http://127.0.0.1:8888/lab?token=531vbeb08567581944e486d47e1tee15683757086205da68
+  [I 2023-09-13 12:51:47.960 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+  [C 2023-09-13 12:51:47.962 ServerApp] 
+      
+      To access the server, open this file in a browser:
+          file:///home/jovyan/.local/share/jupyter/runtime/jpserver-7-open.html
+      Or copy and paste one of these URLs:
+          http://7f1ca9847263:8888/lab?token=531vbeb08567581944e486d47e1tee15683757086205da68
+          http://127.0.0.1:8888/lab?token=531vbeb08567581944e486d47e1tee15683757086205da68
+  [I 2023-09-13 12:51:48.653 ServerApp] Skipped non-installed server(s): bash-language-server, dockerfile-language-server-nodejs, javascript-typescript-langserver, jedi-language-server, julia-language-server, pyright, python-language-server, python-lsp-server, r-languageserver, sql-language-server, texlab, typescript-language-server, unified-language-server, vscode-css-languageserver-bin, vscode-html-languageserver-bin, vscode-json-languageserver-bin, yaml-language-server
+  ...
+  ```
+- open a browser of your choice on your local machine and paste as URL  `http://127.0.0.1:10000/lab?token=531vbeb08567581944e486d47e1tee15683757086205da68` (essentially, you just have to substitute the port `8888` with the one you choose in the URL showed in the previous logs).
+- now you should see a JupyterLab page containing the GaPSE files.
+
+Now you can use GaPSE inside the Jupyter interface as normally!
+
+Quick summary of Docker commands, in case you don't know them:
+- `sudo docker ps [-a]` : list running containers (all with `-a`);
+- `sudo docker logs <container-name/id>` : get the logs of a container;
+- `sudo docker start/stop <container-name/id>` : start a stopped container/stop a running container;
+- `sudo docker rm <container-id/name>` : delete a container;
+- `sudo docker pull <image>` : download a container image;
+- `sudo docker run <image>` : create a running container from an image;
+- `sudo docker image list` : list all the local images;
+- `sudo docker image rm <image>` : delete an image.
+
+
 
 ## Dependencies
 
