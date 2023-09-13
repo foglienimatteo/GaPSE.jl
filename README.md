@@ -131,20 +131,20 @@ The code is well tested and documented: almost each struct/function has a docstr
 
 The `Dockerfile` we provide in this directory is the one we used to create the container image corresponding to this GaPSE version.
 
-The images are saved in https://hub.docker.com/matteofoglieni, and the name convenction is `gapse-julia-<juliaversion>` and the tag is the same as the GaPSE version the container refers to + a latin letter (alphabetically orderer), to take into account different version of the Dockerfile which refer to the same GaPSE one.
-The latest container name is then `gapse-julia-1.9.1:0.8.0a`.
+The images are saved in https://hub.docker.com/matteofoglieni/gapse and the tag is the same as the GaPSE version the container refers to + a latin letter (alphabetically orderer), to take into account different version of the Dockerfile which refer to the same GaPSE one.
+The latest container name is then `gapse:0.8.0a`.
 
 These containers have already installed all the Julia packages that GaPSE needs (i.e. the ones listed in `Project.toml`) + come others for the ipynbs (check the Dockerfile itself).
 
 Supposing that you have already installed Docker, so as to use GaPSE as a container:
 - download the image: 
   ```bash
-  $ sudo docker pull 
+  $ sudo docker pull matteofoglieni/gapse:0.8.0a
   ```
 - choose a free port where to access the JupyterLab of the container; we will use `10000`;
 - run the container with that port:
   ```bash
-  $ sudo docker run -d -p 10000:8888 gapse-julia-1.9.1:0.8.0a
+  $ sudo docker run -d -p 10000:8888 matteofoglieni/gapse:0.8.0a
   ```
 - get the logs of the container and copy the Jupyter token (in the following output is `531vbeb08567581944e486d47e1tee15683757086205da68`):
   ```bash
