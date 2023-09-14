@@ -25,7 +25,7 @@ IMPORTANT NOTE: This is a work-in-progress project! As a consequence, currently 
   - [Brief description](#brief-description)
   - [Installation and Usage](#installation-and-usage)
     - [traditional way: Installation](#traditional-way-installation)
-  - [traditional way: Usage](#traditional-way-usage)
+    - [traditional way: Usage](#traditional-way-usage)
     - [Docker container: Installation and Usage](#docker-container-installation-and-usage)
   - [Dependencies](#dependencies)
   - [How to report bugs, suggest improvements and/or contribute](#how-to-report-bugs-suggest-improvements-andor-contribute)
@@ -103,7 +103,7 @@ NOTE: instead of using the `install_gapse.jl` script, you can also do the same i
 - done! You can exit from the package mode (press the Backspace key on an empty line) and start to use GaPSE
 
 
-## traditional way: Usage
+### traditional way: Usage
 
 There are three ways in order to use this code:
 
