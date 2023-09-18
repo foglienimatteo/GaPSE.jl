@@ -152,14 +152,14 @@ As already mentioned above, this is a WIP project used mostly by the authors the
 
 If you use GaPSE to compute the galaxy power spectrum/correlation function please refer to the two following papers:
 
-- Castorina, Di Dio, _The observed galaxy power spectrum in General Relativity_ (2022), Journal of Cosmology and Astroparticle Physics, DOI: 10.1088/1475-7516/2022/01/061, url: https://doi.org/10.1088/1475-7516/2022/01/061
+- Castorina, Di Dio, _The observed galaxy power spectrum in General Relativity_ (2022), Journal of Cosmology and Astroparticle Physics, DOI: [10.1088/1475-7516/2022/01/061](https://doi.org/10.1088/1475-7516/2022/01/061) (arXiv [2106.08857](https://arxiv.org/abs/2106.08857))
 
-- Foglieni, Pantiri, Di Dio, Castorina,  _The large scale limit of the observed galaxy power spectrum_ (2023), ArXiv number 2303.03142, url: https://arxiv.org/abs/2303.03142
+- Foglieni, Pantiri, Di Dio, Castorina,  _The large scale limit of the observed galaxy power spectrum_ (2023), Physical Review Letters, DOI: [10.1103/PhysRevLett.131.111201](https://doi.org/10.1103/PhysRevLett.131.111201) (arXiv [2303.03142](https://arxiv.org/abs/2303.03142))
 
 If you also use the code to compute the perturbations in the luminosity distance, please refer also to
 
 - Pantiri, Foglieni, Di Dio, Castorina,  _The power spectrum of luminosity distance fluctuations in General Relativity_ (2023) [in preparation]
-
+- 
 ## Licence
 
 This software is under the [GNU 3.0 General Public Licence](https://www.gnu.org/licenses/gpl-3.0.en.html). See the file [LICENCE.md](./LICENCE.md).

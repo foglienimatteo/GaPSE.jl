@@ -1,7 +1,7 @@
 name = "GaPSE"
 uuid = "d1bf0294-456c-4ffb-813c-36d532d2da2e"
 authors = ["Matteo Foglieni <matteo.foglieni16@gmail.com>"]
-version = "0.1.0"
+version = "0.7.0"
 
 [deps]
 ArbNumerics = "7e558dbc-694d-5a72-987c-6f4ebed21442"
