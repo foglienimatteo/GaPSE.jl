@@ -52,7 +52,7 @@ const NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mp
      "comov. dist.", "ang.diam.dist.", "lum. dist.", "comov.snd.hrz.",
      "(.)rho_g", "(.)rho_b", "(.)rho_cdm", "(.)rho_lambda", "(.)rho_ur",
      "(.)rho_crit", "gr.fac. D", "gr.fac. f"]
-const VALID_GROUPS = ["LD", "GNC", "GNCxLD", "LDxGNC", "generic"]
+const VALID_GROUPS = ["LD", "GNC", "GNCxLD", "LDxGNC", "generic"] # DO NOT MODIFY!
 const LENGTH_VALID_GROUPS = [18, 27, 22, 22, nothing]
 
 const HUBBLE_0 = 1e5 / 299792458.0

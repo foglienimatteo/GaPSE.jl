@@ -847,3 +847,17 @@ function specif_kwargs_LDxGNC(name::String, kwargs)
         return filter(p -> (first(p) ∉ chi_integrated_GNCxLD_kwargs), kwargs)
     end
 end
+
+
+
+##################### miscellanea #############################
+
+
+
+const GR_EFFECTS_VECTOR = [
+    GaPSE.GR_EFFECTS_LD,
+    GaPSE.GR_EFFECTS_GNC,
+    GaPSE.GR_EFFECTS_GNCxLD,
+    GaPSE.GR_EFFECTS_LDxGNC
+];
+

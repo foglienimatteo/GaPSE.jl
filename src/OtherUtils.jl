@@ -378,7 +378,7 @@ types `xdt` and `ydt`.
 If the file start with comments (lines starting with #), set 
 `comments = true`.
 
-See also: [`readxall`](@ref), [`readxyall`](@ref)
+See also: [`readxall`](@ref), [`readxyall`](@ref), [`readxchoosey`](@ref)
 """
 function readxy(input::String; comments::Bool=true,
     xdt::DataType=Float64, ydt::DataType=Float64)
@@ -401,7 +401,7 @@ Read the file `input` and return a tuple having
 If the file start with comments (lines starting with #), set 
 `comments = true`.
 
-See also: [`readxy`](@ref), [`readxyall`](@ref)
+See also: [`readxy`](@ref), [`readxyall`](@ref), [`readxchoosey`](@ref)
 """
 function readxall(input::String; comments::Bool=true,
     xdt::DataType=Float64, ydt::DataType=Float64)
@@ -428,7 +428,7 @@ Read the file `input` and return a tuple having
 If the file start with comments (lines starting with #), set 
 `comments = true`.
 
-See also: [`readxy`](@ref), [`readxall`](@ref)
+See also: [`readxy`](@ref), [`readxall`](@ref), [`readxchoosey`](@ref)
 """
 function readxyall(input::String; comments::Bool=true,
     xdt::DataType=Float64, ydt::DataType=Float64, zdt::DataType=Float64)
@@ -440,6 +440,98 @@ function readxyall(input::String; comments::Bool=true,
     return (xs, ys, all)
 end;
 
+
+"""
+    readchoosen(
+        input::String, n::Int; 
+        comments::Bool = true, dt::DataType = Float64, 
+        ) ::Tuple{Vector{xdt},Vector{ydt}}
+
+Read the file `input` and return the data (with the input type `ydt`) stored in the column number `n`.
+
+If the file start with comments (lines starting with #), set 
+`comments = true`.
+
+See also: [`readxy`](@ref), [`readxall`](@ref), [`readxyall`](@ref), [`readxchoosey`](@ref)
+"""
+function readchoosen(
+    input::String, n::Int; comments::Bool = true,
+    dt::DataType = Float64)
+
+    table = readdlm(input, comments=comments)
+    @assert 1 ≤ n ≤ size(table)[2] "The colomn number n must be an integer such that 1 ≤ n ≤ $(size(table)[2])!"
+    xs = vecstring_to_vecnumbers(table[:, n]; dt=dt)
+    return xs
+end
+
+
+
+function readxchoosey(
+    input::String, n::Int; comments::Bool = true,
+    xdt::DataType = Float64, ydt::DataType = Float64)
+
+    table = readdlm(input, comments=comments)
+    @assert 2 ≤ n ≤ size(table)[2] "The colomn number n must be an integer such that 2 ≤ n ≤ $(size(table)[2])!"
+    xs = vecstring_to_vecnumbers(table[:, 1]; dt=xdt)
+    ys = vecstring_to_vecnumbers(table[:, n]; dt=ydt)
+    return (xs, ys)
+end
+
+
+function readxchoosey(
+    input::String, effect::String, group::String = VALID_GROUPS[begin+1];
+    comments::Bool = true, xdt::DataType = Float64, ydt::DataType = Float64)
+
+    check_group(group; valid_groups=VALID_GROUPS[begin:end-1])
+
+    error = "$effect is not a valid GR effect name for $group group.\n" *
+            "Valid GR effect names for $group group are the following:\n"
+
+    for (i, g) in enumerate(VALID_GROUPS[begin:end-1])
+        if group == g
+            @assert (effect ∈ GR_EFFECTS_VECTOR[i] || effect =="sum") error * string(GR_EFFECTS_VECTOR[i] .* " , "...)
+            index_j = if effect == "sum" 
+                2
+            else
+                ttt = findfirst(x -> x == effect, GR_EFFECTS_VECTOR[i])
+                @assert !isnothing(ttt) "bug to be fixed"
+                index_j = 2 + ttt
+            end
+
+            table = readdlm(input, comments=comments)
+            @assert 2 ≤ index_j ≤ size(table)[2] "bug to be fixed"
+            xs = vecstring_to_vecnumbers(table[:, 1]; dt=xdt)
+            ys = vecstring_to_vecnumbers(table[:, index_j]; dt=ydt)
+            return (xs, ys)
+        end
+    end
+end
+
+
+"""
+    readxchoosey(
+        input::String, n::Int; 
+        comments::Bool = true, xdt::DataType = Float64, ydt::DataType = Float64,
+        ) ::Tuple{Vector{xdt},Vector{ydt}}
+
+    readxchoosey(
+        input::String, effect::String, group::String = VALID_GROUPS[begin+1]; 
+        comments::Bool = true, xdt::DataType = Float64, ydt::DataType = Float64,
+        ) ::Tuple{Vector{xdt},Vector{ydt}}
+
+Read the file `input` and return a tuple having
+- as first element the data in the first column (with the input type `xdt`)
+- as second element the data (with the input type `ydt`)
+  - stored in the column number `n` (first method) 
+  - in the position corresponding to the input `effect` for the given `group`
+    (note: also "sum" is valid as effect here, and gives the sum column, i.e. the second one)
+
+If the file start with comments (lines starting with #), set 
+`comments = true`.
+
+See also: [`readxy`](@ref), [`readxall`](@ref), [`readxyall`](@ref),[`readchoosen`](@ref)
+"""
+readxchoosey
 
 
 ##########################################################################################92

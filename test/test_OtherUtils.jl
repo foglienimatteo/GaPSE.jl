@@ -370,6 +370,142 @@ end
 end
 
 
+
+
+##########################################################################################92
+
+@testset "test readchoosen" begin
+    filename="datatest/LD_SumXiMultipoles/xis_LD_L0_noF.txt"
+    four_column = [parse.(Float64, readlines(`awk '!/^#/ {print $4}' datatest/LD_SumXiMultipoles/xis_LD_L0_noF.txt`))...]
+
+    @test all(GaPSE.readchoosen(filename, 4) .≈ four_column)
+end
+
+
+@testset "test readxchoosey" begin
+    filename_LD = "datatest/LD_SumXiMultipoles/xis_LD_L0_noF.txt"
+    LD_four_column = [parse.(Float64, readlines(`awk '!/^#/ {print $4}' datatest/LD_SumXiMultipoles/xis_LD_L0_noF.txt`))...]
+
+    xs, ys = GaPSE.readxchoosey(filename_LD, 4)
+    @test all(xs .≈ GaPSE.readchoosen(filename_LD, 1))
+    @test all(ys .≈ LD_four_column)
+
+    _, ys = GaPSE.readxchoosey(filename_LD, "sum", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 2))
+    _, ys = GaPSE.readxchoosey(filename_LD, "auto_doppler", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 3))
+    _, ys = GaPSE.readxchoosey(filename_LD, "auto_lensing", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 4))
+    _, ys = GaPSE.readxchoosey(filename_LD, "auto_localgp", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 5))
+    _, ys = GaPSE.readxchoosey(filename_LD, "auto_integratedgp", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 6))
+    _, ys = GaPSE.readxchoosey(filename_LD, "lensing_doppler", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 7))
+    _, ys = GaPSE.readxchoosey(filename_LD, "doppler_lensing", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 8))
+    _, ys = GaPSE.readxchoosey(filename_LD, "doppler_localgp", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 9))
+    _, ys = GaPSE.readxchoosey(filename_LD, "localgp_doppler", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 10))
+    _, ys = GaPSE.readxchoosey(filename_LD, "doppler_integratedgp", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 11))
+    _, ys = GaPSE.readxchoosey(filename_LD, "integratedgp_doppler", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 12))
+    _, ys = GaPSE.readxchoosey(filename_LD, "lensing_localgp", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 13))
+    _, ys = GaPSE.readxchoosey(filename_LD, "localgp_lensing", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 14))
+    _, ys = GaPSE.readxchoosey(filename_LD, "lensing_integratedgp", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 15))
+    _, ys = GaPSE.readxchoosey(filename_LD, "integratedgp_lensing", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 16))
+    _, ys = GaPSE.readxchoosey(filename_LD, "localgp_integratedgp", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 17))
+    _, ys = GaPSE.readxchoosey(filename_LD, "integratedgp_localgp", "LD"); @test all(ys .≈ GaPSE.readchoosen(filename_LD, 18))
+    # 1: s [Mpc/h_0] 	 2: xi_SUM 	 3: xi_auto_doppler 	 4: xi_auto_lensing 	 5: xi_auto_localgp 	 6: xi_auto_integratedgp 	 
+    # 7: xi_lensing_doppler 	 8: xi_doppler_lensing 	 9: xi_doppler_localgp 	 10: xi_localgp_doppler 	 11: xi_doppler_integratedgp 	 
+    # 12: xi_integratedgp_doppler 	 13: xi_lensing_localgp 	 14: xi_localgp_lensing 	 15: xi_lensing_integratedgp 	 16: xi_integratedgp_lensing 	 
+    # 17: xi_localgp_integratedgp 	 18: xi_integratedgp_localgp 
+    
+    filename_GNC = "datatest/GNC_SumXiMultipoles/xis_GNC_L0_noF_noobs.txt"
+
+    _, ys = GaPSE.readxchoosey(filename_GNC, "sum", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 2))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "auto_newton", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 3))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "auto_doppler", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 4))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "auto_lensing", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 5))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "auto_localgp", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 6))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "auto_integratedgp", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 7))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "newton_doppler", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 8))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "doppler_newton", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 9))
+     _, ys = GaPSE.readxchoosey(filename_GNC, "newton_lensing", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 10))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "lensing_newton", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 11))
+     _, ys = GaPSE.readxchoosey(filename_GNC, "newton_localgp", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 12))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "localgp_newton", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 13))
+     _, ys = GaPSE.readxchoosey(filename_GNC, "newton_integratedgp", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 14))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "integratedgp_newton", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 15))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "lensing_doppler", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 16))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "doppler_lensing", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 17))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "doppler_localgp", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 18))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "localgp_doppler", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 19))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "doppler_integratedgp", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 20))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "integratedgp_doppler", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 21))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "lensing_localgp", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 22))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "localgp_lensing", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 23))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "lensing_integratedgp", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 24))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "integratedgp_lensing", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 25))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "localgp_integratedgp", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 26))
+    _, ys = GaPSE.readxchoosey(filename_GNC, "integratedgp_localgp", "GNC"); @test all(ys .≈ GaPSE.readchoosen(filename_GNC, 27))
+    # 1: s [Mpc/h_0] 	 2: xi_SUM 	 3: xi_auto_newton 	 4: xi_auto_doppler 	 5: xi_auto_lensing 	 6: xi_auto_localgp 	 
+    # 7: xi_auto_integratedgp 	 8: xi_newton_doppler 	 9: xi_doppler_newton 	 10: xi_newton_lensing 	 11: xi_lensing_newton 	 
+    # 12: xi_newton_localgp 	 13: xi_localgp_newton 	 14: xi_newton_integratedgp 	 15: xi_integratedgp_newton 	 16: xi_lensing_doppler 	 
+    # 17: xi_doppler_lensing 	 18: xi_doppler_localgp 	 19: xi_localgp_doppler 	 20: xi_doppler_integratedgp 	 21: xi_integratedgp_doppler 	 
+    # 22: xi_lensing_localgp 	 23: xi_localgp_lensing 	 24: xi_lensing_integratedgp 	 25: xi_integratedgp_lensing 	 26: xi_localgp_integratedgp 	 
+    # 27: xi_integratedgp_localgp 	 
+
+    filename_GNCxLD = "datatest/GNCxLD_SumXiMultipoles/xis_GNCxLD_L0_noF.txt"
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "sum", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 2))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "newton_doppler", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 3))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "newton_lensing", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 4))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "newton_localgp", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 5))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "newton_integratedgp", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 6))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "doppler_doppler", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 7))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "doppler_lensing", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 8))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "doppler_localgp", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 9))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "doppler_integratedgp", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 10))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "lensing_doppler", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 11))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "lensing_lensing", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 12))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "lensing_localgp", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 13))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "lensing_integratedgp", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 14))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "localgp_doppler", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 15))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "localgp_lensing", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 16))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "localgp_localgp", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 17))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "localgp_integratedgp", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 18))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "integratedgp_doppler", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 19))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "integratedgp_lensing", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 20))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "integratedgp_localgp", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 21))
+    _, ys = GaPSE.readxchoosey(filename_GNCxLD, "integratedgp_integratedgp", "GNCxLD"); @test all(ys .≈ GaPSE.readchoosen(filename_GNCxLD, 22))
+    # 1: s [Mpc/h_0] 	 2: xi_SUM 	 3: xi_newton_doppler 	 4: xi_newton_lensing 	 5: xi_newton_localgp 	 6: xi_newton_integratedgp 	 
+    # 7: xi_doppler_doppler 	 8: xi_doppler_lensing 	 9: xi_doppler_localgp 	 10: xi_doppler_integratedgp 	 11: xi_lensing_doppler 	 
+    # 12: xi_lensing_lensing 	 13: xi_lensing_localgp 	 14: xi_lensing_integratedgp 	 15: xi_localgp_doppler 	 16: xi_localgp_lensing 	 
+    # 17: xi_localgp_localgp 	 18: xi_localgp_integratedgp 	 19: xi_integratedgp_doppler 	 20: xi_integratedgp_lensing 	 21: xi_integratedgp_localgp 	 
+    # 22: xi_integratedgp_integratedgp 	 
+
+    filename_LDxGNC = "datatest/LDxGNC_SumXiMultipoles/xis_LDxGNC_L0_noF.txt"
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "sum", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 2))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "doppler_newton", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 3))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "lensing_newton", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 4))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "localgp_newton", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 5))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "integratedgp_newton", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 6))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "doppler_doppler", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 7))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "lensing_doppler", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 8))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "localgp_doppler", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 9))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "integratedgp_doppler", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 10))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "doppler_lensing", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 11))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "lensing_lensing", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 12))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "localgp_lensing", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 13))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "integratedgp_lensing", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 14))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "doppler_localgp", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 15))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "lensing_localgp", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 16))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "localgp_localgp", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 17))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "integratedgp_localgp", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 18))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "doppler_integratedgp", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 19))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "lensing_integratedgp", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 20))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "localgp_integratedgp", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 21))
+    _, ys = GaPSE.readxchoosey(filename_LDxGNC, "integratedgp_integratedgp", "LDxGNC"); @test all(ys .≈ GaPSE.readchoosen(filename_LDxGNC, 22))
+    # 1: s [Mpc/h_0] 	 2: xi_SUM 	 3: xi_doppler_newton 	 4: xi_lensing_newton 	 5: xi_localgp_newton 	 6: xi_integratedgp_newton 	 
+    # 7: xi_doppler_doppler 	 8: xi_lensing_doppler 	 9: xi_localgp_doppler 	 10: xi_integratedgp_doppler 	 11: xi_doppler_lensing 	 
+    # 12: xi_lensing_lensing 	 13: xi_localgp_lensing 	 14: xi_integratedgp_lensing 	 15: xi_doppler_localgp 	 16: xi_lensing_localgp 	 
+    # 17: xi_localgp_localgp 	 18: xi_integratedgp_localgp 	 19: xi_doppler_integratedgp 	 20: xi_lensing_integratedgp 	 21: xi_localgp_integratedgp 	 
+    # 22: xi_integratedgp_integratedgp 	 
+
+end
+
+
 ##########################################################################################92
 
 
