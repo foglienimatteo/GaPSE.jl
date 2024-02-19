@@ -211,7 +211,7 @@ becomes negative, but computationally might happen that ``\\mathrm{den}`` result
 very small negative number (for instance `-1.2368946523-18`); in this case `tolerance`
 solve the problem, returning 0 if ``0<-\\mathrm{den}< \\mathrm{tolerance}``.
 
-The double integral is performed with [`trapz`](@ref) function from the Julia
+The double integral is performed with trapz() function from the Julia
 Package [`Trapz`](@ref), that is based on the trapezoidal rule. `N` is the number
 of point to be used to sample INDIPENDENTLY `θ_1` and `θ`, so consider that there
 is a `N^2` time dependence.

@@ -92,6 +92,42 @@ function my_println_vec(vec::Vector{T}, name::String; N::Int=5) where {T}
 end
 
 
+"""
+    my_println_vec(io::IO, vec::Vector{T}, name::String; N::Int=5) where {T}
+    my_println_vec(vec::Vector{T}, name::String; N::Int=5) where {T}
+        my_println_vec(stdout, vec, name; N=N)
+
+Print the input `vec::Vector{T}` as follows:
+```julia
+> vec = [x for x in 1:0.1:4]
+> my_println_vec(vec, "vector"; N=8)
+vector = [
+1.0 , 1.1 , 1.2 , 1.3 , 1.4 , 1.5 , 1.6 , 1.7 , 
+1.8 , 1.9 , 2.0 , 2.1 , 2.2 , 2.3 , 2.4 , 2.5 , 
+2.6 , 2.7 , 2.8 , 2.9 , 3.0 , 3.1 , 3.2 , 3.3 , 
+3.4 , 3.5 , 3.6 , 3.7 , 3.8 , 3.9 , 4.0 , 
+];
+
+> my_println_vec(vec, "vector"; N=3)
+vector = [
+1.0 , 1.1 , 1.2 , 
+1.3 , 1.4 , 1.5 , 
+1.6 , 1.7 , 1.8 , 
+1.9 , 2.0 , 2.1 , 
+2.2 , 2.3 , 2.4 , 
+2.5 , 2.6 , 2.7 , 
+2.8 , 2.9 , 3.0 , 
+3.1 , 3.2 , 3.3 , 
+3.4 , 3.5 , 3.6 , 
+3.7 , 3.8 , 3.9 , 
+4.0 , 
+];
+	
+```
+
+See also: [`my_println_dict`](@ref)
+"""
+my_println_vec
 
 ##########################################################################################92
 
@@ -113,6 +149,23 @@ end
 function my_println_dict(dict::Dict; pref::String="", N::Int=3)
     my_println_dict(stdout, dict; pref=pref, N=N)
 end;
+
+
+"""
+    my_println_dict(io::IO, dict::Dict; pref::String="", N::Int=3)
+    my_println_dict(dict::Dict; pref::String="", N::Int=3) = 
+        my_println_dict(stdout, dict; pref=pref, N=N)
+
+Print the input `dict::Dict` as follows:
+```julia
+> my_println_dict(io, cosmo.params.IPS; pref="#\t ", N=2)
+#	 fit_left_min = 1.0e-6 	 fit_right_min = 10.0 	 
+#	 fit_left_max = 3.0e-6 	 fit_right_max = 20.0 	
+```
+
+See also: [`my_println_vec`](@ref)
+"""
+my_println_dict
 
 
 

@@ -254,7 +254,7 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
 [`map_ξ_LDxGNC_multipole`](@ref), [`print_map_ξ_LDxGNC_multipole`](@ref),
-[`ξ_LDxGNC_Newtonian_LocalGP`](@ref)
+[`ξ_GNCxLD_Doppler_Doppler`](@ref)
 """
 function ξ_LDxGNC_Doppler_Doppler(s1, s2, y, cosmo::Cosmology; 
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 

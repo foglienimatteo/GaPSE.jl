@@ -229,7 +229,7 @@ where:
 In this TPCF there are no observer terms. The `obs` keyword is inserted only for compatibility with 
 the other GNC TPCFs.
 
-This function is used inside `ξ_GNC_Lensing` with [`trapz`](@ref) from the 
+This function is used inside `ξ_GNC_Lensing` with trapz() from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 
@@ -465,7 +465,7 @@ where:
 In this TPCF there are no observer terms. The `obs` keyword is inserted only for compatibility with 
 the other GNC TPCFs.
 
-This function is computed integrating `integrand_ξ_GNC_Lensing` with [`trapz`](@ref) from the 
+This function is computed integrating `integrand_ξ_GNC_Lensing` with trapz() from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 

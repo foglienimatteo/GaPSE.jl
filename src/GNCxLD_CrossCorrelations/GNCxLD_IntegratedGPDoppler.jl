@@ -170,7 +170,7 @@ where:
   ``\\Delta\\chi := \\sqrt{\\chi_1^2 + \\chi_2^2-2\\,\\chi_1\\,\\chi_2\\,y}``.
 
 
-This function is used inside `ξ_GNCxLD_IntegratedGP_Doppler` with the [`trapz`](@ref) from the 
+This function is used inside `ξ_GNCxLD_IntegratedGP_Doppler` with the trapz() from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 ## Inputs
@@ -326,7 +326,7 @@ where:
   ``\\Delta\\chi := \\sqrt{\\chi_1^2 + \\chi_2^2-2\\,\\chi_1\\,\\chi_2\\,y}``.
 
 
-The computation is made applying [`trapz`](@ref) (see the 
+The computation is made applying trapz() (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
 the integrand function `integrand_ξ_GNCxLD_IntegratedGP_Doppler`.
 
@@ -432,7 +432,7 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
 [`map_ξ_LDxGNC_multipole`](@ref), [`print_map_ξ_LDxGNC_multipole`](@ref),
-[`ξ_LDxGNC_Newtonian_LocalGP`](@ref)
+[`ξ_GNCxLD_IntegratedGP_Doppler`](@ref)
 """
 function ξ_LDxGNC_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology; 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 

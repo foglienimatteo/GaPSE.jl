@@ -212,7 +212,7 @@ where:
 - ``s=\\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}`` and 
   ``\\Delta\\chi := \\sqrt{\\chi_1^2 + \\chi_2^2-2\\,\\chi_1\\,\\chi_2\\,y}``.
 
-This function is used inside `ξ_LD_Lensing_Doppler` with [`trapz`](@ref) from the 
+This function is used inside `ξ_LD_Lensing_Doppler` with trapz() from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 ## Inputs
@@ -357,7 +357,7 @@ where:
 - ``s=\\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}`` and 
   ``\\Delta\\chi := \\sqrt{\\chi_1^2 + \\chi_2^2-2\\,\\chi_1\\,\\chi_2\\,y}``.
 
-This function is computed integrating `integrand_ξ_LD_Lensing_Doppler` with [`trapz`](@ref) from the 
+This function is computed integrating `integrand_ξ_LD_Lensing_Doppler` with trapz() from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 ## Inputs

@@ -12,6 +12,8 @@ end
 ```@docs
 GaPSE.WindowFIntegrated_multipole
 GaPSE.print_map_WindowFIntegrated_multipole
+
+GaPSE.XiMultipoles
 ```
 
 ## Creating a XiMultipole struct

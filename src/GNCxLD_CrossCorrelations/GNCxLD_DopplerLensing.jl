@@ -234,7 +234,7 @@ where:
 
 
 
-This function is used inside `ξ_GNCxLD_Doppler_Lensing` with the [`trapz`](@ref) from the 
+This function is used inside `ξ_GNCxLD_Doppler_Lensing` with the trapz() from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 ## Inputs
@@ -423,7 +423,7 @@ where:
 
 
 
-The computation is made applying [`trapz`](@ref) (see the 
+The computation is made applying trapz() (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
 the integrand function `integrand_ξ_GNCxLD_Doppler_Lensing`.
 
@@ -527,7 +527,7 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
 [`map_ξ_LDxGNC_multipole`](@ref), [`print_map_ξ_LDxGNC_multipole`](@ref),
-[`ξ_LDxGNC_Newtonian_LocalGP`](@ref)
+[`ξ_GNCxLD_Dopppler_Lensing`](@ref)
 """
 function ξ_LDxGNC_Lensing_Doppler(s1, s2, y, cosmo::Cosmology; 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,

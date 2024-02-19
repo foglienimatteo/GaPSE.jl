@@ -17,4 +17,5 @@ GaPSE.W
 GaPSE.V_survey
 GaPSE.A
 GaPSE.A_prime
+GaPSE.corresponding_redshift
 ```

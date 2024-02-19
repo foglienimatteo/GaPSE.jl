@@ -232,7 +232,7 @@ where:
 In this TPCF there are no observer terms. The `obs` keyword is inserted only for compatibility with 
 the other GNC TPCFs.
 
-This function is used inside `ξ_GNC_Newton_Lensing` with the [`trapz`](@ref) from the 
+This function is used inside `ξ_GNC_Newton_Lensing` with the trapz() from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 
@@ -296,7 +296,7 @@ This function is used inside `ξ_GNC_Newton_Lensing` with the [`trapz`](@ref) fr
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
 [`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),
-[`ξ_GNC_Newton_Lensing`](@ref)
+[`ξ_GNC_Newtonian_Lensing`](@ref)
 """
 integrand_ξ_GNC_Newtonian_Lensing
 
@@ -488,7 +488,7 @@ where:
 In this TPCF there are no observer terms. The `obs` keyword is inserted only for compatibility with 
 the other GNC TPCFs.
 
-This function is computed integrating `integrand_ξ_GNC_Newtonian_Lensing` with [`trapz`](@ref) from the 
+This function is computed integrating `integrand_ξ_GNC_Newtonian_Lensing` with trapz() from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 ## Inputs

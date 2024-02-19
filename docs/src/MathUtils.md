@@ -17,6 +17,8 @@ GaPSE.mean_spectral_index
 GaPSE.power_law
 GaPSE.two_power_laws
 GaPSE.power_law_from_data
+GaPSE.polynomial_from_data
+GaPSE.polynomial
 
 GaPSE.expanded_left_log
 GaPSE.expanded_right_log

@@ -211,7 +211,7 @@ it does also depend on the observer velocity. Consequently, if you set `obs = :y
 both of them will computed, while for `obs = :no`, `obs = false` or even `obs = :noobsvel`
 only the first one will be taken into account.
 
-This function is used inside `ξ_GNC_LocalGP_IntegratedGP` with [`trapz`](@ref) from the 
+This function is used inside `ξ_GNC_LocalGP_IntegratedGP` with trapz() from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 
@@ -402,7 +402,7 @@ it does also depend on the observer velocity. Consequently, if you set `obs = :y
 both of them will computed, while for `obs = :no`, `obs = false` or even `obs = :noobsvel`
 only the first one will be taken into account.
 
-This function is computed from `integrand_ξ_GNC_LocalGP_IntegratedGP` with [`trapz`](@ref) from the 
+This function is computed from `integrand_ξ_GNC_LocalGP_IntegratedGP` with trapz() from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 

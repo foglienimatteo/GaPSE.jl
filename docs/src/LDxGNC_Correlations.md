@@ -25,10 +25,10 @@ GaPSE.ξ_LDxGNC_Doppler_LocalGP
 GaPSE.ξ_LDxGNC_Lensing_LocalGP
 GaPSE.ξ_LDxGNC_LocalGP_LocalGP
 GaPSE.ξ_LDxGNC_IntegratedGP_LocalGP
-GaPSE.ξ_LDxGNC_Doppler_IntegrateGP
-GaPSE.ξ_LDxGNC_Lensing_IntegrateGP
-GaPSE.ξ_LDxGNC_LocalGP_IntegrateGP
-GaPSE.ξ_LDxGNC_IntegratedGP_IntegrateGP
+GaPSE.ξ_LDxGNC_Doppler_IntegratedGP
+GaPSE.ξ_LDxGNC_Lensing_IntegratedGP
+GaPSE.ξ_LDxGNC_LocalGP_IntegratedGP
+GaPSE.ξ_LDxGNC_IntegratedGP_IntegratedGP
 ```
 
 

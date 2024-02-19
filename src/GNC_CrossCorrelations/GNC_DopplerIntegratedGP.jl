@@ -220,7 +220,7 @@ and it does depend on the observer velocity. Consequently, if you set `obs = :ye
 both of them will computed, while for `obs = :no`, `obs = false` or
 even `obs = :noobsvel` only the ``\\propto D(s_1)`` one will be taken into account.
 
-This function is used inside `ξ_GNC_Doppler_IntegratedGP` with [`trapz`](@ref) from the 
+This function is used inside `ξ_GNC_Doppler_IntegratedGP` with trapz() from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 
@@ -401,7 +401,7 @@ and it does depend on the observer velocity. Consequently, if you set `obs = :ye
 both of them will computed, while for `obs = :no`, `obs = false` or
 even `obs = :noobsvel` only the ``\\propto D(s_1)`` one will be taken into account.
 
-This function is computed integrating `integrand_ξ_GNC_Doppler_IntegratedGP` with [`trapz`](@ref) from the 
+This function is computed integrating `integrand_ξ_GNC_Doppler_IntegratedGP` with trapz() from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 

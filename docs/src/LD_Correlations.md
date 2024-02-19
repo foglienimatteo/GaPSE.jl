@@ -30,6 +30,15 @@ GaPSE.ξ_LD_Lensing_IntegratedGP
 GaPSE.ξ_LD_IntegratedGP_Lensing
 GaPSE.ξ_LD_LocalGP_IntegratedGP
 GaPSE.ξ_LD_IntegratedGP_LocalGP
+
+
+GaPSE.integrand_ξ_LD_Lensing
+GaPSE.integrand_ξ_LD_IntegratedGP
+GaPSE.integrand_ξ_LD_Lensing_LocalGP
+GaPSE.integrand_ξ_LD_Doppler_IntegratedGP
+GaPSE.integrand_ξ_LD_LocalGP_IntegratedGP
+GaPSE.integrand_ξ_LD_Lensing_IntegratedGP
+GaPSE.integrand_ξ_LD_Lensing_Doppler
 ```
 
 

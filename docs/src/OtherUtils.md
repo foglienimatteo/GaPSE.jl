@@ -7,6 +7,7 @@ end
 # Other utilities
 
 ```@docs
+GaPSE.parameters_used
 GaPSE.check_compatible_dicts
 GaPSE.my_println_vec
 GaPSE.my_println_dict
