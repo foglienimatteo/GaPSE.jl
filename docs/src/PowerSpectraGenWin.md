@@ -12,14 +12,12 @@ end
 ```@docs
 GaPSE.WindowFIntegrated_multipole
 GaPSE.print_map_WindowFIntegrated_multipole
-
-GaPSE.XiMultipoles
 ```
 
 ## Creating a XiMultipole struct
 
 ```@docs
-GaPSE.XiMultipole
+GaPSE.XiMultipoles
 GaPSE.create_file_for_XiMultipoles
 ```
 
@@ -28,5 +26,4 @@ GaPSE.create_file_for_XiMultipoles
 ```@docs
 GaPSE.GenericWindow
 GaPSE.PS_multipole_GenWin
-GaPSE.print_map_PS_multipole_GenWin
 ```

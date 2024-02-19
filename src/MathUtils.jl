@@ -25,6 +25,9 @@
 Return the derivative in `(xp, yp)`, given the neighboor points
 `(x1,y1)` and `(x2,y2)`, with `x1 < xp < x2`.
 It is not assumed that `x2 - xp = xp - x1`.
+
+
+See also: [`derivate_vector`](ref), [`spectral_index`](ref)]
 """
 function derivate_point(xp, yp, x1, y1, x2, y2)
     l2, l1 = (x2 - xp), (xp - x1)
@@ -34,6 +37,15 @@ function derivate_point(xp, yp, x1, y1, x2, y2)
     return res
 end
 
+
+"""
+    derivate_vector(XS, YS; N::Int=1)
+
+Apply `derivate_point` to the vector.
+`N::Int=1` is the number of points at each edge that idk.
+
+See also: [`derivate_point`](ref), [`spectral_index`](ref)]
+"""
 function derivate_vector(XS, YS; N::Int=1)
     @assert length(XS) == length(YS) "xs and ys must have the same length!"
     @assert length(YS) > 2 * N "length of xs and ys must be > 2N !"
@@ -63,6 +75,20 @@ function derivate_vector(XS, YS; N::Int=1)
 end
 
 
+"""
+    spectral_index(xs, ys; N::Int=1, con=false)
+
+Return the spectral index vector for the two input vectors.
+
+The spectral index ``S`` of a generic function ``f = f(x)`` is
+defined as:
+```math
+    S = \\frac{\\partial \\log f(x)}{\\partial \\log x} 
+        = \\frac{x}{f(x)} \\frac{\\partial f(x)}{\\partial x} 
+```
+
+See also: [`derivate_point`](ref), [`derivate_vector`](ref)
+"""
 function spectral_index(xs, ys; N::Int=1, con=false)
     derivs = derivate_vector(xs, ys; N=N)
 
@@ -95,8 +121,8 @@ return the mean spectral index ``\\langle S \\rangle`` of them.
 The spectral index ``S`` of a generic function ``f = f(x)`` is
 defined as:
 ```math
-     S = \\frac{\\partial \\log f(x)}{\\partial \\log x} 
-          = \\frac{x}{f(x)} \\frac{\\partial f(x)}{\\partial x} 
+    S = \\frac{\\partial \\log f(x)}{\\partial \\log x} 
+        = \\frac{x}{f(x)} \\frac{\\partial f(x)}{\\partial x} 
 ```
 """
 function mean_spectral_index(xs, ys; N::Int=1, con=false)
@@ -123,6 +149,12 @@ where `si` is the exponent (``s``), `b` the coefficient (``b``) and
 power_law(x, si, b, a) = a .+ b .* (x .^ si)
 
 
+
+"""
+    two_power_laws(x; switch=5.0, si_1=1.0, si_2=2.0, b=1.0, a=0.0)
+
+Return two power laws, depending on the value of switch.
+"""
 function two_power_laws(x; switch=5.0, si_1=1.0, si_2=2.0, b=1.0, a=0.0)
     @assert switch > 0 "switch must be >0 !"
     if x <= switch
@@ -248,6 +280,13 @@ power_law_from_data
 ##########################################################################################92
 
 
+
+"""
+    expand_left_log(xs, ys;
+        lim=1e-8, fit_min=0.05, fit_max=0.5,
+        p0::Union{Vector{Float64},Nothing}=nothing,
+        con::Bool=false)
+"""
 function expand_left_log(xs, ys;
     lim=1e-8, fit_min=0.05, fit_max=0.5,
     p0::Union{Vector{Float64},Nothing}=nothing,
@@ -275,6 +314,13 @@ function expand_left_log(xs, ys;
     end
 end
 
+
+"""
+    expand_right_log(xs, ys;
+        lim=3e3, fit_min=5.0, fit_max=10.0,
+        p0::Union{Vector{Float64},Nothing}=nothing,
+        con::Bool=false)
+"""
 function expand_right_log(xs, ys;
     lim=3e3, fit_min=5.0, fit_max=10.0,
     p0::Union{Vector{Float64},Nothing}=nothing,
@@ -413,7 +459,10 @@ function func_I04_tilde(PK, s, kmin, kmax; kwargs...)
     return res / (s^4)
 end
 
-
+"""
+    expanded_I04_tilde(PK, ss;
+        kmin=1e-6, kmax=1e3, kwargs...)
+"""
 function expanded_I04_tilde(PK, ss;
     kmin=1e-6, kmax=1e3, kwargs...)
 
@@ -485,7 +534,9 @@ end
 
 =#
 
-
+"""
+    my_interpolation(x1, y1, x2, y2, x)
+"""
 function my_interpolation(x1, y1, x2, y2, x)
     @assert x1 ≤ x ≤ x2 "x1 ≤ x ≤ x2 must hold!"
     x > x1 || (return y1)

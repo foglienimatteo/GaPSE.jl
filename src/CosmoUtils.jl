@@ -219,7 +219,7 @@ Return the Power Spectrum multipole normalization coefficient `A`, i.e.:
 where ``V(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})`` is the 
 survey volume.
 
-Pay attention: this is NOT used for the normalization of [`PS`](@ref), see
+Pay attention: this is NOT used for the normalization of [`InputPS`](@ref), see
 instead [`A_prime`](@ref)
 
 See also: [`V_survey`](@ref)

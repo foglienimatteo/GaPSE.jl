@@ -25,6 +25,15 @@ function warning(io::IO, msg::String)
 end
 warning(msg::String) = warning(stdout, msg)
 
+"""
+    warning(io::IO, msg::String)
+    warning(msg::String) = warning(stdout, msg)
+
+It does the following:
+    printstyled(io, "WARNING: " * msg * "\n"; color=:red, bold=true)
+"""
+warning
+
 
 
 """

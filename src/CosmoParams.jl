@@ -218,7 +218,7 @@ and similar for `IPS_opts`.
 
 See also: [`Cosmology`](@ref), [`CosmoSplines`](@ref), [`IPSTools`](@ref),  [`InputPS`](@ref), 
 [`func_ℛ_LD`](@ref), [`DEFAULT_IPSTOOLS_OPTS`](@ref), [`DEFAULT_IPS_OPTS`](@ref),
-[`DEFAULT_WFI_OPTS`](@ref), [`check_compatible_dicts`](@ref)
+[`check_compatible_dicts`](@ref)
 """
 struct CosmoParams
     z_min::Float64

@@ -95,7 +95,7 @@ the compelte list and their default values:
   ``\\eta_m = \\frac{2 \\pi m}{N \\, \\Delta_{\\ln x}} `` coefficients.
 
 - `plan_rfft::FFTW.rFFTWPlan = plan_rfft(randn(1024))` : a random initialized 
-  fft plan of [`FFTW`](@ref)
+  fft plan of FFTW
 
 - `plan_irfft = 
         plan_irfft(

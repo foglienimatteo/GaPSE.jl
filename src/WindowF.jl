@@ -102,7 +102,7 @@ becomes negative, but computationally might happen that ``\\mathrm{den}`` result
 very small negative number (for instance `-1.2368946523-18`); in this case `tolerance`
 solve the problem, returning 0 if ``0<-\\mathrm{den}< \\mathrm{tolerance}``
 
-See also: [`F`](@ref), [`print_map_F`](@ref)
+See also: [`print_map_F`](@ref)
 """
 function integrand_F(θ_1, θ, x, μ, θ_max; tolerance=1e-10)
     if (x * cos(θ) + cos(θ_1)) / √(x^2 + 1 + 2 * x * μ) - cos(θ_max) > 0 &&
@@ -155,8 +155,8 @@ becomes negative, but computationally might happen that ``\\mathrm{den}`` result
 very small negative number (for instance `-1.2368946523-18`); in this case `tolerance`
 solve the problem, returning 0 if ``0<-\\mathrm{den}< \\mathrm{tolerance}``.
 
-The double integral is performed with [`hcubature`](@ref) function from the Julia
-Package [`HCubature`](@ref); `rtol`, `atol` and all the `kwargs` insert into `F` 
+The double integral is performed with hcubature() function from the Julia
+Package HCubature.jl; `rtol`, `atol` and all the `kwargs` insert into `F` 
 are directly transferred to `hcubature`. 
 
 The output of this function is a `Tuple{Float64, Float64}`, containing respectively
@@ -212,7 +212,7 @@ very small negative number (for instance `-1.2368946523-18`); in this case `tole
 solve the problem, returning 0 if ``0<-\\mathrm{den}< \\mathrm{tolerance}``.
 
 The double integral is performed with trapz() function from the Julia
-Package [`Trapz`](@ref), that is based on the trapezoidal rule. `N` is the number
+Package Trapz.jl, that is based on the trapezoidal rule. `N` is the number
 of point to be used to sample INDIPENDENTLY `θ_1` and `θ`, so consider that there
 is a `N^2` time dependence.
 It's recommended to set `100 < N < 1000`.

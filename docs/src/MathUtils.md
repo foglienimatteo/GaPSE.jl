@@ -29,4 +29,6 @@ GaPSE.expanded_I04_tilde
 
 GaPSE.my_interpolation
 GaPSE.EPLs
+
+GaPSE.FFTLog.evaluate_FFTLog!
 ```

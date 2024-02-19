@@ -328,7 +328,7 @@ The second method takes as input the min and max redshifts of the survey (`z_min
 the vector of redshifts `zs::Vector{Float64}` for the integrated window function sampling, `μs` and `windowF` 
 as before and the `file_data` where can be found the association ``z \\rightarrow s(z)``. 
 Such file must have the structure of the 
-background data produced by the [`CLASS`](https://github.com/lesgourg/class_public) code.
+background data produced by the CLASS (link: https://github.com/lesgourg/class_public) code.
 Note that also `zs` musyt be a float vector of increasing redshift values (so each element must be ≥ 0).
 This method internally recalls the first one, so the other `kwargs...` are in common.
 

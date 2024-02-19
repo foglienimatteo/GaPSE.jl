@@ -151,7 +151,7 @@ It is used only inside the creation of a `Cosmology`, check its documentation fo
         )
 
 - `file_data::String` : file containing all the background data; it is expected that such file
-  is a background output of the [CLASS](link: https://github.com/lesgourg/class_public) code.
+  is a background output of the CLASS (link: https://github.com/lesgourg/class_public) code.
   It is managed through the struct `BackgroundData`.
 
 - `z_min` and `z_max` : the minimum and maximum redshifts of the survey we want to study.
@@ -413,11 +413,11 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
   of `CosmoParams` for more information on the possible inputs.
 
 - `file_data::String` : file containing all the background data; it is expected that such file
-  is a background output of the [CLASS](link: https://github.com/lesgourg/class_public) code.
+  is a background output of the CLASS (link: https://github.com/lesgourg/class_public) code.
   It is managed through the struct `BackgroundData`.
 
 - `file_ips::String` : file containing the Input Power Spectrum at present day; it is expected that such file
-  is a Power Spectrum output of the [CLASS](link: https://github.com/lesgourg/class_public) code.
+  is a Power Spectrum output of the CLASS (link: https://github.com/lesgourg/class_public) code.
   It is managed through the struct `InputPS`.
 
 - `file_windowF::String` : file containing a map of the window function `F`.
