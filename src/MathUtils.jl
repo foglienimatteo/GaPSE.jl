@@ -27,7 +27,7 @@ Return the derivative in `(xp, yp)`, given the neighboor points
 It is not assumed that `x2 - xp = xp - x1`.
 
 
-See also: [`derivate_vector`](ref), [`spectral_index`](ref)]
+See also: [`derivate_vector`](@ref), [`spectral_index`](@ref)]
 """
 function derivate_point(xp, yp, x1, y1, x2, y2)
     l2, l1 = (x2 - xp), (xp - x1)
@@ -44,7 +44,7 @@ end
 Apply `derivate_point` to the vector.
 `N::Int=1` is the number of points at each edge that idk.
 
-See also: [`derivate_point`](ref), [`spectral_index`](ref)]
+See also: [`derivate_point`](@ref), [`spectral_index`](@ref)]
 """
 function derivate_vector(XS, YS; N::Int=1)
     @assert length(XS) == length(YS) "xs and ys must have the same length!"
@@ -87,7 +87,7 @@ defined as:
         = \\frac{x}{f(x)} \\frac{\\partial f(x)}{\\partial x} 
 ```
 
-See also: [`derivate_point`](ref), [`derivate_vector`](ref)
+See also: [`derivate_point`](@ref), [`derivate_vector`](@ref)
 """
 function spectral_index(xs, ys; N::Int=1, con=false)
     derivs = derivate_vector(xs, ys; N=N)
