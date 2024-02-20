@@ -6,34 +6,16 @@ end
 
 # LD TPCFs
 
-## Two-Point Auto-Correlation Functions
+## Two-Point Auto-Correlation Functions integrands
 
 ```@docs
-GaPSE.ξ_LD_Doppler
-GaPSE.ξ_LD_Lensing
-GaPSE.ξ_LD_LocalGP
-GaPSE.ξ_LD_IntegratedGP
-```
-
-## Two-Point Cross-Correlation Functions
-
-```@docs
-GaPSE.ξ_LD_Doppler_Lensing
-GaPSE.ξ_LD_Lensing_Doppler
-GaPSE.ξ_LD_Doppler_LocalGP
-GaPSE.ξ_LD_LocalGP_Doppler
-GaPSE.ξ_LD_Doppler_IntegratedGP
-GaPSE.ξ_LD_IntegratedGP_Doppler
-GaPSE.ξ_LD_Lensing_LocalGP
-GaPSE.ξ_LD_LocalGP_Lensing
-GaPSE.ξ_LD_Lensing_IntegratedGP
-GaPSE.ξ_LD_IntegratedGP_Lensing
-GaPSE.ξ_LD_LocalGP_IntegratedGP
-GaPSE.ξ_LD_IntegratedGP_LocalGP
-
-
 GaPSE.integrand_ξ_LD_Lensing
 GaPSE.integrand_ξ_LD_IntegratedGP
+```
+
+## Two-Point Cross-Correlation Functions integrands
+
+```@docs
 GaPSE.integrand_ξ_LD_Lensing_LocalGP
 GaPSE.integrand_ξ_LD_Doppler_IntegratedGP
 GaPSE.integrand_ξ_LD_LocalGP_IntegratedGP

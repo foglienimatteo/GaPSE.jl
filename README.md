@@ -227,6 +227,7 @@ If you also use the code to compute the perturbations in the luminosity distance
 
 - Pantiri, Foglieni, Di Dio, Castorina,  _The power spectrum of luminosity distance fluctuations in General Relativity_ (2023) [in preparation]
 
+
 ## Licence
 
 This software is under the [GNU 3.0 General Public Licence](https://www.gnu.org/licenses/gpl-3.0.en.html). See the file [LICENCE.md](./LICENCE.md).
