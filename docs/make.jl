@@ -38,4 +38,4 @@ Documenter.makedocs(
      ],
 )
 
-deploydocs(repo = "github.com/cosmofico97/GaPSE.jl.git")
+deploydocs(repo = "github.com/foglienimatteo/GaPSE.jl.git")
