@@ -19,15 +19,16 @@
 
 name: Documentation
 
-# on:
-#  push:
-#    branches:
-#      - main
-#    tags: '*'
-#  pull_request:
+on:
+  push:
+    branches:
+      - main
+      - qls
+    tags: '*'
+  pull_request:
 #
 
-on: [push]
+#on: [push]
 #on:
 #  release:
 #    types: [published, edited, prereleased, released]
@@ -47,3 +48,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # If authenticating with GitHub Actions token
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }} # If authenticating with SSH deploy key
         run: julia --project=docs/ docs/make.jl
+      - uses: julia-actions/julia-processcoverage@v1
+        with:
+          directories: src
+      - uses: codecov/codecov-action@v3
+        with:
+          files: lcov.inf
