@@ -39,10 +39,22 @@ using ProgressMeter, Printf  # Licence: MIT "Expat"
 using Test, Documenter, DelimitedFiles  # Licence: MIT "Expat"
 
 
-const BRAND = """
-        ###############
-        #    GaPSE    #
-        ############### \n#"""
+#const BRAND = """
+#        ###############
+#        #    GaPSE    #
+#        ############### \n#"""
+ 
+const BRAND= """
+###################################
+#   ____       ____  ____  _____  #
+#  / ___| __ _|  _ \/ ___|| ____| #
+# | |  _ / _` | |_) \___ \|  _|   #
+# | |_| | (_| |  __/ ___) | |___  # 
+#  \____|\__,_|_|   |____/|_____| #
+###################################\n
+"""
+
+
 
 ####### DO NOT MODIFY THESE NAMES AND/OR THEIR ORDER IF YOU ARE NOT SURE! ###############92
 
