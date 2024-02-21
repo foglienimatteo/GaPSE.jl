@@ -22,14 +22,15 @@ name: Unit tests
 
 #on: [push]
 
-on:
-  release:
-    types: [published, edited, prereleased, released]
-
 #on:
-#  push:
-#    branches:
-#      - demo
+#  release:
+#    types: [published, edited, prereleased, released]
+
+on:
+  push:
+    branches:
+      - main
+      - qls
 
 
 
