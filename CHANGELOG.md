@@ -3,6 +3,12 @@
 
 ## development branch qls
 
+- added `readchoosen` and `readxchoosey` functions in `src/OtherUtils.jl`;
+
+- changed logo of GaPSE;
+
+- added `ipynbs/eBOSS_Window.ipynb` and related files;
+
 - added `Dockerfile` for building the image `gapse-julia-1.9.1:0.8.0a`;
 
 - IMPORTANT CHANGE: NOW YOU CAN GO FURTHER THAN `z=1.5`!

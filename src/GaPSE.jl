@@ -39,10 +39,10 @@ using ProgressMeter, Printf  # Licence: MIT "Expat"
 using Test, Documenter, DelimitedFiles  # Licence: MIT "Expat"
 
 
-#const BRAND = """
-#        ###############
-#        #    GaPSE    #
-#        ############### \n#"""
+const BRAND_simple = """
+        ###############
+        #    GaPSE    #
+        ############### \n#"""
  
 const BRAND= """
 ###################################
@@ -174,8 +174,16 @@ include("PowerSpectraGenWin.jl")
 include("WindowF_QMultipoles.jl")
 
 
-function parameters_used(io::IO, cosmo::Cosmology; logo::Bool=true)
-    logo && println(io, BRAND)
+function parameters_used(io::IO, cosmo::Cosmology; logo::Union{Bool,String} = true)
+    
+    if typeof(logo) == Bool 
+        logo && println(io, BRAND)
+    elseif logo=="simple" 
+        println(io, BRAND_simple)
+    else
+        throw(AssertionError(("bug to be fixed in parameters_used")))
+    end
+
     println(io, "# The Cosmology considered had the following paremeters:\n# ")
     println(io, "# - Matter Power Spectrum input file: \"$(cosmo.file_ips)\"")
     println(io, "# - Background data input file: \"$(cosmo.file_data)\"")
@@ -224,14 +232,28 @@ function parameters_used(io::IO, cosmo::Cosmology; logo::Bool=true)
     println(io, "# ")
 end
 
-parameters_used(cosmo::Cosmology) = parameters_used(stdout, cosmo)
+parameters_used(cosmo::Cosmology; kwargs...) = parameters_used(stdout, cosmo; kwargs...)
 
 
 """
-    parameters_used(io::IO, cosmo::Cosmology)
-    parameters_used(cosmo::Cosmology) = parameters_used(stdout, cosmo)
+    parameters_used(io::IO, cosmo::Cosmology; logo::Union{Bool,String} = true)
+    parameters_used(cosmo::Cosmology; kwargs...) = parameters_used(stdout, cosmo; kwargs...)
 
 Writes in the `io` stream all the information concerning the input Cosmology `cosmo`.
+There are currently three options for `logo`: `true`, `"simple"` and `false`.
+With `true`, the logo that is printed to `io` is the following:
+
+```julia
+$(string(BRAND))
+```
+
+With `false`, the logo that is printed to `io` is instead the following:
+
+```julia
+$(string(BRAND_simple))
+```
+
+Finally, with `false`, not logo is printed.
 
 See also: [`Cosmology`](@ref)
 """

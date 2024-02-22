@@ -41,7 +41,6 @@ const HUBBLE_0 = 1e5 / 299792458.0
 include("TEST_DATA.jl")
 
 
-
 ##########################################################################################92
 
 
@@ -103,6 +102,8 @@ end
     include("test_PowerSpectraGenWin.jl")
 end
 
+include("test_PowerSpectraeBOSS.jl")
+
 #@testset "test WindowF_QMultipoles" begin
     #include("test_WindowF_QMultipoles.jl")
 #end
@@ -132,6 +133,12 @@ const PARAMS = GaPSE.CosmoParams(Z_MIN, Z_MAX, π / 2.0;
 )
 
 const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP, FILE_IF_MAP)
+
+@test_throws AssertionError GaPSE.parameters_used(COSMO; logo = "idk")
+@test GaPSE.parameters_used(COSMO; logo="simple") isa Any
+@test GaPSE.parameters_used(stdout, COSMO; logo=true) isa Any
+@test GaPSE.parameters_used(stdout, COSMO; logo=false) isa Any
+
 
 @testset "test_Point" begin
     P = GaPSE.Point(150.0, COSMO)
