@@ -104,9 +104,9 @@ end
 
 include("test_PowerSpectraeBOSS.jl")
 
-#@testset "test WindowF_QMultipoles" begin
-    #include("test_WindowF_QMultipoles.jl")
-#end
+@testset "test WindowF_QMultipoles" begin
+    include("test_WindowF_QMultipoles.jl")
+end
 
 
 

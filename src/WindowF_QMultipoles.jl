@@ -230,7 +230,7 @@ function print_map_WindowFIntegrated_multipole(
     @assert all([s_zs[i+1] > s_zs[i] for i in 1:(length(s_zs)-1)]) "s_zs must be a float vector of increasing values!"
 
 
-    BD = GaPSE.BackgroundData(file_data, z_max; names=names_bg, h=h_0)
+    BD = GaPSE.BackgroundData(file_data, 1000.0; names=names_bg, h=h_0)
     s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
     ss = s_zs[1] ≈ 0.0 ? union([0.0], s_of_z.(s_zs[begin+1:end])) : s_of_z.(s_zs)
 
