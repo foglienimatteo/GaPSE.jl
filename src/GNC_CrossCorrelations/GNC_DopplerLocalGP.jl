@@ -116,7 +116,7 @@ end
         s1, s2, y, cosmo::Cosmology; 
         kwargs...) ::Float64
 
-Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
+Returns the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Doppler and the Local Gravitational Potential (GP) effects arising from the Galaxy Number Counts (GNC).
 
 In the first method, you should pass the two `Point` (`P1` and `P2`) where to 
@@ -188,7 +188,7 @@ where:
 - ``f_1 = f(s_1)``, ... is the linear growth rate (evaluated in ``s_1``);
 
 - ``\\mathcal{H}_1 = \\mathcal{H}(s_1)``, ... is the comoving 
-  Hubble distances (evaluated in ``s_1``);
+  Hubble parameter (evaluated in ``s_1``, ...);
 
 - ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``;
 
@@ -245,9 +245,9 @@ on the observer velocity. Consequently, if you set:
 
 - `P1::Point` and `P2::Point`, or `s1` and `s2`: `Point`/comoving distances where the 
   TPCF has to be calculated; they contain all the 
-  data of interest needed for this calculus (comoving distance, growth factor and so on).
+  data of interest needed for this calculus (comoving distance, growth factor and so on);
   
-- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer;
 
 - `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
   used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
@@ -277,10 +277,10 @@ on the observer velocity. Consequently, if you set:
 
 - `obs::Union{Bool,Symbol} = :noobsvel` : do you want to consider the observer terms in the computation of the 
   chosen GNC TPCF effect?
-  - `:yes` or `true` -> all the observer effects will be considered
-  - `:no` or `false` -> no observer term will be taken into account
+  - `:yes` or `true` -> all the observer effects will be considered;
+  - `:no` or `false` -> no observer term will be taken into account;
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
-    will be neglected, the other ones will be taken into account
+    will be neglected, the other ones will be taken into account.
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
 [`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref)
@@ -305,7 +305,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
         𝑓_evo1=nothing, 𝑓_evo2=nothing,
         s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel ) ::Float64 
 
-Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
+Returns the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Local Gravitational Potential (GP) and the Doppler effects arising from the Galaxy Number Counts (GNC).
 
 It's computed through the symmetric function `ξ_GNC_Doppler_LocalGP`; check its documentation for
@@ -317,14 +317,14 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 - `s1` and `s2`: comoving distances where the TPCF has to be calculated;
   
-- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer;
 
 - `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
   used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
 
 ## Keyword Arguments
 
-- `kwargs...` : Keyword arguments to be passed to the symmetric TPCF
+- `kwargs...` : Keyword arguments to be passed to the symmetric TPCF.
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
 [`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),

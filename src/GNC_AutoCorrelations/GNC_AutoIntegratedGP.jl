@@ -131,7 +131,7 @@ where:
 - ``f_1 = f(s_1)``, ... is the linear growth rate (evaluated in ``s_1``);
 
 - ``\\mathcal{H}_1 = \\mathcal{H}(s_1)``, ... is the comoving 
-  Hubble distances (evaluated in ``s_1``);
+  Hubble parameter (evaluated in ``s_1``, ...);
 
 - ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``;
 
@@ -220,10 +220,10 @@ This function is used inside `ξ_GNC_IntegratedGP` with trapz() from the
 
 - `obs::Union{Bool,Symbol} = :noobsvel` : do you want to consider the observer terms in the computation of the 
   chosen GNC TPCF effect?
-  - `:yes` or `true` -> all the observer effects will be considered
-  - `:no` or `false` -> no observer term will be taken into account
+  - `:yes` or `true` -> all the observer terms will be considered;
+  - `:no` or `false` -> no observer term will be taken into account;
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
-    will be neglected, the other ones will be taken into account
+    will be neglected, the other ones will be taken into account.
 
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
@@ -302,7 +302,7 @@ end
     ξ_GNC_IntegratedGP(s1, s2, y, cosmo::Cosmology; 
         kwargs...) ::Float64
 
-Return the Two-Point Correlation Function (TPCF) of the Integrated
+Returns the Two-Point Correlation Function (TPCF) of the Integrated
 Gravitational Potential (GP) auto-correlation effect
 arising from the Galaxy Number Counts (GNC).
 
@@ -354,7 +354,7 @@ where:
 - ``f_1 = f(s_1)``, ... is the linear growth rate (evaluated in ``s_1``);
 
 - ``\\mathcal{H}_1 = \\mathcal{H}(s_1)``, ... is the comoving 
-  Hubble distances (evaluated in ``s_1``);
+  Hubble parameter (evaluated in ``s_1``, ...);
 
 - ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``;
 
@@ -403,9 +403,9 @@ This function is computed integrating `integrand_ξ_GNC_IntegratedGP` with trapz
 
 - `P1::Point` and `P2::Point`, or `s1` and `s2`: `Point`/comoving distances where the 
   TPCF has to be calculated; they contain all the 
-  data of interest needed for this calculus (comoving distance, growth factor and so on).
+  data of interest needed for this calculus (comoving distance, growth factor and so on);
   
-- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer;
 
 - `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
   used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
@@ -435,10 +435,10 @@ This function is computed integrating `integrand_ξ_GNC_IntegratedGP` with trapz
 
 - `obs::Union{Bool,Symbol} = :noobsvel` : do you want to consider the observer terms in the computation of the 
   chosen GNC TPCF effect?
-  - `:yes` or `true` -> all the observer effects will be considered
-  - `:no` or `false` -> no observer term will be taken into account
+  - `:yes` or `true` -> all the observer terms will be considered;
+  - `:no` or `false` -> no observer term will be taken into account;
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
-    will be neglected, the other ones will be taken into account
+    will be neglected, the other ones will be taken into account.
 
 - `en::Float64 = 1e6`: just a float number used in order to deal better 
   with small numbers;

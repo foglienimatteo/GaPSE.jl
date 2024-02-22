@@ -76,16 +76,19 @@ with length `N + n_extrap_low + n_extrap_right`.
 It is not assumed that the spacing is the same in the two edges of the data.
 """
 function _logextrap(x::Vector, n_extrap_low::Int, n_extrap_high::Int)
-    d_ln_x_low = x[2] / x[1] > 0 ? log(x[2] / x[1]) : log(x[3] / x[2])
-    d_ln_x_high = reverse(x)[1] / reverse(x)[2] > 0 ? log(reverse(x)[1] / reverse(x)[2]) : log(reverse(x)[2] / reverse(x)[3])
-    X = x
+    d_ln_x_low = real(x[2] / x[1]) > 0 ? log(real(x[2] / x[1])) : log(real(x[3] / x[2]))
+    d_ln_x_high = real(reverse(x)[1] / reverse(x)[2]) > 0 ? log(real(reverse(x)[1] / reverse(x)[2])) : log(real(reverse(x)[2] / reverse(x)[3]))
+    X = all(imag.(x) .≈ 0.0) ? x : imag.(x)
+
+    x_begin = all(imag.(x) .≈ 0.0) ? x[1] : imag.(x[1])
+    x_end = all(imag.(x) .≈ 0.0) ? last(x) : imag.(last(x))
     if n_extrap_low != 0
-        X = vcat(x[1] .* exp.(d_ln_x_low .* Array(-n_extrap_low:-1)), X)
+        X = vcat(x_begin .* exp.(d_ln_x_low .* Array(-n_extrap_low:-1)), X)
     end
     if n_extrap_high != 0
-        X = vcat(X, last(x) .* exp.(d_ln_x_high .* Array(1:n_extrap_high)))
+        X = vcat(X, x_end .* exp.(d_ln_x_high .* Array(1:n_extrap_high)))
     end
-    return X
+    return all(imag.(x) .≈ 0.0) ? X : im .* X
 end
 
 #=

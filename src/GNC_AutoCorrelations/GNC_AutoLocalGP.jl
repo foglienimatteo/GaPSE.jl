@@ -95,7 +95,7 @@ end
      ξ_GNC_LocalGP(s1, s2, y, cosmo::Cosmology; 
           kwargs...) ::Float64
 
-Return the Two-Point Correlation Function (TPCF) of the Local Gravitational
+Returns the Two-Point Correlation Function (TPCF) of the Local Gravitational
 Potential (GP) auto-correlation effect arising from the Galaxy Number Counts (GNC).
 
 In the first method, you should pass the two `Point` (`P1` and `P2`) where to 
@@ -173,7 +173,7 @@ where:
 - ``f_1 = f(s_1)``, ... is the linear growth rate (evaluated in ``s_1``);
 
 - ``\\mathcal{H}_1 = \\mathcal{H}(s_1)``, ... is the comoving 
-  Hubble distances (evaluated in ``s_1``);
+  Hubble parameter (evaluated in ``s_1``, ...);
 
 - ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``;
 
@@ -228,9 +228,9 @@ if you set `obs = :noobsvel` they will still be computed.
 
 - `P1::Point` and `P2::Point`, or `s1` and `s2`: `Point`/comoving distances where the 
   TPCF has to be calculated; they contain all the 
-  data of interest needed for this calculus (comoving distance, growth factor and so on).
+  data of interest needed for this calculus (comoving distance, growth factor and so on);
   
-- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer;
 
 - `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
   used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...

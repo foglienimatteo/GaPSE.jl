@@ -187,9 +187,9 @@ function ξ_LD_multipole(
         orig_fs = orig_f.(μs)
         trapz(μs, orig_fs)
 
-    else
-        throw(AssertionError("how the hell did you arrive here?"))
-    end
+     else
+          throw(AssertionError("how did you arrive here?"))
+     end
 
     return int / enhancer
 end
@@ -504,9 +504,9 @@ function map_ξ_LD_multipole(cosmo::Cosmology,
             trapz(μs, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
         ]
 
-    else
-        throw(AssertionError("how the hell did you arrive here?"))
-    end
+     else
+          throw(AssertionError("how did you arrive here?"))
+     end
 
     #=
     xis = pr ? begin

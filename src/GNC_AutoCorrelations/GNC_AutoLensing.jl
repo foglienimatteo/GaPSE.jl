@@ -180,7 +180,7 @@ where:
 - ``f_1 = f(s_1)``, ... is the linear growth rate (evaluated in ``s_1``);
 
 - ``\\mathcal{H}_1 = \\mathcal{H}(s_1)``, ... is the comoving 
-  Hubble distances (evaluated in ``s_1``);
+  Hubble parameter (evaluated in ``s_1``, ...);
 
 - ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``;
 
@@ -269,10 +269,10 @@ This function is used inside `ξ_GNC_Lensing` with trapz() from the
 
 - `obs::Union{Bool,Symbol} = :noobsvel` : do you want to consider the observer terms in the computation of the 
   chosen GNC TPCF effect?
-  - `:yes` or `true` -> all the observer effects will be considered
-  - `:no` or `false` -> no observer term will be taken into account
+  - `:yes` or `true` -> all the observer terms will be considered;
+  - `:no` or `false` -> no observer term will be taken into account;
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
-    will be neglected, the other ones will be taken into account
+    will be neglected, the other ones will be taken into account.
 
 - `Δχ_min::Float64 = 1e-4` : when 
   ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
@@ -342,7 +342,7 @@ end
     ξ_GNC_Lensing(s1, s2, y, cosmo::Cosmology; 
         kwargs...) ::Float64
 
-Return the Two-Point Correlation Function (TPCF) of the Lensing auto-correlation effect
+Returns the Two-Point Correlation Function (TPCF) of the Lensing auto-correlation effect
 arising from the Galaxy Number Counts (GNC).
 
 In the first method, you should pass the two `Point` (`P1` and `P2`) where to 
@@ -424,7 +424,7 @@ where:
 - ``f_1 = f(s_1)``, ... is the linear growth rate (evaluated in ``s_1``);
 
 - ``\\mathcal{H}_1 = \\mathcal{H}(s_1)``, ... is the comoving 
-  Hubble distances (evaluated in ``s_1``);
+  Hubble parameter (evaluated in ``s_1``, ...);
 
 - ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``;
 
@@ -473,9 +473,9 @@ This function is computed integrating `integrand_ξ_GNC_Lensing` with trapz() fr
 
 - `P1::Point` and `P2::Point`, or `s1` and `s2`: `Point`/comoving distances where the 
   TPCF has to be calculated; they contain all the 
-  data of interest needed for this calculus (comoving distance, growth factor and so on).
+  data of interest needed for this calculus (comoving distance, growth factor and so on);
   
-- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer;
 
 - `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
   used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
@@ -505,10 +505,10 @@ This function is computed integrating `integrand_ξ_GNC_Lensing` with trapz() fr
 
 - `obs::Union{Bool,Symbol} = :noobsvel` : do you want to consider the observer terms in the computation of the 
   chosen GNC TPCF effect?
-  - `:yes` or `true` -> all the observer effects will be considered
-  - `:no` or `false` -> no observer term will be taken into account
+  - `:yes` or `true` -> all the observer terms will be considered;
+  - `:no` or `false` -> no observer term will be taken into account;
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
-    will be neglected, the other ones will be taken into account
+    will be neglected, the other ones will be taken into account.
 
 - `en::Float64 = 1e6`: just a float number used in order to deal better 
   with small numbers;

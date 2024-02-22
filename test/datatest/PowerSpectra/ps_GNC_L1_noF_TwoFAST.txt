@@ -4,13 +4,13 @@
 #
 #
 # Power Spectra Multipole computation for the Galaxy Number Counts GR effect
-# from the file: /Users/di75tom/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/Power_Spectrum/xis_GNC_L1_noF.txt
+# from the file: /Users/di75tom/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/PowerSpectra/xis_GNC_L1_noF.txt
 #
 # For this PS_multipole computation we set: 
 # 	 multipole degree in consideration L = 1
 # 	 algorithm chosen for the computation: :twofast
 # 	 #points used in Fourier transform N = 113
-# overall computational time needed (in s) : 0.0354
+# overall computational time needed (in s) : 0.0335
 # kwards passed to "print_all_PS_multipole": 
 # 		cut_first_n = 0
 # 		cut_last_n = 0

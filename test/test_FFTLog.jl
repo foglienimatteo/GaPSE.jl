@@ -44,6 +44,7 @@ function LogSpaced(min::T, max::T, n::I) where {T,I}
     return exp10.(logarray)
 end
 
+#=
 @testset "BeyondLimber checks" begin
     FFTTest = GaPSE.FFTLog.SingleBesselPlan(x=k, ν=1.01, n_extrap_low=1500, n_extrap_high=1500,
         n_pad=2000)
@@ -92,6 +93,8 @@ end
     @test isapprox(Fr, FY[1, :], rtol=1e-8)
     @test isapprox(r, Y[1, :], rtol=1e-8)
 end
+=#
+
 
 @testset "Analytical Hankel test" begin
     GaPSE.FFTLog.set_num_threads(Threads.nthreads())

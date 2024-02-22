@@ -8,7 +8,7 @@
 # 	 multipole degree in consideration L = 2
 # 	 algorithm chosen for the computation: :twofast
 # 	 #points used in Fourier transform N = 39
-# computational time needed (in s) : 0.0004
+# computational time needed (in s) : 0.0003
 # kwards passed to "print_PS_multipole": 
 # 		cut_first_n = 0
 # 		cut_last_n = 0

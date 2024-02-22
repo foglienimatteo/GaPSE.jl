@@ -26,7 +26,6 @@ Documenter.makedocs(
           ],
           "Calculating TPCFs with the PP Approximation" => "PlaneParallelApprox.md",
           "Calculating Power Spectra" => "PowerSpectra.md",
-          "Power Spectra for a generic window" => "PowerSpectraGenWin.md",
           "implication on PNG" => "PNG.md",
           "Utilities" => [
                "Dictionaries and names" => "Dicts.md",

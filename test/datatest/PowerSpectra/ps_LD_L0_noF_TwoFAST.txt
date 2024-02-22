@@ -4,13 +4,13 @@
 #
 #
 # Power Spectra Multipole computation for the Luminosity Distance perturbations GR effect
-# from the file: /Users/di75tom/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/Power_Spectrum/xis_LD_L0_noF.txt
+# from the file: /Users/di75tom/AAA_TESI_MAGISTRALE/GaPSE/test/datatest/PowerSpectra/xis_LD_L0_noF.txt
 #
 # For this PS_multipole computation we set: 
 # 	 multipole degree in consideration L = 0
 # 	 algorithm chosen for the computation: :twofast
 # 	 #points used in Fourier transform N = 113
-# overall computational time needed (in s) : 1.0199
+# overall computational time needed (in s) : 0.1368
 # kwards passed to "print_all_PS_multipole": 
 # 		cut_first_n = 0
 # 		cut_last_n = 0

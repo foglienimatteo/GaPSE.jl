@@ -27,6 +27,10 @@
 
 - huge improvements on docstrings and API.
 
+- added `ipynbs/PS_L01234.ipynb` and its Julia script
+
+- modified starting point of FFTLog algorithm (from (1 + ell) ./ plan.x to 1.0 ./ plan.x)
+
 - renamed `src/PowerSpectrum.jl` to `src/PowerSpectra.jl`
 
 - creation of the package `GaPSE.jl`; it will still take a while
