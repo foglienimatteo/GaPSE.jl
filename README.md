@@ -121,9 +121,10 @@ There are three ways in order to use this code:
 - you can run the same `include("<path-to-GaPSE.jl-directory>/src/GaPSE.jl")` command in a Jupyter Notebook, and use the code functions inside it. This is by far the most confortable way.
 
 Some `.ipynb`s are already provided in the directory `ipynbs` :
-- we encourage you to follow the `ipynbs/TUTORIAL.ipynb` file first. The basic structure of the code and the most important functions are there presented
-- `ipynbs/Computations_b1p5-sb0-fevo0.ipynb` explains the analytical Primordial Non-Gaussianities model we use here, compute its contribution in the redshift bin $1.0 \leq z \leq 1.5$ and compare it with the GNC effects, all using our toy-model window function with angular opening $\theta_{\rm max} = \pi/2$
-- `ipynbs/Generic_Window.ipynb` explains how to use GaPSE with a generic Window Function of your choice
+- we encourage you to follow the `ipynbs/TUTORIAL.ipynb` file first. The basic structure of the code and the most important functions are there presented;
+- `ipynbs/Computations_b1p5-sb0-fevo0.ipynb` explains the analytical Primordial Non-Gaussianities model we use here, compute its contribution in the redshift bin $1.0 \leq z \leq 1.5$ and compare it with the GNC effects, all using our toy-model window function with angular opening $\theta_{\rm max} = \pi/2$;
+- `ipynbs/Generic_Window.ipynb` explains how to use GaPSE with a generic Window Function of your choice;
+- `ipynbs/eBOSS_Window.ipynb` apply GaPSE on a real case scenario: the eBOSS window function;
 - the `ipynbs/Computations_b1p5-sb0-fevo0.jl` Julia file its the translation into script of `ipynbs/Computations_b1p5-sb0-fevo0.ipynb`; you can easily run it from the command line with:
   ```bash
     $ julia Computations_b1p5-sb0-fevo0.jl

@@ -26,4 +26,5 @@ GaPSE.create_file_for_XiMultipoles
 ```@docs
 GaPSE.GenericWindow
 GaPSE.PS_multipole_GenWin
+GaPSE.print_PS_multipole_GenWin
 ```
