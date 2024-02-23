@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>GNC TPCFs · GaPSE.jl</title><meta name="title" content="GNC TPCFs · GaPSE.jl"/><meta property="og:title" content="GNC TPCFs · GaPSE.jl"/><meta property="twitter:title" content="GNC TPCFs · GaPSE.jl"/><meta name="description" content="Documentation for GaPSE.jl."/><meta property="og:description" content="Documentation for GaPSE.jl."/><meta property="twitter:description" content="Documentation for GaPSE.jl."/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">GaPSE.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Introduction</a></li><li><span class="tocitem">The basic structure</span><ul><li><a class="tocitem" href="../BackgroundData/">Background Data</a></li><li><a class="tocitem" href="../CosmoParams/">Cosmology Parameters</a></li><li><a class="tocitem" href="../Cosmology/">Cosmology Struct</a></li></ul></li><li><span class="tocitem">The window function F and its integration</span><ul><li><a class="tocitem" href="../WindowF/">Window F</a></li><li><a class="tocitem" href="../WindowFIntegrated/">Integrated Window F</a></li></ul></li><li><span class="tocitem">Calculating TPCFs multipoles</span><ul><li><input class="collapse-toggle" id="menuitem-4-1" type="checkbox" checked/><label class="tocitem" for="menuitem-4-1"><span class="docs-label">GNC</span><i class="docs-chevron"></i></label><ul class="collapsed"><li class="is-active"><a class="tocitem" href>GNC TPCFs</a><ul class="internal"><li><a class="tocitem" href="#Two-Point-Auto-Correlation-Functions"><span>Two-Point Auto-Correlation Functions</span></a></li><li><a class="tocitem" href="#Two-Point-Auto-Correlation-Functions-integrands"><span>Two-Point Auto-Correlation Functions integrands</span></a></li></ul></li><li><a class="tocitem" href="../GNC_Correlations_2/">GNC TPCFs</a></li><li><a class="tocitem" href="../GNC_Correlations_3/">GNC TPCFs</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-4-2" type="checkbox"/><label class="tocitem" for="menuitem-4-2"><span class="docs-label">LD</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../LD_Correlations_1/">LD TPCFs</a></li><li><a class="tocitem" href="../LD_Correlations_2/">LD TPCFs</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-4-3" type="checkbox"/><label class="tocitem" for="menuitem-4-3"><span class="docs-label">GNCxLD</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../GNCxLD_Correlations_1/">GNCxLD TPCFs</a></li><li><a class="tocitem" href="../GNCxLD_Correlations_2/">GNCxLD TPCFs</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-4-4" type="checkbox"/><label class="tocitem" for="menuitem-4-4"><span class="docs-label">LDxGNC</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../LDxGNC_Correlations_1/">LDxGNC TPCFs</a></li><li><a class="tocitem" href="../LDxGNC_Correlations_2/">LDxGNC TPCFs</a></li></ul></li></ul></li><li><a class="tocitem" href="../PlaneParallelApprox/">Calculating TPCFs with the PP Approximation</a></li><li><a class="tocitem" href="../PowerSpectra/">Calculating Power Spectra</a></li><li><a class="tocitem" href="../PowerSpectraGenWin/">Power Spectra for a generic window</a></li><li><a class="tocitem" href="../PNG/">implication on PNG</a></li><li><span class="tocitem">Utilities</span><ul><li><a class="tocitem" href="../Dicts/">Dictionaries and names</a></li><li><a class="tocitem" href="../MathUtils/">Mathematical Utilities</a></li><li><a class="tocitem" href="../CosmoUtils/">Cosmology Utilities</a></li><li><a class="tocitem" href="../IPSTools/">Input Power Spectrum Tools</a></li><li><a class="tocitem" href="../OtherUtils/">Other Utilities</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Calculating TPCFs multipoles</a></li><li><a class="is-disabled">GNC</a></li><li class="is-active"><a href>GNC TPCFs</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>GNC TPCFs</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/foglienimatteo/GaPSE.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/foglienimatteo/GaPSE.jl/blob/main/docs/src/GNC_Correlations_1.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="GNC-TPCFs"><a class="docs-heading-anchor" href="#GNC-TPCFs">GNC TPCFs</a><a id="GNC-TPCFs-1"></a><a class="docs-heading-anchor-permalink" href="#GNC-TPCFs" title="Permalink"></a></h1><h2 id="Two-Point-Auto-Correlation-Functions"><a class="docs-heading-anchor" href="#Two-Point-Auto-Correlation-Functions">Two-Point Auto-Correlation Functions</a><a id="Two-Point-Auto-Correlation-Functions-1"></a><a class="docs-heading-anchor-permalink" href="#Two-Point-Auto-Correlation-Functions" title="Permalink"></a></h2><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="GaPSE.ξ_GNC_Newtonian" href="#GaPSE.ξ_GNC_Newtonian"><code>GaPSE.ξ_GNC_Newtonian</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">ξ_GNC_Newtonian(P1::Point, P2::Point, y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+    obs::Union{Bool, Symbol} = :noobsvel) ::Float64
+
+ξ_GNC_Newtonian(s1, s2, y, cosmo::Cosmology; 
+    kwargs...) ::Float64</code></pre><p>Return the Two-Point Correlation Function (TPCF) of the Newtonian auto-correlation effect arising from the Galaxy Number Counts (GNC).</p><p>In the first method, you should pass the two <code>Point</code> (<code>P1</code> and <code>P2</code>) where to  evaluate the function, while in the second method (that internally recalls the first)  you must provide the two corresponding comoving distances <code>s1</code> and <code>s2</code>. We remember that all the distances are measured in <span>$h_0^{-1}\mathrm{Mpc}$</span>.</p><p>The analytical expression of this TPCF is the following:</p><p class="math-container">\[\begin{split}
+    \xi^{\delta\delta} ( s_1 , s_2 , y )  = D_1 D_2 
+    \left[ 
+    J_{00}^{\delta\delta} I_0^0 (s) + 
+    J_{02}^{\delta\delta} I_2^0 (s) + 
+    J_{04}^{\delta\delta} I_4^0 (s) 
+    \right] \, , 
+\end{split}\]</p><p>with</p><p class="math-container">\[\begin{split}
+    J_{00}^{\delta\delta}  &amp;= \frac{1}{15}  
+    \left[
+        15 b_1 b_2 + 5 b_1 f_2 + 5 b_2 f_1  +
+        (2 y^2 + 1) f_1 f_2
+    \right]
+    \, , \\
+    %%%%%%%%%%%%%%%%%%
+    J_{02}^{\delta\delta}  &amp;= - \frac{1}{21 s^2}
+    \left\{
+        s_1^2 \left[
+            14 b_2 f_1 + 
+            7 b_1 f_2 (3 y^2 - 1) + 
+            (11 y^2 + 1) f_1 f_2 
+            \right]  \right.  \\
+        &amp;\left.\qquad \qquad  
+        + s_2^2 \left[
+            14 b_1 f_2 + 
+            7 b_2 f_1 (3 y^2 - 1) + 
+            (11 y^2 + 1) f_1 f_2 
+            \right]  \right. \\
+        &amp;\left. \qquad \qquad   
+        - 4 y s_1 s_2 \left[
+            7 b_2 f_1 + 7 b_1 f_2 +
+            (y^2 + 5) f_1 f_2
+            \right]
+    \right\}
+    \, , \\
+    %%%%%%%%%%%%%%%%%%
+    J_{04}^{\delta\delta}  &amp;= \frac{f_1 f_2}{35 s^4}
+    \left[
+        4 (3 y^2 - 1) (s_1^4 + s_2^4) +
+        3 (3 + y^2)^2 s_1^2 s_2^2 - 
+        8 y s_1 s_2 (s_1^2 + s_2^2) (3 + y^2)
+    \right]
+    \, ,
+\end{split}\]</p><p>where:</p><ul><li><p><span>$s_1$</span> and <span>$s_2$</span> are comoving distances;</p></li><li><p><span>$D_1 = D(s_1)$</span>, ... is the linear growth factor (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$a_1 = a(s_1)$</span>, ... is the scale factor (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$f_1 = f(s_1)$</span>, ... is the linear growth rate (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$\mathcal{H}_1 = \mathcal{H}(s_1)$</span>, ... is the comoving  Hubble distances (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2$</span>;</p></li><li><p><span>$\mathcal{R}_1 = \mathcal{R}(s_1)$</span>, ... is  computed by <code>func_ℛ_GNC</code> in <code>cosmo::Cosmology</code> (and evaluated in <span>$s_1$</span> ); the definition of <span>$\mathcal{R}(s)$</span> is the following:</p><p class="math-container">\[\mathcal{R}(s) = 5 s_{\mathrm{b}}(s) + \frac{2 - 5 s_{\mathrm{b}}(s)}{\mathcal{H}(s) \, s} +  
+\frac{\dot{\mathcal{H}}(s)}{\mathcal{H}(s)^2} - \mathit{f}_{\mathrm{evo}} \quad ;\]</p></li><li><p><span>$b_1$</span>, <span>$s_{\mathrm{b}, 1}$</span>, <span>$\mathit{f}_{\mathrm{evo}, 1}$</span>  (and <span>$b_2$</span>, <span>$s_{\mathrm{b}, 2}$</span>, <span>$\mathit{f}_{\mathrm{evo}, 2}$</span>) :  galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold),  and evolution bias for the first (second) effect;</p></li><li><p><span>$\Omega_{\mathrm{M}0} = \Omega_{\mathrm{cdm}} + \Omega_{\mathrm{b}}$</span> is the sum of  cold-dark-matter and barionic density parameters (again, stored in <code>cosmo</code>);</p></li><li><p><span>$I_\ell^n$</span> and <span>$\sigma_i$</span> are defined as</p><p class="math-container">\[I_\ell^n(s) = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \quad , 
+\quad \sigma_i = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^{2-i} \, P(q)\]</p><p>with <span>$P(q)$</span> as the matter Power Spectrum at <span>$z=0$</span> (stored in <code>cosmo</code>)  and <span>$j_\ell$</span> as spherical Bessel function of order <span>$\ell$</span>;</p></li><li><p><span>$\tilde{I}_0^4$</span> is defined as</p><p class="math-container">\[\tilde{I}_0^4 = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^2 \, P(q) \, \frac{j_0(qs) - 1}{(qs)^4}\]</p><p>with <span>$P(q)$</span> as the matter Power Spectrum at <span>$z=0$</span> (stored in <code>cosmo</code>)  and <span>$j_\ell$</span> as spherical Bessel function of order <span>$\ell$</span>;</p></li><li><p><span>$\mathcal{H}_0$</span>, <span>$f_0$</span> and so on are evaluated at the observer position (i.e. at present day);</p></li><li><p><span>$\Delta\chi_1 := \sqrt{\chi_1^2 + s_2^2-2\,\chi_1\,s_2\,y}$</span> and  <span>$\Delta\chi_2 := \sqrt{s_1^2 + \chi_2^2-2\,s_1\,\chi_2\,y}$</span>;</p></li><li><p><span>$s=\sqrt{s_1^2 + s_2^2 - 2 \, s_1 \, s_2 \, y}$</span> and  <span>$\Delta\chi := \sqrt{\chi_1^2 + \chi_2^2-2\,\chi_1\,\chi_2\,y}$</span>.</p></li></ul><p>In this TPCF there are no observer terms. The <code>obs</code> keyword is inserted only for compatibility with  the other GNC TPCFs.</p><p><strong>Inputs</strong></p><ul><li><p><code>P1::Point</code> and <code>P2::Point</code>, or <code>s1</code> and <code>s2</code>: <code>Point</code>/comoving distances where the  TPCF has to be calculated; they contain all the  data of interest needed for this calculus (comoving distance, growth factor and so on).</p></li><li><p><code>y</code>: the cosine of the angle between the two points <code>P1</code> and <code>P2</code> wrt the observer</p></li><li><p><code>cosmo::Cosmology</code>: cosmology to be used in this computation; it contains all the splines used for the conversion <code>s</code> -&gt; <code>Point</code>, and all the cosmological parameters <span>$b$</span>, ...</p></li></ul><p><strong>Keyword Arguments</strong></p><ul><li><p><code>b1=nothing</code>, <code>s_b1=nothing</code>, <code>𝑓_evo1=nothing</code> and <code>b2=nothing</code>, <code>s_b2=nothing</code>, <code>𝑓_evo2=nothing</code>: galaxy, magnification and evolutionary biases respectively for the first and the second effect  computed in this TPCF:</p><ul><li>if not set (i.e. if you leave the default value <code>nothing</code>) the values stored in the input <code>cosmo</code> will be considered;</li><li>if you set one or more values, they will override the <code>cosmo</code> ones in this computation;</li><li>the two sets of values should be different only if you are interested in studing two galaxy species;</li><li>only the required parameters for the chosen TPCF will be used, depending on its analytical expression; all the others will have no effect, we still inserted them for pragmatical code compatibilities. </li></ul></li><li><p><code>s_lim=nothing</code> : parameter used in order to avoid the divergence of the <span>$\mathcal{R}$</span> and  <span>$\mathfrak{R}$</span> denominators: when <span>$0 \leq s \leq s_\mathrm{lim}$</span> the returned values are</p><p class="math-container">\[\forall \, s \in [ 0, s_\mathrm{lim} ] \; : \quad 
+    \mathfrak{R}(s) = 1 - \frac{1}{\mathcal{H}_0 \, s_\mathrm{lim}} \; , \quad
+    \mathcal{R}(s) = 5 s_{\mathrm{b}} + 
+        \frac{2 - 5 s_{\mathrm{b}}}{\mathcal{H}_0 \, s_\mathrm{lim}} +  
+        \frac{\dot{\mathcal{H}}}{\mathcal{H}_0^2} - \mathit{f}_{\mathrm{evo}} \; .\]</p><p>If <code>nothing</code>, the default value stored in <code>cosmo</code> will be considered.</p></li><li><p><code>obs::Union{Bool,Symbol} = :noobsvel</code> : do you want to consider the observer terms in the computation of the  chosen GNC TPCF effect?</p><ul><li><code>:yes</code> or <code>true</code> -&gt; all the observer effects will be considered</li><li><code>:no</code> or <code>false</code> -&gt; no observer term will be taken into account</li><li><code>:noobsvel</code> -&gt; the observer terms related to the observer velocity (that you can find in the CF concerning Doppler) will be neglected, the other ones will be taken into account</li></ul></li></ul><p>See also: <a href="../Cosmology/#GaPSE.Point"><code>Point</code></a>, <a href="../Cosmology/#GaPSE.Cosmology"><code>Cosmology</code></a>, <a href="../GNC_Correlations_3/#GaPSE.ξ_GNC_multipole"><code>ξ_GNC_multipole</code></a>,  <a href="../GNC_Correlations_3/#GaPSE.map_ξ_GNC_multipole"><code>map_ξ_GNC_multipole</code></a>, <a href="../GNC_Correlations_3/#GaPSE.print_map_ξ_GNC_multipole"><code>print_map_ξ_GNC_multipole</code></a></p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/foglienimatteo/GaPSE.jl/blob/e601437c432ee08c2009b9fd4aee18390ba3e877/src/GNC_AutoCorrelations/GNC_AutoNewtonian.jl#L64-L239">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="GaPSE.ξ_GNC_Doppler" href="#GaPSE.ξ_GNC_Doppler"><code>GaPSE.ξ_GNC_Doppler</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">ξ_GNC_Doppler(P1::Point, P2::Point, y, cosmo::Cosmology;
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+    obs::Union{Bool, Symbol} = :noobsvel) ::Float64
+
+ξ_GNC_Doppler(s1, s2, y, cosmo::Cosmology; 
+    kwargs...) ::Float64</code></pre><p>Return the Two-Point Correlation Function (TPCF) of the Doppler auto-correlation effect arising from the Galaxy Number Counts (GNC).</p><p>In the first method, you should pass the two <code>Point</code> (<code>P1</code> and <code>P2</code>) where to  evaluate the function, while in the second method (that internally recalls the first)  you must provide the two corresponding comoving distances <code>s1</code> and <code>s2</code>. We remember that all the distances are measured in <span>$h_0^{-1}\mathrm{Mpc}$</span>.</p><p>The analytical expression of this TPCF is the following:</p><p class="math-container">\[\begin{split}
+    \xi^{v_{\parallel} v_{\parallel}}( s_1, s_2 , y ) &amp;=
+    D_1 D_2 J_{\alpha}^{v_{\parallel} v_{\parallel}}
+    \left[  
+        J_{\beta}^{v_{\parallel} v_{\parallel}}
+        \left( 
+            \frac{1}{45} I_0^0(s) +
+            \frac{2}{63} I_2^0 (s) + 
+            \frac{1}{105} I_4^0(s)
+        \right) +
+        J^{v_{\parallel} v_{\parallel}}_{20} I_0^2 (s)
+    \right] 
+     \\
+    &amp; + D_1 \left[ 
+        J^{v_{\parallel} v_{\parallel}}_{31} ( s_1 , s_2) I_1^3 (s_1) +   
+        J^{v_{\parallel} v_{\parallel}}_{11} ( s_1 , s_2) I_1^1 (s_1) + 
+        J^{v_{\parallel} v_{\parallel}}_{13} ( s_1 ,s_2) I_3^1 (s_1) 
+    \right] 
+     \\
+    &amp; + D_2 \left[
+        J^{v_{\parallel} v_{\parallel}}_{31} ( s_2 , s_1) I_1^3 (s_2) +  
+        J^{v_{\parallel} v_{\parallel}}_{11} ( s_2 , s_1) I_1^1 (s_2) +
+        J^{v_{\parallel} v_{\parallel}}_{13} ( s_2 , s_1) I_3^1 (s_2) 
+    \right]
+     \\
+    &amp; + J^{v_{\parallel} v_{\parallel}}_{\sigma2} \sigma_2 \, ,
+\end{split}\]</p><p>with</p><p class="math-container">\[\begin{split}
+    J_{\alpha}^{v_{\parallel} v_{\parallel}} &amp;= 
+    f_1 f_2\mathcal{H}_1 \mathcal{H}_2 \mathcal{R}_1 \mathcal{R}_2
+    \, , \\
+    %%%%%%%%%%%%%%
+    J_{\beta}^{v_{\parallel} v_{\parallel}} &amp;= 
+    y^2 s_1 s_2 - 2 y (s_1^2 + s_2^2) + 3 s_1 s_2
+    \, , \\
+    %%%%%%%%%%%%%%
+    J_{20}^{v_{\parallel} v_{\parallel}}  &amp;=
+    \frac{1}{3} y s^2
+    \, , \\
+    %%%%%%%%%%%%%%
+    J_{31}^{v_{\parallel} v_{\parallel}} (s_1, s_2)  &amp;=
+    -y f_0 \mathcal{H}_0 s_1^2 f_1 \mathcal{R}_1 (\mathcal{R}_2 - 5 s_{\mathrm{b}, 2} + 2)
+    \, , \\
+    %%%%%%%%%%%%%%
+    J_{11}^{v_{\parallel} v_{\parallel}} (s_1, s_2)  &amp;=
+    \frac{1}{5} y f_0 \mathcal{H}_0 s_1^2 f_1 \mathcal{H}_1 \mathcal{R}_1 
+    (\mathcal{R}_2 - 5 s_{\mathrm{b}, 2} + 2)
+    \, , \\
+    %%%%%%%%%%%%%%
+    J_{13}^{v_{\parallel} v_{\parallel}} (s_1, s_2)  &amp;=
+    \frac{1}{5} y f_0 \mathcal{H}_0 s_1^2 f_1 \mathcal{H}_1 \mathcal{R}_1 
+    (\mathcal{R}_2 - 5 s_{\mathrm{b}, 2} + 2)
+    \, , \\
+    %%%%%%%%%%%%%%
+    J_{\sigma2}^{v_{\parallel} v_{\parallel}} &amp;=
+    \frac{1}{3} y f_0^2 \mathcal{H}_0^2 (\mathcal{R}_1 - 5 s_{\mathrm{b}, 1} + 2) 
+    (\mathcal{R}_2 - 5 s_{\mathrm{b}, 2} + 2) 
+    \, ,
+\end{split}\]</p><p>where:</p><ul><li><p><span>$s_1$</span> and <span>$s_2$</span> are comoving distances;</p></li><li><p><span>$D_1 = D(s_1)$</span>, ... is the linear growth factor (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$a_1 = a(s_1)$</span>, ... is the scale factor (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$f_1 = f(s_1)$</span>, ... is the linear growth rate (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$\mathcal{H}_1 = \mathcal{H}(s_1)$</span>, ... is the comoving  Hubble distances (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2$</span>;</p></li><li><p><span>$\mathcal{R}_1 = \mathcal{R}(s_1)$</span>, ... is  computed by <code>func_ℛ_GNC</code> in <code>cosmo::Cosmology</code> (and evaluated in <span>$s_1$</span> ); the definition of <span>$\mathcal{R}(s)$</span> is the following:</p><p class="math-container">\[\mathcal{R}(s) = 5 s_{\mathrm{b}}(s) + \frac{2 - 5 s_{\mathrm{b}}(s)}{\mathcal{H}(s) \, s} +  
+\frac{\dot{\mathcal{H}}(s)}{\mathcal{H}(s)^2} - \mathit{f}_{\mathrm{evo}} \quad ;\]</p></li><li><p><span>$b_1$</span>, <span>$s_{\mathrm{b}, 1}$</span>, <span>$\mathit{f}_{\mathrm{evo}, 1}$</span>  (and <span>$b_2$</span>, <span>$s_{\mathrm{b}, 2}$</span>, <span>$\mathit{f}_{\mathrm{evo}, 2}$</span>) :  galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold),  and evolution bias for the first (second) effect;</p></li><li><p><span>$\Omega_{\mathrm{M}0} = \Omega_{\mathrm{cdm}} + \Omega_{\mathrm{b}}$</span> is the sum of  cold-dark-matter and barionic density parameters (again, stored in <code>cosmo</code>);</p></li><li><p><span>$I_\ell^n$</span> and <span>$\sigma_i$</span> are defined as</p><p class="math-container">\[I_\ell^n(s) = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \quad , 
+\quad \sigma_i = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^{2-i} \, P(q)\]</p><p>with <span>$P(q)$</span> as the matter Power Spectrum at <span>$z=0$</span> (stored in <code>cosmo</code>)  and <span>$j_\ell$</span> as spherical Bessel function of order <span>$\ell$</span>;</p></li><li><p><span>$\tilde{I}_0^4$</span> is defined as</p><p class="math-container">\[\tilde{I}_0^4 = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^2 \, P(q) \, \frac{j_0(qs) - 1}{(qs)^4}\]</p><p>with <span>$P(q)$</span> as the matter Power Spectrum at <span>$z=0$</span> (stored in <code>cosmo</code>)  and <span>$j_\ell$</span> as spherical Bessel function of order <span>$\ell$</span>;</p></li><li><p><span>$\mathcal{H}_0$</span>, <span>$f_0$</span> and so on are evaluated at the observer position (i.e. at present day);</p></li><li><p><span>$\Delta\chi_1 := \sqrt{\chi_1^2 + s_2^2-2\,\chi_1\,s_2\,y}$</span> and  <span>$\Delta\chi_2 := \sqrt{s_1^2 + \chi_2^2-2\,s_1\,\chi_2\,y}$</span>;</p></li><li><p><span>$s=\sqrt{s_1^2 + s_2^2 - 2 \, s_1 \, s_2 \, y}$</span> and  <span>$\Delta\chi := \sqrt{\chi_1^2 + \chi_2^2-2\,\chi_1\,\chi_2\,y}$</span>.</p></li></ul><p>In this TPCF, the only non-observer term is the first one (i.e. the bracket proportional to  <span>$D(s_1) \, D(s_2)$</span>). The other three ones are all observer terms related to the observer velocity, so if you set <code>obs = :no</code>, <code>obs = false</code> or even <code>obs = :noobsvel</code> they will not be computed.</p><p><strong>Inputs</strong></p><ul><li><p><code>P1::Point</code> and <code>P2::Point</code>, or <code>s1</code> and <code>s2</code>: <code>Point</code>/comoving distances where the  TPCF has to be calculated; they contain all the  data of interest needed for this calculus (comoving distance, growth factor and so on).</p></li><li><p><code>y</code>: the cosine of the angle between the two points <code>P1</code> and <code>P2</code> wrt the observer</p></li><li><p><code>cosmo::Cosmology</code>: cosmology to be used in this computation; it contains all the splines used for the conversion <code>s</code> -&gt; <code>Point</code>, and all the cosmological parameters <span>$b$</span>, ...</p></li></ul><p><strong>Keyword Arguments</strong></p><ul><li><p><code>b1=nothing</code>, <code>s_b1=nothing</code>, <code>𝑓_evo1=nothing</code> and <code>b2=nothing</code>, <code>s_b2=nothing</code>, <code>𝑓_evo2=nothing</code>: galaxy, magnification and evolutionary biases respectively for the first and the second effect  computed in this TPCF:</p><ul><li>if not set (i.e. if you leave the default value <code>nothing</code>) the values stored in the input <code>cosmo</code> will be considered;</li><li>if you set one or more values, they will override the <code>cosmo</code> ones in this computation;</li><li>the two sets of values should be different only if you are interested in studing two galaxy species;</li><li>only the required parameters for the chosen TPCF will be used, depending on its analytical expression; all the others will have no effect, we still inserted them for pragmatical code compatibilities. </li></ul></li><li><p><code>s_lim=nothing</code> : parameter used in order to avoid the divergence of the <span>$\mathcal{R}$</span> and  <span>$\mathfrak{R}$</span> denominators: when <span>$0 \leq s \leq s_\mathrm{lim}$</span> the returned values are</p><p class="math-container">\[\forall \, s \in [ 0, s_\mathrm{lim} ] \; : \quad 
+    \mathfrak{R}(s) = 1 - \frac{1}{\mathcal{H}_0 \, s_\mathrm{lim}} \; , \quad
+    \mathcal{R}(s) = 5 s_{\mathrm{b}} + 
+        \frac{2 - 5 s_{\mathrm{b}}}{\mathcal{H}_0 \, s_\mathrm{lim}} +  
+        \frac{\dot{\mathcal{H}}}{\mathcal{H}_0^2} - \mathit{f}_{\mathrm{evo}} \; .\]</p><p>If <code>nothing</code>, the default value stored in <code>cosmo</code> will be considered.</p></li><li><p><code>obs::Union{Bool,Symbol} = :noobsvel</code> : do you want to consider the observer terms in the computation of the  chosen GNC TPCF effect?</p><ul><li><code>:yes</code> or <code>true</code> -&gt; all the observer effects will be considered</li><li><code>:no</code> or <code>false</code> -&gt; no observer term will be taken into account</li><li><code>:noobsvel</code> -&gt; the observer terms related to the observer velocity (that you can find in the CF concerning Doppler) will be neglected, the other ones will be taken into account</li></ul></li></ul><p>See also: <a href="../Cosmology/#GaPSE.Point"><code>Point</code></a>, <a href="../Cosmology/#GaPSE.Cosmology"><code>Cosmology</code></a>, <a href="../GNC_Correlations_3/#GaPSE.ξ_GNC_multipole"><code>ξ_GNC_multipole</code></a>,  <a href="../GNC_Correlations_3/#GaPSE.map_ξ_GNC_multipole"><code>map_ξ_GNC_multipole</code></a>, <a href="../GNC_Correlations_3/#GaPSE.print_map_ξ_GNC_multipole"><code>print_map_ξ_GNC_multipole</code></a></p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/foglienimatteo/GaPSE.jl/blob/e601437c432ee08c2009b9fd4aee18390ba3e877/src/GNC_AutoCorrelations/GNC_AutoDoppler.jl#L88-L278">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="GaPSE.ξ_GNC_Lensing" href="#GaPSE.ξ_GNC_Lensing"><code>GaPSE.ξ_GNC_Lensing</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
+    en::Float64 = 1e6, Δχ_min::Float64 = 1e-1,
+    N_χs_2::Int = 100,
+    s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
+    s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel,
+    suit_sampling::Bool=true ) ::Float64
+
+ξ_GNC_Lensing(s1, s2, y, cosmo::Cosmology; 
+    kwargs...) ::Float64</code></pre><p>Return the Two-Point Correlation Function (TPCF) of the Lensing auto-correlation effect arising from the Galaxy Number Counts (GNC).</p><p>In the first method, you should pass the two <code>Point</code> (<code>P1</code> and <code>P2</code>) where to  evaluate the function, while in the second method (that internally recalls the first)  you must provide the two corresponding comoving distances <code>s1</code> and <code>s2</code>. We remember that all the distances are measured in <span>$h_0^{-1}\mathrm{Mpc}$</span>.</p><p>The analytical expression of this TPCF is the following:</p><p class="math-container">\[\begin{split}
+    \xi^{\kappa\kappa} (s_1, s_2, y) = 
+    \int_0^{s_1} \mathrm{d}\chi_1 \int_0^{s_2} \mathrm{d}\chi_2\;  
+    J^{\kappa\kappa}_{\alpha}
+    &amp;\left[
+        J^{\kappa\kappa}_{00} I_0^0(\Delta\chi) + 
+        J^{\kappa\kappa}_{02} I_2^0(\Delta\chi) +
+        \right.\\
+        &amp;\left.
+        J^{\kappa\kappa}_{31} I_1^3(\Delta\chi) +
+        J^{\kappa\kappa}_{22} I_2^2(\Delta\chi)
+    \right]  \, , 
+\end{split}\]</p><p>with</p><p class="math-container">\[\begin{split}
+    J^{\kappa\kappa}_{\alpha} &amp; = 
+    \frac{
+        \mathcal{H}_0^4 \Omega_{\mathrm{M}0}^2 D(\chi_1) D(\chi_2) 
+    }{
+        s_1 s_2 a(\chi_1) a(\chi_2)}
+    (\chi_1 - s_1)(\chi_2 - s_2)
+    (5 s_{\mathrm{b}, 1} - 2)(5 s_{\mathrm{b}, 2} - 2) 
+    \, , \\
+    %%%%&amp;%%%%%%%%%%%%%
+    J^{\kappa\kappa}_{00} &amp; = 
+    -\frac{ 3 \chi_1^2 \chi_2^2}{4 \Delta\chi^4} (y^2 - 1)
+    \left[
+        8 y (\chi_1^2 + \chi_2^2) - 9\chi_1\chi_2y^2 - 
+        7\chi_1\chi_2
+    \right] 
+    \, , \\
+    %%%%&amp;%%%%%%%%%%%%%
+    J^{\kappa\kappa}_{02} &amp; = 
+    -\frac{ 3 \chi_1^2 \chi_2^2}{2 \Delta\chi^4}(y^2 - 1)
+    \left[
+        4 y (\chi_1^2 + \chi_2^2) - 3 \chi_1 \chi_2 y^2 -
+        5 \chi_1 \chi_2
+    \right] 
+    \, , \\
+    %%%%%%%%%%%%%%%%%%
+    J^{\kappa\kappa}_{31} &amp; = 9 y \Delta\chi^2 
+    \, , \\
+    %%%%%%%%%%%%%%%%%%
+    J^{\kappa\kappa}_{22} &amp; = 
+    \frac{9 \chi_1 \chi_2}{4 \Delta\chi^4}
+    \left[
+        2(\chi_1^4 + \chi_2^4)(7 y^2 - 3) - 
+        16 y \chi_1 \chi_2 (\chi_1^2 + \chi_2^2)(y^2 + 1) + 
+        \right.\\
+        &amp;\left.\qquad\qquad\qquad
+        \chi_1^2 \chi_2^2 (11y^4 + 14y^2 + 23) 
+    \right] 
+    \, ,
+\end{split}\]</p><p>where:</p><ul><li><p><span>$s_1$</span> and <span>$s_2$</span> are comoving distances;</p></li><li><p><span>$D_1 = D(s_1)$</span>, ... is the linear growth factor (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$a_1 = a(s_1)$</span>, ... is the scale factor (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$f_1 = f(s_1)$</span>, ... is the linear growth rate (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$\mathcal{H}_1 = \mathcal{H}(s_1)$</span>, ... is the comoving  Hubble distances (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2$</span>;</p></li><li><p><span>$\mathcal{R}_1 = \mathcal{R}(s_1)$</span>, ... is  computed by <code>func_ℛ_GNC</code> in <code>cosmo::Cosmology</code> (and evaluated in <span>$s_1$</span> ); the definition of <span>$\mathcal{R}(s)$</span> is the following:</p><p class="math-container">\[\mathcal{R}(s) = 5 s_{\mathrm{b}}(s) + \frac{2 - 5 s_{\mathrm{b}}(s)}{\mathcal{H}(s) \, s} +  
+\frac{\dot{\mathcal{H}}(s)}{\mathcal{H}(s)^2} - \mathit{f}_{\mathrm{evo}} \quad ;\]</p></li><li><p><span>$b_1$</span>, <span>$s_{\mathrm{b}, 1}$</span>, <span>$\mathit{f}_{\mathrm{evo}, 1}$</span>  (and <span>$b_2$</span>, <span>$s_{\mathrm{b}, 2}$</span>, <span>$\mathit{f}_{\mathrm{evo}, 2}$</span>) :  galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold),  and evolution bias for the first (second) effect;</p></li><li><p><span>$\Omega_{\mathrm{M}0} = \Omega_{\mathrm{cdm}} + \Omega_{\mathrm{b}}$</span> is the sum of  cold-dark-matter and barionic density parameters (again, stored in <code>cosmo</code>);</p></li><li><p><span>$I_\ell^n$</span> and <span>$\sigma_i$</span> are defined as</p><p class="math-container">\[I_\ell^n(s) = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \quad , 
+\quad \sigma_i = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^{2-i} \, P(q)\]</p><p>with <span>$P(q)$</span> as the matter Power Spectrum at <span>$z=0$</span> (stored in <code>cosmo</code>)  and <span>$j_\ell$</span> as spherical Bessel function of order <span>$\ell$</span>;</p></li><li><p><span>$\mathcal{H}_0$</span>, <span>$f_0$</span> and so on are evaluated at the observer position (i.e. at present day);</p></li><li><p><span>$\Delta\chi_1 := \sqrt{\chi_1^2 + s_2^2-2\,\chi_1\,s_2\,y}$</span> and  <span>$\Delta\chi_2 := \sqrt{s_1^2 + \chi_2^2-2\,s_1\,\chi_2\,y}$</span>;</p></li><li><p><span>$s=\sqrt{s_1^2 + s_2^2 - 2 \, s_1 \, s_2 \, y}$</span> and  <span>$\Delta\chi := \sqrt{\chi_1^2 + \chi_2^2-2\,\chi_1\,\chi_2\,y}$</span>.</p></li></ul><p>In this TPCF there are no observer terms. The <code>obs</code> keyword is inserted only for compatibility with  the other GNC TPCFs.</p><p>This function is computed integrating <code>integrand_ξ_GNC_Lensing</code> with trapz() from the  <a href="https://github.com/francescoalemanno/Trapz.jl">Trapz</a> Julia package.</p><p><strong>Inputs</strong></p><ul><li><p><code>P1::Point</code> and <code>P2::Point</code>, or <code>s1</code> and <code>s2</code>: <code>Point</code>/comoving distances where the  TPCF has to be calculated; they contain all the  data of interest needed for this calculus (comoving distance, growth factor and so on).</p></li><li><p><code>y</code>: the cosine of the angle between the two points <code>P1</code> and <code>P2</code> wrt the observer</p></li><li><p><code>cosmo::Cosmology</code>: cosmology to be used in this computation; it contains all the splines used for the conversion <code>s</code> -&gt; <code>Point</code>, and all the cosmological parameters <span>$b$</span>, ...</p></li></ul><p><strong>Keyword Arguments</strong></p><ul><li><p><code>b1=nothing</code>, <code>s_b1=nothing</code>, <code>𝑓_evo1=nothing</code> and <code>b2=nothing</code>, <code>s_b2=nothing</code>, <code>𝑓_evo2=nothing</code>: galaxy, magnification and evolutionary biases respectively for the first and the second effect  computed in this TPCF:</p><ul><li>if not set (i.e. if you leave the default value <code>nothing</code>) the values stored in the input <code>cosmo</code> will be considered;</li><li>if you set one or more values, they will override the <code>cosmo</code> ones in this computation;</li><li>the two sets of values should be different only if you are interested in studing two galaxy species;</li><li>only the required parameters for the chosen TPCF will be used, depending on its analytical expression; all the others will have no effect, we still inserted them for pragmatical code compatibilities. </li></ul></li><li><p><code>s_lim=nothing</code> : parameter used in order to avoid the divergence of the <span>$\mathcal{R}$</span> and  <span>$\mathfrak{R}$</span> denominators: when <span>$0 \leq s \leq s_\mathrm{lim}$</span> the returned values are</p><p class="math-container">\[\forall \, s \in [ 0, s_\mathrm{lim} ] \; : \quad 
+    \mathfrak{R}(s) = 1 - \frac{1}{\mathcal{H}_0 \, s_\mathrm{lim}} \; , \quad
+    \mathcal{R}(s) = 5 s_{\mathrm{b}} + 
+        \frac{2 - 5 s_{\mathrm{b}}}{\mathcal{H}_0 \, s_\mathrm{lim}} +  
+        \frac{\dot{\mathcal{H}}}{\mathcal{H}_0^2} - \mathit{f}_{\mathrm{evo}} \; .\]</p><p>If <code>nothing</code>, the default value stored in <code>cosmo</code> will be considered.</p></li><li><p><code>obs::Union{Bool,Symbol} = :noobsvel</code> : do you want to consider the observer terms in the computation of the  chosen GNC TPCF effect?</p><ul><li><code>:yes</code> or <code>true</code> -&gt; all the observer effects will be considered</li><li><code>:no</code> or <code>false</code> -&gt; no observer term will be taken into account</li><li><code>:noobsvel</code> -&gt; the observer terms related to the observer velocity (that you can find in the CF concerning Doppler) will be neglected, the other ones will be taken into account</li></ul></li><li><p><code>en::Float64 = 1e6</code>: just a float number used in order to deal better  with small numbers;</p></li><li><p><code>Δχ_min::Float64 = 1e-4</code> : when  <span>$\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}$</span>, some <span>$I_\ell^n$</span> term diverges, but the overall parenthesis has a known limit:</p><p class="math-container">\[    \lim_{\Delta\chi \to 0^{+}} \left(
+        J_{00}^{\kappa\kappa} \, I^0_0(\Delta\chi) + 
+        J_{02}^{\kappa\kappa} \, I^0_2(\Delta\chi) + 
+        J_{31}^{\kappa\kappa} \, I^3_1(\Delta\chi) + 
+        J_{22}^{\kappa\kappa} \, I^2_2(\Delta\chi)
+    \right) = 
+        3 \, \sigma_2 + \frac{6}{5} \, \chi_2^2 \, \sigma_0\]</p><p>So, when it happens that <span>$\Delta\chi &lt; \Delta\chi_\mathrm{min}$</span>, the function considers this limit as the result of the parenthesis instead of calculating it in the normal way; it prevents computational divergences.</p></li><li><p><code>N_χs_2::Int = 100</code>: number of points to be used for sampling the integral along the ranges <code>(0, s1)</code> (for <code>χ1</code>) and <code>(0, s2)</code> (for <code>χ2</code>); it has been checked that with <code>N_χs_2 ≥ 50</code> the result is stable.</p></li><li><p><code>suit_sampling::Bool = true</code> : this bool keyword can be found in all the TPCFs which have at least one <code>χ</code> integral; it is conceived to enable a sampling of the <code>χ</code> integral(s) suited for the given TPCF; however, it actually have an effect only in the TPCFs that have such a sampling implemented in the code. Currently, only <code>ξ_GNC_Newtonian_Lensing</code> (and its simmetryc TPCF) has it.</p></li></ul><p>See also: <a href="../Cosmology/#GaPSE.Point"><code>Point</code></a>, <a href="../Cosmology/#GaPSE.Cosmology"><code>Cosmology</code></a>, <a href="../GNC_Correlations_3/#GaPSE.ξ_GNC_multipole"><code>ξ_GNC_multipole</code></a>,  <a href="../GNC_Correlations_3/#GaPSE.map_ξ_GNC_multipole"><code>map_ξ_GNC_multipole</code></a>, <a href="../GNC_Correlations_3/#GaPSE.print_map_ξ_GNC_multipole"><code>print_map_ξ_GNC_multipole</code></a>, <a href="#GaPSE.integrand_ξ_GNC_Lensing"><code>integrand_ξ_GNC_Lensing</code></a></p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/foglienimatteo/GaPSE.jl/blob/e601437c432ee08c2009b9fd4aee18390ba3e877/src/GNC_AutoCorrelations/GNC_AutoLensing.jl#L334-L546">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="GaPSE.ξ_GNC_LocalGP" href="#GaPSE.ξ_GNC_LocalGP"><code>GaPSE.ξ_GNC_LocalGP</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs"> ξ_GNC_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
+      obs::Union{Bool, Symbol} = :noobsvel) ::Float64
+
+ ξ_GNC_LocalGP(s1, s2, y, cosmo::Cosmology; 
+      kwargs...) ::Float64</code></pre><p>Return the Two-Point Correlation Function (TPCF) of the Local Gravitational Potential (GP) auto-correlation effect arising from the Galaxy Number Counts (GNC).</p><p>In the first method, you should pass the two <code>Point</code> (<code>P1</code> and <code>P2</code>) where to  evaluate the function, while in the second method (that internally recalls the first)  you must provide the two corresponding comoving distances <code>s1</code> and <code>s2</code>. We remember that all the distances are measured in <span>$h_0^{-1}\mathrm{Mpc}$</span>.</p><p>The analytical expression of this TPCF is the following:</p><p class="math-container">\[\begin{split}
+    \xi^{\phi\phi}( s_1 , s_2, y ) &amp;= 
+    D_1 D_2 J_{40}^{\phi\phi}( s_1, s_2 ) \tilde{I}_0^4 (s) 
+    +  D_2 J_{40}^{\phi_0 \phi}(s_1,s_2)  \tilde{I}_0^4 (s_2)
+     \\
+    &amp;+  D_1 J_{40}^{\phi_0 \phi}(s_2,s_1) \tilde{I}_0^4 (s_1)
+     + J_{\sigma4}^{\phi\phi} (s_1, s_2) \sigma_4  \, ,
+\end{split}\]</p><p>with</p><p class="math-container">\[\begin{split}
+    J_{40}^{\phi\phi} (s_1, s_2)  &amp;= 
+    \frac{s^4}{4 a_1 a_2}
+    \left[
+        2 a_2 f_2 (\mathit{f}_{\mathrm{evo}, 2} - 3) \mathcal{H}_2^2 + 
+        3 \mathcal{H}_0^2 \Omega_{\mathrm{M}0} (f_2 + \mathcal{R}_2 + 5 s_{\mathrm{b}, 2} - 2)
+    \right] \times
+     \\
+    &amp;\qquad\qquad
+    \left[
+        2 a_1 f_1(\mathit{f}_{\mathrm{evo}, 1}-3) \mathcal{H}_1^2 + 
+        3 \mathcal{H}_0^2 \Omega_{\mathrm{M}0} (f_1 + \mathcal{R}_1 + 5 s_{\mathrm{b}, 1} - 2)
+    \right] 
+    \, ,\\
+%%%%%%%%%%%%%%%%%
+    J_{40}^{\phi_0 \phi}(s_1, s_2) &amp;= 
+    \frac{\mathcal{H}_0 s_2^4}{4 s_1 a_2} 
+    \left[
+        \mathcal{H}_0 s_1 (2 f_0-3 \Omega_{\mathrm{M}0}) \mathcal{R}_1 + 
+        2 f_0 (5 s_{\mathrm{b}, 1}-2) 
+    \right] \times
+     \\
+    &amp;\qquad\qquad\left[
+        2 a_2 f_2 (\mathit{f}_{\mathrm{evo}, 2} - 3) \mathcal{H}_2^2 + 
+        3 \mathcal{H}_0^2 \Omega_{\mathrm{M}0} (f_2 + \mathcal{R}_2 + 5 s_{\mathrm{b}, 2} - 2)
+    \right]
+    \, , \\
+%%%%%%%%%%%%%%%%%%%%
+    J_{\sigma 4}(s_1, s_2)&amp;= 
+    \frac{\mathcal{H}_0^2 }{4 s_1 s_2}
+    \left[
+        \mathcal{H}_0 s_1 (2 f_0-3 \Omega_{\mathrm{M}0}) \mathcal{R}_1 + 
+        2 f_0(5 s_{\mathrm{b}, 1}-2)
+    \right] \times
+     \\
+    &amp;\qquad\qquad\left[
+        3 \Omega_{\mathrm{M}0} \mathcal{H}_0 s_2 \mathcal{R}_2 + 
+        2 f_0 (\mathcal{H}_0 s_2 \mathcal{R}_2 + 5 s_{\mathrm{b}, 2} - 2)
+    \right]
+    \, ,
+\end{split}\]</p><p>where:</p><ul><li><p><span>$s_1$</span> and <span>$s_2$</span> are comoving distances;</p></li><li><p><span>$D_1 = D(s_1)$</span>, ... is the linear growth factor (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$a_1 = a(s_1)$</span>, ... is the scale factor (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$f_1 = f(s_1)$</span>, ... is the linear growth rate (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$\mathcal{H}_1 = \mathcal{H}(s_1)$</span>, ... is the comoving  Hubble distances (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2$</span>;</p></li><li><p><span>$\mathcal{R}_1 = \mathcal{R}(s_1)$</span>, ... is  computed by <code>func_ℛ_GNC</code> in <code>cosmo::Cosmology</code> (and evaluated in <span>$s_1$</span> ); the definition of <span>$\mathcal{R}(s)$</span> is the following:</p><p class="math-container">\[\mathcal{R}(s) = 5 s_{\mathrm{b}}(s) + \frac{2 - 5 s_{\mathrm{b}}(s)}{\mathcal{H}(s) \, s} +  
+\frac{\dot{\mathcal{H}}(s)}{\mathcal{H}(s)^2} - \mathit{f}_{\mathrm{evo}} \quad ;\]</p></li><li><p><span>$b_1$</span>, <span>$s_{\mathrm{b}, 1}$</span>, <span>$\mathit{f}_{\mathrm{evo}, 1}$</span>  (and <span>$b_2$</span>, <span>$s_{\mathrm{b}, 2}$</span>, <span>$\mathit{f}_{\mathrm{evo}, 2}$</span>) :  galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold),  and evolution bias for the first (second) effect;</p></li><li><p><span>$\Omega_{\mathrm{M}0} = \Omega_{\mathrm{cdm}} + \Omega_{\mathrm{b}}$</span> is the sum of  cold-dark-matter and barionic density parameters (again, stored in <code>cosmo</code>);</p></li><li><p><span>$I_\ell^n$</span> and <span>$\sigma_i$</span> are defined as</p><p class="math-container">\[I_\ell^n(s) = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \quad , 
+\quad \sigma_i = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^{2-i} \, P(q)\]</p><p>with <span>$P(q)$</span> as the matter Power Spectrum at <span>$z=0$</span> (stored in <code>cosmo</code>)  and <span>$j_\ell$</span> as spherical Bessel function of order <span>$\ell$</span>;</p></li><li><p><span>$\tilde{I}_0^4$</span> is defined as</p><p class="math-container">\[\tilde{I}_0^4 = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^2 \, P(q) \, \frac{j_0(qs) - 1}{(qs)^4}\]</p><p>with <span>$P(q)$</span> as the matter Power Spectrum at <span>$z=0$</span> (stored in <code>cosmo</code>)  and <span>$j_\ell$</span> as spherical Bessel function of order <span>$\ell$</span>;</p></li><li><p><span>$\mathcal{H}_0$</span>, <span>$f_0$</span> and so on are evaluated at the observer position (i.e. at present day);</p></li><li><p><span>$\Delta\chi_1 := \sqrt{\chi_1^2 + s_2^2-2\,\chi_1\,s_2\,y}$</span> and  <span>$\Delta\chi_2 := \sqrt{s_1^2 + \chi_2^2-2\,s_1\,\chi_2\,y}$</span>;</p></li><li><p><span>$s=\sqrt{s_1^2 + s_2^2 - 2 \, s_1 \, s_2 \, y}$</span> and  <span>$\Delta\chi := \sqrt{\chi_1^2 + \chi_2^2-2\,\chi_1\,\chi_2\,y}$</span>.</p></li></ul><p>In this TPCF, the only non-observer term is the first one (i.e. the bracket proportional to  <span>$D(s_1) \, D(s_2)$</span>), so if you set <code>obs = :no</code> or <code>obs = false</code> that is the only one computed. The other three terms are all observer terms, but not related to the observer velocity, so if you set <code>obs = :noobsvel</code> they will still be computed.</p><p><strong>Inputs</strong></p><ul><li><p><code>P1::Point</code> and <code>P2::Point</code>, or <code>s1</code> and <code>s2</code>: <code>Point</code>/comoving distances where the  TPCF has to be calculated; they contain all the  data of interest needed for this calculus (comoving distance, growth factor and so on).</p></li><li><p><code>y</code>: the cosine of the angle between the two points <code>P1</code> and <code>P2</code> wrt the observer</p></li><li><p><code>cosmo::Cosmology</code>: cosmology to be used in this computation; it contains all the splines used for the conversion <code>s</code> -&gt; <code>Point</code>, and all the cosmological parameters <span>$b$</span>, ...</p></li></ul><p><strong>Keyword Arguments</strong></p><ul><li><p><code>b1=nothing</code>, <code>s_b1=nothing</code>, <code>𝑓_evo1=nothing</code> and <code>b2=nothing</code>, <code>s_b2=nothing</code>, <code>𝑓_evo2=nothing</code>: galaxy, magnification and evolutionary biases respectively for the first and the second effect  computed in this TPCF:</p><ul><li>if not set (i.e. if you leave the default value <code>nothing</code>) the values stored in the input <code>cosmo</code> will be considered;</li><li>if you set one or more values, they will override the <code>cosmo</code> ones in this computation;</li><li>the two sets of values should be different only if you are interested in studing two galaxy species;</li><li>only the required parameters for the chosen TPCF will be used, depending on its analytical expression; all the others will have no effect, we still inserted them for pragmatical code compatibilities. </li></ul></li><li><p><code>s_lim=nothing</code> : parameter used in order to avoid the divergence of the <span>$\mathcal{R}$</span> and  <span>$\mathfrak{R}$</span> denominators: when <span>$0 \leq s \leq s_\mathrm{lim}$</span> the returned values are</p><p class="math-container">\[\forall \, s \in [ 0, s_\mathrm{lim} ] \; : \quad 
+    \mathfrak{R}(s) = 1 - \frac{1}{\mathcal{H}_0 \, s_\mathrm{lim}} \; , \quad
+    \mathcal{R}(s) = 5 s_{\mathrm{b}} + 
+        \frac{2 - 5 s_{\mathrm{b}}}{\mathcal{H}_0 \, s_\mathrm{lim}} +  
+        \frac{\dot{\mathcal{H}}}{\mathcal{H}_0^2} - \mathit{f}_{\mathrm{evo}} \; .\]</p><p>If <code>nothing</code>, the default value stored in <code>cosmo</code> will be considered.</p></li><li><p><code>obs::Union{Bool,Symbol} = :noobsvel</code> : do you want to consider the observer terms in the computation of the  chosen GNC TPCF effect?</p><ul><li><code>:yes</code> or <code>true</code> -&gt; all the observer effects will be considered</li><li><code>:no</code> or <code>false</code> -&gt; no observer term will be taken into account</li><li><code>:noobsvel</code> -&gt; the observer terms related to the observer velocity (that you can find in the CF concerning Doppler) will be neglected, the other ones will be taken into account</li></ul></li></ul><p>See also: <a href="../Cosmology/#GaPSE.Point"><code>Point</code></a>, <a href="../Cosmology/#GaPSE.Cosmology"><code>Cosmology</code></a>, <a href="../GNC_Correlations_3/#GaPSE.ξ_GNC_multipole"><code>ξ_GNC_multipole</code></a>,  <a href="../GNC_Correlations_3/#GaPSE.map_ξ_GNC_multipole"><code>map_ξ_GNC_multipole</code></a>, <a href="../GNC_Correlations_3/#GaPSE.print_map_ξ_GNC_multipole"><code>print_map_ξ_GNC_multipole</code></a></p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/foglienimatteo/GaPSE.jl/blob/e601437c432ee08c2009b9fd4aee18390ba3e877/src/GNC_AutoCorrelations/GNC_AutoLocalGP.jl#L91-L270">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="GaPSE.ξ_GNC_IntegratedGP" href="#GaPSE.ξ_GNC_IntegratedGP"><code>GaPSE.ξ_GNC_IntegratedGP</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">ξ_GNC_IntegratedGP(
+    P1::Point, P2::Point, y, cosmo::Cosmology;
+    en::Float64=1e10, N_χs_2::Int=100, 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+    obs::Union{Bool,Symbol}=:noobsvel,
+    suit_sampling::Bool=true
+    ) ::Float64
+
+ξ_GNC_IntegratedGP(s1, s2, y, cosmo::Cosmology; 
+    kwargs...) ::Float64</code></pre><p>Return the Two-Point Correlation Function (TPCF) of the Integrated Gravitational Potential (GP) auto-correlation effect arising from the Galaxy Number Counts (GNC).</p><p>In the first method, you should pass the two <code>Point</code> (<code>P1</code> and <code>P2</code>) where to  evaluate the function, while in the second method (that internally recalls the first)  you must provide the two corresponding comoving distances <code>s1</code> and <code>s2</code>. We remember that all the distances are measured in <span>$h_0^{-1}\mathrm{Mpc}$</span>.</p><p>The analytical expression of this TPCF is the following:</p><p class="math-container">\[\begin{split}
+    \xi^{\int\!\phi \int \!\phi }( s_1 , s_2, y ) = 
+    \int_0^{s_1}\mathrm{d} \chi_1  \int_0^{s_2}\mathrm{d} \chi_2 \;  
+    J^{\int \!\phi \int \!\phi}_{40} 
+    \tilde{I}_0^4 ( \Delta\chi) \, , 
+\end{split}\]</p><p>with</p><p class="math-container">\[\begin{split}
+    J^{\int \!\phi\int \!\phi}_{40} =
+    \frac{
+        9 \Delta\chi ^4 \mathcal{H}_0^4 \Omega_{\mathrm{M},  0}^2 D(\chi_1) D(\chi_2)
+    }{
+        a(\chi_1) a(\chi_2) s_1 s_2
+    }
+    &amp;\left[
+        s_1 (f(\chi_1) - 1) \mathcal{H}(\chi_1) \mathcal{R}_1 - 5 s_{\mathrm{b},  1} + 2
+    \right] \times
+    \nonumber \\
+    &amp;\left[
+        s_2 (f(\chi_2) - 1) \mathcal{H}(\chi_2) \mathcal{R}_2 - 5 s_{\mathrm{b},  2} + 2
+    \right]
+    \, ,
+\end{split}\]</p><p>where:</p><ul><li><p><span>$s_1$</span> and <span>$s_2$</span> are comoving distances;</p></li><li><p><span>$D_1 = D(s_1)$</span>, ... is the linear growth factor (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$a_1 = a(s_1)$</span>, ... is the scale factor (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$f_1 = f(s_1)$</span>, ... is the linear growth rate (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$\mathcal{H}_1 = \mathcal{H}(s_1)$</span>, ... is the comoving  Hubble distances (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2$</span>;</p></li><li><p><span>$\mathcal{R}_1 = \mathcal{R}(s_1)$</span>, ... is  computed by <code>func_ℛ_GNC</code> in <code>cosmo::Cosmology</code> (and evaluated in <span>$s_1$</span> ); the definition of <span>$\mathcal{R}(s)$</span> is the following:</p><p class="math-container">\[\mathcal{R}(s) = 5 s_{\mathrm{b}}(s) + \frac{2 - 5 s_{\mathrm{b}}(s)}{\mathcal{H}(s) \, s} +  
+\frac{\dot{\mathcal{H}}(s)}{\mathcal{H}(s)^2} - \mathit{f}_{\mathrm{evo}} \quad ;\]</p></li><li><p><span>$b_1$</span>, <span>$s_{\mathrm{b}, 1}$</span>, <span>$\mathit{f}_{\mathrm{evo}, 1}$</span>  (and <span>$b_2$</span>, <span>$s_{\mathrm{b}, 2}$</span>, <span>$\mathit{f}_{\mathrm{evo}, 2}$</span>) :  galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold),  and evolution bias for the first (second) effect;</p></li><li><p><span>$\Omega_{\mathrm{M}0} = \Omega_{\mathrm{cdm}} + \Omega_{\mathrm{b}}$</span> is the sum of  cold-dark-matter and barionic density parameters (again, stored in <code>cosmo</code>);</p></li><li><p><span>$I_\ell^n$</span> and <span>$\sigma_i$</span> are defined as</p><p class="math-container">\[I_\ell^n(s) = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \quad , 
+\quad \sigma_i = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^{2-i} \, P(q)\]</p><p>with <span>$P(q)$</span> as the matter Power Spectrum at <span>$z=0$</span> (stored in <code>cosmo</code>)  and <span>$j_\ell$</span> as spherical Bessel function of order <span>$\ell$</span>;</p></li><li><p><span>$\mathcal{H}_0$</span>, <span>$f_0$</span> and so on are evaluated at the observer position (i.e. at present day);</p></li><li><p><span>$\Delta\chi_1 := \sqrt{\chi_1^2 + s_2^2-2\,\chi_1\,s_2\,y}$</span> and  <span>$\Delta\chi_2 := \sqrt{s_1^2 + \chi_2^2-2\,s_1\,\chi_2\,y}$</span>;</p></li><li><p><span>$s=\sqrt{s_1^2 + s_2^2 - 2 \, s_1 \, s_2 \, y}$</span> and  <span>$\Delta\chi := \sqrt{\chi_1^2 + \chi_2^2-2\,\chi_1\,\chi_2\,y}$</span>.</p></li></ul><p>In this TPCF there are no observer terms. The <code>obs</code> keyword is inserted only for compatibility with  the other GNC TPCFs.</p><p>This function is computed integrating <code>integrand_ξ_GNC_IntegratedGP</code> with trapz() from the  <a href="https://github.com/francescoalemanno/Trapz.jl">Trapz</a> Julia package.</p><p><strong>Inputs</strong></p><ul><li><p><code>P1::Point</code> and <code>P2::Point</code>, or <code>s1</code> and <code>s2</code>: <code>Point</code>/comoving distances where the  TPCF has to be calculated; they contain all the  data of interest needed for this calculus (comoving distance, growth factor and so on).</p></li><li><p><code>y</code>: the cosine of the angle between the two points <code>P1</code> and <code>P2</code> wrt the observer</p></li><li><p><code>cosmo::Cosmology</code>: cosmology to be used in this computation; it contains all the splines used for the conversion <code>s</code> -&gt; <code>Point</code>, and all the cosmological parameters <span>$b$</span>, ...</p></li></ul><p><strong>Keyword Arguments</strong></p><ul><li><p><code>b1=nothing</code>, <code>s_b1=nothing</code>, <code>𝑓_evo1=nothing</code> and <code>b2=nothing</code>, <code>s_b2=nothing</code>, <code>𝑓_evo2=nothing</code>: galaxy, magnification and evolutionary biases respectively for the first and the second effect  computed in this TPCF:</p><ul><li>if not set (i.e. if you leave the default value <code>nothing</code>) the values stored in the input <code>cosmo</code> will be considered;</li><li>if you set one or more values, they will override the <code>cosmo</code> ones in this computation;</li><li>the two sets of values should be different only if you are interested in studing two galaxy species;</li><li>only the required parameters for the chosen TPCF will be used, depending on its analytical expression; all the others will have no effect, we still inserted them for pragmatical code compatibilities. </li></ul></li><li><p><code>s_lim=nothing</code> : parameter used in order to avoid the divergence of the <span>$\mathcal{R}$</span> and  <span>$\mathfrak{R}$</span> denominators: when <span>$0 \leq s \leq s_\mathrm{lim}$</span> the returned values are</p><p class="math-container">\[\forall \, s \in [ 0, s_\mathrm{lim} ] \; : \quad 
+    \mathfrak{R}(s) = 1 - \frac{1}{\mathcal{H}_0 \, s_\mathrm{lim}} \; , \quad
+    \mathcal{R}(s) = 5 s_{\mathrm{b}} + 
+        \frac{2 - 5 s_{\mathrm{b}}}{\mathcal{H}_0 \, s_\mathrm{lim}} +  
+        \frac{\dot{\mathcal{H}}}{\mathcal{H}_0^2} - \mathit{f}_{\mathrm{evo}} \; .\]</p><p>If <code>nothing</code>, the default value stored in <code>cosmo</code> will be considered.</p></li><li><p><code>obs::Union{Bool,Symbol} = :noobsvel</code> : do you want to consider the observer terms in the computation of the  chosen GNC TPCF effect?</p><ul><li><code>:yes</code> or <code>true</code> -&gt; all the observer effects will be considered</li><li><code>:no</code> or <code>false</code> -&gt; no observer term will be taken into account</li><li><code>:noobsvel</code> -&gt; the observer terms related to the observer velocity (that you can find in the CF concerning Doppler) will be neglected, the other ones will be taken into account</li></ul></li><li><p><code>en::Float64 = 1e6</code>: just a float number used in order to deal better  with small numbers;</p></li><li><p><code>N_χs_2::Int = 100</code>: number of points to be used for sampling the integral along the ranges <code>(0, s1)</code> (for <code>χ1</code>) and <code>(0, s2)</code> (for <code>χ2</code>); it has been checked that with <code>N_χs_2 ≥ 50</code> the result is stable.</p></li><li><p><code>suit_sampling::Bool = true</code> : this bool keyword can be found in all the TPCFs which have at least one <code>χ</code> integral; it is conceived to enable a sampling of the <code>χ</code> integral(s) suited for the given TPCF; however, it actually have an effect only in the TPCFs that have such a sampling implemented in the code. Currently, only <code>ξ_GNC_Newtonian_Lensing</code> (and its simmetryc TPCF) has it.</p></li></ul><p>See also: <a href="../Cosmology/#GaPSE.Point"><code>Point</code></a>, <a href="../Cosmology/#GaPSE.Cosmology"><code>Cosmology</code></a>, <a href="../GNC_Correlations_3/#GaPSE.ξ_GNC_multipole"><code>ξ_GNC_multipole</code></a>,  <a href="../GNC_Correlations_3/#GaPSE.map_ξ_GNC_multipole"><code>map_ξ_GNC_multipole</code></a>, <a href="../GNC_Correlations_3/#GaPSE.print_map_ξ_GNC_multipole"><code>print_map_ξ_GNC_multipole</code></a>, <a href="#GaPSE.integrand_ξ_GNC_IntegratedGP"><code>integrand_ξ_GNC_IntegratedGP</code></a></p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/foglienimatteo/GaPSE.jl/blob/e601437c432ee08c2009b9fd4aee18390ba3e877/src/GNC_AutoCorrelations/GNC_AutoIntegratedGP.jl#L292-L458">source</a></section></article><h2 id="Two-Point-Auto-Correlation-Functions-integrands"><a class="docs-heading-anchor" href="#Two-Point-Auto-Correlation-Functions-integrands">Two-Point Auto-Correlation Functions integrands</a><a id="Two-Point-Auto-Correlation-Functions-integrands-1"></a><a class="docs-heading-anchor-permalink" href="#Two-Point-Auto-Correlation-Functions-integrands" title="Permalink"></a></h2><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="GaPSE.integrand_ξ_GNC_Lensing" href="#GaPSE.integrand_ξ_GNC_Lensing"><code>GaPSE.integrand_ξ_GNC_Lensing</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">integrand_ξ_GNC_Lensing(
+    IP1::Point, IP2::Point,
+    P1::Point, P2::Point,
+    y, cosmo::Cosmology;
+    Δχ_min::Float64=1e-1, b1=nothing, b2=nothing, 
+    s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
+    s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel
+    ) ::Float64
+
+integrand_ξ_GNC_Lensing(
+    χ1::Float64, χ2::Float64,
+    s1::Float64, s2::Float64,
+    y, cosmo::Cosmology;
+    kwargs... )::Float64</code></pre><p>Return the integrand of the Two-Point Correlation Function (TPCF) of the  Lensing auto-correlation effect arising from the Galaxy Number Counts (GNC).</p><p>In the first method, you should pass the two extreme <code>Point</code>s (<code>P1</code> and <code>P2</code>) and the two  intermediate integrand <code>Point</code>s (<code>IP1</code> and <code>IP2</code>) where to  evaluate the function. In the second method (that internally recalls the first), you must provide the four corresponding comoving distances <code>s1</code>, <code>s2</code>, <code>χ1</code>, <code>χ2</code>. We remember that all the distances are measured in <span>$h_0^{-1}\mathrm{Mpc}$</span>.</p><p>The analytical expression of this integrand is the following:</p><p class="math-container">\[\begin{equation}
+    f^{\kappa\kappa} (\chi_1, \chi_2, s_1, s_2, y) = 
+    J^{\kappa\kappa}_{\alpha}
+    \left[
+        J^{\kappa\kappa}_{00} I_0^0(\Delta\chi) + 
+        J^{\kappa\kappa}_{02} I_2^0(\Delta\chi) +
+        J^{\kappa\kappa}_{31} I_1^3(\Delta\chi) +
+        J^{\kappa\kappa}_{22} I_2^2(\Delta\chi)
+    \right]  \, , 
+\end{equation}\]</p><p>with</p><p class="math-container">\[\begin{split}
+    J^{\kappa\kappa}_{\alpha} &amp; = 
+    \frac{
+        \mathcal{H}_0^4 \Omega_{\mathrm{M}0}^2 D(\chi_1) D(\chi_2) 
+    }{
+        s_1 s_2 a(\chi_1) a(\chi_2)}
+    (\chi_1 - s_1)(\chi_2 - s_2)
+    (5 s_{\mathrm{b}, 1} - 2)(5 s_{\mathrm{b}, 2} - 2) 
+    \, , \\
+    %%%%&amp;%%%%%%%%%%%%%
+    J^{\kappa\kappa}_{00} &amp; = 
+    -\frac{ 3 \chi_1^2 \chi_2^2}{4 \Delta\chi^4} (y^2 - 1)
+    \left[
+        8 y (\chi_1^2 + \chi_2^2) - 9\chi_1\chi_2y^2 - 
+        7\chi_1\chi_2
+    \right] 
+    \, , \\
+    %%%%&amp;%%%%%%%%%%%%%
+    J^{\kappa\kappa}_{02} &amp; = 
+    -\frac{ 3 \chi_1^2 \chi_2^2}{2 \Delta\chi^4}(y^2 - 1)
+    \left[
+        4 y (\chi_1^2 + \chi_2^2) - 3 \chi_1 \chi_2 y^2 -
+        5 \chi_1 \chi_2
+    \right] 
+    \, , \\
+    %%%%%%%%%%%%%%%%%%
+    J^{\kappa\kappa}_{31} &amp; = 9 y \Delta\chi^2 
+    \, , \\
+    %%%%%%%%%%%%%%%%%%
+    J^{\kappa\kappa}_{22} &amp; = 
+    \frac{9 \chi_1 \chi_2}{4 \Delta\chi^4}
+    \left[
+        2(\chi_1^4 + \chi_2^4)(7 y^2 - 3) - 
+        16 y \chi_1 \chi_2 (\chi_1^2 + \chi_2^2)(y^2 + 1) + 
+        \right.\\
+        &amp;\left.\qquad\qquad\qquad
+        \chi_1^2 \chi_2^2 (11y^4 + 14y^2 + 23) 
+    \right] 
+    \, ,
+\end{split}\]</p><p>where:</p><ul><li><p><span>$s_1$</span> and <span>$s_2$</span> are comoving distances;</p></li><li><p><span>$D_1 = D(s_1)$</span>, ... is the linear growth factor (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$a_1 = a(s_1)$</span>, ... is the scale factor (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$f_1 = f(s_1)$</span>, ... is the linear growth rate (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$\mathcal{H}_1 = \mathcal{H}(s_1)$</span>, ... is the comoving  Hubble distances (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2$</span>;</p></li><li><p><span>$\mathcal{R}_1 = \mathcal{R}(s_1)$</span>, ... is  computed by <code>func_ℛ_GNC</code> in <code>cosmo::Cosmology</code> (and evaluated in <span>$s_1$</span> ); the definition of <span>$\mathcal{R}(s)$</span> is the following:</p><p class="math-container">\[\mathcal{R}(s) = 5 s_{\mathrm{b}}(s) + \frac{2 - 5 s_{\mathrm{b}}(s)}{\mathcal{H}(s) \, s} +  
+\frac{\dot{\mathcal{H}}(s)}{\mathcal{H}(s)^2} - \mathit{f}_{\mathrm{evo}} \quad ;\]</p></li><li><p><span>$b_1$</span>, <span>$s_{\mathrm{b}, 1}$</span>, <span>$\mathit{f}_{\mathrm{evo}, 1}$</span>  (and <span>$b_2$</span>, <span>$s_{\mathrm{b}, 2}$</span>, <span>$\mathit{f}_{\mathrm{evo}, 2}$</span>) :  galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold),  and evolution bias for the first (second) effect;</p></li><li><p><span>$\Omega_{\mathrm{M}0} = \Omega_{\mathrm{cdm}} + \Omega_{\mathrm{b}}$</span> is the sum of  cold-dark-matter and barionic density parameters (again, stored in <code>cosmo</code>);</p></li><li><p><span>$I_\ell^n$</span> and <span>$\sigma_i$</span> are defined as</p><p class="math-container">\[I_\ell^n(s) = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \quad , 
+\quad \sigma_i = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^{2-i} \, P(q)\]</p><p>with <span>$P(q)$</span> as the matter Power Spectrum at <span>$z=0$</span> (stored in <code>cosmo</code>)  and <span>$j_\ell$</span> as spherical Bessel function of order <span>$\ell$</span>;</p></li><li><p><span>$\tilde{I}_0^4$</span> is defined as</p><p class="math-container">\[\tilde{I}_0^4 = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^2 \, P(q) \, \frac{j_0(qs) - 1}{(qs)^4}\]</p><p>with <span>$P(q)$</span> as the matter Power Spectrum at <span>$z=0$</span> (stored in <code>cosmo</code>)  and <span>$j_\ell$</span> as spherical Bessel function of order <span>$\ell$</span>;</p></li><li><p><span>$\mathcal{H}_0$</span>, <span>$f_0$</span> and so on are evaluated at the observer position (i.e. at present day);</p></li><li><p><span>$\Delta\chi_1 := \sqrt{\chi_1^2 + s_2^2-2\,\chi_1\,s_2\,y}$</span> and  <span>$\Delta\chi_2 := \sqrt{s_1^2 + \chi_2^2-2\,s_1\,\chi_2\,y}$</span>;</p></li><li><p><span>$s=\sqrt{s_1^2 + s_2^2 - 2 \, s_1 \, s_2 \, y}$</span> and  <span>$\Delta\chi := \sqrt{\chi_1^2 + \chi_2^2-2\,\chi_1\,\chi_2\,y}$</span>.</p></li></ul><p>In this TPCF there are no observer terms. The <code>obs</code> keyword is inserted only for compatibility with  the other GNC TPCFs.</p><p>This function is used inside <code>ξ_GNC_Lensing</code> with trapz() from the  <a href="https://github.com/francescoalemanno/Trapz.jl">Trapz</a> Julia package.</p><p><strong>Inputs</strong></p><ul><li><p><code>IP1::Point</code>, <code>IP2::Point</code>, <code>P1::Point</code>, <code>P2::Point</code> or <code>χ1</code>, <code>χ2</code>, <code>s1</code>, <code>s2</code>: <code>Point</code>/comoving  distances where the TPCF has to be calculated; they contain all the  data of interest needed for this calculus (comoving distance, growth factor and so on).</p></li><li><p><code>y</code>: the cosine of the angle between the two points <code>P1</code> and <code>P2</code> wrt the observer</p></li><li><p><code>cosmo::Cosmology</code>: cosmology to be used in this computation; it contains all the splines used for the conversion <code>s</code> -&gt; <code>Point</code>, and all the cosmological parameters <span>$b$</span>, ...</p></li></ul><p><strong>Keyword Arguments</strong></p><ul><li><p><code>b1=nothing</code>, <code>s_b1=nothing</code>, <code>𝑓_evo1=nothing</code> and <code>b2=nothing</code>, <code>s_b2=nothing</code>, <code>𝑓_evo2=nothing</code>: galaxy, magnification and evolutionary biases respectively for the first and the second effect  computed in this TPCF:</p><ul><li>if not set (i.e. if you leave the default value <code>nothing</code>) the values stored in the input <code>cosmo</code> will be considered;</li><li>if you set one or more values, they will override the <code>cosmo</code> ones in this computation;</li><li>the two sets of values should be different only if you are interested in studing two galaxy species;</li><li>only the required parameters for the chosen TPCF will be used, depending on its analytical expression; all the others will have no effect, we still inserted them for pragmatical code compatibilities. </li></ul></li><li><p><code>s_lim=nothing</code> : parameter used in order to avoid the divergence of the <span>$\mathcal{R}$</span> and  <span>$\mathfrak{R}$</span> denominators: when <span>$0 \leq s \leq s_\mathrm{lim}$</span> the returned values are</p><p class="math-container">\[\forall \, s \in [ 0, s_\mathrm{lim} ] \; : \quad 
+    \mathfrak{R}(s) = 1 - \frac{1}{\mathcal{H}_0 \, s_\mathrm{lim}} \; , \quad
+    \mathcal{R}(s) = 5 s_{\mathrm{b}} + 
+        \frac{2 - 5 s_{\mathrm{b}}}{\mathcal{H}_0 \, s_\mathrm{lim}} +  
+        \frac{\dot{\mathcal{H}}}{\mathcal{H}_0^2} - \mathit{f}_{\mathrm{evo}} \; .\]</p><p>If <code>nothing</code>, the default value stored in <code>cosmo</code> will be considered.</p></li><li><p><code>obs::Union{Bool,Symbol} = :noobsvel</code> : do you want to consider the observer terms in the computation of the  chosen GNC TPCF effect?</p><ul><li><code>:yes</code> or <code>true</code> -&gt; all the observer effects will be considered</li><li><code>:no</code> or <code>false</code> -&gt; no observer term will be taken into account</li><li><code>:noobsvel</code> -&gt; the observer terms related to the observer velocity (that you can find in the CF concerning Doppler) will be neglected, the other ones will be taken into account</li></ul></li><li><p><code>Δχ_min::Float64 = 1e-4</code> : when  <span>$\Delta\chi = \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \chi_2 y} \to 0^{+}$</span>, some <span>$I_\ell^n$</span> term diverges, but the overall parenthesis has a known limit:</p><p class="math-container">\[    \lim_{\Delta\chi \to 0^{+}} \left(
+        J_{00}^{\kappa\kappa} \, I^0_0(\Delta\chi) + 
+        J_{02}^{\kappa\kappa} \, I^0_2(\Delta\chi) + 
+        J_{31}^{\kappa\kappa} \, I^3_1(\Delta\chi) + 
+        J_{22}^{\kappa\kappa} \, I^2_2(\Delta\chi)
+    \right) = 
+        3 \, \sigma_2 + \frac{6}{5} \, \chi_2^2 \, \sigma_0\]</p><p>So, when it happens that <span>$\Delta\chi &lt; \Delta\chi_\mathrm{min}$</span>, the function considers this limit as the result of the parenthesis instead of calculating it in the normal way; it prevents computational divergences.</p></li></ul><p>See also: <a href="../Cosmology/#GaPSE.Point"><code>Point</code></a>, <a href="../Cosmology/#GaPSE.Cosmology"><code>Cosmology</code></a>, <a href="../GNC_Correlations_3/#GaPSE.ξ_GNC_multipole"><code>ξ_GNC_multipole</code></a>,  <a href="../GNC_Correlations_3/#GaPSE.map_ξ_GNC_multipole"><code>map_ξ_GNC_multipole</code></a>, <a href="../GNC_Correlations_3/#GaPSE.print_map_ξ_GNC_multipole"><code>print_map_ξ_GNC_multipole</code></a>, <a href="#GaPSE.ξ_GNC_Lensing"><code>ξ_GNC_Lensing</code></a></p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/foglienimatteo/GaPSE.jl/blob/e601437c432ee08c2009b9fd4aee18390ba3e877/src/GNC_AutoCorrelations/GNC_AutoLensing.jl#L87-L298">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="GaPSE.integrand_ξ_GNC_IntegratedGP" href="#GaPSE.integrand_ξ_GNC_IntegratedGP"><code>GaPSE.integrand_ξ_GNC_IntegratedGP</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">integrand_ξ_GNC_IntegratedGP(
+    IP1::Point, IP2::Point,
+    P1::Point, P2::Point,
+    y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+    obs::Union{Bool,Symbol}=:noobsvel
+    ) ::Float64
+
+integrand_ξ_GNC_IntegratedGP(
+    χ1::Float64, χ2::Float64,
+    s1::Float64, s2::Float64,
+    y, cosmo::Cosmology;
+    kwargs...) ::Float64</code></pre><p>Return the integrand of the Two-Point Correlation Function (TPCF) of the  Integrated Gravitational Potential (GP) auto-correlation effect  arising from the Galaxy Number Counts (GNC).</p><p>In the first method, you should pass the two extreme <code>Point</code>s (<code>P1</code> and <code>P2</code>) and the two  intermediate integrand <code>Point</code>s (<code>IP1</code> and <code>IP2</code>) where to  evaluate the function. In the second method (that internally recalls the first), you must provide the four corresponding comoving distances <code>s1</code>, <code>s2</code>, <code>χ1</code>, <code>χ2</code>. We remember that all the distances are measured in <span>$h_0^{-1}\mathrm{Mpc}$</span>.</p><p>The analytical expression of this integrand is the following:</p><p class="math-container">\[\begin{equation}
+    f^{\int \!\phi\int \!\phi} (\chi_1, \chi_2, s_1, s_2, y) = 
+    J^{\int \!\phi \int \!\phi}_{40} 
+    \tilde{I}_0^4 ( \Delta\chi) \, , 
+\end{equation}\]</p><p>with</p><p class="math-container">\[\begin{split}
+    J^{\int \!\phi\int \!\phi}_{40} =
+    \frac{
+        9 \Delta\chi ^4 \mathcal{H}_0^4 \Omega_{\mathrm{M}0}^2 D(\chi_1) D(\chi_2)
+    }{
+        a(\chi_1) a(\chi_2) s_1 s_2
+    }
+    &amp;\left[
+        s_1 (f(\chi_1) - 1) \mathcal{H}(\chi_1) \mathcal{R}_1 - 5 s_{\mathrm{b}, 1} + 2
+    \right] \times
+    \nonumber \\
+    &amp;\left[
+        s_2 (f(\chi_2) - 1) \mathcal{H}(\chi_2) \mathcal{R}_2 - 5 s_{\mathrm{b}, 2} + 2
+    \right]
+    \, ,
+\end{split}\]</p><p>where:</p><ul><li><p><span>$s_1$</span> and <span>$s_2$</span> are comoving distances;</p></li><li><p><span>$D_1 = D(s_1)$</span>, ... is the linear growth factor (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$a_1 = a(s_1)$</span>, ... is the scale factor (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$f_1 = f(s_1)$</span>, ... is the linear growth rate (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$\mathcal{H}_1 = \mathcal{H}(s_1)$</span>, ... is the comoving  Hubble distances (evaluated in <span>$s_1$</span>);</p></li><li><p><span>$y = \cos{\theta} = \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2$</span>;</p></li><li><p><span>$\mathcal{R}_1 = \mathcal{R}(s_1)$</span>, ... is  computed by <code>func_ℛ_GNC</code> in <code>cosmo::Cosmology</code> (and evaluated in <span>$s_1$</span> ); the definition of <span>$\mathcal{R}(s)$</span> is the following:</p><p class="math-container">\[\mathcal{R}(s) = 5 s_{\mathrm{b}}(s) + \frac{2 - 5 s_{\mathrm{b}}(s)}{\mathcal{H}(s) \, s} +  
+\frac{\dot{\mathcal{H}}(s)}{\mathcal{H}(s)^2} - \mathit{f}_{\mathrm{evo}} \quad ;\]</p></li><li><p><span>$b_1$</span>, <span>$s_{\mathrm{b}, 1}$</span>, <span>$\mathit{f}_{\mathrm{evo}, 1}$</span>  (and <span>$b_2$</span>, <span>$s_{\mathrm{b}, 2}$</span>, <span>$\mathit{f}_{\mathrm{evo}, 2}$</span>) :  galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold),  and evolution bias for the first (second) effect;</p></li><li><p><span>$\Omega_{\mathrm{M}0} = \Omega_{\mathrm{cdm}} + \Omega_{\mathrm{b}}$</span> is the sum of  cold-dark-matter and barionic density parameters (again, stored in <code>cosmo</code>);</p></li><li><p><span>$I_\ell^n$</span> and <span>$\sigma_i$</span> are defined as</p><p class="math-container">\[I_\ell^n(s) = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \quad , 
+\quad \sigma_i = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^{2-i} \, P(q)\]</p><p>with <span>$P(q)$</span> as the matter Power Spectrum at <span>$z=0$</span> (stored in <code>cosmo</code>)  and <span>$j_\ell$</span> as spherical Bessel function of order <span>$\ell$</span>;</p></li><li><p><span>$\tilde{I}_0^4$</span> is defined as</p><p class="math-container">\[\tilde{I}_0^4 = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} 
+\, q^2 \, P(q) \, \frac{j_0(qs) - 1}{(qs)^4}\]</p><p>with <span>$P(q)$</span> as the matter Power Spectrum at <span>$z=0$</span> (stored in <code>cosmo</code>)  and <span>$j_\ell$</span> as spherical Bessel function of order <span>$\ell$</span>;</p></li><li><p><span>$\mathcal{H}_0$</span>, <span>$f_0$</span> and so on are evaluated at the observer position (i.e. at present day);</p></li><li><p><span>$\Delta\chi_1 := \sqrt{\chi_1^2 + s_2^2-2\,\chi_1\,s_2\,y}$</span> and  <span>$\Delta\chi_2 := \sqrt{s_1^2 + \chi_2^2-2\,s_1\,\chi_2\,y}$</span>;</p></li><li><p><span>$s=\sqrt{s_1^2 + s_2^2 - 2 \, s_1 \, s_2 \, y}$</span> and  <span>$\Delta\chi := \sqrt{\chi_1^2 + \chi_2^2-2\,\chi_1\,\chi_2\,y}$</span>.</p></li></ul><p>In this TPCF there are no observer terms. The <code>obs</code> keyword is inserted only for compatibility with  the other GNC TPCFs.</p><p>This function is used inside <code>ξ_GNC_IntegratedGP</code> with trapz() from the  <a href="https://github.com/francescoalemanno/Trapz.jl">Trapz</a> Julia package.</p><p><strong>Inputs</strong></p><ul><li><p><code>IP1::Point</code>, <code>IP2::Point</code>, <code>P1::Point</code>, <code>P2::Point</code> or <code>χ1</code>, <code>χ2</code>, <code>s1</code>, <code>s2</code>: <code>Point</code>/comoving  distances where the TPCF has to be calculated; they contain all the  data of interest needed for this calculus (comoving distance, growth factor and so on).</p></li><li><p><code>y</code>: the cosine of the angle between the two points <code>P1</code> and <code>P2</code> wrt the observer</p></li><li><p><code>cosmo::Cosmology</code>: cosmology to be used in this computation; it contains all the splines used for the conversion <code>s</code> -&gt; <code>Point</code>, and all the cosmological parameters <span>$b$</span>, ...</p></li></ul><p><strong>Keyword Arguments</strong></p><ul><li><p><code>b1=nothing</code>, <code>s_b1=nothing</code>, <code>𝑓_evo1=nothing</code> and <code>b2=nothing</code>, <code>s_b2=nothing</code>, <code>𝑓_evo2=nothing</code>: galaxy, magnification and evolutionary biases respectively for the first and the second effect  computed in this TPCF:</p><ul><li>if not set (i.e. if you leave the default value <code>nothing</code>) the values stored in the input <code>cosmo</code> will be considered;</li><li>if you set one or more values, they will override the <code>cosmo</code> ones in this computation;</li><li>the two sets of values should be different only if you are interested in studing two galaxy species;</li><li>only the required parameters for the chosen TPCF will be used, depending on its analytical expression; all the others will have no effect, we still inserted them for pragmatical code compatibilities. </li></ul></li><li><p><code>s_lim=nothing</code> : parameter used in order to avoid the divergence of the <span>$\mathcal{R}$</span> and  <span>$\mathfrak{R}$</span> denominators: when <span>$0 \leq s \leq s_\mathrm{lim}$</span> the returned values are</p><p class="math-container">\[\forall \, s \in [ 0, s_\mathrm{lim} ] \; : \quad 
+    \mathfrak{R}(s) = 1 - \frac{1}{\mathcal{H}_0 \, s_\mathrm{lim}} \; , \quad
+    \mathcal{R}(s) = 5 s_{\mathrm{b}} + 
+        \frac{2 - 5 s_{\mathrm{b}}}{\mathcal{H}_0 \, s_\mathrm{lim}} +  
+        \frac{\dot{\mathcal{H}}}{\mathcal{H}_0^2} - \mathit{f}_{\mathrm{evo}} \; .\]</p><p>If <code>nothing</code>, the default value stored in <code>cosmo</code> will be considered.</p></li><li><p><code>obs::Union{Bool,Symbol} = :noobsvel</code> : do you want to consider the observer terms in the computation of the  chosen GNC TPCF effect?</p><ul><li><code>:yes</code> or <code>true</code> -&gt; all the observer effects will be considered</li><li><code>:no</code> or <code>false</code> -&gt; no observer term will be taken into account</li><li><code>:noobsvel</code> -&gt; the observer terms related to the observer velocity (that you can find in the CF concerning Doppler) will be neglected, the other ones will be taken into account</li></ul></li></ul><p>See also: <a href="../Cosmology/#GaPSE.Point"><code>Point</code></a>, <a href="../Cosmology/#GaPSE.Cosmology"><code>Cosmology</code></a>, <a href="../GNC_Correlations_3/#GaPSE.ξ_GNC_multipole"><code>ξ_GNC_multipole</code></a>,  <a href="../GNC_Correlations_3/#GaPSE.map_ξ_GNC_multipole"><code>map_ξ_GNC_multipole</code></a>, <a href="../GNC_Correlations_3/#GaPSE.print_map_ξ_GNC_multipole"><code>print_map_ξ_GNC_multipole</code></a>, <a href="#GaPSE.ξ_GNC_IntegratedGP"><code>ξ_GNC_IntegratedGP</code></a></p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/foglienimatteo/GaPSE.jl/blob/e601437c432ee08c2009b9fd4aee18390ba3e877/src/GNC_AutoCorrelations/GNC_AutoIntegratedGP.jl#L66-L232">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../WindowFIntegrated/">« Integrated Window F</a><a class="docs-footer-nextpage" href="../GNC_Correlations_2/">GNC TPCFs »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Friday 23 February 2024 11:02">Friday 23 February 2024</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
