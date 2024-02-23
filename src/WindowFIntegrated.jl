@@ -19,8 +19,8 @@
 
 
 """
-     integrated_F_quadgk(s, μ, s_min, s_max, windowF::WindowF;
-          llim=0.0, rlim=Inf, rtol=1e-2, atol=0.0)
+    integrated_F_quadgk(s, μ, s_min, s_max, windowF::WindowF;
+        llim=0.0, rlim=Inf, rtol=1e-2, atol=0.0)
 
 Computes the Integrated Window Function fron the input Window Function `windowF`, 
 through the `quadgk` function of the [QuadGK](https://github.com/JuliaMath/QuadGK.jl) Julia
@@ -51,38 +51,38 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 See also: [`WindowF`], [`ϕ`](@ref)
 """
 function integrated_F_quadgk(s, μ, s_min, s_max, windowF::WindowF;
-     llim=nothing, rlim=nothing, rtol=1e-2, atol=0.0)
+    llim=nothing, rlim=nothing, rtol=1e-2, atol=0.0)
 
-     LLIM = isnothing(llim) ? 0.95 * s_min : llim
-     RLIM = isnothing(rlim) ? 1.05 * s_max : isinf(rlim) ? 3.0 * s_max : rlim
-     f(p) = ϕ(p, s_min, s_max) > 0 ? begin
-          spline_F(s / p, μ, windowF) * ϕ(p, s_min, s_max) * ϕ(s2(p, s, μ), s_min, s_max) * p^2
-     end : 0.0
-     quadgk(p -> f(p), LLIM, RLIM; rtol=rtol, atol=atol)[1]
+    LLIM = isnothing(llim) ? 0.95 * s_min : llim
+    RLIM = isnothing(rlim) ? 1.05 * s_max : isinf(rlim) ? 3.0 * s_max : rlim
+    f(p) = ϕ(p, s_min, s_max) > 0 ? begin
+        spline_F(s / p, μ, windowF) * ϕ(p, s_min, s_max) * ϕ(s2(p, s, μ), s_min, s_max) * p^2
+    end : 0.0
+    quadgk(p -> f(p), LLIM, RLIM; rtol=rtol, atol=atol)[1]
 end
 
 
 #=
 """
-     integrated_F_quadgk(s, μ, z_min, z_max, windowF::WindowF, file_data::String;
-          names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
+    integrated_F_quadgk(s, μ, z_min, z_max, windowF::WindowF, file_data::String;
+        names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
 
 Same as the othert method, but this one takes as input REDSHIFTS and not comoving distances.
 In order to convert from one to the other, you must provide a `file_data` with the appropriate
 data; it is expected that such file is an output of CLASS.
 """
 function integrated_F_quadgk(s, μ, z_min, z_max, windowF::WindowF, file_data::String;
-     names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
-     BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
-     s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
-     integrated_F_quadgk(s, μ, s_of_z(z_min), s_of_z(z_max), windowF::WindowF; kwargs...)
+    names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
+    BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
+    s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+    integrated_F_quadgk(s, μ, s_of_z(z_min), s_of_z(z_max), windowF::WindowF; kwargs...)
 end
 =#
 
 
 """
-     integrated_F_trapz(s, μ, s_min, s_max, windowF::WindowF;
-          llim=nothing, rlim=nothing, N::Int=1000)
+    integrated_F_trapz(s, μ, s_min, s_max, windowF::WindowF;
+        llim=nothing, rlim=nothing, N::Int=1000)
 
 Computes the Integrated Window Function fron the input Window Function `windowF`, 
 through the `trapz` function of the [Trapz](https://juliapackages.com/p/trapz) Julia
@@ -113,32 +113,32 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 See also: [`WindowF`], [`ϕ`](@ref)
 """
 function integrated_F_trapz(s, μ, s_min, s_max, windowF::WindowF;
-     llim=nothing, rlim=nothing, N::Int=1000)
+    llim=nothing, rlim=nothing, N::Int=1000)
 
-     LLIM = isnothing(llim) ? 0.95 * s_min : llim
-     RLIM = isnothing(rlim) ? 1.05 * s_max : isinf(rlim) ? 3.0 * s_max : rlim
-     f(p) = ϕ(p, s_min, s_max) > 0 ? begin
-          spline_F(s / p, μ, windowF) * ϕ(p, s_min, s_max) * ϕ(s2(p, s, μ), s_min, s_max) * p^2
-     end : 0.0
-     ps = range(LLIM, RLIM, length=N)
-     trapz(ps, f.(ps))
+    LLIM = isnothing(llim) ? 0.95 * s_min : llim
+    RLIM = isnothing(rlim) ? 1.05 * s_max : isinf(rlim) ? 3.0 * s_max : rlim
+    f(p) = ϕ(p, s_min, s_max) > 0 ? begin
+        spline_F(s / p, μ, windowF) * ϕ(p, s_min, s_max) * ϕ(s2(p, s, μ), s_min, s_max) * p^2
+    end : 0.0
+    ps = range(LLIM, RLIM, length=N)
+    trapz(ps, f.(ps))
 end
 
 
 #=
 """
-     integrated_F_trapz(s, μ, z_min, z_max, windowF::WindowF, file_data::String;
-          names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
+    integrated_F_trapz(s, μ, z_min, z_max, windowF::WindowF, file_data::String;
+        names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
 
 Same as the othert method, but this one takes as input REDSHIFTS and not comoving distances.
 In order to convert from one to the other, you must provide a `file_data` with the appropriate
 data; it is expected that such file is an output of CLASS.
 """
 function integrated_F_trapz(s, μ, z_min, z_max, windowF::WindowF, file_data::String;
-     names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
-     BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
-     s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
-     integrated_F_trapz(s, μ, s_of_z(z_min), s_of_z(z_max), windowF::WindowF; kwargs...)
+    names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
+    BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
+    s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+    integrated_F_trapz(s, μ, s_of_z(z_min), s_of_z(z_max), windowF::WindowF; kwargs...)
 end
 =#
 
@@ -146,165 +146,165 @@ end
 
 #=
 function print_map_IntegratedF(in::String, out::String, s_min, s_max,
-     μs::Vector{Float64}; kwargs...)
+    μs::Vector{Float64}; kwargs...)
 
-     check_parent_directory(out)
-     check_namefile(out)
+    check_parent_directory(out)
+    check_namefile(out)
 
-     windowF = WindowF(in)
-     windowFint = WindowFIntegrated(s_min, s_max, μs, windowF; kwargs...)
-     print_map_IntegratedF(out, windowFint)
+    windowF = WindowF(in)
+    windowFint = WindowFIntegrated(s_min, s_max, μs, windowF; kwargs...)
+    print_map_IntegratedF(out, windowFint)
 end
 =#
 
 function print_map_IntegratedF(s_min, s_max, ss::Vector{Float64},
-     μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String;
-     alg::Symbol=:trap, llim=nothing, rlim=nothing,
-     rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true)
+    μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String;
+    alg::Symbol=:trap, llim=nothing, rlim=nothing,
+    rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true)
 
-     check_parent_directory(out)
-     check_namefile(out)
+    check_parent_directory(out)
+    check_namefile(out)
 
-     @assert 0.0 < s_min < s_max " 0.0 < s_min < s_max must hold!"
-     @assert 9 < N < 100001 " 10 < N < 100001 must hold!"
-     @assert all(ss .≥ 0.0) "All ss must be ≥ 0.0!"
-     @assert ss[begin] ≈ 0.0 "Why don't you start sampling from s=0ad from s=$(ss[begin])?"
-     @assert all([ss[i+1] > ss[i] for i in 1:(length(ss)-1)]) "ss must be a float vector of increasing values!"
-     @assert all(μs .≥ -1.0) "All μs must be ≥-1.0!"
-     @assert all([μs[i+1] > μs[i] for i in 1:(length(μs)-1)]) "μs must be a float vector of increasing values!"
-     @assert all(μs .≤ 1.0) "All μs must be ≤1.0!"
-     @assert isnothing(llim) || llim ≥ 0.0 "llim must be nothing or ≥ 0.0!"
-     @assert isnothing(rlim) || rlim > 0.0 "rlim must be nothing or > 0.0!"
-     @assert isnothing(llim) || isnothing(rlim) || rlim > llim "rlim must be > llim!"
+    @assert 0.0 < s_min < s_max " 0.0 < s_min < s_max must hold!"
+    @assert 9 < N < 100001 " 10 < N < 100001 must hold!"
+    @assert all(ss .≥ 0.0) "All ss must be ≥ 0.0!"
+    @assert ss[begin] ≈ 0.0 "Why don't you start sampling from s=0ad from s=$(ss[begin])?"
+    @assert all([ss[i+1] > ss[i] for i in 1:(length(ss)-1)]) "ss must be a float vector of increasing values!"
+    @assert all(μs .≥ -1.0) "All μs must be ≥-1.0!"
+    @assert all([μs[i+1] > μs[i] for i in 1:(length(μs)-1)]) "μs must be a float vector of increasing values!"
+    @assert all(μs .≤ 1.0) "All μs must be ≤1.0!"
+    @assert isnothing(llim) || llim ≥ 0.0 "llim must be nothing or ≥ 0.0!"
+    @assert isnothing(rlim) || rlim > 0.0 "rlim must be nothing or > 0.0!"
+    @assert isnothing(llim) || isnothing(rlim) || rlim > llim "rlim must be > llim!"
 
-     #ss_step=21.768735478453323
-     #@assert ss_start ≥ 0.0 " ss_start ≥ 0.0 must hold!"
-     #@assert (iszero(ss_stop) && s_max ≥ ss_start + 3 * ss_step) || (ss_stop ≥ ss_start + 3 * ss_step)
-     #" (ss_stop == 0 && s_max ≥ ss_start + 3 * ss_step) || ss_stop ≥ ss_start + 3 * ss_step musty hold!"
-     #SS_STOP = iszero(ss_stop) ? 3.0 * s_max : ss_stop
-     #ss = [s for s in ss_start:ss_step:SS_STOP]
+    #ss_step=21.768735478453323
+    #@assert ss_start ≥ 0.0 " ss_start ≥ 0.0 must hold!"
+    #@assert (iszero(ss_stop) && s_max ≥ ss_start + 3 * ss_step) || (ss_stop ≥ ss_start + 3 * ss_step)
+    #" (ss_stop == 0 && s_max ≥ ss_start + 3 * ss_step) || ss_stop ≥ ss_start + 3 * ss_step musty hold!"
+    #SS_STOP = iszero(ss_stop) ? 3.0 * s_max : ss_stop
+    #ss = [s for s in ss_start:ss_step:SS_STOP]
 
-     WINDOWF = typeof(windowF) == String ? WindowF(windowF) : windowF
+    WINDOWF = typeof(windowF) == String ? WindowF(windowF) : windowF
 
-     t1 = time()
+    t1 = time()
 
-     IFs = if alg == :trap
-          pr ? begin
-               @showprogress "calculating intF: " [
-                    integrated_F_quadgk(s, μ, s_min, s_max, WINDOWF;
-                         llim=llim, rlim=rlim, rtol=rtol, atol=atol)
-                    for s in ss, μ in μs]
-          end : begin
-               [integrated_F_quadgk(s, μ, s_min, s_max, WINDOWF;
-                    llim=llim, rlim=rlim, rtol=rtol, atol=atol)
+    IFs = if alg == :trap
+        pr ? begin
+            @showprogress "calculating intF: " [
+                integrated_F_quadgk(s, μ, s_min, s_max, WINDOWF;
+                        llim=llim, rlim=rlim, rtol=rtol, atol=atol)
                 for s in ss, μ in μs]
-          end
-     elseif alg == :quad
-          pr ? begin
-               @showprogress "calculating intF: " [
-                    integrated_F_trapz(s, μ, s_min, s_max, WINDOWF;
-                         llim=llim, rlim=rlim, N=N)
-                    for s in ss, μ in μs]
-          end : begin
-               [integrated_F_trapz(s, μ, s_min, s_max, WINDOWF;
-                    llim=llim, rlim=rlim, N=N)
+        end : begin
+            [integrated_F_quadgk(s, μ, s_min, s_max, WINDOWF;
+                llim=llim, rlim=rlim, rtol=rtol, atol=atol)
+            for s in ss, μ in μs]
+        end
+    elseif alg == :quad
+        pr ? begin
+            @showprogress "calculating intF: " [
+                integrated_F_trapz(s, μ, s_min, s_max, WINDOWF;
+                        llim=llim, rlim=rlim, N=N)
                 for s in ss, μ in μs]
-          end
-     else
-          throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
-                               "choose between ':trap' and ':quad' . "))
-     end
+        end : begin
+            [integrated_F_trapz(s, μ, s_min, s_max, WINDOWF;
+                llim=llim, rlim=rlim, N=N)
+            for s in ss, μ in μs]
+        end
+    else
+        throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
+                            "choose between ':trap' and ':quad' . "))
+    end
 
-     t2 = time()
+    t2 = time()
 
-     (pr) && println("\ntime needed for print_map_IntegratedF " *
-                     "[in s] = $(@sprintf("%.5f", t2-t1)) \n")
+    (pr) && println("\ntime needed for print_map_IntegratedF " *
+                    "[in s] = $(@sprintf("%.5f", t2-t1)) \n")
 
 
-     ss_grid = [s for s in ss for μ in μs]
-     μs_grid = [μ for s in ss for μ in μs]
-     IFs_grid = reshape(transpose(IFs), (:,))
+    ss_grid = [s for s in ss for μ in μs]
+    μs_grid = [μ for s in ss for μ in μs]
+    IFs_grid = reshape(transpose(IFs), (:,))
 
-     open(out, "w") do io
-          println(io, BRAND)
-          println(io, "# This is an integration map of the function \\mathcal{F}(s, \\mu), defined as:")
-          println(io, "# \\mathcal{F}(s, \\mu) = \\int_0^\\infty dp p^2 \\phi(p) \\phi(\\sqrt{p^2 + s^2 + 2 p s \\mu}) F(s/p, \\mu)")
-          println(io, "# where F(x, \\mu) is stored in a WindowF struct (for its analytical definition, check the code.\n#")
+    open(out, "w") do io
+        println(io, BRAND)
+        println(io, "# This is an integration map of the function \\mathcal{F}(s, \\mu), defined as:")
+        println(io, "# \\mathcal{F}(s, \\mu) = \\int_0^\\infty dp p^2 \\phi(p) \\phi(\\sqrt{p^2 + s^2 + 2 p s \\mu}) F(s/p, \\mu)")
+        println(io, "# where F(x, \\mu) is stored in a WindowF struct (for its analytical definition, check the code.\n#")
 
-          println(io, "#\n# Time needed for this computation [in s]: $(t2-t1)")
-          println(io, "# Range of interest:")
-          println(io, "# \t s_min = $s_min h_0^{-1} Mpc")
-          println(io, "# \t s_max = $s_max h_0^{-1} Mpc")
-          println(io, "# The keyword arguments were:")
-          println(io, "# \t alg = :$alg \t llim = $llim \t rlim = $rlim")
-          println(io, "# \t rtol = $rtol \t atol = $atol \t N = $N \t pr = $pr")
+        println(io, "#\n# Time needed for this computation [in s]: $(t2-t1)")
+        println(io, "# Range of interest:")
+        println(io, "# \t s_min = $s_min h_0^{-1} Mpc")
+        println(io, "# \t s_max = $s_max h_0^{-1} Mpc")
+        println(io, "# The keyword arguments were:")
+        println(io, "# \t alg = :$alg \t llim = $llim \t rlim = $rlim")
+        println(io, "# \t rtol = $rtol \t atol = $atol \t N = $N \t pr = $pr")
 
-          println(io, "#\n# s [h_0^{-1} Mpc] \t mu \t IF")
-          for (s, μ, F) in zip(ss_grid, μs_grid, IFs_grid)
-               println(io, "$s\t $μ \t $F")
-          end
-     end
+        println(io, "#\n# s [h_0^{-1} Mpc] \t mu \t IF")
+        for (s, μ, F) in zip(ss_grid, μs_grid, IFs_grid)
+            println(io, "$s\t $μ \t $F")
+        end
+    end
 end
 
 
 function print_map_IntegratedF(z_min, z_max, zs::Vector{Float64},
-     μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String,
-     file_data::String;
-     names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
+    μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String,
+    file_data::String;
+    names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
 
-     @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
-     @assert all(zs .≥ 0.0) "All zs must be ≥ 0.0!"
-     @assert zs[begin] ≈ 0.0 "Why don't you start sampling from z=0 instead from z=$(zs[begin])?"
-     @assert all([zs[i+1] > zs[i] for i in 1:(length(zs)-1)]) "zs must be a float vector of increasing values!"
+    @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
+    @assert all(zs .≥ 0.0) "All zs must be ≥ 0.0!"
+    @assert zs[begin] ≈ 0.0 "Why don't you start sampling from z=0 instead from z=$(zs[begin])?"
+    @assert all([zs[i+1] > zs[i] for i in 1:(length(zs)-1)]) "zs must be a float vector of increasing values!"
 
-     BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
-     s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
-     SS = union([0.0], s_of_z.(zs[begin+1:end]))
+    BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
+    s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+    SS = union([0.0], s_of_z.(zs[begin+1:end]))
 
-     print_map_IntegratedF(s_of_z(z_min), s_of_z(z_max), SS,
-          μs, windowF, out; kwargs...)
+    print_map_IntegratedF(s_of_z(z_min), s_of_z(z_max), SS,
+        μs, windowF, out; kwargs...)
 end
 
 function print_map_IntegratedF(z_min, z_max,
-     μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String,
-     file_data::String;
-     names_bg=NAMES_BACKGROUND, h_0=0.7, N_ss::Int=100, m::Float64=2.1, kwargs...)
+    μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String,
+    file_data::String;
+    names_bg=NAMES_BACKGROUND, h_0=0.7, N_ss::Int=100, m::Float64=2.1, kwargs...)
 
-     @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
-     @assert N_ss > 9 "N_ss > 9 must hold!"
-     @assert 0.0 < m < 10.0 "0.0 < m < 10.0 must hold!"
-     BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
-     s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
-     s_min, s_max = s_of_z(z_min), s_of_z(z_max)
-     SS = union([0.0], [s for s in range(0.0, m * s_max, length=N_ss)][begin+1:end])
+    @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
+    @assert N_ss > 9 "N_ss > 9 must hold!"
+    @assert 0.0 < m < 10.0 "0.0 < m < 10.0 must hold!"
+    BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
+    s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+    s_min, s_max = s_of_z(z_min), s_of_z(z_max)
+    SS = union([0.0], [s for s in range(0.0, m * s_max, length=N_ss)][begin+1:end])
 
-     print_map_IntegratedF(s_min, s_max, SS,
-          μs, windowF, out; kwargs...)
+    print_map_IntegratedF(s_min, s_max, SS,
+        μs, windowF, out; kwargs...)
 end
 
 
 """
-     print_map_IntegratedF(
-          s_min, s_max, 
-          ss::Vector{Float64}, μs::Vector{Float64}, 
-          windowF::Union{String,WindowF}, out::String;
-          alg::Symbol=:trap, llim=nothing, rlim=nothing,
-          rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true)
+    print_map_IntegratedF(
+        s_min, s_max, 
+        ss::Vector{Float64}, μs::Vector{Float64}, 
+        windowF::Union{String,WindowF}, out::String;
+        alg::Symbol=:trap, llim=nothing, rlim=nothing,
+        rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true)
 
-     print_map_IntegratedF(
-          z_min, z_max, 
-          zs::Vector{Float64}, μs::Vector{Float64}, 
-          windowF::Union{String,WindowF}, out::String,
-          file_data::String; 
-          names_bg = NAMES_BACKGROUND, h_0 = 0.7, kwargs...)
+    print_map_IntegratedF(
+        z_min, z_max, 
+        zs::Vector{Float64}, μs::Vector{Float64}, 
+        windowF::Union{String,WindowF}, out::String,
+        file_data::String; 
+        names_bg = NAMES_BACKGROUND, h_0 = 0.7, kwargs...)
 
-     print_map_IntegratedF(
-          z_min, z_max,
-          μs::Vector{Float64}, 
-          windowF::Union{String,WindowF}, out::String,
-          file_data::String;
-          names_bg = NAMES_BACKGROUND, h_0 = 0.7, N_ss::Int = 100, 
-          m::Float64 = 2.1, kwargs...)
+    print_map_IntegratedF(
+        z_min, z_max,
+        μs::Vector{Float64}, 
+        windowF::Union{String,WindowF}, out::String,
+        file_data::String;
+        names_bg = NAMES_BACKGROUND, h_0 = 0.7, N_ss::Int = 100, 
+        m::Float64 = 2.1, kwargs...)
 
 Evaluate the integrated window function ``\\mathcal{F}(s,\\mu)`` in a rectangual grid 
 of ``\\mu`` and ``s`` values, and print the results in the `out` file.
@@ -328,7 +328,7 @@ The second method takes as input the min and max redshifts of the survey (`z_min
 the vector of redshifts `zs::Vector{Float64}` for the integrated window function sampling, `μs` and `windowF` 
 as before and the `file_data` where can be found the association ``z \\rightarrow s(z)``. 
 Such file must have the structure of the 
-background data produced by the [`CLASS`](https://github.com/lesgourg/class_public) code.
+background data produced by the CLASS (link: https://github.com/lesgourg/class_public) code.
 Note that also `zs` musyt be a float vector of increasing redshift values (so each element must be ≥ 0).
 This method internally recalls the first one, so the other `kwargs...` are in common.
 
@@ -425,11 +425,11 @@ end
 
 
 """
-     WindowFIntegrated(
-          ss::Vector{Float64}
-          μs::Vector{Float64}
-          IFs::Matrix{Float64}
-          )
+    WindowFIntegrated(
+        ss::Vector{Float64}
+        μs::Vector{Float64}
+        IFs::Matrix{Float64}
+        )
 
 Struct containing ss, μs and IFs values of the integrated window function ``\\mathcal{F}(s, μ)``.
 `ss` and `μs` are 1D vectors containing each value only once, while 
@@ -488,96 +488,96 @@ See also: [`integrated_F_trapz`](@ref), [`integrated_F_quadgk`](@ref),
 [`print_map_IntegratedF`](@ref)
 """
 struct WindowFIntegrated
-     ss::Vector{Float64}
-     μs::Vector{Float64}
-     IFs::Matrix{Float64}
+    ss::Vector{Float64}
+    μs::Vector{Float64}
+    IFs::Matrix{Float64}
 
-     #=
-     function WindowFIntegrated(s_min, s_max, ss::Vector{Float64},
-          μs::Vector{Float64}, windowF::WindowF;
-          alg::Symbol=:trap, llim=nothing, rlim=nothing,
-          rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true)
+    #=
+    function WindowFIntegrated(s_min, s_max, ss::Vector{Float64},
+        μs::Vector{Float64}, windowF::WindowF;
+        alg::Symbol=:trap, llim=nothing, rlim=nothing,
+        rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true)
 
-          @assert 0 < s_min < s_max " 0 < s_min < s_max must hold!"
-          @assert ss_start ≥ 0.0 " ss_start ≥ 0.0 must hold!"
-          @assert 9 < N < 100001 " 10 < N < 100001 must hold!"
-          @assert 0.0 ≤ llim < rlim " 0.0 ≤ llim < rlim must hold!"
-          @assert all(ss .≥ 0.0) "All ss must be ≥ 0.0!"
-          @assert all([ss[i+1] > ss[i] for i in 1:(length(ss)-1)]) "ss must be a float vector of increasing values!"
-          @assert all(μs .≥ -1.0) "All μs must be ≥-1.0!"
-          @assert all([μs[i+1] > μs[i] for i in 1:(length(μs)-1)]) "μs must be a float vector of increasing values!"
-          @assert all(μs .≤ 1.0) "All μs must be ≤1.0!"
+        @assert 0 < s_min < s_max " 0 < s_min < s_max must hold!"
+        @assert ss_start ≥ 0.0 " ss_start ≥ 0.0 must hold!"
+        @assert 9 < N < 100001 " 10 < N < 100001 must hold!"
+        @assert 0.0 ≤ llim < rlim " 0.0 ≤ llim < rlim must hold!"
+        @assert all(ss .≥ 0.0) "All ss must be ≥ 0.0!"
+        @assert all([ss[i+1] > ss[i] for i in 1:(length(ss)-1)]) "ss must be a float vector of increasing values!"
+        @assert all(μs .≥ -1.0) "All μs must be ≥-1.0!"
+        @assert all([μs[i+1] > μs[i] for i in 1:(length(μs)-1)]) "μs must be a float vector of increasing values!"
+        @assert all(μs .≤ 1.0) "All μs must be ≤1.0!"
 
-          #ss_step=21.768735478453323
-          #@assert (iszero(ss_stop) && s_max ≥ ss_start + 3 * ss_step) || (ss_stop ≥ ss_start + 3 * ss_step)
-          #" (ss_stop == 0 && s_max ≥ ss_start + 3 * ss_step) || ss_stop ≥ ss_start + 3 * ss_step musty hold!"
-          #SS_STOP = iszero(ss_stop) ? 3.0 * s_max : ss_stop
-          #ss = [s for s in ss_start:ss_step:SS_STOP]
+        #ss_step=21.768735478453323
+        #@assert (iszero(ss_stop) && s_max ≥ ss_start + 3 * ss_step) || (ss_stop ≥ ss_start + 3 * ss_step)
+        #" (ss_stop == 0 && s_max ≥ ss_start + 3 * ss_step) || ss_stop ≥ ss_start + 3 * ss_step musty hold!"
+        #SS_STOP = iszero(ss_stop) ? 3.0 * s_max : ss_stop
+        #ss = [s for s in ss_start:ss_step:SS_STOP]
 
-          IFs = if alg == :trap
-               pr ? begin
-                    @showprogress "calculating intF: " [
-                         integrated_F_quadgk(s, μ, s_min, s_max, windowF;
-                              llim=llim, rlim=rlim, rtol=rtol, atol=atol)
-                         for s in ss, μ in μs]
-               end : begin
-                    [integrated_F_quadgk(s, μ, s_min, s_max, windowF;
-                         llim=llim, rlim=rlim, rtol=rtol, atol=atol)
-                     for s in ss, μ in μs]
-               end
-          elseif alg == :quad
-               pr ? begin
-                    @showprogress "calculating intF: " [
-                         integrated_F_trapz(s, μ, s_min, s_max, windowF;
-                              llim=llim, rlim=rlim, N=N)
-                         for s in ss, μ in μs]
-               end : begin
-                    [integrated_F_trapz(s, μ, s_min, s_max, windowF;
-                         llim=llim, rlim=rlim, N=N)
-                     for s in ss, μ in μs]
-               end
-          else
-               throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
-                                    "choose between ':trap' and ':quad' . "))
-          end
+        IFs = if alg == :trap
+            pr ? begin
+                @showprogress "calculating intF: " [
+                        integrated_F_quadgk(s, μ, s_min, s_max, windowF;
+                            llim=llim, rlim=rlim, rtol=rtol, atol=atol)
+                        for s in ss, μ in μs]
+            end : begin
+                [integrated_F_quadgk(s, μ, s_min, s_max, windowF;
+                        llim=llim, rlim=rlim, rtol=rtol, atol=atol)
+                    for s in ss, μ in μs]
+            end
+        elseif alg == :quad
+            pr ? begin
+                @showprogress "calculating intF: " [
+                        integrated_F_trapz(s, μ, s_min, s_max, windowF;
+                            llim=llim, rlim=rlim, N=N)
+                        for s in ss, μ in μs]
+            end : begin
+                [integrated_F_trapz(s, μ, s_min, s_max, windowF;
+                        llim=llim, rlim=rlim, N=N)
+                    for s in ss, μ in μs]
+            end
+        else
+            throw(AssertionError("The value 'alg = :$alg' is not a valid algorithm; you must " *
+                                "choose between ':trap' and ':quad' . "))
+        end
 
-          new(ss, μs, IFs)
-     end
-     =#
+        new(ss, μs, IFs)
+    end
+    =#
 
-     #=
-     function WindowFIntegrated(z_min, z_max, μs::Vector{Float64}, windowF::WindowF,
-          file_data::String; names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
+    #=
+    function WindowFIntegrated(z_min, z_max, μs::Vector{Float64}, windowF::WindowF,
+        file_data::String; names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
 
-          BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
-          s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
-          WindowFIntegrated(s_of_z(z_min), s_of_z(z_max), μs, windowF; kwargs...)
-     end
-     =#
+        BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
+        s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+        WindowFIntegrated(s_of_z(z_min), s_of_z(z_max), μs, windowF; kwargs...)
+    end
+    =#
 
-     function WindowFIntegrated(file::String)
-          data = readdlm(file, comments=true)
-          ss, μs, IFs = data[:, 1], data[:, 2], data[:, 3]
-          @assert size(ss) == size(μs) == size(IFs) "ss, μs and IFs must have the same length!"
+    function WindowFIntegrated(file::String)
+        data = readdlm(file, comments=true)
+        ss, μs, IFs = data[:, 1], data[:, 2], data[:, 3]
+        @assert size(ss) == size(μs) == size(IFs) "ss, μs and IFs must have the same length!"
 
-          new_ss = unique(ss)
-          new_μs = unique(μs)
-          new_IFs =
-               if ss[2] == ss[1] && μs[2] ≠ μs[1]
-                    transpose(reshape(IFs, (length(new_μs), length(new_ss))))
-               elseif ss[2] ≠ ss[1] && μs[2] == μs[1]
-                    reshape(IFs, (length(new_ss), length(new_μs)))
-               else
-                    throw(ErrorException("What kind of convenction for the file $file" *
-                                         " are you using? I do not recognise it."))
-               end
-          new(new_ss, new_μs, new_IFs)
-     end
+        new_ss = unique(ss)
+        new_μs = unique(μs)
+        new_IFs =
+            if ss[2] == ss[1] && μs[2] ≠ μs[1]
+                transpose(reshape(IFs, (length(new_μs), length(new_ss))))
+            elseif ss[2] ≠ ss[1] && μs[2] == μs[1]
+                reshape(IFs, (length(new_ss), length(new_μs)))
+            else
+                throw(ErrorException("What kind of convenction for the file $file" *
+                                        " are you using? I do not recognise it."))
+            end
+        new(new_ss, new_μs, new_IFs)
+    end
 end
 
 
 """
-     spline_integrF(s, μ, str::WindowFIntegrated)::Float64
+    spline_integrF(s, μ, str::WindowFIntegrated)::Float64
 
 Return the 2-dim spline value of ``\\mathcal{F}`` in the given `(s,μ)`, where
 ``\\mathcal{F}`` is defined in the input `WindowFIntegrated`.
@@ -588,14 +588,14 @@ package.
 See also: [`WindowFIntegrated`](@ref)
 """
 function spline_integrF(s, μ, str::WindowFIntegrated)
-     grid = GridInterpolations.RectangleGrid(str.ss, str.μs)
-     GridInterpolations.interpolate(grid, reshape(str.IFs, (:, 1)), [s, μ])
+    grid = GridInterpolations.RectangleGrid(str.ss, str.μs)
+    GridInterpolations.interpolate(grid, reshape(str.IFs, (:, 1)), [s, μ])
 end
 
 
 
 """
-     print_map_IntegratedF(out::String, windowFint::WindowFIntegrated)
+    print_map_IntegratedF(out::String, windowFint::WindowFIntegrated)
 
 Print the input Integrated Window Function `windowFint` in the file `out`.
 
@@ -603,24 +603,24 @@ See also: [`WindowFIntegrated`](@ref)
 """
 function print_map_IntegratedF(out::String, windowFint::WindowFIntegrated)
 
-     check_parent_directory(out)
-     check_namefile(out)
+    check_parent_directory(out)
+    check_namefile(out)
 
-     ss_grid = [s for s in windowFint.ss for μ in windowFint.μs]
-     μs_grid = [μ for s in windowFint.ss for μ in windowFint.μs]
-     IFs_grid = reshape(transpose(windowFint.IFs), (:,))
+    ss_grid = [s for s in windowFint.ss for μ in windowFint.μs]
+    μs_grid = [μ for s in windowFint.ss for μ in windowFint.μs]
+    IFs_grid = reshape(transpose(windowFint.IFs), (:,))
 
-     open(out, "w") do io
-          println(io, BRAND)
-          println(io, "# This is an integration map of the function \\mathcal{F}(s, \\mu), defined as:")
-          println(io, "# \\mathcal{F}(s, \\mu) = \\int_0^\\infty dp p^2 \\phi(p) \\phi(\\sqrt{p^2 + s^2 + 2 p s \\mu}) F(s/p, \\mu)")
-          println(io, "# where F(x, \\mu) is stored in a WindowF struct (for its analytical definition, check the code.\n#")
+    open(out, "w") do io
+        println(io, BRAND)
+        println(io, "# This is an integration map of the function \\mathcal{F}(s, \\mu), defined as:")
+        println(io, "# \\mathcal{F}(s, \\mu) = \\int_0^\\infty dp p^2 \\phi(p) \\phi(\\sqrt{p^2 + s^2 + 2 p s \\mu}) F(s/p, \\mu)")
+        println(io, "# where F(x, \\mu) is stored in a WindowF struct (for its analytical definition, check the code.\n#")
 
-          println(io, "#\n# s [h_0^{-1} Mpc] \t mu \t IF")
-          for (s, μ, F) in zip(ss_grid, μs_grid, IFs_grid)
-               println(io, "$s\t $μ \t $F")
-          end
-     end
+        println(io, "#\n# s [h_0^{-1} Mpc] \t mu \t IF")
+        for (s, μ, F) in zip(ss_grid, μs_grid, IFs_grid)
+            println(io, "$s\t $μ \t $F")
+        end
+    end
 end
 
 

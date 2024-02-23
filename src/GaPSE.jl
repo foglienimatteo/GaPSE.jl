@@ -39,10 +39,22 @@ using ProgressMeter, Printf  # Licence: MIT "Expat"
 using Test, Documenter, DelimitedFiles  # Licence: MIT "Expat"
 
 
-const BRAND = """
+const BRAND_simple = """
         ###############
         #    GaPSE    #
         ############### \n#"""
+ 
+const BRAND= """
+###################################
+#   ____       ____  ____  _____  #
+#  / ___| __ _|  _ \\/ ___|| ____| #
+# | |  _ / _` | |_) \\___ \\|  _|   #
+# | |_| | (_| |  __/ ___) | |___  # 
+#  \\____|\\__,_|_|   |____/|_____| #
+###################################\n# \
+"""
+
+
 
 ####### DO NOT MODIFY THESE NAMES AND/OR THEIR ORDER IF YOU ARE NOT SURE! ###############92
 
@@ -52,7 +64,7 @@ const NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mp
      "comov. dist.", "ang.diam.dist.", "lum. dist.", "comov.snd.hrz.",
      "(.)rho_g", "(.)rho_b", "(.)rho_cdm", "(.)rho_lambda", "(.)rho_ur",
      "(.)rho_crit", "gr.fac. D", "gr.fac. f"]
-const VALID_GROUPS = ["LD", "GNC", "GNCxLD", "LDxGNC", "generic"]
+const VALID_GROUPS = ["LD", "GNC", "GNCxLD", "LDxGNC", "generic"] # DO NOT MODIFY!
 const LENGTH_VALID_GROUPS = [18, 27, 22, 22, nothing]
 
 const HUBBLE_0 = 1e5 / 299792458.0
@@ -158,63 +170,90 @@ include("LDxGNC_SumXiMultipoles.jl")
 include("PS_FFTLog.jl")
 include("PS_TwoFAST.jl")
 include("PowerSpectra.jl")
+include("PowerSpectraGenWin.jl")
+include("WindowF_QMultipoles.jl")
 
 
-function parameters_used(io::IO, cosmo::Cosmology; logo::Bool=true)
-     logo && println(io, BRAND)
-     println(io, "# The Cosmology considered had the following paremeters:\n# ")
-     println(io, "# - Matter Power Spectrum input file: \"$(cosmo.file_ips)\"")
-     println(io, "# - Background data input file: \"$(cosmo.file_data)\"")
-     println(io, "# - F window function input file: \"$(cosmo.file_windowF)\"")
-     println(io, "# - Integrated F window function input file: \"$(cosmo.file_IWF)\"")
-     println(io, "#")
+function parameters_used(io::IO, cosmo::Cosmology; logo::Union{Bool,String} = true)
+    
+    if typeof(logo) == Bool 
+        logo && println(io, BRAND)
+    elseif logo=="simple" 
+        println(io, BRAND_simple)
+    else
+        throw(AssertionError(("bug to be fixed in parameters_used")))
+    end
 
-     println(io, "# - Basic CosmoParams considered: ")
-     println(io, "#\t z_min = $(cosmo.params.z_min) \t z_max = $(cosmo.params.z_max)")
-     println(io, "#\t θ_max = $(cosmo.params.θ_max) [rad] \t h_0 = $(cosmo.params.h_0)")
-     println(io, "#\t Ω_b = $(cosmo.params.Ω_b) \t " *
-                 "Ω_cdm = $(cosmo.params.Ω_cdm) \t Ω_M0 = $(cosmo.params.Ω_M0)")
-     println(io, "#\t b = $(cosmo.params.b) \t " *
-                 "f_evo = $(cosmo.params.𝑓_evo) \t s_b = $(cosmo.params.s_b)")
-     println(io, "#")
+    println(io, "# The Cosmology considered had the following paremeters:\n# ")
+    println(io, "# - Matter Power Spectrum input file: \"$(cosmo.file_ips)\"")
+    println(io, "# - Background data input file: \"$(cosmo.file_data)\"")
+    println(io, "# - F window function input file: \"$(cosmo.file_windowF)\"")
+    println(io, "# - Integrated F window function input file: \"$(cosmo.file_IWF)\"")
+    println(io, "#")
 
-     println(io, "# - CosmoParams about the Input Power Spectrum: ")
-     my_println_dict(io, cosmo.params.IPS; pref="#\t ", N=2)
-     println(io, "#")
+    println(io, "# - Basic CosmoParams considered: ")
+    println(io, "#\t z_min = $(cosmo.params.z_min) \t z_max = $(cosmo.params.z_max)")
+    println(io, "#\t θ_max = $(cosmo.params.θ_max) [rad] \t h_0 = $(cosmo.params.h_0)")
+    println(io, "#\t Ω_b = $(cosmo.params.Ω_b) \t " *
+                "Ω_cdm = $(cosmo.params.Ω_cdm) \t Ω_M0 = $(cosmo.params.Ω_M0)")
+    println(io, "#\t b1 = $(cosmo.params.b1) \t " *
+                "f_evo1 = $(cosmo.params.𝑓_evo1) \t s_b1 = $(cosmo.params.s_b1)")
+    println(io, "#\t b2 = $(cosmo.params.b2) \t " *
+                "f_evo2 = $(cosmo.params.𝑓_evo2) \t s_b2 = $(cosmo.params.s_b2)")
+    println(io, "#")
 
-     println(io, "# - CosmoParams about the Input Power Spectrum Tools: ")
-     my_println_dict(io, cosmo.params.IPSTools; pref="#\t ", N=3)
-     println(io, "#")
+    println(io, "# - CosmoParams about the Input Power Spectrum: ")
+    my_println_dict(io, cosmo.params.IPS; pref="#\t ", N=2)
+    println(io, "#")
 
-     #=
-     println(io, "# - CosmoParams about the Integrated Window Function F: ")
-     my_println_dict(io, cosmo.params.WFI; pref="#\t ", N=3)
-     println(io, "#")
-     =#
+    println(io, "# - CosmoParams about the Input Power Spectrum Tools: ")
+    my_println_dict(io, cosmo.params.IPSTools; pref="#\t ", N=3)
+    println(io, "#")
 
-     println(io, "# - Computed quantities: ")
-     println(io, "# \t effective redshift z_eff = $(cosmo.z_eff) ")
-     println(io, "# \t comoving s_min = $(cosmo.s_min) Mpc/h_0")
-     println(io, "# \t comoving s_max = $(cosmo.s_max) Mpc/h_0")
-     println(io, "# \t comoving s_eff = $(cosmo.s_eff) Mpc/h_0")
-     println(io, "# \t Volume of the survey V_survey = $(cosmo.volume) Mpc^3/h_0^3")
-     println(io, "# \t σ_0 = $(cosmo.tools.σ_0)")
-     println(io, "# \t σ_1 = $(cosmo.tools.σ_1)")
-     println(io, "# \t σ_2 = $(cosmo.tools.σ_2)")
-     println(io, "# \t σ_3 = $(cosmo.tools.σ_3)")
-     println(io, "# \t σ_4 = $(cosmo.tools.σ_4)")
-     println(io, "# \t (where σ_i = \\int_{k_{min}}^{k_{max}}\\frac{dq}{2 π^2} q^{2-i} P(q))")
-     println(io, "# ")
+    #=
+    println(io, "# - CosmoParams about the Integrated Window Function F: ")
+    my_println_dict(io, cosmo.params.WFI; pref="#\t ", N=3)
+    println(io, "#")
+    =#
+
+    println(io, "# - Computed quantities: ")
+    println(io, "# \t effective redshift z_eff = $(cosmo.z_eff) ")
+    println(io, "# \t comoving s_min = $(cosmo.s_min) Mpc/h_0")
+    println(io, "# \t comoving s_max = $(cosmo.s_max) Mpc/h_0")
+    println(io, "# \t comoving s_eff = $(cosmo.s_eff) Mpc/h_0")
+    println(io, "# \t comoving s_spline_lim = $(cosmo.s_spline_lim) Mpc/h_0")
+    println(io, "# \t Volume of the survey V_survey = $(cosmo.volume) Mpc^3/h_0^3")
+    println(io, "# \t σ_0 = $(cosmo.tools.σ_0)")
+    println(io, "# \t σ_1 = $(cosmo.tools.σ_1)")
+    println(io, "# \t σ_2 = $(cosmo.tools.σ_2)")
+    println(io, "# \t σ_3 = $(cosmo.tools.σ_3)")
+    println(io, "# \t σ_4 = $(cosmo.tools.σ_4)")
+    println(io, "# \t (where σ_i = \\int_{k_{min}}^{k_{max}}\\frac{dq}{2 π^2} q^{2-i} P(q))")
+    println(io, "# ")
 end
 
-parameters_used(cosmo::Cosmology) = parameters_used(stdout, cosmo)
+parameters_used(cosmo::Cosmology; kwargs...) = parameters_used(stdout, cosmo; kwargs...)
 
 
 """
-     parameters_used(io::IO, cosmo::Cosmology)
-     parameters_used(cosmo::Cosmology) = parameters_used(stdout, cosmo)
+    parameters_used(io::IO, cosmo::Cosmology; logo::Union{Bool,String} = true)
+    parameters_used(cosmo::Cosmology; kwargs...) = parameters_used(stdout, cosmo; kwargs...)
 
 Writes in the `io` stream all the information concerning the input Cosmology `cosmo`.
+There are currently three options for `logo`: `true`, `"simple"` and `false`.
+With `true`, the logo that is printed to `io` is the following:
+
+```julia
+$(string(BRAND))
+```
+
+With `false`, the logo that is printed to `io` is instead the following:
+
+```julia
+$(string(BRAND_simple))
+```
+
+Finally, with `false`, not logo is printed.
 
 See also: [`Cosmology`](@ref)
 """

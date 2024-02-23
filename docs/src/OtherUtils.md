@@ -7,6 +7,7 @@ end
 # Other utilities
 
 ```@docs
+GaPSE.parameters_used
 GaPSE.check_compatible_dicts
 GaPSE.my_println_vec
 GaPSE.my_println_dict
@@ -21,6 +22,8 @@ GaPSE.vecstring_to_vecnumbers
 GaPSE.readxy
 GaPSE.readxall
 GaPSE.readxyall
+GaPSE.readchoosen
+GaPSE.readxchoosey
 GaPSE.sample_subdivision_begin
 GaPSE.sample_subdivision_middle
 ```

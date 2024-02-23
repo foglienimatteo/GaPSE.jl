@@ -19,80 +19,81 @@
 
 
 function integrand_ξ_GNC_Newtonian_Lensing(
-     IP::Point, P1::Point, P2::Point,
-     y, cosmo::Cosmology; Δχ_min::Float64=1e-1,
-     obs::Union{Bool,Symbol}=:noobsvel)
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
+    Δχ_min::Float64=1e-1, b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+    obs::Union{Bool,Symbol}=:noobsvel)
 
-     s1, D_s1, f_s1 = P1.comdist, P1.D, P1.f
-     s2 = P2.comdist
-     χ2, D2, a2 = IP.comdist, IP.D, IP.a
-     s_b_s2 = cosmo.params.s_b
-     b_s1 = cosmo.params.b
-     Ω_M0 = cosmo.params.Ω_M0
+    s1, D_s1, f_s1 = P1.comdist, P1.D, P1.f
+    s2 = P2.comdist
+    χ2, D2, a2 = IP.comdist, IP.D, IP.a
 
-     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-     Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
+    Ω_M0 = cosmo.params.Ω_M0
+    b_s1 = isnothing(b1) ? cosmo.params.b1 : b1
+    s_b_s2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
 
-     common = D_s1 * ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) * (5 * s_b_s2 - 2) / (a2 * s2)
+    Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
+    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
 
-     if Δχ2 ≥ Δχ_min
-          new_J00 = 1 / 5 * (f_s1 * χ2 * (3 * y^2 - 1) - 3 * y * s1 * f_s1 - 5 * y * s1 * b_s1)
-          new_J02 = 1 / (14 * Δχ2^2) * (
-               7 * s1 * b_s1 * (-2 * χ2^2 * y + χ2 * s1 * (y^2 + 3) - 2 * y * s1^2) +
-               f_s1 * (
-                    4 * χ2^3 * (3 * y^2 - 1) - 2 * χ2^2 * y * s1 * (3 * y^2 + 8)
-                    +
-                    χ2 * s1^2 * (9 * y^2 + 11) - 6 * y * s1^3
-               )
-          )
-          new_J04 = 3 / (70 * Δχ2^4) * f_s1 * (
-                         χ2^5 * (6 * y^2 - 2) + 6 * χ2^4 * y * s1 * (y^2 - 3)
-                         -
-                         χ2^3 * s1^2 * (y^4 + 12 * y^2 - 21)
-                         +
-                         2 * χ2^2 * y * s1^3 * (y^2 + 3) - 12 * χ2 * s1^4
-                         +
-                         4 * y * s1^5
-                    )
+    common = D_s1 * ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) * (5 * s_b_s2 - 2) / (a2 * s2)
 
-          I00 = cosmo.tools.I00(Δχ2)
-          I20 = cosmo.tools.I20(Δχ2)
-          I40 = cosmo.tools.I40(Δχ2)
+    if Δχ2 ≥ Δχ_min
+        new_J00 = 1 / 5 * (f_s1 * χ2 * (3 * y^2 - 1) - 3 * y * s1 * f_s1 - 5 * y * s1 * b_s1)
+        new_J02 = 1 / (14 * Δχ2^2) * (
+            7 * s1 * b_s1 * (-2 * χ2^2 * y + χ2 * s1 * (y^2 + 3) - 2 * y * s1^2) +
+            f_s1 * (
+            4 * χ2^3 * (3 * y^2 - 1) - 2 * χ2^2 * y * s1 * (3 * y^2 + 8)
+            +
+            χ2 * s1^2 * (9 * y^2 + 11) - 6 * y * s1^3
+            )
+        )
+        new_J04 = 3 / (70 * Δχ2^4) * f_s1 * (
+            χ2^5 * (6 * y^2 - 2) + 6 * χ2^4 * y * s1 * (y^2 - 3)
+            -
+            χ2^3 * s1^2 * (y^4 + 12 * y^2 - 21)
+            +
+            2 * χ2^2 * y * s1^3 * (y^2 + 3) - 12 * χ2 * s1^4
+            +
+            4 * y * s1^5
+        )
 
-          return common * (new_J00 * I00 + new_J02 * I20 + new_J04 * I40)
+        I00 = cosmo.tools.I00(Δχ2)
+        I20 = cosmo.tools.I20(Δχ2)
+        I40 = cosmo.tools.I40(Δχ2)
 
-     else
-          #return - 2.0 / 3.0 * Δχ2 * f(Δχ2) * D(Δχ2) * cosmo.tools.σ_2^2.0
-          #return - 2.0 / 3.0 * common * χ2 * f_s1 * cosmo.tools.σ_2^2
-          return -common * s1 * (f_s1 + 5 * b_s1) * cosmo.tools.σ_0 / 5.0
-     end
+        return common * (new_J00 * I00 + new_J02 * I20 + new_J04 * I40)
+    else
+        #return - 2.0 / 3.0 * Δχ2 * f(Δχ2) * D(Δχ2) * cosmo.tools.σ_2^2.0
+        #return - 2.0 / 3.0 * common * χ2 * f_s1 * cosmo.tools.σ_2^2
+        return -common * s1 * (f_s1 + 5 * b_s1) * cosmo.tools.σ_0 / 5.0
+    end
 end
 
 
 function integrand_ξ_GNC_Newtonian_Lensing(
-     χ2::Float64, s1::Float64, s2::Float64,
-     y, cosmo::Cosmology;
-     kwargs...)
+    χ2::Float64, s1::Float64, s2::Float64,
+    y, cosmo::Cosmology;
+    kwargs...)
 
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP = Point(χ2, cosmo)
-     return integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    IP = Point(χ2, cosmo)
+    return integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
 
 """
-     integrand_ξ_GNC_Newtonian_Lensing(
-          IP::Point, P1::Point, P2::Point,
-          y, cosmo::Cosmology;
-          Δχ_min::Float64=1e-1, 
-          obs::Union{Bool,Symbol}=:noobsvel
-          ) ::Float64
+    integrand_ξ_GNC_Newtonian_Lensing(
+        IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+        Δχ_min::Float64=1e-1, b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        obs::Union{Bool,Symbol}=:noobsvel
+        ) ::Float64
 
-     integrand_ξ_GNC_Newtonian_Lensing(
-          χ2::Float64, s1::Float64, s2::Float64,
-          y, cosmo::Cosmology;
-          kwargs... )::Float64
+    integrand_ξ_GNC_Newtonian_Lensing(
+        χ2::Float64, s1::Float64, s2::Float64,
+        y, cosmo::Cosmology;
+        kwargs... )::Float64
 
 Return the integrand of the Two-Point Correlation Function (TPCF) 
 given by the cross correlation between the Newtonian and the Lensing effects 
@@ -108,66 +109,66 @@ The analytical expression of this integrand is the following:
 
 ```math
 \\begin{equation}
-     f^{\\delta\\kappa} (\\chi_2, s_1, s_2, y) =
-     D_1 J^{\\delta \\kappa}_{\\alpha}
-     \\left[ 
-          J^{\\delta \\kappa}_{00} I_0^0 ( \\Delta\\chi_2 ) + 
-          J^{\\delta \\kappa}_{02} I_2^0 ( \\Delta \\chi_2 ) + 
-          J^{\\delta \\kappa}_{04} I_4^0 ( \\Delta \\chi_2 ) 
-     \\right] \\, ,
+    f^{\\delta\\kappa} (\\chi_2, s_1, s_2, y) =
+    D_1 J^{\\delta \\kappa}_{\\alpha}
+    \\left[ 
+        J^{\\delta \\kappa}_{00} I_0^0 ( \\Delta\\chi_2 ) + 
+        J^{\\delta \\kappa}_{02} I_2^0 ( \\Delta \\chi_2 ) + 
+        J^{\\delta \\kappa}_{04} I_4^0 ( \\Delta \\chi_2 ) 
+    \\right] \\, ,
 \\end{equation}
 ```
 
-where
+with
 
 ```math
 \\begin{split}
-     J^{\\delta \\kappa}_{\\alpha} &=
-     \\frac{
-          \\mathcal{H}_0 ^2 \\Omega_{\\mathrm{M}0} D (\\chi_2)
-     }{
-          a(\\chi_2 ) s_2
-     } 
-     (\\chi_2 - s_2 ) (5s_{\\mathrm{b}, 2} - 2) 
-     \\, , \\\\
-     %%%%%%%%%%%%%%%%%%%%%%%%
-     J^{\\delta \\kappa}_{00} &=
-          \\frac{1}{5}
-          \\left[
-               (3 y^2 - 1) \\chi_2 f_1 - y s_1(3 f_1 + 5 b_1) 
-          \\right] 
-     \\, , \\\\
-     %%%%%%%%%%%%%%%%%%%%%%%%
-     J^{\\delta \\kappa}_{02} &=
-          \\frac{1}{14 \\Delta\\chi_2^2} 
-          \\left\\{
-               4 f_1 (3 y^2 - 1) \\chi_2^3 - 
-               2 y 
-               \\left[
-                    (3 y^2 + 8) f_1 + 7 b_1
-               \\right] s_1 \\chi_2^2 +
-               \\right. \\nonumber \\\\
-               &\\left.\\qquad \\qquad\\qquad
-               \\left[
-                    (9 y^2 + 11) f_1 - 7 (y^2 + 3) b_1
-               \\right] s_1^2 \\chi_2 -
-               2 y \\left[7 b_1 + 3 f_1 \\right] s_1^3
-          \\right\\} 
-     \\, , \\\\
-     %%%%%%%%%%%%%%%%%%%%%%%%
-     J^{\\delta \\kappa}_{04} &=
-     \\frac{f_1}{70 \\Delta\\chi_2^4 }
-     \\left\\{
-          (6 y^2 - 2) \\chi_2^5 +
-          6 y (y^2 - 3) s_1 \\chi_2^4 -
-          (y^4 + 12 y^2 - 21) s_1^2 \\chi_2^3 +
-          \\right.\\nonumber \\\\
-          &\\left.\\qquad\\qquad\\qquad
-          2 y (y^2 + 3) s_1^3 \\chi_2^2 -
-          12 \\chi_2 s_1^4 + 
-          4 y s_1 ^5
-     \\right\\} 
-     \\, .
+    J^{\\delta \\kappa}_{\\alpha} &=
+    \\frac{
+        \\mathcal{H}_0 ^2 \\Omega_{\\mathrm{M}0} D (\\chi_2)
+    }{
+        a(\\chi_2 ) s_2
+    } 
+    (\\chi_2 - s_2 ) (5s_{\\mathrm{b}, 2} - 2) 
+    \\, , \\\\
+    %%%%%%%%%%%%%%%%%%%%%%%%
+    J^{\\delta \\kappa}_{00} &=
+        \\frac{1}{5}
+        \\left[
+            (3 y^2 - 1) \\chi_2 f_1 - y s_1(3 f_1 + 5 b_1) 
+        \\right] 
+    \\, , \\\\
+    %%%%%%%%%%%%%%%%%%%%%%%%
+    J^{\\delta \\kappa}_{02} &=
+        \\frac{1}{14 \\Delta\\chi_2^2} 
+        \\left\\{
+            4 f_1 (3 y^2 - 1) \\chi_2^3 - 
+            2 y 
+            \\left[
+                (3 y^2 + 8) f_1 + 7 b_1
+            \\right] s_1 \\chi_2^2 +
+            \\right. \\nonumber \\\\
+            &\\left.\\qquad \\qquad\\qquad
+            \\left[
+                (9 y^2 + 11) f_1 - 7 (y^2 + 3) b_1
+            \\right] s_1^2 \\chi_2 -
+            2 y \\left[7 b_1 + 3 f_1 \\right] s_1^3
+        \\right\\} 
+    \\, , \\\\
+    %%%%%%%%%%%%%%%%%%%%%%%%
+    J^{\\delta \\kappa}_{04} &=
+    \\frac{f_1}{70 \\Delta\\chi_2^4 }
+    \\left\\{
+        (6 y^2 - 2) \\chi_2^5 +
+        6 y (y^2 - 3) s_1 \\chi_2^4 -
+        (y^4 + 12 y^2 - 21) s_1^2 \\chi_2^3 +
+        \\right.\\nonumber \\\\
+        &\\left.\\qquad\\qquad\\qquad
+        2 y (y^2 + 3) s_1^3 \\chi_2^2 -
+        12 \\chi_2 s_1^4 + 
+        4 y s_1 ^5
+    \\right\\} 
+    \\, ,
 \\end{split}
 ```
 
@@ -182,7 +183,7 @@ where:
 - ``f_1 = f(s_1)``, ... is the linear growth rate (evaluated in ``s_1``);
 
 - ``\\mathcal{H}_1 = \\mathcal{H}(s_1)``, ... is the comoving 
-  Hubble parameter (evaluated in ``s_1``, ...);
+  Hubble distances (evaluated in ``s_1``);
 
 - ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``;
 
@@ -194,10 +195,10 @@ where:
   \\frac{\\dot{\\mathcal{H}}(s)}{\\mathcal{H}(s)^2} - \\mathit{f}_{\\mathrm{evo}} \\quad ;
   ```
 
-- ``b_1 = b(s_1)``, ``s_{\\mathrm{b}, 1} = s_{\\mathrm{b}}(s_1)``, ``\\mathit{f}_{\\mathrm{evo}}``, ... : 
+- ``b_1``, ``s_{\\mathrm{b}, 1}``, ``\\mathit{f}_{\\mathrm{evo}, 1}`` 
+  (and ``b_2``, ``s_{\\mathrm{b}, 2}``, ``\\mathit{f}_{\\mathrm{evo}, 2}``) : 
   galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold), 
-  and evolution bias (the first two evaluated in ``s_1``); they are
-  all stored in `cosmo`;
+  and evolution bias for the first (second) effect;
 
 - ``\\Omega_{\\mathrm{M}0} = \\Omega_{\\mathrm{cdm}} + \\Omega_{\\mathrm{b}}`` is the sum of 
   cold-dark-matter and barionic density parameters (again, stored in `cosmo`);
@@ -231,7 +232,7 @@ where:
 In this TPCF there are no observer terms. The `obs` keyword is inserted only for compatibility with 
 the other GNC TPCFs.
 
-This function is used inside `ξ_GNC_Newton_Lensing` with the [`trapz`](@ref) from the 
+This function is used inside `ξ_GNC_Newton_Lensing` with the trapz() from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 
@@ -248,24 +249,45 @@ This function is used inside `ξ_GNC_Newton_Lensing` with the [`trapz`](@ref) fr
 
 ## Keyword Arguments
 
+- `b1=nothing`, `s_b1=nothing`, `𝑓_evo1=nothing` and `b2=nothing`, `s_b2=nothing`, `𝑓_evo2=nothing`:
+  galaxy, magnification and evolutionary biases respectively for the first and the second effect 
+  computed in this TPCF:
+  - if not set (i.e. if you leave the default value `nothing`) the values stored in the input `cosmo`
+    will be considered;
+  - if you set one or more values, they will override the `cosmo` ones in this computation;
+  - the two sets of values should be different only if you are interested in studing two galaxy species;
+  - only the required parameters for the chosen TPCF will be used, depending on its analytical expression;
+    all the others will have no effect, we still inserted them for pragmatical code compatibilities. 
+
+- `s_lim=nothing` : parameter used in order to avoid the divergence of the ``\\mathcal{R}`` and 
+  ``\\mathfrak{R}`` denominators: when ``0 \\leq s \\leq s_\\mathrm{lim}`` the returned values are
+  ```math
+  \\forall \\, s \\in [ 0, s_\\mathrm{lim} ] \\; : \\quad 
+      \\mathfrak{R}(s) = 1 - \\frac{1}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} \\; , \\quad
+      \\mathcal{R}(s) = 5 s_{\\mathrm{b}} + 
+          \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} +  
+          \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}_0^2} - \\mathit{f}_{\\mathrm{evo}} \\; .
+  ```
+  If `nothing`, the default value stored in `cosmo` will be considered.
+
 - `obs::Union{Bool,Symbol} = :noobsvel` : do you want to consider the observer terms in the computation of the 
   chosen GNC TPCF effect?
-  - `:yes` or `true` -> all the observer terms will be considered;
-  - `:no` or `false` -> no observer term will be taken into account;
+  - `:yes` or `true` -> all the observer effects will be considered
+  - `:no` or `false` -> no observer term will be taken into account
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
-    will be neglected, the other ones will be taken into account.
+    will be neglected, the other ones will be taken into account
 
 - `Δχ_min::Float64 = 1e-4` : when ``\\Delta\\chi_2 = \\sqrt{s_1^2 + \\chi_2^2 - 2 \\, s_1 \\chi_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
-     \\lim_{\\Delta \\chi_2 \\to 0^{+}} 
-     \\left(
-     J_{00}^{\\delta \\kappa} \\, I^0_0(\\Delta \\chi_2 ) + 
-     J_{02}^{\\delta \\kappa} \\, I^0_2(\\Delta \\chi_2 ) + 
-     J_{04}^{\\delta \\kappa} \\, I^4_0(\\Delta \\chi_2 ) 
-     \\right) = 
-     - \\frac{1}{5} \\, s_1 \\left(f_1 + 5 b_1\\right) \\, \\sigma_0
+    \\lim_{\\Delta \\chi_2 \\to 0^{+}} 
+    \\left(
+    J_{00}^{\\delta \\kappa} \\, I^0_0(\\Delta \\chi_2 ) + 
+    J_{02}^{\\delta \\kappa} \\, I^0_2(\\Delta \\chi_2 ) + 
+    J_{04}^{\\delta \\kappa} \\, I^4_0(\\Delta \\chi_2 ) 
+    \\right) = 
+    - \\frac{1}{5} \\, s_1 \\left(f_1 + 5 b_1\\right) \\, \\sigma_0
   ```
 
   So, when it happens that ``\\Delta \\chi_2 < \\Delta\\chi_\\mathrm{min}``, the function considers this limit
@@ -274,7 +296,7 @@ This function is used inside `ξ_GNC_Newton_Lensing` with the [`trapz`](@ref) fr
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
 [`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),
-[`ξ_GNC_Newton_Lensing`](@ref)
+[`ξ_GNC_Newtonian_Lensing`](@ref)
 """
 integrand_ξ_GNC_Newtonian_Lensing
 
@@ -285,48 +307,51 @@ integrand_ξ_GNC_Newtonian_Lensing
 
 
 function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
-     en::Float64=1e6, N_χs::Int=100, Δχ_min::Float64=1e-1,
-     obs::Union{Bool,Symbol}=:noobsvel, suit_sampling::Bool=true)
+    en::Float64=1e6, N_χs::Int=100, suit_sampling::Bool=true,
+    kwargs...)
 
-     STARTING = 0.0
-     frac_begin, frac_middle, FRAC_s = 0.6, 0.6, 0.10
+    STARTING = 0.0
+    frac_begin, frac_middle, FRAC_s = 0.6, 0.6, 0.10
 
-     χ2s = if suit_sampling == false
-          s2 .* range(STARTING, 1.0, length=N_χs)
-     else
-          if s2 < (1.0 - FRAC_s) * s1
-               s2 .* range(STARTING, 1.0, length=N_χs)
+    χ2s = if suit_sampling == false
+        s2 .* range(STARTING, 1.0, length=N_χs)
+    else
+        if s2 < (1.0 - FRAC_s) * s1
+            s2 .* range(STARTING, 1.0, length=N_χs)
 
-          elseif (1.0 - FRAC_s) * s1 ≤ s2 ≤ (1.0 + FRAC_s) * s1
-               GaPSE.sample_subdivision_begin(STARTING, (1.0 - FRAC_s) * s1, s2;
-                    frac_begin=frac_begin, N=N_χs, ass=false)
+        elseif (1.0 - FRAC_s) * s1 ≤ s2 ≤ (1.0 + FRAC_s) * s1
+            GaPSE.sample_subdivision_begin(STARTING, (1.0 - FRAC_s) * s1, s2;
+            frac_begin=frac_begin, N=N_χs, ass=false)
 
-          elseif (1.0 + FRAC_s) * s1 < s2
-               GaPSE.sample_subdivision_middle(
-                    STARTING, (1.0 - FRAC_s) * s1, (1.0 + FRAC_s) * s1, s2;
-                    frac_middle=frac_middle, N=N_χs, ass=false
-               )
-          else
-               throw(AssertionError("how did you arrived here?"))
-          end
-     end
+        elseif (1.0 + FRAC_s) * s1 < s2
+            GaPSE.sample_subdivision_middle(
+            STARTING, (1.0 - FRAC_s) * s1, (1.0 + FRAC_s) * s1, s2;
+            frac_middle=frac_middle, N=N_χs, ass=false
+            )
+        else
+            throw(AssertionError("how the hell did you arrived here?"))
+        end
+    end
 
-     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-     IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
+    P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
+    IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-     int_ξs = [
-          en * GaPSE.integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; obs=obs, Δχ_min=Δχ_min)
-          for IP in IPs
-     ]
+    int_ξs = [
+        en * GaPSE.integrand_ξ_GNC_Newtonian_Lensing(IP, P1, P2, y, cosmo; kwargs...)
+        for IP in IPs
+    ]
 
-     return trapz(χ2s, int_ξs) / en
+    return trapz(χ2s, int_ξs) / en
 end
 
 
 """
-     ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
-          en::Float64=1e6, N_χs::Int=100, Δχ_min::Float64=1e-1,
-          obs::Union{Bool,Symbol}=:noobsvel, suit_sampling::Bool = true)
+    ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
+        en::Float64=1e6, N_χs::Int=100, Δχ_min::Float64=1e-1,
+        obs::Union{Bool,Symbol}=:noobsvel, 
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        suit_sampling::Bool = true )::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Newtonian and the Lensing effects arising from the Galaxy Number Counts (GNC).
@@ -335,71 +360,71 @@ You must provide the two comoving distances `s1` and `s2` where to
 evaluate the function.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
-The analytical expression of this term is the following:
+The analytical expression of this TPCF is the following:
 
 ```math
 \\begin{equation}
-     \\xi^{\\delta \\kappa} ( s_1 , s_2, y ) =
-     D_1  \\int_0^{s_2}\\mathrm{d} \\chi_2
-     J^{\\delta \\kappa}_{\\alpha}
-     \\left[ 
-          J^{\\delta \\kappa}_{00} I_0^0 ( \\Delta\\chi_2 ) + 
-          J^{\\delta \\kappa}_{02} I_2^0 ( \\Delta \\chi_2 ) + 
-          J^{\\delta \\kappa}_{04} I_4^0 ( \\Delta \\chi_2 ) 
-     \\right] \\, ,
+    \\xi^{\\delta \\kappa} ( s_1 , s_2, y ) =
+    D_1  \\int_0^{s_2}\\mathrm{d} \\chi_2
+    J^{\\delta \\kappa}_{\\alpha}
+    \\left[ 
+        J^{\\delta \\kappa}_{00} I_0^0 ( \\Delta\\chi_2 ) + 
+        J^{\\delta \\kappa}_{02} I_2^0 ( \\Delta \\chi_2 ) + 
+        J^{\\delta \\kappa}_{04} I_4^0 ( \\Delta \\chi_2 ) 
+    \\right] \\, ,
 \\end{equation}
 ```
 
-where
+with
 
 ```math
 \\begin{split}
-     J^{\\delta \\kappa}_{\\alpha} &=
-     \\frac{
-          \\mathcal{H}_0 ^2 \\Omega_{\\mathrm{M}0} D (\\chi_2)
-     }{
-          a(\\chi_2 ) s_2
-     } 
-     (\\chi_2 - s_2 ) (5s_{\\mathrm{b}, 2} - 2) 
-     \\, , \\\\
-     %%%%%%%%%%%%%%%%%%%%%%%%
-     J^{\\delta \\kappa}_{00} &=
-          \\frac{1}{5}
-          \\left[
-               (3 y^2 - 1) \\chi_2 f_1 - y s_1(3 f_1 + 5 b_1) 
-          \\right] 
-     \\, , \\\\
-     %%%%%%%%%%%%%%%%%%%%%%%%
-     J^{\\delta \\kappa}_{02} &=
-          \\frac{1}{14 \\Delta\\chi_2^2} 
-          \\left\\{
-               4 f_1 (3 y^2 - 1) \\chi_2^3 - 
-               2 y 
-               \\left[
-                    (3 y^2 + 8) f_1 + 7 b_1
-               \\right] s_1 \\chi_2^2 +
-               \\right. \\nonumber \\\\
-               &\\left.\\qquad \\qquad\\qquad
-               \\left[
-                    (9 y^2 + 11) f_1 - 7 (y^2 + 3) b_1
-               \\right] s_1^2 \\chi_2 -
-               2 y \\left[7 b_1 + 3 f_1 \\right] s_1^3
-          \\right\\} 
-     \\, , \\\\
-     %%%%%%%%%%%%%%%%%%%%%%%%
-     J^{\\delta \\kappa}_{04} &=
-     \\frac{f_1}{70 \\Delta\\chi_2^4 }
-     \\left\\{
-          (6 y^2 - 2) \\chi_2^5 +
-          6 y (y^2 - 3) s_1 \\chi_2^4 -
-          (y^4 + 12 y^2 - 21) s_1^2 \\chi_2^3 +
-          \\right.\\nonumber \\\\
-          &\\left.\\qquad\\qquad\\qquad
-          2 y (y^2 + 3) s_1^3 \\chi_2^2 -
-          12 \\chi_2 s_1^4 + 
-          4 y s_1 ^5
-     \\right\\} 
-     \\, .
+    J^{\\delta \\kappa}_{\\alpha} &=
+    \\frac{
+        \\mathcal{H}_0 ^2 \\Omega_{\\mathrm{M}0} D (\\chi_2)
+    }{
+        a(\\chi_2 ) s_2
+    } 
+    (\\chi_2 - s_2 ) (5s_{\\mathrm{b}, 2} - 2) 
+    \\, , \\\\
+    %%%%%%%%%%%%%%%%%%%%%%%%
+    J^{\\delta \\kappa}_{00} &=
+        \\frac{1}{5}
+        \\left[
+            (3 y^2 - 1) \\chi_2 f_1 - y s_1(3 f_1 + 5 b_1) 
+        \\right] 
+    \\, , \\\\
+    %%%%%%%%%%%%%%%%%%%%%%%%
+    J^{\\delta \\kappa}_{02} &=
+        \\frac{1}{14 \\Delta\\chi_2^2} 
+        \\left\\{
+            4 f_1 (3 y^2 - 1) \\chi_2^3 - 
+            2 y 
+            \\left[
+                (3 y^2 + 8) f_1 + 7 b_1
+            \\right] s_1 \\chi_2^2 +
+            \\right. \\nonumber \\\\
+            &\\left.\\qquad \\qquad\\qquad
+            \\left[
+                (9 y^2 + 11) f_1 - 7 (y^2 + 3) b_1
+            \\right] s_1^2 \\chi_2 -
+            2 y \\left[7 b_1 + 3 f_1 \\right] s_1^3
+        \\right\\} 
+    \\, , \\\\
+    %%%%%%%%%%%%%%%%%%%%%%%%
+    J^{\\delta \\kappa}_{04} &=
+    \\frac{f_1}{70 \\Delta\\chi_2^4 }
+    \\left\\{
+        (6 y^2 - 2) \\chi_2^5 +
+        6 y (y^2 - 3) s_1 \\chi_2^4 -
+        (y^4 + 12 y^2 - 21) s_1^2 \\chi_2^3 +
+        \\right.\\nonumber \\\\
+        &\\left.\\qquad\\qquad\\qquad
+        2 y (y^2 + 3) s_1^3 \\chi_2^2 -
+        12 \\chi_2 s_1^4 + 
+        4 y s_1 ^5
+    \\right\\} 
+    \\, ,
 \\end{split}
 ```
 
@@ -414,7 +439,7 @@ where:
 - ``f_1 = f(s_1)``, ... is the linear growth rate (evaluated in ``s_1``);
 
 - ``\\mathcal{H}_1 = \\mathcal{H}(s_1)``, ... is the comoving 
-  Hubble parameter (evaluated in ``s_1``, ...);
+  Hubble distances (evaluated in ``s_1``);
 
 - ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``;
 
@@ -426,10 +451,10 @@ where:
   \\frac{\\dot{\\mathcal{H}}(s)}{\\mathcal{H}(s)^2} - \\mathit{f}_{\\mathrm{evo}} \\quad ;
   ```
 
-- ``b_1 = b(s_1)``, ``s_{\\mathrm{b}, 1} = s_{\\mathrm{b}}(s_1)``, ``\\mathit{f}_{\\mathrm{evo}}``, ... : 
+- ``b_1``, ``s_{\\mathrm{b}, 1}``, ``\\mathit{f}_{\\mathrm{evo}, 1}`` 
+  (and ``b_2``, ``s_{\\mathrm{b}, 2}``, ``\\mathit{f}_{\\mathrm{evo}, 2}``) : 
   galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold), 
-  and evolution bias (the first two evaluated in ``s_1``); they are
-  all stored in `cosmo`;
+  and evolution bias for the first (second) effect;
 
 - ``\\Omega_{\\mathrm{M}0} = \\Omega_{\\mathrm{cdm}} + \\Omega_{\\mathrm{b}}`` is the sum of 
   cold-dark-matter and barionic density parameters (again, stored in `cosmo`);
@@ -463,26 +488,40 @@ where:
 In this TPCF there are no observer terms. The `obs` keyword is inserted only for compatibility with 
 the other GNC TPCFs.
 
-This function is computed integrating `integrand_ξ_GNC_Newtonian_Lensing` with [`trapz`](@ref) from the 
+This function is computed integrating `integrand_ξ_GNC_Newtonian_Lensing` with trapz() from the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 ## Inputs
 
-- `s1` and `s2`: comoving distances where the TPCF has to be calculated;
+- `s1` and `s2`: comoving distances where the TPCF has to be calculated.
   
-- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer;
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
 
 - `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
   used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
 
 ## Keyword Arguments
 
-- `obs::Union{Bool,Symbol} = :noobsvel` : do you want to consider the observer terms in the computation of the 
-  chosen GNC TPCF effect?
-  - `:yes` or `true` -> all the observer terms will be considered;
-  - `:no` or `false` -> no observer term will be taken into account;
-  - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
-    will be neglected, the other ones will be taken into account.
+- `b1=nothing`, `s_b1=nothing`, `𝑓_evo1=nothing` and `b2=nothing`, `s_b2=nothing`, `𝑓_evo2=nothing`:
+  galaxy, magnification and evolutionary biases respectively for the first and the second effect 
+  computed in this TPCF:
+  - if not set (i.e. if you leave the default value `nothing`) the values stored in the input `cosmo`
+    will be considered;
+  - if you set one or more values, they will override the `cosmo` ones in this computation;
+  - the two sets of values should be different only if you are interested in studing two galaxy species;
+  - only the required parameters for the chosen TPCF will be used, depending on its analytical expression;
+    all the others will have no effect, we still inserted them for pragmatical code compatibilities. 
+
+- `s_lim=nothing` : parameter used in order to avoid the divergence of the ``\\mathcal{R}`` and 
+  ``\\mathfrak{R}`` denominators: when ``0 \\leq s \\leq s_\\mathrm{lim}`` the returned values are
+  ```math
+  \\forall \\, s \\in [ 0, s_\\mathrm{lim} ] \\; : \\quad 
+      \\mathfrak{R}(s) = 1 - \\frac{1}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} \\; , \\quad
+      \\mathcal{R}(s) = 5 s_{\\mathrm{b}} + 
+          \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} +  
+          \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}_0^2} - \\mathit{f}_{\\mathrm{evo}} \\; .
+  ```
+  If `nothing`, the default value stored in `cosmo` will be considered.
 
 - `en::Float64 = 1e6`: just a float number used in order to deal better 
   with small numbers;
@@ -491,13 +530,13 @@ This function is computed integrating `integrand_ξ_GNC_Newtonian_Lensing` with 
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
-     \\lim_{\\Delta \\chi_2 \\to 0^{+}} 
-     \\left(
-     J_{00}^{\\delta \\kappa} \\, I^0_0(\\Delta \\chi_2 ) + 
-     J_{02}^{\\delta \\kappa} \\, I^0_2(\\Delta \\chi_2 ) + 
-     J_{04}^{\\delta \\kappa} \\, I^4_0(\\Delta \\chi_2 ) 
-     \\right) = 
-     - \\frac{1}{5} \\, s_1 \\left(f_1 + 5 b_1\\right) \\, \\sigma_0
+    \\lim_{\\Delta \\chi_2 \\to 0^{+}} 
+    \\left(
+    J_{00}^{\\delta \\kappa} \\, I^0_0(\\Delta \\chi_2 ) + 
+    J_{02}^{\\delta \\kappa} \\, I^0_2(\\Delta \\chi_2 ) + 
+    J_{04}^{\\delta \\kappa} \\, I^4_0(\\Delta \\chi_2 ) 
+    \\right) = 
+    - \\frac{1}{5} \\, s_1 \\left(f_1 + 5 b_1\\right) \\, \\sigma_0
   ```
 
   So, when it happens that ``\\Delta \\chi_2 < \\Delta\\chi_\\mathrm{min}``, the function considers this limit
@@ -508,7 +547,10 @@ This function is computed integrating `integrand_ξ_GNC_Newtonian_Lensing` with 
   along the range `(0, s2)` (for `χ2`); it has been checked that
   with `N_χs ≥ 100` the result is stable.
 
-- `suit_sampling::Bool = true` : 
+- `suit_sampling::Bool = true` : this bool keyword can be found in all the TPCFs which have at least one `χ` integral;
+  it is conceived to enable a sampling of the `χ` integral(s) suited for the given TPCF; however, it actually have an
+  effect only in the TPCFs that have such a sampling implemented in the code.
+  Currently, only `ξ_GNC_Newtonian_Lensing` (and its simmetryc TPCF) has it.
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
 [`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),
@@ -527,8 +569,12 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 
 
 """
-     ξ_GNC_Lensing_Newtonian(s1, s2, y, cosmo::Cosmology; kwargs...) = 
-          ξ_GNC_Newtonian_Lensing(s2, s1, y, cosmo; kwargs...)
+    ξ_GNC_Lensing_Newtonian(s1, s2, y, cosmo::Cosmology; 
+        en::Float64=1e6, N_χs::Int=100, Δχ_min::Float64=1e-1,
+        obs::Union{Bool,Symbol}=:noobsvel, 
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        suit_sampling::Bool = true )::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Lensing and the Newtonian effects arising from the Galaxy Number Counts (GNC).
@@ -542,19 +588,32 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 - `s1` and `s2`: comoving distances where the TPCF has to be calculated;
   
-- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer;
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
 
 - `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
   used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
 
 ## Keyword Arguments
 
-- `kwargs...` : Keyword arguments to be passed to the symmetric TPCF.
+- `kwargs...` : Keyword arguments to be passed to the symmetric TPCF
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
 [`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),
 [`ξ_GNC_Newtonian_Lensing`](@ref)
 """
-function ξ_GNC_Lensing_Newtonian(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_GNC_Newtonian_Lensing(s2, s1, y, cosmo; kwargs...)
+function ξ_GNC_Lensing_Newtonian(s1, s2, y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+    kwargs...)
+    
+
+    b1 = isnothing(b1) ? cosmo.params.b1 : b1
+    b2 = isnothing(b2) ? cosmo.params.b2 : b2
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+
+    ξ_GNC_Newtonian_Lensing(s2, s1, y, cosmo; b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
+        𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end

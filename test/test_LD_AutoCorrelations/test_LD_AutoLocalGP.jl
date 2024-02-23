@@ -18,24 +18,24 @@
 #
 
 @testset "test xi auto_localgp L = 0" begin
-     effect = "auto_localgp"
-     L = 0
+    effect = "auto_localgp"
+    L = 0
 
-     ss = ss_LD_L0_noF
-     xis = all_xis_LD_L0_noF[GaPSE.INDEX_GR_EFFECT_LD[effect]]
+    ss = ss_LD_L0_noF
+    xis = all_xis_LD_L0_noF[GaPSE.INDEX_GR_EFFECT_LD[effect]]
 
-     name = "calc_xi_LD_" * effect * "_LD_L$L" * ".txt"
-     isfile(name) && rm(name)
-     GaPSE.print_map_ξ_LD_multipole(COSMO, name, effect, SS_LD;
-          L = L, alg = :quad, GaPSE.specif_kwargs_LD(effect, KWARGS_LD)...)
+    name = "calc_xi_LD_" * effect * "_LD_L$L" * ".txt"
+    isfile(name) && rm(name)
+    GaPSE.print_map_ξ_LD_multipole(COSMO, name, effect, SS_LD;
+        L = L, alg = :quad, GaPSE.specif_kwargs_LD(effect, KWARGS_LD)...)
 
-     calc_table = readdlm(name; comments = true)
-     calc_ss = convert(Vector{Float64}, calc_table[:, 1])
-     calc_xis = convert(Vector{Float64}, calc_table[:, 2])
+    calc_table = readdlm(name; comments = true)
+    calc_ss = convert(Vector{Float64}, calc_table[:, 1])
+    calc_xis = convert(Vector{Float64}, calc_table[:, 2])
 
-     @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
-     @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
+    @test all([isapprox(s, calc_s, rtol = 1e-2) for (s, calc_s) in zip(ss, calc_ss)])
+    @test all([isapprox(xi, calc_xi, rtol = 1e-2) for (xi, calc_xi) in zip(xis, calc_xis)])
 
-     rm(name)
+    rm(name)
 end
 

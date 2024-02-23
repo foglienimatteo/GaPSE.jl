@@ -38,19 +38,19 @@ include("./FFTLog_files/SingleBessel.jl")
 
 
 function mul!(Y, Q::SingleBesselPlan, A)
-     evaluate_FFTLog!(Y, Q, A)
+    evaluate_FFTLog!(Y, Q, A)
 end
 
 function mul!(Y, Q::HankelPlan, A)
-     Y[:, :] .= evaluate_Hankel!(Y, Q, A)
+    Y[:, :] .= evaluate_Hankel!(Y, Q, A)
 end
 
 function *(Q::SingleBesselPlan, A)
-     evaluate_FFTLog(Q, A)
+    evaluate_FFTLog(Q, A)
 end
 
 function *(Q::HankelPlan, A)
-     evaluate_Hankel(Q, A)
+    evaluate_Hankel(Q, A)
 end
 
 end 

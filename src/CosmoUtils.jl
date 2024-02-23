@@ -20,7 +20,7 @@
 
 
 """
-     func_z_eff(s_min, s_max, z_of_s) ::Float64
+    func_z_eff(s_min, s_max, z_of_s) ::Float64
 
 Given:
 - the input comoving distances `s_min` and `s_max`
@@ -31,24 +31,24 @@ this function return the effective redshift ``z_\\mathrm{eff}``, computed as fol
 ```math
 \\begin{split}
 z_\\mathrm{eff} := 
-    \\frac{
-        \\int \\mathrm{d}^3\\mathbf{s} \\, \\phi^2(\\mathbf{s}) \\, z(s)
-     }{
-         \\int \\mathrm{d}^3\\mathbf{s}\\, \\phi^2(\\mathbf{s}) 
-      } &= \\frac{
-          \\int_0^\\infty \\mathrm{d}s  \\, s^2 \\, \\phi^2(s) \\, z(s) \\times
-          \\int_{4\\pi}\\mathrm{d}^2\\hat{\\mathbf{s}} \\, W^2(\\hat{\\mathbf{s}})
-      }{
-          \\int_0^\\infty \\mathrm{d}s \\, s^2 \\, \\phi^2(s)\\times
-          \\int_{4\\pi}\\mathrm{d}^2\\hat{\\mathbf{s}} \\, W^2(\\hat{\\mathbf{s}})
-      } \\\\[5pt]
-      &= \\frac{
-          \\int_0^\\infty \\mathrm{d}s  \\, s^2 \\, \\phi^2(s) \\, z(s)
-      }{
-          \\int_0^\\infty \\mathrm{d}s \\, s^2 \\, \\phi^2(s)
-      } \\\\[4pt]
-      &= \\frac{3}{s_\\mathrm{max}^3 - s_\\mathrm{min}^3} \\,
-          \\int_{s_\\mathrm{min}}^{s_\\mathrm{max}} \\mathrm{d}s  \\, s^2 \\, z(s) \\; .
+\\frac{
+    \\int \\mathrm{d}^3\\mathbf{s} \\, \\phi^2(\\mathbf{s}) \\, z(s)
+    }{
+        \\int \\mathrm{d}^3\\mathbf{s}\\, \\phi^2(\\mathbf{s}) 
+    } &= \\frac{
+        \\int_0^\\infty \\mathrm{d}s  \\, s^2 \\, \\phi^2(s) \\, z(s) \\times
+        \\int_{4\\pi}\\mathrm{d}^2\\hat{\\mathbf{s}} \\, W^2(\\hat{\\mathbf{s}})
+    }{
+        \\int_0^\\infty \\mathrm{d}s \\, s^2 \\, \\phi^2(s)\\times
+        \\int_{4\\pi}\\mathrm{d}^2\\hat{\\mathbf{s}} \\, W^2(\\hat{\\mathbf{s}})
+    } \\\\[5pt]
+    &= \\frac{
+        \\int_0^\\infty \\mathrm{d}s  \\, s^2 \\, \\phi^2(s) \\, z(s)
+    }{
+        \\int_0^\\infty \\mathrm{d}s \\, s^2 \\, \\phi^2(s)
+    } \\\\[4pt]
+    &= \\frac{3}{s_\\mathrm{max}^3 - s_\\mathrm{min}^3} \\,
+        \\int_{s_\\mathrm{min}}^{s_\\mathrm{max}} \\mathrm{d}s  \\, s^2 \\, z(s) \\; .
 \\end{split}
 ```
 
@@ -57,7 +57,7 @@ of the survey ``\\phi(\\mathbf{s})`` into a
 radial and angular part, respectively ``\\phi(s)`` and ``W(\\mathbf{\\hat{s}})``:
 
 ```math
-     \\phi(\\mathbf{s}) = \\phi(s) \\, W(\\mathbf{\\hat{s}}) \\; .
+    \\phi(\\mathbf{s}) = \\phi(s) \\, W(\\mathbf{\\hat{s}}) \\; .
 ```
 
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
@@ -67,12 +67,12 @@ of the [QuadGK.jl](https://github.com/JuliaMath/QuadGK.jl) Julia package.
 See also: [`ϕ`](@ref), [`W`](@ref)
 """
 function func_z_eff(s_min, s_max, z_of_s)
-     3.0 / (s_max^3 - s_min^3) * quadgk(s -> s^2 * z_of_s(s), s_min, s_max)[1]
+    3.0 / (s_max^3 - s_min^3) * quadgk(s -> s^2 * z_of_s(s), s_min, s_max)[1]
 end
 
 
 """
-     s(s1, s2, y) ::Float64
+    s(s1, s2, y) ::Float64
 
 Return the value ``s = s(s_1, s_2, y) = \\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}``
 
@@ -82,7 +82,7 @@ s(s1, s2, y) = √(s1^2 + s2^2 - 2 * s1 * s2 * y)
 
 
 """
-     μ(s1, s2, y) ::Float64
+    μ(s1, s2, y) ::Float64
 
 Return the cosine ``\\mu=\\hat{\\mathbf{s}}_1\\cdot\\hat{\\mathbf{s}}`` of the angle between 
 the comoving distances ``\\mathbf{s}_1`` and ``\\mathbf{s} = \\mathbf{s}_2 - \\mathbf{s}_1``.
@@ -102,7 +102,7 @@ See also: [`s`](@ref), [`s2`](@ref), [`y`](@ref)
 
 
 """
-     s2(s1, s, μ) ::Float64
+    s2(s1, s, μ) ::Float64
 
 Return the value ``s_2 = \\sqrt{s_1^2 + s^2 + 2 \\, s_1 \\, s \\, \\mu}``
 
@@ -113,7 +113,7 @@ s2(s1, s, μ) = √(s1^2 + s^2 + 2 * s1 * s * μ)
 
 
 """
-     y(s1, s, y) ::Float64
+    y(s1, s, y) ::Float64
 
 Return the cosine ``y=\\cos\\theta=\\hat{\\mathbf{s}}_1\\cdot\\hat{\\mathbf{s}}_2`` of the angle between 
 the comoving distances ``\\mathbf{s}_1`` and ``\\mathbf{s}_2 = \\mathbf{s}_1 + \\mathbf{s}``.
@@ -138,7 +138,7 @@ y(s1, s, μ) = (μ * s + s1) / s2(s, s1, μ)
 
 
 """
-     ϕ(s, s_min, s_max) ::Float64
+    ϕ(s, s_min, s_max) ::Float64
 
 Radial part of the survey window function. Return `1.0` if is true that
 ``s_\\mathrm{min} < s < s_\\mathrm{max}`` and `0.0` otherwise.
@@ -147,7 +147,7 @@ In this software we made the assuption that the survey window function can be
 separated into a radial and angular part, i.e.:
 
 ```math
-     \\phi(\\mathbf{s}) = \\phi(s) \\, W(\\mathbf{\\hat{s}})
+    \\phi(\\mathbf{s}) = \\phi(s) \\, W(\\mathbf{\\hat{s}})
 ```
 
 See also: [`W`](@ref)
@@ -157,7 +157,7 @@ See also: [`W`](@ref)
 
 
 """
-     W(θ, θ_max) ::Float64
+    W(θ, θ_max) ::Float64
 
 Angular part of the survey window function. Return `1.0` if is true that
 ``0 \\leq \\theta < \\theta_\\mathrm{max}`` and `0.0` otherwise. It is
@@ -167,7 +167,7 @@ In this software we made the assuption that the survey window function can be
 separated into a radial and angular part, i.e.:
 
 ```math
-     \\phi(\\mathbf{s}) = \\phi(s) \\, W(\\mathbf{\\hat{s}})
+    \\phi(\\mathbf{s}) = \\phi(s) \\, W(\\mathbf{\\hat{s}})
 ```
 
 See also: [`ϕ`](@ref)
@@ -176,7 +176,7 @@ W(θ, θ_max) = 0.0 ≤ θ < θ_max ? 1.0 : 0.0
 
 
 """
-     V_survey(s_min, s_max, θ_max) ::Float64
+    V_survey(s_min, s_max, θ_max) ::Float64
 
 Return the volume of a survey with azimutal simmetry, i.e.:
 
@@ -194,32 +194,32 @@ Return the volume of a survey with azimutal simmetry, i.e.:
 ```
 """
 function V_survey(s_min, s_max, θ_max)
-     sin_θ, cos_θ = sin(θ_max), cos(θ_max)
-     diff_up_down = (s_max^3 - s_min^3) * (1 - cos_θ)^2 * (2 + cos_θ)
-     tr = (s_max^2 + s_min^2 + s_max * s_min) * (s_max - s_min) * cos_θ * sin_θ^2
-     #r1, r2 = s_min * sin(θ_max), s_max * sin(θ_max)
-     #d1, d2 = s_min * cos(θ_max), s_max * cos(θ_max)
-     #calotta_up = π / 3 * (s_max - d2)^2 * (2 * s_max + d2)
-     #calotta_down = π / 3 * (s_min - d1)^2 * (2 * s_min + d1)
-     #tronco_cono = π / 3 * (r1^2 + r1 * r2 + r2^2) * (s_max - s_min) * cos(θ_max)
-     return π / 3.0 * (diff_up_down + tr)
+    sin_θ, cos_θ = sin(θ_max), cos(θ_max)
+    diff_up_down = (s_max^3 - s_min^3) * (1 - cos_θ)^2 * (2 + cos_θ)
+    tr = (s_max^2 + s_min^2 + s_max * s_min) * (s_max - s_min) * cos_θ * sin_θ^2
+    #r1, r2 = s_min * sin(θ_max), s_max * sin(θ_max)
+    #d1, d2 = s_min * cos(θ_max), s_max * cos(θ_max)
+    #calotta_up = π / 3 * (s_max - d2)^2 * (2 * s_max + d2)
+    #calotta_down = π / 3 * (s_min - d1)^2 * (2 * s_min + d1)
+    #tronco_cono = π / 3 * (r1^2 + r1 * r2 + r2^2) * (s_max - s_min) * cos(θ_max)
+    return π / 3.0 * (diff_up_down + tr)
 end
 
 
 """
-     A(s_min, s_max, θ_max) ::Float64
+    A(s_min, s_max, θ_max) ::Float64
 
 Return the Power Spectrum multipole normalization coefficient `A`, i.e.:
 ```math
-     A(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})= 
-     \\frac{
-          V(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})
-     }{4 \\, \\pi^2}
+    A(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})= 
+    \\frac{
+        V(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})
+    }{4 \\, \\pi^2}
 ```
 where ``V(s_\\mathrm{max}, s_\\mathrm{min}, \\theta_\\mathrm{max})`` is the 
 survey volume.
 
-Pay attention: this is NOT used for the normalization of [`PS`](@ref), see
+Pay attention: this is NOT used for the normalization of [`InputPS`](@ref), see
 instead [`A_prime`](@ref)
 
 See also: [`V_survey`](@ref)
@@ -231,12 +231,12 @@ end
 
 
 """
-     A_prime :: Float64
+    A_prime :: Float64
 
 It's the Power Spectrum multipole normalization coefficient ``A^{'}``, i.e.:
 ```math
-     A^{'} = \\frac{3 \\, A}{ (s_\\mathrm{max}^3 - s_\\mathrm{min}^3)} = 
-     \\frac{1}{4\\,\\pi}
+    A^{'} = \\frac{3 \\, A}{ (s_\\mathrm{max}^3 - s_\\mathrm{min}^3)} = 
+    \\frac{1}{4\\,\\pi}
 ```
 
 See also: [`A`](@ref), [`V_survey`](@ref)
@@ -280,13 +280,14 @@ maximum sampling value of the Integrated Window Function.
 See also: [`BackgroundData`](@ref), [`WindowFIntegrated`](@ref)
 """
 function corresponding_redshift(z, m, file_data::String; names_bg=NAMES_BACKGROUND, h_0=0.7, Z_MAX=1e3)
-     @assert m > 0 "m > 0 must hold!"
-     @assert 0.0 ≤ z < Z_MAX "0.0 ≤ z < Z_MAX must hold"
+    @assert m > 0 "m > 0 must hold!"
+    @assert 0.0 ≤ z < Z_MAX "0.0 ≤ z < Z_MAX must hold"
 
-     BD = BackgroundData(file_data, Z_MAX; names=names_bg, h=h_0)
-     s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
-     z_of_s = Spline1D(BD.comdist, BD.z; bc="error")
+    BD = BackgroundData(file_data, Z_MAX; names=names_bg, h=h_0)
+    s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+    z_of_s = Spline1D(BD.comdist, BD.z; bc="error")
 
-     s = s_of_z(z)
-     return z_of_s(m * s)
+    s = s_of_z(z)
+    return z_of_s(m * s)
 end
+

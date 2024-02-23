@@ -25,6 +25,15 @@ function warning(io::IO, msg::String)
 end
 warning(msg::String) = warning(stdout, msg)
 
+"""
+    warning(io::IO, msg::String)
+    warning(msg::String) = warning(stdout, msg)
+
+It does the following:
+    printstyled(io, "WARNING: " * msg * "\n"; color=:red, bold=true)
+"""
+warning
+
 
 
 """
@@ -92,6 +101,42 @@ function my_println_vec(vec::Vector{T}, name::String; N::Int=5) where {T}
 end
 
 
+"""
+    my_println_vec(io::IO, vec::Vector{T}, name::String; N::Int=5) where {T}
+    my_println_vec(vec::Vector{T}, name::String; N::Int=5) where {T}
+        my_println_vec(stdout, vec, name; N=N)
+
+Print the input `vec::Vector{T}` as follows:
+```julia
+> vec = [x for x in 1:0.1:4]
+> my_println_vec(vec, "vector"; N=8)
+vector = [
+1.0 , 1.1 , 1.2 , 1.3 , 1.4 , 1.5 , 1.6 , 1.7 , 
+1.8 , 1.9 , 2.0 , 2.1 , 2.2 , 2.3 , 2.4 , 2.5 , 
+2.6 , 2.7 , 2.8 , 2.9 , 3.0 , 3.1 , 3.2 , 3.3 , 
+3.4 , 3.5 , 3.6 , 3.7 , 3.8 , 3.9 , 4.0 , 
+];
+
+> my_println_vec(vec, "vector"; N=3)
+vector = [
+1.0 , 1.1 , 1.2 , 
+1.3 , 1.4 , 1.5 , 
+1.6 , 1.7 , 1.8 , 
+1.9 , 2.0 , 2.1 , 
+2.2 , 2.3 , 2.4 , 
+2.5 , 2.6 , 2.7 , 
+2.8 , 2.9 , 3.0 , 
+3.1 , 3.2 , 3.3 , 
+3.4 , 3.5 , 3.6 , 
+3.7 , 3.8 , 3.9 , 
+4.0 , 
+];
+	
+```
+
+See also: [`my_println_dict`](@ref)
+"""
+my_println_vec
 
 ##########################################################################################92
 
@@ -113,6 +158,23 @@ end
 function my_println_dict(dict::Dict; pref::String="", N::Int=3)
     my_println_dict(stdout, dict; pref=pref, N=N)
 end;
+
+
+"""
+    my_println_dict(io::IO, dict::Dict; pref::String="", N::Int=3)
+    my_println_dict(dict::Dict; pref::String="", N::Int=3) = 
+        my_println_dict(stdout, dict; pref=pref, N=N)
+
+Print the input `dict::Dict` as follows:
+```julia
+> my_println_dict(io, cosmo.params.IPS; pref="#\t ", N=2)
+#	 fit_left_min = 1.0e-6 	 fit_right_min = 10.0 	 
+#	 fit_left_max = 3.0e-6 	 fit_right_max = 20.0 	
+```
+
+See also: [`my_println_vec`](@ref)
+"""
+my_println_dict
 
 
 
@@ -378,7 +440,7 @@ types `xdt` and `ydt`.
 If the file start with comments (lines starting with #), set 
 `comments = true`.
 
-See also: [`readxall`](@ref), [`readxyall`](@ref)
+See also: [`readxall`](@ref), [`readxyall`](@ref), [`readxchoosey`](@ref)
 """
 function readxy(input::String; comments::Bool=true,
     xdt::DataType=Float64, ydt::DataType=Float64)
@@ -401,7 +463,7 @@ Read the file `input` and return a tuple having
 If the file start with comments (lines starting with #), set 
 `comments = true`.
 
-See also: [`readxy`](@ref), [`readxyall`](@ref)
+See also: [`readxy`](@ref), [`readxyall`](@ref), [`readxchoosey`](@ref)
 """
 function readxall(input::String; comments::Bool=true,
     xdt::DataType=Float64, ydt::DataType=Float64)
@@ -428,7 +490,7 @@ Read the file `input` and return a tuple having
 If the file start with comments (lines starting with #), set 
 `comments = true`.
 
-See also: [`readxy`](@ref), [`readxall`](@ref)
+See also: [`readxy`](@ref), [`readxall`](@ref), [`readxchoosey`](@ref)
 """
 function readxyall(input::String; comments::Bool=true,
     xdt::DataType=Float64, ydt::DataType=Float64, zdt::DataType=Float64)
@@ -440,6 +502,98 @@ function readxyall(input::String; comments::Bool=true,
     return (xs, ys, all)
 end;
 
+
+"""
+    readchoosen(
+        input::String, n::Int; 
+        comments::Bool = true, dt::DataType = Float64, 
+        ) ::Tuple{Vector{xdt},Vector{ydt}}
+
+Read the file `input` and return the data (with the input type `ydt`) stored in the column number `n`.
+
+If the file start with comments (lines starting with #), set 
+`comments = true`.
+
+See also: [`readxy`](@ref), [`readxall`](@ref), [`readxyall`](@ref), [`readxchoosey`](@ref)
+"""
+function readchoosen(
+    input::String, n::Int; comments::Bool = true,
+    dt::DataType = Float64)
+
+    table = readdlm(input, comments=comments)
+    @assert 1 ≤ n ≤ size(table)[2] "The colomn number n must be an integer such that 1 ≤ n ≤ $(size(table)[2])!"
+    xs = vecstring_to_vecnumbers(table[:, n]; dt=dt)
+    return xs
+end
+
+
+
+function readxchoosey(
+    input::String, n::Int; comments::Bool = true,
+    xdt::DataType = Float64, ydt::DataType = Float64)
+
+    table = readdlm(input, comments=comments)
+    @assert 2 ≤ n ≤ size(table)[2] "The colomn number n must be an integer such that 2 ≤ n ≤ $(size(table)[2])!"
+    xs = vecstring_to_vecnumbers(table[:, 1]; dt=xdt)
+    ys = vecstring_to_vecnumbers(table[:, n]; dt=ydt)
+    return (xs, ys)
+end
+
+
+function readxchoosey(
+    input::String, effect::String, group::String = VALID_GROUPS[begin+1];
+    comments::Bool = true, xdt::DataType = Float64, ydt::DataType = Float64)
+
+    check_group(group; valid_groups=VALID_GROUPS[begin:end-1])
+
+    error = "$effect is not a valid GR effect name for $group group.\n" *
+            "Valid GR effect names for $group group are the following:\n"
+
+    for (i, g) in enumerate(VALID_GROUPS[begin:end-1])
+        if group == g
+            @assert (effect ∈ GR_EFFECTS_VECTOR[i] || effect =="sum") error * string(GR_EFFECTS_VECTOR[i] .* " , "...)
+            index_j = if effect == "sum" 
+                2
+            else
+                ttt = findfirst(x -> x == effect, GR_EFFECTS_VECTOR[i])
+                @assert !isnothing(ttt) "bug to be fixed"
+                index_j = 2 + ttt
+            end
+
+            table = readdlm(input, comments=comments)
+            @assert 2 ≤ index_j ≤ size(table)[2] "bug to be fixed"
+            xs = vecstring_to_vecnumbers(table[:, 1]; dt=xdt)
+            ys = vecstring_to_vecnumbers(table[:, index_j]; dt=ydt)
+            return (xs, ys)
+        end
+    end
+end
+
+
+"""
+    readxchoosey(
+        input::String, n::Int; 
+        comments::Bool = true, xdt::DataType = Float64, ydt::DataType = Float64,
+        ) ::Tuple{Vector{xdt},Vector{ydt}}
+
+    readxchoosey(
+        input::String, effect::String, group::String = VALID_GROUPS[begin+1]; 
+        comments::Bool = true, xdt::DataType = Float64, ydt::DataType = Float64,
+        ) ::Tuple{Vector{xdt},Vector{ydt}}
+
+Read the file `input` and return a tuple having
+- as first element the data in the first column (with the input type `xdt`)
+- as second element the data (with the input type `ydt`)
+  - stored in the column number `n` (first method) 
+  - in the position corresponding to the input `effect` for the given `group`
+    (note: also "sum" is valid as effect here, and gives the sum column, i.e. the second one)
+
+If the file start with comments (lines starting with #), set 
+`comments = true`.
+
+See also: [`readxy`](@ref), [`readxall`](@ref), [`readxyall`](@ref),[`readchoosen`](@ref)
+"""
+readxchoosey
 
 
 ##########################################################################################92
@@ -534,3 +688,5 @@ function sample_subdivision_middle(x_min, x_start, x_stop, x_max;
         )
     end
 end
+
+

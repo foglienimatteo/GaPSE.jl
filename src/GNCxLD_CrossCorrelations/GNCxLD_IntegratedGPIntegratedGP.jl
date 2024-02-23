@@ -18,193 +18,478 @@
 #
 
 
+function integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1::Point, IP2::Point,
+    P1::Point, P2::Point, y, cosmo::Cosmology;
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
+
+    s1 = P1.comdist
+    s2, ℜ_s2 = P2.comdist, P2.ℛ_LD 
+    χ1, D1, a1, ℋ1, f1 = IP1.comdist, IP1.D, IP1.a, IP1.ℋ, IP1.f
+    χ2, D2, a2, ℋ2, f2 = IP2.comdist, IP2.D, IP2.a, IP2.ℋ, IP2.f
+
+    Ω_M0 = cosmo.params.Ω_M0
+    s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    𝑓_evo_s1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+
+    s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
+    ℛ_s1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b_s1, 𝑓_evo=𝑓_evo_s1, s_lim=s_lim)
+
+    Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
+    Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
+
+    factor = - 9 * Δχ^4 * ℋ0^4 * Ω_M0^2 * D1 * D2 / (s1 * s2 * a1 * a2)
+    parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2
+    parenth_2 = s2 * ℋ2 * ℜ_s2 * (f2 - 1) - 1
+
+    I04_tilde = cosmo.tools.I04_tilde(Δχ)
+
+    return factor * parenth_1 * parenth_2 * I04_tilde
+end
+
+
+function integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(
+    χ1::Float64, χ2::Float64, s1::Float64, s2::Float64, y, cosmo::Cosmology;
+    kwargs...)
+
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
+    return integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+end
+
+
 """
-     integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1::Point, IP2::Point,
-          P1::Point, P2::Point,
-          y, cosmo::Cosmology) :: Float64
+    integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1::Point, IP2::Point,
+        P1::Point, P2::Point, y, cosmo::Cosmology;
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
-Return the integrand of the integrated gravitational potential 
-auto-correlation function ``\\xi^{\\int\\phi\\int\\phi} (s_1, s_2, \\cos{\\theta})``, 
-i.e. the function ``f(s_1, s_2, y, \\chi_1, \\chi_2)`` defined as follows:  
+    integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(
+        χ1::Float64, χ2::Float64, s1::Float64, s2::Float64, 
+        y, cosmo::Cosmology; kwargs... ) ::Float64
 
-```math
-f(s_1, s_2, y, \\chi_1, \\chi_2) = J_{40}(s_1, s_2, y, \\chi_1, \\chi_2) \\tilde{I}^4_0(\\chi)
-```
-where ``\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\, \\chi_2 \\, y} ``,
-``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2`` and:
+Return the integrand of the Two-Point Correlation Function (TPCF) given by the cross correlation 
+between the Integrated Gravitational Potential (GP) effect arising from the 
+Galaxy Number Counts (GNC) and the Integrated GP
+one arising from the Luminosity Distance (LD) perturbations.
+
+In the first method, you should pass the two extreme `Point`s (`P1` and `P2`) and the 
+two intermediate integrand `Point`s (`IP1` and `IP2`) where to 
+evaluate the function. In the second method (that internally recalls the first),
+you must provide the three corresponding comoving distances `s1`, `s2`, `χ1`, `χ2`.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
+
+The analytical expression of this integrand is the following:
+
 ```math
 \\begin{split}
-     &J_{40}(s_1, s_2, y, \\chi_1, \\chi_2)  = 
-          \\frac{
-                    9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(\\chi_1) D(\\chi_2) \\chi^4
-          }{    a(\\chi_1) a(\\chi_2) s_1 s_2} 
-          (s_2 \\mathcal{H}(\\chi_2) \\mathcal{R}(s_2) (f(\\chi_2)-1) - 1) 
-          (s_1 \\mathcal{H}(\\chi_1) \\mathcal{R}(s_1) (f(\\chi_1)-1) - 1)\\\\[5pt]
-     &\\tilde{I}^4_0 (s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} 
-          q^2 \\, P(q) \\, \\frac{j_0(q s) - 1}{(q s)^4}
+    f^{\\int\\!\\phi \\, \\int \\!\\phi }(\\chi_1, \\chi_2, s_1 , s_2, y ) =  
+    \\mathfrak{J}^{\\int \\!\\phi \\int \\!\\phi}_{40} 
+    \\tilde{I}_0^4 ( \\Delta\\chi) \\, ,
 \\end{split}
 ```
 
+with
+
+```math
+\\begin{split}
+    \\mathfrak{J}^{\\int \\!\\phi\\int \\!\\phi}_{40} =
+    - \\frac{
+        9 \\Delta\\chi ^4 \\mathcal{H}_0^4 \\Omega_{\\mathrm{M}0}^2 D(\\chi_1) D(\\chi_2)
+    }{
+        a(\\chi_1) a(\\chi_2) s_1 s_2
+    }
+    &\\left[
+        s_1 (f(\\chi_1) - 1) \\mathcal{H}(\\chi_1) \\mathcal{R}_1 - 5 s_{\\mathrm{b}, 1}  + 2
+    \\right] \\times
+    \\nonumber \\\\
+    &\\left[
+        s_2 (f(\\chi_2) - 1) \\mathcal{H}(\\chi_2) \\mathfrak{R}_2 - 1
+    \\right]
+    \\, ,
+\\end{split}
+```
+
+where:
+
+- ``s_1`` and ``s_2`` are comoving distances;
+
+- ``D_1 = D(s_1)``, ... is the linear growth factor (evaluated in ``s_1``);
+
+- ``a_1 = a(s_1)``, ... is the scale factor (evaluated in ``s_1``);
+
+- ``f_1 = f(s_1)``, ... is the linear growth rate (evaluated in ``s_1``);
+
+- ``\\mathcal{H}_1 = \\mathcal{H}(s_1)``, ... is the comoving 
+  Hubble distances (evaluated in ``s_1``);
+
+- ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``;
+
+- ``\\mathcal{R}_1 = \\mathcal{R}(s_1)``, ... is 
+  computed by `func_ℛ_GNC` in `cosmo::Cosmology` (and evaluated in ``s_1`` );
+  the definition of ``\\mathcal{R}(s)`` is the following:
+  ```math
+  \\mathcal{R}(s) = 5 s_{\\mathrm{b}}(s) + \\frac{2 - 5 s_{\\mathrm{b}}(s)}{\\mathcal{H}(s) \\, s} +  
+  \\frac{\\dot{\\mathcal{H}}(s)}{\\mathcal{H}(s)^2} - \\mathit{f}_{\\mathrm{evo}} \\quad ;
+  ```
+
+- ``\\mathfrak{R}_1 = \\mathfrak{R}(s_1)``, ... is 
+  computed by `func_ℛ_LD` in `cosmo::Cosmology` (and evaluated in ``s_1`` );
+  the definition of ``\\mathcal{R}(s)`` is the following:
+  ```math
+  \\mathfrak{R}(s) = 1 - \\frac{1}{\\mathcal{H}(s) s} ;
+  ```
+
+- ``b_1``, ``s_{\\mathrm{b}, 1}``, ``\\mathit{f}_{\\mathrm{evo}, 1}`` 
+  (and ``b_2``, ``s_{\\mathrm{b}, 2}``, ``\\mathit{f}_{\\mathrm{evo}, 2}``) : 
+  galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold), 
+  and evolution bias for the first (second) effect;
+
+- ``\\Omega_{\\mathrm{M}0} = \\Omega_{\\mathrm{cdm}} + \\Omega_{\\mathrm{b}}`` is the sum of 
+  cold-dark-matter and barionic density parameters (again, stored in `cosmo`);
+
+- ``I_\\ell^n`` and ``\\sigma_i`` are defined as
+  ```math
+  I_\\ell^n(s) = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_\\ell(qs)}{(qs)^n} \\quad , 
+  \\quad \\sigma_i = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^{2-i} \\, P(q)
+  ```
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`) 
+  and ``j_\\ell`` as spherical Bessel function of order ``\\ell``;
+
+- ``\\tilde{I}_0^4`` is defined as
+  ```math
+  \\tilde{I}_0^4 = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_0(qs) - 1}{(qs)^4}
+  ``` 
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`) 
+  and ``j_\\ell`` as spherical Bessel function of order ``\\ell``;
+
+- ``\\mathcal{H}_0``, ``f_0`` and so on are evaluated at the observer position (i.e. at present day);
+
+- ``\\Delta\\chi_1 := \\sqrt{\\chi_1^2 + s_2^2-2\\,\\chi_1\\,s_2\\,y}`` and 
+  ``\\Delta\\chi_2 := \\sqrt{s_1^2 + \\chi_2^2-2\\,s_1\\,\\chi_2\\,y}``;
+
+- ``s=\\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}`` and 
+  ``\\Delta\\chi := \\sqrt{\\chi_1^2 + \\chi_2^2-2\\,\\chi_1\\,\\chi_2\\,y}``.
+
+This function is used inside `ξ_GNCxLD_IntegratedGP_IntegratedGP` with the trapz() from the 
+[Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package.
 
 ## Inputs
 
-- `IP1::Point` and `IP2::Point`: `Point` inside the integration limits, placed 
-  at comoving distance `χ1` and `χ2` respectively.
+-  `IP1::Point`, `IP2::Point`, `P1::Point`, `P2::Point` or `χ1`,`χ2`,`s1`,`s2`: `Point`/comoving 
+  distances where the TPCF has to be calculated; they contain all the 
+  data of interest needed for this calculus (comoving distance, growth factor and so on).
+  
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
 
-- `P1::Point` and `P2::Point`: extreme `Point` of the integration, placed 
-  at comoving distance `s1` and `s2` respectively.
+- `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
+  used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
 
-- `y`: the cosine of the angle between the two points `P1` and `P2`
+## Keyword Arguments
 
-- `cosmo::Cosmology`: cosmology to be used in this computation
+- `b1=nothing`, `s_b1=nothing`, `𝑓_evo1=nothing` and `b2=nothing`, `s_b2=nothing`, `𝑓_evo2=nothing`:
+  galaxy, magnification and evolutionary biases respectively for the first and the second effect 
+  computed in this TPCF:
+  - if not set (i.e. if you leave the default value `nothing`) the values stored in the input `cosmo`
+    will be considered;
+  - if you set one or more values, they will override the `cosmo` ones in this computation;
+  - the two sets of values should be different only if you are interested in studing two galaxy species;
+  - only the required parameters for the chosen TPCF will be used, depending on its analytical expression;
+    all the others will have no effect, we still inserted them for pragmatical code compatibilities. 
 
+- `s_lim=nothing` : parameter used in order to avoid the divergence of the ``\\mathcal{R}`` and 
+  ``\\mathfrak{R}`` denominators: when ``0 \\leq s \\leq s_\\mathrm{lim}`` the returned values are
+  ```math
+  \\forall \\, s \\in [ 0, s_\\mathrm{lim} ] \\; : \\quad 
+      \\mathfrak{R}(s) = 1 - \\frac{1}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} \\; , \\quad
+      \\mathcal{R}(s) = 5 s_{\\mathrm{b}} + 
+          \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} +  
+          \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}_0^2} - \\mathit{f}_{\\mathrm{evo}} \\; .
+  ```
+  If `nothing`, the fault value stored in `cosmo` will be considered.
 
-See also: [`ξ_GNCxLD_IntegratedGP_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
+See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNCxLD_multipole`](@ref), 
+[`map_ξ_GNCxLD_multipole`](@ref), [`print_map_ξ_GNCxLD_multipole`](@ref)
 """
-function integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1::Point, IP2::Point,
-     P1::Point, P2::Point,
-     y, cosmo::Cosmology)
+integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP
 
-     s1, ℛ_s1 = P1.comdist, P1.ℛ_GNC
-     s2, ℜ_s2 = P2.comdist, P2.ℛ_LD 
-     χ1, D1, a1, ℋ1, f1 = IP1.comdist, IP1.D, IP1.a, IP1.ℋ, IP1.f
-     χ2, D2, a2, ℋ2, f2 = IP2.comdist, IP2.D, IP2.a, IP2.ℋ, IP2.f
-     s_b_s1 = cosmo.params.s_b
-     Ω_M0 = cosmo.params.Ω_M0
 
-     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-     Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
 
-     factor = - 9 * Δχ^4 * ℋ0^4 * Ω_M0^2 * D1 * D2 / (s1 * s2 * a1 * a2)
-     parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2
-     parenth_2 = s2 * ℋ2 * ℜ_s2 * (f2 - 1) - 1
+##########################################################################################92
 
-     I04_tilde = cosmo.tools.I04_tilde(Δχ)
-
-     return factor * parenth_1 * parenth_2 * I04_tilde
-end
 
 
 
 function ξ_GNCxLD_IntegratedGP_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-     en::Float64 = 1e10, N_χs_2::Int = 100)
+    en::Float64 = 1e10, N_χs_2::Int = 100, kwargs...)
 
-     χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
-     χ2s = P2.comdist .* range(1e-6, 1.0, length = N_χs_2 + 7)
+    χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
+    χ2s = P2.comdist .* range(1e-6, 1.0, length = N_χs_2 + 7)
 
-     IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-     IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
+    IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+    IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-     int_ξ_igp = [
-          en * GaPSE.integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1, IP2, P1, P2, y, cosmo)
-          for IP1 in IP1s, IP2 in IP2s
-     ]
+    int_ξ_igp = [
+        en * GaPSE.integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+        for IP1 in IP1s, IP2 in IP2s
+    ]
 
-     res = trapz((χ1s, χ2s), int_ξ_igp)
-     #println("res = $res")
+    res = trapz((χ1s, χ2s), int_ξ_igp)
+    #println("res = $res")
 
-     #=
-     χ1s = [x for x in range(0, P1.comdist, length = N_χs)[begin+1:end]]
-     l = Int(floor(N_χs/2))
-     matrix_χ2s = [begin
-          a = [x for x in range(0, P2.comdist, length=l)[begin+1:end]];
-          b = [x for x in range(x1-focus, x1+focus, length=l)];
-          vcat(a[a.<x1-focus], b, a[a.>x1+focus])
-          end for x1 in χ1s]
+    #=
+    χ1s = [x for x in range(0, P1.comdist, length = N_χs)[begin+1:end]]
+    l = Int(floor(N_χs/2))
+    matrix_χ2s = [begin
+        a = [x for x in range(0, P2.comdist, length=l)[begin+1:end]];
+        b = [x for x in range(x1-focus, x1+focus, length=l)];
+        vcat(a[a.<x1-focus], b, a[a.>x1+focus])
+        end for x1 in χ1s]
 
-     IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-     matrix_IP2s = [[GaPSE.Point(x, cosmo) for x in y] for y in matrix_χ2s]
-     matrix_int_ξs = [
-          [en * GaPSE.integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1, IP2, P1, P2, y, cosmo) 
-          for IP2 in matrix_IP2s[i]]
-          for (i,IP1) in enumerate(IP1s)]
-     
-     vec_trapz = [trapz(χ2s,int_ξs) for (χ2s,int_ξs) in zip(matrix_χ2s, matrix_int_ξs)]
-     res = trapz(χ1s, vec_trapz)
-     =#
-     return res / en
+    IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+    matrix_IP2s = [[GaPSE.Point(x, cosmo) for x in y] for y in matrix_χ2s]
+    matrix_int_ξs = [
+        [en * GaPSE.integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1, IP2, P1, P2, y, cosmo) 
+        for IP2 in matrix_IP2s[i]]
+        for (i,IP1) in enumerate(IP1s)]
+    
+    vec_trapz = [trapz(χ2s,int_ξs) for (χ2s,int_ξs) in zip(matrix_χ2s, matrix_int_ξs)]
+    res = trapz(χ1s, vec_trapz)
+    =#
+    return res / en
 end
 
 
 function ξ_GNCxLD_IntegratedGP_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_GNCxLD_IntegratedGP_IntegratedGP(P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    return ξ_GNCxLD_IntegratedGP_IntegratedGP(P1, P2, y, cosmo; kwargs...)
 end
 
 
 
 """
-     ξ_GNCxLD_IntegratedGP_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
-          en::Float64 = 1e10,
-          N_χs::Int = 100) :: Float64
+    ξ_GNCxLD_IntegratedGP_IntegratedGP(
+        P1::Point, P2::Point, y, cosmo::Cosmology; 
+        en::Float64 = 1e10, N_χs::Int = 100,
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
-     ξ_GNCxLD_IntegratedGP_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...) = 
-          ξ_GNCxLD_IntegratedGP_IntegratedGP(Point(s1, cosmo), Point(s2, cosmo), y, cosmo; kwargs...)
+    ξ_GNCxLD_IntegratedGP_IntegratedGP(
+        s1, s2, y, cosmo::Cosmology; kwargs...) ::Float64
 
-Return the integrated gravitational potential auto-correlation function 
-``\\xi^{\\int\\phi\\int\\phi}(s_1, s_2, \\cos{\\theta})`` concerning the perturbed
-luminosity distance, defined as follows:
-    
-```math
-\\xi^{\\int\\phi\\int\\phi} (s_1, s_2, \\cos{\\theta}) = 
-     \\int_0^{s_1} \\mathrm{d} \\chi_1 \\int_0^{s_2}\\mathrm{d} \\chi_2 \\;
-     J_{40}(s_1, s_2, y, \\chi_1, \\chi_2) \\, \\tilde{I}^4_0(\\chi)
-```
-where ``\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\, \\chi_2 \\, y} ``,
-``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2`` and:
+Return the Two-Point Correlation Function (TPCF) given by the cross correlation 
+between the Integrated Gravitational Potential (GP) effect arising from the 
+Galaxy Number Counts (GNC) and the Integrated GP
+one arising from the Luminosity Distance (LD) perturbations.
+
+In the first method, you should pass the two extreme `Point`s (`P1` and `P2`) where to 
+evaluate the function. In the second method (that internally recalls the first),
+you must provide the two corresponding comoving distances `s1`, `s2`.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
+
+The analytical expression of this TPCF is the following:
+
 ```math
 \\begin{split}
-     &J_{40}(s_1, s_2, y, \\chi_1, \\chi_2)  = 
-          \\frac{
-               9 \\mathcal{H}_0^4 \\Omega_{M0}^2 D(\\chi_1) D(\\chi_2) \\chi^4
-          }{    a(\\chi_1) a(\\chi_2) s_1 s_2} 
-          (s_2 \\mathcal{H}(\\chi_2) \\mathcal{R}(s_2) (f(\\chi_2)-1) - 1) 
-          (s_1 \\mathcal{H}(\\chi_1) \\mathcal{R}(s_1) (f(\\chi_1)-1) - 1)\\\\[5pt]
-     &\\tilde{I}^4_0 (s) = \\int_0^\\infty \\frac{\\mathrm{d}q}{2\\pi^2} 
-          q^2 \\, P(q) \\, \\frac{j_0(q s) - 1}{(q s)^4}
+    \\xi^{\\int\\!\\phi \\, \\int \\!\\phi }( s_1 , s_2, y ) = 
+    \\int_0^{s_1}\\! \\mathrm{d}\\chi_1  \\int_0^{s_2}\\! \\mathrm{d}\\chi_2 \\;  
+    \\mathfrak{J}^{\\int \\!\\phi \\int \\!\\phi}_{40} 
+    \\tilde{I}_0^4 ( \\Delta\\chi) \\, ,
 \\end{split}
 ```
-and ``P(q)`` is the input power spectrum.
 
+with
 
-The computation is made applying [`trapz`](@ref) (see the 
+```math
+\\begin{split}
+    \\mathfrak{J}^{\\int \\!\\phi\\int \\!\\phi}_{40} =
+    - \\frac{
+        9 \\Delta\\chi ^4 \\mathcal{H}_0^4 \\Omega_{\\mathrm{M}0}^2 D(\\chi_1) D(\\chi_2)
+    }{
+        a(\\chi_1) a(\\chi_2) s_1 s_2
+    }
+    &\\left[
+        s_1 (f(\\chi_1) - 1) \\mathcal{H}(\\chi_1) \\mathcal{R}_1 - 5 s_{\\mathrm{b}, 1}  + 2
+    \\right] \\times
+    \\nonumber \\\\
+    &\\left[
+        s_2 (f(\\chi_2) - 1) \\mathcal{H}(\\chi_2) \\mathfrak{R}_2 - 1
+    \\right]
+    \\, ,
+\\end{split}
+```
+
+where:
+
+- ``s_1`` and ``s_2`` are comoving distances;
+
+- ``D_1 = D(s_1)``, ... is the linear growth factor (evaluated in ``s_1``);
+
+- ``a_1 = a(s_1)``, ... is the scale factor (evaluated in ``s_1``);
+
+- ``f_1 = f(s_1)``, ... is the linear growth rate (evaluated in ``s_1``);
+
+- ``\\mathcal{H}_1 = \\mathcal{H}(s_1)``, ... is the comoving 
+  Hubble distances (evaluated in ``s_1``);
+
+- ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``;
+
+- ``\\mathcal{R}_1 = \\mathcal{R}(s_1)``, ... is 
+  computed by `func_ℛ_GNC` in `cosmo::Cosmology` (and evaluated in ``s_1`` );
+  the definition of ``\\mathcal{R}(s)`` is the following:
+  ```math
+  \\mathcal{R}(s) = 5 s_{\\mathrm{b}}(s) + \\frac{2 - 5 s_{\\mathrm{b}}(s)}{\\mathcal{H}(s) \\, s} +  
+  \\frac{\\dot{\\mathcal{H}}(s)}{\\mathcal{H}(s)^2} - \\mathit{f}_{\\mathrm{evo}} \\quad ;
+  ```
+
+- ``\\mathfrak{R}_1 = \\mathfrak{R}(s_1)``, ... is 
+  computed by `func_ℛ_LD` in `cosmo::Cosmology` (and evaluated in ``s_1`` );
+  the definition of ``\\mathcal{R}(s)`` is the following:
+  ```math
+  \\mathfrak{R}(s) = 1 - \\frac{1}{\\mathcal{H}(s) s} ;
+  ```
+
+- ``b_1``, ``s_{\\mathrm{b}, 1}``, ``\\mathit{f}_{\\mathrm{evo}, 1}`` 
+  (and ``b_2``, ``s_{\\mathrm{b}, 2}``, ``\\mathit{f}_{\\mathrm{evo}, 2}``) : 
+  galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold), 
+  and evolution bias for the first (second) effect;
+
+- ``\\Omega_{\\mathrm{M}0} = \\Omega_{\\mathrm{cdm}} + \\Omega_{\\mathrm{b}}`` is the sum of 
+  cold-dark-matter and barionic density parameters (again, stored in `cosmo`);
+
+- ``I_\\ell^n`` and ``\\sigma_i`` are defined as
+  ```math
+  I_\\ell^n(s) = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_\\ell(qs)}{(qs)^n} \\quad , 
+  \\quad \\sigma_i = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^{2-i} \\, P(q)
+  ```
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`) 
+  and ``j_\\ell`` as spherical Bessel function of order ``\\ell``;
+
+- ``\\tilde{I}_0^4`` is defined as
+  ```math
+  \\tilde{I}_0^4 = \\int_0^{+\\infty} \\frac{\\mathrm{d}q}{2\\pi^2} 
+  \\, q^2 \\, P(q) \\, \\frac{j_0(qs) - 1}{(qs)^4}
+  ``` 
+  with ``P(q)`` as the matter Power Spectrum at ``z=0`` (stored in `cosmo`) 
+  and ``j_\\ell`` as spherical Bessel function of order ``\\ell``;
+
+- ``\\mathcal{H}_0``, ``f_0`` and so on are evaluated at the observer position (i.e. at present day);
+
+- ``\\Delta\\chi_1 := \\sqrt{\\chi_1^2 + s_2^2-2\\,\\chi_1\\,s_2\\,y}`` and 
+  ``\\Delta\\chi_2 := \\sqrt{s_1^2 + \\chi_2^2-2\\,s_1\\,\\chi_2\\,y}``;
+
+- ``s=\\sqrt{s_1^2 + s_2^2 - 2 \\, s_1 \\, s_2 \\, y}`` and 
+  ``\\Delta\\chi := \\sqrt{\\chi_1^2 + \\chi_2^2-2\\,\\chi_1\\,\\chi_2\\,y}``.
+
+The computation is made applying trapz() (see the 
 [Trapz](https://github.com/francescoalemanno/Trapz.jl) Julia package) to
-the integrand function `integrand_ξ_GNC_Lensing`.
-
+the integrand function `integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP`.
 
 ## Inputs
 
-- `s1` and `s2`: comovign distances where the function must be evaluated
+- `P1::Point`, `P2::Point` or `s1`,`s2`: `Point`/comoving 
+  distances where the TPCF has to be calculated; they contain all the 
+  data of interest needed for this calculus (comoving distance, growth factor and so on).
+  
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
 
-- `y`: the cosine of the angle between the two points `P1` and `P2`
+- `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
+  used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
 
-- `cosmo::Cosmology`: cosmology to be used in this computation
+## Keyword Arguments
 
+- `b1=nothing`, `s_b1=nothing`, `𝑓_evo1=nothing` and `b2=nothing`, `s_b2=nothing`, `𝑓_evo2=nothing`:
+  galaxy, magnification and evolutionary biases respectively for the first and the second effect 
+  computed in this TPCF:
+  - if not set (i.e. if you leave the default value `nothing`) the values stored in the input `cosmo`
+    will be considered;
+  - if you set one or more values, they will override the `cosmo` ones in this computation;
+  - the two sets of values should be different only if you are interested in studing two galaxy species;
+  - only the required parameters for the chosen TPCF will be used, depending on its analytical expression;
+    all the others will have no effect, we still inserted them for pragmatical code compatibilities. 
 
-## Optional arguments 
+- `s_lim=nothing` : parameter used in order to avoid the divergence of the ``\\mathcal{R}`` and 
+  ``\\mathfrak{R}`` denominators: when ``0 \\leq s \\leq s_\\mathrm{lim}`` the returned values are
+  ```math
+  \\forall \\, s \\in [ 0, s_\\mathrm{lim} ] \\; : \\quad 
+      \\mathfrak{R}(s) = 1 - \\frac{1}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} \\; , \\quad
+      \\mathcal{R}(s) = 5 s_{\\mathrm{b}} + 
+          \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} +  
+          \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}_0^2} - \\mathit{f}_{\\mathrm{evo}} \\; .
+  ```
+  If `nothing`, the fault value stored in `cosmo` will be considered.
 
-- `en::Float64 = 1e10`: just a float number used in order to deal better 
-  with small numbers.
+- `en::Float64 = 1e6`: just a float number used in order to deal better 
+  with small numbers;
 
-- `N_χs::Int = 100`: number of points to be used for sampling the integral
-  along the ranges `(0, s1)` (for `χ1`) and `(0, s1)` (for `χ2`); it has been checked that
-  with `N_χs ≥ 50` the result is stable.
+- `N_χs_2::Int = 100`: number of points to be used for sampling the integral
+  along the ranges `(0, s1)` (for `χ1`) and `(0, s2)` (for `χ2`); it has been checked that
+  with `N_χs_2 ≥ 50` the result is stable.
 
-See also: [`integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP`](@ref), [`integrand_on_mu_IntegratedGP`](@ref)
-[`integral_on_mu`](@ref), [`ξ_GNC_multipole`](@ref)
+See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNCxLD_multipole`](@ref), 
+[`map_ξ_GNCxLD_multipole`](@ref), [`print_map_ξ_GNCxLD_multipole`](@ref)
 """
 ξ_GNCxLD_IntegratedGP_IntegratedGP
 
 
-##########################################################################################92
 
 ##########################################################################################92
 
 ##########################################################################################92
 
+##########################################################################################92
 
 
-function ξ_LDxGNC_IntegratedGP_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_GNCxLD_IntegratedGP_IntegratedGP(s2, s1, y, cosmo; kwargs...)
+
+"""
+    ξ_LDxGNC_IntegratedGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;         
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        obs::Union{Bool, Symbol} = :noobsvel ) ::Float64
+
+Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the Integrated
+Gravitational Potential (GP) effect arising from the Luminosity Distance (LD) perturbations and 
+the Integrated GP one arising from the Galaxy Number Counts (GNC).
+
+It's computed through the symmetric function `ξ_GNCxLD_IntegratedGP_IntegratedGP`; check its documentation for
+more details about the analytical expression and the keyword arguments.
+We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
+
+
+## Inputs
+
+- `s1` and `s2`: comoving distances where the TPCF has to be calculated;
+  
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
+
+- `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
+  used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
+
+## Keyword Arguments
+
+- `kwargs...` : Keyword arguments to be passed to the symmetric TPCF
+
+See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
+[`map_ξ_LDxGNC_multipole`](@ref), [`print_map_ξ_LDxGNC_multipole`](@ref),
+[`ξ_GNCxLD_IntegratedGP_IntegratedGP`](@ref)
+"""
+function ξ_LDxGNC_IntegratedGP_IntegratedGP(s1, s2, y, cosmo::Cosmology; 
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
+    
+    b1 = isnothing(b1) ? cosmo.params.b1 : b1
+    b2 = isnothing(b2) ? cosmo.params.b2 : b2
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+
+    ξ_GNCxLD_IntegratedGP_IntegratedGP(s2, s1, y, cosmo; 
+        b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
+        𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end

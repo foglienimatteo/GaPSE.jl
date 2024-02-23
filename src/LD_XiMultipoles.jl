@@ -19,51 +19,53 @@
 
 
 function integrand_ξ_LD_multipole(s1, s, μ, effect::Function, cosmo::Cosmology;
-     L::Int=0, use_windows::Bool=true, kwargs...)
+    L::Int=0, use_windows::Bool=true, kwargs...)
 
-     s2_value = s2(s1, s, μ)
-     y_value = y(s1, s, μ)
+    s2_value = s2(s1, s, μ)
+    (cosmo.s_spline_lim ≥ s2_value) || (return 0.0)
+    
+    y_value = y(s1, s, μ)
 
-     res = if use_windows == true
-          #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
-          int = effect(s1, s2_value, y_value, cosmo; kwargs...)
-          #print(" F_val = ", spline_integrF(s, μ, cosmo.windowFint))
-          #isapprox(cost, 3.1749350588720085e10; rtol=1e-5) || print(" \t cost = " , cosmo.WFI_norm)
-          #isapprox(Pl(μ, L), 1.0; rotl=1e-4) || println(" \t Lp = " , Pl(μ, L) )
-          #println("IF = $val")
+    res = if use_windows == true
+        #println("s1 = $s1 \\t s2 = $(s2(s1, s, μ)) \\t  y=$(y(s1, s, μ))")
+        int = effect(s1, s2_value, y_value, cosmo; kwargs...)
+        #print(" F_val = ", spline_integrF(s, μ, cosmo.windowFint))
+        #isapprox(cost, 3.1749350588720085e10; rtol=1e-5) || print(" \t cost = " , cosmo.WFI_norm)
+        #isapprox(Pl(μ, L), 1.0; rotl=1e-4) || println(" \t Lp = " , Pl(μ, L) )
+        #println("IF = $val")
 
-          int .* (spline_integrF(s, μ, cosmo.windowFint) / cosmo.WFI_norm * Pl(μ, L))
-          #=
-          ϕ_s2 = ϕ(s2_value, cosmo.s_min, cosmo.s_max)
-          (ϕ_s2 > 0.0) || (return 0.0)
-          int = effect(s1, s2_value, y_value, cosmo; kwargs...)
-          int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
-          =#
-     else
-          int = effect(s1, s2_value, y_value, cosmo; kwargs...)
-          int .* Pl(μ, L)
-     end
+        int .* (spline_integrF(s, μ, cosmo.windowFint) / cosmo.WFI_norm * Pl(μ, L))
+        #=
+        ϕ_s2 = ϕ(s2_value, cosmo.s_min, cosmo.s_max)
+        (ϕ_s2 > 0.0) || (return 0.0)
+        int = effect(s1, s2_value, y_value, cosmo; kwargs...)
+        int .* (ϕ_s2 * spline_F(s / s1, μ, cosmo.windowF) * Pl(μ, L))
+        =#
+    else
+        int = effect(s1, s2_value, y_value, cosmo; kwargs...)
+        int .* Pl(μ, L)
+    end
 
-     return (2.0 * L + 1.0) / 2.0 * res
+    return (2.0 * L + 1.0) / 2.0 * res
 end
 
 
 function integrand_ξ_LD_multipole(s1, s, μ, effect::String, cosmo::Cosmology; kwargs...)
-     error = "$effect is not a valid GR effect name.\n" *
-             "Valid GR effect names are the following:\n" *
-             string(GaPSE.GR_EFFECTS_LD .* " , "...)
-     @assert (effect ∈ GaPSE.GR_EFFECTS_LD) error
+    error = "$effect is not a valid GR effect name.\n" *
+            "Valid GR effect names are the following:\n" *
+            string(GaPSE.GR_EFFECTS_LD .* " , "...)
+    @assert (effect ∈ GaPSE.GR_EFFECTS_LD) error
 
-     return integrand_ξ_LD_multipole(s1, s, μ, DICT_GR_ξs_LD[effect], cosmo; kwargs...)
+    return integrand_ξ_LD_multipole(s1, s, μ, DICT_GR_ξs_LD[effect], cosmo; kwargs...)
 end
 
 
 
 """
-     integrand_ξ_LD_multipole(s1, s, μ, effect::Function, cosmo::Cosmology;
-          L::Int = 0, use_windows::Bool = true, kwargs...)
+    integrand_ξ_LD_multipole(s1, s, μ, effect::Function, cosmo::Cosmology;
+        L::Int = 0, use_windows::Bool = true, kwargs...)
 
-     integrand_ξ_LD_multipole(s1, s, μ, effect::String, cosmo::Cosmology; kwargs...)
+    integrand_ξ_LD_multipole(s1, s, μ, effect::String, cosmo::Cosmology; kwargs...)
 
 Return the integrand on ``\\mu = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}`` 
 of the chosen perturbation of the Luminosity Distance (LD) Two-Point Correlation Function (TPCF)
@@ -143,80 +145,80 @@ integrand_ξ_LD_multipole
 
 
 function ξ_LD_multipole(
-     s1, s, effect::Function, cosmo::Cosmology;
-     L::Int=0, alg::Symbol=:lobatto,
-     use_windows::Bool=true,
-     N_lob::Int=100, N_trap::Int=200,
-     atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
-     enhancer::Float64=1e6,
-     kwargs...)
+    s1, s, effect::Function, cosmo::Cosmology;
+    L::Int=0, alg::Symbol=:lobatto,
+    use_windows::Bool=true,
+    N_lob::Int=100, N_trap::Int=200,
+    atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
+    enhancer::Float64=1e6,
+    kwargs...)
 
-     error = "$(string(effect)) is not a valid GR effect function for galaxy number counts.\n" *
-             "Valid GR effect functions for galaxy number counts are the following:\n" *
-             string(string.(VEC_ξs_LD) .* " , "...)
-     @assert (effect ∈ VEC_ξs_LD) error
-     @assert alg ∈ VALID_INTEGRATION_ALGORITHM ":$alg is not a valid Symbol for \"alg\"; they are: \n\t" *
-                                               "$(":".*string.(VALID_INTEGRATION_ALGORITHM) .* vcat([" , " for i in 1:length(VALID_INTEGRATION_ALGORITHM)-1], " .")... )"
+    error = "$(string(effect)) is not a valid GR effect function for galaxy number counts.\n" *
+            "Valid GR effect functions for galaxy number counts are the following:\n" *
+            string(string.(VEC_ξs_LD) .* " , "...)
+    @assert (effect ∈ VEC_ξs_LD) error
+    @assert alg ∈ VALID_INTEGRATION_ALGORITHM ":$alg is not a valid Symbol for \"alg\"; they are: \n\t" *
+                                            "$(":".*string.(VALID_INTEGRATION_ALGORITHM) .* vcat([" , " for i in 1:length(VALID_INTEGRATION_ALGORITHM)-1], " .")... )"
 
-     @assert N_trap > 2 "N_trap must be >2,  N_trap = $N_trap is not!"
-     @assert N_lob > 2 "N_lob must be >2,  N_lob = $N_lob is not!"
-     @assert atol_quad ≥ 0.0 "atol_quad must be ≥ 0.0,  atol_quad = $atol_quad is not!"
-     @assert rtol_quad ≥ 0.0 "rtol_trap must be ≥ 0.0,  rtol_quad = $rtol_quad is not!"
-     @assert L ≥ 0 "L must be ≥ 0, L = $L is not!"
+    @assert N_trap > 2 "N_trap must be >2,  N_trap = $N_trap is not!"
+    @assert N_lob > 2 "N_lob must be >2,  N_lob = $N_lob is not!"
+    @assert atol_quad ≥ 0.0 "atol_quad must be ≥ 0.0,  atol_quad = $atol_quad is not!"
+    @assert rtol_quad ≥ 0.0 "rtol_trap must be ≥ 0.0,  rtol_quad = $rtol_quad is not!"
+    @assert L ≥ 0 "L must be ≥ 0, L = $L is not!"
 
 
-     orig_f(μ) = enhancer * integrand_ξ_LD_multipole(s1, s, μ, effect, cosmo;
-          L=L, use_windows=use_windows, kwargs...)
+    orig_f(μ) = enhancer * integrand_ξ_LD_multipole(s1, s, μ, effect, cosmo;
+        L=L, use_windows=use_windows, kwargs...)
 
-     int = if alg == :lobatto
-          xs, ws = gausslobatto(N_lob)
-          dot(ws, orig_f.(xs))
+    int = if alg == :lobatto
+        xs, ws = gausslobatto(N_lob)
+        dot(ws, orig_f.(xs))
 
-     elseif alg == :quad
-          quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=atol_quad, rtol=rtol_quad)[1]
+    elseif alg == :quad
+        quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=atol_quad, rtol=rtol_quad)[1]
 
-     elseif alg == :trap
-          μs = union(
-               range(-1.0, -0.98, length=Int(ceil(N_trap / 3) + 1)),
-               range(-0.98, 0.98, length=Int(ceil(N_trap / 3) + 1)),
-               range(0.98, 1.0, length=Int(ceil(N_trap / 3) + 1))
-          )
-          #μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_trap)
-          orig_fs = orig_f.(μs)
-          trapz(μs, orig_fs)
+    elseif alg == :trap
+        μs = union(
+            range(-1.0, -0.98, length=Int(ceil(N_trap / 3) + 1)),
+            range(-0.98, 0.98, length=Int(ceil(N_trap / 3) + 1)),
+            range(0.98, 1.0, length=Int(ceil(N_trap / 3) + 1))
+        )
+        #μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_trap)
+        orig_fs = orig_f.(μs)
+        trapz(μs, orig_fs)
 
-     else
-          throw(AssertionError("how did you arrive here?"))
-     end
+    else
+        throw(AssertionError("how the hell did you arrive here?"))
+    end
 
-     return int / enhancer
+    return int / enhancer
 end
 
 
 
 function ξ_LD_multipole(s1, s, effect::String, cosmo::Cosmology; kwargs...)
-     error = "$effect is not a valid GR effect name for galaxy number counts.\n" *
-             "Valid GR effect names for galaxy number counts are the following:\n" *
-             string(GaPSE.GR_EFFECTS_LD .* " , "...)
+    error = "$effect is not a valid GR effect name for galaxy number counts.\n" *
+            "Valid GR effect names for galaxy number counts are the following:\n" *
+            string(GaPSE.GR_EFFECTS_LD .* " , "...)
 
-     @assert (effect ∈ GaPSE.GR_EFFECTS_LD) error
-     ξ_LD_multipole(s1, s, DICT_GR_ξs_LD[effect], cosmo; kwargs...)
+    @assert (effect ∈ GaPSE.GR_EFFECTS_LD) error
+    ξ_LD_multipole(s1, s, DICT_GR_ξs_LD[effect], cosmo; kwargs...)
 end
 
 
 
 """
-     ξ_LD_multipole(
-          s1, s, effect::Function, cosmo::Cosmology;
-          L::Int = 0, alg::Symbol = :lobatto, 
-          use_windows::Bool = true, 
-          N_lob::Int = 100, N_trap::Int = 200, 
-          atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
-          enhancer::Float64 = 1e6, 
-          kwargs...) ::Float64
+    ξ_LD_multipole(
+        s1, s, effect::Function, cosmo::Cosmology;
+        L::Int = 0, alg::Symbol = :lobatto, 
+        use_windows::Bool = true, 
+        N_lob::Int = 100, N_trap::Int = 200, 
+        atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
+        enhancer::Float64 = 1e6, 
+        kwargs...) ::Float64
 
-     ξ_LD_multipole(s1, s, effect::String, cosmo::Cosmology; 
-          kwargs...) ::Float64
+    ξ_LD_multipole(s1, s, effect::String, cosmo::Cosmology; 
+        kwargs...) ::Float64
 
 Evaluate the multipole of order `L` of the chosen perturbation of the Luminosity 
 Distance (LD) Two-Point Correlation Function (TPCF) 
@@ -319,14 +321,14 @@ See also: [`integrand_ξ_LD_multipole`](@ref),
 
 
 """
-     map_ξ_LD_multipole(cosmo::Cosmology,
-          effect::Union{String,Function}, ss = nothing;
-          s1 = nothing, L::Int = 0, alg::Symbol = :lobatto,
-          N_lob::Int = 100, N_trap::Int = 50,
-          atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
-          enhancer::Float64=1e6, N_log::Int = 1000, 
-          pr::Bool = true,
-          kwargs...) ::Tuple{Vector{Float64}, Vector{Float64}}
+    map_ξ_LD_multipole(cosmo::Cosmology,
+        effect::Union{String,Function}, ss = nothing;
+        s1 = nothing, L::Int = 0, alg::Symbol = :lobatto,
+        N_lob::Int = 100, N_trap::Int = 50,
+        atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
+        enhancer::Float64=1e6, N_log::Int = 1000, 
+        pr::Bool = true,
+        kwargs...) ::Tuple{Vector{Float64}, Vector{Float64}}
 
 Evaluate the multipole of order `L` of the chosen perturbation of the Luminosity 
 Distance (LD) Two-Point Correlation Function (TPCF) term for all the comoving distance 
@@ -435,91 +437,91 @@ See also: [`integrand_ξ_LD_multipole`](@ref), [`ξ_LD_multipole`](@ref),
 [`y`](@ref), [`s2`](@ref), [`GR_EFFECTS_LD`](@ref), [`GaPSE.VEC_ξs_LD`](@ref)
 """
 function map_ξ_LD_multipole(cosmo::Cosmology,
-     effect::Union{String,Function}, ss=nothing;
-     s1=nothing, L::Int=0, alg::Symbol=:lobatto,
-     N_lob::Int=100, N_trap::Int=50,
-     atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
-     enhancer::Float64=1e6, N_log::Int=1000,
-     pr::Bool=true, sum_xi::Bool=false,
-     kwargs...)
+    effect::Union{String,Function}, ss=nothing;
+    s1=nothing, L::Int=0, alg::Symbol=:lobatto,
+    N_lob::Int=100, N_trap::Int=50,
+    atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
+    enhancer::Float64=1e6, N_log::Int=1000,
+    pr::Bool=true, sum_xi::Bool=false,
+    kwargs...)
 
-     @assert alg ∈ VALID_INTEGRATION_ALGORITHM ":$alg is not a valid Symbol for \"alg\"; they are: \n\t" *
-                                               "$(":".*string.(VALID_INTEGRATION_ALGORITHM) .* vcat([" , " for i in 1:length(VALID_INTEGRATION_ALGORITHM)-1], " .")... )"
+    @assert alg ∈ VALID_INTEGRATION_ALGORITHM ":$alg is not a valid Symbol for \"alg\"; they are: \n\t" *
+                                            "$(":".*string.(VALID_INTEGRATION_ALGORITHM) .* vcat([" , " for i in 1:length(VALID_INTEGRATION_ALGORITHM)-1], " .")... )"
 
-     @assert N_trap > 2 "N_trap must be >2,  N_trap = $N_trap is not!"
-     @assert N_lob > 2 "N_lob must be >2,  N_lob = $N_lob is not!"
-     @assert atol_quad ≥ 0.0 "atol_quad must be ≥ 0.0,  atol_quad = $atol_quad is not!"
-     @assert rtol_quad ≥ 0.0 "rtol_trap must be ≥ 0.0,  rtol_quad = $rtol_quad is not!"
-     @assert L ≥ 0 "L must be ≥ 0, L = $L is not!"
+    @assert N_trap > 2 "N_trap must be >2,  N_trap = $N_trap is not!"
+    @assert N_lob > 2 "N_lob must be >2,  N_lob = $N_lob is not!"
+    @assert atol_quad ≥ 0.0 "atol_quad must be ≥ 0.0,  atol_quad = $atol_quad is not!"
+    @assert rtol_quad ≥ 0.0 "rtol_trap must be ≥ 0.0,  rtol_quad = $rtol_quad is not!"
+    @assert L ≥ 0 "L must be ≥ 0, L = $L is not!"
 
-     t1 = time()
+    t1 = time()
 
 
-     s_1 = isnothing(s1) ? cosmo.s_eff : s1
-     v_ss = isnothing(ss) ? 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log) : ss
-     xis = [0.0 for i in 1:length(v_ss)]
+    s_1 = isnothing(s1) ? cosmo.s_eff : s1
+    v_ss = isnothing(ss) ? 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log) : ss
+    xis = [0.0 for i in 1:length(v_ss)]
 
-     orig_f(μ, s) = enhancer * integrand_ξ_LD_multipole(s_1, s, μ, effect, cosmo;
-          L=L, kwargs...)
+    orig_f(μ, s) = enhancer * integrand_ξ_LD_multipole(s_1, s, μ, effect, cosmo;
+        L=L, kwargs...)
 
-     if alg == :lobatto
-          μs, ws = gausslobatto(N_lob)
+    if alg == :lobatto
+        μs, ws = gausslobatto(N_lob)
 
-          global xis = pr ? begin
-               @showprogress "$effect, L=$L: " [
-                    dot(ws, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
-               ]
-          end : [
-               dot(ws, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
-          ]
+        global xis = pr ? begin
+            @showprogress "$effect, L=$L: " [
+                dot(ws, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
+            ]
+        end : [
+            dot(ws, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
+        ]
 
-     elseif alg == :quad
+    elseif alg == :quad
 
-          global xis = pr ? begin
-               @showprogress "$effect, L=$L: " [
-                    quadgk(μ -> orig_f(μ, s), -1.0, 1.0;
-                         atol=atol_quad, rtol=rtol_quad)[1] / enhancer for s in v_ss
-               ]
-          end : [
-               quadgk(μ -> orig_f(μ, s), -1.0, 1.0;
-                    atol=atol_quad, rtol=rtol_quad)[1] / enhancer for s in v_ss
-          ]
+        global xis = pr ? begin
+            @showprogress "$effect, L=$L: " [
+                quadgk(μ -> orig_f(μ, s), -1.0, 1.0;
+                        atol=atol_quad, rtol=rtol_quad)[1] / enhancer for s in v_ss
+            ]
+        end : [
+            quadgk(μ -> orig_f(μ, s), -1.0, 1.0;
+                atol=atol_quad, rtol=rtol_quad)[1] / enhancer for s in v_ss
+        ]
 
-     elseif alg == :trap
+    elseif alg == :trap
 
-          μs = union(
-               range(-1.0, -0.98, length=Int(ceil(N_trap / 3) + 1)),
-               range(-0.98, 0.98, length=Int(ceil(N_trap / 3) + 1)),
-               range(0.98, 1.0, length=Int(ceil(N_trap / 3) + 1))
-          )
-          #μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_trap)
+        μs = union(
+            range(-1.0, -0.98, length=Int(ceil(N_trap / 3) + 1)),
+            range(-0.98, 0.98, length=Int(ceil(N_trap / 3) + 1)),
+            range(0.98, 1.0, length=Int(ceil(N_trap / 3) + 1))
+        )
+        #μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_trap)
 
-          global xis = pr ? begin
-               @showprogress "$effect, L=$L: " [
-                    trapz(μs, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
-               ]
-          end : [
-               trapz(μs, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
-          ]
+        global xis = pr ? begin
+            @showprogress "$effect, L=$L: " [
+                trapz(μs, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
+            ]
+        end : [
+            trapz(μs, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
+        ]
 
-     else
-          throw(AssertionError("how did you arrive here?"))
-     end
+    else
+        throw(AssertionError("how the hell did you arrive here?"))
+    end
 
-     #=
-     xis = pr ? begin
-          @showprogress "$effect, L=$L: " [
-               ξ_LD_multipole(s_1, s, effect, cosmo; L=L, kwargs...) for s in v_ss
-          ]
-     end : [
-          ξ_LD_multipole(s_1, s, effect, cosmo; L=L, kwargs...) for s in v_ss
-     ]
-     =#
+    #=
+    xis = pr ? begin
+        @showprogress "$effect, L=$L: " [
+            ξ_LD_multipole(s_1, s, effect, cosmo; L=L, kwargs...) for s in v_ss
+        ]
+    end : [
+        ξ_LD_multipole(s_1, s, effect, cosmo; L=L, kwargs...) for s in v_ss
+    ]
+    =#
 
-     t2 = time()
-     (!sum_xi) && (pr) && println("\ntime needed for map_ξ_LD_multipole for $effect, L=$L " *
-                                  "[in s] = $(@sprintf("%.5f", t2-t1)) \n")
-     return (v_ss, xis)
+    t2 = time()
+    (!sum_xi) && (pr) && println("\ntime needed for map_ξ_LD_multipole for $effect, L=$L " *
+                                "[in s] = $(@sprintf("%.5f", t2-t1)) \n")
+    return (v_ss, xis)
 end
 
 
@@ -527,16 +529,16 @@ end
 
 
 """
-     print_map_ξ_LD_multipole(
-          cosmo::Cosmology, out::String,
-          effect::Union{String,Function},
-          ss = nothing;
-          s1 = nothing, L::Int = 0, alg::Symbol = :lobatto,
-          N_lob::Int = 100, N_trap::Int = 50,
-          atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
-          enhancer::Float64=1e6, N_log::Int = 1000, 
-          pr::Bool = true,
-          kwargs...)
+    print_map_ξ_LD_multipole(
+        cosmo::Cosmology, out::String,
+        effect::Union{String,Function},
+        ss = nothing;
+        s1 = nothing, L::Int = 0, alg::Symbol = :lobatto,
+        N_lob::Int = 100, N_trap::Int = 50,
+        atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
+        enhancer::Float64=1e6, N_log::Int = 1000, 
+        pr::Bool = true,
+        kwargs...)
 
 Evaluate the multipole of order `L` of the of the chosen perturbation of the Luminosity 
 Distance (LD) Two-Point Correlation Function (TPCF) term for all the comoving distance 
@@ -644,42 +646,42 @@ See also: [`integrand_ξ_LD_multipole`](@ref), [`ξ_LD_multipole`](@ref),
 [`y`](@ref), [`s2`](@ref), [`GR_EFFECTS_LD`](@ref), [`GaPSE.VEC_ξs_LD`](@ref)
 """
 function print_map_ξ_LD_multipole(
-     cosmo::Cosmology, out::String,
-     effect::Union{String,Function}, ss=nothing;
-     s1=nothing, L::Int=0, kwargs...)
+    cosmo::Cosmology, out::String,
+    effect::Union{String,Function}, ss=nothing;
+    s1=nothing, L::Int=0, kwargs...)
 
-     check_parent_directory(out)
-     check_namefile(out)
+    check_parent_directory(out)
+    check_namefile(out)
 
-     s_1 = isnothing(s1) ? cosmo.s_eff : s1
-     t1 = time()
-     vec = map_ξ_LD_multipole(cosmo, effect, ss; s1=s_1, L=L, kwargs...)
-     t2 = time()
+    s_1 = isnothing(s1) ? cosmo.s_eff : s1
+    t1 = time()
+    vec = map_ξ_LD_multipole(cosmo, effect, ss; s1=s_1, L=L, kwargs...)
+    t2 = time()
 
-     isfile(out) && run(`rm $out`)
-     open(out, "w") do io
-          println(io, BRAND)
+    isfile(out) && run(`rm $out`)
+    open(out, "w") do io
+        println(io, BRAND)
 
-          println(io, "#\n# This is an integration map on mu of the ξ L=$L multipole $effect GR effect")
-          println(io, "# concerning the relativistic galaxy number counts.")
-          parameters_used(io, cosmo; logo=false)
-          println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
-          print(io, "# kwards passed: ")
+        println(io, "#\n# This is an integration map on mu of the ξ L=$L multipole $effect GR effect")
+        println(io, "# concerning the relativistic galaxy number counts.")
+        parameters_used(io, cosmo; logo=false)
+        println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
+        print(io, "# kwards passed: ")
 
-          println(io, "\n# \t\tL = $L")
-          if !isempty(kwargs)
-               for key in keys(kwargs)
-                    println(io, "# \t\t$(key) = $(kwargs[key])")
-               end
-          end
+        println(io, "\n# \t\tL = $L")
+        if !isempty(kwargs)
+            for key in keys(kwargs)
+                println(io, "# \t\t$(key) = $(kwargs[key])")
+            end
+        end
 
-          isnothing(s1) || println(io, "#\n# NOTE: the computation is done not in " *
-                                       "s1 = s_eff, because you specified in input s1 = $s1 !")
-          println(io, "# ")
-          println(io, "# s [Mpc/h_0] \t \t xi")
-          for (s, xi) in zip(vec[1], vec[2])
-               println(io, "$s \t $xi")
-          end
-     end
+        isnothing(s1) || println(io, "#\n# NOTE: the computation is done not in " *
+                                    "s1 = s_eff, because you specified in input s1 = $s1 !")
+        println(io, "# ")
+        println(io, "# s [Mpc/h_0] \t \t xi")
+        for (s, xi) in zip(vec[1], vec[2])
+            println(io, "$s \t $xi")
+        end
+    end
 end
 

@@ -20,17 +20,17 @@
 
 
 """
-     TF(
-          left_value::Float64
-          left::Float64
+    TF(
+        left_value::Float64
+        left::Float64
 
-          spline::Dierckx.Spline1D
+        spline::Dierckx.Spline1D
 
-          r_si::Float64
-          r_b::Float64
-          r_a::Float64
-          right::Float64
-          )
+        r_si::Float64
+        r_b::Float64
+        r_a::Float64
+        right::Float64
+        )
 
 Contains all the information useful in order to return the Transfer Function value from:
 - a spline inside the interval `left ≤ x ≤ right`
@@ -68,31 +68,31 @@ value and fit with `power_law_from_data` the last 15.
 See also: [`power_law_from_data`](@ref)
 """
 struct TF
-     left_value::Float64
-     left::Float64
+    left_value::Float64
+    left::Float64
 
-     spline::Dierckx.Spline1D
+    spline::Dierckx.Spline1D
 
-     r_si::Float64
-     r_b::Float64
-     r_a::Float64
-     right::Float64
+    r_si::Float64
+    r_b::Float64
+    r_a::Float64
+    right::Float64
 
 
-     function TF(ks, Tks)
-          left_val = sum(Tks[1:10]) / 10
-          r_si, r_b, r_a = power_law_from_data(
-               ks, Tks, [-2.0, 1.0], ks[end-15], ks[end]; con=false)
-          spline = Spline1D(ks, Tks; bc="error")
+    function TF(ks, Tks)
+        left_val = sum(Tks[1:10]) / 10
+        r_si, r_b, r_a = power_law_from_data(
+            ks, Tks, [-2.0, 1.0], ks[end-15], ks[end]; con=false)
+        spline = Spline1D(ks, Tks; bc="error")
 
-          new(left_val, ks[2], spline, r_si, r_b, r_a, ks[end])
-     end
+        new(left_val, ks[2], spline, r_si, r_b, r_a, ks[end])
+    end
 
 end;
 
 
 """
-     (f::TF)(x)
+    (f::TF)(x)
 
 Return the value of the `f::TF` as follows:
 ```math
@@ -113,21 +113,21 @@ where ``y_\\mathrm{left}``,``\\mathrm{left}``,
 See also: [`TF`](@ref)
 """
 function (tf::TF)(k)
-     if k < tf.left
-          return tf.left_value
-     elseif k > tf.right
-          return power_law(k, tf.r_si, tf.r_b, tf.r_a)
-     else
-          return tf.spline(k)
-     end
-end;
+    if k < tf.left
+        return tf.left_value
+    elseif k > tf.right
+        return power_law(k, tf.r_si, tf.r_b, tf.r_a)
+    else
+        return tf.spline(k)
+    end
+end
 
 
 ##########################################################################################92
 
 
 """
-     α_bias(k, tf::TF; bf=1.0, D=1.0, Ω_M0=0.29992)
+    α_bias(k, tf::TF; bf=1.0, D=1.0, Ω_M0=0.29992)
 
 Return the coefficient ``\\alpha_{\\rm bias}`` that relates the Non-Gaussian density fluctiations 
 ``\\delta_{\\rm NG}`` and the Non-Gaussian gravitational potential ``\\Phi_{\\rm NG}``
@@ -148,25 +148,25 @@ in Fourier space:
 See also: [`TF`](@ref)
 """
 function α_bias(k, tf::TF; bf=1.0, D=1.0, Ω_M0=0.29992)
-     return 1.5 * bf * Ω_M0 * (100 / 299792.458)^2 / (0.779017 * D * k^2 * tf(k))
+    return 1.5 * bf * Ω_M0 * (100 / 299792.458)^2 / (0.779017 * D * k^2 * tf(k))
 end
 
 
 
 """
-     IntegralIPSalpha(
-          l_si::Float64
-          l_b::Float64
-          l_a::Float64
-          left::Float64
+    IntegralIPSalpha(
+        l_si::Float64
+        l_b::Float64
+        l_a::Float64
+        left::Float64
 
-          spline::Dierckx.Spline1D
+        spline::Dierckx.Spline1D
 
-          r_si::Float64
-          r_b::Float64
-          r_a::Float64
-          right::Float64
-     )
+        r_si::Float64
+        r_b::Float64
+        r_a::Float64
+        right::Float64
+    )
 
 Contains all the information useful in order to return the value of the integral
 of the Input Power Spectrum weighted with the `α_bias` function. In other words,
@@ -212,10 +212,10 @@ where ``P(q)`` is the Input Power Spectrum and
 
 ## Constructors
 
-     IntegralIPSalpha(tf::TF, cosmo::Cosmology, l, n=0; D=nothing, bf=1.0,
-          N::Int=1024, kmin=1e-6, kmax=1e4, s0=1e-4,
-          fit_left_min=nothing, fit_left_max=nothing, p0_left=nothing,
-          fit_right_min=nothing, fit_right_max=nothing, p0_right=nothing)
+    IntegralIPSalpha(tf::TF, cosmo::Cosmology, l, n=0; D=nothing, bf=1.0,
+        N::Int=1024, kmin=1e-6, kmax=1e4, s0=1e-4,
+        fit_left_min=nothing, fit_left_max=nothing, p0_left=nothing,
+        fit_right_min=nothing, fit_right_max=nothing, p0_right=nothing)
 
 The integral obtained with this constructor is calculated through `xicalc`, and
 expanded with power-laws at the edges.
@@ -269,62 +269,62 @@ See also: [`power_law_from_data`](@ref), [`power_law`](@ref),
 [`Cosmology`](@ref), [`α_bias`](@ref)
 """
 struct IntegralIPSalpha
-     l_si::Float64
-     l_b::Float64
-     l_a::Float64
-     left::Float64
+    l_si::Float64
+    l_b::Float64
+    l_a::Float64
+    left::Float64
 
-     spline::Dierckx.Spline1D
+    spline::Dierckx.Spline1D
 
-     r_si::Float64
-     r_b::Float64
-     r_a::Float64
-     right::Float64
+    r_si::Float64
+    r_b::Float64
+    r_a::Float64
+    right::Float64
 
-     function IntegralIPSalpha(tf::TF, cosmo::Cosmology, l, n=0;
-          D=nothing, bf=1.0,
-          N::Int=1024, kmin=1e-6, kmax=1e4, s0=1e-4,
-          fit_left_min=nothing, fit_left_max=nothing, p0_left=nothing,
-          fit_right_min=nothing, fit_right_max=nothing, p0_right=nothing)
+    function IntegralIPSalpha(tf::TF, cosmo::Cosmology, l, n=0;
+        D=nothing, bf=1.0,
+        N::Int=1024, kmin=1e-6, kmax=1e4, s0=1e-4,
+        fit_left_min=nothing, fit_left_max=nothing, p0_left=nothing,
+        fit_right_min=nothing, fit_right_max=nothing, p0_right=nothing)
 
-          DD = isnothing(D) ? cosmo.D_of_s(cosmo.s_eff) : D
-          Ω_M00 = cosmo.params.Ω_M0
+        DD = isnothing(D) ? cosmo.D_of_s(cosmo.s_eff) : D
+        Ω_M00 = cosmo.params.Ω_M0
 
-          rs, xis = xicalc(k -> cosmo.IPS(k) * α_bias(k, tf; bf=bf, D=DD, Ω_M0=Ω_M00), l, n;
-               N=N, kmin=kmin, kmax=kmax, r0=s0)
+        rs, xis = xicalc(k -> cosmo.IPS(k) * α_bias(k, tf; bf=bf, D=DD, Ω_M0=Ω_M00), l, n;
+            N=N, kmin=kmin, kmax=kmax, r0=s0)
 
-          fit_left_MIN = !isnothing(fit_left_min) ? fit_left_min : begin
-               l ≈ 0.0 ? 5e-2 : l ≈ 2.0 ? 5e-1 : rs[2]
-          end
-          fit_left_MAX = !isnothing(fit_left_max) ? fit_left_max : begin
-               l ≈ 0.0 ? 1e-1 : l ≈ 2.0 ? 1e0 : rs[16]
-          end
-          p_0_left = isnothing(p0_left) ? [-1.0, 1.0] : p0_left
-          l_si, l_b, l_a = power_law_from_data(
-               rs, xis, p_0_left, fit_left_MIN, fit_left_MAX; con=false)
+        fit_left_MIN = !isnothing(fit_left_min) ? fit_left_min : begin
+            l ≈ 0.0 ? 5e-2 : l ≈ 2.0 ? 5e-1 : rs[2]
+        end
+        fit_left_MAX = !isnothing(fit_left_max) ? fit_left_max : begin
+            l ≈ 0.0 ? 1e-1 : l ≈ 2.0 ? 1e0 : rs[16]
+        end
+        p_0_left = isnothing(p0_left) ? [-1.0, 1.0] : p0_left
+        l_si, l_b, l_a = power_law_from_data(
+            rs, xis, p_0_left, fit_left_MIN, fit_left_MAX; con=false)
 
-          fit_right_MIN = isnothing(fit_right_min) ? rs[length(rs)-16] : fit_right_min
-          fit_right_MAX = isnothing(fit_right_max) ? rs[length(rs)-1] : fit_right_max
-          p_0_right = isnothing(p0_right) ? [-4.0, 1.0] : p0_right
-          r_si, r_b, r_a = power_law_from_data(
-               rs, xis, p_0_right, fit_right_MIN, fit_right_MAX; con=false)
+        fit_right_MIN = isnothing(fit_right_min) ? rs[length(rs)-16] : fit_right_min
+        fit_right_MAX = isnothing(fit_right_max) ? rs[length(rs)-1] : fit_right_max
+        p_0_right = isnothing(p0_right) ? [-4.0, 1.0] : p0_right
+        r_si, r_b, r_a = power_law_from_data(
+            rs, xis, p_0_right, fit_right_MIN, fit_right_MAX; con=false)
 
-          ind_left = findfirst(x -> x > fit_left_MIN, rs) - 1
-          ind_right = findfirst(x -> x >= fit_right_MAX, rs)
-          new_rs = vcat(rs[ind_left:ind_right])
-          new_Js = vcat(xis[ind_left:ind_right])
-          spline = Spline1D(new_rs, new_Js; bc="error")
+        ind_left = findfirst(x -> x > fit_left_MIN, rs) - 1
+        ind_right = findfirst(x -> x >= fit_right_MAX, rs)
+        new_rs = vcat(rs[ind_left:ind_right])
+        new_Js = vcat(xis[ind_left:ind_right])
+        spline = Spline1D(new_rs, new_Js; bc="error")
 
-          #println("\nleft = $l_si , $l_b , $l_a, $fit_left_min")
-          #println("right = $r_si , $r_b , $r_a, $fit_right_MAX\n")
+        #println("\nleft = $l_si , $l_b , $l_a, $fit_left_min")
+        #println("right = $r_si , $r_b , $r_a, $fit_right_MAX\n")
 
-          new(l_si, l_b, l_a, fit_left_MIN, spline, r_si, r_b, r_a, fit_right_MAX)
-     end
-end;
+        new(l_si, l_b, l_a, fit_left_MIN, spline, r_si, r_b, r_a, fit_right_MAX)
+    end
+end
 
 
 """
-     (f::IntegralIPSalpha)(x)
+    (f::IntegralIPSalpha)(x)
 
 Return the value of the `f::IntegralIPSalpha` as follows:
 ```math
@@ -345,14 +345,14 @@ where ``a_\\mathrm{L}``, ``b_\\mathrm{L}``, ``s_\\mathrm{L}``, ``\\mathrm{left}`
 See also: [`IntegralIPSalpha`](@ref)
 """
 function (Jl::IntegralIPSalpha)(x)
-     if x < Jl.left
-          return power_law(x, Jl.l_si, Jl.l_b, Jl.l_a)
-     elseif x > Jl.right
-          #warning("i am going too right! ")
-          return power_law(x, Jl.r_si, Jl.r_b, Jl.r_a)
-     else
-          return Jl.spline(x)
-     end
+    if x < Jl.left
+        return power_law(x, Jl.l_si, Jl.l_b, Jl.l_a)
+    elseif x > Jl.right
+        #warning("i am going too right! ")
+        return power_law(x, Jl.r_si, Jl.r_b, Jl.r_a)
+    else
+        return Jl.spline(x)
+    end
 end;
 
 
@@ -363,21 +363,21 @@ end;
 
 """
     CosmoParams(
-          D::Float64 
-          bf::Float64
+            D::Float64 
+            bf::Float64
 
-          flm_0::Float64 
-          flM_0::Float64 
-          kmin_0::Float64 
-          kmax_0::Float64  
-          N_0::Int
+            flm_0::Float64 
+            flM_0::Float64 
+            kmin_0::Float64 
+            kmax_0::Float64  
+            N_0::Int
 
-          flm_2::Float64  
-          flM_2::Float64 
-          kmin_2::Float64 
-          kmax_2::Float64  
-          N_2::Int
-     )
+            flm_2::Float64  
+            flM_2::Float64 
+            kmin_2::Float64 
+            kmax_2::Float64  
+            N_2::Int
+        )
 
 
 Struct that contains all the parameters and options that are 
@@ -404,13 +404,13 @@ matter of concerns for the `CosmoPNG` we are interested in.
 
 ## Constructors
 
-     function CosmoPNGParams(D; 
-          bf = 1.0,
-          flm_0 = 5e-2, flM_0 = 1e-1, s0_0 = 1e-4,
-          kmin_0 = 1e-6, kmax_0 = 1e4, N_0::Int = 1024,
-          flm_2 = 5e-1, flM_2 = 1e0, s0_2 = 1e-4,
-          kmin_2 = 1e-6, kmax_2 = 1e4, N_2::Int = 1024,
-          )
+    function CosmoPNGParams(D; 
+        bf = 1.0,
+        flm_0 = 5e-2, flM_0 = 1e-1, s0_0 = 1e-4,
+        kmin_0 = 1e-6, kmax_0 = 1e4, N_0::Int = 1024,
+        flm_2 = 5e-1, flM_2 = 1e0, s0_2 = 1e-4,
+        kmin_2 = 1e-6, kmax_2 = 1e4, N_2::Int = 1024,
+        )
      
 The associations are trivials.
 The only thing to be put attention on is that `D` is a MANDATORY argument, while
@@ -426,62 +426,62 @@ See also: [`Cosmology`](@ref), [`CosmoPNG`](@ref), [`IntegralIPSalpha`](@ref),
 [`α_bias`](@ref)
 """
 struct CosmoPNGParams
-     D::Float64
-     bf::Float64
+    D::Float64
+    bf::Float64
 
-     flm_0::Float64
-     flM_0::Float64
-     s0_0::Float64
-     kmin_0::Float64
-     kmax_0::Float64
-     N_0::Int
+    flm_0::Float64
+    flM_0::Float64
+    s0_0::Float64
+    kmin_0::Float64
+    kmax_0::Float64
+    N_0::Int
 
-     flm_2::Float64
-     flM_2::Float64
-     s0_2::Float64
-     kmin_2::Float64
-     kmax_2::Float64
-     N_2::Int
+    flm_2::Float64
+    flM_2::Float64
+    s0_2::Float64
+    kmin_2::Float64
+    kmax_2::Float64
+    N_2::Int
 
-     function CosmoPNGParams(D;
-          bf=1.0,
-          flm_0=5e-2, flM_0=1e-1, s0_0=1e-4,
-          kmin_0=1e-6, kmax_0=1e4, N_0::Int=1024,
-          flm_2=5e-1, flM_2=1e0, s0_2=1e-4,
-          kmin_2=1e-6, kmax_2=1e4, N_2::Int=1024
-     )
+    function CosmoPNGParams(D;
+        bf=1.0,
+        flm_0=5e-2, flM_0=1e-1, s0_0=1e-4,
+        kmin_0=1e-6, kmax_0=1e4, N_0::Int=1024,
+        flm_2=5e-1, flM_2=1e0, s0_2=1e-4,
+        kmin_2=1e-6, kmax_2=1e4, N_2::Int=1024
+    )
 
-          @assert D > 0.0 "D > 0.0 must hold!"
-          @assert bf > 0.0 "bf > 0.0 must hold!"
+        @assert D > 0.0 "D > 0.0 must hold!"
+        @assert bf > 0.0 "bf > 0.0 must hold!"
 
-          @assert N_0 > 10 "N_0 > 10 must hold!"
-          @assert 0.0 < flm_0 < flM_0 "0.0 < flm_0 < flM_0 must hold!"
-          @assert 0.0 < kmin_0 < kmax_0 "0.0 < kmin_0 < kmax_0 must hold!"
-          @assert kmin_0 < s0_0 < kmax_0 "kmin_0 < s0_0 < kmax_0 must hold!"
+        @assert N_0 > 10 "N_0 > 10 must hold!"
+        @assert 0.0 < flm_0 < flM_0 "0.0 < flm_0 < flM_0 must hold!"
+        @assert 0.0 < kmin_0 < kmax_0 "0.0 < kmin_0 < kmax_0 must hold!"
+        @assert kmin_0 < s0_0 < kmax_0 "kmin_0 < s0_0 < kmax_0 must hold!"
 
-          @assert N_2 > 10 "N_2 > 10 must hold!"
-          @assert 0.0 < flm_2 < flM_2 "0.0 < flm_2 < flM_2 must hold!"
-          @assert 0.0 < kmin_2 < kmax_2 "0.0 < kmin_2 < kmax_2 must hold!"
-          @assert kmin_2 < s0_2 < kmax_2 "kmin_2 < s0_2 < kmax_2 must hold!"
+        @assert N_2 > 10 "N_2 > 10 must hold!"
+        @assert 0.0 < flm_2 < flM_2 "0.0 < flm_2 < flM_2 must hold!"
+        @assert 0.0 < kmin_2 < kmax_2 "0.0 < kmin_2 < kmax_2 must hold!"
+        @assert kmin_2 < s0_2 < kmax_2 "kmin_2 < s0_2 < kmax_2 must hold!"
 
 
-          new(
-               D, bf,
-               flm_0, flM_0, s0_0, kmin_0, kmax_0, N_0,
-               flm_2, flM_2, s0_2, kmin_2, kmax_2, N_2,
-          )
-     end
+        new(
+            D, bf,
+            flm_0, flM_0, s0_0, kmin_0, kmax_0, N_0,
+            flm_2, flM_2, s0_2, kmin_2, kmax_2, N_2,
+        )
+    end
 end
 
 """
     CosmoPNG(
-          params::CosmoPNGParams
-          tf::TF
-          file_TF::String
+        params::CosmoPNGParams
+        tf::TF
+        file_TF::String
 
-          J0::IntegralIPSalpha
-          J2::IntegralIPSalpha
-          )
+        J0::IntegralIPSalpha
+        J2::IntegralIPSalpha
+        )
 
 Struct that contains all the information that may be used for the 
 Correlation Function computations of the Primordial Non-Gaussianities (PNG) signal.
@@ -512,11 +512,11 @@ Correlation Function computations of the Primordial Non-Gaussianities (PNG) sign
 
 ## Constructor 
 
-     CosmoPNG(
-          pngparams::CosmoPNGParams,
-          cosmo::Cosmology, file_TF::String;
-          comments::Bool=true
-     )
+    CosmoPNG(
+        pngparams::CosmoPNGParams,
+        cosmo::Cosmology, file_TF::String;
+        comments::Bool=true
+    )
 
 - `pngparams::CosmoParams` : parameters to be used for this Cosmology. See the docstring
   of `CosmoParams` for more information on the possible inputs.
@@ -531,67 +531,69 @@ Correlation Function computations of the Primordial Non-Gaussianities (PNG) sign
 See also: [`TF`](@ref), [`IntegralIPSalpha`](@ref), [`Cosmology`](@ref)
 """
 struct CosmoPNG
-     params::CosmoPNGParams
+    params::CosmoPNGParams
 
-     tf::TF
-     file_TF::String
+    tf::TF
+    file_TF::String
 
-     J0::IntegralIPSalpha
-     J2::IntegralIPSalpha
+    J0::IntegralIPSalpha
+    J2::IntegralIPSalpha
 
-     function CosmoPNG(
-          pngparams::CosmoPNGParams,
-          cosmo::Cosmology, file_TF::String;
-          comments::Bool=true
-     )
+    function CosmoPNG(
+            pngparams::CosmoPNGParams,
+            cosmo::Cosmology, file_TF::String;
+            comments::Bool=true
+        )
 
-          table = readdlm(file_TF; comments=comments)
-          ks_tf = convert(Vector{Float64}, table[:, 1])
-          pks_tf = convert(Vector{Float64}, table[:, 2])
+        table = readdlm(file_TF; comments=comments)
+        ks_tf = convert(Vector{Float64}, table[:, 1])
+        pks_tf = convert(Vector{Float64}, table[:, 2])
 
-          #DD = isnothing(D) ? cosmo.D_of_s(cosmo.s_eff) : D
-          tf = TF(ks_tf, pks_tf)
+        #DD = isnothing(D) ? cosmo.D_of_s(cosmo.s_eff) : D
+        tf = TF(ks_tf, pks_tf)
 
-          J0 = IntegralIPSalpha(tf, cosmo, 0, 0;
-               D=pngparams.D, bf=pngparams.bf,
-               kmin=pngparams.kmin_0, kmax=pngparams.kmax_0,
-               s0=pngparams.s0_0,
-               fit_left_min=pngparams.flm_0, fit_left_max=pngparams.flM_0,
-               N=pngparams.N_0)
-          J2 = IntegralIPSalpha(tf, cosmo, 2, 0;
-               D=pngparams.D, bf=pngparams.bf,
-               kmin=pngparams.kmin_2, kmax=pngparams.kmax_2,
-               s0=pngparams.s0_2,
-               fit_left_min=pngparams.flm_2, fit_left_max=pngparams.flM_2,
-               N=pngparams.N_2)
+        J0 = IntegralIPSalpha(tf, cosmo, 0, 0;
+            D=pngparams.D, bf=pngparams.bf,
+            kmin=pngparams.kmin_0, kmax=pngparams.kmax_0,
+            s0=pngparams.s0_0,
+            fit_left_min=pngparams.flm_0, fit_left_max=pngparams.flM_0,
+            N=pngparams.N_0)
+        J2 = IntegralIPSalpha(tf, cosmo, 2, 0;
+            D=pngparams.D, bf=pngparams.bf,
+            kmin=pngparams.kmin_2, kmax=pngparams.kmax_2,
+            s0=pngparams.s0_2,
+            fit_left_min=pngparams.flm_2, fit_left_max=pngparams.flM_2,
+            N=pngparams.N_2)
 
-          new(pngparams, tf, file_TF, J0, J2)
-     end
+        new(pngparams, tf, file_TF, J0, J2)
+    end
 end
 
 
 ##########################################################################################92
 
 
+err_png = "the keyword 'sp' must indicate which galaxy species you want to consider; " *
+          "this means that you can chose only between type (and corresponding 'sp' values) 1 or 2; sp="
 
-function ξ_S_L0(P::Point, cosmo::Cosmology, cosmopng::CosmoPNG)
-     b = cosmo.params.b
-     s = P.comdist
+function ξ_S_L0(P::Point, cosmo::Cosmology, cosmopng::CosmoPNG; b=nothing, sp::Int64=1)
+    b = !isnothing(b) ? b : sp == 1 ? cosmo.params.b1 : sp == 2 ? cosmo.params.b2 : throw(AssertionError(err_ppg * "$sp is not valid!"))
+    s = P.comdist
 
-     Peff = Point(cosmo.s_eff, cosmo)
-     D, f = Peff.D, Peff.f
+    Peff = Point(cosmo.s_eff, cosmo)
+    D, f = Peff.D, Peff.f
 
-     2.0 * (b + f / 3.0) * D^2 * cosmopng.J0(s)
+    2.0 * (b + f / 3.0) * D^2 * cosmopng.J0(s)
 end
 
-function ξ_S_L0(s1, cosmo::Cosmology, cosmopng::CosmoPNG)
-     P1 = Point(s1, cosmo)
-     return ξ_S_L0(P1, cosmo, cosmopng)
+function ξ_S_L0(s1, cosmo::Cosmology, cosmopng::CosmoPNG; kwargs...)
+    P1 = Point(s1, cosmo)
+    return ξ_S_L0(P1, cosmo, cosmopng; kwargs...)
 end
 
 """
-    ξ_S_L0(P::Point, cosmo::Cosmology, cosmopng::CosmoPNG)
-    ξ_S_L0(s1, cosmo::Cosmology, cosmopng::CosmoPNG)
+    ξ_S_L0(P::Point, cosmo::Cosmology, cosmopng::CosmoPNG; b=nothing, sp::Int64=1)
+    ξ_S_L0(s1, cosmo::Cosmology, cosmopng::CosmoPNG; kwargs...)
 
 Return the value of the Two-Point Correlation Function (TPCF) monopole of the signal (S)
 of the local Primordial Non-Gaussianities (PNG) (for the given `cosmo::Cosmology` and 
@@ -627,6 +629,14 @@ where:
   with ``b_{\\phi}f_{\\rm NL}`` is stored in `cosmopng`. Check the documentation of `α_bias` and `CosmoPNG`
   for more information.
 
+## Keyword arguments
+
+- `b = nothing` : galaxy bias value to be considered in the computation; if set to `nothing`, its value
+  is inferred from the other keyword argument `sp`;
+
+- `sp::Int64=1` : galaxy type to be considered between the two species stored in `cosmo`: it can be either `1` or `2`,
+  and the corresponding set of galaxy, magnification and evolutionary biases stored in `cosmo` are considered;
+  in case `b` is set to a value, this parameter is ignored.
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`CosmoPNG`](@ref), [`α_bias`](@ref), 
 [`ξ_S_L2`](@ref), [`ξ_S`](@ref), 
@@ -635,24 +645,24 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`CosmoPNG`](@ref), [`α_bias`](
 """
 ξ_S_L0
 
-function ξ_S_L2(P::Point, cosmo::Cosmology, cosmopng::CosmoPNG)
-     s = P.comdist
+function ξ_S_L2(P::Point, cosmo::Cosmology, cosmopng::CosmoPNG; b=nothing, sp::Int64=1)
+    s = P.comdist
 
-     Peff = Point(cosmo.s_eff, cosmo)
-     D, f = Peff.D, Peff.f
+    Peff = Point(cosmo.s_eff, cosmo)
+    D, f = Peff.D, Peff.f
 
-     -4.0 / 3.0 * f * D^2 * cosmopng.J2(s)
+    -4.0 / 3.0 * f * D^2 * cosmopng.J2(s)
 end
 
-function ξ_S_L2(s1, cosmo::Cosmology, cosmopng::CosmoPNG)
-     P1 = Point(s1, cosmo)
-     return ξ_S_L2(P1, cosmo, cosmopng)
+function ξ_S_L2(s1, cosmo::Cosmology, cosmopng::CosmoPNG; kwargs...)
+    P1 = Point(s1, cosmo)
+    return ξ_S_L2(P1, cosmo, cosmopng; kwargs...)
 end
 
 
 """
-    ξ_S_L2(P::Point, cosmo::Cosmology, cosmopng::CosmoPNG)
-    ξ_S_L2(s1, cosmo::Cosmology, cosmopng::CosmoPNG)
+    ξ_S_L2(P::Point, cosmo::Cosmology, cosmopng::CosmoPNG; b=nothing, sp::Int64=1)
+    ξ_S_L2(s1, cosmo::Cosmology, cosmopng::CosmoPNG; kwargs...)
 
 Return the value of the Two-Point Correlation Function (TPCF) quadrupole of the signal (S)
 of the local Primordial Non-Gaussianities (PNG) (for the given `cosmo::Cosmology` and 
@@ -688,6 +698,14 @@ where:
   with ``b_{\\phi}f_{\\rm NL}`` is stored in `cosmopng`. Check the documentation of `α_bias` and `CosmoPNG`
   for more information.
 
+## Keyword arguments
+
+- `b = nothing` : galaxy bias value to be considered in the computation; if set to `nothing`, its value
+  is inferred from the other keyword argument `sp`;
+
+- `sp::Int64=1` : galaxy type to be considered between the two species stored in `cosmo`: it can be either `1` or `2`,
+  and the corresponding set of galaxy, magnification and evolutionary biases stored in `cosmo` are considered;
+  in case `b` is set to a value, this parameter is ignored.
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`CosmoPNG`](@ref), [`α_bias`](@ref), 
 [`ξ_S_L0`](@ref), [`ξ_S`](@ref), 
@@ -698,7 +716,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`CosmoPNG`](@ref), [`α_bias`](
 
 
 """
-    ξ_S(s, μ, cosmo::Cosmology, cosmopng::CosmoPNG)
+    ξ_S(s, μ, cosmo::Cosmology, cosmopng::CosmoPNG; b=nothing, sp::Int64=1)
 
 Return the value of the Two-Point Correlation Function (TPCF) of the signal (S)
 of the local Primordial Non-Gaussianities (PNG) in the given comoving distance `s` and cosine
@@ -740,14 +758,23 @@ where:
   with ``b_{\\phi}f_{\\rm NL}`` is stored in `cosmopng`. Check the documentation of `α_bias` and `CosmoPNG`
   for more information.
 
+## Keyword arguments
+
+- `b = nothing` : galaxy bias value to be considered in the computation; if set to `nothing`, its value
+  is inferred from the other keyword argument `sp`;
+
+- `sp::Int64=1` : galaxy type to be considered between the two species stored in `cosmo`: it can be either `1` or `2`,
+  and the corresponding set of galaxy, magnification and evolutionary biases stored in `cosmo` are considered;
+  in case `b` is set to a value, this parameter is ignored.
+
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`CosmoPNG`](@ref), [`α_bias`](@ref), 
 [`ξ_S_L0`](@ref), [`ξ_S_L2`](@ref), 
 [`integrand_ξ_S_multipole`](@ref), [`ξ_S_multipole`](@ref) 
 [`map_ξ_S_multipole`](@ref), [`print_map_ξ_S_multipole`](@ref)
 """
-function ξ_S(s1, y, cosmo::Cosmology, cosmopng::CosmoPNG)
-     ξ_S_L0(s1, cosmo, cosmopng) + ξ_S_L2(s1, cosmo, cosmopng) * Pl(y, 2)
+function ξ_S(s1, y, cosmo::Cosmology, cosmopng::CosmoPNG; kwargs...)
+    ξ_S_L0(s1, cosmo, cosmopng; kwargs...) + ξ_S_L2(s1, cosmo, cosmopng; kwargs...) * Pl(y, 2)
 end
 
 
@@ -756,8 +783,8 @@ end
 
 
 """
-     integrand_ξ_S_multipole(s, μ, cosmo::Cosmology, cosmopng::CosmoPNG;
-          L::Int=0, use_windows::Bool=true)
+    integrand_ξ_S_multipole(s, μ, cosmo::Cosmology, cosmopng::CosmoPNG;
+        L::Int=0, use_windows::Bool=true, b=nothing, sp::Int64=1 )::Float64
 
 Return the integrand on ``\\mu = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}`` 
 of the Two-Point Correlation Function (TPCF) concerning the signal (S) of the 
@@ -789,39 +816,47 @@ where:
 - `cosmopng::CosmoPNG`: struct that contains all the information that may be used for the TPCF 
   computations of the PNG signal.
 
-## Optional arguments 
+## Keyword arguments 
 
 - `L::Int = 0`: order of the Legendre polynomial to be used
 
 - `use_windows::Bool = false`: tells if the integrand must consider ``\\mathcal{F}``
   or not.
 
+- `b = nothing` : galaxy bias value to be considered in the computation; if set to `nothing`, its value
+  is inferred from the other keyword argument `sp`;
+
+- `sp::Int64=1` : galaxy type to be considered between the two species stored in `cosmo`: it can be either `1` or `2`,
+  and the corresponding set of galaxy, magnification and evolutionary biases stored in `cosmo` are considered;
+  in case `b` is set to a value, this parameter is ignored.
+
 See also:[`ξ_S`](@ref), [`ξ_S_multipole`](@ref), 
 [`map_ξ_S_multipole`](@ref), [`print_map_ξ_S_multipole`](@ref)
 [`WindowFIntegrated`](@ref), [`Cosmology`](@ref), [`CosmoPNG`](@ref), 
 """
 function integrand_ξ_S_multipole(s, μ, cosmo::Cosmology, cosmopng::CosmoPNG;
-     L::Int=0, use_windows::Bool=true)
+    L::Int=0, use_windows::Bool=true, kwargs...)
 
-     res = if use_windows == true
-          ξ_S(s, μ, cosmo, cosmopng) .* (
-               spline_integrF(s, μ, cosmo.windowFint) / cosmo.WFI_norm * Pl(μ, L)
-          )
-     else
-          ξ_S(s, μ, cosmo, cosmopng) .* Pl(μ, L)
-     end
+    res = if use_windows == true
+        ξ_S(s, μ, cosmo, cosmopng; kwargs...) .* (
+            spline_integrF(s, μ, cosmo.windowFint) / cosmo.WFI_norm * Pl(μ, L)
+        )
+    else
+        ξ_S(s, μ, cosmo, cosmopng; kwargs...) .* Pl(μ, L)
+    end
 
-     return (2.0 * L + 1.0) / 2.0 * res
+    return (2.0 * L + 1.0) / 2.0 * res
 end
 
 
 """
-     ξ_S_multipole(
-          s, cosmo::Cosmology, cosmopng::CosmoPNG;;
-          L::Int = 0, use_windows::Bool = true,
-          atol_quad::Float64 = 0.0,
-          rtol_quad::Float64 = 1e-2
-          enhancer::Float64 = 1e6 ) ::Float64
+    ξ_S_multipole(
+        s, cosmo::Cosmology, cosmopng::CosmoPNG;;
+        L::Int = 0, use_windows::Bool = true,
+        atol_quad::Float64 = 0.0,
+        rtol_quad::Float64 = 1e-2
+        enhancer::Float64 = 1e6,
+        b=nothing, sp::Int64=1 ) ::Float64
 
 
 Evaluate the multipole of order `L` of the Two-Point Correlation Function (TPCF) 
@@ -857,7 +892,7 @@ Gauss-Kronrod quadrature.
 - `cosmopng::CosmoPNG`: struct that contains all the information that may be used for the TPCF 
   computations of the PNG signal.
 
-## Optional arguments 
+## Keyword arguments 
 
 - `L::Int = 0`: order of the Legendre polynomial to be used
 
@@ -872,24 +907,28 @@ Gauss-Kronrod quadrature.
   the returned value is NOT modified by this value, because after a multiplication
   the internal result is divided by `enhancer`.
 
+- `b = nothing` : galaxy bias value to be considered in the computation; if set to `nothing`, its value
+  is inferred from the other keyword argument `sp`;
+
+- `sp::Int64=1` : galaxy type to be considered between the two species stored in `cosmo`: it can be either `1` or `2`,
+  and the corresponding set of galaxy, magnification and evolutionary biases stored in `cosmo` are considered;
+  in case `b` is set to a value, this parameter is ignored.
+
 See also: [`ξ_S`](@ref), [`integrand_ξ_S_multipole`](@ref), 
 [`map_ξ_S_multipole`](@ref), [`print_map_ξ_S_multipole`](@ref)
 [`WindowFIntegrated`](@ref), [`Cosmology`](@ref), [`CosmoPNG`](@ref), 
 """
 function ξ_S_multipole(
-     s, cosmo::Cosmology, cosmopng::CosmoPNG;
-     L::Int=0,
-     use_windows::Bool=true,
-     atol_quad::Float64=0.0,
-     rtol_quad::Float64=1e-2,
-     enhancer::Float64=1e6)
+    s, cosmo::Cosmology, cosmopng::CosmoPNG;
+    atol_quad::Float64=0.0,
+    rtol_quad::Float64=1e-2,
+    enhancer::Float64=1e6, kwargs...)
 
-     orig_f(μ) = enhancer * integrand_ξ_S_multipole(s, μ, cosmo, cosmopng;
-          L=L, use_windows=use_windows)
+    orig_f(μ) = enhancer * integrand_ξ_S_multipole(s, μ, cosmo, cosmopng; kwargs...)
 
-     int = quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=atol_quad, rtol=rtol_quad)[1]
+    int = quadgk(μ -> orig_f(μ), -1.0, 1.0; atol=atol_quad, rtol=rtol_quad)[1]
 
-     return int / enhancer
+    return int / enhancer
 end
 
 
@@ -898,16 +937,16 @@ end
 
 
 """
-     map_ξ_S_multipole(
-          cosmo::Cosmology, cosmopng::CosmoPNG,
-          ss = nothing;
-          L::Int = 0, use_windows::Bool = true,
-          atol_quad::Float64 = 0.0,
-          rtol_quad::Float64 = 1e-2,
-          enhancer::Float64 = 1e6,
-          pr::Bool = true,
-          N_log::Int = 1000,
-          kwargs...) ::Tuple{Vector{Float64}, Vector{Float64}}
+    map_ξ_S_multipole(
+        cosmo::Cosmology, cosmopng::CosmoPNG,
+        ss = nothing;
+        L::Int = 0, use_windows::Bool = true,
+        atol_quad::Float64 = 0.0,
+        rtol_quad::Float64 = 1e-2,
+        enhancer::Float64 = 1e6,
+        pr::Bool = true,
+        N_log::Int = 1000,
+        kwargs...) ::Tuple{Vector{Float64}, Vector{Float64}}
 
 
 Evaluate the multipole of order `L` of the Two-Point Correlation Function (TPCF) 
@@ -949,7 +988,7 @@ Gauss-Kronrod quadrature.
   it is set `ss = 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log)`. This is why it is returned 
   also the vector of the "input" values.
 
-## Optional arguments 
+## Keyword arguments 
 
 This function recall internally `ξ_S_multipole`, so the kwargs of the latter are valid also for the former; 
 we report them for comfortness:
@@ -973,6 +1012,13 @@ we report them for comfortness:
 - `pr::Bool = true` : do you want the progress bar showed on screen, in order to 
   check the time needed for the computation? (`true` recommended)
 
+- `b = nothing` : galaxy bias value to be considered in the computation; if set to `nothing`, its value
+  is inferred from the other keyword argument `sp`;
+
+- `sp::Int64=1` : galaxy type to be considered between the two species stored in `cosmo`: it can be either `1` or `2`,
+  and the corresponding set of galaxy, magnification and evolutionary biases stored in `cosmo` are considered;
+  in case `b` is set to a value, this parameter is ignored.
+
 # Returns
 
 A `Tuple{Vector{Float64}, Vector{Float64}}`, which has as first element the `ss` vector
@@ -983,27 +1029,27 @@ See also: [`ξ_S`](@ref), [`integrand_ξ_S_multipole`](@ref),
 [`WindowFIntegrated`](@ref), [`Cosmology`](@ref), [`CosmoPNG`](@ref), 
 """
 function map_ξ_S_multipole(
-     cosmo::Cosmology, cosmopng::CosmoPNG,
-     ss=nothing;
-     pr::Bool=true,
-     N_log::Int=1000,
-     L::Int=0,
-     kwargs...)
+    cosmo::Cosmology, cosmopng::CosmoPNG,
+    ss=nothing;
+    pr::Bool=true,
+    N_log::Int=1000,
+    L::Int=0,
+    kwargs...)
 
-     t1 = time()
-     v_ss = isnothing(ss) ? 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log) : ss
-     xis = pr ? begin
-          @showprogress "ξ_S, L=$L: " [
-               ξ_S_multipole(s, cosmo, cosmopng; L=L, kwargs...) for s in v_ss
-          ]
-     end : [
-          ξ_S_multipole(s, cosmo, cosmopng; L=L, kwargs...) for s in v_ss
-     ]
+    t1 = time()
+    v_ss = isnothing(ss) ? 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log) : ss
+    xis = pr ? begin
+        @showprogress "ξ_S, L=$L: " [
+            ξ_S_multipole(s, cosmo, cosmopng; L=L, kwargs...) for s in v_ss
+        ]
+    end : [
+        ξ_S_multipole(s, cosmo, cosmopng; L=L, kwargs...) for s in v_ss
+    ]
 
-     t2 = time()
-     pr && println("\ntime needed for map_ξ_S_multipole " *
-                   "[in s] = $(@sprintf("%.5f", t2-t1)) ")
-     return (v_ss, xis)
+    t2 = time()
+    pr && println("\ntime needed for map_ξ_S_multipole " *
+                "[in s] = $(@sprintf("%.5f", t2-t1)) ")
+    return (v_ss, xis)
 end
 
 
@@ -1012,16 +1058,16 @@ end
 
 
 """
-     print_map_ξ_S_multipole(
-          cosmo::Cosmology, cosmopng::CosmoPNG, 
-          out::String, ss = nothing;
-          L::Int = 0, use_windows::Bool = true,
-          atol_quad::Float64 = 0.0,
-          rtol_quad::Float64 = 1e-2,
-          enhancer::Float64 = 1e6,
-          pr::Bool = true,
-          N_log::Int = 1000,
-          kwargs...)
+    print_map_ξ_S_multipole(
+        cosmo::Cosmology, cosmopng::CosmoPNG, 
+        out::String, ss = nothing;
+        L::Int = 0, use_windows::Bool = true,
+        atol_quad::Float64 = 0.0,
+        rtol_quad::Float64 = 1e-2,
+        enhancer::Float64 = 1e6,
+        pr::Bool = true,
+        N_log::Int = 1000,
+        kwargs...)
 
 
 Evaluate the multipole of order `L` of the Two-Point Correlation Function (TPCF) 
@@ -1033,7 +1079,7 @@ If `ss = nothing`, it is set `ss = 10 .^ range(0, log10(2 * cosmo.s_max), length
 The function evaluated is then the following ``\\xi^{\\mathrm{S}} (s)``:
 
 ```math
-     \\xi^{\\mathrm{S}} (s) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
+    \\xi^{\\mathrm{S}} (s) = \\frac{2 L + 1}{2} \\int_{-1}^{+1} \\mathrm{d}\\mu \\; 
     \\xi^{\\mathrm{S}} \\left(s, \\mu\\right) 
           \\, \\mathcal{L}_L(\\mu) \\, \\times 
     \\begin{cases} 
@@ -1066,7 +1112,7 @@ Gauss-Kronrod quadrature.
   it is set `ss = 10 .^ range(0, log10(2 * cosmo.s_max), length=N_log)`. This is why it is returned 
   also the vector of the "input" values.
 
-## Optional arguments 
+## Keyword arguments 
 
 This function recall internally `map_ξ_S_multipole`, so the kwargs of the latter are valid also for the former; 
 we report them for comfortness:
@@ -1090,57 +1136,64 @@ we report them for comfortness:
 - `pr::Bool = true` : do you want the progress bar showed on screen, in order to 
   check the time needed for the computation? (`true` recommended)
 
+- `b = nothing` : galaxy bias value to be considered in the computation; if set to `nothing`, its value
+  is inferred from the other keyword argument `sp`;
+
+- `sp::Int64=1` : galaxy type to be considered between the two species stored in `cosmo`: it can be either `1` or `2`,
+  and the corresponding set of galaxy, magnification and evolutionary biases stored in `cosmo` are considered;
+  in case `b` is set to a value, this parameter is ignored.
+
 See also: [`ξ_S`](@ref), [`integrand_ξ_S_multipole`](@ref), 
 [`ξ_S_multipole`](@ref), [`map_ξ_S_multipole`](@ref)
 [`WindowFIntegrated`](@ref), [`Cosmology`](@ref), [`CosmoPNG`](@ref)
 """
 function print_map_ξ_S_multipole(
-     cosmo::Cosmology, cosmopng::CosmoPNG,
-     out::String,
-     v_ss=nothing;
-     L::Int=0,
-     kwargs...)
+    cosmo::Cosmology, cosmopng::CosmoPNG,
+    out::String,
+    v_ss=nothing;
+    L::Int=0,
+    kwargs...)
 
-     check_parent_directory(out)
-     check_namefile(out)
+    check_parent_directory(out)
+    check_namefile(out)
 
-     t1 = time()
-     vec = map_ξ_S_multipole(cosmo, cosmopng, v_ss; L=L, kwargs...)
-     t2 = time()
+    t1 = time()
+    vec = map_ξ_S_multipole(cosmo, cosmopng, v_ss; L=L, kwargs...)
+    t2 = time()
 
-     isfile(out) && run(`rm $out`)
-     open(out, "w") do io
-          println(io, BRAND)
+    isfile(out) && run(`rm $out`)
+    open(out, "w") do io
+        println(io, BRAND)
 
-          println(io, "#\n# This is an integration map on mu of the ξ L=$L multipole of S,\n" *
-                      "# which is the difference between the Power Spectrum with PNG and with f_NL = 0.")
-          println(io, "# Transfer function read from the file: $(cosmopng.file_TF)")
-          print(io, "# Parameters used for the considered CosmoPNG: ")
-          print(io, "\n")
-          println(io, "# \t D = $(cosmopng.params.D) \t bf = $(cosmopng.params.bf)")
-          println(io, "# \t flm_0 = $(cosmopng.params.flm_0) \t flM_0 = $(cosmopng.params.flM_0) \t N_0 = $(cosmopng.params.N_0)")
-          println(io, "# \t kmin_0 = $(cosmopng.params.kmin_0) \t kmax_0 = $(cosmopng.params.kmax_0) \t s0_0 = $(cosmopng.params.s0_0)")
-          println(io, "# \t flm_2 = $(cosmopng.params.flm_2) \t flM_2 = $(cosmopng.params.flM_2) \t N_2 = $(cosmopng.params.N_2)")
-          println(io, "# \t kmin_2 = $(cosmopng.params.kmin_2) \t kmax_2 = $(cosmopng.params.kmax_2) \t s0_2 = $(cosmopng.params.s0_2)")
-          println(io, "#")
+        println(io, "#\n# This is an integration map on mu of the ξ L=$L multipole of S,\n" *
+                    "# which is the difference between the Power Spectrum with PNG and with f_NL = 0.")
+        println(io, "# Transfer function read from the file: $(cosmopng.file_TF)")
+        print(io, "# Parameters used for the considered CosmoPNG: ")
+        print(io, "\n")
+        println(io, "# \t D = $(cosmopng.params.D) \t bf = $(cosmopng.params.bf)")
+        println(io, "# \t flm_0 = $(cosmopng.params.flm_0) \t flM_0 = $(cosmopng.params.flM_0) \t N_0 = $(cosmopng.params.N_0)")
+        println(io, "# \t kmin_0 = $(cosmopng.params.kmin_0) \t kmax_0 = $(cosmopng.params.kmax_0) \t s0_0 = $(cosmopng.params.s0_0)")
+        println(io, "# \t flm_2 = $(cosmopng.params.flm_2) \t flM_2 = $(cosmopng.params.flM_2) \t N_2 = $(cosmopng.params.N_2)")
+        println(io, "# \t kmin_2 = $(cosmopng.params.kmin_2) \t kmax_2 = $(cosmopng.params.kmax_2) \t s0_2 = $(cosmopng.params.s0_2)")
+        println(io, "#")
 
-          parameters_used(io, cosmo; logo=false)
-          println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
-          print(io, "# kwards passed: ")
+        parameters_used(io, cosmo; logo=false)
+        println(io, "# computational time needed (in s) : $(@sprintf("%.4f", t2-t1))")
+        print(io, "# kwards passed: ")
 
-          println(io, "\n# \t\tL = $L")
-          if !isempty(kwargs)
-               for key in keys(kwargs)
-                    println(io, "# \t\t$(key) = $(kwargs[key])")
-               end
-          end
+        println(io, "\n# \t\tL = $L")
+        if !isempty(kwargs)
+            for key in keys(kwargs)
+                println(io, "# \t\t$(key) = $(kwargs[key])")
+            end
+        end
 
-          println(io, "# ")
-          println(io, "# s [Mpc/h_0] \t \t xi")
-          for (s, xi) in zip(vec[1], vec[2])
-               println(io, "$s \t $xi")
-          end
-     end
+        println(io, "# ")
+        println(io, "# s [Mpc/h_0] \t \t xi")
+        for (s, xi) in zip(vec[1], vec[2])
+            println(io, "$s \t $xi")
+        end
+    end
 end
 
 

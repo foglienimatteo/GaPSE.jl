@@ -18,74 +18,83 @@
 #
 
 
-function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
-     s1, D1, f1 = P1.comdist, P1.D, P1.f
-     s2, D2, f2, a2, ℋ2, ℛ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ, P2.ℛ_GNC
-     b1 = cosmo.params.b
-     s_b2 = cosmo.params.s_b
-     𝑓_evo2 = cosmo.params.𝑓_evo
-     Ω_M0 = cosmo.params.Ω_M0
+function ξ_GNC_Newtonian_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
-     Δs = s(s1, s2, y)
+    s1, D1, f1 = P1.comdist, P1.D, P1.f
+    s2, D2, f2, a2, ℋ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ
 
-     common = 2 * f2 * a2 * ℋ2^2 * (𝑓_evo2 - 3) + 3 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5 * s_b2 - 2)
-     factor = f1 * ((3 * y^2 - 1) * s2^2 - 4 * y * s1 * s2 + 2 * s1^2)
+    Ω_M0 = cosmo.params.Ω_M0
+    b1 = isnothing(b1) ? cosmo.params.b1 : b1
+    s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
 
-     J20 = -1 / 6 * (3 * b1 + f1) * (-2 * y * s1 * s2 + s1^2 + s2^2)
+    s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
+    ℛ2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b2, 𝑓_evo=𝑓_evo2, s_lim=s_lim)
 
-     I00 = cosmo.tools.I00(Δs)
-     I20 = cosmo.tools.I20(Δs)
-     I40 = cosmo.tools.I40(Δs)
-     I02 = cosmo.tools.I02(Δs)
+    Δs = s(s1, s2, y)
 
-     if obs == false || obs == :no 
-          return D1 * D2 / a2 * common * (
-                    factor * (1 / 90 * I00 + 1 / 63 * I20 + 1 / 210 * I40)
-                    +
-                    J20 * I02
-               )
-     elseif obs == true || obs == :yes || obs == :noobsvel
+    common = 2 * f2 * a2 * ℋ2^2 * (𝑓_evo2 - 3) + 3 * ℋ0^2 * Ω_M0 * (f2 + ℛ2 + 5 * s_b2 - 2)
+    factor = f1 * ((3 * y^2 - 1) * s2^2 - 4 * y * s1 * s2 + 2 * s1^2)
 
-          #### New observer terms #########
+    J20 = -1 / 6 * (3 * b1 + f1) * (-2 * y * s1 * s2 + s1^2 + s2^2)
 
-          I31_s1 = cosmo.tools.I31(s1)
-          I11_s1 = cosmo.tools.I11(s1)
-          I13_s1 = cosmo.tools.I13(s1)
+    I00 = cosmo.tools.I00(Δs)
+    I20 = cosmo.tools.I20(Δs)
+    I40 = cosmo.tools.I40(Δs)
+    I02 = cosmo.tools.I02(Δs)
 
-          obs_common = ℋ0 * s1^2 / (2 * s2) * (ℛ2 * s2 * ℋ0 * (2 * f0 - 3 * Ω_M0) +  2 * f0 * (5 * s_b2 - 2))
+    if obs == false || obs == :no 
+        return D1 * D2 / a2 * common * (
+                factor * (1 / 90 * I00 + 1 / 63 * I20 + 1 / 210 * I40)
+                +
+                J20 * I02
+            )
+    elseif obs == true || obs == :yes || obs == :noobsvel
 
-          obs_terms = D1 * obs_common * ( (b1 + f1)/5 * (I11_s1 + I31_s1) - (3 * b1 + f1) * I13_s1)
+        #### New observer terms #########
 
-          #################################
+        I31_s1 = cosmo.tools.I31(s1)
+        I11_s1 = cosmo.tools.I11(s1)
+        I13_s1 = cosmo.tools.I13(s1)
 
-          return D1 * D2 / a2 * common * (
-                    factor * (1 / 90 * I00 + 1 / 63 * I20 + 1 / 210 * I40)
-                    +
-                    J20 * I02
-               ) + obs_terms
+        obs_common = ℋ0 * s1^2 / (2 * s2) * (ℛ2 * s2 * ℋ0 * (2 * f0 - 3 * Ω_M0) +  2 * f0 * (5 * s_b2 - 2))
 
-     else 
-          throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
-               "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
-               ))
-     end
+        obs_terms = D1 * obs_common * ( (b1 + f1)/5 * (I11_s1 + I31_s1) - (3 * b1 + f1) * I13_s1)
+
+        #################################
+
+        return D1 * D2 / a2 * common * (
+                factor * (1 / 90 * I00 + 1 / 63 * I20 + 1 / 210 * I40)
+                +
+                J20 * I02
+            ) + obs_terms
+
+    else 
+        throw(AssertionError(":$obs is not a valid Symbol for \"obs\"; they are: \n\t"*
+            "$(":".*string.(VALID_OBS_VALUES) .* vcat([" , " for i in 1:length(VALID_OBS_VALUES)-1], " .")... )" 
+            ))
+    end
 end
 
 
-function ξ_GNC_Newtonian_LocalGP(s1, s2, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     return ξ_GNC_Newtonian_LocalGP(P1, P2, y, cosmo; obs = obs)
+function ξ_GNC_Newtonian_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    return ξ_GNC_Newtonian_LocalGP(P1, P2, y, cosmo; kwargs...)
 end
 
 
 """
-     ξ_GNC_Newtonian_LocalGP(
-          P1::Point, P2::Point, y, cosmo::Cosmology; 
-          obs::Union{Bool, Symbol} = :noobsvel
-          ) ::Float64
+    ξ_GNC_Newtonian_LocalGP(
+        P1::Point, P2::Point, y, cosmo::Cosmology;
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        obs::Union{Bool, Symbol} = :noobsvel
+        ) ::Float64
 
-     ξ_GNC_Newtonian_LocalGP(s1, s2, y, cosmo::Cosmology;
-          kwargs...) ::Float64
+    ξ_GNC_Newtonian_LocalGP(s1, s2, y, cosmo::Cosmology;
+        kwargs...) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Newtonian and the Local Gravitational Potential (GP) effects arising from the Galaxy Number Counts (GNC).
@@ -95,7 +104,7 @@ evaluate the function, while in the second method (that internally recalls the f
 you must provide the two corresponding comoving distances `s1` and `s2`.
 We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
-The analytical expression of this term is the following:
+The analytical expression of this TPCF is the following:
 
 ```math
 \\begin{split}
@@ -117,8 +126,7 @@ The analytical expression of this term is the following:
 \\end{split}
 ```
 
-
-where
+with
 
 ```math
 \\begin{split}
@@ -151,7 +159,7 @@ where
     %%%%%%%%%%%%%%%%%%%%%
     J^{\\delta \\phi}_{11} &=
     J^{\\delta \\phi}_{13} = \\frac{1}{5}(b_1 + f_1) 
-    \\, .
+    \\, ,
 \\end{split}
 ```
 
@@ -166,7 +174,7 @@ where:
 - ``f_1 = f(s_1)``, ... is the linear growth rate (evaluated in ``s_1``);
 
 - ``\\mathcal{H}_1 = \\mathcal{H}(s_1)``, ... is the comoving 
-  Hubble parameter (evaluated in ``s_1``, ...);
+  Hubble distances (evaluated in ``s_1``);
 
 - ``y = \\cos{\\theta} = \\hat{\\mathbf{s}}_1 \\cdot \\hat{\\mathbf{s}}_2``;
 
@@ -178,10 +186,10 @@ where:
   \\frac{\\dot{\\mathcal{H}}(s)}{\\mathcal{H}(s)^2} - \\mathit{f}_{\\mathrm{evo}} \\quad ;
   ```
 
-- ``b_1 = b(s_1)``, ``s_{\\mathrm{b}, 1} = s_{\\mathrm{b}}(s_1)``, ``\\mathit{f}_{\\mathrm{evo}}``, ... : 
+- ``b_1``, ``s_{\\mathrm{b}, 1}``, ``\\mathit{f}_{\\mathrm{evo}, 1}`` 
+  (and ``b_2``, ``s_{\\mathrm{b}, 2}``, ``\\mathit{f}_{\\mathrm{evo}, 2}``) : 
   galaxy bias, magnification bias (i.e. the slope of the luminosity function at the luminosity threshold), 
-  and evolution bias (the first two evaluated in ``s_1``); they are
-  all stored in `cosmo`;
+  and evolution bias for the first (second) effect;
 
 - ``\\Omega_{\\mathrm{M}0} = \\Omega_{\\mathrm{cdm}} + \\Omega_{\\mathrm{b}}`` is the sum of 
   cold-dark-matter and barionic density parameters (again, stored in `cosmo`);
@@ -222,21 +230,42 @@ only the first one will be taken into account.
 
 - `P1::Point` and `P2::Point`, or `s1` and `s2`: `Point`/comoving distances where the 
   TPCF has to be calculated; they contain all the 
-  data of interest needed for this calculus (comoving distance, growth factor and so on);
+  data of interest needed for this calculus (comoving distance, growth factor and so on).
   
-- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer;
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
 
 - `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
   used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
 
 ## Keyword Arguments
 
+- `b1=nothing`, `s_b1=nothing`, `𝑓_evo1=nothing` and `b2=nothing`, `s_b2=nothing`, `𝑓_evo2=nothing`:
+  galaxy, magnification and evolutionary biases respectively for the first and the second effect 
+  computed in this TPCF:
+  - if not set (i.e. if you leave the default value `nothing`) the values stored in the input `cosmo`
+    will be considered;
+  - if you set one or more values, they will override the `cosmo` ones in this computation;
+  - the two sets of values should be different only if you are interested in studing two galaxy species;
+  - only the required parameters for the chosen TPCF will be used, depending on its analytical expression;
+    all the others will have no effect, we still inserted them for pragmatical code compatibilities. 
+
+- `s_lim=nothing` : parameter used in order to avoid the divergence of the ``\\mathcal{R}`` and 
+  ``\\mathfrak{R}`` denominators: when ``0 \\leq s \\leq s_\\mathrm{lim}`` the returned values are
+  ```math
+  \\forall \\, s \\in [ 0, s_\\mathrm{lim} ] \\; : \\quad 
+      \\mathfrak{R}(s) = 1 - \\frac{1}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} \\; , \\quad
+      \\mathcal{R}(s) = 5 s_{\\mathrm{b}} + 
+          \\frac{2 - 5 s_{\\mathrm{b}}}{\\mathcal{H}_0 \\, s_\\mathrm{lim}} +  
+          \\frac{\\dot{\\mathcal{H}}}{\\mathcal{H}_0^2} - \\mathit{f}_{\\mathrm{evo}} \\; .
+  ```
+  If `nothing`, the default value stored in `cosmo` will be considered.
+
 - `obs::Union{Bool,Symbol} = :noobsvel` : do you want to consider the observer terms in the computation of the 
   chosen GNC TPCF effect?
-  - `:yes` or `true` -> all the observer terms will be considered;
-  - `:no` or `false` -> no observer term will be taken into account;
+  - `:yes` or `true` -> all the observer effects will be considered
+  - `:no` or `false` -> no observer term will be taken into account
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
-    will be neglected, the other ones will be taken into account.
+    will be neglected, the other ones will be taken into account
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
 [`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref)
@@ -254,8 +283,10 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 
 
 """
-     ξ_GNC_LocalGP_Newtonian(s1, s2, y, cosmo::Cosmology; kwargs...) = 
-          ξ_GNC_Newtonian_LocalGP(s2, s1, y, cosmo; kwargs...)
+    ξ_GNC_LocalGP_Newtonian(s1, s2, y, cosmo::Cosmology;         
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        obs::Union{Bool, Symbol} = :noobsvel ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Local Gravitational Potential (GP) and the Newtonian effects arising from the Galaxy Number Counts (GNC).
@@ -269,20 +300,31 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
 
 - `s1` and `s2`: comoving distances where the TPCF has to be calculated;
   
-- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer;
+- `y`: the cosine of the angle between the two points `P1` and `P2` wrt the observer
 
 - `cosmo::Cosmology`: cosmology to be used in this computation; it contains all the splines
   used for the conversion `s` -> `Point`, and all the cosmological parameters ``b``, ...
 
 ## Keyword Arguments
 
-- `kwargs...` : Keyword arguments to be passed to the symmetric TPCF.
+- `kwargs...` : Keyword arguments to be passed to the symmetric TPCF
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref), 
 [`map_ξ_GNC_multipole`](@ref), [`print_map_ξ_GNC_multipole`](@ref),
 [`ξ_GNC_Newtonian_LocalGP`](@ref)
 """
-function ξ_GNC_LocalGP_Newtonian(s1, s2, y, cosmo::Cosmology; kwargs...)
-     ξ_GNC_Newtonian_LocalGP(s2, s1, y, cosmo; kwargs...)
+function ξ_GNC_LocalGP_Newtonian(s1, s2, y, cosmo::Cosmology; 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
+
+    b1 = isnothing(b1) ? cosmo.params.b1 : b1
+    b2 = isnothing(b2) ? cosmo.params.b2 : b2
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
+
+    ξ_GNC_Newtonian_LocalGP(s2, s1, y, cosmo; b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
+        𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end
 
