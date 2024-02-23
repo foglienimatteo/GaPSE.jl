@@ -1,6 +1,6 @@
 # GaPSE - a model for the Galaxy Power Spectrum Estimator
 
-![julia-version](https://img.shields.io/badge/julia_version-v1.8-9558B2?style=flat&logo=julia) 
+![julia-version](https://img.shields.io/badge/julia_version-v1.9-9558B2?style=flat&logo=julia) 
 ![package-version](https://img.shields.io/github/v/release/foglienimatteo/GaPSE.jl?include_prereleases)
 ![CI-build](https://img.shields.io/github/actions/workflow/status/foglienimatteo/GaPSE.jl/UnitTests.yml)
 ![size](https://img.shields.io/github/repo-size/foglienimatteo/GaPSE.jl) 
