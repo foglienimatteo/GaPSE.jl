@@ -66,7 +66,7 @@ end
         isfile(calc_name_file_Qmultipoles) && rm(calc_name_file_Qmultipoles)
 
         ss, all_Q_l1 = GaPSE.readxall(name_file_Qmultipoles)
-        cs = GaPSE.CosmoSplines("datatest/WideA_ZA_background.dat", 0.05, 0.20; h=0.7, s_lim = 0.01, s_b = 0.0, 𝑓_evo = 0.0)
+        cs = GaPSE.CosmoSplines("datatest/WideA_ZA_background.dat", 0.05, 0.20; h=0.7, s_lim = 0.01, s_b1 = 0.0, 𝑓_evo1 = 0.0, s_b2 = 0.0, 𝑓_evo2 = 0.0)
 
         GaPSE.print_map_WindowFIntegrated_multipole(cs.z_of_s.(ss), windowfint, calc_name_file_Qmultipoles,
             "datatest/WideA_ZA_background.dat"; z_min=0.05, z_max=0.20, pr=false, L_max=4,
