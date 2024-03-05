@@ -21,7 +21,7 @@ module GaPSE
 
 
 using TwoFAST # Licence: MIT "Expat" (o GPL ?)
-using oneAPI, IntelITT
+using oneAPI
 using FFTW
 using Base: @kwdef
 using SpecialFunctions: gamma
