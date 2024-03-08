@@ -305,7 +305,8 @@ integrand_ξ_GNC_Lensing
 
 
 function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::Float64=1e6, N_χs_2::Int=100, suit_sampling::Bool=true, kwargs...)
+    en::Float64=1e6, N_χs_2::Int=100, suit_sampling::Bool=true, 
+    oneapi::Bool=false, kwargs...)
 
     if oneapi==false
         χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
