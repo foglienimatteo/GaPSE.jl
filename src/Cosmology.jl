@@ -232,7 +232,7 @@ struct CosmoSplines
         ℋ_of_s = Spline1D(BD.comdist, BD.ℋ; bc="error")
 
         ℋ_of_τ = Spline1D(reverse(BD.conftime), reverse(BD.ℋ); bc="error")
-        vec_ℋs_p = [derivative(ℋ_of_τ, t) for t in BD.conftime]
+        vec_ℋs_p = [Dierckx.derivative(ℋ_of_τ, t) for t in BD.conftime]
         ℋ_p_of_s = Spline1D(BD.comdist, vec_ℋs_p; bc="error")
 
         #println(BD.z[end], " ",BD.comdist[end])

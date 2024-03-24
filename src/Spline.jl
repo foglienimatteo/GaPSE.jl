@@ -9,7 +9,7 @@ struct MySpline
         @assert length(xs) > 3 "cannot interpolate with less than 4 pairs of data"
 
         # Boundary conditions
-        @assert bc == "Error" "Only bc=\"Error\" is allowed at the moment, bc=$bc is not valid."
+        @assert bc == "Error" || bc=="error" "Only bc=\"Error\"/\"error\" is allowed at the moment, bc=$bc is not valid."
 
 
         N, Δ = length(xs), diff(xs)

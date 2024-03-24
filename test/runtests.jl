@@ -48,6 +48,10 @@ include("TEST_DATA.jl")
     include("test_FFTLog.jl")
 end
 
+@testset "test Spline" begin
+    include("test_Spline.jl")
+end
+
 @testset "test MathUtils" begin
     include("test_MathUtils.jl")
 end
