@@ -83,6 +83,16 @@ function integrand_ξ_GNC_Lensing(
     return integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
 end
 
+function integrand_ξ_GNC_Lensing_oneapi(
+    IP1s, IP2,
+    P1, P2,
+    y, cosmo::Cosmology;
+    kwargs...)
+
+    i = get_global_id()
+    1
+    #integrand_ξ_GNC_Lensing(IP1s[i], IP2, P1, P2, y, cosmo; kwargs...)
+end
 
 """
     integrand_ξ_GNC_Lensing(
@@ -314,7 +324,7 @@ function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
         χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
 
         IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-        IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
+        IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]``
 
         int_ξ_Lensings = [
           en * GaPSE.integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
@@ -331,14 +341,37 @@ function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
         χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
 
         IP1s = oneArray([GaPSE.Point(x, cosmo) for x in χ1s])
-        IP2s = oneArray([GaPSE.Point(x, cosmo) for x in χ2s])
+        IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-        int_ξ_Lensings = [
-          en * GaPSE.integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
-          for IP1 in IP1s, IP2 in IP2s
-        ]
+        int_ξ_Lensings = zeros(length(IP1s), length(IP2s))
+        tmp=oneArray(zeros(length(IP1s)))
+        tmp_onearray=oneArray(tmp)
 
-        res = trapz((χ1s, χ2s), int_ξ_Lensings)
+        #i = 1
+        #for j in 1:length(IP2s)
+        #  int_ξ_Lensing[i,j] = @oneapi items=30 en * GaPSE.integrand_ξ_GNC_Lensing_oneapi(IP1s, IP2s[j], P1, P2, y, cosmo; kwargs...)
+        #end
+        #  global i+=1
+
+        function vadd(tmp, IP1s, IP2s;kwargs...)
+           i = get_global_id()
+           #@inbounds c[i] = a[i] + b[i]
+           tmp[i] = en * GaPSE.integrand_ξ_GNC_Lensing(IP1s[i], IP2s, P1, P2, y, cosmo;kwargs...)
+           return 
+       end
+
+        #a = oneArray(rand(10));
+
+        #b = oneArray(rand(10));
+
+        #c = similar(a);
+       for j in 1:length(IP2s)
+        @oneapi items=10 vadd(tmp, IP1s, IP2s[j])
+        [int_ξ_Lensings[i, j] =  tmp[i] for i in 1:legnth(IP1s)]
+       end
+        #Array(a) .+ Array(b) == Array(c)
+
+        res = trapz((χ1s, χ2s), reshape(int_ξ_Lensings,length(IP1s), length(IP2s)))
         #println("res = $res")
         return res / en
 
