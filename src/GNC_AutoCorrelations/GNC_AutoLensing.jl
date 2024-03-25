@@ -324,7 +324,7 @@ function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
         χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
 
         IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-        IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]``
+        IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
         int_ξ_Lensings = [
           en * GaPSE.integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)

@@ -36,6 +36,4 @@ end
     @test all(isapprox.(BD.f[begin:L], GROWTH_FACTOR_F, rtol = 1e-8))
     @test all(isapprox.(BD.ℋ[begin:L], COM_H, rtol = 1e-8))
     @test all(isapprox.(BD.ℋ_p[3:L], COM_H_P[3:end], rtol = 1e-3))
-    println("vec1 = ", BD.ℋ_p[3:L], ";")
-    println("vec2 = ", COM_H_P[3:end], ";")
 end

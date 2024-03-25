@@ -1,8 +1,47 @@
 
+"""
+    test_are_numbers(y...)
 
+Return `true` if the inputs are all valid numbers, `false` otherwise (i.e. there
+is at least one `NaN` or `Inf` or `-Inf`).
+"""
 test_are_numbers(y...) = any(x -> isnan(x) || isinf(x), [y...]) ? false : true
 
+
 # This works, and it's the best one!
+"""
+    struct MySpline
+        xs::Vector{Float64}
+        coeffs::Vector{Tuple{Float64,Float64,Float64,Float64}}
+        N::Int64
+    end
+
+
+The theory bechind these Struct is taken from the book of Parviz Moin, 
+_"Fundamentals of Engineering Numerical Analysis"_ (2010), Cambridge University Press.
+Let ``g(x)`` be the cubic in the interval ``x_i \\leq x \\leq x_{i+1}`` and let g(x) denote the
+collection of all the cubics for the entire range of x. Since g is piecewise cubic
+its second derivative, g, is piecewise linear. 
+For the interval ``x_i \\leq x \\leq x_{i+1}``, we
+can write the equation for the corresponding straight line as
+```math
+g^{''}_i(x) = g^{''}(x_i)\\frac{x-x_{i+1}}{x_{i} - x_{i+1}} + g^{''}(x_{i+1})\\frac{x-x_{i}}{x_{i+1} - x_{i}}
+```
+Integrating two times and imposing to match the known values at the endpoints 
+(``y_i = g_i(x_i)`` and ``y_{i+1} = g_i(x_{i+1})``) we get:
+```math
+\\begin{split}
+g_i(x) = 
+    & \\frac{g^{''}(x_i)}{6}\\left[-\\frac{(x - x_{i+1})^3}{\\Delta_i} + \\Delta_i(x - x_{i+1})\\right] + \\\\ 
+    &\\frac{g^{''}(x_i+1)}{6}\\left[ \\frac{(x - x_{i})^3}{\\Delta_i} - \\Delta_i(x - x_{i})\\right] + \\\\
+    & y_{i+1} \\frac{x - x_{i}}{\\Delta_i} - y_{i} \\frac{x - x_{i+1}}{\\Delta_i} \\; ,
+    \\forall x \\in [x_i, x_{i+1}] \\; \\forall i=1,...,N-1 
+\\end{split}
+```
+where ``\\Delta_i = x_{i+1} - x_i``.
+
+
+"""
 struct MySpline
     xs::Vector{Float64}
     coeffs::Vector{Tuple{Float64,Float64,Float64,Float64}}
