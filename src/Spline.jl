@@ -1,3 +1,7 @@
+
+
+test_are_numbers(y...) = any(x -> isnan(x) || isinf(x), [y...]) ? false : true
+
 # This works, and it's the best one!
 struct MySpline
     xs::Vector{Float64}
@@ -20,25 +24,28 @@ struct MySpline
         # it would span from 1 to N-1; we will cut them at the end
 
         # Initial conditions
-        b_1, b_N, c_1, a_N, d_1, d_N =
-            if ic == "Natural"
-                1, 1, 0, 0, 0, 0
-            elseif ic == "Parabolic"
-                1, 1, -1, -1, 0, 0
-            elseif ic == "ThirdDerivative"
-                η_in = [(ys[i+1] - ys[i]) / (xs[i+1] - xs[i]) for i in 1:3]
-                η_in_2 = [(η_in[i+1] - η_in[i]) / (xs[i+2] - xs[i]) for i in 1:2]
-                η_in_3 = (η_in_2[2] - η_in_2[1]) / (xs[4] - xs[1])
+        b_1, b_N, c_1, a_N, d_1, d_N = begin
+                tmp = if ic == "Natural"
+                        1, 1, 0, 0, 0, 0
+                    elseif ic == "Parabolic"
+                        1, 1, -1, -1, 0, 0
+                    elseif ic == "ThirdDerivative"
+                        η_in = [(ys[i+1] - ys[i]) / (xs[i+1] - xs[i]) for i in 1:3]
+                        η_in_2 = [(η_in[i+1] - η_in[i]) / (xs[i+2] - xs[i]) for i in 1:2]
+                        η_in_3 = (η_in_2[2] - η_in_2[1]) / (xs[4] - xs[1])
 
-                η_end = [(ys[N-3+i] - ys[N-4+i]) / (xs[N-3+i] - xs[N-4+i]) for i in 1:3]
-                η_end_2 = [(η_end[i+1] - η_end[i]) / (xs[N-2+i] - xs[N-4+i]) for i in 1:2]
-                η_end_3 = (η_end_2[2] - η_end_2[1]) / (xs[N] - xs[N-3])
+                        η_end = [(ys[N-3+i] - ys[N-4+i]) / (xs[N-3+i] - xs[N-4+i]) for i in 1:3]
+                        η_end_2 = [(η_end[i+1] - η_end[i]) / (xs[N-2+i] - xs[N-4+i]) for i in 1:2]
+                        η_end_3 = (η_end_2[2] - η_end_2[1]) / (xs[N] - xs[N-3])
 
-                -Δ[1] / 6, -Δ[N-1] / 6, Δ[1] / 6, Δ[N-1] / 6, Δ[1]^2 * η_in_3, -Δ[N-1]^2 * η_end_3
-            else
-                vic = ["Natural", "Parabolic", "ThirdDerivative"]
-                throw(AssertionError("ic=$ic is not valid. Valid inital conditions are: $vic"))
+                        -Δ[1] / 6, -Δ[N-1] / 6, Δ[1] / 6, Δ[N-1] / 6, Δ[1]^2 * η_in_3, -Δ[N-1]^2 * η_end_3
+                    else
+                        vic = ["Natural", "Parabolic", "ThirdDerivative"]
+                        throw(AssertionError("ic=$ic is not valid. Valid inital conditions are: $vic"))
+                    end
+                test_are_numbers(tmp...) ? tmp : (1, 1, 0, 0, 0, 0)
             end
+        
 
         γ[1], δ[1] = c_1 / b_1, d_1 / b_1
         for i in 2:N-1
@@ -60,16 +67,20 @@ struct MySpline
             B[i] = (ys[i+1] - ys[i]) / Δ[i] - Δ[i] * (C[i+1] + 2 * C[i]) / 3
             D[i] = (C[i+1] - C[i]) / (3 * Δ[i])
         end
-        #C = C[begin:end-1] #not needed, the cycle inside new does that
+        
+        B[N], C[N], D[N] = 0.0, 0.0, 0.0
+        # We need the N index for ys[N] , so for compatibility we keep them all
 
-        new(xs, [(ys[i], B[i], C[i], D[i]) for i in 1:N-1], N)
+        new(xs, [(ys[i], B[i], C[i], D[i]) for i in 1:N], N)
     end
 end
 
 function (S::MySpline)(x)
+    @assert S.xs[1] ≤ x ≤ S.xs[end] "BC Error: $(S.xs[1]) ≤ $x ≤ $(S.xs[end]) does not hold!"
     i = searchsortedlast(S.xs, x)
-    @assert 1 ≤ i ≤ S.N "BC Error: $(S.xs[1]) ≤ $x ≤ $(S.xs[end]) does not hold!"
     x_i = S.xs[i]
+    (x_i ≈ x) && (return S.coeffs[i][1])
+
     #a, b, c, d = S.coeffs[i]
     #return a + b * (x - x_i) + c * (x - x_i)^2 + d * (x - x_i)^3
     #return @evalpoly(x-x_i, a, b, c, d)

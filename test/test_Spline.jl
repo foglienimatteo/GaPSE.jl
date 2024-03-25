@@ -2,12 +2,12 @@
 
 @testset "test Spline - linear range" begin
     RTOL = 1e-4
-    N = length(xs)
+    N = 10000
     N1, N2 = 10, 10
     #lp,hp=0.005,0.005
 
     #xs = [x for x in 10 .^ range(0, 2, length=1000) ] 
-    xs = [1.0 * x for x in 1:1:10000]
+    xs = [1.0 * x for x in 1:1:N]
     ys = sin.(xs / 987.452) + cos.(xs .^ 9.32) .* (xs) .^ (0.39761)
 
     #N1, N2 = Int64(ceil(N*lp)), N-Int64(floor(N*hp))
@@ -32,12 +32,12 @@ end
 
 @testset "test Spline - log range" begin
     RTOL = 1e-4
-    N = length(xs)
+    N = 10000
     N1, N2 = 10, 10
     #lp,hp=0.005,0.005
 
-    xs = [x for x in 10 .^ range(0, 2, length=10000) ] 
-    #xs = [1.0 * x for x in 1:1:10000]
+    xs = [x for x in 10 .^ range(0, 2, length=N) ] 
+    #xs = [1.0 * x for x in 1:1:N]
     ys = sin.(xs / 987.452) + cos.(xs .^ 9.32) .* (xs) .^ (0.39761)
 
     #N1, N2 = Int64(ceil(N*lp)), N-Int64(floor(N*hp))
