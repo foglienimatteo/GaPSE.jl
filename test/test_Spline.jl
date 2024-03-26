@@ -8,6 +8,7 @@
     @test_throws MethodError GaPSE.MySpline([1.0*x for x in 1:3], [1.0*x for x in 1:3]; nu=2)
     @test_throws AssertionError GaPSE.MySpline([1.0*x for x in 1:6], [1.0*x for x in 1:6]; bc="idk")
     @test_throws AssertionError GaPSE.MySpline([1.0*x for x in 1:6], [1.0*x for x in 1:6]; ic="idk")
+
     @test GaPSE.MySpline([1.0*x for x in 1:6], [1.0*x for x in 1:6]) isa Any
     @test GaPSE.MySpline([1.0*x for x in 1:6], [1.0*x for x in 1:6]; bc="error") isa Any
     @test GaPSE.MySpline([1.0*x for x in 1:6], [1.0*x for x in 1:6]; bc="Error") isa Any
@@ -21,17 +22,18 @@ end
         xs = [1.0 * x for x in 1:10]
         best_sp_1 = GaPSE.MySpline(xs, xs)
 
-        @test_throws MethodError best_sp_1(9)
         @test_throws AssertionError best_sp_1(11.0)
         @test_throws AssertionError best_sp_1(-1.0)
         @test best_sp_1(10.0) ≈ 10.0
+        @test best_sp_1(10) ≈ 10
         @test best_sp_1(1.0) ≈ 1.0
         @test best_sp_1(5.0) ≈ 5.0
+        @test best_sp_1(7) ≈ 7
         @test best_sp_1(4.32) ≈ 4.32
 
         @test_throws AssertionError best_sp_1.([x for x in 1:0.1:11])
         @test_throws AssertionError best_sp_1.([x for x in -1:0.1:10])
-        @test_throws MethodError best_sp_1.([x for x in 1:10])
+        @test all(best_sp_1.([x for x in 1:10]) .≈ xs)
         @test all(best_sp_1.(xs) .≈ xs)
     end
 
@@ -101,18 +103,19 @@ end
         xs = [1.0 * x for x in 1:10]
         best_sp_1 = GaPSE.MySpline(xs, xs)
 
-        @test_throws MethodError GaPSE.derivative(best_sp_1, 9)
         @test_throws AssertionError GaPSE.derivative(best_sp_1, 11.0)
         @test_throws AssertionError GaPSE.derivative(best_sp_1, -1.0)
         @test_throws AssertionError GaPSE.derivative(best_sp_1, 9.0; nu=0)
         @test GaPSE.derivative(best_sp_1, 10.0) ≈ 1.0
+        @test GaPSE.derivative(best_sp_1, 10) ≈ 1
         @test GaPSE.derivative(best_sp_1, 1.0) ≈ 1.0
-        @test GaPSE.derivative(best_sp_1, 5.0) ≈ 1.0
+        @test GaPSE.derivative(best_sp_1, 7) ≈ 1
+        @test GaPSE.derivative(best_sp_1, 4.32) ≈ 1.0
 
         @test_throws AssertionError GaPSE.derivative(best_sp_1, [x for x in 1:0.1:11])
         @test_throws AssertionError GaPSE.derivative(best_sp_1, [x for x in -1:0.1:10])
-        @test_throws MethodError GaPSE.derivative(best_sp_1, [x for x in 1:10])
         @test all(GaPSE.derivative(best_sp_1, xs) .≈ 1.0)
+        @test all(GaPSE.derivative(best_sp_1, [x for x in 1:10]) .≈ 1.0)
     end
 
     @testset "test Spline derivative - linear range - nu=1" begin
@@ -351,4 +354,3 @@ end
     end
 end
 
-@test false

@@ -1,10 +1,12 @@
+# MySpline
 
 
+The mathematical procedure we implemented in GaPSE is based on:
+- Parviz Moin, _"Fundamentals of Engineering Numerical Analysis"_ (2010), 
+  Cambridge University Press: Second edition, Chapter 1.2, "Cubic Spline Interpolation"
+- 
 
-The theory bechind these Struct is taken from the book of Parviz Moin, 
-_"Fundamentals of Engineering Numerical Analysis"_ (2010), Cambridge University Press.
-
-## Mathematical Derivation
+## Derivation of the equation system for the cubic spline
 
 Let us suppose to have a set of $N$ data points $(x_i, y_i), \forall i=1,...,N$ that we want
 to use to create our cubic spline.
@@ -76,6 +78,9 @@ $$
     d_N
 \end{bmatrix}
 $$
+
+
+## Apply the TDMA 
 
 The equations are in tridiagonal form and diagonally dominant, so we can easily apply the TriDiagonal Matrix Algorithm (TDMA) to this system
 
@@ -253,6 +258,10 @@ $$
 g^{''}(x_N) = \frac{\delta_N}{\beta_N} = \tilde{\delta}_N\\[10pt]
 g^{''}(x_i) = \frac{\delta_i - \gamma_i\, g^{''}(x_{i+1})}{\beta_i} = \tilde{\delta}_i - \tilde{\gamma}_i\, g^{''}(x_{i+1})
 $$
+
+
+## Final spline polynomial coefficients 
+
 
 The final expression for $g(x)$ is:
 

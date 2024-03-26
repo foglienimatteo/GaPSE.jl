@@ -8,7 +8,7 @@ is at least one `NaN` or `Inf` or `-Inf`).
 test_are_numbers(y...) = any(x -> isnan(x) || isinf(x), [y...]) ? false : true
 
 
-# This works, and it's the best one!
+
 """
     struct MySpline
         xs::Vector{Float64}
@@ -16,9 +16,76 @@ test_are_numbers(y...) = any(x -> isnan(x) || isinf(x), [y...]) ? false : true
         N::Int64
     end
 
+Struct that stores the data necessary to define a cubic spline interpolation.
 
-TBD
+The implementation of this function is based on:
+- Parviz Moin, _"Fundamentals of Engineering Numerical Analysis"_ (2010), 
+  Cambridge University Press: Second edition, Chapter 1.2, "Cubic Spline Interpolation"
+- 
 
+Have a look at the **Spline Theory** section in the online documentation of GaPSE.jl 
+([https://foglienimatteo.github.io/GaPSE.jl/stable/](https://foglienimatteo.github.io/GaPSE.jl/stable/))
+to have a better understanding of the mathematical procedure here employed.
+
+## Arguments
+
+- `xs::Vector{Float64}`: input x-axis data points.
+- `coeffs::Vector{Tuple{Float64,Float64,Float64,Float64}}`: vector of tuples containing 
+   `(y, B, C, D)`, respectively the input y-axis data points and the linear, quadriatic and
+  cubic coefficients of the polynomial, i.e.:
+  ```math
+    f(x) = y_i + B \\,(x - x_i) + C \\,(x - x_i)^2 + D \\,(x-x_i)^3 \\; , \\quad 
+    \\forall x \\in [x_i, x_{i+1}] \\; , \\quad \\forall i = 1,...,N-1 
+  ```
+- `N::Int64`: number of input data point couples ``(x_i, y_i)``
+
+## Constructor
+
+    MySpline(
+        xs::Vector{T1}, ys::Vector{T2}; 
+        bc::String="Error", ic::String="Natural"
+    ) where {T1<:AbstractFloat, T2<:AbstractFloat}
+        
+It supports specifying Boundary Conditions (BC) and Initial Conditions (ic) for the 
+spline interpolation.
+
+- `xs::Vector{T1}`: input x-axis data points.
+- `xs::Vector{T2}`: input y-axis data points.
+- `bc::String="Error"`: Boundary Condition option, i.e. what to do if the point 
+  where to evaluate the spline is outside the range ``[x_1, x_N]``. 
+  Only "Error" or "error" are allowed.
+- `ic::String="Natural"`: Initial Condition option. 
+  Supported options are 
+  - `"Natural"` : also known as Free Run-Out, the splines gets flat at the extremes;
+  - `"Parabolic"`: Parabolic run-out, i.e. the edge cubic are set to be parabolas;
+  - `"ThirdDerivative"` : set the continuity of the Third Derivative at the extremes.
+
+## Example of use
+
+Once you create a `MyStruct` spline, you can apply it as a normal function to
+any input number/vector:
+
+```julia
+julia> xs = [1.0*x for x in 1:10]; # MySpline doesn't accept Int64
+
+julia> ys = [2.0*x for x in 1:10]; 
+
+julia> spl = GaPSE.MySpline(xs, ys; ic="Natural");
+
+julia> spl(3)
+6.0
+
+julia> spl.([4 5])
+1×2 Matrix{Float64}:
+ 8.0  10.0
+
+julia> spl.([4.3, 5.1])
+2-element Vector{Float64}:
+  8.6
+ 10.2
+```
+
+See also: [`derivative`](@ref)
 """
 struct MySpline
     xs::Vector{Float64}
@@ -93,7 +160,21 @@ struct MySpline
 end
 
 """
-    TBD
+    (S::MySpline)(x)
+
+Return the value of this cubic spline struct `MySpline` in the input point `x`,
+using the equation:
+
+```math
+    f(x) = y_i + B \\,(x - x_i) + C \\,(x - x_i)^2 + D \\,(x-x_i)^3 \\; , \\quad 
+    \\forall x \\in [x_i, x_{i+1}] \\; , \\quad \\forall i = 1,...,N-1 
+```
+
+where ``x_i`` is the biggest value stored in `S.xs` smaller than `x` and 
+``y, ``B``, ``C``, ``D`` are its corresponding coefficients stored in `S.coeff[i]` 
+(with `x_i = S.xs[i]`).
+
+See also: [`MySpline`](@ref), [`derivative`](@ref)
 """
 function (S::MySpline)(x)
     @assert S.xs[1] ≤ x ≤ S.xs[end] "BC Error: $(S.xs[1]) ≤ $x ≤ $(S.xs[end]) does not hold!"
@@ -101,18 +182,15 @@ function (S::MySpline)(x)
     u = x - S.xs[i]
     (u ≈ 0.0) && (return S.coeffs[i][1])
 
-    #a, b, c, d = S.coeffs[i]
     #return a + b * (x - x_i) + c * (x - x_i)^2 + d * (x - x_i)^3
-    #return @evalpoly(x-x_i, a, b, c, d)
     return @evalpoly(u, S.coeffs[i]...)
 end
 
-function derivative(S::MySpline, x::T; nu::Int=1) where {T<:AbstractFloat}
+function derivative(S::MySpline, x::T; nu::Int=1) where {T<:Real}
     @assert nu > 0 "The derivative order nu must be >0; nu=$nu is not valid!"
     @assert S.xs[1] ≤ x ≤ S.xs[end] "BC Error: $(S.xs[1]) ≤ $x ≤ $(S.xs[end]) does not hold!"
     i = searchsortedlast(S.xs, x)
     u, _, b, c, d = (i == length(S.xs)) ? (x - S.xs[i-1], S.coeffs[i-1]...) : (x - S.xs[i], S.coeffs[i]...)
-    println("i=$i, x=$x, u=$u")
 
     if nu == 1
         return b + u * (2*c + 3*d*u)
@@ -133,12 +211,40 @@ function derivative(S::MySpline, x::T; nu::Int=1) where {T<:AbstractFloat}
     #end
 end
 
-function derivative(S::MySpline, x::Vector{T}; nu::Int=1) where {T<:AbstractFloat}
+function derivative(S::MySpline, x::Vector{T}; nu::Int=1) where {T<:Real}
     return [derivative(S, p; nu=nu) for p in x]
 end
 
 
 """
-    TBD
+    derivative(S::MySpline, x::T; nu::Int=1) where {T<:Real}
+    derivative(S::MySpline, x::Vector{T}; nu::Int=1) where {T<:Real}
+
+Evaluate the derivative of order `nu` in the input point(s) `x` for the cubic
+spline object ``S::MySpline``.
+Due to the fact that this spline is piecewise cubic, the following equations hold
+``\\forall x \\in [x_i, x_{i+1}] \\; , \\quad \\forall i = 1,...,N-1``:
+- ``\\nu=1``:
+  ```math
+    f^{'}(x) = B  + 2 \\, C \\,(x - x_i) + 3 \\, D \\,(x-x_i)^2 
+  ```
+- ``\\nu=2``:
+  ```math
+    f^{''}(x) = 2 \\, C + 6 \\, D \\,(x-x_i)
+  ```
+- ``\\nu=3``:
+  ```math
+    f^{'''}(x) = 6 \\, D
+  ```
+- ``\\nu \\geq 4``:
+  ```math
+    f^{(n)}(x) = 0 \\; , \\quad \\forall n \\geq 4
+  ```
+where ``x_i`` is the biggest value stored in `S.xs` smaller than `x` and 
+``y, ``B``, ``C``, ``D`` are its corresponding coefficients stored in `S.coeff[i]` 
+(with `x_i = S.xs[i]`).
+
+
+See also: [`MySpline`](@ref)
 """
 derivative
