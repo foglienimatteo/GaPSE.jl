@@ -25,7 +25,7 @@ struct MySpline
     coeffs::Vector{Tuple{Float64,Float64,Float64,Float64}}
     N::Int64
 
-    function MySpline(xs::Vector{T1}, ys::Vector{T2}; bc::String="Error", ic::String="Natural") where {T1<:Real,T2<:Real}
+    function MySpline(xs::Vector{T1}, ys::Vector{T2}; bc::String="Error", ic::String="Natural") where {T1<:AbstractFloat,T2<:AbstractFloat}
         @assert length(xs) == length(ys) "xs and ys have different lengths!"
         @assert length(xs) > 3 "cannot interpolate with less than 4 pairs of data"
 
@@ -98,30 +98,42 @@ end
 function (S::MySpline)(x)
     @assert S.xs[1] ≤ x ≤ S.xs[end] "BC Error: $(S.xs[1]) ≤ $x ≤ $(S.xs[end]) does not hold!"
     i = searchsortedlast(S.xs, x)
-    x_i = S.xs[i]
-    (x_i ≈ x) && (return S.coeffs[i][1])
+    u = x - S.xs[i]
+    (u ≈ 0.0) && (return S.coeffs[i][1])
 
     #a, b, c, d = S.coeffs[i]
     #return a + b * (x - x_i) + c * (x - x_i)^2 + d * (x - x_i)^3
     #return @evalpoly(x-x_i, a, b, c, d)
-    return @evalpoly(x - x_i, S.coeffs[i]...)
+    return @evalpoly(u, S.coeffs[i]...)
 end
 
-function derivative(S::MySpline, x::T; nu::Int=1) where {T<:Real}
+function derivative(S::MySpline, x::T; nu::Int=1) where {T<:AbstractFloat}
     @assert nu > 0 "The derivative order nu must be >0; nu=$nu is not valid!"
+    @assert S.xs[1] ≤ x ≤ S.xs[end] "BC Error: $(S.xs[1]) ≤ $x ≤ $(S.xs[end]) does not hold!"
     i = searchsortedlast(S.xs, x)
-    @assert 1 ≤ i ≤ S.N "BC Error: $(S.xs[1]) ≤ $x ≤ $(S.xs[end]) does not hold!"
-    x_i = S.xs[i]
-    if nu > 3
-        return 0
+    u, _, b, c, d = (i == length(S.xs)) ? (x - S.xs[i-1], S.coeffs[i-1]...) : (x - S.xs[i], S.coeffs[i]...)
+    println("i=$i, x=$x, u=$u")
+
+    if nu == 1
+        return b + u * (2*c + 3*d*u)
+    elseif nu == 2
+        return 2*c + 6*d * u
+    elseif nu == 3
+        return 6*d
     else
-        coeffs = S.coeffs[i]
-        return @evalpoly(x - x_i, coeffs[nu+1:end] .* [factorial(i) / factorial(i - nu) for i in nu:length(coeffs)-1]...)
+        return 0.0
     end
+
+    # The following general expression is way less efficient than the if-else statements
+    #if nu > 3
+    #    return 0
+    #else
+    #    coeffs = S.coeffs[i]
+    #    return @evalpoly(x - x_i, coeffs[nu+1:end] .* [factorial(i) / factorial(i - nu) for i in nu:length(coeffs)-1]...)
+    #end
 end
 
-# not efficient the following!
-function derivative(S::MySpline, x::Vector{T}; nu::Int=1) where {T<:Real}
+function derivative(S::MySpline, x::Vector{T}; nu::Int=1) where {T<:AbstractFloat}
     return [derivative(S, p; nu=nu) for p in x]
 end
 
