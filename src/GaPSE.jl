@@ -21,6 +21,7 @@ module GaPSE
 
 
 using TwoFAST # Licence: MIT "Expat" (o GPL ?)
+using oneAPI
 using FFTW
 using Base: @kwdef
 using SpecialFunctions: gamma
@@ -69,6 +70,7 @@ const LENGTH_VALID_GROUPS = [18, 27, 22, 22, nothing]
 
 const HUBBLE_0 = 1e5 / 299792458.0
 
+include("Spline.jl")
 include("OtherUtils.jl")
 include("MathUtils.jl")
 #include("FFTLog.jl")

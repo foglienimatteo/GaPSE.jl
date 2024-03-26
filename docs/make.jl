@@ -35,6 +35,10 @@ Documenter.makedocs(
                "Input Power Spectrum Tools" => "IPSTools.md",
                "Other Utilities" => "OtherUtils.md",
           ],
+          "Spline" => [
+               "MySpline" => "Spline.md",
+               "Spline Theory" => "SplineTheory.md"
+          ],
      ],
 )
 
