@@ -20,7 +20,7 @@
 
 function ξ_GNC_Newtonian(P1::Point, P2::Point, y, cosmo::Cosmology; 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
-    s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
+    s_lim=nothing, backend=false, obs::Union{Bool,Symbol}=:noobsvel)
     
     s1, D1, f1 = P1.comdist, P1.D, P1.f
     s2, D2, f2 = P2.comdist, P2.D, P2.f

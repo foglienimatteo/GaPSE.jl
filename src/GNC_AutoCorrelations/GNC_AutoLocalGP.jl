@@ -20,7 +20,7 @@
 
 function ξ_GNC_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology; 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
-    s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
+    s_lim=nothing, backend=false, obs::Union{Bool,Symbol}=:noobsvel)
 
     s1, D1, f1, a1, ℋ1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ
     s2, D2, f2, a2, ℋ2 = P2.comdist, P2.D, P2.f, P2.a, P2.ℋ
@@ -83,9 +83,9 @@ function ξ_GNC_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology;
 end
 
 
-function ξ_GNC_LocalGP(s1, s2, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
+function ξ_GNC_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-    return ξ_GNC_LocalGP(P1, P2, y, cosmo; obs = obs)
+    return ξ_GNC_LocalGP(P1, P2, y, cosmo; kwargs...)
 end
 
 """
