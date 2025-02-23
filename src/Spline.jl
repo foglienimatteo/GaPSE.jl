@@ -212,14 +212,14 @@ function derivative(S::MySpline, x::T; nu::Int=1) where {T<:Real}
     #end
 end
 
-function derivative(S::MySpline, x::Vector{T}; nu::Int=1) where {T<:AbstractFloat}
+function derivative(S::MySpline, x::Vector{T}; nu::Int=1) where {T<:Real}
     return [derivative(S, p; nu=nu) for p in x]
 end
 
 
 """
-    derivative(S::MySpline, x::T; nu::Int=1)  where {T<:AbstractFloat}
-    derivative(S::MySpline, x::Vector{T}; nu::Int=1)  where {T<:AbstractFloat}
+    derivative(S::MySpline, x::T; nu::Int=1)  where {T<:Real}
+    derivative(S::MySpline, x::Vector{T}; nu::Int=1)  where {T<:Real}
 
 Evaluate the derivative of order `nu` in the input point(s) `x` for the cubic
 spline object ``S::MySpline``.
