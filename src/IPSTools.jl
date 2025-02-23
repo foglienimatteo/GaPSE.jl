@@ -421,10 +421,10 @@ struct IntegralIPS
     end
 
     #=
-    function IntegralIPS(xs::Vector{Float64}, ys::Vector{Float64}; N = 1024, kmin = 1e-4, kmax = 1e3,
+    function IntegralIPS(xs::Vector{T}, ys::Vector{T}; N = 1024, kmin = 1e-4, kmax = 1e3,
         fit_left_min = 0.1, fit_left_max = 1.0, p0_left = nothing, con = false, 
         fit_right_min = nothing, fit_right_max = nothing, p0_right = nothing,
-        kwargs...)
+        kwargs...) where T<:AbstractFloat
 
         ss = 10 .^ range(log10(0.999*fit_left_min), 4, length = 1024)
         Is = [func(ips, s, kmin, kmax; kwargs...) for s in ss]
@@ -561,8 +561,8 @@ Input Power Spectrum.
 ## Constructors
 
     IPSTools(ips::InputPS; N::Int = 1024,
-        fit_min::Float64 = 0.05, fit_max::Float64 = 0.5,
-        k_min::Float64 = 1e-6, k_max::Float64 = 10.0
+        fit_min::AbstractFloat = 0.05, fit_max::AbstractFloat = 0.5,
+        k_min::AbstractFloat = 1e-6, k_max::AbstractFloat = 10.0
         con::Bool = false
     )
 
@@ -570,7 +570,7 @@ Input Power Spectrum.
 
 - `N::Int = 1024` : number of points to be used in the `xicalc` function
 
-- `k_min::Float64 = 1e-6, k_max::Float64 = 10.0` : integrations extremes of 
+- `k_min::AbstractFloat = 1e-6, k_max::AbstractFloat = 10.0` : integrations extremes of 
   the ``\\sigma_i``s
 
 - `con::Bool = false` : do you want that the fit of all the ``I_\\ell^n`` for the LEFT edge
@@ -622,11 +622,11 @@ struct IPSTools
     function IPSTools(
         ips::InputPS;
         N::Int=1024,
-        fit_min::Float64=0.05,
-        fit_max::Float64=0.5,
+        fit_min::AbstractFloat=0.05,
+        fit_max::AbstractFloat=0.5,
         con::Bool=false,
-        k_min::Float64=1e-6,
-        k_max::Float64=10.0
+        k_min::AbstractFloat=1e-6,
+        k_max::AbstractFloat=10.0
     )
         #PK = GaPSE.MySpline(ips.ks, ips.pks; bc = "error")
         PK = ips
@@ -695,8 +695,8 @@ struct IPSTools
 
     #=
     function IPSTools(ips::InputPS, iIs::String;
-        k_min::Float64 = 1e-8,
-        k_max::Float64 = 10.0
+        k_min::AbstractFloat = 1e-8,
+        k_max::AbstractFloat = 10.0
     )
         #PK = GaPSE.MySpline(ips.ks, ips.pks; bc = "error")
         Pk= ips

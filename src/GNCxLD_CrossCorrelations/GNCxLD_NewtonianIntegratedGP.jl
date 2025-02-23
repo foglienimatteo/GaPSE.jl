@@ -54,7 +54,7 @@ end
 
 
 function integrand_ξ_GNCxLD_Newtonian_IntegratedGP(
-    χ2::Float64, s1::Float64, s2::Float64,
+    χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
     y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
@@ -69,7 +69,7 @@ end
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
     integrand_ξ_GNCxLD_Newtonian_IntegratedGP(
-        χ2::Float64, s1::Float64, s2::Float64,
+        χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
         y, cosmo::Cosmology; kwargs... ) ::Float64
 
 Return the integrand of the Two-Point Correlation Function (TPCF) given by the cross correlation 
@@ -245,7 +245,7 @@ integrand_ξ_GNCxLD_Newtonian_IntegratedGP
         s1, s2, y, cosmo::Cosmology;
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
-        en::Float64 = 1e6, N_χs::Int = 100 ) ::Float64
+        en::AbstractFloat = 1e6, N_χs::Int = 100 ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation 
 between the Newtonian effect arising from the Galaxy Number Counts (GNC) and the Integrated 
@@ -400,7 +400,7 @@ the integrand function `integrand_ξ_GNCxLD_Newtonian_IntegratedGP`.
   ```
   If `nothing`, the fault value stored in `cosmo` will be considered.
 
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
+- `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
 - `N_χs::Int = 100`: number of points to be used for sampling the integral
@@ -411,7 +411,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNCxLD_multipole`](@ref),
 [`map_ξ_GNCxLD_multipole`](@ref), [`print_map_ξ_GNCxLD_multipole`](@ref)
 """
 function ξ_GNCxLD_Newtonian_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-    en::Float64 = 1e6, N_χs::Int = 100, kwargs...)
+    en::AbstractFloat = 1e6, N_χs::Int = 100, kwargs...)
 
     χ2s = s2 .* range(1e-6, 1.0, length = N_χs)
 

@@ -58,8 +58,8 @@ end
 
 
 function integrand_ξ_GNC_Lensing_IntegratedGP(
-    χ1::Float64, χ2::Float64,
-    s1::Float64, s2::Float64,
+    χ1::AbstractFloat, χ2::AbstractFloat,
+    s1::AbstractFloat, s2::AbstractFloat,
     y, cosmo::Cosmology;
     kwargs...)
 
@@ -80,8 +80,8 @@ end
         ) ::Float64
 
     integrand_ξ_GNC_Lensing_IntegratedGP(
-        χ1::Float64, χ2::Float64,
-        s1::Float64, s2::Float64,
+        χ1::AbstractFloat, χ2::AbstractFloat,
+        s1::AbstractFloat, s2::AbstractFloat,
         y, cosmo::Cosmology;
         kwargs...) ::Float64
 
@@ -261,7 +261,7 @@ end
 
 
 function ξ_GNC_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::Float64=1e6, N_χs_2::Int=100, backend=false, suit_sampling::Bool=true, kwargs...)
+    en::AbstractFloat=1e6, N_χs_2::Int=100, backend=false, suit_sampling::Bool=true, kwargs...)
 
     χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
     χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
@@ -307,7 +307,7 @@ end
 """
     ξ_GNC_Lensing_IntegratedGP(
         P1::Point, P2::Point, y, cosmo::Cosmology;
-        en::Float64=1e6, N_χs_2::Int=100,
+        en::AbstractFloat=1e6, N_χs_2::Int=100,
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
         obs::Union{Bool,Symbol}=:noobsvel,
@@ -473,7 +473,7 @@ This function is computed from `integrand_ξ_GNC_Lensing_IntegratedGP` with trap
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning IntegratedGP)
     will be neglected, the other ones will be taken into account
 
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
+- `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
 - `N_χs_2::Int = 100`: number of points to be used for sampling the integral
@@ -502,7 +502,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 
 """
     ξ_GNC_IntegratedGP_Lensing(s1, s2, y, cosmo::Cosmology; 
-        en::Float64=1e6, N_χs_2::Int=100,
+        en::AbstractFloat=1e6, N_χs_2::Int=100,
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
         obs::Union{Bool,Symbol}=:noobsvel,

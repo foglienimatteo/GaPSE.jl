@@ -22,7 +22,7 @@
 function integrand_ξ_GNC_Lensing(
     IP1::Point, IP2::Point,
     P1::Point, P2::Point,
-    y, cosmo::Cosmology; Δχ_min::Float64=1e-1, 
+    y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1, 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
@@ -130,8 +130,8 @@ function integrand_ξ_GNC_Lensing(
 end
 
 function integrand_ξ_GNC_Lensing(
-    χ1::Float64, χ2::Float64,
-    s1::Float64, s2::Float64,
+    χ1::AbstractFloat, χ2::AbstractFloat,
+    s1::AbstractFloat, s2::AbstractFloat,
     y, cosmo::Cosmology;
     kwargs...)
 
@@ -146,14 +146,14 @@ end
         IP1::Point, IP2::Point,
         P1::Point, P2::Point,
         y, cosmo::Cosmology;
-        Δχ_min::Float64=1e-1, b1=nothing, b2=nothing, 
+        Δχ_min::AbstractFloat=1e-1, b1=nothing, b2=nothing, 
         s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
         s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel
         ) ::Float64
 
     integrand_ξ_GNC_Lensing(
-        χ1::Float64, χ2::Float64,
-        s1::Float64, s2::Float64,
+        χ1::AbstractFloat, χ2::AbstractFloat,
+        s1::AbstractFloat, s2::AbstractFloat,
         y, cosmo::Cosmology;
         kwargs... )::Float64
 
@@ -331,7 +331,7 @@ This function is used inside `ξ_GNC_Lensing` with trapz() from the
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
     will be neglected, the other ones will be taken into account
 
-- `Δχ_min::Float64 = 1e-4` : when 
+- `Δχ_min::AbstractFloat = 1e-4` : when 
   ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
@@ -362,7 +362,7 @@ integrand_ξ_GNC_Lensing
 
 
 function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::Float64=1e6, N_χs_2::Int=100, suit_sampling::Bool=true, 
+    en::AbstractFloat=1e6, N_χs_2::Int=100, suit_sampling::Bool=true, 
     backend=CPU(), kwargs...)
 
     χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
@@ -384,7 +384,7 @@ function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
 
     else
 
-        int_ξs = KernelAbstractions.zeros(backend, Float64, N_χs_2, N_χs_2)
+        int_ξs = KernelAbstractions.zeros(backend, Float32, N_χs_2, N_χs_2)
 
         kernel! = kernel_2d!(backend)
         kernel!(int_ξs, GaPSE.integrand_ξ_GNC_Lensing, P1, P2, y, cosmo, N_χs_2, kwargs...; ndrange=size(int_ξs))
@@ -478,7 +478,7 @@ end
 
 """
     ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-        en::Float64 = 1e6, Δχ_min::Float64 = 1e-1,
+        en::AbstractFloat = 1e6, Δχ_min::AbstractFloat = 1e-1,
         N_χs_2::Int = 100,
         s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
         s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel,
@@ -655,10 +655,10 @@ This function is computed integrating `integrand_ξ_GNC_Lensing` with trapz() fr
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
     will be neglected, the other ones will be taken into account
 
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
+- `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
-- `Δχ_min::Float64 = 1e-4` : when 
+- `Δχ_min::AbstractFloat = 1e-4` : when 
   ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 

@@ -146,7 +146,7 @@ end
 
 #=
 function print_map_IntegratedF(in::String, out::String, s_min, s_max,
-    μs::Vector{Float64}; kwargs...)
+    μs::Vector{T}; kwargs...) where {T<:AbstractFloat}
 
     check_parent_directory(out)
     check_namefile(out)
@@ -157,10 +157,10 @@ function print_map_IntegratedF(in::String, out::String, s_min, s_max,
 end
 =#
 
-function print_map_IntegratedF(s_min, s_max, ss::Vector{Float64},
-    μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String;
+function print_map_IntegratedF(s_min, s_max, ss::Vector{T},
+    μs::Vector{T}, windowF::Union{String,WindowF}, out::String;
     alg::Symbol=:trap, llim=nothing, rlim=nothing,
-    rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true)
+    rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true) where {T<:AbstractFloat}
 
     check_parent_directory(out)
     check_namefile(out)
@@ -247,10 +247,10 @@ function print_map_IntegratedF(s_min, s_max, ss::Vector{Float64},
 end
 
 
-function print_map_IntegratedF(z_min, z_max, zs::Vector{Float64},
-    μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String,
+function print_map_IntegratedF(z_min, z_max, zs::Vector{T},
+    μs::Vector{T}, windowF::Union{String,WindowF}, out::String,
     file_data::String;
-    names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
+    names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...) where {T<:AbstractFloat}
 
     @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
     @assert all(zs .≥ 0.0) "All zs must be ≥ 0.0!"
@@ -266,9 +266,9 @@ function print_map_IntegratedF(z_min, z_max, zs::Vector{Float64},
 end
 
 function print_map_IntegratedF(z_min, z_max,
-    μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String,
+    μs::Vector{T}, windowF::Union{String,WindowF}, out::String,
     file_data::String;
-    names_bg=NAMES_BACKGROUND, h_0=0.7, N_ss::Int=100, m::Float64=2.1, kwargs...)
+    names_bg=NAMES_BACKGROUND, h_0=0.7, N_ss::Int=100, m::AbstractFloat=2.1, kwargs...) where {T<:AbstractFloat}
 
     @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
     @assert N_ss > 9 "N_ss > 9 must hold!"
@@ -286,25 +286,25 @@ end
 """
     print_map_IntegratedF(
         s_min, s_max, 
-        ss::Vector{Float64}, μs::Vector{Float64}, 
+        ss::Vector{T}, μs::Vector{T}, 
         windowF::Union{String,WindowF}, out::String;
         alg::Symbol=:trap, llim=nothing, rlim=nothing,
-        rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true)
+        rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true) where {T<:AbstractFloat}
 
     print_map_IntegratedF(
         z_min, z_max, 
-        zs::Vector{Float64}, μs::Vector{Float64}, 
+        zs::Vector{T}, μs::Vector{T}, 
         windowF::Union{String,WindowF}, out::String,
         file_data::String; 
-        names_bg = NAMES_BACKGROUND, h_0 = 0.7, kwargs...)
+        names_bg = NAMES_BACKGROUND, h_0 = 0.7, kwargs...) where {T<:AbstractFloat}
 
     print_map_IntegratedF(
         z_min, z_max,
-        μs::Vector{Float64}, 
+        μs::Vector{T}, 
         windowF::Union{String,WindowF}, out::String,
         file_data::String;
         names_bg = NAMES_BACKGROUND, h_0 = 0.7, N_ss::Int = 100, 
-        m::Float64 = 2.1, kwargs...)
+        m::AbstractFloat = 2.1, kwargs...)
 
 Evaluate the integrated window function ``\\mathcal{F}(s,\\mu)`` in a rectangual grid 
 of ``\\mu`` and ``s`` values, and print the results in the `out` file.
@@ -336,7 +336,7 @@ The third method takes as input the min and max redshifts of the survey (`z_min`
 input as the second method (`μs`, `widnowF`, `out` and `file_data`) but NOT THE REDSHIFT SAMPLING VECTOR `zs`.
 The sampling will be internally made linearly from ``s = 0`` to ``s = m \\, s_{\\mathrm{max}}``, 
 where `s_max` is the comoving distance associated to `z_max` (for the data stored in `file_data`) 
-and `m::Float64 = 2.1` a coefficient that we suggest to set equals to `2 < m < 3`.
+and `m::AbstractFloat = 2.1` a coefficient that we suggest to set equals to `2 < m < 3`.
 `N_ss::Int = 100` is the number of `s` values used for the sampling in the interval 
 ``[0, m \\, s_{\\mathrm{max}}]``.
 This method internally recalls the first one, so the other `kwargs...` are in common.
@@ -393,7 +393,7 @@ The only two exceptions are:
 
 - `N_ss::Int=100` : number of points to be used in the liearly spaced comoving distance vector
 
-- `st::Float64=0.0` : starting comoving distance of the vector
+- `st::AbstractFloat=0.0` : starting comoving distance of the vector
 
 - `m:Float64 = 2.1` : coefficient that set the maximum comoving distance of the vector, equals to ``m * s_max``,
   where `s_max` is the comoving distance associated to the redhsift `z_max`
@@ -407,7 +407,7 @@ print_map_IntegratedF
 
 #=
 function print_map_IntegratedF(in::String, out::String, z_min, z_max,
-     μs::Vector{Float64}, file_data::String; kwargs...)
+     μs::Vector{T}, file_data::String; kwargs...) where {T<:AbstractFloat}
 
      check_parent_directory(out)
      check_namefile(out)
@@ -493,10 +493,10 @@ struct WindowFIntegrated
     IFs::Matrix{Float64}
 
     #=
-    function WindowFIntegrated(s_min, s_max, ss::Vector{Float64},
-        μs::Vector{Float64}, windowF::WindowF;
+    function WindowFIntegrated(s_min, s_max, ss::Vector{T},
+        μs::Vector{T}, windowF::WindowF;
         alg::Symbol=:trap, llim=nothing, rlim=nothing,
-        rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true)
+        rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true) where {T<:AbstractFloat}
 
         @assert 0 < s_min < s_max " 0 < s_min < s_max must hold!"
         @assert ss_start ≥ 0.0 " ss_start ≥ 0.0 must hold!"
@@ -546,8 +546,8 @@ struct WindowFIntegrated
     =#
 
     #=
-    function WindowFIntegrated(z_min, z_max, μs::Vector{Float64}, windowF::WindowF,
-        file_data::String; names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
+    function WindowFIntegrated(z_min, z_max, μs::Vector{T}, windowF::WindowF,
+        file_data::String; names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...) where {T<:AbstractFloat}
 
         BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
         s_of_z = GaPSE.MySpline(BD.z, BD.comdist; bc="error")

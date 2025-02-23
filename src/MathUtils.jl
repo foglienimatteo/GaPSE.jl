@@ -168,8 +168,8 @@ end
 
 function power_law_from_data(
     xs, ys,
-    P0::Vector{Float64},
-    fit_min::Number, fit_max::Number; con=false)
+    P0::Vector{T},
+    fit_min::Number, fit_max::Number; con=false) where {T<:AbstractFloat}
 
     @assert length(xs) == length(ys) "xs and ys must have same length"
     @assert length(P0) ∈ [2, 3] "length of P0 must be 2 or 3!"
@@ -241,17 +241,17 @@ end
 
 
 
-function power_law_from_data(xs, ys, p0::Vector{Float64}; con=false)
+function power_law_from_data(xs, ys, p0::Vector{T}; con=false) where {T<:AbstractFloat}
     power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con=con)
 end
 
 
 """
-    power_law_from_data(xs, ys, p0::Vector{Float64},
-        fit_min::Number, fit_max::Number; con = false)
+    power_law_from_data(xs, ys, p0::Vector{T},
+        fit_min::Number, fit_max::Number; con = false) where T<:AbstractFloat
 
-    power_law_from_data(xs, ys, p0::Vector{Float64}; con = false) = 
-        power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con = con)
+    power_law_from_data(xs, ys, p0::Vector{T}; con = false) = 
+        power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con = con) where T<:AbstractFloat
 
 Returns the "spurious" power-law
 coefficients ``s``, ``b`` and ``a`` obtained from the fitting of the data vectors
@@ -1044,8 +1044,8 @@ end
 
 function polynomial_from_data(
     xs, ys,
-    P0::Vector{Float64},
-    fit_min::Number, fit_max::Number; err::Float64=0.05, pr::Bool = true)
+    P0::Vector{T},
+    fit_min::Number, fit_max::Number; err::AbstractFloat=0.05, pr::Bool=true) where {T<:AbstractFloat}
 
     @assert length(xs) == length(ys) "xs and ys must have same length"
     @assert length(P0) ∈ [1, 2, 3] "length of P0 must be 1, 2 or 3!"
@@ -1079,17 +1079,17 @@ end
 
 
 
-function polynomial_from_data(xs, ys, p0::Vector{Float64}; kwargs...)
+function polynomial_from_data(xs, ys, p0::Vector{T}; kwargs...) where {T<:AbstractFloat}
      polynomial_from_data(xs, ys, p0, xs[begin], xs[end]; kwargs...)
 end
 
 
 """
-    polynomial_from_data(xs, ys, p0::Vector{Float64},
-        fit_min::Number, fit_max::Number; con = false)
+    polynomial_from_data(xs, ys, p0::Vector{T},
+        fit_min::Number, fit_max::Number; con = false) where {T<:AbstractFloat}
 
-    polynomial_from_data(xs, ys, p0::Vector{Float64}; con = false) = 
-        polynomial_from_data(xs, ys, p0, xs[begin], xs[end]; con = con)
+    polynomial_from_data(xs, ys, p0::Vector{T}; con = false) = 
+        polynomial_from_data(xs, ys, p0, xs[begin], xs[end]; con = con) where {T<:AbstractFloat}
 
 Returns the 2-degree polynomial
 coefficients ``c``, ``b`` and ``a`` obtained from the fitting of the data vectors

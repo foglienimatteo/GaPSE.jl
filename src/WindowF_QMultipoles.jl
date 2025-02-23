@@ -24,8 +24,8 @@
             s_min, s_max,
             L::Int=0, alg::Symbol=:lobatto,
             N_lob::Int=100, N_trap::Int=200,
-            atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
-            enhancer::Float64=1e6,
+            atol_quad::AbstractFloat=0.0, rtol_quad::AbstractFloat=1e-2,
+            enhancer::AbstractFloat=1e6,
             )
 
 Evaluate the multipole of order `L` of the input Integrated Window Function `windowfint` in the 
@@ -80,12 +80,12 @@ the integrated window function associated to the window function ``F\\left(\\fra
 - `N_trap::Int = 200` : number of points to be used in the sampling made by the function `trapz`.
   Note that these options will have an effect only if you se `alg = :quad`.
 
-- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+- `atol_quad::AbstractFloat = 0.0` and `rtol_quad::AbstractFloat = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
   because the time for evaluation increase quickly.
   Note that these options will have an effect only if you se `alg = :quad`.
 
-- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+- `enhancer::AbstractFloat = 1e6`: just a float number used in order to deal better with small numbers; 
   the returned value is NOT modified by this value, because after a multiplication
   the internal result is divided by `enhancer`.
 
@@ -96,8 +96,8 @@ function WindowFIntegrated_multipole(
     s_min, s_max,
     L::Int=0, alg::Symbol=:lobatto,
     N_lob::Int=100, N_trap::Int=200,
-    atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
-    enhancer::Float64=1e6)
+    atol_quad::AbstractFloat=0.0, rtol_quad::AbstractFloat=1e-2,
+    enhancer::AbstractFloat=1e6)
 
     @assert alg ∈ GaPSE.VALID_INTEGRATION_ALGORITHM ":$alg is not a valid Symbol for \"alg\"; they are: \n\t" *
                                                     "$(":".*string.(VALID_INTEGRATION_ALGORITHM) .* vcat([" , " for i in 1:length(VALID_INTEGRATION_ALGORITHM)-1], " .")... )"
@@ -140,10 +140,10 @@ end
 
 
 function print_map_WindowFIntegrated_multipole(
-    ss::Vector{Float64},
+    ss::Vector{T},
     windowFint::Union{String,GaPSE.WindowFIntegrated}, out::String;
     s_min, s_max,
-    pr::Bool=true, L_max::Int=4, kwargs...)
+    pr::Bool=true, L_max::Int=4, kwargs...) where {T<:AbstractFloat}
 
     GaPSE.check_parent_directory(out)
     GaPSE.check_namefile(out)
@@ -218,10 +218,10 @@ end
 
 
 function print_map_WindowFIntegrated_multipole(
-    s_zs::Vector{Float64},
+    s_zs::Vector{T},
     windowFint::Union{String,GaPSE.WindowFIntegrated}, out::String,
     file_data::String; z_min, z_max,
-    names_bg=GaPSE.NAMES_BACKGROUND, h_0=0.7, kwargs...)
+    names_bg=GaPSE.NAMES_BACKGROUND, h_0=0.7, kwargs...) where {T<:AbstractFloat}
 
     @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
 
@@ -241,7 +241,7 @@ end
 function print_map_WindowFIntegrated_multipole(
     windowFint::Union{String,GaPSE.WindowFIntegrated}, out::String,
     file_data::String; z_min, z_max,
-    names_bg=GaPSE.NAMES_BACKGROUND, h_0=0.7, N::Int=100, m::Float64=2.1, st::Float64=0.0, kwargs...)
+    names_bg=GaPSE.NAMES_BACKGROUND, h_0=0.7, N::Int=100, m::AbstractFloat=2.1, st::AbstractFloat=0.0, kwargs...)
 
     @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
     @assert N > 9 "N > 9 must hold!"
@@ -263,25 +263,25 @@ end
 
 """
     print_map_WindowFIntegrated_multipole(
-        ss::Vector{Float64},
+        ss::Vector{T},
         windowFint::Union{String,GaPSE.WindowFIntegrated}, out::String;
         s_min, s_max,
         pr::Bool=true, L_max::Int=4, alg::Symbol=:lobatto,
         N_lob::Int=100, N_trap::Int=200,
-        atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
-        enhancer::Float64=1e6)
+        atol_quad::AbstractFloat=0.0, rtol_quad::AbstractFloat=1e-2,
+        enhancer::AbstractFloat=1e6) where {T<:AbstractFloat}
 
     print_map_WindowFIntegrated_multipole(
-        s_zs::Vector{Float64},
+        s_zs::Vector{T},
         windowFint::Union{String,GaPSE.WindowFIntegrated}, out::String,
         file_data::String; z_min, z_max,
-        names_bg=GaPSE.NAMES_BACKGROUND, h_0=0.7, kwargs...))
+        names_bg=GaPSE.NAMES_BACKGROUND, h_0=0.7, kwargs...)) where {T<:AbstractFloat}
 
     print_map_WindowFIntegrated_multipole(
         windowFint::Union{String,GaPSE.WindowFIntegrated}, out::String,
         file_data::String; z_min, z_max,
         names_bg=GaPSE.NAMES_BACKGROUND, h_0=0.7, N::Int=100, 
-        m::Float64=2.1, st::Float64=0.0, kwargs...)
+        m::AbstractFloat=2.1, st::AbstractFloat=0.0, kwargs...)
 
 Evaluate the integrated window function multipoles ``Q_{\\ell_1}(s)`` in a vector of ``s`` values for all
 the multipoles ``0 \\leq \\ell_1 \\leq L_\\mathrm{max}``, and print the results in the `out` file.
@@ -309,9 +309,9 @@ This method internally recalls the first one, so the other `kwargs...` are in co
 
 The third method takes as input the min and max redshifts of the survey (`z_min`and `z_max`) and the same 
 input as the second method (`windowF`, `out` and `file_data`) but NOT THE REDSHIFT SAMPLING VECTOR `zs`.
-The sampling will be internally made linearly from ``s = \\mathrm{st}``(where `st::Float64 = 0.0` is a 
+The sampling will be internally made linearly from ``s = \\mathrm{st}``(where `st::AbstractFloat = 0.0` is a 
 keyword argument) to ``s = m \\, s_{\\mathrm{max}}``, where `s_max` is the comoving distance associated to 
-`z_max` (for the data stored in `file_data`) and `m::Float64 = 2.1` a coefficient that we 
+`z_max` (for the data stored in `file_data`) and `m::AbstractFloat = 2.1` a coefficient that we 
 suggest to set equals to `2 < m < 3`.
 `N::Int = 100` is the number of `s` values used for the sampling in the interval 
 ``[0, m \\, s_{\\mathrm{max}}]``.
@@ -385,12 +385,12 @@ As optional arguments of the first method:
 - `N_trap::Int = 200` : number of points to be used in the sampling made by the function `trapz`.
   Note that these options will have an effect only if you se `alg = :quad`.
 
-- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+- `atol_quad::AbstractFloat = 0.0` and `rtol_quad::AbstractFloat = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
   because the time for evaluation increase quickly.
   Note that these options will have an effect only if you se `alg = :quad`.
 
-- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+- `enhancer::AbstractFloat = 1e6`: just a float number used in order to deal better with small numbers; 
   the returned value is NOT modified by this value, because after a multiplication
   the internal result is divided by `enhancer`.
 
@@ -419,7 +419,7 @@ The only two exceptions are:
 
 - `N::Int=100` : number of points to be used in the liearly spaced comoving distance vector
 
-- `st::Float64=0.0` : starting comoving distance of the vector
+- `st::AbstractFloat=0.0` : starting comoving distance of the vector
 
 - `m:Float64 = 2.1` : coefficient that set the maximum comoving distance of the vector, equals to ``m * s_max``,
   where `s_max` is the comoving distance associated to the redhsift `z_max`
@@ -440,8 +440,8 @@ function PhiTimesWindowF_multipole(
      s_min, s_max,
      L::Int=0, alg::Symbol=:lobatto,
      N_lob::Int=100, N_trap::Int=200,
-     atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
-     enhancer::Float64=1e6,
+     atol_quad::AbstractFloat=0.0, rtol_quad::AbstractFloat=1e-2,
+     enhancer::AbstractFloat=1e6,
      kwargs...)
 
      @assert alg ∈ VALID_INTEGRATION_ALGORITHM ":$alg is not a valid Symbol for \"alg\"; they are: \n\t" *
@@ -487,10 +487,10 @@ end
 
 
 function print_map_PhiTimesWindowF_multipole(
-     s1_ss::Vector{Float64}, s_ss::Vector{Float64},
+     s1_ss::Vector{T}, s_ss::Vector{T},
      windowF::Union{String,WindowF}, out::String;
      s_min, s_max,
-     pr::Bool=true, L_max::Int=4, kwargs...)
+     pr::Bool=true, L_max::Int=4, kwargs...) where {T<:AbstractFloat}
 
      check_parent_directory(out)
      check_namefile(out)
@@ -575,10 +575,10 @@ function print_map_PhiTimesWindowF_multipole(
 end
 
 function print_map_PhiTimesWindowF_multipole(
-     s1_zs::Vector{Float64}, s_zs::Vector{Float64},
+     s1_zs::Vector{T}, s_zs::Vector{T},
      windowF::Union{String,WindowF}, out::String,
      file_data::String; z_min, z_max,
-     names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
+     names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...) where {T<:AbstractFloat}
 
      @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
      @assert all(s1_zs .≥ 0.0) "All s1_zs must be ≥ 0.0!"
@@ -603,7 +603,7 @@ function print_map_PhiTimesWindowF_multipole(
      windowF::Union{String,WindowF}, out::String,
      file_data::String; z_min, z_max,
      names_bg=NAMES_BACKGROUND, h_0=0.7, N_s1_ss::Int=100, N_s_ss::Int=100,
-     m_s1::Float64=2.1, m_s::Float64=2.1, st::Float64=1.0, kwargs...)
+     m_s1::AbstractFloat=2.1, m_s::AbstractFloat=2.1, st::AbstractFloat=1.0, kwargs...)
 
      @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
      @assert N_s1_ss > 9 "N_s1_ss > 9 must hold!"
@@ -640,12 +640,12 @@ function Q_multipole(
     L::Int=0, alg::Symbol=:quad,
     llim=nothing, rlim=nothing,
     N_trap::Int=200,
-    atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
-    enhancer::Float64=1e6,
+    atol_quad::AbstractFloat=0.0, rtol_quad::AbstractFloat=1e-2,
+    enhancer::AbstractFloat=1e6,
     in_alg::Symbol=:lobatto,
     in_N_lob::Int=100, in_N_trap::Int=200,
-    in_atol_quad::Float64=0.0, in_rtol_quad::Float64=1e-2,
-    in_enhancer::Float64=1e6, in_st::Float64=1.0,
+    in_atol_quad::AbstractFloat=0.0, in_rtol_quad::AbstractFloat=1e-2,
+    in_enhancer::AbstractFloat=1e6, in_st::AbstractFloat=1.0,
     kwargs...)
 
 
@@ -689,10 +689,10 @@ end
 
 
 function print_map_Q_multipole(
-    s_ss::Vector{Float64},
+    s_ss::Vector{T},
     windowF::Union{String,WindowF}, out::String;
     s_min, s_max,
-    pr::Bool=true, L_max::Int=4, kwargs...)
+    pr::Bool=true, L_max::Int=4, kwargs...) where {T<:AbstractFloat}
 
     check_parent_directory(out)
     check_namefile(out)
@@ -773,10 +773,10 @@ end
 
 
 function print_map_Q_multipole(
-    s_zs::Vector{Float64},
+    s_zs::Vector{T},
     windowF::Union{String,WindowF}, out::String,
     file_data::String; z_min, z_max,
-    names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
+    names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...) where {T<:AbstractFloat}
 
     @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
     @assert all(s_zs .≥ 0.0) "All s_zs must be ≥ 0.0!"
@@ -797,8 +797,8 @@ function print_map_Q_multipole(
     windowF::Union{String,WindowF}, out::String,
     file_data::String; z_min, z_max,
     names_bg=NAMES_BACKGROUND, h_0=0.7, N::Int=100,
-    st::Float64=1.0,
-    m::Float64=2.1, kwargs...)
+    st::AbstractFloat=1.0,
+    m::AbstractFloat=2.1, kwargs...)
 
     @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
     @assert N > 9 "N_s_ss > 9 must hold!"
