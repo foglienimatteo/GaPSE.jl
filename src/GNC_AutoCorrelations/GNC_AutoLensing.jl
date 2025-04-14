@@ -383,7 +383,8 @@ function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
         return res
 
     else
-
+        #=
+        # with this I get: "Argument 8 to your kernel function is of type GaPSE.Cosmology, which is not a bitstype"
         int_ξs = KernelAbstractions.zeros(backend, Float32, N_χs_2, N_χs_2)
 
         kernel! = kernel_2d!(backend)
@@ -392,10 +393,8 @@ function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
 
         res = trapz((χ1s, χ2s), reshape(int_ξs, N_χs_2, N_χs_2))
         return res
+        =#
 
-    end
-
-    if(1>2)
         #= 
         # with this everything works as expected
         χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
@@ -421,7 +420,7 @@ function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
         #IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
         #IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-        int_ξs = KernelAbstractions.zeros(backend, Float64, N_χs_2, N_χs_2)
+        int_ξs = KernelAbstractions.zeros(backend, Float32, N_χs_2, N_χs_2)
         #tmp = KernelAbstractions.zeros(length(IP1s))
 
         #i = 1
@@ -447,19 +446,27 @@ function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
         # [int_ξs[i, j] =  tmp[i] for i in 1:legnth(IP1s)]
         #end
         #@kernel function mykernel!(int_ξs, integrand_ξ_GNC_Lensing, IP1s, IP2s, P1, P2, y, cosmo, kwargs...)
-        @kernel function mykernel!(int_ξs, integrand_ξ_GNC_Lensing, P1, P2, y, cosmo, kwargs...) 
-          i, j = @index(Global, NTuple)
-          IP1 = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs_2, i), cosmo)
-          IP2 = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs_2, j), cosmo)
-          #IP1 = GaPSE.Point(χ1s[i], cosmo)
-          #IP2 = GaPSE.Point(χ2s[j], cosmo) 
-          int_ξs[i,j] = integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+        #@kernel function mykernel!(int_ξs, integrand_ξ_GNC_Lensing, P1, P2, y, cosmo, kwargs...) 
+        #  i, j = @index(Global, NTuple)
+        #  IP1 = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs_2, i), cosmo)
+        #  IP2 = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs_2, j), cosmo)
+        #  #IP1 = GaPSE.Point(χ1s[i], cosmo)
+        #  #IP2 = GaPSE.Point(χ2s[j], cosmo) 
+        #  int_ξs[i,j] = integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+        #end
+        @kernel function mykernel!(int_ξs)
+            i, j = @index(Global, NTuple)
+            IP1 = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs_2, i), cosmo)
+            IP2 = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs_2, j), cosmo)
+            #IP1 = GaPSE.Point(χ1s[i], cosmo)
+            #IP2 = GaPSE.Point(χ2s[j], cosmo) 
+            int_ξs[i, j] = integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
         end
         #Array(a) .+ Array(b) == Array(c)
 
         kernel! = mykernel!(backend) 
         #kernel!(int_ξs, GaPSE.integrand_ξ_GNC_Lensing, IP1s, IP2s, P1, P2, y, cosmo, kwargs...; ndrange=size(int_ξs))
-        kernel!(int_ξs, GaPSE.integrand_ξ_GNC_Lensing, P1, P2, y, cosmo, kwargs...; ndrange=size(int_ξs))
+        kernel!(int_ξs; ndrange=size(int_ξs))
         KernelAbstractions.synchronize(backend)
 
         res = trapz((χ1s, χ2s), reshape(int_ξs,N_χs_2, N_χs_2))
