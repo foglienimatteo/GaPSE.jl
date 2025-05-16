@@ -20,13 +20,13 @@
 
 
 function integrand_ξ_GNC_Lensing(
-    IP1::Point, IP2::Point,
-    P1::Point, P2::Point,
+    IP1::Union{Point,DP}, IP2::Union{Point,DP},
+    P1::Union{Point,DP}, P2::Union{Point,DP},
     y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1, 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
-    s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
+    s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel) where DP <: DevPoint
 
-    
+    #=
     s1 = P1.comdist
     s2 = P2.comdist
     χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
@@ -125,8 +125,10 @@ function integrand_ξ_GNC_Lensing(
         #res
         3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
     end
+    =#
 
-    return factor / denomin * first_res
+
+    return 0.0f0 #factor / denomin * first_res
 end
 
 function integrand_ξ_GNC_Lensing(
@@ -143,13 +145,13 @@ end
 
 """
     integrand_ξ_GNC_Lensing(
-        IP1::Point, IP2::Point,
-        P1::Point, P2::Point,
+        IP1::Union{Point,DP}, IP2::Union{Point,DP},
+        P1::Union{Point,DP}, P2::Union{Point,DP},
         y, cosmo::Cosmology;
         Δχ_min::AbstractFloat=1e-1, b1=nothing, b2=nothing, 
         s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
         s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel
-        ) ::Float64
+        ) where DP<:Devpoint ::Float64
 
     integrand_ξ_GNC_Lensing(
         χ1::AbstractFloat, χ2::AbstractFloat,
@@ -361,9 +363,9 @@ integrand_ξ_GNC_Lensing
 
 
 
-function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
+function ξ_GNC_Lensing(P1::Union{Point,DP}, P2::Union{Point,DP}, y, cosmo::Cosmology;
     en::AbstractFloat=1e6, N_χs_2::Int=100, suit_sampling::Bool=true, 
-    backend=CPU(),  kwargs...)
+    backend=CPU(),  kwargs...) where DP<:DevPoint
 
     χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
     #χ2s = P2.comdist .* range(1e-5, 1, length = N_χs_2 + 7)
@@ -455,24 +457,28 @@ function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
         #  int_ξs[i,j] = integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
         #end
         devcosmo = adapt(backend, cosmo)
-        IP1s = adapt(backend, [GaPSE.Point(x, cosmo) for x in χ1s])
-        IP2s = adapt(backend, [GaPSE.Point(x, cosmo) for x in χ2s])
+        IP1s = adapt(backend, [adapt(backend, GaPSE.Point(x, cosmo)) for x in χ1s])
+        IP2s = adapt(backend, [adapt(backend, GaPSE.Point(x, cosmo)) for x in χ2s])
+        devIP1, devIP2 =  adapt(backend,P1), adapt(backend,P2)
+        int_f(IP1, IP2, devIP1, devIP2, y, devcosmo) = 0.0f0 #integrand_ξ_GNC_Lensing(IP1, IP2, devIP1, devIP2, y, devcosmo)
 
-        @kernel function mykernel!(int_ξs, IP1s, IP2s)
+        @kernel function mykernel!(int_f, int_ξs, IP1s, IP2s, devIP1, devIP2, y, devcosmo)
             i, j = @index(Global, NTuple)
             #IP1 = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs_2, i), cosmo)
             #IP2 = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs_2, j), cosmo)
             #IP1 = GaPSE.Point(χ1s[i], cosmo)
             #IP2 = GaPSE.Point(χ2s[j], cosmo) 
-            int_ξs[i, j] = integrand_ξ_GNC_Lensing(IP1s[i], IP2s[j], P1, P2, y, devcosmo; kwargs...)
+            int_ξs[i, j] = int_f(IP1s[i], IP2s[j], devIP1, devIP2, y, devcosmo)
         end
         #Array(a) .+ Array(b) == Array(c)
 
         #kernel!(int_ξs, GaPSE.integrand_ξ_GNC_Lensing, IP1s, IP2s, P1, P2, y, cosmo, kwargs...; ndrange=size(int_ξs))
-        mykernel!(backend, 64)(int_ξs, IP1s, IP2s; ndrange=size(int_ξs))
+        kkk=mykernel!(backend, 64)
+        kkk(int_f, int_ξs, IP1s, IP2s, devIP1, devIP2, y, devcosmo; ndrange=size(int_ξs))
         KernelAbstractions.synchronize(backend)
+        hostint_ξs = Array(int_ξs)
 
-        res = trapz((χ1s, χ2s), reshape(int_ξs,N_χs_2, N_χs_2))
+        res = trapz((χ1s, χ2s), reshape(hostint_ξs,N_χs_2, N_χs_2))
         #println("res = $res")
         return res
         
@@ -487,12 +493,12 @@ end
 
 
 """
-    ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
+    ξ_GNC_Lensing(P1::Union{Point,DP}, P2::Union{Point,DP}, y, cosmo::Cosmology;
         en::AbstractFloat = 1e6, Δχ_min::AbstractFloat = 1e-1,
         N_χs_2::Int = 100,
         s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
         s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel,
-        suit_sampling::Bool=true ) ::Float64
+        suit_sampling::Bool=true ) where DP<:DevPoint ::Float64
 
     ξ_GNC_Lensing(s1, s2, y, cosmo::Cosmology; 
         kwargs...) ::Float64
