@@ -363,7 +363,7 @@ integrand_ξ_GNC_Lensing
 
 function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
     en::AbstractFloat=1e6, N_χs_2::Int=100, suit_sampling::Bool=true, 
-    backend=CPU(), kwargs...)
+    backend=CPU(),  kwargs...)
 
     χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
     #χ2s = P2.comdist .* range(1e-5, 1, length = N_χs_2 + 7)
@@ -454,19 +454,22 @@ function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
         #  #IP2 = GaPSE.Point(χ2s[j], cosmo) 
         #  int_ξs[i,j] = integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
         #end
-        @kernel function mykernel!(int_ξs)
+        devcosmo = adapt(backend, cosmo)
+        IP1s = adapt(backend, [GaPSE.Point(x, cosmo) for x in χ1s])
+        IP2s = adapt(backend, [GaPSE.Point(x, cosmo) for x in χ2s])
+
+        @kernel function mykernel!(int_ξs, IP1s, IP2s)
             i, j = @index(Global, NTuple)
-            IP1 = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs_2, i), cosmo)
-            IP2 = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs_2, j), cosmo)
+            #IP1 = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs_2, i), cosmo)
+            #IP2 = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs_2, j), cosmo)
             #IP1 = GaPSE.Point(χ1s[i], cosmo)
             #IP2 = GaPSE.Point(χ2s[j], cosmo) 
-            int_ξs[i, j] = integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+            int_ξs[i, j] = integrand_ξ_GNC_Lensing(IP1s[i], IP2s[j], P1, P2, y, devcosmo; kwargs...)
         end
         #Array(a) .+ Array(b) == Array(c)
 
-        kernel! = mykernel!(backend) 
         #kernel!(int_ξs, GaPSE.integrand_ξ_GNC_Lensing, IP1s, IP2s, P1, P2, y, cosmo, kwargs...; ndrange=size(int_ξs))
-        kernel!(int_ξs; ndrange=size(int_ξs))
+        mykernel!(backend, 64)(int_ξs, IP1s, IP2s; ndrange=size(int_ξs))
         KernelAbstractions.synchronize(backend)
 
         res = trapz((χ1s, χ2s), reshape(int_ξs,N_χs_2, N_χs_2))

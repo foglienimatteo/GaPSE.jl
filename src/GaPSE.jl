@@ -42,7 +42,7 @@ using ProgressMeter, Printf  # Licence: MIT "Expat"
 using Test, Documenter, DelimitedFiles  # Licence: MIT "Expat"
 
 using KernelAbstractions, Adapt
-onlycpu = true
+#onlycpu = true
 
 
 
@@ -92,6 +92,7 @@ include("CosmoUtils.jl")
 include("IPSTools.jl")
 include("XiMatter.jl")
 include("Cosmology.jl")
+include("./DevCosmo.jl")
 include("PPXiGalaxies.jl")
 include("PNG.jl")
 

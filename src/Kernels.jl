@@ -36,7 +36,7 @@ It means that, with `n>2`, `1 ≤ i ≤ n` and:
 It's used inside [`kernel_1d_P1!`](@ref), [`kernel_1d_P2!`](@ref) and [`kernel_2d!`](@ref)
 """
 function lr(a, b, n, i)
-    @assert (a<b) && (1≤i≤n) "Not valid inputs: a, b = $a, $b \t i, n = $i, $n"
+    #@assert (a<b) && (1≤i≤n) "Not valid inputs: a, b = $a, $b \t i, n = $i, $n"
     return a + (i - 1.0) / (n - 1.0) * (b - a)
 end
 
@@ -76,10 +76,11 @@ res = trapz(χ1s, int_ξs)
 
 See also: [`kernel_1d_P2!`](@ref), [`kernel_2d!`](@ref)
 """
-@kernel function kernel_1d_P1!(results_vector, integrand, P1, P2, y, cosmo, N_χs, kwargs...)
+@kernel function kernel_1d_P1!(results_vector, integrand, P1, P2, y, devcosmo, N_χs, kwargs...)
     i = @index(Global, Linear)
-    IP = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs, i), cosmo)
-    results_vector[i] = integrand(IP, P1, P2, y, cosmo; kwargs...)
+    #IP = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs, i), cosmo)
+    DevIP = GaPSE.DevPoint(P1.comdist * lr(1e-6, 1, N_χs, i), devcosmo)
+    results_vector[i] = integrand(DevIP, P1, P2, y, devcosmo; kwargs...)
 end
 
 
@@ -114,10 +115,11 @@ res = trapz(χ2s, int_ξs)
 
 See also: [`kernel_1d_P1!`](@ref), [`kernel_2d!`](@ref)
 """
-@kernel function kernel_1d_P2!(results_vector, integrand, P1, P2, y, cosmo, N_χs, kwargs...)
+@kernel function kernel_1d_P2!(results_vector, integrand, P1, P2, y, devcosmo, N_χs, kwargs...)
     i = @index(Global, Linear)
-    IP = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs, i), cosmo)
-    results_vector[i] = integrand(IP, P1, P2, y, cosmo; kwargs...)
+    #IP = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs, i), cosmo)
+    DevIP = GaPSE.DevPoint(P2.comdist * lr(1e-6, 1, N_χs, i), devcosmo)
+    results_vector[i] = integrand(DevIP, P1, P2, y, devcosmo; kwargs...)
 end
 
 
@@ -156,12 +158,14 @@ res = trapz((χ1s, χ2s), reshape(int_ξs, N_χs_2, N_χs_2))
 
 See also: [`kernel_1d_P1!`](@ref), [`kernel_1d_P2!`](@ref)
 """
-@kernel function kernel_2d!(results_vector, integrand, P1, P2, y, cosmo, N_χs_2, kwargs...)
+@kernel function kernel_2d!(results_vector, integrand, P1, P2, y, devcosmo, N_χs_2, kwargs...)
     i, j = @index(Global, NTuple)
-    IP1 = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs_2, i), cosmo)
-    IP2 = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs_2, j), cosmo)
+    #IP1 = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs_2, i), cosmo)
+    #IP2 = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs_2, j), cosmo)
+    DevIP1 = GaPSE.DevPoint(P1.comdist * lr(1e-6, 1, N_χs_2, i), devcosmo)
+    DevIP2 = GaPSE.DevPoint(P2.comdist * lr(1e-6, 1, N_χs_2, j), devcosmo)
     #IP1 = GaPSE.Point(χ1s[i], cosmo)
     #IP2 = GaPSE.Point(χ2s[j], cosmo) 
-    results_vector[i, j] = integrand(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+    results_vector[i, j] = integrand(DevIP1, DevIP2, P1, P2, y, devcosmo; kwargs...)
 end
 

@@ -574,6 +574,7 @@ struct WindowF
     xs::Vector{Float64}
     μs::Vector{Float64}
     Fs::Matrix{Float64}
+    grid::GridInterpolations.RectangleGrid{2}
 
 
     function WindowF(file::String)
@@ -592,7 +593,7 @@ struct WindowF
                 throw(ErrorException("What kind of convenction for the file $file" *
                                         " are you using? I do not recognise it."))
             end
-        new(new_xs, new_μs, new_Fs)
+        new(new_xs, new_μs, new_Fs, GridInterpolations.RectangleGrid(new_xs, new_μs))
     end
 end
 
@@ -609,8 +610,8 @@ package.
 See also: [`WindowF`](@ref)
 """
 function spline_F(x, μ, str::WindowF)
-    grid = GridInterpolations.RectangleGrid(str.xs, str.μs)
-    GridInterpolations.interpolate(grid, reshape(str.Fs, (:, 1)), [x, μ])
+    #grid = GridInterpolations.RectangleGrid(str.xs, str.μs)
+    GridInterpolations.interpolate(str.grid, reshape(str.Fs, (:, 1)), [x, μ])
 end
 
 #=
