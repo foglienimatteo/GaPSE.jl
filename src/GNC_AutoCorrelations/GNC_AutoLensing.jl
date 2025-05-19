@@ -22,17 +22,19 @@
 function integrand_ξ_GNC_Lensing(
     IP1::Union{Point,DP}, IP2::Union{Point,DP},
     P1::Union{Point,DP}, P2::Union{Point,DP},
-    y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1, 
+    y, cosmo::Union{Cosmology, DC}; Δχ_min::AbstractFloat=DevFloat(1e-1), 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
-    s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel) where DP <: DevPoint
+    s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel) where {DP<:DevPoint, DC<:DevCosmology}
 
-    #=
+    
     s1 = P1.comdist
     s2 = P2.comdist
+    
     χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
     χ2, D2, a2 = IP2.comdist, IP2.D, IP2.a
 
     Ω_M0 = cosmo.params.Ω_M0
+    
     s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
     s_b_s2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
 
@@ -41,10 +43,11 @@ function integrand_ξ_GNC_Lensing(
 
     denomin = s1 * s2 * a1 * a2
     factor = ℋ0^4 * Ω_M0^2 * D1 * (s1 - χ1) * D2 * (s2 - χ2) * (5 * s_b_s1 - 2) * (5 * s_b_s2 - 2)
-
+    
     first_res = if Δχ > Δχ_min
+        
         χ1χ2 = χ1 * χ2
-
+        
         #new_J00 = -3 / 4 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
         #new_J02 = -3 / 2 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
         new_J31 = 9 * y * Δχ^2
@@ -53,18 +56,23 @@ function integrand_ξ_GNC_Lensing(
         #    - 16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
         #    + χ1χ2^2 * (11y^4 + 14y^2 + 23)
         #)
+        
+        #new_J00, new_J02, new_J22 = 1.0f0, 1.0f0, 1.0f0
+        
         new_J00 = begin
             new_J00_a = 8 * y * (χ1^2 + χ2^2)
             new_J00_b = - χ1χ2 * (9 * y^2 + 7)
             new_J00_sum = new_J00_a + new_J00_b
-            eps(new_J00_a) ≈ abs.(new_J00_sum) ? 0.0 : -3 / 4 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * new_J00_sum
+            #eps(new_J00_a) ≈ abs.(new_J00_sum) ? 0.0 : -3 / 4 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * new_J00_sum
+            eps(new_J00_a) ≈ abs.(new_J00_sum) ? zero(s1) : -3  * χ1χ2^2 / Δχ^4 * (y^2 - 1) * new_J00_sum /4
         end 
 
         new_J02 = begin
             new_J02_a = 4 * y * (χ1^2 + χ2^2)
             new_J02_b = -χ1χ2 * (3 * y^2 + 5)
             new_J02_sum = new_J02_a + new_J02_b
-            eps(new_J02_a) ≈ abs.(new_J02_sum) ? 0.0 : -3 / 2 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * new_J02_sum
+            #eps(new_J02_a) ≈ abs.(new_J02_sum) ? 0.0 : -3 / 2 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * new_J02_sum
+            eps(new_J02_a) ≈ abs.(new_J02_sum) ? zero(s1) : -3  * χ1χ2^2 / Δχ^4 * (y^2 - 1) * new_J02_sum / 2
         end
       
         new_J22 = begin
@@ -72,8 +80,10 @@ function integrand_ξ_GNC_Lensing(
             new_J22_b = - 16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
             new_J22_c = χ1χ2^2 * (11y^4 + 14y^2 + 23)
             new_J22_sum = new_J22_a + new_J22_b + new_J22_c
-            eps(new_J22_b) ≈ abs.(new_J22_sum) ? 0.0 : 9 / 4 * χ1χ2 / Δχ^4 * new_J22_sum
+            #eps(new_J22_b) ≈ abs.(new_J22_sum) ? 0.0 : 9 / 4 * χ1χ2 / Δχ^4 * new_J22_sum
+            eps(new_J22_b) ≈ abs.(new_J22_sum) ? zero(s1) : 9 * χ1χ2 / Δχ^4 * new_J22_sum / 4
         end
+        
         #new_J22 = log10(abs(new_J22_sum)) < log10(abs(new_J22_b)) - 15 ? 0.0 : new_J22_coeff * new_J22_sum
         
         #if(log10(abs(new_J22_sum)) < log10(abs(new_J22_b)) - 14.5)
@@ -83,7 +93,7 @@ function integrand_ξ_GNC_Lensing(
         #end
         
         #if(log(abs(new_J22_a)) > 13 && log(abs(new_J22_b)) > 13 && log(abs(new_J22_c)) > 13 && log(abs(new_J22_sum)) < )
-
+        
 
         I00 = cosmo.tools.I00(Δχ)
         I20 = cosmo.tools.I20(Δχ)
@@ -115,7 +125,9 @@ function integrand_ξ_GNC_Lensing(
             #    """
             #)
         #end
+
         res
+
     else
         #println("s1 = $s1 \t s2 = $s2")
         #println("χ1 = $χ1 \t χ2 = $χ2")
@@ -123,12 +135,14 @@ function integrand_ξ_GNC_Lensing(
         #res = 3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
         #println("res = $res")
         #res
-        3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
+
+        #3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
+        3 * cosmo.tools.σ_2 + 6 * χ1^2 * cosmo.tools.σ_0 / 5
     end
-    =#
+    
 
-
-    return 0.0f0 #factor / denomin * first_res
+    
+    return factor / denomin * first_res
 end
 
 function integrand_ξ_GNC_Lensing(
@@ -474,7 +488,8 @@ function ξ_GNC_Lensing(P1::Union{Point,DP}, P2::Union{Point,DP}, y, cosmo::Cosm
 
         #kernel!(int_ξs, GaPSE.integrand_ξ_GNC_Lensing, IP1s, IP2s, P1, P2, y, cosmo, kwargs...; ndrange=size(int_ξs))
         kkk=mykernel!(backend, 64)
-        kkk(int_f, int_ξs, IP1s, IP2s, devIP1, devIP2, y, devcosmo; ndrange=size(int_ξs))
+        Z = Float32(y)
+        kkk(int_f, int_ξs, IP1s, IP2s, devIP1, devIP2, Z, devcosmo; ndrange=size(int_ξs))
         KernelAbstractions.synchronize(backend)
         hostint_ξs = Array(int_ξs)
 

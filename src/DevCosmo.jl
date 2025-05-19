@@ -19,7 +19,6 @@
 
 ##########################################################################################92
 
-const DevFloat=Float32
 
 struct DevMySpline{V,VT,I}
     xs::V        #Vector{Float64}
@@ -27,9 +26,25 @@ struct DevMySpline{V,VT,I}
     N::I         #Int64
 end
 
+function gpu_searchsortedlast(xs, x)
+    lo = 1
+    hi = length(xs)
+    while lo < hi
+        mid = (lo + hi + 1) >>> 1
+        # direct device indexing
+        if xs[mid] <= x
+            lo = mid
+        else
+            hi = mid - 1
+        end
+    end
+    return lo
+end
+
 function (S::DevMySpline)(x)
     #@assert S.xs[1] ≤ x ≤ S.xs[end] "BC Error: $(S.xs[1]) ≤ $x ≤ $(S.xs[end]) does not hold!"
-    i = searchsortedlast(S.xs, x)
+    #i = searchsortedlast(S.xs, x)
+    i = gpu_searchsortedlast(S.xs, x)
     #u = x - S.xs[i]
     u, a, b, c, d = (i == length(S.xs)) ? (x - S.xs[i-1], S.coeffs[i-1]...) : (x - S.xs[i], S.coeffs[i]...)
     (u ≈ zero(u)) && (return S.coeffs[i][1])
@@ -142,6 +157,16 @@ struct DevIntegralIPS{F,S}
     r_b::F     #Float64
     r_a::F     #Float64
     right::F     #Float64
+end
+
+function (IPS::DevIntegralIPS)(x)
+    if x < IPS.left
+        return power_law(x, IPS.l_si, IPS.l_b, IPS.l_a)
+    elseif x > IPS.right
+        return power_law(x, IPS.r_si, IPS.r_b, IPS.r_a)
+    else
+        return IPS.spline(x)
+    end
 end
 
 function Adapt.adapt_structure(to, s::IntegralIPS; devfloat=Float32)
