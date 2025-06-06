@@ -11,11 +11,17 @@
 GaPSE (Galaxy Power Spectrum Estimator) is a software for cosmological computations written in the [Julia Programming Language](https://julialang.org).
 
 IMPORTANT NOTE: This is a work-in-progress project! As a consequence, currently in this pre-release:
-- it is possible to compute the power spectrum/correlation function multipoles with L=1,2,3,... of the effects we'll show next, but 2 effects among the Galaxy Number Counts multipoles (Newton-Lensing and Lensing-Newton) converge very slowly, so their computation is not still 100% ready. However, the monopole (L=0) computations do not have any problem with `quad`, and even the GNC sum for higher order multipoles is not affected;
+
+- it is possible to compute the power spectrum/correlation function multipoles with `L=1,2,3,...` of the effects we'll show next, but 2 effects among the Galaxy Number Counts multipoles (Newton-Lensing and Lensing-Newton) converge very slowly, so their computation is not still 100% ready. However, the monopole (L=0) computations do not have any problem with `quad`, and even the GNC sum for higher order multipoles is not affected;
 - The Power Spectrum computations with `:twofast` do not work properly, you should always prefer `:fftog`. However, due to the fact that with `:fftlog` you must specify manually the bias parameter, the Power Spectra of a whole group of terms creates FFT oscillations in the smallest ones. The leading ones and the sum are not however affected.  
 - the code functions are well documented; check the github pages website https://foglienimatteo.github.io/GaPSE.jl/stable if you can't see correctly the analytical expressions written in the docstrings; 
 - few people used this code, so bugs are behind the corner; do not hesitate to raise the finger to point out them (see in the [How to report bugs, suggest improvements and/or contribute](#how-to-report-bugs-suggest-improvements-andor-contribute) section below)!
 - if you use this code, please read the [Using this code](##using-this-code) section below
+
+<br>
+<br>
+<br>
+
 
 
 ## Table of Contents
@@ -32,6 +38,14 @@ IMPORTANT NOTE: This is a work-in-progress project! As a consequence, currently 
   - [Using this code](#using-this-code)
   - [Licence](#licence)
   - [References](#references)
+
+
+<br>
+<br>
+<br>
+
+
+
 
 
 ## Brief description
@@ -55,12 +69,28 @@ All these calculations can be performed both with and without a survey window fu
 
 This project, and the analytical expressions used for the TPCFs, are based on the article of Emanuele Castorina and Enea Di Dio [[3]](#1). 
 
+<br>
+<br>
+<br>
+
+
+
+
+
 ## Installation and Usage
 
 Currently, this package is not in the Julia package registries. 
 There are two main ways to install and use GaPSE on your local machine:
+
 -  the traditional way: you clone this gitrepo locally and you install the librarires that GaPSE needs in a suited Julia enviroment; it requires a compatible Julia version ≥1.8;
 -  using a Docker container (experimental): you pull and run the GaPSE container; it requires a [Docker](https://www.docker.com) installation.
+
+<br>
+
+
+
+
+
 
 
 ### traditional way: Installation
@@ -102,6 +132,12 @@ NOTE: instead of using the `install_gapse.jl` script, you can also do the same i
 
 - done! You can exit from the package mode (press the Backspace key on an empty line) and start to use GaPSE
 
+<br>
+
+
+
+
+
 
 ### traditional way: Usage
 
@@ -132,16 +168,23 @@ Some `.ipynb`s are already provided in the directory `ipynbs` :
 
 The code is well tested and documented: almost each struct/function has a docstring that you can easily access in Julia with `?<name-of-the-struct/function>`, and there is an acitive GitHub Pages website with the [latest stable documentation](https://foglienimatteo.github.io/GaPSE/stable).
 
+<br>
+
+
+
+
+
 ### Docker container: Installation and Usage
 
 The `Dockerfile` we provide in this directory is the one we used to create the container image corresponding to this GaPSE version.
 
-The images are saved in https://hub.docker.com/repository/docker/matteofoglieni/gapse/general and the tag is the same as the GaPSE version the container refers to + a latin letter (alphabetically orderer), to take into account different version of the Dockerfile which refer to the same GaPSE one.
+The images are saved in <https://hub.docker.com/repository/docker/matteofoglieni/gapse/general> and the tag is the same as the GaPSE version the container refers to + a latin letter (alphabetically orderer), to take into account different version of the Dockerfile which refer to the same GaPSE one.
 The latest container name is then `gapse:0.8.0a`.
 
 These containers have already installed all the Julia packages that GaPSE needs (i.e. the ones listed in `Project.toml`) + come others for the ipynbs (check the Dockerfile itself).
 
 Supposing that you have already installed Docker, so as to use GaPSE as a container:
+
 - download the image: 
   ```bash
   $ sudo docker pull matteofoglieni/gapse:0.8.0a
@@ -175,7 +218,8 @@ Supposing that you have already installed Docker, so as to use GaPSE as a contai
 Now you can use GaPSE inside the Jupyter interface as normally!
 
 Quick summary of Docker commands, in case you don't know them:
-- `sudo docker ps [-a]` : list running containers (all with `-a`);
+
+- `sudo docker ps [-a]` : list running containers (`-a` to list also stopped ones);
 - `sudo docker logs <container-name/id>` : get the logs of a container;
 - `sudo docker start/stop <container-name/id>` : start a stopped container/stop a running container;
 - `sudo docker rm <container-id/name>` : delete a container;
@@ -183,6 +227,12 @@ Quick summary of Docker commands, in case you don't know them:
 - `sudo docker run <image>` : create a running container from an image;
 - `sudo docker image list` : list all the local images;
 - `sudo docker image rm <image>` : delete an image.
+
+<br>
+<br>
+<br>
+
+
 
 
 
@@ -194,13 +244,20 @@ GaPSE.jl makes extensive use of the following packages:
 - [Dierckx](https://github.com/kbarbary/Dierckx.jl) and [GridInterpolations](https://github.com/sisl/GridInterpolations.jl) for 1D and 2D Splines respectively
 - [LsqFit](https://github.com/JuliaNLSolvers/LsqFit.jl) for basic least-squares fitting
 - [QuadGK](https://github.com/JuliaMath/QuadGK.jl), [Trapz](https://github.com/francescoalemanno/Trapz.jl) and [FastGaussQuadrature](https://github.com/JuliaApproximation/FastGaussQuadrature.jl) for preforming 1D integrations, and [HCubature](https://github.com/JuliaMath/HCubature.jl) for the 2D ones
-- [ArbNumerics](https://github.com/JeffreySarnoff/ArbNumerics.jl), [AssociatedLegendrePolynomials](https://github.com/jmert/AssociatedLegendrePolynomials.jl), [LegendrePolynomials](https://github.com/jishnub/LegendrePolynomials.jl) and [SpecialFunctions](https://github.com/JuliaMath/SpecialFunctions.jl) for mathematical function evaluations, especially for the Legendre Polinomials $\mathcal{L}_{\ell}(x)$ and the Gamma function $ \Gamma(x) $
+- [ArbNumerics](https://github.com/JeffreySarnoff/ArbNumerics.jl), [AssociatedLegendrePolynomials](https://github.com/jmert/AssociatedLegendrePolynomials.jl), [LegendrePolynomials](https://github.com/jishnub/LegendrePolynomials.jl) and [SpecialFunctions](https://github.com/JuliaMath/SpecialFunctions.jl) for mathematical function evaluations, especially for the Legendre Polinomials $\mathcal{L}_{\ell}(x)$ and the Gamma function $\Gamma(x)$
 - other native Julia packages: [DelimitedFiles](https://github.com/JuliaData/DelimitedFiles.jl), [Documenter](https://github.com/JuliaDocs/Documenter.jl), [IJulia](https://github.com/JuliaLang/IJulia.jl), [LinearAlgebra](https://github.com/JuliaLang/julia/tree/master/stdlib/LinearAlgebra), [NPZ](https://github.com/fhs/NPZ.jl), [Printf](https://github.com/JuliaLang/julia/tree/master/stdlib/Printf), [ProgressMeter](https://github.com/timholy/ProgressMeter.jl), [Suppressor](https://github.com/JuliaIO/Suppressor.jl), [Test](https://github.com/JuliaLang/julia/tree/master/stdlib/Test)
 
 Furthermore, the notebooks we provide in `ipynbs` use:
+
 - [Plots](https://github.com/JuliaPlots/Plots.jl) for the pure julian plots;
 - [LaTeXStrings](https://github.com/JuliaStrings/LaTeXStrings.jl) for the labels in LaTeX;
 - [PyPlot](https://github.com/JuliaPy/PyPlot.jl) for the julian plots in the python style; this package is based on the [Matplotlib](https://matplotlib.org) Python package, and it requires it in order to run properly.
+
+<br>
+<br>
+<br>
+
+
 
 
 ## How to report bugs, suggest improvements and/or contribute
@@ -215,6 +272,11 @@ As already mentioned above, this is a WIP project used mostly by the authors the
 - push:  in the terminal, run `$ git push origin feature/<your-feature-name>`
 - open a Pull Request for that branch
 
+<br>
+<br>
+<br>
+
+
 
 ## Using this code
 
@@ -226,12 +288,25 @@ If you use GaPSE to compute the galaxy power spectrum/correlation function pleas
 
 If you also use the code to compute the perturbations in the luminosity distance, please refer also to
 
-- Pantiri, Foglieni, Di Dio, Castorina,  _The power spectrum of luminosity distance fluctuations in General Relativity_ (2023) [in preparation]
+- Pantiri, Foglieni, Di Dio, Castorina,  _The power spectrum of luminosity distance fluctuations in General Relativity_ (2024), Journal of Cosmology and Astroparticle Physics, DOI: [10.1088/1475-7516/2024/11/021](https://doi.org/10.1088/1475-7516/2024/11/021) (arXiv [2407.01486](https://arxiv.org/abs/2407.01486))
+
+<br>
+<br>
+<br>
+
+
 
 
 ## Licence
 
 This software is under the [GNU 3.0 General Public Licence](https://www.gnu.org/licenses/gpl-3.0.en.html). See the file [LICENCE.md](./LICENCE.md).
+
+<br>
+<br>
+<br>
+
+
+
 
 ## References
 <a id="1">[1]</a> 
