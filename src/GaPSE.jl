@@ -76,7 +76,7 @@ const NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mp
 const VALID_GROUPS = ["LD", "GNC", "GNCxLD", "LDxGNC", "generic"] # DO NOT MODIFY!
 const LENGTH_VALID_GROUPS = [18, 27, 22, 22, nothing]
 
-const DevFloat = Float64
+const DevFloat = Float32
 
 const HUBBLE_0 = 1e5 / 299792458.0
 
