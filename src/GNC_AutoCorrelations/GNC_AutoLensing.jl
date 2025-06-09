@@ -253,7 +253,7 @@ function ξ_GNC_Lensing(P1::Union{Point,DP}, P2::Union{Point,DP}, y, cosmo::Cosm
 
         #kernel!(int_ξs, GaPSE.integrand_ξ_GNC_Lensing, IP1s, IP2s, P1, P2, y, cosmo, kwargs...; ndrange=size(int_ξs))
         compiled_kernel! = kernel_2d!(backend, 64)
-        compiled_kernel!(int_ξs, int_f, IP1s, IP2s, P1, P2, y, devcosmo; ndrange=size(int_ξs))
+        compiled_kernel!(int_ξs, GaPSE.integrand_ξ_GNC_Lensing, IP1s, IP2s, P1, P2, y, devcosmo; ndrange=size(int_ξs))
         KernelAbstractions.synchronize(backend)
         hostint_ξs = Array(int_ξs)
 
