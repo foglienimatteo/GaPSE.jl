@@ -119,14 +119,8 @@ function integrand_ξ_GNC_Lensing(
         #res
 
         #3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
-        factor / denomin * 3 * cosmo.tools.σ_2 + 6 * χ1^2 * cosmo.tools.σ_0 / 5
+        return factor / denomin * 3 * cosmo.tools.σ_2 + 6 * χ1^2 * cosmo.tools.σ_0 / 5
     end
-    
-    
-    
-
-    
-    return factor / denomin * first_res
 end
 
 function integrand_ξ_GNC_Lensing(
