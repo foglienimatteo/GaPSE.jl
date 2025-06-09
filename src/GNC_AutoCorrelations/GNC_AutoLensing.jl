@@ -75,11 +75,10 @@ function integrand_ξ_GNC_Lensing(
         I20 = cosmo.tools.I20(Δχ)
         I13 = cosmo.tools.I13(Δχ)
         I22 = cosmo.tools.I22(Δχ)
+
+        par_sum = new_J00 * I00 + new_J02 * I20 + new_J31 * I13 + new_J22 * I22
  
-        return factor / denomin * (
-            new_J00 * I00 + new_J02 * I20 +
-            new_J31 * I13 + new_J22 * I22
-        )
+        return factor / denomin * par_sum
 
         # The problem is new_J22: its parenthesis does not cancel out completely
         #  sometimes for y->1.0 and Δχ smalls (below 0.2 tipically)
