@@ -24,9 +24,9 @@ function integrand_ξ_GNC_Lensing(
     denomin = s1 * s2 * a1 * a2
     factor = ℋ0^4 * Ω_M0^2 * D1 * (s1 - χ1) * D2 * (s2 - χ2) * (5 * s_b_s1 - 2) * (5 * s_b_s2 - 2)
     
-    #if Δχ > Δχ_min
+    if Δχ > Δχ_min
         
-        #χ1χ2 = χ1 * χ2
+        χ1χ2 = χ1 * χ2
         
         #new_J00 = -3 / 4 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
         #new_J02 = -3 / 2 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
@@ -40,32 +40,29 @@ function integrand_ξ_GNC_Lensing(
         #new_J00, new_J02, new_J22 = 1.0f0, 1.0f0, 1.0f0
         
         new_J00, new_J02, new_J22 = new_J31, new_J31, new_J31
-        #=
-        new_J00 = begin
-            new_J00_a = 8 * y * (χ1^2 + χ2^2)
-            new_J00_b = - χ1χ2 * (9 * y^2 + 7)
-            new_J00_sum = new_J00_a + new_J00_b
-            #eps(new_J00_a) ≈ abs.(new_J00_sum) ? 0.0 : -3 / 4 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * new_J00_sum
-            eps(new_J00_a) ≈ abs.(new_J00_sum) ? zero(s1) : -3  * χ1χ2^2 / Δχ^4 * (y^2 - 1) * new_J00_sum /4
-        end 
+        
+        
+        new_J00_a = 8 * y * (χ1^2 + χ2^2)
+        new_J00_b = - χ1χ2 * (9 * y^2 + 7)
+        new_J00_sum = new_J00_a + new_J00_b
+        #eps(new_J00_a) ≈ abs.(new_J00_sum) ? 0.0 : -3 / 4 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * new_J00_sum
+        new_J00 = eps(new_J00_a) ≈ abs.(new_J00_sum) ? zero(s1) : -3  * χ1χ2^2 / Δχ^4 * (y^2 - 1) * new_J00_sum /4
 
-        new_J02 = begin
-            new_J02_a = 4 * y * (χ1^2 + χ2^2)
-            new_J02_b = -χ1χ2 * (3 * y^2 + 5)
-            new_J02_sum = new_J02_a + new_J02_b
-            #eps(new_J02_a) ≈ abs.(new_J02_sum) ? 0.0 : -3 / 2 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * new_J02_sum
-            eps(new_J02_a) ≈ abs.(new_J02_sum) ? zero(s1) : -3  * χ1χ2^2 / Δχ^4 * (y^2 - 1) * new_J02_sum / 2
-        end
+
+        new_J02_a = 4 * y * (χ1^2 + χ2^2)
+        new_J02_b = -χ1χ2 * (3 * y^2 + 5)
+        new_J02_sum = new_J02_a + new_J02_b
+        #eps(new_J02_a) ≈ abs.(new_J02_sum) ? 0.0 : -3 / 2 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * new_J02_sum
+        new_J02 = eps(new_J02_a) ≈ abs.(new_J02_sum) ? zero(s1) : -3  * χ1χ2^2 / Δχ^4 * (y^2 - 1) * new_J02_sum / 2
       
-        new_J22 = begin
-            new_J22_a = 2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)
-            new_J22_b = - 16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
-            new_J22_c = χ1χ2^2 * (11y^4 + 14y^2 + 23)
-            new_J22_sum = new_J22_a + new_J22_b + new_J22_c
-            #eps(new_J22_b) ≈ abs.(new_J22_sum) ? 0.0 : 9 / 4 * χ1χ2 / Δχ^4 * new_J22_sum
-            eps(new_J22_b) ≈ abs.(new_J22_sum) ? zero(s1) : 9 * χ1χ2 / Δχ^4 * new_J22_sum / 4
-        end
-        =#
+
+        new_J22_a = 2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)
+        new_J22_b = - 16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
+        new_J22_c = χ1χ2^2 * (11y^4 + 14y^2 + 23)
+        new_J22_sum = new_J22_a + new_J22_b + new_J22_c
+        #eps(new_J22_b) ≈ abs.(new_J22_sum) ? 0.0 : 9 / 4 * χ1χ2 / Δχ^4 * new_J22_sum
+        new_J22 = eps(new_J22_b) ≈ abs.(new_J22_sum) ? zero(s1) : 9 * χ1χ2 / Δχ^4 * new_J22_sum / 4
+
         
         #new_J22 = log10(abs(new_J22_sum)) < log10(abs(new_J22_b)) - 15 ? 0.0 : new_J22_coeff * new_J22_sum
         
