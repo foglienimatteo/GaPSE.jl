@@ -78,10 +78,10 @@ function integrand_ξ_GNC_Lensing(
         #if(log(abs(new_J22_a)) > 13 && log(abs(new_J22_b)) > 13 && log(abs(new_J22_c)) > 13 && log(abs(new_J22_sum)) < )
         
 
-        I00 = cosmo.tools.I00(Δχ)
-        I20 = cosmo.tools.I20(Δχ)
-        I13 = cosmo.tools.I13(Δχ)
-        I22 = cosmo.tools.I22(Δχ)
+        I00 = 1.0 #cosmo.tools.I00(Δχ)
+        I20 = 1.0 #cosmo.tools.I20(Δχ)
+        I13 = 1.0 #cosmo.tools.I13(Δχ)
+        I22 = 1.0 #cosmo.tools.I22(Δχ)
  
         return factor / denomin * (
             new_J00 * I00 + new_J02 * I20 +
