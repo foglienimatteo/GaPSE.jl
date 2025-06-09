@@ -77,7 +77,8 @@ function integrand_ξ_GNC_Lensing(
         I22 = cosmo.tools.I22(Δχ)
 
         new_J00_32, new_J02_32, new_J31_32, new_J22_32 = DevFloat(new_J00), DevFloat(new_J02), DevFloat(new_J31), DevFloat(new_J22)
-        par_sum = new_J00_32 * I00 + new_J02_32 * I20 + new_J31_32 * I13 + new_J22_32 * I22
+        I00_32, I20_32, I13_32, I22_32 = DevFloat(I00), DevFloat(I20), DevFloat(I13), DevFloat(I22)
+        par_sum = new_J00_32 * I00_32 + new_J02_32 * I20_32 + new_J31_32 * I13_32 + new_J22_32 * I22_32
         #par_sum = new_J00 * I00 + new_J02 * I20 + new_J31 * I13 + new_J22 * I22
  
         return factor / denomin * par_sum
