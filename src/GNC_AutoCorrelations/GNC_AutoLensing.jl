@@ -59,6 +59,8 @@ function integrand_ξ_GNC_Lensing(
         
         #new_J00, new_J02, new_J22 = 1.0f0, 1.0f0, 1.0f0
         
+        new_J00, new_J02, new_J22 = new_J31, new_J31, new_J31
+        #=
         new_J00 = begin
             new_J00_a = 8 * y * (χ1^2 + χ2^2)
             new_J00_b = - χ1χ2 * (9 * y^2 + 7)
@@ -83,6 +85,7 @@ function integrand_ξ_GNC_Lensing(
             #eps(new_J22_b) ≈ abs.(new_J22_sum) ? 0.0 : 9 / 4 * χ1χ2 / Δχ^4 * new_J22_sum
             eps(new_J22_b) ≈ abs.(new_J22_sum) ? zero(s1) : 9 * χ1χ2 / Δχ^4 * new_J22_sum / 4
         end
+        =#
         
         #new_J22 = log10(abs(new_J22_sum)) < log10(abs(new_J22_b)) - 15 ? 0.0 : new_J22_coeff * new_J22_sum
         
@@ -487,9 +490,8 @@ function ξ_GNC_Lensing(P1::Union{Point,DP}, P2::Union{Point,DP}, y, cosmo::Cosm
         #Array(a) .+ Array(b) == Array(c)
 
         #kernel!(int_ξs, GaPSE.integrand_ξ_GNC_Lensing, IP1s, IP2s, P1, P2, y, cosmo, kwargs...; ndrange=size(int_ξs))
-        kkk=mykernel!(backend, 64)
-        Z = Float32(y)
-        kkk(int_f, int_ξs, IP1s, IP2s, devIP1, devIP2, Z, devcosmo; ndrange=size(int_ξs))
+        compiled_kernel! = mykernel!(backend, 64)
+        compiled_kernel!(int_f, int_ξs, IP1s, IP2s, devIP1, devIP2, y, devcosmo; ndrange=size(int_ξs))
         KernelAbstractions.synchronize(backend)
         hostint_ξs = Array(int_ξs)
 
