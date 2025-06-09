@@ -37,10 +37,6 @@ function integrand_ξ_GNC_Lensing(
         #    + χ1χ2^2 * (11y^4 + 14y^2 + 23)
         #)
         
-        #new_J00, new_J02, new_J22 = 1.0f0, 1.0f0, 1.0f0
-        
-        new_J00, new_J02, new_J22 = new_J31, new_J31, new_J31
-        
         
         new_J00_a = 8 * y * (χ1^2 + χ2^2)
         new_J00_b = - χ1χ2 * (9 * y^2 + 7)
@@ -75,10 +71,10 @@ function integrand_ξ_GNC_Lensing(
         #if(log(abs(new_J22_a)) > 13 && log(abs(new_J22_b)) > 13 && log(abs(new_J22_c)) > 13 && log(abs(new_J22_sum)) < )
         
 
-        I00 = 1.0 #cosmo.tools.I00(Δχ)
-        I20 = 1.0 #cosmo.tools.I20(Δχ)
-        I13 = 1.0 #cosmo.tools.I13(Δχ)
-        I22 = 1.0 #cosmo.tools.I22(Δχ)
+        I00 = cosmo.tools.I00(Δχ)
+        I20 = cosmo.tools.I20(Δχ)
+        I13 = cosmo.tools.I13(Δχ)
+        I22 = cosmo.tools.I22(Δχ)
  
         return factor / denomin * (
             new_J00 * I00 + new_J02 * I20 +
