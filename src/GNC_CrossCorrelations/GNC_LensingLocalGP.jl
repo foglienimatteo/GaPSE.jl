@@ -441,12 +441,12 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`integrand_ξ_GNC_Lensing_LocalGP`](@ref)
 """
 function ξ_GNC_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
-    en::AbstractFloat=1e6, N_χs::Int=100, backend=false, suit_sampling::Bool=true, kwargs...)
+    en::AbstractFloat=1e6, N_χs::Int=100, devcosmo=false, suit_sampling::Bool=true, kwargs...)
 
     χ1s = s1 .* range(1e-6, 1, length=N_χs)
     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
 
-    if backend == false
+    if devcosmo == false
 
         IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
@@ -460,7 +460,7 @@ function ξ_GNC_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
         return res 
 
     else
-
+        backend = KernelAbstractions.get_backend(devcosmo.z_of_s.xs)
         int_ξs = KernelAbstractions.zeros(backend, Float64, N_χs)
 
         kernel! = kernel_1d_P1!(backend)

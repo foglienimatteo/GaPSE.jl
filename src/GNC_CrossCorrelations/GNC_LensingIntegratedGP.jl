@@ -261,12 +261,12 @@ end
 
 
 function ξ_GNC_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::AbstractFloat=1e6, N_χs_2::Int=100, backend=false, suit_sampling::Bool=true, kwargs...)
+    en::AbstractFloat=1e6, N_χs_2::Int=100, devcosmo=false, suit_sampling::Bool=true, kwargs...)
 
     χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
     χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
 
-    if backend == false
+    if devcosmo == false
 
         IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
         IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
@@ -281,7 +281,7 @@ function ξ_GNC_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
         return res
 
     else
-
+        backend = KernelAbstractions.get_backend(devcosmo.z_of_s.xs)
         int_ξs = KernelAbstractions.zeros(backend, Float64, N_χs_2, N_χs_2)
 
         kernel! = kernel_2d!(backend)

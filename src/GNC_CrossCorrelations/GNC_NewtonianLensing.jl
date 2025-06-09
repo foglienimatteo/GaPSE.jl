@@ -307,13 +307,13 @@ integrand_ξ_GNC_Newtonian_Lensing
 
 
 function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
-    en::AbstractFloat=1e6, N_χs::Int=100, backend=false, suit_sampling::Bool=true,
+    en::AbstractFloat=1e6, N_χs::Int=100, devcosmo=false, suit_sampling::Bool=true,
     kwargs...)
 
     χ2s = s2 .* range(0.0, 1.0, length=N_χs)
     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
 
-    if backend == false
+    if devcosmo == false
 
         IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
@@ -327,7 +327,7 @@ function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
         return res
 
     else
-
+        backend = KernelAbstractions.get_backend(devcosmo.z_of_s.xs)
         int_ξs = KernelAbstractions.zeros(backend, Float64, N_χs)
 
         kernel! = kernel_1d_P2!(backend)

@@ -25,7 +25,7 @@ Linear growth rate at present time. Its value is equal to:
     f_0 \\simeq 0.5126998572951
 ```
 """
-const f0 = DevFloat(5.126998572951e-01)
+const f0 = 5.126998572951e-01
 
 
 """
@@ -36,7 +36,7 @@ Linear growth factor at present time. Its value is equal to:
      D_0 = 1.0
 ```
 """
-const D0 = DevFloat(1.0)
+const D0 = 1.0
 
 
 """
@@ -46,7 +46,7 @@ Comoving Hubble constant at present time. Its value is, in natural system
 (where the speed of light c=1): 
 ``\\mathcal{H}_0 \\simeq 3.335641\\times10^{-4} \\; h_0^{-1}\\mathrm{Mpc}``
 """
-const ℋ0 = DevFloat(3.3356409519815204e-4) # h_0/Mpc
+const ℋ0 = 3.3356409519815204e-4 # h_0/Mpc
 
 
 

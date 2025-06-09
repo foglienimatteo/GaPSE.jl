@@ -63,7 +63,7 @@ end
 #    )
 #end
 
-function Adapt.adapt_structure(to, s::MySpline; devfloat=Float32)
+function Adapt.adapt_structure(to, s::MySpline; devfloat=DevFloat)
     if devfloat == typeof(s.xs[begin])
         return DevMySpline(
             adapt(to, s.xs),
@@ -114,7 +114,7 @@ function (IPS::DevInputPS)(x)
     end
 end
 
-function Adapt.adapt_structure(to, s::InputPS; devfloat=Float32)
+function Adapt.adapt_structure(to, s::InputPS; devfloat=DevFloat)
     if devfloat == typeof(s.l_si)
         return DevInputPS(
             adapt(to, s.l_si), adapt(to, s.l_b), adapt(to, s.l_a), adapt(to, s.left),
@@ -169,7 +169,7 @@ function (IPS::DevIntegralIPS)(x)
     end
 end
 
-function Adapt.adapt_structure(to, s::IntegralIPS; devfloat=Float32)
+function Adapt.adapt_structure(to, s::IntegralIPS; devfloat=DevFloat)
     if devfloat == typeof(s.l_si)
         return DevIntegralIPS(
             adapt(to, s.l_si), adapt(to, s.l_b), adapt(to, s.l_a), adapt(to, s.left),
@@ -225,7 +225,7 @@ end
 
 
 
-function Adapt.adapt_structure(to, s::IPSTools; devfloat=Float32)
+function Adapt.adapt_structure(to, s::IPSTools; devfloat=DevFloat)
     if devfloat == typeof(s.fit_min)
         return DevIPSTools(
             Adapt.adapt_structure(to, s.I00; devfloat=devfloat),

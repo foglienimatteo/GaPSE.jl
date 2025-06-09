@@ -158,14 +158,13 @@ res = trapz((χ1s, χ2s), reshape(int_ξs, N_χs_2, N_χs_2))
 
 See also: [`kernel_1d_P1!`](@ref), [`kernel_1d_P2!`](@ref)
 """
-@kernel function kernel_2d!(results_vector, integrand, P1, P2, y, devcosmo, N_χs_2, kwargs...)
+@kernel function kernel_2d!(int_ξs, int_f, devIP1s, devIP2s, devP1, devP2, y, @Const(devcosmo))
     i, j = @index(Global, NTuple)
     #IP1 = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs_2, i), cosmo)
     #IP2 = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs_2, j), cosmo)
-    DevIP1 = GaPSE.DevPoint(P1.comdist * lr(1e-6, 1, N_χs_2, i), devcosmo)
-    DevIP2 = GaPSE.DevPoint(P2.comdist * lr(1e-6, 1, N_χs_2, j), devcosmo)
+    #DevIP1 = GaPSE.DevPoint(P1.comdist * lr(1e-6, 1, N_χs_2, i), devcosmo)
+    #DevIP2 = GaPSE.DevPoint(P2.comdist * lr(1e-6, 1, N_χs_2, j), devcosmo)
     #IP1 = GaPSE.Point(χ1s[i], cosmo)
     #IP2 = GaPSE.Point(χ2s[j], cosmo) 
-    results_vector[i, j] = integrand(DevIP1, DevIP2, P1, P2, y, devcosmo; kwargs...)
+    int_ξs[i, j] = int_f(devIP1s[i], devIP2s[j], devP1, devP2, y, devcosmo)
 end
-
