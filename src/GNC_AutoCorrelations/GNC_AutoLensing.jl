@@ -114,7 +114,8 @@ function integrand_ξ_GNC_Lensing(
         #res
 
         #3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
-        return factor / denomin * 3 * cosmo.tools.σ_2 + 6 * χ1^2 * cosmo.tools.σ_0 / 5
+        temp = 3 * cosmo.tools.σ_2 + 6 * χ1^2 * cosmo.tools.σ_0 / 5
+        return factor / denomin * temp
     end
   
 end
@@ -233,9 +234,9 @@ function ξ_GNC_Lensing(P1::Union{Point,DP}, P2::Union{Point,DP}, y, cosmo::Cosm
         #end
 
         #devcosmo = adapt(backend, cosmo)
-        devIP1s = Adapt.adapt_structure(backend, [Adapt.adapt_structure(backend, GaPSE.Point(x, cosmo); devfloat=Float32) for x in χ1s])
-        devIP2s = Adapt.adapt_structure(backend, [Adapt.adapt_structure(backend, GaPSE.Point(x, cosmo); devfloat=Float32) for x in χ2s])
-        devP1, devP2 = Adapt.adapt_structure(backend, P1; devfloat=Float32), Adapt.adapt_structure(backend, P2; devfloat=Float32)
+        devIP1s = Adapt.adapt_structure(backend, [Adapt.adapt_structure(backend, GaPSE.Point(x, cosmo); devfloat=DevFloat) for x in χ1s])
+        devIP2s = Adapt.adapt_structure(backend, [Adapt.adapt_structure(backend, GaPSE.Point(x, cosmo); devfloat=DevFloat) for x in χ2s])
+        devP1, devP2 = Adapt.adapt_structure(backend, P1; devfloat=DevFloat), Adapt.adapt_structure(backend, P2; devfloat=DevFloat)
         #int_f(IP1, IP2, devIP1, devIP2, y, devcosmo) = integrand_ξ_GNC_Lensing(IP1, IP2, devIP1, devIP2, y, devcosmo)
         #IP1s, IP2s = [GaPSE.Point(x, cosmo) for x in χ1s], [GaPSE.Point(x, cosmo) for x in χ2s]
 
@@ -250,13 +251,14 @@ function ξ_GNC_Lensing(P1::Union{Point,DP}, P2::Union{Point,DP}, y, cosmo::Cosm
         #Array(a) .+ Array(b) == Array(c)
 
         #kernel!(int_ξs, GaPSE.integrand_ξ_GNC_Lensing, IP1s, IP2s, P1, P2, y, cosmo, kwargs...; ndrange=size(int_ξs))
-        compiled_kernel! = mykernel!(backend, 64) #kernel_2d!(backend, 64)
-        compiled_kernel!(int_ξs, devIP1s, devIP2s; ndrange=size(int_ξs))
-        #compiled_kernel!(int_ξs, devIP1s, devIP2s, (GaPSE.integrand_ξ_GNC_Lensing, devP1, devP2, y, devcosmo); ndrange=size(int_ξs))
+        #compiled_kernel! = mykernel!(backend, 64) #kernel_2d!(backend, 64)
+        #compiled_kernel!(int_ξs, devIP1s, devIP2s; ndrange=size(int_ξs))
+        compiled_kernel! = kernel_2d!(backend, 64)
+        compiled_kernel!(int_ξs, devIP1s, devIP2s, (GaPSE.integrand_ξ_GNC_Lensing, devP1, devP2, y, devcosmo); ndrange=size(int_ξs))
         KernelAbstractions.synchronize(backend)
         hostint_ξs = Array(int_ξs)
 
-        res = trapz((χ1s, χ2s), reshape(hostint_ξs,N_χs_2, N_χs_2))
+        res = trapz((χ1s, χ2s), reshape(hostint_ξs, N_χs_2, N_χs_2))
         #println("res = $res")
         return res
         
