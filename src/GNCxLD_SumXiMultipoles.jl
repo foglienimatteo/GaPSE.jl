@@ -384,7 +384,8 @@ function print_map_sum_ξ_GNCxLD_multipole(
         println(io, "\n# \t\tL = $L")
         if !isempty(kwargs)
             for key in keys(kwargs)
-                println(io, "# \t\t$(key) = $(kwargs[key])")
+              val = string(kwargs[key])
+              println(io, "# \t\t$(key) = $(length(val) > 20 ? first(val, 20)*"..." : val)")
             end
         end
         isnothing(s1) ||
@@ -422,9 +423,10 @@ function print_map_sum_ξ_GNCxLD_multipole(
 
                 println(io, "\n# \t\tL = $L")
                 if !isempty(kwargs)
-                        for key in keys(kwargs)
-                            println(io, "# \t\t$(key) = $(kwargs[key])")
-                        end
+                    for key in keys(kwargs)
+                        val = string(kwargs[key])
+                        println(io, "# \t\t$(key) = $(length(val) > 20 ? first(val, 20)*"..." : val)")
+                    end
                 end
                 isnothing(s1) || println(io, "#\n# NOTE: the computation is done not in " *
                                                 "s1 = s_eff, because you specified in input s1 = $s1 !")
