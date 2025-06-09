@@ -6,7 +6,7 @@ function integrand_ξ_GNC_Lensing(
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel) where {DP<:DevPoint, DC<:DevCosmology}
 
-    #=
+    
     s1 = P1.comdist
     s2 = P2.comdist
     
@@ -24,6 +24,8 @@ function integrand_ξ_GNC_Lensing(
     denomin = s1 * s2 * a1 * a2
     factor = ℋ0^4 * Ω_M0^2 * D1 * (s1 - χ1) * D2 * (s2 - χ2) * (5 * s_b_s1 - 2) * (5 * s_b_s2 - 2)
     
+    first_res = 1.0
+    #=
     first_res = if Δχ > Δχ_min
         
         χ1χ2 = χ1 * χ2
@@ -124,9 +126,10 @@ function integrand_ξ_GNC_Lensing(
     end
     =#
     
+    
 
     
-    return 1.0 #factor / denomin * first_res
+    return factor / denomin * first_res
 end
 
 function integrand_ξ_GNC_Lensing(
