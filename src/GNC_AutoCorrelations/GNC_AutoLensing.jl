@@ -106,7 +106,7 @@ function integrand_ξ_GNC_Lensing(
             #)
         #end
 
-        #=
+        
     else
         #println("s1 = $s1 \t s2 = $s2")
         #println("χ1 = $χ1 \t χ2 = $χ2")
@@ -118,7 +118,7 @@ function integrand_ξ_GNC_Lensing(
         #3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
         return factor / denomin * 3 * cosmo.tools.σ_2 + 6 * χ1^2 * cosmo.tools.σ_0 / 5
     end
-    =#
+  
 end
 
 function integrand_ξ_GNC_Lensing(
