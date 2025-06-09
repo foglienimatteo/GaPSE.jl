@@ -76,6 +76,8 @@ function integrand_ξ_GNC_Lensing(
         I13 = cosmo.tools.I13(Δχ)
         I22 = cosmo.tools.I22(Δχ)
 
+        KernelAbstractions.@print "I00, I20, I13, I22 = " I00 I20 I13 I22
+        KernelAbstractions.@print "new_J00, new_J02, new_J31, new_J22 = " new_J00 new_J02 new_J31 new_J22
         par_sum = new_J00 * I00 + new_J02 * I20 + new_J31 * I13 + new_J22 * I22
  
         return factor / denomin * par_sum
