@@ -24,9 +24,7 @@ function integrand_ξ_GNC_Lensing(
     denomin = s1 * s2 * a1 * a2
     factor = ℋ0^4 * Ω_M0^2 * D1 * (s1 - χ1) * D2 * (s2 - χ2) * (5 * s_b_s1 - 2) * (5 * s_b_s2 - 2)
     
-    first_res = 1.0
-    #=
-    first_res = if Δχ > Δχ_min
+    if Δχ > Δχ_min
         
         χ1χ2 = χ1 * χ2
         
@@ -85,7 +83,7 @@ function integrand_ξ_GNC_Lensing(
         I13 = cosmo.tools.I13(Δχ)
         I22 = cosmo.tools.I22(Δχ)
  
-        res = (
+        return factor / denomin * (
             new_J00 * I00 + new_J02 * I20 +
             new_J31 * I13 + new_J22 * I22
         )
@@ -111,7 +109,6 @@ function integrand_ξ_GNC_Lensing(
             #)
         #end
 
-        res
 
     else
         #println("s1 = $s1 \t s2 = $s2")
@@ -122,9 +119,9 @@ function integrand_ξ_GNC_Lensing(
         #res
 
         #3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
-        3 * cosmo.tools.σ_2 + 6 * χ1^2 * cosmo.tools.σ_0 / 5
+        factor / denomin * 3 * cosmo.tools.σ_2 + 6 * χ1^2 * cosmo.tools.σ_0 / 5
     end
-    =#
+    
     
     
 
