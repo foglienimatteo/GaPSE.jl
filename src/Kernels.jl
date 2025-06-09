@@ -158,7 +158,7 @@ res = trapz((χ1s, χ2s), reshape(int_ξs, N_χs_2, N_χs_2))
 
 See also: [`kernel_1d_P1!`](@ref), [`kernel_1d_P2!`](@ref)
 """
-@kernel function kernel_2d!(int_ξs, int_f, devIP1s, devIP2s, devP1, devP2, y, @Const(devcosmo))
+@kernel function kernel_2d!(int_ξs, int_f, devIP1s, devIP2s, devP1, devP2, y, devcosmo)
     i, j = @index(Global, NTuple)
     #IP1 = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs_2, i), cosmo)
     #IP2 = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs_2, j), cosmo)
