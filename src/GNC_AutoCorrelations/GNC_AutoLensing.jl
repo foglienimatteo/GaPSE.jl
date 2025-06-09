@@ -239,7 +239,7 @@ function ξ_GNC_Lensing(P1::Union{Point,DP}, P2::Union{Point,DP}, y, cosmo::Cosm
         #IP2s = adapt(backend, [adapt(backend, GaPSE.Point(x, cosmo)) for x in χ2s])
         #devIP1, devIP2 =  adapt(backend,P1), adapt(backend,P2)
         #int_f(IP1, IP2, devIP1, devIP2, y, devcosmo) = integrand_ξ_GNC_Lensing(IP1, IP2, devIP1, devIP2, y, devcosmo)
-        IP1s, IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
+        IP1s, IP2s = [GaPSE.Point(x, cosmo) for x in χ1s], [GaPSE.Point(x, cosmo) for x in χ2s]
 
         ###@kernel function mykernel!(int_f, int_ξs, IP1s, IP2s, devIP1, devIP2, y, devcosmo)
         ###    i, j = @index(Global, NTuple)
