@@ -235,9 +235,9 @@ function ξ_GNC_Lensing(P1::Union{Point,DP}, P2::Union{Point,DP}, y, cosmo::Cosm
         #end
 
         #devcosmo = adapt(backend, cosmo)
-        devIP1s = adapt(backend, [adapt(backend, GaPSE.Point(x, cosmo)) for x in χ1s])
-        devIP2s = adapt(backend, [adapt(backend, GaPSE.Point(x, cosmo)) for x in χ2s])
-        devP1, devP2 =  adapt(backend,P1), adapt(backend,P2)
+        devIP1s = Adapt.adapt_structure(backend, [Adapt.adapt_structure(backend, GaPSE.Point(x, cosmo); devfloat=Float32) for x in χ1s])
+        devIP2s = Adapt.adapt_structure(backend, [Adapt.adapt_structure(backend, GaPSE.Point(x, cosmo); devfloat=Float32) for x in χ2s])
+        devP1, devP2 = Adapt.adapt_structure(backend, P1; devfloat=Float32), Adapt.adapt_structure(backend, P2; devfloat=Float32)
         #int_f(IP1, IP2, devIP1, devIP2, y, devcosmo) = integrand_ξ_GNC_Lensing(IP1, IP2, devIP1, devIP2, y, devcosmo)
         #IP1s, IP2s = [GaPSE.Point(x, cosmo) for x in χ1s], [GaPSE.Point(x, cosmo) for x in χ2s]
 
