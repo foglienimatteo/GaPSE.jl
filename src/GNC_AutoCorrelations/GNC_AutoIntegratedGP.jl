@@ -248,7 +248,7 @@ function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
     χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
     χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
 
-    if devcosmo == false
+    if devcosmo ∈ [false, "false", nothing]
         
         IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
         IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]

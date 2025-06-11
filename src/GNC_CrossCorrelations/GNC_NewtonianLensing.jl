@@ -313,7 +313,7 @@ function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
     χ2s = s2 .* range(0.0, 1.0, length=N_χs)
     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
 
-    if devcosmo == false
+    if devcosmo ∈ [false, "false", nothing]
 
         IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
