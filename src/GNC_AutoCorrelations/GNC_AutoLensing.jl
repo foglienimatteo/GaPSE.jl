@@ -156,7 +156,7 @@ function ξ_GNC_Lensing(P1::Union{Point,DP}, P2::Union{Point,DP}, y, cosmo::Cosm
             for IP1 in IP1s, IP2 in IP2s
         ]
 
-        println("int_ξs: $(typeof(int_ξs)), $(size(int_ξs)), $(size(reshape(int_ξs, N_χs_2, N_χs_2)))")
+        #println("int_ξs: $(typeof(int_ξs)), $(size(int_ξs)), $(size(reshape(int_ξs, N_χs_2, N_χs_2)))")
         res = trapz((χ1s, χ2s), int_ξs)
         return res
 
