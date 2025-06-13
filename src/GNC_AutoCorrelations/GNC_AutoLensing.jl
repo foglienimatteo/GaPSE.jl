@@ -189,10 +189,11 @@ function ξ_GNC_Lensing(P1::Union{Point,DP}, P2::Union{Point,DP}, y, cosmo::Cosm
         compiled_kernel!(int_ξs, devIP1s, devIP2s, (GaPSE.integrand_ξ_GNC_Lensing, devP1, devP2, y, devcosmo); ndrange=size(int_ξs))
         KernelAbstractions.synchronize(backend)
         hostint_ξs = Array(int_ξs)
-        println("int_ξs: $(typeof(int_ξs)), $(size(int_ξs)), $(size(reshape(int_ξs, N_χs_2, N_χs_2)))")
-        println("hostint_ξs: $(typeof(hostint_ξs)), $(size(hostint_ξs)), $(size(reshape(hostint_ξs, N_χs_2, N_χs_2)))")
+        #println("int_ξs: $(typeof(int_ξs)), $(size(int_ξs)), $(size(reshape(int_ξs, N_χs_2, N_χs_2)))")
+        #println("hostint_ξs: $(typeof(hostint_ξs)), $(size(hostint_ξs)), $(size(reshape(hostint_ξs, N_χs_2, N_χs_2)))")
 
-        res = trapz((χ1s, χ2s), reshape(hostint_ξs, N_χs_2, N_χs_2))
+        res = trapz((χ1s, χ2s), hostint_ξs)
+        #res = trapz((χ1s, χ2s), reshape(hostint_ξs, N_χs_2, N_χs_2))
         return res
         
 
