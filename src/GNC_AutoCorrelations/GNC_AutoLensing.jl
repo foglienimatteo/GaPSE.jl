@@ -147,22 +147,57 @@ function ξ_GNC_Lensing(P1::Union{Point,DP}, P2::Union{Point,DP}, y, cosmo::Cosm
     χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
 
     if devcosmo ∈ [false, "false", nothing]
+        println("works")
 
         IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
         IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
         int_ξs = [
-          GaPSE.integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
-          for IP1 in IP1s, IP2 in IP2s
+            GaPSE.integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+            for IP1 in IP1s, IP2 in IP2s
         ]
 
+        println("int_ξs: $(typeof(int_ξs)), $(sizeof(int_ξs)), $(sizeof(reshape(int_ξs, N_χs_2, N_χs_2)))")
         res = trapz((χ1s, χ2s), int_ξs)
         return res
 
     else
+        println("broken: ")
+
         backend = KernelAbstractions.get_backend(devcosmo.z_of_s.xs)
+
+        int_ξs = KernelAbstractions.zeros(backend, Float64, N_χs_2, N_χs_2)
+
+        #devcosmo = Adapt.adapt_structure(backend, cosmo)
+        devIP1s = Adapt.adapt_structure(backend, [Adapt.adapt_structure(backend, GaPSE.Point(x, cosmo); devfloat=DevFloat) for x in χ1s])
+        devIP2s = Adapt.adapt_structure(backend, [Adapt.adapt_structure(backend, GaPSE.Point(x, cosmo); devfloat=DevFloat) for x in χ2s])
+        devP1, devP2 = Adapt.adapt_structure(backend, P1; devfloat=DevFloat), Adapt.adapt_structure(backend, P2; devfloat=DevFloat)
+        #int_f(IP1, IP2, devIP1, devIP2, y, devcosmo) = integrand_ξ_GNC_Lensing(IP1, IP2, devIP1, devIP2, y, devcosmo)
+
+        @kernel function mykernel!(int_ξs, IP1s, IP2s)
+            i, j = @index(Global, NTuple)
+            #IP1 = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs_2, i), cosmo)
+            #IP2 = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs_2, j), cosmo)
+            #IP1 = GaPSE.Point(χ1s[i], cosmo)
+            #IP2 = GaPSE.Point(χ2s[j], cosmo) 
+            int_ξs[i, j] = integrand_ξ_GNC_Lensing(IP1s[i], IP2s[j], devP1, devP2, y, devcosmo)
+        end
+
+        #compiled_kernel! = mykernel!(backend, 64) #kernel_2d!(backend, 64)
+        #compiled_kernel!(int_ξs, devIP1s, devIP2s; ndrange=size(int_ξs))
+        compiled_kernel! = kernel_2d!(backend, 64)
+        compiled_kernel!(int_ξs, devIP1s, devIP2s, (GaPSE.integrand_ξ_GNC_Lensing, devP1, devP2, y, devcosmo); ndrange=size(int_ξs))
+        KernelAbstractions.synchronize(backend)
+        hostint_ξs = Array(int_ξs)
+        println("int_ξs: $(typeof(int_ξs)), $(sizeof(int_ξs)), $(sizeof(reshape(int_ξs, N_χs_2, N_χs_2)))")
+        println("hostint_ξs: $(typeof(hostint_ξs)), $(sizeof(hostint_ξs)), $(sizeof(reshape(hostint_ξs, N_χs_2, N_χs_2)))")
+
+        res = trapz((χ1s, χ2s), reshape(hostint_ξs, N_χs_2, N_χs_2))
+        return res
+        
+
+        ########## ERROR: "Argument 8 to your kernel function is of type GaPSE.Cosmology, which is not a bitstype" ##########
         #=
-        # with this I get: "Argument 8 to your kernel function is of type GaPSE.Cosmology, which is not a bitstype"
         int_ξs = KernelAbstractions.zeros(backend, Float32, N_χs_2, N_χs_2)
 
         kernel! = kernel_2d!(backend)
@@ -172,9 +207,11 @@ function ξ_GNC_Lensing(P1::Union{Point,DP}, P2::Union{Point,DP}, y, cosmo::Cosm
         res = trapz((χ1s, χ2s), reshape(int_ξs, N_χs_2, N_χs_2))
         return res
         =#
+        ########################################
 
-        #= 
-        # with this everything works as expected
+
+        ########### WORKS ##########
+        #=
         χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
         #χ2s = P2.comdist .* range(1e-5, 1, length = N_χs_2 + 7)
         χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
@@ -190,78 +227,41 @@ function ξ_GNC_Lensing(P1::Union{Point,DP}, P2::Union{Point,DP}, y, cosmo::Cosm
         res = trapz((χ1s, χ2s), int_ξs)
         return res / en
         =#
+        ########################################
         
-        χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
-        #χ2s = P2.comdist .* range(1e-5, 1, length = N_χs_2 + 7)
-        χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
 
-        #IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-        #IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
-
-        int_ξs = KernelAbstractions.zeros(backend, Float64, N_χs_2, N_χs_2)
-        #tmp = KernelAbstractions.zeros(length(IP1s))
-
-        #i = 1
-        #for j in 1:length(IP2s)
-        #  int_ξ_Lensing[i,j] = @oneapi items=30 en * GaPSE.integrand_ξ_GNC_Lensing_oneapi(IP1s, IP2s[j], P1, P2, y, cosmo; kwargs...)
-        #end
-        #  global i+=1
-
-        #function vadd(tmp, IP1s, IP2s;kwargs...)
-        #   i = get_global_id()
-        #   #@inbounds c[i] = a[i] + b[i]
-        #   tmp[i] = en * GaPSE.integrand_ξ_GNC_Lensing(IP1s[i], IP2s, P1, P2, y, cosmo;kwargs...)
-        #   return 
-        #end
-
-        #a = oneArray(rand(10));
-
-        #b = oneArray(rand(10));
-
-        #c = similar(a);
-        #for j in 1:length(IP2s)
-        # @oneapi items=10 vadd(tmp, IP1s, IP2s[j])
-        # [int_ξs[i, j] =  tmp[i] for i in 1:legnth(IP1s)]
-        #end
-        #@kernel function mykernel!(int_ξs, integrand_ξ_GNC_Lensing, IP1s, IP2s, P1, P2, y, cosmo, kwargs...)
-        #@kernel function mykernel!(int_ξs, integrand_ξ_GNC_Lensing, P1, P2, y, cosmo, kwargs...) 
-        #  i, j = @index(Global, NTuple)
-        #  IP1 = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs_2, i), cosmo)
-        #  IP2 = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs_2, j), cosmo)
-        #  #IP1 = GaPSE.Point(χ1s[i], cosmo)
-        #  #IP2 = GaPSE.Point(χ2s[j], cosmo) 
-        #  int_ξs[i,j] = integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
-        #end
-
-        #devcosmo = adapt(backend, cosmo)
-        devIP1s = Adapt.adapt_structure(backend, [Adapt.adapt_structure(backend, GaPSE.Point(x, cosmo); devfloat=DevFloat) for x in χ1s])
-        devIP2s = Adapt.adapt_structure(backend, [Adapt.adapt_structure(backend, GaPSE.Point(x, cosmo); devfloat=DevFloat) for x in χ2s])
-        devP1, devP2 = Adapt.adapt_structure(backend, P1; devfloat=DevFloat), Adapt.adapt_structure(backend, P2; devfloat=DevFloat)
-        #int_f(IP1, IP2, devIP1, devIP2, y, devcosmo) = integrand_ξ_GNC_Lensing(IP1, IP2, devIP1, devIP2, y, devcosmo)
-        #IP1s, IP2s = [GaPSE.Point(x, cosmo) for x in χ1s], [GaPSE.Point(x, cosmo) for x in χ2s]
-
-        @kernel function mykernel!(int_ξs, IP1s, IP2s)
-            i, j = @index(Global, NTuple)
-            #IP1 = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs_2, i), cosmo)
-            #IP2 = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs_2, j), cosmo)
-            #IP1 = GaPSE.Point(χ1s[i], cosmo)
-            #IP2 = GaPSE.Point(χ2s[j], cosmo) 
-            int_ξs[i, j] = integrand_ξ_GNC_Lensing(IP1s[i], IP2s[j], devP1, devP2, y, devcosmo)
+        ########## TEST: oneAPI macro 1 ##########
+        #=
+        i = 1
+        for j in 1:length(IP2s)
+          int_ξ_Lensing[i,j] = @oneapi items=30 en * GaPSE.integrand_ξ_GNC_Lensing_oneapi(IP1s, IP2s[j], P1, P2, y, cosmo; kwargs...)
         end
-        #Array(a) .+ Array(b) == Array(c)
+        global i+=1
+        =#
+        ########################################
 
-        #kernel!(int_ξs, GaPSE.integrand_ξ_GNC_Lensing, IP1s, IP2s, P1, P2, y, cosmo, kwargs...; ndrange=size(int_ξs))
-        #compiled_kernel! = mykernel!(backend, 64) #kernel_2d!(backend, 64)
-        #compiled_kernel!(int_ξs, devIP1s, devIP2s; ndrange=size(int_ξs))
-        compiled_kernel! = kernel_2d!(backend, 64)
-        compiled_kernel!(int_ξs, devIP1s, devIP2s, (GaPSE.integrand_ξ_GNC_Lensing, devP1, devP2, y, devcosmo); ndrange=size(int_ξs))
-        KernelAbstractions.synchronize(backend)
-        hostint_ξs = Array(int_ξs)
 
-        res = trapz((χ1s, χ2s), reshape(hostint_ξs, N_χs_2, N_χs_2))
-        #println("res = $res")
-        return res
+        ########## TEST: oneAPI macro 2 ##########
+        #=
+        function vadd(tmp, IP1s, IP2s;kwargs...)
+           i = get_global_id()
+           #@inbounds c[i] = a[i] + b[i]
+           tmp[i] = en * GaPSE.integrand_ξ_GNC_Lensing(IP1s[i], IP2s, P1, P2, y, cosmo;kwargs...)
+           return 
+        end
+
+        a = oneArray(rand(10));
+        b = oneArray(rand(10));
+        c = similar(a);
+        for j in 1:length(IP2s)
+            @oneapi items=10 vadd(tmp, IP1s, IP2s[j])
+            #[int_ξs[i, j] =  tmp[i] for i in 1:length(IP1s)]
+        end
         
+        Array(a) .+ Array(b) == Array(c)
+        =#
+        ########################################
+
     end
 end
 
