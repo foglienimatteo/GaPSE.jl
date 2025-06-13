@@ -147,7 +147,6 @@ function ξ_GNC_Lensing(P1::Union{Point,DP}, P2::Union{Point,DP}, y, cosmo::Cosm
     χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
 
     if devcosmo ∈ [false, "false", nothing]
-        println("works")
 
         IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
         IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
@@ -162,7 +161,6 @@ function ξ_GNC_Lensing(P1::Union{Point,DP}, P2::Union{Point,DP}, y, cosmo::Cosm
         return res
 
     else
-        println("broken: ")
 
         backend = KernelAbstractions.get_backend(devcosmo.z_of_s.xs)
 
