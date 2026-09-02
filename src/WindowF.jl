@@ -512,6 +512,7 @@ print_map_F
         xs::Vector{Float64}
         μs::Vector{Float64}
         Fs::Matrix{Float64}
+        grid::GridInterpolations.RectangleGrid{2}
         )
 
 Struct containing xs, μs and Fs values of the window function ``F(x, μ)``.
@@ -519,6 +520,11 @@ Struct containing xs, μs and Fs values of the window function ``F(x, μ)``.
 `Fs` values are contained in a matrix of size `(length(xs), length(μs))`, so:
 - along a fixed column the changing value is `x`
 - along a fixed row the changing value is `μ`
+
+`grid` is the `GridInterpolations.RectangleGrid` built on `(xs, μs)`. It is
+computed once by the constructor and stored, because `spline_F` is called in the
+innermost loop of every TPCF integration: rebuilding the grid at each call was
+allocating on every single integrand evaluation.
 
 The analytical definition of the window function is the following (see Eq. A.10 of
 Castorina, Di Dio, 2021):
@@ -574,6 +580,7 @@ struct WindowF
     xs::Vector{Float64}
     μs::Vector{Float64}
     Fs::Matrix{Float64}
+    grid::GridInterpolations.RectangleGrid{2}
 
 
     function WindowF(file::String)
@@ -592,7 +599,7 @@ struct WindowF
                 throw(ErrorException("What kind of convenction for the file $file" *
                                         " are you using? I do not recognise it."))
             end
-        new(new_xs, new_μs, new_Fs)
+        new(new_xs, new_μs, new_Fs, GridInterpolations.RectangleGrid(new_xs, new_μs))
     end
 end
 
@@ -609,8 +616,7 @@ package.
 See also: [`WindowF`](@ref)
 """
 function spline_F(x, μ, str::WindowF)
-    grid = GridInterpolations.RectangleGrid(str.xs, str.μs)
-    GridInterpolations.interpolate(grid, reshape(str.Fs, (:, 1)), [x, μ])
+    GridInterpolations.interpolate(str.grid, reshape(str.Fs, (:, 1)), [x, μ])
 end
 
 #=

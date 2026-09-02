@@ -429,6 +429,7 @@ end
         ss::Vector{Float64}
         μs::Vector{Float64}
         IFs::Matrix{Float64}
+        grid::GridInterpolations.RectangleGrid{2}
         )
 
 Struct containing ss, μs and IFs values of the integrated window function ``\\mathcal{F}(s, μ)``.
@@ -436,6 +437,12 @@ Struct containing ss, μs and IFs values of the integrated window function ``\\m
 `IFs` values are contained in a matrix of size `(length(ss), length(μs))`, so:
 - along a fixed column the changing value is `s`
 - along a fixed row the changing value is `μ`
+
+`grid` is the `GridInterpolations.RectangleGrid` built on `(ss, μs)`. It is
+computed once by the constructor and stored, because `spline_integrF` is called in
+the innermost loop of every TPCF integration performed with `use_windows=true`:
+rebuilding the grid at each call was allocating on every single integrand
+evaluation.
 
 The analytical expression for the integrated window function is the following:
 
@@ -491,6 +498,7 @@ struct WindowFIntegrated
     ss::Vector{Float64}
     μs::Vector{Float64}
     IFs::Matrix{Float64}
+    grid::GridInterpolations.RectangleGrid{2}
 
     #=
     function WindowFIntegrated(s_min, s_max, ss::Vector{Float64},
@@ -541,7 +549,7 @@ struct WindowFIntegrated
                                 "choose between ':trap' and ':quad' . "))
         end
 
-        new(ss, μs, IFs)
+        new(ss, μs, IFs, GridInterpolations.RectangleGrid(ss, μs))
     end
     =#
 
@@ -571,7 +579,7 @@ struct WindowFIntegrated
                 throw(ErrorException("What kind of convenction for the file $file" *
                                         " are you using? I do not recognise it."))
             end
-        new(new_ss, new_μs, new_IFs)
+        new(new_ss, new_μs, new_IFs, GridInterpolations.RectangleGrid(new_ss, new_μs))
     end
 end
 
@@ -588,8 +596,7 @@ package.
 See also: [`WindowFIntegrated`](@ref)
 """
 function spline_integrF(s, μ, str::WindowFIntegrated)
-    grid = GridInterpolations.RectangleGrid(str.ss, str.μs)
-    GridInterpolations.interpolate(grid, reshape(str.IFs, (:, 1)), [s, μ])
+    GridInterpolations.interpolate(str.grid, reshape(str.IFs, (:, 1)), [s, μ])
 end
 
 
