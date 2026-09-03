@@ -158,7 +158,7 @@ end
 =#
 
 function print_map_IntegratedF(s_min, s_max, ss::AbstractVector{T},
-    μs::VAbstractVector{T}, windowF::Union{String,WindowF}, out::String;
+    μs::AbstractVector{T}, windowF::Union{String,WindowF}, out::String;
     alg::Symbol=:trap, llim=nothing, rlim=nothing,
     rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true) where {T<:AbstractFloat}
 
