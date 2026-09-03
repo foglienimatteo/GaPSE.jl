@@ -19,10 +19,10 @@
 
 """
     DEFAULT_FMAP_OPTS_hcub = Dict(
-        :θ_max => π / 2.0::Float64, 
-        :tolerance => 1e-10::Float64, 
-        :rtol => 1e-2::Float64, 
-        :atol => 1e-3::Float64,
+        :θ_max => π / 2.0::AbstractFloat, 
+        :tolerance => 1e-10::AbstractFloat, 
+        :rtol => 1e-2::AbstractFloat, 
+        :atol => 1e-3::AbstractFloat,
         :pr => true::Bool,
     )
 
@@ -32,20 +32,20 @@ want to perform the computation with `hcubature`.
 See also: [`integrand_F`](@ref), [`F_hcub`](@ref), [`print_map_F`](@ref)
 """
 const DEFAULT_FMAP_OPTS_hcub = Dict(
-    :θ_max => π / 2.0::Float64,
-    :tolerance => 1e-10::Float64,
-    :rtol => 1e-2::Float64,
-    :atol => 1e-3::Float64,
+    :θ_max => π / 2.0::AbstractFloat,
+    :tolerance => 1e-10::AbstractFloat,
+    :rtol => 1e-2::AbstractFloat,
+    :atol => 1e-3::AbstractFloat,
     :pr => true::Bool,
 )
 
 
 """
     DEFAULT_FMAP_OPTS_trap = Dict(
-        :θ_max => π / 2.0::Float64, 
-        :tolerance => 1e-10::Float64, 
+        :θ_max => π / 2.0::AbstractFloat, 
+        :tolerance => 1e-10::AbstractFloat, 
         :N => 300::Int64, 
-        :en => 1.0::Float64,
+        :en => 1.0::AbstractFloat,
         :pr => true::Bool,
     )
 
@@ -56,10 +56,10 @@ want to perform the computation with `trap`.
 See also: [`integrand_F`](@ref), [`F_trap`](@ref), [`print_map_F`](@ref)
 """
 const DEFAULT_FMAP_OPTS_trap = Dict(
-    :θ_max => π / 2.0::Float64,
-    :tolerance => 1e-10::Float64,
+    :θ_max => π / 2.0::AbstractFloat,
+    :tolerance => 1e-10::AbstractFloat,
     :N => 300::Int64,
-    :en => 1.0::Float64,
+    :en => 1.0::AbstractFloat,
     :pr => true::Bool,
 )
 
@@ -240,7 +240,7 @@ function F_trap(x, μ; θ_max=π / 2, N::Int=300, en=1.0, tolerance=1e-13)
 end;
 
 
-function print_map_F(out::String, x_step::Float64=0.01, μ_step::Float64=0.01;
+function print_map_F(out::String, x_step::AbstractFloat=0.01, μ_step::AbstractFloat=0.01;
     alg::Symbol=:trap, x1=0, x2=3, μ1=-1, μ2=1,
     Fmap_opts::Dict=Dict{Symbol,Any}(), kwargs...)
 
@@ -322,7 +322,8 @@ function print_map_F(out::String, x_step::Float64=0.01, μ_step::Float64=0.01;
 
         if !isempty(kwargs)
             for key in keys(kwargs)
-                println(io, "# \t\t$(key) = $(kwargs[key])")
+                val = string(kwargs[key])
+                println(io, "# \t\t$(key) = $(length(val) > 20 ? first(val, 20)*"..." : val)")
             end
         end
 
@@ -345,8 +346,8 @@ end
 
 
 
-function print_map_F(out::String, xs::Vector{Float64}, μs::Vector{Float64};
-    alg::Symbol=:trap, Fmap_opts::Dict=Dict{Symbol,Any}(), kwargs...)
+function print_map_F(out::String, xs::AbstractVector{T}, μs::AbstractVector{T};
+    alg::Symbol=:trap, Fmap_opts::Dict=Dict{Symbol,Any}(), kwargs...) where {T<:AbstractFloat}
 
     check_parent_directory(out)
     check_namefile(out)
@@ -424,7 +425,8 @@ function print_map_F(out::String, xs::Vector{Float64}, μs::Vector{Float64};
 
         if !isempty(kwargs)
             for key in keys(kwargs)
-                println(io, "# \t\t$(key) = $(kwargs[key])")
+                val = string(kwargs[key])
+                println(io, "# \t\t$(key) = $(length(val) > 20 ? first(val, 20)*"..." : val)")
             end
         end
 
@@ -616,6 +618,7 @@ package.
 See also: [`WindowF`](@ref)
 """
 function spline_F(x, μ, str::WindowF)
+    #grid = GridInterpolations.RectangleGrid(str.xs, str.μs)
     GridInterpolations.interpolate(str.grid, reshape(str.Fs, (:, 1)), [x, μ])
 end
 
