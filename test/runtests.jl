@@ -21,8 +21,8 @@
 ##########################################################################################92
 
 TEST_BASICS = true
-TEST_PP_PNG = false
-TEST_LD = false
+TEST_PP_PNG = true
+TEST_LD = true
 TEST_GNC = true
 TEST_GNCxLD_LDxGNC = true
 TEST_TWOSPECIES = true
