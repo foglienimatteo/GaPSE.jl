@@ -207,7 +207,8 @@ function print_PS_multipole(ss, fs, out::String;
         else
             print(io, "\n")
             for key in keys(kwargs)
-                println(io, "# \t\t$(key) = $(kwargs[key])")
+                val = string(kwargs[key])
+                println(io, "# \t\t$(key) = $(length(val) > 20 ? first(val, 20)*"..." : val)")
             end
         end
         println(io, "# ")
@@ -578,7 +579,8 @@ function print_all_PS_multipole(input::String, out::String,
         else
             print(io, "\n")
             for key in keys(kwargs)
-                println(io, "# \t\t$(key) = $(kwargs[key])")
+                val = string(kwargs[key])
+                println(io, "# \t\t$(key) = $(length(val) > 20 ? first(val, 20)*"..." : val)")
             end
         end
         println(io, "# ")

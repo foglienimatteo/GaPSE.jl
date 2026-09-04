@@ -652,7 +652,8 @@ function print_map_ξ_PPGalaxies_multipole(
         println(io, "\n# \t\tL = $L")
         if !isempty(kwargs)
             for key in keys(kwargs)
-                println(io, "# \t\t$(key) = $(kwargs[key])")
+                val = string(kwargs[key])
+                println(io, "# \t\t$(key) = $(length(val) > 20 ? first(val, 20)*"..." : val)")
             end
         end
 
