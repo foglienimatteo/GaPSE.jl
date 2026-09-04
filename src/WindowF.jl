@@ -451,12 +451,12 @@ end
 
 
 """
-    print_map_F(out::String, x_step::Float64 = 0.01, μ_step::Float64 = 0.01;
+    print_map_F(out::String, x_step::AbstractFloat = 0.01, μ_step::AbstractFloat = 0.01;
         alg::Symbol = :trap, x1 = 0, x2 = 3, μ1 = -1, μ2 = 1, 
         Fmap_opts::Dict = Dict{Symbol,Any}(), 
         kwargs...)
 
-    print_map_F(out::String, xs::Vector{Float64}, μs::Vector{Float64};
+    print_map_F(out::String, xs::Vector{T}, μs::Vector{T};
         alg::Symbol = :trap, Fmap_opts::Dict = Dict{Symbol,Any}(),
         kwargs...)
 
@@ -686,8 +686,8 @@ function PhiTimesWindowF_multipole(
     s1, s, phi::Function, windowf::WindowF;
     L::Int=0, alg::Symbol=:lobatto,
     N_lob::Int=100, N_trap::Int=200,
-    atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
-    enhancer::Float64=1e6,
+    atol_quad::AbstractFloat=0.0, rtol_quad::AbstractFloat=1e-2,
+    enhancer::AbstractFloat=1e6,
     kwargs...)
 
     @assert alg ∈ VALID_INTEGRATION_ALGORITHM ":$alg is not a valid Symbol for \"alg\"; they are: \n\t" *

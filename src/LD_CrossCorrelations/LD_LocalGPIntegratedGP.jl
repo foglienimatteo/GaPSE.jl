@@ -40,7 +40,7 @@ end
 
 
 function integrand_ξ_LD_LocalGP_IntegratedGP(
-    χ2::Float64, s1::Float64, s2::Float64,
+    χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
     y, cosmo::Cosmology;
     kwargs...)
 
@@ -56,7 +56,7 @@ end
         y, cosmo::Cosmology ) ::Float64
     
     integrand_ξ_LD_LocalGP_IntegratedGP(
-        χ2::Float64, s1::Float64, s2::Float64,
+        χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
         y, cosmo::Cosmology;
         kwargs... ) ::Float64
 
@@ -278,7 +278,7 @@ This function is computed integrating `integrand_ξ_LD_LocalGP_IntegratedGP` wit
 
 ## Keyword arguments 
 
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
+- `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
 - `N_χs::Int = 100`: number of points to be used for sampling the integral
@@ -290,7 +290,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_LD_multipole`](@ref),
 [`map_ξ_LD_multipole`](@ref), [`print_map_ξ_LD_multipole`](@ref)
 """
 function ξ_LD_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-    en::Float64 = 1e6, N_χs::Int = 100)
+    en::AbstractFloat = 1e6, N_χs::Int = 100)
 
     #=
     f(χ2) = en * integrand_ξ_LD_LocalGP_IntegratedGP(χ2, s1, s2, y, cosmo)

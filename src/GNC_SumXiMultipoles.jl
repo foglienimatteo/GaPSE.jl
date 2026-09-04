@@ -24,8 +24,8 @@
         s1 = nothing, L::Int = 0, alg::Symbol = :lobatto,
         obs::Union{Bool,Symbol} = :noobsvel,
         N_lob::Int = 100, N_trap::Int = 50,
-        atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
-        enhancer::Float64=1e6, N_log::Int = 1000, 
+        atol_quad::AbstractFloat = 0.0, rtol_quad::AbstractFloat = 1e-2,
+        enhancer::AbstractFloat=1e6, N_log::Int = 1000, 
         pr::Bool = true,
         kwargs...) ::Tuple{Float64, Vector{Float64}}
 
@@ -85,12 +85,12 @@ for comfortness:
 - `N_trap::Int = 200` : number of points to be used in the sampling made by the function `trapz`.
   Note that these options will have an effect only if you se `alg = :quad`.
 
-- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+- `atol_quad::AbstractFloat = 0.0` and `rtol_quad::AbstractFloat = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
   because the time for evaluation increase quickly.
   Note that these options will have an effect only if you se `alg = :quad`.
 
-- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+- `enhancer::AbstractFloat = 1e6`: just a float number used in order to deal better with small numbers; 
   the returned value is NOT modified by this value, because after a multiplication
   the internal result is divided by `enhancer`.
 
@@ -134,8 +134,8 @@ end
         s1 = nothing, L::Int = 0, alg::Symbol = :lobatto,
         obs::Union{Bool,Symbol} = :noobsvel,
         N_lob::Int = 100, N_trap::Int = 50,
-        atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
-        enhancer::Float64=1e6, N_log::Int = 1000, 
+        atol_quad::AbstractFloat = 0.0, rtol_quad::AbstractFloat = 1e-2,
+        enhancer::AbstractFloat=1e6, N_log::Int = 1000, 
         pr::Bool = true,
         kwargs...) ::Tuple{Vector{Float64}, Vector{Float64}, Vector{Vector{Float64}}}
 
@@ -200,12 +200,12 @@ for comfortness:
 - `N_trap::Int = 200` : number of points to be used in the sampling made by the function `trapz`.
   Note that these options will have an effect only if you se `alg = :quad`.
 
-- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+- `atol_quad::AbstractFloat = 0.0` and `rtol_quad::AbstractFloat = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
   because the time for evaluation increase quickly.
   Note that these options will have an effect only if you se `alg = :quad`.
 
-- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+- `enhancer::AbstractFloat = 1e6`: just a float number used in order to deal better with small numbers; 
   the returned value is NOT modified by this value, because after a multiplication
   the internal result is divided by `enhancer`.
 
@@ -264,8 +264,8 @@ end
         s1 = nothing, L::Int = 0, alg::Symbol = :lobatto,
         obs::Union{Bool,Symbol} = :noobsvel,
         N_lob::Int = 100, N_trap::Int = 50,
-        atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
-        enhancer::Float64=1e6, N_log::Int = 1000, 
+        atol_quad::AbstractFloat = 0.0, rtol_quad::AbstractFloat = 1e-2,
+        enhancer::AbstractFloat=1e6, N_log::Int = 1000, 
         pr::Bool = true,
         single::Bool = true,
         kwargs...) 
@@ -333,12 +333,12 @@ for comfortness:
 - `N_trap::Int = 200` : number of points to be used in the sampling made by the function `trapz`.
   Note that these options will have an effect only if you se `alg = :quad`.
 
-- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+- `atol_quad::AbstractFloat = 0.0` and `rtol_quad::AbstractFloat = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
   because the time for evaluation increase quickly.
   Note that these options will have an effect only if you se `alg = :quad`.
 
-- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+- `enhancer::AbstractFloat = 1e6`: just a float number used in order to deal better with small numbers; 
   the returned value is NOT modified by this value, because after a multiplication
   the internal result is divided by `enhancer`.
 

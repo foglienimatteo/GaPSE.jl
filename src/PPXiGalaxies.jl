@@ -351,8 +351,8 @@ end
     ξ_PPGalaxies_multipole(
         s, cosmo::Cosmology;
         L::Int = 0, use_windows::Bool = true,
-        atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
-        enhancer::Float64 = 1e6, 
+        atol_quad::AbstractFloat = 0.0, rtol_quad::AbstractFloat = 1e-2,
+        enhancer::AbstractFloat = 1e6, 
         b=nothing, sp::Int64=1 ) ::Float64
 
 
@@ -393,11 +393,11 @@ Gauss-Kronrod quadrature.
 - `use_windows::Bool = false`: tells if the integrand must consider ``\\mathcal{F}``
   or not.
 
-- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+- `atol_quad::AbstractFloat = 0.0` and `rtol_quad::AbstractFloat = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
   because the time for evaluation increase quickly.
 
-- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+- `enhancer::AbstractFloat = 1e6`: just a float number used in order to deal better with small numbers; 
   the returned value is NOT modified by this value, because after a multiplication
   the internal result is divided by `enhancer`.
 
@@ -414,8 +414,8 @@ See also: [`ξ_PPGalaxies`](@ref), [`integrand_ξ_PPGalaxies_multipole`](@ref),
 """
 function ξ_PPGalaxies_multipole(
     s, cosmo::Cosmology;
-    enhancer::Float64=1e6,
-    atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
+    enhancer::AbstractFloat=1e6,
+    atol_quad::AbstractFloat=0.0, rtol_quad::AbstractFloat=1e-2,
     kwargs...)
 
     orig_f(μ) = enhancer * integrand_ξ_PPGalaxies_multipole(s, μ, cosmo; kwargs...)
@@ -433,9 +433,9 @@ end
     map_ξ_PPGalaxies_multipole(
         cosmo::Cosmology, ss = nothing;
         L::Int = 0, use_windows::Bool = true,
-        atol_quad::Float64 = 0.0,
-        rtol_quad::Float64 = 1e-2,
-        enhancer::Float64 = 1e6,
+        atol_quad::AbstractFloat = 0.0,
+        rtol_quad::AbstractFloat = 1e-2,
+        enhancer::AbstractFloat = 1e6,
         pr::Bool = true,
         N_log::Int = 1000,
         kwargs...) ::Tuple{Vector{Float64}, Vector{Float64}}
@@ -487,11 +487,11 @@ we report them for comfortness:
 - `use_windows::Bool = false`: tells if the integrand must consider ``\\mathcal{F}``
   or not.
 
-- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+- `atol_quad::AbstractFloat = 0.0` and `rtol_quad::AbstractFloat = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
   because the time for evaluation increase quickly.
 
-- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+- `enhancer::AbstractFloat = 1e6`: just a float number used in order to deal better with small numbers; 
   the returned value is NOT modified by this value, because after a multiplication
   the internal result is divided by `enhancer`.
 
@@ -548,9 +548,9 @@ end
         cosmo::Cosmology, out::String,
         ss = nothing;
         L::Int = 0, use_windows::Bool = true,
-        atol_quad::Float64 = 0.0,
-        rtol_quad::Float64 = 1e-2,
-        enhancer::Float64 = 1e6,
+        atol_quad::AbstractFloat = 0.0,
+        rtol_quad::AbstractFloat = 1e-2,
+        enhancer::AbstractFloat = 1e6,
         pr::Bool = true,
         N_log::Int = 1000,
         kwargs...)
@@ -604,11 +604,11 @@ we report them for comfortness:
 - `use_windows::Bool = false`: tells if the integrand must consider ``\\mathcal{F}``
   or not.
 
-- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+- `atol_quad::AbstractFloat = 0.0` and `rtol_quad::AbstractFloat = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
   because the time for evaluation increase quickly.
 
-- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+- `enhancer::AbstractFloat = 1e6`: just a float number used in order to deal better with small numbers; 
   the returned value is NOT modified by this value, because after a multiplication
   the internal result is divided by `enhancer`.
 

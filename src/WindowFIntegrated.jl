@@ -336,7 +336,7 @@ The third method takes as input the min and max redshifts of the survey (`z_min`
 input as the second method (`μs`, `widnowF`, `out` and `file_data`) but NOT THE REDSHIFT SAMPLING VECTOR `zs`.
 The sampling will be internally made linearly from ``s = 0`` to ``s = m \\, s_{\\mathrm{max}}``, 
 where `s_max` is the comoving distance associated to `z_max` (for the data stored in `file_data`) 
-and `m::Float64 = 2.1` a coefficient that we suggest to set equals to `2 < m < 3`.
+and `m::AbstractFloat = 2.1` a coefficient that we suggest to set equals to `2 < m < 3`.
 `N_ss::Int = 100` is the number of `s` values used for the sampling in the interval 
 ``[0, m \\, s_{\\mathrm{max}}]``.
 This method internally recalls the first one, so the other `kwargs...` are in common.

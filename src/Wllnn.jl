@@ -73,7 +73,7 @@ end
 
 
 
-function Wnnll(θ_max::Float64, n1::Int, n2::Int, l3::Int, l4::Int;
+function Wnnll(θ_max::AbstractFloat, n1::Int, n2::Int, l3::Int, l4::Int;
     rtol=1e-2, kwargs...)
 
     vec_indexes_A = vec_index_Aabcd(max(n1, n2, l3, l4))
@@ -118,7 +118,7 @@ function Wnnll(dict_i_A::Dict{Vector{Int64},Float64},
     )
 end
 
-function Wnnll(θ_max::Float64, indexes::Vector{Vector{Int64}};
+function Wnnll(θ_max::AbstractFloat, indexes::Vector{Vector{Int64}};
     rtol=1e-2, kwargs...)
 
     l_max = max([max(x...) for x in indexes]...)
@@ -183,7 +183,7 @@ end
     Wnnll(θ_max, n1::Int, n2::Int, l3::Int, l4::Int; kwargs...)
     Wnnll(dict_i_A::Dict{Vector{Int64},Float64},
         n1::Int, n2::Int, l3::Int, l4::Int)
-    Wnnll(θ_max::Float64, indexes::Vector{Vector{Int64}};
+    Wnnll(θ_max::AbstractFloat, indexes::Vector{Vector{Int64}};
         rtol=1e-2, kwargs...)
     Wnnll(dict_i_A::Dict{Vector{Int64},Float64},
         indexes::Vector{Vector{Int64}})
