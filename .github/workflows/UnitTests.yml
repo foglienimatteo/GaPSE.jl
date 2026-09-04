@@ -30,51 +30,81 @@ on:
   push:
     branches:
       - main
-      - qls
-
-
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  test:
+  # Reference run. Blocking.
+  test-base:
+    name: Julia 1.9 - ubuntu-24.04 - x86_64
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Set up Julia"
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.9'
+          arch: x64
+      - name: "Cache artifacts"
+        uses: julia-actions/cache@v2
+      - name: "Build package"
+        uses: julia-actions/julia-buildpkg@v1
+      - name: "Run unit tests"
+        uses: julia-actions/julia-runtest@v1
+      - uses: julia-actions/julia-processcoverage@v1
+      - uses: codecov/codecov-action@v4
+        with:
+          files: lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  # Forward-compatibility probe. Starts only once 1.9 is green.
+  test-next:
     name: Julia ${{ matrix.julia-version }} - ${{ matrix.os }} - ${{ matrix.arch }}
+    needs: test-base
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        julia-version: ['1.9']
-        os: [macos-latest, ubuntu-latest, windows-latest]
-        arch: [x64]
-
+        include:
+          - {os: ubuntu-latest,  arch: x64,     julia-version: '1.12'}
+          - {os: macos-latest,   arch: aarch64, julia-version: '1.12'}
+          #- {os: windows-latest, arch: x64,     julia-version: '1.12'}
+        #julia-version: ['1.9']
+        #os: [macos-latest, ubuntu-latest, windows-latest]
+        #arch: [x64]
+    continue-on-error: true   # advisory — delete this line to make 1.12 blocking
     steps:
       - uses: actions/checkout@v4
-
       - name: "Set up Julia"
-        # install Julia 
-        uses: julia-actions/setup-julia@v1
+        uses: julia-actions/setup-julia@v2
         with:
-          version: ${{ matrix.julia-version }}
-          arch: ${{ matrix.arch }}
-
+          version: '1.12'
+          arch: x64
       - name: "Cache artifacts"
-        # avoid to re-install Julia packages every time 
-        uses: actions/cache@v1
-        env:
-          cache-name: cache-artifacts
-        with:
-          path: ~/.julia/artifacts
-          key: ${{ runner.os }}-test-${{ env.cache-name }}-${{ hashFiles('**/Project.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-test-${{ env.cache-name }}-
-            ${{ runner.os }}-test-
-            ${{ runner.os }}-
-            
+        uses: julia-actions/cache@v2
       - name: "Build package"
-        # compile the package
-        uses: julia-actions/julia-buildpkg@latest
-
+        uses: julia-actions/julia-buildpkg@v1
       - name: "Run unit tests"
-        # run the tests 
-        uses: julia-actions/julia-runtest@latest
-      - uses: julia-actions/julia-processcoverage@v1
-      - uses: codecov/codecov-action@v2
-        with:
-          file: lcov.info
+        uses: julia-actions/julia-runtest@v1
+        
+      #- name: "Cache artifacts"
+      #  # avoid to re-install Julia packages every time 
+      #  uses: actions/cache@v1
+      #  env:
+      #    cache-name: cache-artifacts
+      #  with:
+      #    path: ~/.julia/artifacts
+      #    key: ${{ runner.os }}-test-${{ env.cache-name }}-${{ hashFiles('**/Project.toml') }}
+      #    restore-keys: |
+      #      ${{ runner.os }}-test-${{ env.cache-name }}-
+      #      ${{ runner.os }}-test-
+      #      ${{ runner.os }}-
+      #- name: "Build package"
+      #  # compile the package
+      #  uses: julia-actions/julia-buildpkg@latest
+      #- name: "Run unit tests"
+      #  # run the tests 
+      #  uses: julia-actions/julia-runtest@latest
+      #- uses: julia-actions/julia-processcoverage@v1
+      #- uses: codecov/codecov-action@v2
+      #  with:
+      #    file: lcov.info

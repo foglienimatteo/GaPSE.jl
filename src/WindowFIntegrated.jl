@@ -146,7 +146,7 @@ end
 
 #=
 function print_map_IntegratedF(in::String, out::String, s_min, s_max,
-    μs::Vector{Float64}; kwargs...)
+    μs::Vector{T}; kwargs...) where {T<:AbstractFloat}
 
     check_parent_directory(out)
     check_namefile(out)
@@ -157,10 +157,10 @@ function print_map_IntegratedF(in::String, out::String, s_min, s_max,
 end
 =#
 
-function print_map_IntegratedF(s_min, s_max, ss::Vector{Float64},
-    μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String;
+function print_map_IntegratedF(s_min, s_max, ss::AbstractVector{T},
+    μs::AbstractVector{T}, windowF::Union{String,WindowF}, out::String;
     alg::Symbol=:trap, llim=nothing, rlim=nothing,
-    rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true)
+    rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true) where {T<:AbstractFloat}
 
     check_parent_directory(out)
     check_namefile(out)
@@ -247,10 +247,10 @@ function print_map_IntegratedF(s_min, s_max, ss::Vector{Float64},
 end
 
 
-function print_map_IntegratedF(z_min, z_max, zs::Vector{Float64},
-    μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String,
+function print_map_IntegratedF(z_min, z_max, zs::AbstractVector{T},
+    μs::AbstractVector{T}, windowF::Union{String,WindowF}, out::String,
     file_data::String;
-    names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
+    names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...) where {T<:AbstractFloat}
 
     @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
     @assert all(zs .≥ 0.0) "All zs must be ≥ 0.0!"
@@ -266,9 +266,9 @@ function print_map_IntegratedF(z_min, z_max, zs::Vector{Float64},
 end
 
 function print_map_IntegratedF(z_min, z_max,
-    μs::Vector{Float64}, windowF::Union{String,WindowF}, out::String,
+    μs::AbstractVector{T}, windowF::Union{String,WindowF}, out::String,
     file_data::String;
-    names_bg=NAMES_BACKGROUND, h_0=0.7, N_ss::Int=100, m::Float64=2.1, kwargs...)
+    names_bg=NAMES_BACKGROUND, h_0=0.7, N_ss::Int=100, m::AbstractFloat=2.1, kwargs...) where {T<:AbstractFloat}
 
     @assert 0.0 ≤ z_min < z_max "0.0 ≤ z_min < z_max must hold!"
     @assert N_ss > 9 "N_ss > 9 must hold!"
@@ -286,25 +286,25 @@ end
 """
     print_map_IntegratedF(
         s_min, s_max, 
-        ss::Vector{Float64}, μs::Vector{Float64}, 
+        ss::AbstractVector{T}, μs::AbstractVector{T}, 
         windowF::Union{String,WindowF}, out::String;
         alg::Symbol=:trap, llim=nothing, rlim=nothing,
-        rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true)
+        rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true) where {T<:AbstractFloat}
 
     print_map_IntegratedF(
         z_min, z_max, 
-        zs::Vector{Float64}, μs::Vector{Float64}, 
+        zs::AbstractVector{T}, μs::AbstractVector{T}, 
         windowF::Union{String,WindowF}, out::String,
         file_data::String; 
-        names_bg = NAMES_BACKGROUND, h_0 = 0.7, kwargs...)
+        names_bg = NAMES_BACKGROUND, h_0 = 0.7, kwargs...) where {T<:AbstractFloat}
 
     print_map_IntegratedF(
         z_min, z_max,
-        μs::Vector{Float64}, 
+        μs::AbstractVector{T}, 
         windowF::Union{String,WindowF}, out::String,
         file_data::String;
         names_bg = NAMES_BACKGROUND, h_0 = 0.7, N_ss::Int = 100, 
-        m::Float64 = 2.1, kwargs...)
+        m::AbstractFloat = 2.1, kwargs...) where {T<:AbstractFloat}
 
 Evaluate the integrated window function ``\\mathcal{F}(s,\\mu)`` in a rectangual grid 
 of ``\\mu`` and ``s`` values, and print the results in the `out` file.
@@ -393,7 +393,7 @@ The only two exceptions are:
 
 - `N_ss::Int=100` : number of points to be used in the liearly spaced comoving distance vector
 
-- `st::Float64=0.0` : starting comoving distance of the vector
+- `st::AbstractFloat=0.0` : starting comoving distance of the vector
 
 - `m:Float64 = 2.1` : coefficient that set the maximum comoving distance of the vector, equals to ``m * s_max``,
   where `s_max` is the comoving distance associated to the redhsift `z_max`
@@ -407,7 +407,7 @@ print_map_IntegratedF
 
 #=
 function print_map_IntegratedF(in::String, out::String, z_min, z_max,
-     μs::Vector{Float64}, file_data::String; kwargs...)
+     μs::AbstractVector{T}, file_data::String; kwargs...) where {T<:AbstractFloat}
 
      check_parent_directory(out)
      check_namefile(out)
@@ -429,6 +429,7 @@ end
         ss::Vector{Float64}
         μs::Vector{Float64}
         IFs::Matrix{Float64}
+        grid::GridInterpolations.RectangleGrid{2}
         )
 
 Struct containing ss, μs and IFs values of the integrated window function ``\\mathcal{F}(s, μ)``.
@@ -436,6 +437,12 @@ Struct containing ss, μs and IFs values of the integrated window function ``\\m
 `IFs` values are contained in a matrix of size `(length(ss), length(μs))`, so:
 - along a fixed column the changing value is `s`
 - along a fixed row the changing value is `μ`
+
+`grid` is the `GridInterpolations.RectangleGrid` built on `(ss, μs)`. It is
+computed once by the constructor and stored, because `spline_integrF` is called in
+the innermost loop of every TPCF integration performed with `use_windows=true`:
+rebuilding the grid at each call was allocating on every single integrand
+evaluation.
 
 The analytical expression for the integrated window function is the following:
 
@@ -491,12 +498,13 @@ struct WindowFIntegrated
     ss::Vector{Float64}
     μs::Vector{Float64}
     IFs::Matrix{Float64}
+    grid::GridInterpolations.RectangleGrid{2}
 
     #=
-    function WindowFIntegrated(s_min, s_max, ss::Vector{Float64},
-        μs::Vector{Float64}, windowF::WindowF;
+    function WindowFIntegrated(s_min, s_max, ss::AbstractVector{T},
+        μs::AbstractVector{T}, windowF::WindowF;
         alg::Symbol=:trap, llim=nothing, rlim=nothing,
-        rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true)
+        rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true) where {T<:AbstractFloat}
 
         @assert 0 < s_min < s_max " 0 < s_min < s_max must hold!"
         @assert ss_start ≥ 0.0 " ss_start ≥ 0.0 must hold!"
@@ -541,13 +549,13 @@ struct WindowFIntegrated
                                 "choose between ':trap' and ':quad' . "))
         end
 
-        new(ss, μs, IFs)
+        new(ss, μs, IFs, GridInterpolations.RectangleGrid(ss, μs))
     end
     =#
 
     #=
-    function WindowFIntegrated(z_min, z_max, μs::Vector{Float64}, windowF::WindowF,
-        file_data::String; names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
+    function WindowFIntegrated(z_min, z_max, μs::AbstractVector{T}, windowF::WindowF,
+        file_data::String; names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...) where {T<:AbstractFloat}
 
         BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
         s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
@@ -571,7 +579,7 @@ struct WindowFIntegrated
                 throw(ErrorException("What kind of convenction for the file $file" *
                                         " are you using? I do not recognise it."))
             end
-        new(new_ss, new_μs, new_IFs)
+        new(new_ss, new_μs, new_IFs, GridInterpolations.RectangleGrid(new_ss, new_μs))
     end
 end
 
@@ -588,8 +596,8 @@ package.
 See also: [`WindowFIntegrated`](@ref)
 """
 function spline_integrF(s, μ, str::WindowFIntegrated)
-    grid = GridInterpolations.RectangleGrid(str.ss, str.μs)
-    GridInterpolations.interpolate(grid, reshape(str.IFs, (:, 1)), [s, μ])
+    #grid = GridInterpolations.RectangleGrid(str.ss, str.μs)
+    GridInterpolations.interpolate(str.grid, reshape(str.IFs, (:, 1)), [s, μ])
 end
 
 
