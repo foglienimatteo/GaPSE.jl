@@ -270,13 +270,13 @@ end
         pr::Bool=true, L_max::Int=4, alg::Symbol=:lobatto,
         N_lob::Int=100, N_trap::Int=200,
         atol_quad::AbstractFloat=0.0, rtol_quad::AbstractFloat=1e-2,
-        enhancer::AbstractFloat=1e6)
+        enhancer::AbstractFloat=1e6) where {T<:AbstractFloat}
 
     print_map_WindowFIntegrated_multipole(
         s_zs::Vector{T},
         windowFint::Union{String,GaPSE.WindowFIntegrated}, out::String,
         file_data::String; z_min, z_max,
-        names_bg=GaPSE.NAMES_BACKGROUND, h_0=0.7, kwargs...))
+        names_bg=GaPSE.NAMES_BACKGROUND, h_0=0.7, kwargs...)) where {T<:AbstractFloat}
 
     print_map_WindowFIntegrated_multipole(
         windowFint::Union{String,GaPSE.WindowFIntegrated}, out::String,

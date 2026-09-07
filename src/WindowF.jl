@@ -458,7 +458,7 @@ end
 
     print_map_F(out::String, xs::Vector{T}, μs::Vector{T};
         alg::Symbol = :trap, Fmap_opts::Dict = Dict{Symbol,Any}(),
-        kwargs...)
+        kwargs...) where {T<:AbstractFloat}
 
 Evaluate the window function ``F(x,\\mu; \\theta_\\mathrm{max})`` in a rectangual grid 
 of ``\\mu`` and ``x`` values, and print the results in the `out` file.
