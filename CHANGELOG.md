@@ -1,5 +1,23 @@
 ## HEAD
 
+- IMPORTANT CHANGE: replaced [Dierckx](https://github.com/kbarbary/Dierckx.jl) with our own cubic spline `MySpline`, implemented in the new `src/Spline.jl`, for all the 1D interpolations of the library (`Cosmology`, `InputPS`, `IntegralIPS`, `IPSTools`, `BackgroundData`, `XiMatter`, ...). It supports the `"Natural"`, `"Parabolic"` and `"ThirdDerivative"` initial conditions and provides its own `derivative`. `Dierckx` is no longer used anywhere inside `src/`; it is kept as a dependency only because the test suite uses it as an independent cross-check;
+
+- added the `MySpline` documentation and the derivation of the algorithm to the manual (`docs/src/Spline.md` and `docs/src/SplineTheory.md`), plus `test/test_Spline.jl`;
+
+- NOTE: `MySpline` and `Dierckx.Spline1D` are not bit-identical, so 33 reference files in `test/datatest` were regenerated and a few test tolerances relaxed accordingly. Note also that `MySpline` only supports `bc="error"`, so the `spline_com_H` of `BackgroundData` throws outside its range instead of clamping to the nearest value;
+
+- the `::Float64` annotations of function arguments and keyword arguments are now `::AbstractFloat`, and the `Vector{Float64}` ones are `Vector{T} where {T<:AbstractFloat}`, so that a float type other than `Float64` can flow through the code. This is a pure widening: nothing changes for `Float64` input;
+
+- removed the inert `x::T` type assertions from the `DEFAULT_IPS_OPTS`, `DEFAULT_IPSTOOLS_OPTS`, `DEFAULT_WFI_OPTS`, `DEFAULT_FMAP_OPTS_hcub` and `DEFAULT_FMAP_OPTS_trap` dictionaries. In expression position `x::T` is a runtime assertion that always passed and constrained nothing; the types accepted for these options are enforced by `check_compatible_dicts`, which is unaffected;
+
+- `WindowF` and `WindowFIntegrated` now build their `GridInterpolations.RectangleGrid` once, in the constructor, and store it. `spline_F` and `spline_integrF` used to rebuild it on every call, i.e. once per integrand evaluation;
+
+- the `print_map_*` functions now truncate to 20 characters the keyword-argument values they write into the header of the output files, so that passing a large object no longer makes the header unreadable;
+
+- the unit tests now also run on pull requests, Julia 1.12 was added as a second non-blocking job, Windows was dropped and macOS moved to `aarch64` (an `x86_64` Julia running under Rosetta 2 on the Apple-silicon runners produced spurious `DomainError`s from `cos`);
+
+- `test/runtests.jl` gained the `TEST_BASICS`, `TEST_PP_PNG`, `TEST_LD`, `TEST_GNC`, `TEST_GNCxLD_LDxGNC` and `TEST_TWOSPECIES` switches, to run only a subset of the suite while developing. They must all be `true` on the shared branches;
+
 
 ## development branch qls
 
