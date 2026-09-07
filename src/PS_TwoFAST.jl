@@ -21,7 +21,7 @@
 
 """
     TwoFAST_PS_multipole(f_in;
-        int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3,
+        int_s_min::AbstractFloat = 1e-1, int_s_max::AbstractFloat = 1e3,
         L::Int = 0, N::Int = 1024, pr::Bool = true,
         k0::Union{Nothing,Float64} = nothing,
         right::Union{Float64,Nothing} = nothing
@@ -47,7 +47,7 @@ where ``f_\\mathrm{in}`` is the inpunt spline.
 - `L::Int=0` : which multipole order should I use for this computation? IT MUST MATCH 
   THE MULTIPOLE ORDER OF THE INPUT TPCF!
 - `N::Int = 1024` : number of points to be used in Fourier transform 
-- `int_s_min::Float64 = 1e-1` and `int_s_max::Float64 = 1e3`: extremes of integration
+- `int_s_min::AbstractFloat = 1e-1` and `int_s_max::AbstractFloat = 1e3`: extremes of integration
 - `k0::Union{Nothing,Float64} = nothing` : starting point for the `xicalc` function; if `nothing`, 
   it will be set `k0 = 1.0 / int_s_max`
 - `right::Union{Float64,Nothing} = nothing` : do you want to cut the output elements with 
@@ -56,7 +56,7 @@ where ``f_\\mathrm{in}`` is the inpunt spline.
 See also: [`PS_multipole`](@ref)
 """
 function TwoFAST_PS_multipole(f_in;
-    int_s_min::Float64=1e-1, int_s_max::Float64=1e3,
+    int_s_min::AbstractFloat=1e-1, int_s_max::AbstractFloat=1e3,
     L::Int=0, N::Int=1024, pr::Bool=true,
     k0::Union{Nothing,Float64}=nothing,
     right::Union{Float64,Nothing}=nothing)
@@ -89,7 +89,7 @@ end
 
 """
     TwoFAST_PS_multipole(ss, fs;
-        int_s_min::Float64 = 1e-1, int_s_max::Float64 = 1e3,
+        int_s_min::AbstractFloat = 1e-1, int_s_max::AbstractFloat = 1e3,
         epl::Bool = true, pr::Bool = true, L::Int = 0,
         N_left::Int = 12, N_right::Int = 12,
         p0_left = [-2.0, 1.0], p0_right = [-2.0, 1.0],
@@ -112,7 +112,7 @@ create also a power law epansions on the edges.
   right edges to be used for the power law fitting in `EPLs`. They matters only
   if in the given input file ξ is not defined until the extremes of integration
   `int_s_min` and `int_s_max`.
-- `int_s_min::Float64 = 1e-1` and `int_s_max::Float64 = 1e3`: extremes of integration; if `epl`
+- `int_s_min::AbstractFloat = 1e-1` and `int_s_max::AbstractFloat = 1e3`: extremes of integration; if `epl`
   is set to `false`, their values will be automatically set to `min(ss...)` and `max(ss...)`
   respectively. Their values do matter only if `epl=true`. 
 - `p0_left=[-2.0, 1.0]` and `p0_right=[-2.0, 1.0]`: vectors with the initial values for the left/right 
@@ -129,7 +129,7 @@ create also a power law epansions on the edges.
 See also: [`PS_multipole`](@ref)
 """
 function TwoFAST_PS_multipole(SS, FS;
-        int_s_min::Float64=1e-1, int_s_max::Float64=1e3,
+        int_s_min::AbstractFloat=1e-1, int_s_max::AbstractFloat=1e3,
         epl::Bool=true, pr::Bool=true, L::Int=0,
         N_left::Int=12, N_right::Int=12,
         p0_left=[-2.0, 1.0], p0_right=[-2.0, 1.0],
@@ -210,7 +210,7 @@ case the input xis do not belog to a specific group (and so no predefined number
   right edges to be used for the power law fitting in `EPLs`. They matters only
   if in the given input file ξ is not defined until the extremes of integration
   `int_s_min` and `int_s_max`.
-- `int_s_min::Float64 = 1e-1` and `int_s_max::Float64 = 1e3`: extremes of integration; if `epl`
+- `int_s_min::AbstractFloat = 1e-1` and `int_s_max::AbstractFloat = 1e3`: extremes of integration; if `epl`
   is set to `false`, their values will be automatically set to `min(ss...)` and `max(ss...)`
   respectively. Their values do matter only if `epl=true`. 
 - `p0_left=[-2.0, 1.0]` and `p0_right=[-2.0, 1.0]`: vectors with the initial values for the left/right 

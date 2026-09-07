@@ -73,8 +73,8 @@ function integrand_ξ_GNC_Lensing(
 end
 
 function integrand_ξ_GNC_Lensing(
-    χ1::Float64, χ2::Float64,
-    s1::Float64, s2::Float64,
+    χ1::AbstractFloat, χ2::AbstractFloat,
+    s1::AbstractFloat, s2::AbstractFloat,
     y, cosmo::Cosmology;
     kwargs...)
 
@@ -95,8 +95,8 @@ end
         ) ::Float64
 
     integrand_ξ_GNC_Lensing(
-        χ1::Float64, χ2::Float64,
-        s1::Float64, s2::Float64,
+        χ1::AbstractFloat, χ2::AbstractFloat,
+        s1::AbstractFloat, s2::AbstractFloat,
         y, cosmo::Cosmology;
         kwargs... )::Float64
 

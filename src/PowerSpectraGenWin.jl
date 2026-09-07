@@ -404,7 +404,7 @@ The specific ones for `alg = :twofast` are:
   right edges to be used for the power law fitting in `EPLs`. They matters only
   if in the given input file ξ is not defined until the extremes of integration
   `int_s_min` and `int_s_max`.
-- `int_s_min::Float64 = 1e-1` and `int_s_max::Float64 = 1e3`: extremes of integration; if `epl`
+- `int_s_min::AbstractFloat = 1e-1` and `int_s_max::AbstractFloat = 1e3`: extremes of integration; if `epl`
   is set to `false`, their values will be automatically set to `min(ss...)` and `max(ss...)`
   respectively. Their values do matter only if `epl=true`. 
 - `p0_left=[-2.0, 1.0]` and `p0_right=[-2.0, 1.0]`: vectors with the initial values for the left/right 
@@ -670,7 +670,7 @@ The specific ones for `alg = :twofast` are:
   right edges to be used for the power law fitting in `EPLs`. They matters only
   if in the given input file ξ is not defined until the extremes of integration
   `int_s_min` and `int_s_max`.
-- `int_s_min::Float64 = 1e-1` and `int_s_max::Float64 = 1e3`: extremes of integration; if `epl`
+- `int_s_min::AbstractFloat = 1e-1` and `int_s_max::AbstractFloat = 1e3`: extremes of integration; if `epl`
   is set to `false`, their values will be automatically set to `min(ss...)` and `max(ss...)`
   respectively. Their values do matter only if `epl=true`. 
 - `p0_left=[-2.0, 1.0]` and `p0_right=[-2.0, 1.0]`: vectors with the initial values for the left/right 
@@ -731,7 +731,8 @@ function print_PS_multipole_GenWin(
         else
             print(io, "\n")
             for key in keys(kwargs)
-                println(io, "# \t\t$(key) = $(kwargs[key])")
+                val = string(kwargs[key])
+                println(io, "# \t\t$(key) = $(length(val) > 20 ? first(val, 20)*"..." : val)")
             end
         end
         println(io, "# ")
