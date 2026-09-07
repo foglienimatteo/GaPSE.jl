@@ -19,11 +19,11 @@
 
 """
     DEFAULT_FMAP_OPTS_hcub = Dict(
-        :θ_max => π / 2.0::AbstractFloat, 
-        :tolerance => 1e-10::AbstractFloat, 
-        :rtol => 1e-2::AbstractFloat, 
-        :atol => 1e-3::AbstractFloat,
-        :pr => true::Bool,
+        :θ_max => π / 2.0, 
+        :tolerance => 1e-10, 
+        :rtol => 1e-2, 
+        :atol => 1e-3,
+        :pr => true,
     )
 
 The default values to be used for the `F` function when you
@@ -32,21 +32,21 @@ want to perform the computation with `hcubature`.
 See also: [`integrand_F`](@ref), [`F_hcub`](@ref), [`print_map_F`](@ref)
 """
 const DEFAULT_FMAP_OPTS_hcub = Dict(
-    :θ_max => π / 2.0::AbstractFloat,
-    :tolerance => 1e-10::AbstractFloat,
-    :rtol => 1e-2::AbstractFloat,
-    :atol => 1e-3::AbstractFloat,
-    :pr => true::Bool,
+    :θ_max => π / 2.0,
+    :tolerance => 1e-10,
+    :rtol => 1e-2,
+    :atol => 1e-3,
+    :pr => true,
 )
 
 
 """
     DEFAULT_FMAP_OPTS_trap = Dict(
-        :θ_max => π / 2.0::AbstractFloat, 
-        :tolerance => 1e-10::AbstractFloat, 
-        :N => 300::Int64, 
-        :en => 1.0::AbstractFloat,
-        :pr => true::Bool,
+        :θ_max => π / 2.0, 
+        :tolerance => 1e-10, 
+        :N => 300, 
+        :en => 1.0,
+        :pr => true,
     )
 
 
@@ -56,11 +56,11 @@ want to perform the computation with `trap`.
 See also: [`integrand_F`](@ref), [`F_trap`](@ref), [`print_map_F`](@ref)
 """
 const DEFAULT_FMAP_OPTS_trap = Dict(
-    :θ_max => π / 2.0::AbstractFloat,
-    :tolerance => 1e-10::AbstractFloat,
-    :N => 300::Int64,
-    :en => 1.0::AbstractFloat,
-    :pr => true::Bool,
+    :θ_max => π / 2.0,
+    :tolerance => 1e-10,
+    :N => 300,
+    :en => 1.0,
+    :pr => true,
 )
 
 
