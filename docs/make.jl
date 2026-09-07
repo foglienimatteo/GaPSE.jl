@@ -28,6 +28,10 @@ Documenter.makedocs(
           "Calculating Power Spectra" => "PowerSpectra.md",
           "Power Spectra for a generic window" => "PowerSpectraGenWin.md",
           "implication on PNG" => "PNG.md",
+          "Spline" => [
+               "MySpline" => "Spline.md",
+               "Spline Theory" => "SplineTheory.md"
+          ],
           "Utilities" => [
                "Dictionaries and names" => "Dicts.md",
                "Mathematical Utilities" => "MathUtils.md",
