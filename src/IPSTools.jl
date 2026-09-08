@@ -424,7 +424,7 @@ struct IntegralIPS
     function IntegralIPS(xs::Vector{T}, ys::Vector{T}; N = 1024, kmin = 1e-4, kmax = 1e3,
         fit_left_min = 0.1, fit_left_max = 1.0, p0_left = nothing, con = false, 
         fit_right_min = nothing, fit_right_max = nothing, p0_right = nothing,
-        kwargs...) where T<:AbstractFloat
+        kwargs...) where {T<:AbstractFloat}
 
         ss = 10 .^ range(log10(0.999*fit_left_min), 4, length = 1024)
         Is = [func(ips, s, kmin, kmax; kwargs...) for s in ss]

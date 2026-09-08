@@ -78,6 +78,11 @@ function main()
      # refer to the second one. If you leave the latter to `nothing` (the
      # default), they are set equal to the former ones, i.e. you are doing an
      # auto-correlation of a single species.
+     #WFI_opts = Dict(
+     #     :ss_start => 0.0, :ss_stop => 0.0,
+     #     :ss_step => 100, :llim => 0.0, :rlim => Inf,
+     #     :rtol => 5e-2, :atol => 0.0, :N => 1000, #:pr => true,
+     #)
      params = GaPSE.CosmoParams(z_min, z_max, θ_max;
           Ω_b=0.0489, Ω_cdm=0.251020, h_0=0.70, s_lim=1e-2,
           b1=1.5, s_b1=0.0, 𝑓_evo1=0.0,
@@ -88,6 +93,7 @@ function main()
           IPSTools_opts=Dict(
                :N => 1024, :fit_min => 0.05, :fit_max => 0.5,
                :con => true, :k_min => 1e-8, :k_max => 10.0),
+          #WFI_opts=WFI_opts
      )
 
      # This integrated window function map must be computed for the same
@@ -143,6 +149,7 @@ function main()
                     :N_left => 12, :N_right => 12,
                     :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
                     :int_s_min => 1e0, :int_s_max => 1200.0,
+                    #cut_first_n => 6, cut_last_n => 3,
                ) 
           elseif alg == :fftlog
           

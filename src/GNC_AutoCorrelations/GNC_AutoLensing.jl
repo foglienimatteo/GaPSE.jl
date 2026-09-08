@@ -1,3 +1,23 @@
+# -*- encoding: utf-8 -*-
+#
+# This file is part of GaPSE
+# Copyright (C) 2022 Matteo Foglieni
+#
+# GaPSE is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# GaPSE is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
+#
+
+
 
 function integrand_ξ_GNC_Lensing(
     IP1::Union{Point,DP}, IP2::Union{Point,DP},
@@ -6,24 +26,21 @@ function integrand_ξ_GNC_Lensing(
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel) where {DP<:DevPoint, DC<:DevCosmology}
 
-    
     s1 = P1.comdist
     s2 = P2.comdist
-    
     χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
     χ2, D2, a2 = IP2.comdist, IP2.D, IP2.a
 
     Ω_M0 = cosmo.params.Ω_M0
-    
     s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
     s_b_s2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
 
     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-    Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
+    Δχ = Δχ_square > 0 ? √(Δχ_square) : throw(AssertionError("Δχ_square=$Δχ_square : y=$y, χ1=$χ1, χ2=$χ2"))
 
     denomin = s1 * s2 * a1 * a2
     factor = ℋ0^4 * Ω_M0^2 * D1 * (s1 - χ1) * D2 * (s2 - χ2) * (5 * s_b_s1 - 2) * (5 * s_b_s2 - 2)
-    
+
     if Δχ > Δχ_min
         
         χ1χ2 = χ1 * χ2

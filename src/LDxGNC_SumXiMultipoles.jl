@@ -423,7 +423,7 @@ function print_map_sum_ξ_LDxGNC_multipole(
                 if !isempty(kwargs)
                         for key in keys(kwargs)
                             val = string(kwargs[key])
-                println(io, "# \t\t$(key) = $(length(val) > 20 ? first(val, 20)*"..." : val)")
+                            println(io, "# \t\t$(key) = $(length(val) > 20 ? first(val, 20)*"..." : val)")
                         end
                 end
                 isnothing(s1) || println(io, "#\n# NOTE: the computation is done not in " *

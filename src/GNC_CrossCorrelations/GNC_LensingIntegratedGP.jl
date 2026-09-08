@@ -41,7 +41,7 @@ function integrand_ξ_GNC_Lensing_IntegratedGP(
     ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-    Δχ = √(Δχ_square) > 0 ? √(Δχ_square) : 0
+    Δχ = √(Δχ_square) > 0 ? √(Δχ_square) : throw(AssertionError("Δχ_square=$Δχ_square : y=$y , χ1=$χ1 , χ2=$χ2"))
 
     denomin = a1 * a2 * s1 * s2
     common = 9 * χ2 * ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (5 * s_b_s1 - 2)

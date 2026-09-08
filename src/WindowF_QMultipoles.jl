@@ -561,7 +561,7 @@ function print_map_PhiTimesWindowF_multipole(
           if !isempty(kwargs)
                for key in keys(kwargs)
                     val = string(kwargs[key])
-                println(io, "# \t\t$(key) = $(length(val) > 20 ? first(val, 20)*"..." : val)")
+                    println(io, "# \t\t$(key) = $(length(val) > 20 ? first(val, 20)*"..." : val)")
                end
           end
 

@@ -248,10 +248,10 @@ end
 
 """
     power_law_from_data(xs, ys, p0::Vector{T},
-        fit_min::Number, fit_max::Number; con = false) where T<:AbstractFloat
+        fit_min::Number, fit_max::Number; con = false) where {T<:AbstractFloat}
 
-    power_law_from_data(xs, ys, p0::Vector{T}; con = false) = 
-        power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con = con) where T<:AbstractFloat
+    power_law_from_data(xs, ys, p0::Vector{T}; con = false) where {T<:AbstractFloat} = 
+        power_law_from_data(xs, ys, p0, xs[begin], xs[end]; con = con)
 
 Returns the "spurious" power-law
 coefficients ``s``, ``b`` and ``a`` obtained from the fitting of the data vectors
@@ -1088,8 +1088,8 @@ end
     polynomial_from_data(xs, ys, p0::Vector{T},
         fit_min::Number, fit_max::Number; con = false) where {T<:AbstractFloat}
 
-    polynomial_from_data(xs, ys, p0::Vector{T}; con = false) = 
-        polynomial_from_data(xs, ys, p0, xs[begin], xs[end]; con = con) where {T<:AbstractFloat}
+    polynomial_from_data(xs, ys, p0::Vector{T}; con = false) where {T<:AbstractFloat} = 
+        polynomial_from_data(xs, ys, p0, xs[begin], xs[end]; con = con)
 
 Returns the 2-degree polynomial
 coefficients ``c``, ``b`` and ``a`` obtained from the fitting of the data vectors

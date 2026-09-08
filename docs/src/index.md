@@ -174,21 +174,16 @@ Quick summary of Docker commands, in case you don't know them:
 GaPSE.jl makes extensive use of the following packages:
 
 - [TwoFAST](https://github.com/hsgg/TwoFAST.jl)[[5]](#1), [FFTLog](https://github.com/marcobonici/FFTLog.jl) and [FFTW](https://github.com/JuliaMath/FFTW.jl) in order to perform Fast Fourier Transforms on integrals containing Spherical Bessel functions $j_\ell(x)$
-- [Dierckx](https://github.com/kbarbary/Dierckx.jl) and [GridInterpolations](https://github.com/sisl/GridInterpolations.jl) for 1D and 2D Splines respectively
+- our own cubic spline `MySpline` (`src/Spline.jl`) for the 1D interpolations, and [GridInterpolations](https://github.com/sisl/GridInterpolations.jl) for the 2D ones;  you can find the code of it under `src/Spline.jl`, and the mathematical procedure exploited in the Documentation (check for "Spline Theory"); [Dierckx](https://github.com/kbarbary/Dierckx.jl) is no longer used by the library itself, only by the test suite as an independent cross-check
 - [LsqFit](https://github.com/JuliaNLSolvers/LsqFit.jl) for basic least-squares fitting
 - [QuadGK](https://github.com/JuliaMath/QuadGK.jl), [Trapz](https://github.com/francescoalemanno/Trapz.jl) and [FastGaussQuadrature](https://github.com/JuliaApproximation/FastGaussQuadrature.jl) for preforming 1D integrations, and [HCubature](https://github.com/JuliaMath/HCubature.jl) for the 2D ones
 - [ArbNumerics](https://github.com/JeffreySarnoff/ArbNumerics.jl), [AssociatedLegendrePolynomials](https://github.com/jmert/AssociatedLegendrePolynomials.jl), [LegendrePolynomials](https://github.com/jishnub/LegendrePolynomials.jl) and [SpecialFunctions](https://github.com/JuliaMath/SpecialFunctions.jl) for mathematical function evaluations, especially for the Legendre Polinomials $\mathcal{L}_{\ell}(x)$ and the Gamma function $ \Gamma(x) $
 - other native Julia packages: [DelimitedFiles](https://github.com/JuliaData/DelimitedFiles.jl), [Documenter](https://github.com/JuliaDocs/Documenter.jl), [IJulia](https://github.com/JuliaLang/IJulia.jl), [LinearAlgebra](https://github.com/JuliaLang/julia/tree/master/stdlib/LinearAlgebra), [NPZ](https://github.com/fhs/NPZ.jl), [Printf](https://github.com/JuliaLang/julia/tree/master/stdlib/Printf), [ProgressMeter](https://github.com/timholy/ProgressMeter.jl), [Suppressor](https://github.com/JuliaIO/Suppressor.jl), [Test](https://github.com/JuliaLang/julia/tree/master/stdlib/Test)
-- [oneAPI.jl](https://github.com/JuliaGPU/oneAPI.jl), for GPU offloading.
 
 Furthermore, the notebooks we provide in `ipynbs` use:
 - [Plots](https://github.com/JuliaPlots/Plots.jl) for the pure julian plots;
 - [LaTeXStrings](https://github.com/JuliaStrings/LaTeXStrings.jl) for the labels in LaTeX;
 - [PyPlot](https://github.com/JuliaPy/PyPlot.jl) for the julian plots in the python style; this package is based on the [Matplotlib](https://matplotlib.org) Python package, and it requires it in order to run properly.
-
-
-NOTE: in this new version, we implemented our own cubic spline for GPU compatibility with [oneAPI.jl](https://github.com/JuliaGPU/oneAPI.jl). You can find the code of it under `src/Spline.jl`, and the mathematical procedure exploited in the Documentation (check for "Spline Theory").
-
 
 ## How to report bugs, suggest improvements and/or contribute
 
