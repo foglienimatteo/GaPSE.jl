@@ -4,7 +4,7 @@ DocTestSetup = quote
 end
 ```
 
-# GNC TPCFs
+# GNC integrands and multipoles
 
 ## Two-Point Cross-Correlation Functions integrands
 

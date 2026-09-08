@@ -19,15 +19,29 @@ Documenter.makedocs(
                "Integrated Window F" => "WindowFIntegrated.md",
           ],
           "Calculating TPCFs multipoles" => [
-               "GNC" => ["GNC_Correlations_1.md", "GNC_Correlations_2.md", "GNC_Correlations_3.md"],
-               "LD" => ["LD_Correlations_1.md", "LD_Correlations_2.md"],
-               "GNCxLD" => ["GNCxLD_Correlations_1.md", "GNCxLD_Correlations_2.md"],
-               "LDxGNC" => ["LDxGNC_Correlations_1.md", "LDxGNC_Correlations_2.md"],
+               "GNC" => [
+                    "Auto-correlations" => "GNC_Correlations_1.md",
+                    "Cross-correlations" => "GNC_Correlations_2.md",
+                    "Integrands and multipoles" => "GNC_Correlations_3.md",
+               ],
+               "LD" => [
+                    "Correlations" => "LD_Correlations_1.md",
+                    "Integrands and multipoles" => "LD_Correlations_2.md",
+               ],
+               "GNCxLD" => [
+                    "Cross-correlations" => "GNCxLD_Correlations_1.md",
+                    "Integrands and multipoles" => "GNCxLD_Correlations_2.md",
+               ],
+               "LDxGNC" => [
+                    "Cross-correlations" => "LDxGNC_Correlations_1.md",
+                    "Multipoles" => "LDxGNC_Correlations_2.md",
+               ],
           ],
           "Calculating TPCFs with the PP Approximation" => "PlaneParallelApprox.md",
           "Calculating Power Spectra" => "PowerSpectra.md",
           "Power Spectra for a generic window" => "PowerSpectraGenWin.md",
           "implication on PNG" => "PNG.md",
+          "The Δχ → 0 limits" => "DeltaChiLimits.md",
           "Spline" => [
                "MySpline" => "Spline.md",
                "Spline Theory" => "SplineTheory.md"
@@ -42,4 +56,8 @@ Documenter.makedocs(
      ],
 )
 
-deploydocs(repo = "github.com/foglienimatteo/GaPSE.jl.git")
+deploydocs(
+     repo = "github.com/foglienimatteo/GaPSE.jl.git",
+     devbranch = "main",
+     push_preview = true,
+)
