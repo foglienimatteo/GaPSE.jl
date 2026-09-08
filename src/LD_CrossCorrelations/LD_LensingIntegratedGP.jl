@@ -225,7 +225,7 @@ end
 """
     ξ_LD_Lensing_IntegratedGP(
         P1::Point, P2::Point, y, cosmo::Cosmology;
-        en::Float64 = 1e6, N_χs_2::Int = 100 ) ::Float64
+        en::AbstractFloat = 1e6, N_χs_2::Int = 100 ) ::Float64
     
     ξ_LD_Lensing_IntegratedGP(
         s1, s2, y, cosmo::Cosmology; kwargs... ) ::Float64

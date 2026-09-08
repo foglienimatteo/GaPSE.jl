@@ -39,7 +39,7 @@ function integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
     ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-    Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
+    Δχ = Δχ_square > 0 ? √(Δχ_square) : throw(AssertionError("Δχ_square=$Δχ_square : y=$y, χ1=$χ1, χ2=$χ2"))
 
     factor = 9 * Δχ^4 * ℋ0^4 * Ω_M0^2 * D1 * D2 / (s1 * s2 * a1 * a2)
     parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2
@@ -240,7 +240,7 @@ integrand_ξ_GNC_IntegratedGP
 
 
 function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::Float64=1e10, N_χs_2::Int=100, suit_sampling::Bool=true, kwargs...)
+    en::AbstractFloat=1e10, N_χs_2::Int=100, suit_sampling::Bool=true, kwargs...)
 
     #adim_χs = range(1e-12, 1, N_χs)
     #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)

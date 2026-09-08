@@ -192,7 +192,7 @@ integrand_ξ_LD_Lensing_LocalGP
 """
     ξ_LD_Lensing_LocalGP(
         s1, s2, y, cosmo::Cosmology;
-        en::Float64 = 1e6, N_χs::Int = 100 ) ::Float64
+        en::AbstractFloat = 1e6, N_χs::Int = 100 ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Lensing and the Local Gravitational Potential (GP) effects arising from the 

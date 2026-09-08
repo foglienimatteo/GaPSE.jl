@@ -87,7 +87,7 @@ end
         IP1::Point, IP2::Point,
         P1::Point, P2::Point,
         y, cosmo::Cosmology;
-        Δχ_min::Float64 = 1e-4) ::Float64
+        Δχ_min::AbstractFloat = 1e-4) ::Float64
 
     integrand_ξ_LD_Lensing(
         χ1::AbstractFloat, χ2::AbstractFloat,

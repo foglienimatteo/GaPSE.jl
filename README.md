@@ -1,6 +1,6 @@
 # GaPSE - a model for the Galaxy Power Spectrum Estimator
 
-![julia-version](https://img.shields.io/badge/julia_version-v1.8-9558B2?style=flat&logo=julia) 
+![julia-version](https://img.shields.io/badge/julia_version-v1.9-9558B2?style=flat&logo=julia) 
 ![package-version](https://img.shields.io/github/v/release/foglienimatteo/GaPSE.jl?include_prereleases)
 ![CI-build](https://img.shields.io/github/actions/workflow/status/foglienimatteo/GaPSE.jl/UnitTests.yml)
 ![size](https://img.shields.io/github/repo-size/foglienimatteo/GaPSE.jl) 
@@ -67,7 +67,7 @@ Given the matter Power Spectrum (PS) at redshift $z=0$ and the background quanti
 
 All these calculations can be performed both with and without a survey window function. The code implements also a toy-survey with azymuthal symmetry.
 
-This project, and the analytical expressions used for the TPCFs, are based on the article of Emanuele Castorina and Enea Di Dio [[3]](#1). 
+This project, and the analytical expressions used for the TPCFs, are based on the article of Emanuele Castorina and Enea Di Dio [[3]](#1).
 
 <br>
 <br>
@@ -241,7 +241,7 @@ Quick summary of Docker commands, in case you don't know them:
 GaPSE.jl makes extensive use of the following packages:
 
 - [TwoFAST](https://github.com/hsgg/TwoFAST.jl)[[5]](#1), [FFTLog](https://github.com/marcobonici/FFTLog.jl) and [FFTW](https://github.com/JuliaMath/FFTW.jl) in order to perform Fast Fourier Transforms on integrals containing Spherical Bessel functions $j_\ell(x)$
-- our own cubic spline `MySpline` (`src/Spline.jl`) for the 1D interpolations, and [GridInterpolations](https://github.com/sisl/GridInterpolations.jl) for the 2D ones; [Dierckx](https://github.com/kbarbary/Dierckx.jl) is no longer used by the library itself, only by the test suite as an independent cross-check
+- our own cubic spline `MySpline` (`src/Spline.jl`) for the 1D interpolations, and [GridInterpolations](https://github.com/sisl/GridInterpolations.jl) for the 2D ones; you can find the code of it under `src/Spline.jl`, and the mathematical procedure exploited in the Documentation (check for "Spline Theory"); [Dierckx](https://github.com/kbarbary/Dierckx.jl) is no longer used by the library itself, only by the test suite as an independent cross-check
 - [LsqFit](https://github.com/JuliaNLSolvers/LsqFit.jl) for basic least-squares fitting
 - [QuadGK](https://github.com/JuliaMath/QuadGK.jl), [Trapz](https://github.com/francescoalemanno/Trapz.jl) and [FastGaussQuadrature](https://github.com/JuliaApproximation/FastGaussQuadrature.jl) for preforming 1D integrations, and [HCubature](https://github.com/JuliaMath/HCubature.jl) for the 2D ones
 - [ArbNumerics](https://github.com/JeffreySarnoff/ArbNumerics.jl), [AssociatedLegendrePolynomials](https://github.com/jmert/AssociatedLegendrePolynomials.jl), [LegendrePolynomials](https://github.com/jishnub/LegendrePolynomials.jl) and [SpecialFunctions](https://github.com/JuliaMath/SpecialFunctions.jl) for mathematical function evaluations, especially for the Legendre Polinomials $\mathcal{L}_{\ell}(x)$ and the Gamma function $\Gamma(x)$

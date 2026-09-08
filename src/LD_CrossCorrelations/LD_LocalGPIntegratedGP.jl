@@ -27,7 +27,7 @@ function integrand_ξ_LD_LocalGP_IntegratedGP(
     Ω_M0 = cosmo.params.Ω_M0
 
     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0.0
+    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : throw(AssertionError("Δχ2=$Δχ2 : y=$y , s1=$s1 , χ2=$χ2"))
 
     prefactor = 9 * ℋ0^4 * Ω_M0^2 * D_s1 * (ℛ_s1 + 1) / (2 * a_s1)
     factor = D2 * Δχ2^4 / a2 * (ℋ2 * ℛ_s2 * (f2 - 1) - 1 / s2)
@@ -175,7 +175,7 @@ integrand_ξ_LD_LocalGP_IntegratedGP
 """
     ξ_LD_LocalGP_IntegratedGP(
         s1, s2, y, cosmo::Cosmology;
-        en::Float64 = 1e6, N_χs::Int = 100 ) ::Float64
+        en::AbstractFloat = 1e6, N_χs::Int = 100 ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Local Gravitational Potential (GP) and the Integrated GP effects arising from the 

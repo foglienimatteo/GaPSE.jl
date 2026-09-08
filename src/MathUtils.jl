@@ -1044,8 +1044,8 @@ end
 
 function polynomial_from_data(
     xs, ys,
-    P0::Vector{Float64},
-    fit_min::Number, fit_max::Number; err::Float64=0.05, pr::Bool = true)
+    P0::Vector{T},
+    fit_min::Number, fit_max::Number; err::AbstractFloat=0.05, pr::Bool=true) where {T<:AbstractFloat}
 
     @assert length(xs) == length(ys) "xs and ys must have same length"
     @assert length(P0) ∈ [1, 2, 3] "length of P0 must be 1, 2 or 3!"
