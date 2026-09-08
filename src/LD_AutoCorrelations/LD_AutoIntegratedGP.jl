@@ -28,7 +28,7 @@ function integrand_ξ_LD_IntegratedGP(IP1::Point, IP2::Point,
     Ω_M0 = cosmo.params.Ω_M0
 
     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-    Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
+    Δχ = Δχ_square > 0 ? √(Δχ_square) : zero(Δχ_square)  # throw(AssertionError("Δχ_square=$Δχ_square : y=$y , χ1=$χ1 , χ2=$χ2"))
 
     factor = 9 * ℋ0^4 * Ω_M0^2 * D1 * D2 * Δχ^4 / (s1 * s2 * a1 * a2)
     parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 1

@@ -35,7 +35,7 @@ function integrand_ξ_GNCxLD_LocalGP_Lensing(
     ℛ_s1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b_s1, 𝑓_evo=𝑓_evo_s1, s_lim=s_lim)
 
 	Δχ2_square = χ2^2 + s1^2 - 2 * χ2 * s1 * y
-	Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
+	Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : zero(Δχ2_square)  # throw(AssertionError("Δχ2_square=$Δχ2_square : y=$y , χ2=$χ2 , s1=$s1"))
 
 	common = - D_s1 * ℋ0^2 * Ω_M0 * s1 * D2 * (χ2 - s2) * (
 				2 * f_s1 * a_s1 * ℋ_s1^2 * (𝑓_evo_s1 - 3)

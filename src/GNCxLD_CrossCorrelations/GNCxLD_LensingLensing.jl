@@ -32,7 +32,7 @@ function integrand_ξ_GNCxLD_Lensing_Lensing(
     s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
 
     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-    Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
+    Δχ = Δχ_square > 0 ? √(Δχ_square) : zero(Δχ_square)  # throw(AssertionError("Δχ_square=$Δχ_square : y=$y , χ1=$χ1 , χ2=$χ2"))
 
     denomin = s1 * s2 * a1 * a2
     factor = - ℋ0^4 * Ω_M0^2 * D1 * (s1 - χ1) * D2 * (s2 - χ2) * (5 * s_b_s1 - 2)

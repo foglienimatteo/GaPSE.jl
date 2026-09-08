@@ -35,7 +35,7 @@ function integrand_ξ_GNCxLD_IntegratedGP_Doppler(
     ℛ_s1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b_s1, 𝑓_evo=𝑓_evo_s1, s_lim=s_lim)
 
 	Δχ1_square = s2^2 + χ1^2 - 2 * s2 * χ1 * y
-	Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0.0
+	Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : zero(Δχ1_square)  # throw(AssertionError("Δχ1_square=$Δχ1_square : y=$y , s2=$s2 , χ1=$χ1"))
 
 	common = 3 * ℋ_s2 * f_s2 * D_s2 * ℋ0^2 * Ω_M0 * ℜ_s2
 
