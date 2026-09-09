@@ -28,6 +28,8 @@
 
 - NOTE on the unit tests: `test_GNCxLD_SumXiMultipoles_P1.jl` reports 28 failing assertions out of 672. 20 of them are older than this branch: they appear with the switch to `MySpline` (they are absent at `Abstractfloat (#10)` and present right after the reference data were regenerated), so the `datatest/GNCxLD_SumXiMultipoles` files still do not match what `MySpline` produces, at `rtol = 1.2e-2`. The remaining 8 are the small-χ corner bug above;
 
+- DOCS FIX: `docs/src/DeltaChiLimits.md` and `docs/src/SplineTheory.md` wrote their formulas with `$...$` and `$$...$$`. Documenter uses the Julia Markdown flavour, which wants ` ``x`` ` and ` ```math ` blocks, so it emitted "Unexpected Julia interpolation in the Markdown" for every formula and rendered the pages with the raw LaTeX source visible instead of the equations. Both pages now use the Documenter syntax, and the build is free of those warnings;
+
 - BUG FIX: `Δχ_min` had been added to the *scalar* method of the six `LD` integrands `integrand_ξ_LD_IntegratedGP`, `..._Doppler_IntegratedGP`, `..._Lensing_Doppler`, `..._Lensing_IntegratedGP`, `..._Lensing_LocalGP` and `..._LocalGP_IntegratedGP`, while the body that uses it lives in the `Point` method: every call raised `UndefVarError: Δχ_min not defined`, aborting the whole `LD` half of the test suite. The keyword now sits on the `Point` method, as in the `GNC` and `GNCxLD` families, and the scalar methods forward it through `kwargs...`;
 
 
