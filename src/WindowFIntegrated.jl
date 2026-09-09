@@ -157,8 +157,8 @@ function print_map_IntegratedF(in::String, out::String, s_min, s_max,
 end
 =#
 
-function print_map_IntegratedF(s_min, s_max, ss::Vector{T},
-    μs::Vector{T}, windowF::Union{String,WindowF}, out::String;
+function print_map_IntegratedF(s_min, s_max, ss::AbstractVector{T},
+    μs::AbstractVector{T}, windowF::Union{String,WindowF}, out::String;
     alg::Symbol=:trap, llim=nothing, rlim=nothing,
     rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true) where {T<:AbstractFloat}
 
@@ -247,8 +247,8 @@ function print_map_IntegratedF(s_min, s_max, ss::Vector{T},
 end
 
 
-function print_map_IntegratedF(z_min, z_max, zs::Vector{T},
-    μs::Vector{T}, windowF::Union{String,WindowF}, out::String,
+function print_map_IntegratedF(z_min, z_max, zs::AbstractVector{T},
+    μs::AbstractVector{T}, windowF::Union{String,WindowF}, out::String,
     file_data::String;
     names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...) where {T<:AbstractFloat}
 
@@ -266,7 +266,7 @@ function print_map_IntegratedF(z_min, z_max, zs::Vector{T},
 end
 
 function print_map_IntegratedF(z_min, z_max,
-    μs::Vector{T}, windowF::Union{String,WindowF}, out::String,
+    μs::AbstractVector{T}, windowF::Union{String,WindowF}, out::String,
     file_data::String;
     names_bg=NAMES_BACKGROUND, h_0=0.7, N_ss::Int=100, m::AbstractFloat=2.1, kwargs...) where {T<:AbstractFloat}
 
@@ -286,25 +286,25 @@ end
 """
     print_map_IntegratedF(
         s_min, s_max, 
-        ss::Vector{T}, μs::Vector{T}, 
+        ss::AbstractVector{T}, μs::AbstractVector{T}, 
         windowF::Union{String,WindowF}, out::String;
         alg::Symbol=:trap, llim=nothing, rlim=nothing,
         rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true) where {T<:AbstractFloat}
 
     print_map_IntegratedF(
         z_min, z_max, 
-        zs::Vector{T}, μs::Vector{T}, 
+        zs::AbstractVector{T}, μs::AbstractVector{T}, 
         windowF::Union{String,WindowF}, out::String,
         file_data::String; 
         names_bg = NAMES_BACKGROUND, h_0 = 0.7, kwargs...) where {T<:AbstractFloat}
 
     print_map_IntegratedF(
         z_min, z_max,
-        μs::Vector{T}, 
+        μs::AbstractVector{T}, 
         windowF::Union{String,WindowF}, out::String,
         file_data::String;
         names_bg = NAMES_BACKGROUND, h_0 = 0.7, N_ss::Int = 100, 
-        m::AbstractFloat = 2.1, kwargs...)
+        m::AbstractFloat = 2.1, kwargs...) where {T<:AbstractFloat}
 
 Evaluate the integrated window function ``\\mathcal{F}(s,\\mu)`` in a rectangual grid 
 of ``\\mu`` and ``s`` values, and print the results in the `out` file.
@@ -407,14 +407,14 @@ print_map_IntegratedF
 
 #=
 function print_map_IntegratedF(in::String, out::String, z_min, z_max,
-     μs::Vector{T}, file_data::String; kwargs...) where {T<:AbstractFloat}
+    μs::AbstractVector{T}, file_data::String; kwargs...) where {T<:AbstractFloat}
 
-     check_parent_directory(out)
-     check_namefile(out)
+    check_parent_directory(out)
+    check_namefile(out)
 
-     windowF = WindowF(in)
-     windowFint = WindowFIntegrated(z_min, z_max, μs, windowF, file_data; kwargs...)
-     print_map_IntegratedF(out, windowFint)
+    windowF = WindowF(in)
+    windowFint = WindowFIntegrated(z_min, z_max, μs, windowF, file_data; kwargs...)
+    print_map_IntegratedF(out, windowFint)
 end
 =#
 
@@ -493,8 +493,8 @@ struct WindowFIntegrated
     IFs::Matrix{Float64}
 
     #=
-    function WindowFIntegrated(s_min, s_max, ss::Vector{T},
-        μs::Vector{T}, windowF::WindowF;
+    function WindowFIntegrated(s_min, s_max, ss::AbstractVector{T},
+        μs::AbstractVector{T}, windowF::WindowF;
         alg::Symbol=:trap, llim=nothing, rlim=nothing,
         rtol=1e-2, atol=0.0, N::Int=1000, pr::Bool=true) where {T<:AbstractFloat}
 
@@ -546,7 +546,7 @@ struct WindowFIntegrated
     =#
 
     #=
-    function WindowFIntegrated(z_min, z_max, μs::Vector{T}, windowF::WindowF,
+    function WindowFIntegrated(z_min, z_max, μs::AbstractVector{T}, windowF::WindowF,
         file_data::String; names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...) where {T<:AbstractFloat}
 
         BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)

@@ -20,10 +20,10 @@
 
 """
     const DEFAULT_IPS_OPTS = Dict(
-        :fit_left_min => 1e-6::AbstractFloat, 
-        :fit_left_max => 3e-6::AbstractFloat,
-        :fit_right_min => 1e1::AbstractFloat, 
-        :fit_right_max => 2e1::AbstractFloat,
+        :fit_left_min => 1e-6,
+        :fit_left_max => 3e-6,
+        :fit_right_min => 1e1,
+        :fit_right_max => 2e1,
         )
 
 The default values to be stored in `CosmoParams` concerning the 
@@ -33,21 +33,21 @@ they will be used in its `InputPS`.
 See also: [`CosmoParams`](@ref), [`Cosmology`](@ref), [`InputPS`](@ref)
 """
 const DEFAULT_IPS_OPTS = Dict(
-    :fit_left_min => 1e-6::AbstractFloat,
-    :fit_left_max => 3e-6::AbstractFloat,
-    :fit_right_min => 1e1::AbstractFloat,
-    :fit_right_max => 2e1::AbstractFloat,
+    :fit_left_min => 1e-6,
+    :fit_left_max => 3e-6,
+    :fit_right_min => 1e1,
+    :fit_right_max => 2e1,
 )
 
 
 """
     const DEFAULT_IPSTOOLS_OPTS = Dict(
-        :N => 1024::Int,
-        :fit_min => 0.05::AbstractFloat,
-        :fit_max => 0.5::AbstractFloat,
-        :con => true::Bool,
-        :k_min => 1e-6::AbstractFloat,
-        :k_max => 10.0::AbstractFloat,
+        :N => 1024,
+        :fit_min => 0.05,
+        :fit_max => 0.5,
+        :con => true,
+        :k_min => 1e-6,
+        :k_max => 10.0,
     )
 
 The default values to be stored in `CosmoParams` concerning the 
@@ -57,23 +57,23 @@ they will be used in its `IPSTools`.
 See also: [`CosmoParams`](@ref), [`Cosmology`](@ref), [`IPSTools`](@ref)
 """
 const DEFAULT_IPSTOOLS_OPTS = Dict(
-    :fit_min => 0.05::AbstractFloat,
-    :fit_max => 0.5::AbstractFloat,
-    :N => 1024::Int,
-    :con => true::Bool,
-    :k_min => 1e-6::AbstractFloat,
-    :k_max => 10.0::AbstractFloat,
+    :fit_min => 0.05,
+    :fit_max => 0.5,
+    :N => 1024,
+    :con => true,
+    :k_min => 1e-6,
+    :k_max => 10.0,
 )
 
 #=
 """
     const DEFAULT_WFI_OPTS = Dict(
-        :llim=> nothing::Union{Nothing,Float64},
-        :rlim=> nothing::Union{Nothing,Float64},
-        :N => 200::Int64,
-        :trap => true::Bool,
-        :rtol => 1e-2::AbstractFloat,
-        :atol => 0.0::AbstractFloat,
+        :llim=> nothing,
+        :rlim=> nothing,
+        :N => 200,
+        :trap => true,
+        :rtol => 1e-2,
+        :atol => 0.0,
         )
 
 The default values to be stored in `CosmoParams` concerning the 
@@ -83,13 +83,13 @@ they will be used in its `WindowFIntegrated`.
 See also: [`CosmoParams`](@ref), [`Cosmology`](@ref), [`WindowFIntegrated`](@ref),
 """
 const DEFAULT_WFI_OPTS = Dict(
-    :llim=> nothing::Union{Nothing,Float64},
-    :rlim=> nothing::Union{Nothing,Float64},
-    :N => 200::Int64,
-    :trap => true::Bool,
-    :rtol => 1e-2::AbstractFloat,
-    :atol => 0.0::AbstractFloat,
-    :pr => true::Bool, 
+    :llim=> nothing,
+    :rlim=> nothing,
+    :N => 200,
+    :trap => true,
+    :rtol => 1e-2,
+    :atol => 0.0,
+    :pr => true, 
 )
 =#
 

@@ -82,7 +82,7 @@ end
 
 
 
-function my_println_vec(io::IO, vec::Vector{T}, name::String; N::Int=5) where {T<:AbstractFloat}
+function my_println_vec(io::IO, vec::Vector{T}, name::String; N::Int=5) where {T}
     @assert N > 1 "N must be an integer >1, not $N !"
 
     println(io, name * " = [")
@@ -96,14 +96,14 @@ function my_println_vec(io::IO, vec::Vector{T}, name::String; N::Int=5) where {T
     return nothing
 end
 
-function my_println_vec(vec::Vector{T}, name::String; N::Int=5) where {T<:AbstractFloat}
+function my_println_vec(vec::Vector{T}, name::String; N::Int=5) where {T}
     my_println_vec(stdout, vec, name; N=N)
 end
 
 
 """
-    my_println_vec(io::IO, vec::Vector{T}, name::String; N::Int=5)  where {T<:AbstractFloat}
-    my_println_vec(vec::Vector{T}, name::String; N::Int=5)  where {T<:AbstractFloat}
+    my_println_vec(io::IO, vec::Vector{T}, name::String; N::Int=5) where {T}
+    my_println_vec(vec::Vector{T}, name::String; N::Int=5) where {T}
     my_println_vec(stdout, vec, name; N=N)
 
 Print the input `vec::Vector{T}` as follows:

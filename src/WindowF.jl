@@ -19,11 +19,11 @@
 
 """
     DEFAULT_FMAP_OPTS_hcub = Dict(
-        :θ_max => π / 2.0::AbstractFloat, 
-        :tolerance => 1e-10::AbstractFloat, 
-        :rtol => 1e-2::AbstractFloat, 
-        :atol => 1e-3::AbstractFloat,
-        :pr => true::Bool,
+        :θ_max => π / 2.0, 
+        :tolerance => 1e-10, 
+        :rtol => 1e-2, 
+        :atol => 1e-3,
+        :pr => true,
     )
 
 The default values to be used for the `F` function when you
@@ -32,21 +32,21 @@ want to perform the computation with `hcubature`.
 See also: [`integrand_F`](@ref), [`F_hcub`](@ref), [`print_map_F`](@ref)
 """
 const DEFAULT_FMAP_OPTS_hcub = Dict(
-    :θ_max => π / 2.0::AbstractFloat,
-    :tolerance => 1e-10::AbstractFloat,
-    :rtol => 1e-2::AbstractFloat,
-    :atol => 1e-3::AbstractFloat,
-    :pr => true::Bool,
+    :θ_max => π / 2.0,
+    :tolerance => 1e-10,
+    :rtol => 1e-2,
+    :atol => 1e-3,
+    :pr => true,
 )
 
 
 """
     DEFAULT_FMAP_OPTS_trap = Dict(
-        :θ_max => π / 2.0::AbstractFloat, 
-        :tolerance => 1e-10::AbstractFloat, 
-        :N => 300::Int64, 
-        :en => 1.0::AbstractFloat,
-        :pr => true::Bool,
+        :θ_max => π / 2.0, 
+        :tolerance => 1e-10, 
+        :N => 300, 
+        :en => 1.0,
+        :pr => true,
     )
 
 
@@ -56,11 +56,11 @@ want to perform the computation with `trap`.
 See also: [`integrand_F`](@ref), [`F_trap`](@ref), [`print_map_F`](@ref)
 """
 const DEFAULT_FMAP_OPTS_trap = Dict(
-    :θ_max => π / 2.0::AbstractFloat,
-    :tolerance => 1e-10::AbstractFloat,
-    :N => 300::Int64,
-    :en => 1.0::AbstractFloat,
-    :pr => true::Bool,
+    :θ_max => π / 2.0,
+    :tolerance => 1e-10,
+    :N => 300,
+    :en => 1.0,
+    :pr => true,
 )
 
 
@@ -346,7 +346,7 @@ end
 
 
 
-function print_map_F(out::String, xs::Vector{T}, μs::Vector{T};
+function print_map_F(out::String, xs::AbstractVector{T}, μs::AbstractVector{T};
     alg::Symbol=:trap, Fmap_opts::Dict=Dict{Symbol,Any}(), kwargs...) where {T<:AbstractFloat}
 
     check_parent_directory(out)
@@ -514,6 +514,7 @@ print_map_F
         xs::Vector{Float64}
         μs::Vector{Float64}
         Fs::Matrix{Float64}
+        grid::GridInterpolations.RectangleGrid{2}
         )
 
 Struct containing xs, μs and Fs values of the window function ``F(x, μ)``.
@@ -521,6 +522,11 @@ Struct containing xs, μs and Fs values of the window function ``F(x, μ)``.
 `Fs` values are contained in a matrix of size `(length(xs), length(μs))`, so:
 - along a fixed column the changing value is `x`
 - along a fixed row the changing value is `μ`
+
+`grid` is the `GridInterpolations.RectangleGrid` built on `(xs, μs)`. It is
+computed once by the constructor and stored, because `spline_F` is called in the
+innermost loop of every TPCF integration: rebuilding the grid at each call was
+allocating on every single integrand evaluation.
 
 The analytical definition of the window function is the following (see Eq. A.10 of
 Castorina, Di Dio, 2021):
