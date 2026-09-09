@@ -20,9 +20,9 @@
 
 """
     const DEFAULT_IPS_OPTS = Dict(
-        :fit_left_min => 1e-6, 
+        :fit_left_min => 1e-6,
         :fit_left_max => 3e-6,
-        :fit_right_min => 1e1, 
+        :fit_right_min => 1e1,
         :fit_right_max => 2e1,
         )
 

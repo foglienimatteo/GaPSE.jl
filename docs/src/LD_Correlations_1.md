@@ -4,7 +4,7 @@ DocTestSetup = quote
 end
 ```
 
-# LD correlations
+# LD auto- and cross-correlations
 
 ## Two-Point Auto-Correlation Functions
 
