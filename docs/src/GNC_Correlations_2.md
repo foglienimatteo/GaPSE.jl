@@ -4,7 +4,7 @@ DocTestSetup = quote
 end
 ```
 
-# GNC TPCFs
+# GNC cross-correlations
 
 ## Two-Point Cross-Correlation Functions
 

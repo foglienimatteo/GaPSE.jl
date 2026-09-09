@@ -4,7 +4,7 @@ DocTestSetup = quote
 end
 ```
 
-# LDxGNC TPCFs
+# LDxGNC multipoles
 
 
 ## Two-Point Cross-Correlation Function multipoles
