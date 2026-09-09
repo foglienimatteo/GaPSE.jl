@@ -346,6 +346,132 @@ $$
     \left(J_{22} I_2^2 + J_{31} I_1^3\right) = \frac{A}{3}\,\sigma_2 \; . }
 $$
 
+## A second way to reach $\Delta\chi = 0$: the small-$\chi$ corner
+
+!!! warning "This is a known bug, not yet fixed in the code"
+    The `Δχ < Δχ_min` branches implemented in the integrands use the limits of the previous
+    sections, which are derived under the assumption that $y \rightarrow 1$. That assumption
+    fails in the corner described here, and the seven integrands listed at the end of this
+    section return a wrong value there. The derivation below gives the correct expression and
+    the one-line change that fixes it.
+
+The statement "$\Delta\chi^2 = 0$ if and only if $y = 1$ and $\chi_1 = \chi_2$" is true for
+*fixed, non-zero* comoving distances. It is not true uniformly: writing
+
+$$
+    \Delta\chi^2 = (\chi_1-\chi_2)^2 + 2\,\chi_1\chi_2\,(1-y) \; ,
+$$
+
+both terms also vanish when $\chi_1$ and $\chi_2$ go to zero **together, at any fixed $y$**.
+This corner is not academic. Every double-$\chi$ TPCF builds its grid as
+
+```julia
+χ1s = P1.comdist .* range(1e-6, 1, length = N_χs_2)
+χ2s = P2.comdist .* range(1e-6, 1, length = N_χs_2)
+```
+
+so the very first node sits at $\chi \simeq 10^{-6} s \simeq 4 \cdot 10^{-4}\,h^{-1}
+\mathrm{Mpc}$, and the whole first row and first column of the grid have
+$\Delta\chi \ll \Delta\chi_\mathrm{min} = 10^{-1}$ **for every** $y$, with full trapezoidal
+weight.
+
+### The corner limit
+
+Parametrise the corner as $\chi_1 = a\,\epsilon$, $\chi_2 = b\,\epsilon$ with $y$ fixed, so
+that $\Delta\chi = c\,\epsilon$ with $c = \sqrt{a^2+b^2-2ab\,y}$, and let
+$\epsilon \rightarrow 0$. For family 1, every $J^{(k)}$ except $J_{31}$ carries a positive
+power of $\epsilon$ once the $\epsilon^{-4}$ of $\Delta\chi^4$ is accounted for, so only
+$J_{31} I_1^3 = 9y\,\Delta\chi^2 \cdot \sigma_2/(3\Delta\chi^2)$ survives:
+
+$$
+    \boxed{\;
+    \lim_{\epsilon \rightarrow 0}
+    \left(J_{00}I_0^0 + J_{02}I_2^0 + J_{31}I_1^3 + J_{22}I_2^2\right)
+    = 3\,y\,\sigma_2 \; , }
+$$
+
+independent of $a$ and $b$, as it must be. The same argument on family 8, where
+$J_{22} = \frac{A}{2}\chi_a\chi_b(y^2-1) = O(\epsilon^2)$ against a finite $I_2^2$, gives
+
+$$
+    \boxed{\;
+    \lim_{\epsilon \rightarrow 0}\left(J_{22} I_2^2 + J_{31} I_1^3\right)
+    = \frac{A}{3}\,y\,\sigma_2 \; . }
+$$
+
+Families 2, 3, 4, 5 and 7 correlate one integration variable $\chi$ against a *fixed* comoving
+distance $s_1$ or $s_2$, so $\Delta\chi \rightarrow 0$ still forces $\chi \rightarrow s > 0$
+and $y \rightarrow 1$: they have no corner. Family 6 is double-$\chi$ but its limit is zero in
+both regimes, since $\Delta\chi^4\tilde{I}_0^4 = -\sigma_2\Delta\chi^2/6 + O(\Delta\chi^4)$
+vanishes however $\Delta\chi$ is made small.
+
+### The fix
+
+The two limits are the two iterated limits of the same function, and a single expression
+covers both, because $3y\sigma_2 \rightarrow 3\sigma_2$ as $y \rightarrow 1$ while
+$\frac{6}{5}\chi_1^2\sigma_0 \rightarrow 0$ as $\chi_1 \rightarrow 0$:
+
+| family | currently in the code | correct in both regimes |
+|:-:|:--|:--|
+| 1 | `3 * σ_2 + 6/5 * χ1^2 * σ_0` | `3 * y * σ_2 + 6/5 * χ1^2 * σ_0` |
+| 8 | `A/3 * σ_2` | `A/3 * y * σ_2` |
+
+Multiplying the $\sigma_2$ coefficient by $y$ is exact to leading order in both limits and
+costs nothing. The seven integrands that need it are the double-$\chi$ ones:
+
+| integrand | family |
+|:--|:-:|
+| `integrand_ξ_GNC_Lensing` | 1 |
+| `integrand_ξ_LD_Lensing` | 1 |
+| `integrand_ξ_GNCxLD_Lensing_Lensing` | 1 |
+| `integrand_ξ_GNC_Lensing_IntegratedGP` | 8 |
+| `integrand_ξ_GNCxLD_IntegratedGP_Lensing` | 8 |
+| `integrand_ξ_GNCxLD_Lensing_IntegratedGP` | 8 |
+| `integrand_ξ_LD_Lensing_IntegratedGP` | 8 |
+
+(`integrand_ξ_GNCxLD_Lensing_LocalGP` and `integrand_ξ_LD_Lensing_LocalGP` are family 8 but
+single-$\chi$, so they are not affected; giving them the `y` anyway keeps the six of the
+family uniform and changes nothing.)
+
+### Measured effect
+
+`integrand_ξ_GNCxLD_Lensing_Lensing` at $s_1 = 435.37$, $s_2 = 1000$, $y = 0.7$, with
+$\chi_1 = 0.9\,\epsilon$ and $\chi_2 = 1.1\,\epsilon$:
+
+| $\epsilon$ | $J\,I$ sum | current limit branch | ratio |
+|--:|--:|--:|--:|
+| $10^{-1}$ | $4.7167\cdot10^{-13}$ | $6.7404\cdot10^{-13}$ | $0.6998$ |
+| $10^{-2}$ | $4.7200\cdot10^{-13}$ | $6.7388\cdot10^{-13}$ | $0.7004$ |
+| $10^{-3}$ | $4.7214\cdot10^{-13}$ | $6.7389\cdot10^{-13}$ | $0.7006$ |
+| $10^{-4}$ | $4.7227\cdot10^{-13}$ | $6.7389\cdot10^{-13}$ | $0.7008$ |
+
+The ratio is $y$, exactly as predicted, and the $J\,I$ sum is perfectly well conditioned here:
+$\Delta\chi/\chi = O(1)$ in the corner, so the bracket cancellation that ruins the sum near
+the singular configuration simply does not occur. The current branch is therefore replacing a
+good value by one that is a factor $1/y$ too large — and, for $y < 0$, of the wrong sign.
+
+Integrated up, this moves `ξ_GNCxLD_Lensing_Lensing` by $2\%$ at $\mu = 0.5$ and $4\%$ at
+$s = 10$, $\mu = 1$, which is what makes 8 assertions of
+`test_GNCxLD_SumXiMultipoles_P1.jl` fail against reference data generated before the limit
+branches existed.
+
+### A better guard
+
+The clean way to keep both regimes apart is to make the threshold **relative to the local
+comoving distances** rather than an absolute length,
+
+```julia
+Δχ < Δχ_min * max(χ1, χ2)     # Δχ_min ≃ 1e-4 ≃ eps()^(1/4)
+```
+
+which is what the roundoff analysis of the previous section asks for anyway
+($\Delta\chi_\mathrm{break} \sim \chi\,\varepsilon^{1/4}$). In the corner
+$\Delta\chi/\chi = O(1)$, so the branch is simply not taken and the well-conditioned $J\,I$
+sum is used; near the singular configuration $\Delta\chi/\chi \rightarrow 0$ and it is. This
+is the role the commented-out `func_Δχ_min` was meant to play, except that it scales with the
+separation $s$, which stays of order hundreds while $\chi \rightarrow 0$ and so does not
+separate the two cases.
+
 ## Summary
 
 | integrand | family | limit of the $J\,I$ sum |
