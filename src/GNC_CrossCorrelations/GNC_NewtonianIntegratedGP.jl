@@ -440,7 +440,6 @@ function ξ_GNC_Newtonian_IntegratedGP(s1, s2, y, cosmo::Cosmology;
     en::Float64=1e6, N_χs::Int=100, suit_sampling::Bool=true, kwargs...)
 
     χ2s = s2 .* range(1e-6, 1, length=N_χs)
-
     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
     IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 

@@ -22,7 +22,7 @@
 function integrand_ξ_GNC_Lensing(
     IP1::Point, IP2::Point,
     P1::Point, P2::Point,
-    y, cosmo::Cosmology; Δχ_min::Float64=1e-1, 
+    y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1, 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 

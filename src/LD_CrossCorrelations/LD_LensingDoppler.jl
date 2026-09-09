@@ -239,7 +239,7 @@ integrand_ξ_LD_Lensing_Doppler
 """
     ξ_LD_Lensing_Doppler(
         s1, s2, y, cosmo::Cosmology;
-        en::Float64 = 1e6, N_χs::Int = 100 ) ::Float64
+        en::AbstractFloat = 1e6, N_χs::Int = 100 ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Lensing and the Doppler effects arising from the Luminosity Distance (LD) perturbations.

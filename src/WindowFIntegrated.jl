@@ -407,14 +407,14 @@ print_map_IntegratedF
 
 #=
 function print_map_IntegratedF(in::String, out::String, z_min, z_max,
-     μs::AbstractVector{T}, file_data::String; kwargs...) where {T<:AbstractFloat}
+    μs::AbstractVector{T}, file_data::String; kwargs...) where {T<:AbstractFloat}
 
-     check_parent_directory(out)
-     check_namefile(out)
+    check_parent_directory(out)
+    check_namefile(out)
 
-     windowF = WindowF(in)
-     windowFint = WindowFIntegrated(z_min, z_max, μs, windowF, file_data; kwargs...)
-     print_map_IntegratedF(out, windowFint)
+    windowF = WindowF(in)
+    windowFint = WindowFIntegrated(z_min, z_max, μs, windowF, file_data; kwargs...)
+    print_map_IntegratedF(out, windowFint)
 end
 =#
 
