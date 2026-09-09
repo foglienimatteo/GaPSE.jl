@@ -19,7 +19,7 @@
 
 
 function integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
-    P1::Point, P2::Point, y, cosmo::Cosmology; 
+    P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1, 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
@@ -45,7 +45,9 @@ function integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
     parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2
     parenth_2 = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2
 
-    I04_tilde = cosmo.tools.I04_tilde(Δχ)
+    # for Δχ → 0 the whole term vanishes, since Δχ^4 * Ĩ_0^4(Δχ) → 0 ;
+    # see the "The Δχ → 0 limits" page of the documentation
+    I04_tilde = Δχ ≥ Δχ_min ? cosmo.tools.I04_tilde(Δχ) : zero(Δχ)
 
     return factor * parenth_1 * parenth_2 * I04_tilde
 end

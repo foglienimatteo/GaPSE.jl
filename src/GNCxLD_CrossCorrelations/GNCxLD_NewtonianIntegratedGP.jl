@@ -20,7 +20,7 @@
 
 
 function integrand_ξ_GNCxLD_Newtonian_IntegratedGP(
-    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
@@ -40,16 +40,19 @@ function integrand_ξ_GNCxLD_Newtonian_IntegratedGP(
     J20 = -Δχ2^2 * (3 * b_s1 + f_s1)
 
 
-    I00 = cosmo.tools.I00(Δχ2)
-    I20 = cosmo.tools.I20(Δχ2)
-    I40 = cosmo.tools.I40(Δχ2)
-    I02 = cosmo.tools.I02(Δχ2)
+    JI_sum = if Δχ2 ≥ Δχ_min
+        I00 = cosmo.tools.I00(Δχ2)
+        I20 = cosmo.tools.I20(Δχ2)
+        I40 = cosmo.tools.I40(Δχ2)
+        I02 = cosmo.tools.I02(Δχ2)
+        factor * (1 / 15 * I00 + 2 / 21 * I20 + 1 / 35 * I40) + J20 * I02
+    else
+        # for Δχ2 → 0 `factor` vanishes, so only the J20 * I02 term survives;
+        # see "The Δχ → 0 limits" page of the documentation
+        - (3 * b_s1 + f_s1) * cosmo.tools.σ_2
+    end
 
-    return common * (
-        factor * (1 / 15 * I00 + 2 / 21 * I20 + 1 / 35 * I40)
-        +
-        J20 * I02
-    )
+    return common * JI_sum
 end
 
 

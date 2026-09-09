@@ -61,8 +61,12 @@ function integrand_ξ_LD_Lensing(
         resss
     else
 
-        lim = 4.0 / 15.0 * (5.0 * cosmo.tools.σ_2 + 6.0 * cosmo.tools.σ_0 * χ2^2)
-        9.0 / 4.0 * lim
+        # for Δχ → 0 the J02 term vanishes, the J31 one gives 3 * σ_2 and the
+        # direction-dependent parts of J00 and J22 cancel each other;
+        # see "The Δχ → 0 limits" page of the documentation.
+        # NOTE: this used to read `9/4 * 4/15 * (5σ_2 + 6σ_0*χ2^2)`, i.e.
+        # `3σ_2 + 18/5*χ2^2*σ_0`: the σ_0 coefficient was a factor 3 too large.
+        3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
     end
 
     res = factor / denomin * first_res

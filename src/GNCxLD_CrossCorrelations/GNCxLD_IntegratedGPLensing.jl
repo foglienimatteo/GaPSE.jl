@@ -19,7 +19,7 @@
 
 
 function integrand_ξ_GNCxLD_IntegratedGP_Lensing(
-	IP1::Point, IP2::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
+	IP1::Point, IP2::Point, P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1, 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
@@ -45,10 +45,17 @@ function integrand_ξ_GNCxLD_IntegratedGP_Lensing(
 	new_J31 = 2 * y * Δχ^2
 	new_J22 = χ1 * χ2 * (y^2 - 1)
 
-	I13 = cosmo.tools.I13(Δχ)
-	I22 = cosmo.tools.I22(Δχ)
+	JI_sum = if Δχ ≥ Δχ_min
+	    I13 = cosmo.tools.I13(Δχ)
+	    I22 = cosmo.tools.I22(Δχ)
+	    new_J22 * I22 + new_J31 * I13
+	else
+	    # for Δχ → 0 the J22 * I22 term vanishes and J31 * I13 stays finite;
+	    # see "The Δχ → 0 limits" page of the documentation
+	    2 * cosmo.tools.σ_2 / 3
+	end
 
-	res = prefactor * factor * parenth * (new_J22 * I22 + new_J31 * I13)
+	res = prefactor * factor * parenth * JI_sum
 
 	return res
 end

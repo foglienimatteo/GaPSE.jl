@@ -47,20 +47,23 @@ function integrand_ξ_LD_Lensing_Doppler(
         χ1 * (y^2 + 9) * s2^3 - 4 * y * s2^4)
     new_J20 = y * Δχ1^2
 
-    I00 = cosmo.tools.I00(Δχ1)
-    I20 = cosmo.tools.I20(Δχ1)
-    I40 = cosmo.tools.I40(Δχ1)
-    I02 = cosmo.tools.I02(Δχ1)
 
     #println("J00 = $new_J00, \t I00(Δχ1) = $(I00)")
     #println("J02 = $new_J02, \t I20(Δχ1) = $(I20)")
     #println("J31 = $new_J31, \t I13(Δχ1) = $(I13)")
     #println("J22 = $new_J22, \t I22(Δχ1) = $(I22)")
 
-    parenth = (
-        new_J00 * I00 + new_J02 * I20 +
-        new_J04 * I40 + new_J20 * I02
-    )
+    parenth = if Δχ1 ≥ Δχ_min
+        I00 = cosmo.tools.I00(Δχ1)
+        I20 = cosmo.tools.I20(Δχ1)
+        I40 = cosmo.tools.I40(Δχ1)
+        I02 = cosmo.tools.I02(Δχ1)
+        new_J00 * I00 + new_J02 * I20 + new_J04 * I40 + new_J20 * I02
+    else
+        # for Δχ1 → 0 the J00, J02 and J04 numerators vanish and only
+        # new_J20 * I02 survives; see "The Δχ → 0 limits" in the documentation
+        cosmo.tools.σ_2
+    end
 
     first = common * factor * parenth
 
@@ -238,7 +241,7 @@ integrand_ξ_LD_Lensing_Doppler
 
 """
     ξ_LD_Lensing_Doppler(
-        s1, s2, y, cosmo::Cosmology;
+        s1, s2, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
         en::Float64 = 1e6, N_χs::Int = 100 ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 

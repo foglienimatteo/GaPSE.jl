@@ -19,7 +19,7 @@
 
 
 function integrand_ξ_GNCxLD_IntegratedGP_Doppler(
-	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
@@ -40,7 +40,9 @@ function integrand_ξ_GNCxLD_IntegratedGP_Doppler(
 	common = 3 * ℋ_s2 * f_s2 * D_s2 * ℋ0^2 * Ω_M0 * ℜ_s2
 
 	new_J31 = Δχ1^2 * D1 * (s2 - χ1 * y) / (a1 * s1) * (s1 * ℛ_s1 * ℋ1 * (f1 - 1) - 5 * s_b_s1 + 2)
-	I13 = cosmo.tools.I13(Δχ1)
+	# the whole term vanishes for Δχ1 → 0 : the geometric factor goes to zero while
+    # I13 diverges only as Δχ1^-2 ; see "The Δχ → 0 limits" in the documentation
+    I13 = Δχ1 ≥ Δχ_min ? cosmo.tools.I13(Δχ1) : zero(Δχ1)
 
 	res = common * new_J31 * I13
 

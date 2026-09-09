@@ -19,7 +19,7 @@
 
 
 function integrand_ξ_GNCxLD_Lensing_Lensing(
-    IP1::Point, IP2::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+    IP1::Point, IP2::Point, P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
@@ -48,12 +48,19 @@ function integrand_ξ_GNCxLD_Lensing_Lensing(
         + χ1χ2^2 * (11y^4 + 14y^2 + 23)
     )
 
-    I00 = cosmo.tools.I00(Δχ)
-    I20 = cosmo.tools.I20(Δχ)
-    I13 = cosmo.tools.I13(Δχ)
-    I22 = cosmo.tools.I22(Δχ)
 
-    res = new_J00 * I00 + new_J02 * I20 + new_J31 * I13 + new_J22 * I22
+    res = if Δχ ≥ Δχ_min
+        I00 = cosmo.tools.I00(Δχ)
+        I20 = cosmo.tools.I20(Δχ)
+        I13 = cosmo.tools.I13(Δχ)
+        I22 = cosmo.tools.I22(Δχ)
+        new_J00 * I00 + new_J02 * I20 + new_J31 * I13 + new_J22 * I22
+    else
+        # for Δχ → 0 the J02 term vanishes, the J31 one gives 3 * σ_2 and the
+        # direction-dependent parts of J00 and J22 cancel each other;
+        # see "The Δχ → 0 limits" page of the documentation
+        3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
+    end
 
     return factor / denomin * res
 end

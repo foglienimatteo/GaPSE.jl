@@ -31,7 +31,9 @@ function integrand_ξ_LD_LocalGP_IntegratedGP(
 
     prefactor = 9 * ℋ0^4 * Ω_M0^2 * D_s1 * (ℛ_s1 + 1) / (2 * a_s1)
     factor = D2 * Δχ2^4 / a2 * (ℋ2 * ℛ_s2 * (f2 - 1) - 1 / s2)
-    I04_tilde = cosmo.tools.I04_tilde(Δχ2)
+    # for Δχ2 → 0 the whole term vanishes, since Δχ2^4 * Ĩ_0^4(Δχ2) → 0 ;
+    # see the "The Δχ → 0 limits" page of the documentation
+    I04_tilde = Δχ2 ≥ Δχ_min ? cosmo.tools.I04_tilde(Δχ2) : zero(Δχ2)
 
     res = prefactor * factor * I04_tilde
 
@@ -41,7 +43,7 @@ end
 
 function integrand_ξ_LD_LocalGP_IntegratedGP(
     χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
-    y, cosmo::Cosmology;
+    y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
     kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)

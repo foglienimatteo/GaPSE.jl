@@ -34,7 +34,9 @@ function integrand_ξ_LD_IntegratedGP(IP1::Point, IP2::Point,
     parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 1
     parenth_2 = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 1
 
-    I04_tilde = cosmo.tools.I04_tilde(Δχ)
+    # for Δχ → 0 the whole term vanishes, since Δχ^4 * Ĩ_0^4(Δχ) → 0 ;
+    # see the "The Δχ → 0 limits" page of the documentation
+    I04_tilde = Δχ ≥ Δχ_min ? cosmo.tools.I04_tilde(Δχ) : zero(Δχ)
 
     return factor * parenth_1 * parenth_2 * I04_tilde
 end
@@ -42,7 +44,7 @@ end
 function integrand_ξ_LD_IntegratedGP(
     χ1::AbstractFloat, χ2::AbstractFloat,
     s1::AbstractFloat, s2::AbstractFloat,
-    y, cosmo::Cosmology;
+    y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
     kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
