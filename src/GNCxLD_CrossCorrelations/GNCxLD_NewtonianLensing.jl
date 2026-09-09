@@ -19,7 +19,7 @@
 
 
 function integrand_ξ_GNCxLD_Newtonian_Lensing(
-    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
@@ -31,7 +31,7 @@ function integrand_ξ_GNCxLD_Newtonian_Lensing(
     b_s1 = isnothing(b1) ? cosmo.params.b1 : b1
 
     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : throw(AssertionError("Δχ2_square=$Δχ2_square : y=$y , s1=$s1 , χ2=$χ2"))
+    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : zero(Δχ2_square)  # throw(AssertionError("Δχ2_square=$Δχ2_square : y=$y , s1=$s1 , χ2=$χ2"))
 
     common = - D_s1 * ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) / (a2 * s2)
 
@@ -54,11 +54,18 @@ function integrand_ξ_GNCxLD_Newtonian_Lensing(
             4 * y * s1^5
         )
 
-    I00 = cosmo.tools.I00(Δχ2)
-    I20 = cosmo.tools.I20(Δχ2)
-    I40 = cosmo.tools.I40(Δχ2)
+    JI_sum = if Δχ2 ≥ Δχ_min
+        I00 = cosmo.tools.I00(Δχ2)
+        I20 = cosmo.tools.I20(Δχ2)
+        I40 = cosmo.tools.I40(Δχ2)
+        new_J00 * I00 + new_J02 * I20 + new_J04 * I40
+    else
+        # for Δχ2 → 0 the J02 and J04 numerators vanish, so only J00 * I00 survives;
+        # see "The Δχ → 0 limits" page of the documentation
+        - s1 * (f_s1 + 5 * b_s1) * cosmo.tools.σ_0 / 5
+    end
 
-    return common * (new_J00 * I00 + new_J02 * I20 + new_J04 * I40)
+    return common * JI_sum
 end
 
 

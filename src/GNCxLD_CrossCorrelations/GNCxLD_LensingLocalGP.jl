@@ -19,7 +19,7 @@
 
 
 function integrand_ξ_GNCxLD_Lensing_LocalGP(
-	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
@@ -39,15 +39,22 @@ function integrand_ξ_GNCxLD_Lensing_LocalGP(
 	new_J31 = -2 * y * Δχ1^2
 	new_J22 = χ1 * s2 * (1 - y^2)
 
-	I13 = cosmo.tools.I13(Δχ1)
-	I22 = cosmo.tools.I22(Δχ1)
+	JI_sum = if Δχ1 ≥ Δχ_min
+	    I13 = cosmo.tools.I13(Δχ1)
+	    I22 = cosmo.tools.I22(Δχ1)
+	    new_J22 * I22 + new_J31 * I13
+	else
+	    # for Δχ1 → 0 the J22 * I22 term vanishes and J31 * I13 stays finite;
+	    # see "The Δχ → 0 limits" page of the documentation
+	    - 2 * cosmo.tools.σ_2 / 3
+	end
 
 	#println("J00 = $new_J00, \\t I00(Δχ1) = $(I00)")
 	#println("J02 = $new_J02, \\t I20(Δχ1) = $(I20)")
 	#println("J31 = $new_J31, \\t I13(Δχ1) = $(I13)")
 	#println("J22 = $new_J22, \\t I22(Δχ1) = $(I22)")
 
-	parenth = (new_J31 * I13 + new_J22 * I22)
+	parenth = JI_sum
 
 	first = common * factor * parenth
 

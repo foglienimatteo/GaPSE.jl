@@ -4,7 +4,7 @@ DocTestSetup = quote
 end
 ```
 
-# LD TPCFs
+# LD integrands and multipoles
 
 ## Two-Point Auto-Correlation Functions integrands
 

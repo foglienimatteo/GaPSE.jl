@@ -20,7 +20,7 @@
 
 
 function integrand_ξ_GNC_Doppler_IntegratedGP(
-    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1, 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
@@ -39,7 +39,7 @@ function integrand_ξ_GNC_Doppler_IntegratedGP(
     ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : throw(AssertionError("Δχ2_square=$Δχ2_square : y=$y , s1=$s1 , χ2=$χ2"))
+    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : zero(Δχ2_square)  # throw(AssertionError("Δχ2_square=$Δχ2_square : y=$y , s1=$s1 , χ2=$χ2"))
 
     common = ℋ0^2 * Ω_M0 * D2 / (s2 * a2)
     factor = Δχ2^2 * f_s1 * ℋ_s1 * ℛ_s1 * (χ2 * y - s1)
@@ -48,7 +48,9 @@ function integrand_ξ_GNC_Doppler_IntegratedGP(
     I00 = cosmo.tools.I00(Δχ2)
     I20 = cosmo.tools.I20(Δχ2)
     I40 = cosmo.tools.I40(Δχ2)
-    I02 = cosmo.tools.I02(Δχ2)
+    # the whole term vanishes for Δχ2 → 0 : the geometric factor goes to zero while
+    # I02 diverges only as Δχ2^-2 ; see "The Δχ → 0 limits" in the documentation
+    I02 = Δχ2 ≥ Δχ_min ? cosmo.tools.I02(Δχ2) : zero(Δχ2)
 
     #if(y≈1.0 && s2 ≈ χ2)
     #  println(

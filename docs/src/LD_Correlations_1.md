@@ -4,7 +4,7 @@ DocTestSetup = quote
 end
 ```
 
-# LD TPCFs
+# LD correlations
 
 ## Two-Point Auto-Correlation Functions
 

@@ -19,7 +19,7 @@
 
 
 function integrand_ξ_GNC_LocalGP_IntegratedGP(
-    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1, 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
@@ -38,12 +38,14 @@ function integrand_ξ_GNC_LocalGP_IntegratedGP(
     ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : throw(AssertionError("Δχ2_square=$Δχ2_square : y=$y , s1=$s1 , χ2=$χ2"))
+    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : zero(Δχ2_square)  # throw(AssertionError("Δχ2_square=$Δχ2_square : y=$y , s1=$s1 , χ2=$χ2"))
 
     factor = 3 * ℋ0^2 * Ω_M0 * D2 * (s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2) / (2 * s2 * a2)
     parenth = 2 * f_s1 * ℋ_s1^2 * a_s1 * (𝑓_evo_s1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f_s1 + ℛ_s1 + 5 * s_b_s1 - 2)
 
-    I04_tilde = cosmo.tools.I04_tilde(Δχ2)
+    # for Δχ2 → 0 the whole term vanishes, since Δχ2^4 * Ĩ_0^4(Δχ2) → 0 ;
+    # see the "The Δχ → 0 limits" page of the documentation
+    I04_tilde = Δχ2 ≥ Δχ_min ? cosmo.tools.I04_tilde(Δχ2) : zero(Δχ2)
 
     if obs == false || obs == :no
         return Δχ2^4 / a_s1 * D_s1 * factor * parenth * I04_tilde
