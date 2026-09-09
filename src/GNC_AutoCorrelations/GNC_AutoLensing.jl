@@ -65,7 +65,11 @@ function integrand_ξ_GNC_Lensing(
 
     else
 
-        #3 / 5 * (5 * cosmo.tools.σ_2 + 6 * cosmo.tools.σ_0 * χ2^2)
+        # for Δχ → 0 the J02 term vanishes, the J31 one gives 3 * σ_2 and the
+        # direction-dependent parts of J00 and J22 cancel each other;
+        # see "The Δχ → 0 limits" page of the documentation.
+        # NOTE: do not restore `3/5 * (5σ_2 + 6σ_0*χ2^2)` = `3σ_2 + 18/5*χ2^2*σ_0`:
+        # its σ_0 coefficient is a factor 3 too large.
         3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
     end
 
@@ -89,7 +93,7 @@ end
         IP1::Point, IP2::Point,
         P1::Point, P2::Point,
         y, cosmo::Cosmology;
-        Δχ_min::Float64=1e-1, b1=nothing, b2=nothing, 
+        Δχ_min::AbstractFloat=1e-1, b1=nothing, b2=nothing, 
         s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
         s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel
         ) ::Float64
@@ -274,7 +278,7 @@ This function is used inside `ξ_GNC_Lensing` with trapz() from the
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
     will be neglected, the other ones will be taken into account
 
-- `Δχ_min::Float64 = 1e-4` : when 
+- `Δχ_min::AbstractFloat = 1e-1` : when 
   ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
@@ -333,7 +337,7 @@ end
 
 """
     ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-        en::Float64 = 1e6, Δχ_min::Float64 = 1e-1,
+        en::AbstractFloat = 1e6, Δχ_min::AbstractFloat = 1e-1,
         N_χs_2::Int = 100,
         s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
         s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel,
@@ -513,7 +517,7 @@ This function is computed integrating `integrand_ξ_GNC_Lensing` with trapz() fr
 - `en::Float64 = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
-- `Δχ_min::Float64 = 1e-4` : when 
+- `Δχ_min::AbstractFloat = 1e-1` : when 
   ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 

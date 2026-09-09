@@ -20,7 +20,7 @@
 
 function integrand_ξ_LD_Lensing_LocalGP(
     IP::Point, P1::Point, P2::Point,
-    y, cosmo::Cosmology)
+    y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1)
 
     s1 = P1.comdist
     s2, D_s2, a_s2, ℛ_s2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
@@ -28,7 +28,7 @@ function integrand_ξ_LD_Lensing_LocalGP(
     Ω_M0 = cosmo.params.Ω_M0
 
     Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
-    Δχ1 = Δχ1_square > 0.0 ? √(Δχ1_square) : 0.0
+    Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : zero(Δχ1_square)  # throw(AssertionError("Δχ1_square=$Δχ1_square : y=$y , χ1=$χ1 , s2=$s2"))
 
     common = 9 * ℋ0^4 * Ω_M0^2 * D_s2 * (1 + ℛ_s2) * s2 / (4 * a_s2 * s1)
     factor = D1 * (s1 - χ1) / a1
@@ -61,11 +61,11 @@ end
 
 function integrand_ξ_LD_Lensing_LocalGP(
     χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
-    y, cosmo::Cosmology)
+    y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP = Point(χ1, cosmo)
-    return integrand_ξ_LD_Lensing_LocalGP(IP, P1, P2, y, cosmo)
+    return integrand_ξ_LD_Lensing_LocalGP(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 

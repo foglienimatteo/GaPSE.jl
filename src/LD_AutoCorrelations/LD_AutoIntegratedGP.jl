@@ -19,7 +19,7 @@
 
 
 function integrand_ξ_LD_IntegratedGP(IP1::Point, IP2::Point,
-    P1::Point, P2::Point, y, cosmo::Cosmology)
+    P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1)
 
     s1, ℛ_s1 = P1.comdist, P1.ℛ_LD
     s2, ℛ_s2 = P2.comdist, P2.ℛ_LD
@@ -44,8 +44,7 @@ end
 function integrand_ξ_LD_IntegratedGP(
     χ1::AbstractFloat, χ2::AbstractFloat,
     s1::AbstractFloat, s2::AbstractFloat,
-    y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
-    kwargs...)
+    y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)

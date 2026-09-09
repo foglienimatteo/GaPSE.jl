@@ -385,13 +385,76 @@ In every case the limit is multiplied by the same prefactor (`common`, `factor`,
 ...) that multiplies the $J\,I$ sum in the `Δχ ≥ Δχ_min` branch, so only the bracket needs to
 be replaced.
 
-## A caveat on the value of `Δχ_min`
+## On the value of `Δχ_min`
 
-The expansions above are controlled by the dimensionless combination $q \, \Delta\chi$, and the
-$q$ integration runs up to $k_\mathrm{max}$, which is $10 \, h \, \mathrm{Mpc}^{-1}$ by default.
-The leading term is therefore accurate only for
-$\Delta\chi \ll 1/k_\mathrm{max} = 0.1 \, h^{-1}\mathrm{Mpc}$, while the default is
-`Δχ_min = 1e-1`. The two coincide, so the limit is being applied right at the edge of its
-range of validity. This does not affect the results presented here, but it suggests that a
-smaller `Δχ_min` (as already used by `integrand_ξ_LD_Lensing`, which has `Δχ_min = 1e-4`)
-would be safer.
+The threshold is squeezed between two errors that grow in opposite directions, so it cannot
+be made arbitrarily small.
+
+**From above**, the expansions of the previous sections are controlled by the dimensionless
+combination $q \, \Delta\chi$, and the $q$ integration runs up to $k_\mathrm{max}$, which is
+$10 \, h \, \mathrm{Mpc}^{-1}$ by default. The leading term is accurate only for
+$\Delta\chi \ll 1/k_\mathrm{max} = 0.1 \, h^{-1}\mathrm{Mpc}$, so the relative error of the
+limit is $O\left[(k_\mathrm{max}\Delta\chi)^2\right]$: at the default
+`Δχ_min = 1e-1` it is of order unity.
+
+**From below**, the $J\,I$ sum becomes unusable, but not for the reason one might expect: the
+four products $J^{(k)} I_{\ell_k}^{n_k}$ do *not* nearly cancel against each other. The loss
+of significance happens one level down, **inside each $J^{(k)}$**. Take $J_{22}$ of family 1:
+its square bracket is a sum of terms of size $O(\chi^6)$ whose value at the singular point is
+zero (that is exactly what was shown in the derivation), so for small $\Delta\chi$ the bracket
+is $O(\chi^4\Delta\chi^2)$ — a relative cancellation of $(\Delta\chi/\chi)^2$ — and the result
+is then divided by $\Delta\chi^4$. The absolute rounding error of the bracket,
+$\varepsilon\,\chi^6$, therefore reaches $J_{22}$ multiplied by $\chi/\Delta\chi^4$, while
+$J_{22}$ itself is $O(\chi^3)$:
+
+$$
+    \frac{\delta J_{22}}{J_{22}} \; \sim \; \varepsilon
+        \left(\frac{\chi}{\Delta\chi}\right)^{4} \; ,
+    \qquad\text{so}\qquad
+    \Delta\chi_\mathrm{break} \; \sim \; \chi \, \varepsilon^{1/4}
+        \; \simeq \; 1.2 \cdot 10^{-4} \, \chi \; .
+$$
+
+The same argument applies to $J_{00}$ and $J_{02}$, whose brackets vanish too. Evaluating the
+four terms of `integrand_ξ_GNC_Lensing` separately at $\chi_1 = 250$,
+$\chi_2 = \chi_1 + 0.4\,\Delta\chi$ (all values in units of the enhancer):
+
+| $\Delta\chi$ | $J_{00}I_0^0$ | $J_{02}I_2^0$ | $J_{31}I_1^3$ | $J_{22}I_2^2$ | sum | limit |
+|--:|--:|--:|--:|--:|--:|--:|
+| $1$ | $4.28\cdot10^{5}$ | $-2.37\cdot10^{4}$ | $3.00\cdot10^{2}$ | $-6.44\cdot10^{4}$ | $3.40\cdot10^{5}$ | $1.17\cdot10^{6}$ |
+| $3\cdot10^{-1}$ | $9.28\cdot10^{5}$ | $-3.64\cdot10^{4}$ | $3.02\cdot10^{2}$ | $-1.26\cdot10^{5}$ | $7.65\cdot10^{5}$ | $1.17\cdot10^{6}$ |
+| $1\cdot10^{-1}$ | $1.61\cdot10^{6}$ | $-5.33\cdot10^{4}$ | $3.03\cdot10^{2}$ | $-7.12\cdot10^{4}$ | $1.49\cdot10^{6}$ | $1.17\cdot10^{6}$ |
+| $5\cdot10^{-2}$ | $2.20\cdot10^{6}$ | $-6.78\cdot10^{4}$ | $3.03\cdot10^{2}$ | $0$ | $2.13\cdot10^{6}$ | $1.17\cdot10^{6}$ |
+| $3\cdot10^{-2}$ | $2.73\cdot10^{6}$ | $-8.09\cdot10^{4}$ | $3.03\cdot10^{2}$ | $1.45\cdot10^{7}$ | $1.72\cdot10^{7}$ | $1.17\cdot10^{6}$ |
+| $1\cdot10^{-2}$ | $4.26\cdot10^{6}$ | $-1.18\cdot10^{5}$ | $3.03\cdot10^{2}$ | $-1.81\cdot10^{9}$ | $-1.81\cdot10^{9}$ | $1.17\cdot10^{6}$ |
+| $1\cdot10^{-3}$ | $1.02\cdot10^{7}$ | $-2.61\cdot10^{5}$ | $3.03\cdot10^{2}$ | $-4.26\cdot10^{13}$ | $-4.26\cdot10^{13}$ | $1.17\cdot10^{6}$ |
+
+$J_{22}I_2^2$ rounds to exactly zero at $\Delta\chi = 5\cdot10^{-2}$ and is pure noise below
+it — right at the predicted $\chi\,\varepsilon^{1/4} \simeq 3\cdot 10^{-2}$ — after which it
+runs away by four orders of magnitude per decade. A single quadrature node landing at
+$\Delta\chi = 10^{-3}$ contributes an integrand $10^{7}$ times too large: enough to destroy
+the whole $\chi$ integral.
+
+The two errors cross between $\Delta\chi = 10^{-1}$ and $3\cdot10^{-1}$: the sum still tracks
+the true bracket at $3\cdot10^{-1}$ (where the limit is $35\%$ off), already overshoots it by
+$27\%$ at $10^{-1}$, and is meaningless below $5\cdot10^{-2}$. So `Δχ_min = 1e-1` sits close
+to the optimum, and **lowering it is not safer, it is dangerous**.
+
+Two consequences worth keeping in mind:
+
+- The breakdown scale is $\chi\,\varepsilon^{1/4}$, so the right threshold is **proportional
+  to the comoving distances**, not an absolute length. A fixed `Δχ_min = 1e-1` is tuned for
+  $\chi \sim$ a few hundred $h^{-1}\mathrm{Mpc}$ and is too small at large $\chi$, too large
+  at small $\chi$. The commented-out `func_Δχ_min(s1, s2, y; frac)` in
+  `GNC_LensingIntegratedGP.jl` is exactly the relative threshold this argument calls for; it
+  wants $\mathrm{frac} \simeq \varepsilon^{1/4} \simeq 10^{-4}$ against $s$, and reviving it
+  would remove the tuning.
+- The residual error of the limit is confined to an interval of length `Δχ_min` out of a
+  $\chi$ range of hundreds of $h^{-1}\mathrm{Mpc}$, so its effect on the integrated TPCF stays
+  at the $10^{-3}$ level for a generic $y$; it grows to a few per cent at $y = 1$, where the
+  quadrature deliberately samples the singular point.
+
+!!! warning "`integrand_ξ_LD_Lensing`"
+    This is the one function that still uses `Δχ_min = 1e-4`, inherited from before these
+    limits were derived. That is three orders of magnitude inside the region where the
+    $J^{(k)}$ are noise, so it should be aligned with the `1e-1` used everywhere else.

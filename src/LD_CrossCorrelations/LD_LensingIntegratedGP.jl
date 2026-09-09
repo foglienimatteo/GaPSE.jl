@@ -21,7 +21,7 @@
 function integrand_ξ_LD_Lensing_IntegratedGP(
         IP1::Point, IP2::Point,
         P1::Point, P2::Point,
-        y, cosmo::Cosmology)
+        y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1)
 
     s1 = P1.comdist
     s2, ℛ_s2 = P2.comdist, P2.ℛ_LD
@@ -30,7 +30,7 @@ function integrand_ξ_LD_Lensing_IntegratedGP(
     Ω_M0 = cosmo.params.Ω_M0
 
     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-    Δχ = √(Δχ_square) > 1e-8 ? √(Δχ_square) : 1e-8
+    Δχ = Δχ_square > 0 ? √(Δχ_square) : zero(Δχ_square)  # throw(AssertionError("Δχ_square=$Δχ_square : y=$y , χ1=$χ1 , χ2=$χ2"))
 
     prefactor = 9 / 2 * ℋ0^4 * Ω_M0^2
     factor = D1 * D2 * χ2 * (s1 - χ1) / (s1 * a1 * a2)
@@ -58,8 +58,7 @@ end
 function integrand_ξ_LD_Lensing_IntegratedGP(
         χ1::AbstractFloat, χ2::AbstractFloat,
         s1::AbstractFloat, s2::AbstractFloat,
-        y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
-        kwargs...)
+        y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)

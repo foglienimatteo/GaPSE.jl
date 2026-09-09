@@ -31,7 +31,7 @@ function integrand_ξ_GNCxLD_Lensing_LocalGP(
     s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
 
 	Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
-	Δχ1 = Δχ1_square > 0.0 ? √(Δχ1_square) : 0.0
+	Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : zero(Δχ1_square)  # throw(AssertionError("Δχ1_square=$Δχ1_square : y=$y , χ1=$χ1 , s2=$s2"))
 
 	common = - 9 * ℋ0^4 * Ω_M0^2 * D_s2 * (1 + ℜ_s2) * s2 * (5 * s_b_s1 - 2) / (4 * a_s2 * s1)
 	factor = D1 * (s1 - χ1) / a1

@@ -20,7 +20,7 @@
 
 function integrand_ξ_LD_Doppler_IntegratedGP(
     IP::Point, P1::Point, P2::Point,
-    y, cosmo::Cosmology)
+    y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1)
 
     s1, D_s1, f_s1, ℋ_s1, ℛ_s1 = P1.comdist, P1.D, P1.f, P1.ℋ, P1.ℛ_LD
     s2, ℛ_s2 = P2.comdist, P2.ℛ_LD
@@ -60,8 +60,7 @@ end
 
 function integrand_ξ_LD_Doppler_IntegratedGP(
     χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
-    y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
-    kwargs...)
+    y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP = Point(χ2, cosmo)

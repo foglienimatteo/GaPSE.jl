@@ -36,7 +36,7 @@ function integrand_ξ_GNCxLD_IntegratedGP_Lensing(
     ℛ_s1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b_s1, 𝑓_evo=𝑓_evo_s1, s_lim=s_lim)
 
 	Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-	Δχ = √(Δχ_square) > 1e-8 ? √(Δχ_square) : 1e-8
+	Δχ = Δχ_square > 0 ? √(Δχ_square) : zero(Δχ_square)  # throw(AssertionError("Δχ_square=$Δχ_square : y=$y , χ1=$χ1 , χ2=$χ2"))
 
 	prefactor = 9 / 2 * ℋ0^4 * Ω_M0^2
 	factor =  - D1 * D2 * χ1 * (χ2 - s2) / (s1 * s2 * a1 * a2)

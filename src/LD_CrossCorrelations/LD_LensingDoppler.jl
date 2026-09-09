@@ -20,7 +20,7 @@
 
 function integrand_ξ_LD_Lensing_Doppler(
     IP::Point, P1::Point, P2::Point,
-    y, cosmo::Cosmology)
+    y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1)
 
     s1 = P1.comdist
     s2, D_s2, f_s2, ℋ_s2, ℛ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
@@ -29,7 +29,7 @@ function integrand_ξ_LD_Lensing_Doppler(
 
 
     Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
-    Δχ1 = Δχ1_square > 0.0 ? √(Δχ1_square) : 0.0
+    Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : zero(Δχ1_square)  # throw(AssertionError("Δχ1_square=$Δχ1_square : y=$y , χ1=$χ1 , s2=$s2"))
 
     common = ℋ0^2 * Ω_M0 * D1 * (χ1 - s1) / (s1 * a1)
     factor = D_s2 * f_s2 * ℋ_s2 * ℛ_s2
@@ -77,11 +77,11 @@ end
 
 function integrand_ξ_LD_Lensing_Doppler(
     χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
-    y, cosmo::Cosmology)
+    y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP = Point(χ1, cosmo)
-    return integrand_ξ_LD_Lensing_Doppler(IP, P1, P2, y, cosmo)
+    return integrand_ξ_LD_Lensing_Doppler(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 

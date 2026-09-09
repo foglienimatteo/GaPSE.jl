@@ -18,6 +18,14 @@
 
 - `test/runtests.jl` gained the `TEST_BASICS`, `TEST_PP_PNG`, `TEST_LD`, `TEST_GNC`, `TEST_GNCxLD_LDxGNC` and `TEST_TWOSPECIES` switches, to run only a subset of the suite while developing. They must all be `true` on the shared branches;
 
+- IMPORTANT CHANGE: `Δχ = 0` is no longer an error. It is the exactly-collinear, coincident-point configuration, which the quadrature reaches deterministically (`μ = ±1` are nodes of both `:lobatto` and `:trap`, and `suit_sampling` places a dense sub-grid right on `χ = s`), so the 21 `throw(AssertionError(...))` are now a fall-through to `zero(Δχ_square)`, with the `throw` kept as a comment next to each site. The three `√(Δχ_square) > 1e-8 ? √(Δχ_square) : 1e-8` clamps were normalised with the rest: `√` was evaluated before the comparison, so a negative argument raised a `DomainError` before the guard could act;
+
+- every χ-integrated integrand now evaluates its analytic `Δχ → 0` limit instead of the `J * I_l^n` sum when `Δχ < Δχ_min`, and `Δχ_min::AbstractFloat=1e-1` was added to the 26 integrands that did not have it. The derivations of the eight families of limits are in the new "The Δχ → 0 limits" page of the manual (`docs/src/DeltaChiLimits.md`), each one obtained by expanding along `χ2 = χ1 + p Δχ` and checked to be independent of `p`;
+
+- corrected the `Δχ → 0` branch of `integrand_ξ_LD_Lensing`, which read `9/4 * 4/15 * (5σ_2 + 6σ_0 χ2^2)` = `3σ_2 + 18/5 χ2^2 σ_0`: its `J` coefficients are algebraically identical to those of `integrand_ξ_GNC_Lensing`, so the limit must be the same, and the `σ_0` coefficient was a factor 3 too large;
+
+- BUG FIX: `Δχ_min` had been added to the *scalar* method of the six `LD` integrands `integrand_ξ_LD_IntegratedGP`, `..._Doppler_IntegratedGP`, `..._Lensing_Doppler`, `..._Lensing_IntegratedGP`, `..._Lensing_LocalGP` and `..._LocalGP_IntegratedGP`, while the body that uses it lives in the `Point` method: every call raised `UndefVarError: Δχ_min not defined`, aborting the whole `LD` half of the test suite. The keyword now sits on the `Point` method, as in the `GNC` and `GNCxLD` families, and the scalar methods forward it through `kwargs...`;
+
 
 ## development branch qls
 

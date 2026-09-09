@@ -277,7 +277,7 @@ This function is used inside `ξ_GNC_Newton_Lensing` with the trapz() from the
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
     will be neglected, the other ones will be taken into account
 
-- `Δχ_min::AbstractFloat = 1e-4` : when ``\\Delta\\chi_2 = \\sqrt{s_1^2 + \\chi_2^2 - 2 \\, s_1 \\chi_2 y} \\to 0^{+}``,
+- `Δχ_min::AbstractFloat = 1e-1` : when ``\\Delta\\chi_2 = \\sqrt{s_1^2 + \\chi_2^2 - 2 \\, s_1 \\chi_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
@@ -526,7 +526,7 @@ This function is computed integrating `integrand_ξ_GNC_Newtonian_Lensing` with 
 - `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
-- `Δχ_min::AbstractFloat = 1e-4` : when ``\\Delta\\chi_2 = \\sqrt{s_1^2 + \\chi_2^2 - 2 \\, s_1 \\chi_2 y} \\to 0^{+}``,
+- `Δχ_min::AbstractFloat = 1e-1` : when ``\\Delta\\chi_2 = \\sqrt{s_1^2 + \\chi_2^2 - 2 \\, s_1 \\chi_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math

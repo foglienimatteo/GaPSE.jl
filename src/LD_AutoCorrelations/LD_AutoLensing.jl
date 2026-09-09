@@ -285,7 +285,7 @@ end
 
 """
     ξ_LD_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-        en::AbstractFloat = 1e6, Δχ_min::AbstractFloat = 1e-3,
+        en::AbstractFloat = 1e6, Δχ_min::AbstractFloat = 1e-4,
         N_χs_2::Int = 100) ::Float64
 
     ξ_LD_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...) ::Float64
