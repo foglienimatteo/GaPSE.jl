@@ -72,7 +72,7 @@ Return the moment of the input Power Spectrum
 
 ```math
 \\sigma_i = \\int_{k_\\mathrm{min}}^{k_\\mathrm{max}}
-    \\frac{\\mathrm{d}q}{2 \\pi^2} \\, q^{2-i} \\, P(q) \; .
+    \\frac{\\mathrm{d}q}{2 \\pi^2} \\, q^{2-i} \\, P(q) \\; .
 ```
 
 `IPSTools` stores only ``\\sigma_0, ..., \\sigma_4``, while the asymptotic limits of
@@ -105,8 +105,8 @@ const ILN = [
 Return the leading small-``s`` behaviour of ``I_\\ell^n``:
 
 ```math
-I_\\ell^n(s) \; \\xrightarrow[s \\rightarrow 0]{} \;
-    \\frac{\\sigma_{n-\\ell}}{(2\\ell+1)!!} \\, s^{\\,\\ell-n} \; .
+I_\\ell^n(s) \\; \\xrightarrow[s \\rightarrow 0]{} \\;
+    \\frac{\\sigma_{n-\\ell}}{(2\\ell+1)!!} \\, s^{\\,\\ell-n} \\; .
 ```
 """
 asymptote(s, l, n) = sigma(n - l) * s^(l - n) / dfact(2 * l + 1)
