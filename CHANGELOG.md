@@ -32,6 +32,10 @@
 
 - BUG FIX: `Δχ_min` had been added to the *scalar* method of the six `LD` integrands `integrand_ξ_LD_IntegratedGP`, `..._Doppler_IntegratedGP`, `..._Lensing_Doppler`, `..._Lensing_IntegratedGP`, `..._Lensing_LocalGP` and `..._LocalGP_IntegratedGP`, while the body that uses it lives in the `Point` method: every call raised `UndefVarError: Δχ_min not defined`, aborting the whole `LD` half of the test suite. The keyword now sits on the `Point` method, as in the `GNC` and `GNCxLD` families, and the scalar methods forward it through `kwargs...`;
 
+- added the new `theory/` directory, meant to collect the Julia scripts (`.jl`) and notebooks (`.ipynb`) - together with the plots and the data they produce - that reproduce the figures of the manual and help investigating the theoretical behaviour of GaPSE. Its first content is `theory/Iln_terms.jl`/`theory/Iln_terms.ipynb`, which plot in log-log scale all the `I_l^n` stored in `IPSTools` (and the regularized `I~_0^4`), each one against its small-`s` asymptote, plus a figure with all of them together. The directory has its own `Project.toml`, so that `Plots` and `PyPlot` are not added to the GaPSE dependencies;
+
+- added the "The I_l^n integrals" page of the manual (`docs/src/IlnIntegrals.md`), which defines the `I_l^n`, proves that `I_l^n(s) -> sigma_{n-l} s^{l-n} / (2l+1)!!` and `I~_0^4(s) -> -sigma_2 / (6 s^2)` for `s -> 0`, and shows the figures produced by `theory/Iln_terms.jl`;
+
 
 ## development branch qls
 
