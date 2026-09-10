@@ -4,9 +4,7 @@ DocTestSetup = quote
 end
 ```
 
-# GNCxLD integrands and multipoles
-
-## Two-Point Cross-Correlation Functions integrands
+## GNCxLD Two-Point Cross-Correlation Functions integrands
 
 ```@docs
 GaPSE.integrand_ξ_GNCxLD_IntegratedGP_Lensing
@@ -26,7 +24,7 @@ GaPSE.integrand_ξ_GNCxLD_Lensing_LocalGP
 ```
 
 
-## Two-Point Cross-Correlation Function multipoles
+## GNCxLD Two-Point Cross-Correlation Function multipoles
 
 ```@docs
 GaPSE.integrand_ξ_GNCxLD_multipole
@@ -35,7 +33,7 @@ GaPSE.map_ξ_GNCxLD_multipole
 GaPSE.print_map_ξ_GNCxLD_multipole
 ```
 
-## Two-Point Cross-Correlation Function Sum multipoles
+## GNCxLD Two-Point Cross-Correlation Function Sum multipoles
 
 ```@docs
 GaPSE.sum_ξ_GNCxLD_multipole

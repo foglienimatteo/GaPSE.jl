@@ -4,10 +4,7 @@ DocTestSetup = quote
 end
 ```
 
-# LDxGNC multipoles
-
-
-## Two-Point Cross-Correlation Function multipoles
+## LDxGNC Two-Point Cross-Correlation Function multipoles
 
 ```@docs
 GaPSE.integrand_ξ_LDxGNC_multipole
@@ -16,7 +13,7 @@ GaPSE.map_ξ_LDxGNC_multipole
 GaPSE.print_map_ξ_LDxGNC_multipole
 ```
 
-## Two-Point Cross-Correlation Function Sum multipoles
+## LDxGNC Two-Point Cross-Correlation Function Sum multipoles
 
 ```@docs
 GaPSE.sum_ξ_LDxGNC_multipole

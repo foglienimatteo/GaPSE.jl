@@ -9,7 +9,11 @@ Documenter.makedocs(
      sitename="GaPSE.jl",
      pages=[
           "Introduction" => "index.md",
-          "The basic structure" => [
+          "Theory" => [
+               "Spline Theory" => "SplineTheory.md",
+               "The Δχ → 0 limits" => "DeltaChiLimits.md",
+          ],
+          "The code basic structures" => [
                "Background Data" => "BackgroundData.md",
                "Cosmology Parameters" => "CosmoParams.md",
                "Cosmology Struct" => "Cosmology.md",
@@ -18,35 +22,44 @@ Documenter.makedocs(
                "Window F" => "WindowF.md",
                "Integrated Window F" => "WindowFIntegrated.md",
           ],
-          "Calculating TPCFs multipoles" => [
-               "GNC" => [
-                    "Auto-correlations" => "GNC_Correlations_1.md",
-                    "Cross-correlations" => "GNC_Correlations_2.md",
-                    "Integrands and multipoles" => "GNC_Correlations_3.md",
-               ],
-               "LD" => [
-                    "Correlations" => "LD_Correlations_1.md",
-                    "Integrands and multipoles" => "LD_Correlations_2.md",
-               ],
-               "GNCxLD" => [
-                    "Cross-correlations" => "GNCxLD_Correlations_1.md",
-                    "Integrands and multipoles" => "GNCxLD_Correlations_2.md",
-               ],
-               "LDxGNC" => [
-                    "Cross-correlations" => "LDxGNC_Correlations_1.md",
-                    "Multipoles" => "LDxGNC_Correlations_2.md",
-               ],
+          "TPCFs multipoles" => [
+               "GNC correlations" => "GNC_Correlations_1-2.md",
+               "GNC integrands and multipoles" => "GNC_Correlations_3.md",
+
+               "LD correlations" => "LD_Correlations_1.md",
+               "LD integrands and multipoles" => "LD_Correlations_2.md",
+
+               "GNCxLD correlations" => "GNCxLD_Correlations_1.md",
+               "GNCxLD integrands and multipoles" => "GNCxLD_Correlations_2.md",
+
+               "LDxGNC correlations" => "LDxGNC_Correlations_1.md",
+               "LDxGNC integrands and multipoles" => "LDxGNC_Correlations_2.md",
+
+               #"GNC" => [
+               #     "Auto-correlations" => "GNC_Correlations_1.md",
+               #     "Cross-correlations" => "GNC_Correlations_2.md",
+               #     "Integrands and multipoles" => "GNC_Correlations_3.md",
+               #],
+               #"LD" => [
+               #     "Correlations" => "LD_Correlations_1.md",
+               #     "Integrands and multipoles" => "LD_Correlations_2.md",
+               #],
+               #"GNCxLD" => [
+               #     "Cross-correlations" => "GNCxLD_Correlations_1.md",
+               #     "Integrands and multipoles" => "GNCxLD_Correlations_2.md",
+               #],
+               #"LDxGNC" => [
+               #     "Cross-correlations" => "LDxGNC_Correlations_1.md",
+               #     "Multipoles" => "LDxGNC_Correlations_2.md",
+               #],
+
+               "The Plain Parralel Approximation" => "PlaneParallelApprox.md",
           ],
-          "Calculating TPCFs with the PP Approximation" => "PlaneParallelApprox.md",
           "Calculating Power Spectra" => "PowerSpectra.md",
           "Power Spectra for a generic window" => "PowerSpectraGenWin.md",
           "implication on PNG" => "PNG.md",
-          "The Δχ → 0 limits" => "DeltaChiLimits.md",
-          "Spline" => [
-               "MySpline" => "Spline.md",
-               "Spline Theory" => "SplineTheory.md"
-          ],
           "Utilities" => [
+               "MySpline" => "Spline.md",
                "Dictionaries and names" => "Dicts.md",
                "Mathematical Utilities" => "MathUtils.md",
                "Cosmology Utilities" => "CosmoUtils.md",

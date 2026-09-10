@@ -3,6 +3,8 @@ DocTestSetup = quote
     using GaPSE
 end
 ```
+
+
 # GaPSE.jl : a Galaxy Power Spectrum Estimator
 
 

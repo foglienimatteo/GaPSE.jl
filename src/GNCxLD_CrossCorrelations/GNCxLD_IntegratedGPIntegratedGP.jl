@@ -481,8 +481,8 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`ξ_GNCxLD_IntegratedGP_IntegratedGP`](@ref)
 """
 function ξ_LDxGNC_IntegratedGP_IntegratedGP(s1, s2, y, cosmo::Cosmology; 
-        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
     
     b1 = isnothing(b1) ? cosmo.params.b1 : b1
     b2 = isnothing(b2) ? cosmo.params.b2 : b2

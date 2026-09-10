@@ -78,8 +78,8 @@ end
 
 
 function integrand_ξ_GNCxLD_Lensing_Doppler(
-    χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat, y, cosmo::Cosmology;
-    kwargs...)
+    χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat, 
+    y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP = Point(χ1, cosmo)
