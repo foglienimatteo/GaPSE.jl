@@ -73,15 +73,18 @@ recomputes them when needed.
 
 ## The small-``s`` behaviour
 
-!!! note Limits of $I_\ell^n$ integrals
-    $$
-        I_\ell^n(s) \; \underset{s \rightarrow 0}{\sim}  \;
-            \frac{\sigma_{n-\ell}}{(2\ell+1)!!} \, s^{\,\ell - n} 
-            \quad \quad (4a)
-        \qquad\qquad
-        \tilde{I}_0^4(s) \; \underset{s \rightarrow 0}{\sim} \; - \frac{\sigma_2}{6 \, s^2}
-        \quad \quad (4b)
-    $$
+```math
+\boxed{
+    I_\ell^n(s) \; \underset{s \rightarrow 0}{\sim}  \;
+        \frac{\sigma_{n-\ell}}{(2\ell+1)!!} \, s^{\,\ell - n} 
+}
+\quad \quad (4a)
+\qquad\qquad
+\boxed{
+    \tilde{I}_0^4(s) \; \underset{s \rightarrow 0}{\sim} \; - \frac{\sigma_2}{6 \, s^2}
+}
+\quad \quad (4b)
+```
 
 **Proof.** 
 
@@ -250,9 +253,22 @@ defined. At small ``s``, the regime this page is about, they keep a constant sig
 absolute value is immaterial there and the asymptote (dashed, black) can be read off
 directly.
 
-```@raw html
-<img src="assets/Iln_terms/all_Iln.png" alt="all the I_l^n" width="100%"/>
+```math
+\boxed{
+    I_\ell^n(s) \; \underset{s \rightarrow 0}{\sim}  \;
+        \frac{\sigma_{n-\ell}}{(2\ell+1)!!} \, s^{\,\ell - n} 
+}
+\quad \quad (4a)
+\qquad\qquad
+\boxed{
+    \tilde{I}_0^4(s) \; \underset{s \rightarrow 0}{\sim} \; - \frac{\sigma_2}{6 \, s^2}
+}
+\quad \quad (4b)
 ```
+
+<img src="assets/Iln_terms/all_Iln.png" alt="all the I_l^n" width="100%"/>
+
+
 
 The three regimes are visible at a glance: the curves that flatten out
 (``\ell = n``), the ones that fall off as a power law (``\ell > n``) and the ones that
@@ -260,13 +276,13 @@ blow up (``\ell < n``).
 
 ### One by one
 
-| | |
-|:-:|:-:|
-| ![I00](assets/Iln_terms/I00.png) | ![I20](assets/Iln_terms/I20.png) |
-| ![I40](assets/Iln_terms/I40.png) | ![I02](assets/Iln_terms/I02.png) |
-| ![I22](assets/Iln_terms/I22.png) | ![I31](assets/Iln_terms/I31.png) |
-| ![I13](assets/Iln_terms/I13.png) | ![I11](assets/Iln_terms/I11.png) |
-| ![I04_tilde](assets/Iln_terms/I04_tilde.png) | |
+|                                              |                                  |
+| :------------------------------------------: | :------------------------------: |
+|       ![I00](assets/Iln_terms/I00.png)       | ![I20](assets/Iln_terms/I20.png) |
+|       ![I40](assets/Iln_terms/I40.png)       | ![I02](assets/Iln_terms/I02.png) |
+|       ![I22](assets/Iln_terms/I22.png)       | ![I31](assets/Iln_terms/I31.png) |
+|       ![I13](assets/Iln_terms/I13.png)       | ![I11](assets/Iln_terms/I11.png) |
+| ![I04_tilde](assets/Iln_terms/I04_tilde.png) |                                  |
 
 ## Reproducing the figures
 
