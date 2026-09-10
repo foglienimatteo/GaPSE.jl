@@ -22,7 +22,7 @@ function integrand_ξ_LD_Lensing(
     IP1::Point, IP2::Point,
     P1::Point, P2::Point,
     y, cosmo::Cosmology;
-    Δχ_min::Float64 = 1e-4)
+    Δχ_min::AbstractFloat = 1e-4)
 
     s1 = P1.comdist
     s2 = P2.comdist
@@ -71,10 +71,9 @@ function integrand_ξ_LD_Lensing(
 end
 
 function integrand_ξ_LD_Lensing(
-    χ1::Float64, χ2::Float64,
-    s1::Float64, s2::Float64,
-    y, cosmo::Cosmology;
-    kwargs...)
+    χ1::AbstractFloat, χ2::AbstractFloat,
+    s1::AbstractFloat, s2::AbstractFloat,
+    y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
@@ -87,11 +86,11 @@ end
         IP1::Point, IP2::Point,
         P1::Point, P2::Point,
         y, cosmo::Cosmology;
-        Δχ_min::Float64 = 1e-4) ::Float64
+        Δχ_min::AbstractFloat = 1e-4) ::Float64
 
     integrand_ξ_LD_Lensing(
-        χ1::Float64, χ2::Float64,
-        s1::Float64, s2::Float64,
+        χ1::AbstractFloat, χ2::AbstractFloat,
+        s1::AbstractFloat, s2::AbstractFloat,
         y, cosmo::Cosmology; kwargs...) ::Float64
 
 Return the integrand of the Two-Point Correlation Function (TPCF) of the Lensing 
@@ -227,7 +226,7 @@ This function is used inside `ξ_LD_Lensing` with trapz() from the
 
 ## Keyword arguments
 
-- `Δχ_min::Float64 = 1e-4` : when ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
+- `Δχ_min::AbstractFloat = 1e-4` : when ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
@@ -253,7 +252,7 @@ integrand_ξ_LD_Lensing
 
 
 function ξ_LD_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::Float64 = 1e6, N_χs_2::Int = 100, Δχ_min::Float64 = 1e-4)
+    en::AbstractFloat=1e6, N_χs_2::Int=100, kwargs...)
 
     χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
     χ2s = P2.comdist .* range(1e-6, 1.0, length = N_χs_2 + 7)
@@ -262,7 +261,7 @@ function ξ_LD_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
     IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
     int_ξ_Lensings = [
-        en * GaPSE.integrand_ξ_LD_Lensing(IP1, IP2, P1, P2, y, cosmo; Δχ_min = Δχ_min)
+        en * GaPSE.integrand_ξ_LD_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
         for IP1 in IP1s, IP2 in IP2s
     ]
 
@@ -281,7 +280,7 @@ end
 
 """
     ξ_LD_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-        en::Float64 = 1e6, Δχ_min::Float64 = 1e-3,
+        en::AbstractFloat = 1e6, Δχ_min::AbstractFloat = 1e-3,
         N_χs_2::Int = 100) ::Float64
 
     ξ_LD_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...) ::Float64
@@ -419,14 +418,14 @@ This function is computed integrating `integrand_ξ_LD_Lensing` with trapz() fro
 
 ## Keyword arguments
 
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
+- `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
 - `N_χs_2::Int = 100`: number of points to be used for sampling the integral
   along the ranges `(0, s1)` (for `χ1`) and `(0, s2)` (for `χ2`); it has been checked that
   with `N_χs_2 ≥ 50` the result is stable.
 
-- `Δχ_min::Float64 = 1e-4` : when ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
+- `Δχ_min::AbstractFloat = 1e-4` : when ``\\Delta\\chi = \\sqrt{\\chi_1^2 + \\chi_2^2 - 2 \\, \\chi_1 \\chi_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math

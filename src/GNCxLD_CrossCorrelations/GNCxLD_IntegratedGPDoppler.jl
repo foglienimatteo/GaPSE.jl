@@ -19,37 +19,37 @@
 
 
 function integrand_ξ_GNCxLD_IntegratedGP_Doppler(
-	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
-	s1 = P1.comdist
-	s2, D_s2, f_s2, ℋ_s2, ℜ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
-	χ1, D1, a1, f1, ℋ1 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
+    s1 = P1.comdist
+    s2, D_s2, f_s2, ℋ_s2, ℜ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
+    χ1, D1, a1, f1, ℋ1 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
 
-	Ω_M0 = cosmo.params.Ω_M0
+    Ω_M0 = cosmo.params.Ω_M0
     s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
     𝑓_evo_s1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
 
     s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
     ℛ_s1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b_s1, 𝑓_evo=𝑓_evo_s1, s_lim=s_lim)
 
-	Δχ1_square = s2^2 + χ1^2 - 2 * s2 * χ1 * y
-	Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0.0
+    Δχ1_square = s2^2 + χ1^2 - 2 * s2 * χ1 * y
+    Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0.0
 
-	common = 3 * ℋ_s2 * f_s2 * D_s2 * ℋ0^2 * Ω_M0 * ℜ_s2
+    common = 3 * ℋ_s2 * f_s2 * D_s2 * ℋ0^2 * Ω_M0 * ℜ_s2
 
-	new_J31 = Δχ1^2 * D1 * (s2 - χ1 * y) / (a1 * s1) * (s1 * ℛ_s1 * ℋ1 * (f1 - 1) - 5 * s_b_s1 + 2)
-	I13 = cosmo.tools.I13(Δχ1)
+    new_J31 = Δχ1^2 * D1 * (s2 - χ1 * y) / (a1 * s1) * (s1 * ℛ_s1 * ℋ1 * (f1 - 1) - 5 * s_b_s1 + 2)
+    I13 = cosmo.tools.I13(Δχ1)
 
-	res = common * new_J31 * I13
+    res = common * new_J31 * I13
 
-	return res
+    return res
 end
 
 
 function integrand_ξ_GNCxLD_IntegratedGP_Doppler(
-    χ1::Float64, s1::Float64, s2::Float64,
+    χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
     y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
@@ -61,12 +61,12 @@ end
 
 """
     integrand_ξ_GNCxLD_IntegratedGP_Doppler(
-    	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+    	  IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
     integrand_ξ_GNCxLD_IntegratedGP_Doppler(
-        χ1::Float64, s1::Float64, s2::Float64,
+        χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
         y, cosmo::Cosmology; kwargs... ) ::Float64
 
 Return the integrand of the Two-Point Correlation Function (TPCF) given by the cross correlation 
@@ -222,7 +222,7 @@ integrand_ξ_GNCxLD_IntegratedGP_Doppler
 
 """
     ξ_GNCxLD_IntegratedGP_Doppler(s1, s2, y, cosmo::Cosmology;
-        en::Float64 = 1e6, N_χs::Int = 100, 
+        en::AbstractFloat = 1e6, N_χs::Int = 100, 
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
@@ -363,7 +363,7 @@ the integrand function `integrand_ξ_GNCxLD_IntegratedGP_Doppler`.
   ```
   If `nothing`, the fault value stored in `cosmo` will be considered.
 
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
+- `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
 - `N_χs::Int = 100`: number of points to be used for sampling the integral
@@ -374,7 +374,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNCxLD_multipole`](@ref),
 [`map_ξ_GNCxLD_multipole`](@ref), [`print_map_ξ_GNCxLD_multipole`](@ref)
 """
 function ξ_GNCxLD_IntegratedGP_Doppler(s1, s2, y, cosmo::Cosmology;
-    en::Float64 = 1e6, N_χs::Int = 100, kwargs...)
+    en::AbstractFloat = 1e6, N_χs::Int = 100, kwargs...)
 
     χ1s = s1 .* range(1e-6, 1.0, length = N_χs)
 

@@ -38,7 +38,7 @@ function integrand_ξ_GNC_LocalGP_IntegratedGP(
     ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
+    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : throw(AssertionError("Δχ2_square=$Δχ2_square : y=$y , s1=$s1 , χ2=$χ2"))
 
     factor = 3 * ℋ0^2 * Ω_M0 * D2 * (s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2) / (2 * s2 * a2)
     parenth = 2 * f_s1 * ℋ_s1^2 * a_s1 * (𝑓_evo_s1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f_s1 + ℛ_s1 + 5 * s_b_s1 - 2)
@@ -67,7 +67,7 @@ end
 
 
 function integrand_ξ_GNC_LocalGP_IntegratedGP(
-    χ2::Float64, s1::Float64, s2::Float64,
+    χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
     y, cosmo::Cosmology;
     kwargs...)
 
@@ -86,7 +86,7 @@ end
         ) ::Float64
 
     integrand_ξ_GNC_LocalGP_IntegratedGP(
-        χ2::Float64, s1::Float64, s2::Float64,
+        χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
         y, cosmo::Cosmology;
         kwargs... )::Float64
 
@@ -274,7 +274,7 @@ integrand_ξ_GNC_LocalGP_IntegratedGP
 """
     ξ_GNC_LocalGP_IntegratedGP(
         s1, s2, y, cosmo::Cosmology;
-        en::Float64=1e6, N_χs::Int=100, 
+        en::AbstractFloat=1e6, N_χs::Int=100, 
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
         obs::Union{Bool,Symbol}=:noobsvel,
@@ -447,7 +447,7 @@ This function is computed from `integrand_ξ_GNC_LocalGP_IntegratedGP` with trap
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
     will be neglected, the other ones will be taken into account
 
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
+- `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
 - `N_χs::Int = 100`: number of points to be used for sampling the integral
@@ -460,21 +460,36 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`integrand_ξ_GNC_LocalGP_IntegratedGP`](@ref)
 """
 function ξ_GNC_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-    en::Float64=1e6, N_χs::Int=100, suit_sampling::Bool=true, kwargs...)
+    en::AbstractFloat=1e6, N_χs::Int=100, devcosmo=false, suit_sampling::Bool=true, kwargs...)
 
     χ2s = s2 .* range(1e-6, 1, length=N_χs)
-
     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-    IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-    int_ξs = [
-        en * GaPSE.integrand_ξ_GNC_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
-        for IP in IPs
-    ]
+    if devcosmo ∈ [false, "false", nothing]
+      
+        IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-    res = trapz(χ2s, int_ξs)
-    #println("res = $res")
-    return res / en
+        int_ξs = [
+            GaPSE.integrand_ξ_GNC_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
+            for IP in IPs
+        ]
+
+        res = trapz(χ2s, int_ξs)
+        #println("res = $res")
+        return res
+
+    else
+        backend = KernelAbstractions.get_backend(devcosmo.z_of_s.xs)
+        int_ξs = KernelAbstractions.zeros(backend, Float64, N_χs)
+
+        kernel! = kernel_1d_P2!(backend)
+        kernel!(int_ξs, GaPSE.integrand_ξ_GNC_LocalGP_IntegratedGP, P1, P2, y, cosmo, N_χs, kwargs...; ndrange=size(int_ξs))
+        KernelAbstractions.synchronize(backend)
+
+        res = trapz(χ2s, int_ξs)
+        return res
+        
+    end
 end
 
 
@@ -490,7 +505,7 @@ end
 
 """
     ξ_GNC_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology; 
-        en::Float64=1e6, N_χs::Int=100, 
+        en::AbstractFloat=1e6, N_χs::Int=100, 
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
         obs::Union{Bool,Symbol}=:noobsvel,

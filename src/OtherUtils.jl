@@ -104,7 +104,7 @@ end
 """
     my_println_vec(io::IO, vec::Vector{T}, name::String; N::Int=5) where {T}
     my_println_vec(vec::Vector{T}, name::String; N::Int=5) where {T}
-        my_println_vec(stdout, vec, name; N=N)
+    my_println_vec(stdout, vec, name; N=N)
 
 Print the input `vec::Vector{T}` as follows:
 ```julia
@@ -602,7 +602,7 @@ readxchoosey
 
 """
     sample_subdivision_begin(x_min, x_stop, x_end; 
-        frac_begin::Float64 = 0.5, N::Int = 100, ass::Bool = true)
+        frac_begin::AbstractFloat = 0.5, N::Int = 100, ass::Bool = true)
 
 Return a vector of `N+2` points inside the interval `x_min ≤ x ≤ x_max` linearly distributed
 with two different sampling:
@@ -612,7 +612,7 @@ with two different sampling:
 `frac_begin` is then the fraction of the `N` points that is inside the LEFT INTERVAL.
 If `ass::Bool` is set to `false` the assert checks on the input data will not be performed. 
 """
-function sample_subdivision_begin(x_min, x_stop, x_max; frac_begin::Float64=0.5, N::Int=100, ass::Bool=true)
+function sample_subdivision_begin(x_min, x_stop, x_max; frac_begin::AbstractFloat=0.5, N::Int=100, ass::Bool=true)
     if ass == true
         @assert 0.0 < frac_begin < 1.0 "frac_begin must be in 0.0 < frac_begin < 1.0, frac_begin = $frac_begin is not valid!"
         @assert x_min < x_stop "x_min < x_stop must hold, x_min = $x_min and x_stop = $x_stop do not!"
@@ -631,7 +631,7 @@ end
 
 """
     sample_subdivision_middle(x_min, x_start, x_stop, x_max; 
-        frac_middle::Float64 = 0.5, rel_frac_begin::Union{Float64, Nothing} = nothing, 
+        frac_middle::AbstractFloat = 0.5, rel_frac_begin::Union{Float64, Nothing} = nothing, 
         N::Int = 100, ass::Bool = true)
 
 Return a vector of `N+3` points inside the interval `x_min ≤ x ≤ x_max` linearly distributed
@@ -654,7 +654,7 @@ If `rel_frac_begin` is instead a float inside the interval `0.0 < rel_frac_begin
 If `ass::Bool` is set to `false` the assert checks on the input data will not be performed. 
 """
 function sample_subdivision_middle(x_min, x_start, x_stop, x_max;
-    frac_middle::Float64=0.5, rel_frac_begin::Union{Float64,Nothing}=nothing,
+    frac_middle::AbstractFloat=0.5, rel_frac_begin::Union{Float64,Nothing}=nothing,
     N::Int=100, ass::Bool=true)
 
     if ass == true

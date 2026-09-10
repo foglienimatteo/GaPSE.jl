@@ -35,7 +35,7 @@ function integrand_ξ_GNCxLD_IntegratedGP_LocalGP(
     ℛ_s1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b_s1, 𝑓_evo=𝑓_evo_s1, s_lim=s_lim)
 
     Δχ1_square = s2^2 + χ1^2 - 2 * s2 * χ1 * y
-    Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0
+    Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : throw(AssertionError("Δχ1_square=$Δχ1_square : y=$y , s2=$s2 , χ1=$χ1"))
 
     factor = - 9 / 2 * D_s2 * Δχ1^4 * ℋ0^4 * Ω_M0^2 * D1 * (1 + ℜ_s2) / (s1 * a1 * a_s2)
     parenth = (s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2) 
@@ -47,7 +47,7 @@ end
 
 
 function integrand_ξ_GNCxLD_IntegratedGP_LocalGP(
-    χ1::Float64, s1::Float64, s2::Float64,
+    χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
     y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
@@ -65,7 +65,7 @@ end
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
     integrand_ξ_GNCxLD_IntegratedGP_LocalGP(
-        χ1::Float64, s1::Float64, s2::Float64,
+        χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
         y, cosmo::Cosmology; kwargs... ) ::Float64
 
 Return the integrand of the Two-Point Correlation Function (TPCF) given by the cross correlation 
@@ -223,7 +223,7 @@ integrand_ξ_GNCxLD_IntegratedGP_LocalGP
         s1, s2, y, cosmo::Cosmology;
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     	  𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
-        en::Float64 = 1e6, N_χs::Int = 100 ) ::Float64
+        en::AbstractFloat = 1e6, N_χs::Int = 100 ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation 
 between the Integrated Gravitational Potential (GP) effect arising from the 
@@ -360,7 +360,7 @@ the integrand function `integrand_ξ_GNCxLD_IntegratedGP_LocalGP`.
   ```
   If `nothing`, the fault value stored in `cosmo` will be considered.
 
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
+- `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
 - `N_χs::Int = 100`: number of points to be used for sampling the integral
@@ -371,7 +371,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNCxLD_multipole`](@ref),
 [`map_ξ_GNCxLD_multipole`](@ref), [`print_map_ξ_GNCxLD_multipole`](@ref)
 """
 function ξ_GNCxLD_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology;
-    en::Float64 = 1e6, N_χs::Int = 100, kwargs...)
+    en::AbstractFloat = 1e6, N_χs::Int = 100, kwargs...)
 
     χ1s = s1 .* range(1e-6, 1.0, length = N_χs)
 

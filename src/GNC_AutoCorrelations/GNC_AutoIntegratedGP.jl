@@ -39,7 +39,7 @@ function integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
     ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-    Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
+    Δχ = Δχ_square > 0 ? √(Δχ_square) : throw(AssertionError("Δχ_square=$Δχ_square : y=$y, χ1=$χ1, χ2=$χ2"))
 
     factor = 9 * Δχ^4 * ℋ0^4 * Ω_M0^2 * D1 * D2 / (s1 * s2 * a1 * a2)
     parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2
@@ -51,8 +51,8 @@ function integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
 end
 
 function integrand_ξ_GNC_IntegratedGP(
-    χ1::Float64, χ2::Float64,
-    s1::Float64, s2::Float64,
+    χ1::AbstractFloat, χ2::AbstractFloat,
+    s1::AbstractFloat, s2::AbstractFloat,
     y, cosmo::Cosmology;
     kwargs...)
 
@@ -74,8 +74,8 @@ end
         ) ::Float64
 
     integrand_ξ_GNC_IntegratedGP(
-        χ1::Float64, χ2::Float64,
-        s1::Float64, s2::Float64,
+        χ1::AbstractFloat, χ2::AbstractFloat,
+        s1::AbstractFloat, s2::AbstractFloat,
         y, cosmo::Cosmology;
         kwargs...) ::Float64
 
@@ -240,7 +240,7 @@ integrand_ξ_GNC_IntegratedGP
 
 
 function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::Float64=1e10, N_χs_2::Int=100, suit_sampling::Bool=true, kwargs...)
+    en::AbstractFloat=1e10, N_χs_2::Int=100, suit_sampling::Bool=true, devcosmo=false, kwargs...)
 
     #adim_χs = range(1e-12, 1, N_χs)
     #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
@@ -248,16 +248,32 @@ function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
     χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
     χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
 
-    IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-    IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
+    if devcosmo ∈ [false, "false", nothing]
+        
+        IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+        IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-    int_ξ_igp = [
-      en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
-      for IP1 in IP1s, IP2 in IP2s
-    ]
+        int_ξs = [
+            GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+            for IP1 in IP1s, IP2 in IP2s
+        ]
 
-    res = trapz((χ1s, χ2s), int_ξ_igp)
-    #println("res = $res")
+        res = trapz((χ1s, χ2s), reshape(int_ξs, N_χs_2, N_χs_2))
+		    return res
+		
+    else
+        backend = KernelAbstractions.get_backend(devcosmo.z_of_s.xs)
+        int_ξs = KernelAbstractions.zeros(backend, Float64, N_χs_2, N_χs_2)
+
+        kernel! = kernel_2d!(backend)
+        kernel!(int_ξs, GaPSE.integrand_ξ_GNC_IntegratedGP, P1, P2, y, cosmo, N_χs_2, kwargs...; ndrange=size(int_ξs))
+        KernelAbstractions.synchronize(backend)
+
+        res = trapz((χ1s, χ2s), reshape(int_ξs, N_χs_2, N_χs_2))
+		    return res
+
+    end
+
 
     #=
     χ1s = [x for x in range(0, P1.comdist, length = N_χs)[begin+1:end]]
@@ -278,7 +294,6 @@ function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
     vec_trapz = [trapz(χ2s,int_ξs) for (χ2s,int_ξs) in zip(matrix_χ2s, matrix_int_ξs)]
     res = trapz(χ1s, vec_trapz)
     =#
-    return res / en
 end
 
 
@@ -292,7 +307,7 @@ end
 """
     ξ_GNC_IntegratedGP(
         P1::Point, P2::Point, y, cosmo::Cosmology;
-        en::Float64=1e10, N_χs_2::Int=100, 
+        en::AbstractFloat=1e10, N_χs_2::Int=100, 
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
         obs::Union{Bool,Symbol}=:noobsvel,
@@ -440,7 +455,7 @@ This function is computed integrating `integrand_ξ_GNC_IntegratedGP` with trapz
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
     will be neglected, the other ones will be taken into account
 
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
+- `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
 - `N_χs_2::Int = 100`: number of points to be used for sampling the integral

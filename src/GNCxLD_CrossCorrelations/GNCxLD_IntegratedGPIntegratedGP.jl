@@ -49,7 +49,7 @@ end
 
 
 function integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(
-    χ1::Float64, χ2::Float64, s1::Float64, s2::Float64, y, cosmo::Cosmology;
+    χ1::AbstractFloat, χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat, y, cosmo::Cosmology;
     kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
@@ -65,7 +65,7 @@ end
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
     integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(
-        χ1::Float64, χ2::Float64, s1::Float64, s2::Float64, 
+        χ1::AbstractFloat, χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat, 
         y, cosmo::Cosmology; kwargs... ) ::Float64
 
 Return the integrand of the Two-Point Correlation Function (TPCF) given by the cross correlation 
@@ -224,7 +224,7 @@ integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP
 
 
 function ξ_GNCxLD_IntegratedGP_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::Float64 = 1e10, N_χs_2::Int = 100, kwargs...)
+    en::AbstractFloat = 1e10, N_χs_2::Int = 100, kwargs...)
 
     χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
     χ2s = P2.comdist .* range(1e-6, 1.0, length = N_χs_2 + 7)
@@ -273,7 +273,7 @@ end
 """
     ξ_GNCxLD_IntegratedGP_IntegratedGP(
         P1::Point, P2::Point, y, cosmo::Cosmology; 
-        en::Float64 = 1e10, N_χs::Int = 100,
+        en::AbstractFloat = 1e10, N_χs::Int = 100,
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
@@ -424,7 +424,7 @@ the integrand function `integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP`.
   ```
   If `nothing`, the fault value stored in `cosmo` will be considered.
 
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
+- `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
 - `N_χs_2::Int = 100`: number of points to be used for sampling the integral
@@ -479,8 +479,8 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`ξ_GNCxLD_IntegratedGP_IntegratedGP`](@ref)
 """
 function ξ_LDxGNC_IntegratedGP_IntegratedGP(s1, s2, y, cosmo::Cosmology; 
-        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
     
     b1 = isnothing(b1) ? cosmo.params.b1 : b1
     b2 = isnothing(b2) ? cosmo.params.b2 : b2

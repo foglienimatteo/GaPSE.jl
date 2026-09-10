@@ -23,7 +23,7 @@ function integrand_ξ_GNC_Lensing_Doppler(
     IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel,
-    Δχ_min::Float64=1e-1)
+    Δχ_min::AbstractFloat=1e-1)
 
 
     s1 = P1.comdist
@@ -39,7 +39,7 @@ function integrand_ξ_GNC_Lensing_Doppler(
     ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
     Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
-    Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0
+    Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : throw(AssertionError("Δχ1_square=$Δχ1_square : y=$y , χ1=$χ1 , s2=$s2"))
 
     common = ℋ0^2 * Ω_M0 * D1 * (χ1 - s1) * (5 * s_b_s1 - 2) / (s1 * a1)
     factor = D_s2 * f_s2 * ℋ_s2 * ℛ_s2
@@ -95,7 +95,7 @@ end
 
 
 function integrand_ξ_GNC_Lensing_Doppler(
-    χ1::Float64, s1::Float64, s2::Float64,
+    χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
     y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
@@ -106,13 +106,13 @@ end
 """
     integrand_ξ_GNC_Lensing_Doppler(
         IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
-        Δχ_min::Float64=1e-1, b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+        Δχ_min::AbstractFloat=1e-1, b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
         obs::Union{Bool,Symbol}=:noobsvel
         ) ::Float64
 
     integrand_ξ_GNC_Lensing_Doppler(
-        χ1::Float64, s1::Float64, s2::Float64,
+        χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
         y, cosmo::Cosmology;
         kwargs... )::Float64
 
@@ -301,7 +301,7 @@ This function is used inside `ξ_GNC_Lensing_Doppler` with trapz() from the
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
     will be neglected, the other ones will be taken into account
 
-- `Δχ_min::Float64 = 1e-1` : when ``\\Delta\\chi_1 = \\sqrt{\\chi_1^2 + s_2^2 - 2 \\, \\chi_1 s_2 y} \\to 0^{+}``,
+- `Δχ_min::AbstractFloat = 1e-1` : when ``\\Delta\\chi_1 = \\sqrt{\\chi_1^2 + s_2^2 - 2 \\, \\chi_1 s_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
@@ -334,8 +334,8 @@ integrand_ξ_GNC_Lensing_Doppler
 """
     ξ_GNC_Lensing_Doppler(
         s1, s2, y, cosmo::Cosmology;
-        en::Float64=1e6, N_χs::Int=100, 
-        Δχ_min::Float64=1e-1,
+        en::AbstractFloat=1e6, N_χs::Int=100, 
+        Δχ_min::AbstractFloat=1e-1,
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
         obs::Union{Bool,Symbol}=:noobsvel,
@@ -525,7 +525,7 @@ This function is computed from `integrand_ξ_GNC_Lensing_Doppler` with trapz() f
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
     will be neglected, the other ones will be taken into account
 
-- `Δχ_min::Float64 = 1e-1` : when ``\\Delta\\chi_1 = \\sqrt{\\chi_1^2 + s_2^2 - 2 \\, \\chi_1 s_2 y} \\to 0^{+}``,
+- `Δχ_min::AbstractFloat = 1e-1` : when ``\\Delta\\chi_1 = \\sqrt{\\chi_1^2 + s_2^2 - 2 \\, \\chi_1 s_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
@@ -542,7 +542,7 @@ This function is computed from `integrand_ξ_GNC_Lensing_Doppler` with trapz() f
   as the result of the parenthesis instead of calculating it in the normal way; it prevents
   computational divergences.
 
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
+- `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
 - `N_χs::Int = 100`: number of points to be used for sampling the integral
@@ -560,21 +560,36 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`integrand_ξ_GNC_Lensing_Doppler`](@ref)
 """
 function ξ_GNC_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
-    en::Float64=1e6, N_χs::Int=100, suit_sampling::Bool=true, kwargs...)
+    en::AbstractFloat=1e6, N_χs::Int=100, devcosmo=false, suit_sampling::Bool=true, kwargs...)
 
     χ1s = s1 .* range(1e-6, 1, length=N_χs)
-
     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-    IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
-    int_ξs = [
-        en * GaPSE.integrand_ξ_GNC_Lensing_Doppler(IP, P1, P2, y, cosmo; kwargs...)
-        for IP in IPs
-    ]
+    if devcosmo ∈ [false, "false", nothing]
 
-    res = trapz(χ1s, int_ξs)
-    #println("res = $res")
-    return res / en
+        IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
+
+        int_ξs = [
+            GaPSE.integrand_ξ_GNC_Lensing_Doppler(IP, P1, P2, y, cosmo; kwargs...)
+            for IP in IPs
+        ]
+
+        res = trapz(χ1s, int_ξs)
+        #println("res = $res")
+        return res
+
+    else
+        backend = KernelAbstractions.get_backend(devcosmo.z_of_s.xs)
+        int_ξs = KernelAbstractions.zeros(backend, Float64, N_χs)
+
+        kernel! = kernel_1d_P1!(backend)
+        kernel!(int_ξs, GaPSE.integrand_ξ_GNC_Lensing_Doppler, P1, P2, y, cosmo, N_χs, kwargs...; ndrange=size(int_ξs))
+        KernelAbstractions.synchronize(backend)
+
+        res = trapz(χ1s, int_ξs)
+        return res
+        
+    end
 end
 
 
@@ -592,7 +607,7 @@ end
 
 """
     ξ_GNC_Doppler_Lensing(s1, s2, y, cosmo::Cosmology;
-        en::Float64=1e6, N_χs::Int=100, Δχ_min::Float64=1e-1,
+        en::AbstractFloat=1e6, N_χs::Int=100, Δχ_min::AbstractFloat=1e-1,
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
         obs::Union{Bool,Symbol}=:noobsvel,

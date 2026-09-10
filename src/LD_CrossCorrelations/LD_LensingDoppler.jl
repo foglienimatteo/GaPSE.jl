@@ -73,7 +73,7 @@ end
 
 
 function integrand_ξ_LD_Lensing_Doppler(
-    χ1::Float64, s1::Float64, s2::Float64,
+    χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
     y, cosmo::Cosmology)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
@@ -90,7 +90,7 @@ end
         y, cosmo::Cosmology ) ::Float64
 
     integrand_ξ_LD_Lensing_Doppler(
-        χ1::Float64, s1::Float64, s2::Float64,
+        χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
         y, cosmo::Cosmology ) ::Float64
 
 
@@ -239,7 +239,7 @@ integrand_ξ_LD_Lensing_Doppler
 """
     ξ_LD_Lensing_Doppler(
         s1, s2, y, cosmo::Cosmology;
-        en::Float64 = 1e6, N_χs::Int = 100 ) ::Float64
+        en::AbstractFloat = 1e6, N_χs::Int = 100 ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Lensing and the Doppler effects arising from the Luminosity Distance (LD) perturbations.
@@ -374,7 +374,7 @@ This function is computed integrating `integrand_ξ_LD_Lensing_Doppler` with tra
 
 ## Keyword Arguments
 
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
+- `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
 - `N_χs::Int = 100`: number of points to be used for sampling the integral
@@ -385,7 +385,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_LD_multipole`](@ref),
 [`map_ξ_LD_multipole`](@ref), [`print_map_ξ_LD_multipole`](@ref)
 """
 function ξ_LD_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
-    en::Float64=1e6, N_χs::Int=100)
+    en::AbstractFloat=1e6, N_χs::Int=100, kwargs...)
 
     adim_χs = range(1e-6, 1.0, N_χs)
     χ1s = adim_χs .* s1
@@ -394,7 +394,7 @@ function ξ_LD_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
     IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
     int_ξs = [
-        en * GaPSE.integrand_ξ_LD_Lensing_Doppler(IP, P1, P2, y, cosmo)
+        en * GaPSE.integrand_ξ_LD_Lensing_Doppler(IP, P1, P2, y, cosmo; kwargs...)
         for IP in IPs
     ]
 

@@ -21,13 +21,16 @@ module GaPSE
 
 
 using TwoFAST # Licence: MIT "Expat" (o GPL ?)
+include("FFTLog.jl")
+using .FFTLog
+
 using FFTW
 using Base: @kwdef
 using SpecialFunctions: gamma
 import Base: *
 
-include("FFTLog.jl")
-using .FFTLog
+#include("TwoFAST.jl/src/TwoFAST.jl")
+#using .TwoFAST
 
 using Dierckx # Licence: BSD
 using HCubature, QuadGK, WignerSymbols # Licence: MIT "Expat"
@@ -37,6 +40,12 @@ using GridInterpolations  # Licence: MIT "Expat"
 using ProgressMeter, Printf  # Licence: MIT "Expat"
 
 using Test, Documenter, DelimitedFiles  # Licence: MIT "Expat"
+
+using KernelAbstractions, Adapt
+#onlycpu = true
+
+
+
 
 
 const BRAND_simple = """
@@ -67,8 +76,12 @@ const NAMES_BACKGROUND = ["z", "proper time [Gyr]", "conf. time [Mpc]", "H [1/Mp
 const VALID_GROUPS = ["LD", "GNC", "GNCxLD", "LDxGNC", "generic"] # DO NOT MODIFY!
 const LENGTH_VALID_GROUPS = [18, 27, 22, 22, nothing]
 
+const DevFloat = Float32
+
 const HUBBLE_0 = 1e5 / 299792458.0
 
+include("Spline.jl")
+include("Kernels.jl")
 include("OtherUtils.jl")
 include("MathUtils.jl")
 #include("FFTLog.jl")
@@ -81,6 +94,7 @@ include("CosmoUtils.jl")
 include("IPSTools.jl")
 include("XiMatter.jl")
 include("Cosmology.jl")
+include("./DevCosmo.jl")
 include("PPXiGalaxies.jl")
 include("PNG.jl")
 

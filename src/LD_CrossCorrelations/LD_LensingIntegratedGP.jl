@@ -49,10 +49,9 @@ end
 
 
 function integrand_ξ_LD_Lensing_IntegratedGP(
-        χ1::Float64, χ2::Float64,
-        s1::Float64, s2::Float64,
-        y, cosmo::Cosmology;
-        kwargs...)
+        χ1::AbstractFloat, χ2::AbstractFloat,
+        s1::AbstractFloat, s2::AbstractFloat,
+        y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
@@ -67,8 +66,8 @@ end
         y, cosmo::Cosmology ) ::Float64
 
     integrand_ξ_LD_Lensing_IntegratedGP(
-        χ1::Float64, χ2::Float64,
-        s1::Float64, s2::Float64,
+        χ1::AbstractFloat, χ2::AbstractFloat,
+        s1::AbstractFloat, s2::AbstractFloat,
         y, cosmo::Cosmology;
         kwargs... ) ::Float64
 
@@ -196,7 +195,7 @@ integrand_ξ_LD_Lensing_IntegratedGP
 
 
 function ξ_LD_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::Float64 = 1e6, N_χs_2::Int = 100)
+    en::AbstractFloat = 1e6, N_χs_2::Int = 100, kwargs...)
 
     χ1s = P1.comdist .* range(1.1e-4, 1.0, length = N_χs_2)
     χ2s = P2.comdist .* range(1.1e-4, 1.0, length = N_χs_2 + 7)
@@ -205,7 +204,7 @@ function ξ_LD_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
     IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
     int_ξs = [
-        en * GaPSE.integrand_ξ_LD_Lensing_IntegratedGP(IP1, IP2, P1, P2, y, cosmo)
+        en * GaPSE.integrand_ξ_LD_Lensing_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
         for IP1 in IP1s, IP2 in IP2s
     ]
 
@@ -225,7 +224,7 @@ end
 """
     ξ_LD_Lensing_IntegratedGP(
         P1::Point, P2::Point, y, cosmo::Cosmology;
-        en::Float64 = 1e6, N_χs_2::Int = 100 ) ::Float64
+        en::AbstractFloat = 1e6, N_χs_2::Int = 100 ) ::Float64
     
     ξ_LD_Lensing_IntegratedGP(
         s1, s2, y, cosmo::Cosmology; kwargs... ) ::Float64
@@ -344,7 +343,7 @@ This function is computed integrating `integrand_ξ_LD_Lensing_IntegratedGP` wit
 
 ## Keyword Arguments
 
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
+- `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
 - `N_χs_2::Int = 100`: number of points to be used for sampling the integral
