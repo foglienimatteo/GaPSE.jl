@@ -58,8 +58,7 @@ end
 
 function integrand_ξ_LD_Doppler_IntegratedGP(
     χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
-    y, cosmo::Cosmology;
-    kwargs...)
+    y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP = Point(χ2, cosmo)
@@ -309,7 +308,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_LD_multipole`](@ref),
 [`map_ξ_LD_multipole`](@ref), [`print_map_ξ_LD_multipole`](@ref)
 """
 function ξ_LD_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-    en::AbstractFloat = 1e6, N_χs::Int = 100)
+    en::AbstractFloat = 1e6, N_χs::Int = 100, kwargs...)
 
     χ2s = range(1e-6, 1.0, length = N_χs) .* s2
 
@@ -317,7 +316,7 @@ function ξ_LD_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
     IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
     int_ξs = [
-        en * GaPSE.integrand_ξ_LD_Doppler_IntegratedGP(IP, P1, P2, y, cosmo)
+        en * GaPSE.integrand_ξ_LD_Doppler_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
         for IP in IPs
     ]
 

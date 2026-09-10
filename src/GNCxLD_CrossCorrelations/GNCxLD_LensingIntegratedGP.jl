@@ -54,8 +54,7 @@ end
 function integrand_ξ_GNCxLD_Lensing_IntegratedGP(
     χ1::AbstractFloat, χ2::AbstractFloat,
     s1::AbstractFloat, s2::AbstractFloat,
-    y, cosmo::Cosmology;
-    kwargs...)
+    y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)

@@ -385,7 +385,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_LD_multipole`](@ref),
 [`map_ξ_LD_multipole`](@ref), [`print_map_ξ_LD_multipole`](@ref)
 """
 function ξ_LD_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
-    en::AbstractFloat=1e6, N_χs::Int=100)
+    en::AbstractFloat=1e6, N_χs::Int=100, kwargs...)
 
     adim_χs = range(1e-6, 1.0, N_χs)
     χ1s = adim_χs .* s1
@@ -394,7 +394,7 @@ function ξ_LD_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
     IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
     int_ξs = [
-        en * GaPSE.integrand_ξ_LD_Lensing_Doppler(IP, P1, P2, y, cosmo)
+        en * GaPSE.integrand_ξ_LD_Lensing_Doppler(IP, P1, P2, y, cosmo; kwargs...)
         for IP in IPs
     ]
 

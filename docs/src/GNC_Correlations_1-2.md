@@ -4,6 +4,17 @@ DocTestSetup = quote
 end
 ```
 
+
+## GNC Two-Point Auto-Correlation Functions
+
+```@docs
+GaPSE.ξ_GNC_Newtonian
+GaPSE.ξ_GNC_Doppler
+GaPSE.ξ_GNC_Lensing
+GaPSE.ξ_GNC_LocalGP
+GaPSE.ξ_GNC_IntegratedGP
+```
+
 ## GNC Two-Point Cross-Correlation Functions
 
 ```@docs
@@ -28,5 +39,3 @@ GaPSE.ξ_GNC_IntegratedGP_Lensing
 GaPSE.ξ_GNC_LocalGP_IntegratedGP
 GaPSE.ξ_GNC_IntegratedGP_LocalGP
 ```
-
-

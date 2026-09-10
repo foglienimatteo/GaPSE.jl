@@ -42,8 +42,7 @@ end
 function integrand_ξ_LD_IntegratedGP(
     χ1::AbstractFloat, χ2::AbstractFloat,
     s1::AbstractFloat, s2::AbstractFloat,
-    y, cosmo::Cosmology;
-    kwargs...)
+    y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
@@ -179,7 +178,7 @@ integrand_ξ_LD_IntegratedGP
 
 
 function ξ_LD_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::AbstractFloat = 1e10, N_χs_2::Int = 100)
+    en::AbstractFloat = 1e10, N_χs_2::Int = 100, kwargs...)
 
 
     χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
@@ -189,7 +188,7 @@ function ξ_LD_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
     IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
     int_ξ_igp = [
-        en * GaPSE.integrand_ξ_LD_IntegratedGP(IP1, IP2, P1, P2, y, cosmo)
+        en * GaPSE.integrand_ξ_LD_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
         for IP1 in IP1s, IP2 in IP2s
     ]
 
