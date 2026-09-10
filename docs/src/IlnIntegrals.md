@@ -9,7 +9,7 @@
   - [Reproducing the figures](#reproducing-the-figures)
 
 
-<br>
+
 
 
 Every Two-Point Correlation Function (TPCF) that GaPSE computes is, in the end, a sum of
@@ -21,8 +21,8 @@ The plots are produced by the script `theory/Iln_terms.jl` (or, equivalently, by
 notebook `theory/Iln_terms.ipynb`); see the end of this page.
 
 
-<br>
-<br>
+
+
 
 
 
@@ -48,10 +48,10 @@ and they are stored in `IPSTools` as `I00`, `I20`, `I40`, `I02`, `I22`, `I31`, `
 them there is the auxiliary integral
 
 ```math
-\begin{align}
+\begin{align*}
     \tilde{I}_0^4(s) &:= \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_0(qs) - 1 }{(qs)^4} \quad \quad (2) \\[10pt]
         &= \frac{1}{s^4} \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, \frac{P(q)}{q^2} \, \left[ j_0(qs) - 1 \right] \; .
-\end{align}
+\end{align*}
 ```
 
 stored in `IPSTools` as `I04_tilde` and computed by [`GaPSE.func_I04_tilde`](@ref).
@@ -68,8 +68,8 @@ finite as long as ``k_\mathrm{max}`` is finite, but they are not stored, so the 
 recomputes them when needed.
 
 
-<br>
-<br>
+
+
 
 ## The small-``s`` behaviour
 
@@ -117,7 +117,7 @@ We then insert this last Eq.(6) into the definition of ``I_\ell^n`` integrals Eq
 
 
 ```math
-\begin{align}
+\begin{align*}
      (1): \quad \quad I_\ell^n(s) 
     &:= \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \\[10pt]
     \mathrm{inserting\; } (6) \; \rightarrow \;\; \quad 
@@ -130,7 +130,7 @@ We then insert this last Eq.(6) into the definition of ``I_\ell^n`` integrals Eq
     \mathrm{inserting\; } (3) \; \rightarrow \;\; \quad 
     &= \sum_{k=0}^{+\infty} \frac{(-1)^k \; \sigma_{n - \ell - 2k}}
         {2^k \, k! \, (2\ell + 2k + 1)!!} \; s^{\,\ell + 2k - n} \; . \quad \quad (7)
-\end{align}
+\end{align*}
 ```
 
 
@@ -138,7 +138,7 @@ Every term carries two more powers of ``s`` than the previous one, so for
 ``s \rightarrow 0`` the ``k=0`` term dominates, which is the claimed result:
 
 ```math
-\begin{align}
+\begin{align*}
 (7):\quad\quad I_\ell^n(s) &= \sum_{k=0}^{+\infty} \frac{(-1)^k \; \sigma_{n - \ell - 2k}}
         {2^k \, k! \, (2\ell + 2k + 1)!!} \; s^{\,\ell + 2k - n} \\[10pt]
     &= s^{\,\ell - n} \left[
@@ -148,21 +148,21 @@ Every term carries two more powers of ``s`` than the previous one, so for
     &= \frac{\sigma_{n-\ell}}{(2\ell+1)!!} s^{\,\ell - n}
         \left[1 + \alpha_1 s^2 + \alpha_2 s^4 + ...\right]\\[10pt]
     &\underset{s \rightarrow 0}{\sim} \frac{\sigma_{n-\ell}}{(2\ell+1)!!} s^{\,\ell - n} \; . \quad\quad (8)
-\end{align}
+\end{align*}
 ```
-<br>
+
 
 For ``\tilde{I}_0^4`` the same argument applies to ``j_0(x) - 1``, whose series starts at
 ``k=1``:
 
 ```math
-\begin{align}
+\begin{align*}
     (5) \mathrm{\;with\;}\ell=0 : \quad \quad 
     j_0(x) &= \sum_{k=0}^{+\infty} \frac{(-1)^k \, x^{2k}}{2^k \, k! \, (2k + 1)!!}\; \\[10pt]
         &= 1+\sum_{k=1}^{+\infty} \frac{(-1)^k \, x^{2k}}{2^k \, k! \, (2k + 1)!!} \\[10pt]
     2^k \, k! \, (2k+1)!! = (2k+1)! \; \rightarrow \quad \quad
         &= 1+\sum_{k=1}^{+\infty} \frac{(-1)^k \, x^{2k}}{(2k+1)!}
-\end{align}
+\end{align*}
 ```
 ```math
 \Rightarrow \quad \quad j_0(x) -1 = \sum_{k=1}^{+\infty} \frac{(-1)^k \, x^{2k}}{(2k+1)!} \quad \quad (9)
@@ -171,7 +171,7 @@ For ``\tilde{I}_0^4`` the same argument applies to ``j_0(x) - 1``, whose series 
 Then
 
 ```math
-\begin{align}
+\begin{align*}
     (2): \quad \quad \tilde{I}_0^4(s) 
         &= \frac{1}{s^4} \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, \frac{P(q)}{q^2} \, \left[ j_0(qs) - 1 \right] \; \\[10pt]
     \mathrm{inserting\; } (9) \; \rightarrow \;\; \quad
@@ -184,7 +184,7 @@ Then
     \mathrm{inserting\; } (3) \; \rightarrow \;\; \quad 
         &=\sum_{k=1}^{+\infty} \frac{(-1)^k \, \sigma_{4-2k}}{(2k+1)!} \, s^{\,2k-4} \; ,
         \quad\quad (10)
-\end{align}
+\end{align*}
 
 ```
 
@@ -192,7 +192,7 @@ And analogously, every term carries two more powers of ``s`` than the previous o
 ``s \rightarrow 0`` the ``k=1`` term dominates, which is again the claimed result:
 
 ```math
-\begin{align}
+\begin{align*}
 (10):\quad\quad \tilde{I}_0^4(s) &= \sum_{k=1}^{+\infty} \frac{(-1)^k \, \sigma_{4-2k}}{(2k+1)!} \, s^{\,2k-4} \\[10pt]
     &= s^{-2} \left[
         \sum_{k=1}^{+\infty} \frac{(-1)^k \; \sigma_{4 - 2k}}
@@ -202,11 +202,11 @@ And analogously, every term carries two more powers of ``s`` than the previous o
         \right]\\[10pt]
     &= - \frac{\sigma_{2}}{6} s^{-2} + \frac{\sigma_0}{120} - \frac{\sigma_{-2}}{5040} s^2 + ... \\[10pt]
     &\underset{s \rightarrow 0}{\sim} - \frac{\sigma_{2}}{6\,s^2} \; . \quad\quad (11)
-\end{align}
+\end{align*}
 ```
 
-<br>
-<br>
+
+
 
 
 
@@ -214,22 +214,28 @@ And analogously, every term carries two more powers of ``s`` than the previous o
 
 The sign of ``\ell - n`` decides everything:
 
-- ``\ell > n`` : the integral **vanishes** as ``s^{\ell-n}``;
-- ``\ell = n`` : the integral tends to the **finite**, non-zero value
-  ``\sigma_0/(2\ell+1)!!``;
-- ``\ell < n`` : the integral **diverges** as ``s^{-(n-\ell)}``.
+```math
+I_\ell^n \xrightarrow[s \rightarrow 0]{} 
+\begin{cases}
+\propto s^{\ell-n} \rightarrow 0                    & \ell > n \\[10pt]
+\frac{\sigma_0}{(2\ell+1)!!}                        & \ell = n \\[10pt]
+\propto \frac{1}{s^{n-\ell}} \rightarrow +\infty    & \ell < n
+\end{cases} 
+```
 
-| | ``\ell`` | ``n`` | ``s \rightarrow 0`` | regime |
-|:--|:-:|:-:|:--|:--|
-| ``I_0^0`` | 0 | 0 | ``\sigma_0`` | finite |
-| ``I_2^0`` | 2 | 0 | ``\sigma_{-2} \, s^2 / 15`` | vanishing |
-| ``I_4^0`` | 4 | 0 | ``\sigma_{-4} \, s^4 / 945`` | vanishing |
-| ``I_0^2`` | 0 | 2 | ``\sigma_2 / s^2`` | diverging |
-| ``I_2^2`` | 2 | 2 | ``\sigma_0 / 15`` | finite |
-| ``I_3^1`` | 3 | 1 | ``\sigma_{-2} \, s^2 / 105`` | vanishing |
-| ``I_1^3`` | 1 | 3 | ``\sigma_2 / (3 s^2)`` | diverging |
-| ``I_1^1`` | 1 | 1 | ``\sigma_0 / 3`` | finite |
-| ``\tilde{I}_0^4`` | - | - | ``-\sigma_2 / (6 s^2)`` | diverging |
+
+
+|                   | ``\ell`` | ``n`` | ``s \rightarrow 0``                | limit       |
+| :---------------- | :------: | :---: | :--------------------------------- | :---------- |
+| ``I_0^0``         |    0     |   0   | ``\sigma_0``                       | const       |
+| ``I_2^0``         |    2     |   0   | ``\frac{\sigma_{-2}}{15} \, s^2 `` | ``0``       |
+| ``I_4^0``         |    4     |   0   | ``\frac{\sigma_{-4}}{945} \, s^4`` | ``0``       |
+| ``I_0^2``         |    0     |   2   | ``\sigma_2 \, s^{-2}``             | ``+\infty`` |
+| ``I_2^2``         |    2     |   2   | ``\frac{\sigma_0}{15}``            | const       |
+| ``I_3^1``         |    3     |   1   | ``\frac{\sigma_{-2}}{105} \, s^2`` | ``0``       |
+| ``I_1^3``         |    1     |   3   | ``\frac{\sigma_2}{3 \, s^{-2}``    | ``+\infty`` |
+| ``I_1^1``         |    1     |   1   | ``\frac{\sigma_0}{3}``             | const       |
+| ``\tilde{I}_0^4`` |    -     |   -   | ``-\frac{\sigma_2}{6}\, s^{-2}``   | ``+\infty`` |
 
 The diverging ones are never a problem in practice: inside a TPCF they always come
 multiplied by a ``J`` carrying the matching positive power of ``\Delta\chi``, so that the
