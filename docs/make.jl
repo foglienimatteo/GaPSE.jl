@@ -11,6 +11,7 @@ Documenter.makedocs(
           "Introduction" => "index.md",
           "Theory" => [
                "Spline Theory" => "SplineTheory.md",
+               "The I_l^n integrals" => "IlnIntegrals.md",
                "The Δχ → 0 limits" => "DeltaChiLimits.md",
           ],
           "The code basic structures" => [
