@@ -234,7 +234,7 @@ The sign of ``\ell - n`` decides everything:
 The diverging ones are never a problem in practice: inside a TPCF they always come
 multiplied by a ``J`` carrying the matching positive power of ``\Delta\chi``, so that the
 product stays finite. How the cancellation works, term by term and for every TPCF, is the
-subject of [The ``\Delta\chi \rightarrow 0`` limits](@ref).
+subject of "The ``\Delta\chi \rightarrow 0`` limits" page.
 
 ## The plots
 
