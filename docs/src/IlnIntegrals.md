@@ -266,7 +266,7 @@ directly.
 \quad \quad (4b)
 ```
 
-<img src="assets/Iln_terms/all_Iln.png" alt="all the I_l^n" width="100%"/>
+![All the I_l^n](assets/Iln_terms/all_Iln.png)
 
 
 
