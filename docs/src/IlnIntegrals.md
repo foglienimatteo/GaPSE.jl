@@ -1,5 +1,17 @@
 # The ``I_\ell^n`` integrals
 
+- [The ``I_\ell^n`` integrals](#the-i_elln-integrals)
+  - [Definitions](#definitions)
+  - [The small-``s`` behaviour](#the-small-s-behaviour)
+    - [The three regimes](#the-three-regimes)
+  - [The plots](#the-plots)
+    - [One by one](#one-by-one)
+  - [Reproducing the figures](#reproducing-the-figures)
+
+
+<br>
+
+
 Every Two-Point Correlation Function (TPCF) that GaPSE computes is, in the end, a sum of
 terms of the form ``J(\chi, s, y) \, I_\ell^n(\Delta\chi)``. This page collects the
 definition of these ``I_\ell^n``, proves their behaviour for small separations, and shows
@@ -8,13 +20,18 @@ what they look like.
 The plots are produced by the script `theory/Iln_terms.jl` (or, equivalently, by the
 notebook `theory/Iln_terms.ipynb`); see the end of this page.
 
+
+<br>
+<br>
+
+
+
 ## Definitions
 
 The integrals are
 
 ```math
-    I_\ell^n(s) = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \,
-        \frac{j_\ell(qs)}{(qs)^n} \; ,
+    I_\ell^n(s) := \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \;, \quad \quad (1)
 ```
 
 with ``P(q)`` the matter Power Spectrum at ``z=0`` stored inside the `Cosmology`, and
@@ -31,89 +48,167 @@ and they are stored in `IPSTools` as `I00`, `I20`, `I40`, `I02`, `I22`, `I31`, `
 them there is the auxiliary integral
 
 ```math
-    \tilde{I}_0^4(s) = \frac{1}{s^4} \int_0^{+\infty}
-        \frac{\mathrm{d}q}{2\pi^2} \, \frac{P(q)}{q^2} \, \left[ j_0(qs) - 1 \right] \; ,
+\begin{align}
+    \tilde{I}_0^4(s) &:= \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_0(qs) - 1 }{(qs)^4} \quad \quad (2) \\[10pt]
+        &= \frac{1}{s^4} \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, \frac{P(q)}{q^2} \, \left[ j_0(qs) - 1 \right] \; .
+\end{align}
 ```
 
-stored as `I04_tilde` and computed by [`GaPSE.func_I04_tilde`](@ref).
+stored in `IPSTools` as `I04_tilde` and computed by [`GaPSE.func_I04_tilde`](@ref).
 
 We also need the moments of the Power Spectrum
 
 ```math
-    \sigma_i = \int_{k_\mathrm{min}}^{k_\mathrm{max}}
-        \frac{\mathrm{d}q}{2 \pi^2} \, q^{2-i} \, P(q) \; ,
+    \sigma_i := \int_{k_\mathrm{min}}^{k_\mathrm{max}} \frac{\mathrm{d}q}{2 \pi^2} \, q^{2-i} \, P(q) \; , \quad \quad (3)
 ```
 
-of which `IPSTools` stores ``\sigma_0, \, \sigma_1, \, \sigma_2, \, \sigma_3`` and
+of which `IPSTools` stores ``\sigma_0``, ``\sigma_1``, ``\sigma_2``, ``\sigma_3`` and
 ``\sigma_4``. Note that ``\sigma_i`` with ``i<0`` also appear below; they are perfectly
 finite as long as ``k_\mathrm{max}`` is finite, but they are not stored, so the script
 recomputes them when needed.
 
+
+<br>
+<br>
+
 ## The small-``s`` behaviour
 
-!!! note "Result"
-    ```math
-        I_\ell^n(s) \; \xrightarrow[s \rightarrow 0]{} \;
-            \frac{\sigma_{n-\ell}}{(2\ell+1)!!} \, s^{\,\ell - n} \; ,
-        \qquad
-        \tilde{I}_0^4(s) \; \xrightarrow[s \rightarrow 0]{} \; - \frac{\sigma_2}{6 \, s^2} \; .
-    ```
+!!! note Limits of $I_\ell^n$ integrals
+    $$
+        I_\ell^n(s) \; \underset{s \rightarrow 0}{\sim}  \;
+            \frac{\sigma_{n-\ell}}{(2\ell+1)!!} \, s^{\,\ell - n} 
+            \quad \quad (4a)
+        \qquad\qquad
+        \tilde{I}_0^4(s) \; \underset{s \rightarrow 0}{\sim} \; - \frac{\sigma_2}{6 \, s^2}
+        \quad \quad (4b)
+    $$
 
-**Proof.** The spherical Bessel function of order ``\ell`` has the everywhere-convergent
-Taylor series
+**Proof.** 
+
+Acronym used for the sources:
+
+- DLMF = Digital Library of Mathematical Functions
+- NIST = National Institute of Standards and Technology
+
+
+
+The Taylor series of the spherical Bessel function ``j_\ell(x)`` of order ``\ell`` is the following everywhere-convergent expansion (source: [U.S. NIST DLMF, Spherical Bessel Functions - Power Series, Section 10.53](https://dlmf.nist.gov/10.53) ):
 
 ```math
-    j_\ell(x) = \sum_{k=0}^{+\infty} \frac{(-1)^k \, x^{\ell + 2k}}
-        {2^k \, k! \, (2\ell + 2k + 1)!!} \; ,
+    j_\ell(x) = \sum_{k=0}^{+\infty} \frac{(-1)^k \, x^{\ell + 2k}}{2^k \, k! \, (2\ell + 2k + 1)!!} \; \quad \quad (5)\\[10pt]
+
+ \quad n!! := \begin{cases} 
+    2 \cdot 4 \cdot 6 \cdot ... \cdot n & n \mathrm{\; is \; even} \\
+    1 \cdot 3 \cdot 5 \cdot ... \cdot n & n \mathrm{\; is \; odd}  \\
+    1                                   & n=0,-1
+\end{cases} 
+
 ```
 
-as can be checked for ``\ell = 0``, where it reproduces
-``j_0(x) = \sin(x)/x = 1 - x^2/6 + x^4/120 - \dots`` Dividing by ``x^n`` and setting
-``x = qs``,
+We can set ``x = qs`` and divide both terms by ``(qs)^n``:
 
 ```math
+    x:=qs \; \Rightarrow \;  \frac{(5)}{(qs)^n} : \quad \quad
     \frac{j_\ell(qs)}{(qs)^n} = \sum_{k=0}^{+\infty} \frac{(-1)^k \, (qs)^{\ell + 2k - n}}
-        {2^k \, k! \, (2\ell + 2k + 1)!!} \; .
+        {2^k \, k! \, (2\ell + 2k + 1)!!} \; . \quad \quad (6)
 ```
 
-Inserting this into the definition of ``I_\ell^n`` and exchanging the sum with the
-integral, which is legitimate because the series converges uniformly on the compact
-integration range ``[k_\mathrm{min}, k_\mathrm{max}]``,
+We then insert this last Eq.(6) into the definition of ``I_\ell^n`` integrals Eq.(1), we bring the sum outside the integral (which is legitimate because the series converges uniformly on the compact integration range ``[k_\mathrm{min}, k_\mathrm{max}]``) and we insert the definition of ``\sigma_i`` Eq.(3):
+
 
 ```math
-    I_\ell^n(s) = \sum_{k=0}^{+\infty} \frac{(-1)^k \; s^{\,\ell - n + 2k}}
+\begin{align}
+     (1): \quad \quad I_\ell^n(s) 
+    &:= \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \\[10pt]
+    \mathrm{inserting\; } (6) \; \rightarrow \;\; \quad 
+    &=  \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, 
+        \sum_{k=0}^{+\infty} \frac{(-1)^k \, (qs)^{\ell + 2k - n}}
+        {2^k \, k! \, (2\ell + 2k + 1)!!}  \\[10pt]
+    &= \sum_{k=0}^{+\infty} \frac{(-1)^k \; s^{\ell + 2k - n}}
         {2^k \, k! \, (2\ell + 2k + 1)!!}
-        \int \frac{\mathrm{d}q}{2\pi^2} \, q^{\,2 + \ell + 2k - n} \, P(q) \; .
+        \int \frac{\mathrm{d}q}{2\pi^2} \, q^{\,2 - (n - \ell - 2k)} \, P(q) \; \\[10pt]
+    \mathrm{inserting\; } (3) \; \rightarrow \;\; \quad 
+    &= \sum_{k=0}^{+\infty} \frac{(-1)^k \; \sigma_{n - \ell - 2k}}
+        {2^k \, k! \, (2\ell + 2k + 1)!!} \; s^{\,\ell + 2k - n} \; . \quad \quad (7)
+\end{align}
 ```
 
-The remaining integral is by definition ``\sigma_i`` with ``2 - i = 2 + \ell + 2k - n``,
-that is ``i = n - \ell - 2k``, so that
-
-```math
-    I_\ell^n(s) = \sum_{k=0}^{+\infty} \frac{(-1)^k \; \sigma_{n - \ell - 2k}}
-        {2^k \, k! \, (2\ell + 2k + 1)!!} \; s^{\,\ell - n + 2k} \; .
-```
 
 Every term carries two more powers of ``s`` than the previous one, so for
-``s \rightarrow 0`` the ``k=0`` term dominates, which is the claimed result.
+``s \rightarrow 0`` the ``k=0`` term dominates, which is the claimed result:
+
+```math
+\begin{align}
+(7):\quad\quad I_\ell^n(s) &= \sum_{k=0}^{+\infty} \frac{(-1)^k \; \sigma_{n - \ell - 2k}}
+        {2^k \, k! \, (2\ell + 2k + 1)!!} \; s^{\,\ell + 2k - n} \\[10pt]
+    &= s^{\,\ell - n} \left[
+        \frac{\sigma_{n-\ell}}{(2\ell+1)!!}  + 
+        \sum_{k=1}^{+\infty} \frac{(-1)^k \; \sigma_{n - \ell - 2k}}
+        {2^k \, k! \, (2\ell + 2k + 1)!!} \; s^{2k}\right]\\[10pt]
+    &= \frac{\sigma_{n-\ell}}{(2\ell+1)!!} s^{\,\ell - n}
+        \left[1 + \alpha_1 s^2 + \alpha_2 s^4 + ...\right]\\[10pt]
+    &\underset{s \rightarrow 0}{\sim} \frac{\sigma_{n-\ell}}{(2\ell+1)!!} s^{\,\ell - n} \; . \quad\quad (8)
+\end{align}
+```
+<br>
 
 For ``\tilde{I}_0^4`` the same argument applies to ``j_0(x) - 1``, whose series starts at
 ``k=1``:
 
 ```math
-    j_0(x) - 1 = \sum_{k=1}^{+\infty} \frac{(-1)^k \, x^{2k}}{(2k+1)!} \; ,
+\begin{align}
+    (5) \mathrm{\;with\;}\ell=0 : \quad \quad 
+    j_0(x) &= \sum_{k=0}^{+\infty} \frac{(-1)^k \, x^{2k}}{2^k \, k! \, (2k + 1)!!}\; \\[10pt]
+        &= 1+\sum_{k=1}^{+\infty} \frac{(-1)^k \, x^{2k}}{2^k \, k! \, (2k + 1)!!} \\[10pt]
+    2^k \, k! \, (2k+1)!! = (2k+1)! \; \rightarrow \quad \quad
+        &= 1+\sum_{k=1}^{+\infty} \frac{(-1)^k \, x^{2k}}{(2k+1)!}
+\end{align}
+```
+```math
+\Rightarrow \quad \quad j_0(x) -1 = \sum_{k=1}^{+\infty} \frac{(-1)^k \, x^{2k}}{(2k+1)!} \quad \quad (9)
 ```
 
-where we used ``2^k \, k! \, (2k+1)!! = (2k+1)!``. Then
+Then
 
 ```math
-    \tilde{I}_0^4(s) = \frac{1}{s^4} \sum_{k=1}^{+\infty} \frac{(-1)^k \, s^{2k}}{(2k+1)!}
-        \int \frac{\mathrm{d}q}{2\pi^2} \, q^{\,2k-2} \, P(q)
-    = \sum_{k=1}^{+\infty} \frac{(-1)^k \, \sigma_{4-2k}}{(2k+1)!} \, s^{\,2k-4} \; ,
+\begin{align}
+    (2): \quad \quad \tilde{I}_0^4(s) 
+        &= \frac{1}{s^4} \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, \frac{P(q)}{q^2} \, \left[ j_0(qs) - 1 \right] \; \\[10pt]
+    \mathrm{inserting\; } (9) \; \rightarrow \;\; \quad
+        &= \frac{1}{s^4} \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, \frac{P(q)}{q^2}
+        \sum_{k=1}^{+\infty} \frac{(-1)^k \, (qs)^{2k}}{(2k+1)!}\\[10pt]
+        &= \frac{1}{s^4} \sum_{k=1}^{+\infty} \frac{(-1)^k \, s^{2k}}{(2k+1)!}
+        \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^{\,2k-2} \, P(q)\\[10pt]
+        &= \sum_{k=1}^{+\infty} \frac{(-1)^k}{(2k+1)!}s^{2k-4}
+        \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^{2-(4-2k)} \, P(q)\\[10pt]
+    \mathrm{inserting\; } (3) \; \rightarrow \;\; \quad 
+        &=\sum_{k=1}^{+\infty} \frac{(-1)^k \, \sigma_{4-2k}}{(2k+1)!} \, s^{\,2k-4} \; ,
+        \quad\quad (10)
+\end{align}
+
 ```
 
-whose first terms are ``-\sigma_2/(6 s^2) + \sigma_0/120 - \sigma_{-2} s^2/5040 + \dots``
-``\blacksquare``
+And analogously, every term carries two more powers of ``s`` than the previous one, so for
+``s \rightarrow 0`` the ``k=1`` term dominates, which is again the claimed result:
+
+```math
+\begin{align}
+(10):\quad\quad \tilde{I}_0^4(s) &= \sum_{k=1}^{+\infty} \frac{(-1)^k \, \sigma_{4-2k}}{(2k+1)!} \, s^{\,2k-4} \\[10pt]
+    &= s^{-2} \left[
+        \sum_{k=1}^{+\infty} \frac{(-1)^k \; \sigma_{4 - 2k}}
+        {(2k + 1)!} \; s^{2k-2}\right]\\[10pt]
+    &= s^{-2} \left[
+        - \frac{\sigma_{2}}{3!} + \frac{\sigma_0}{5!}s^2 - \frac{\sigma_{-2}}{7!}s^4 +...
+        \right]\\[10pt]
+    &= - \frac{\sigma_{2}}{6} s^{-2} + \frac{\sigma_0}{120} - \frac{\sigma_{-2}}{5040} s^2 + ... \\[10pt]
+    &\underset{s \rightarrow 0}{\sim} - \frac{\sigma_{2}}{6\,s^2} \; . \quad\quad (11)
+\end{align}
+```
+
+<br>
+<br>
+
+
 
 ### The three regimes
 
