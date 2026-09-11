@@ -73,7 +73,31 @@ recomputes them when needed.
 ## TLDR; the easy-to-get small-``s`` behaviour
 
 
+```math
+\begin{align*}
+j_\ell(x) \mathrm{ \; series \; expansion \; near \; 0}&: \quad \quad  
+    j_\ell(x) = x^\ell \left( 
+        \frac{\sqrt{\pi}}{2^{\ell+1}\, 
+        \Gamma(\ell + 3/2)} + O(x^2)
+    \right) \quad \quad \mathrm{(I)}\\[10pt]
+\Rightarrow j_\ell(x) \; &\underset{x \rightarrow 0}{\sim}  x^{\ell}
+\quad \quad \mathrm{(II)}
+\end{align*}
+```
 
+So:
+
+```math
+\begin{align*}
+    (1): \quad \quad I_\ell^n(s) 
+    &:= \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \\[10pt]
+    \mathrm{inserting\; (II) }  \; \rightarrow \;\; \quad
+    &\underset{s \rightarrow 0}{\sim} \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{(qs)^{\ell}}{(qs)^n}\\[10pt] 
+    &=  s^{\ell-n}\int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^{2-(n-\ell)} \, P(q) \, \\[10pt]
+    &= \sigma_{n-\ell} \; s^{\ell-n}\\[10pt]
+    &\underset{s \rightarrow 0}{\sim} s^{\ell-n}
+\end{align*}
+```
 
 
 ## The exact small-``s`` behaviour

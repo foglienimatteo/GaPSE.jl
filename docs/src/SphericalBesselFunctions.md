@@ -5,6 +5,19 @@
   - [Properties](#properties)
 
 
+
+Acronym used for the sources:
+
+- DLMF = Digital Library of Mathematical Functions
+- NIST = National Institute of Standards and Technology
+
+Sources:
+
+- [U.S. NIST DLMF, Chapter 10 - Spherical Bessel Functions](https://dlmf.nist.gov/10#PT4)
+  * Spherical Bessel functions Taylor series: [Section 10.53](https://dlmf.nist.gov/10.53)
+  * 
+
+
 ## Definition
 
 Spherical Bessel functions are the solutions to the following differential equation:
