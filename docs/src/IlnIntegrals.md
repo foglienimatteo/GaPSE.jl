@@ -5,6 +5,10 @@
   - [TLDR; the easy-to-get small-``s`` behaviour](#tldr-the-easy-to-get-small-s-behaviour)
   - [The exact small-``s`` behaviour](#the-exact-small-s-behaviour)
     - [The three regimes](#the-three-regimes)
+  - [A warning before looking at the plots](#a-warning-before-looking-at-the-plots)
+    - [1. An `IntegralIPS` is a spline only between `left` and `right`](#1-an-integralips-is-a-spline-only-between-left-and-right)
+    - [2. The ``\sigma_i`` must use the same ``k`` extremes as the ``I_\ell^n``](#2-the-sigma_i-must-use-the-same-k-extremes-as-the-i_elln)
+    - [3. The asymptotic regime starts below ``1/k_\mathrm{max}``](#3-the-asymptotic-regime-starts-below-1k_mathrmmax)
   - [The plots](#the-plots)
     - [One by one](#one-by-one)
   - [Reproducing the figures](#reproducing-the-figures)
@@ -316,12 +320,12 @@ extreme: with ``P(q) \propto q^{-2.64}`` at large ``q``, the integrand of
 ``\sigma_{-2}`` grows as ``q^{1.36}`` and that of ``\sigma_{-4}`` as ``q^{3.36}``. For
 `data/WideA_ZA_pk.dat`:
 
-| ``i``      | over ``[10^{-6}, 10]`` | over ``[10^{-5}, 10^{3}]`` | ratio                 |
-| :--------: | ---------------------: | -------------------------: | --------------------: |
-| ``0``      | ``18.58``              | ``143.3``                  | ``7.7``               |
-| ``2``      | ``101.06``             | ``101.13``                 | ``1.001``             |
-| ``-2``     | ``437.8``              | ``2.35 \times 10^{7}``     | ``5.4 \times 10^{4}`` |
-| ``-4``     | ``2.41 \times 10^{4}`` | ``1.27 \times 10^{13}``    | ``5.3 \times 10^{8}`` |
+| ``i``  | over ``[10^{-6}, 10]`` | over ``[10^{-5}, 10^{3}]`` |                 ratio |
+| :----: | ---------------------: | -------------------------: | --------------------: |
+| ``0``  |              ``18.58`` |                  ``143.3`` |               ``7.7`` |
+| ``2``  |             ``101.06`` |                 ``101.13`` |             ``1.001`` |
+| ``-2`` |              ``437.8`` |     ``2.35 \times 10^{7}`` | ``5.4 \times 10^{4}`` |
+| ``-4`` | ``2.41 \times 10^{4}`` |    ``1.27 \times 10^{13}`` | ``5.3 \times 10^{8}`` |
 
 Only ``\sigma_2`` is insensitive to the choice, which is exactly why ``I_0^2``,
 ``I_1^3`` and ``\tilde{I}_0^4`` — the three whose limits depend on ``\sigma_2`` alone —
@@ -346,11 +350,11 @@ directly-computed integral and its asymptote:
 
 | ``s``       | ``R_0^0`` | ``R_2^0`` | ``R_4^0`` | ``R_0^2`` | ``R_2^2`` | ``R_3^1`` | ``R_1^3`` | ``R_1^1`` |
 | :---------- | --------: | --------: | --------: | --------: | --------: | --------: | --------: | --------: |
-| ``10^{-5}`` | 1.0000    | 1.0000    | 1.0000    | 1.0000    | 1.0000    | 1.0000    | 1.0000    | 1.0000    |
-| ``10^{-4}`` | 0.9997    | 0.9996    | 0.9997    | 1.0000    | 0.9999    | 0.9997    | 1.0000    | 0.9998    |
-| ``10^{-3}`` | 0.9734    | 0.9621    | 0.9693    | 1.0000    | 0.9885    | 0.9704    | 1.0000    | 0.9839    |
-| ``10^{-2}`` | 0.4799    | 0.0661    | 0.0416    | 1.0000    | 0.5997    | 0.1018    | 1.0000    | 0.5521    |
-| ``0.05``    | 0.2337    | 0.0015    | 0.0000    | 0.9998    | 0.3033    | 0.0023    | 0.9999    | 0.2760    |
+| ``10^{-5}`` |    1.0000 |    1.0000 |    1.0000 |    1.0000 |    1.0000 |    1.0000 |    1.0000 |    1.0000 |
+| ``10^{-4}`` |    0.9997 |    0.9996 |    0.9997 |    1.0000 |    0.9999 |    0.9997 |    1.0000 |    0.9998 |
+| ``10^{-3}`` |    0.9734 |    0.9621 |    0.9693 |    1.0000 |    0.9885 |    0.9704 |    1.0000 |    0.9839 |
+| ``10^{-2}`` |    0.4799 |    0.0661 |    0.0416 |    1.0000 |    0.5997 |    0.1018 |    1.0000 |    0.5521 |
+| ``0.05``    |    0.2337 |    0.0015 |    0.0000 |    0.9998 |    0.3033 |    0.0023 |    0.9999 |    0.2760 |
 
 ![Convergence to the limits](assets/Iln_terms/ratios.png)
 
