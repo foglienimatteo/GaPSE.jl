@@ -11,6 +11,7 @@ Documenter.makedocs(
           "Introduction" => "index.md",
           "Theory" => [
                "Spline Theory" => "SplineTheory.md",
+               "Spherical Bessel Functions" => "SphericalBesselFunctions.md",
                "The I_l^n integrals" => "IlnIntegrals.md",
                "The Δχ → 0 limits" => "DeltaChiLimits.md",
           ],

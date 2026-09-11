@@ -2,7 +2,8 @@
 
 - [The ``I_\ell^n`` integrals](#the-i_elln-integrals)
   - [Definitions](#definitions)
-  - [The small-``s`` behaviour](#the-small-s-behaviour)
+  - [TLDR; the easy-to-get small-``s`` behaviour](#tldr-the-easy-to-get-small-s-behaviour)
+  - [The exact small-``s`` behaviour](#the-exact-small-s-behaviour)
     - [The three regimes](#the-three-regimes)
   - [The plots](#the-plots)
     - [One by one](#one-by-one)
@@ -69,9 +70,13 @@ recomputes them when needed.
 
 
 
+## TLDR; the easy-to-get small-``s`` behaviour
 
 
-## The small-``s`` behaviour
+
+
+
+## The exact small-``s`` behaviour
 
 ```math
 \boxed{
