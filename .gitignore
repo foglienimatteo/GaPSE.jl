@@ -48,3 +48,9 @@ docs/build/
 *.pdf
 build.log
 newimage.sh
+
+# ... but the plots and the data produced by the scripts inside `theory/` are part of
+# the repository, since the documentation shows them
+!theory/*/*.png
+!theory/*/*.txt
+!docs/src/assets/*/*.png

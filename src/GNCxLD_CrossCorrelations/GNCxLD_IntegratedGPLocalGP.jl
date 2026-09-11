@@ -19,7 +19,7 @@
 
 
 function integrand_ξ_GNCxLD_IntegratedGP_LocalGP(
-    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
@@ -35,12 +35,14 @@ function integrand_ξ_GNCxLD_IntegratedGP_LocalGP(
     ℛ_s1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b_s1, 𝑓_evo=𝑓_evo_s1, s_lim=s_lim)
 
     Δχ1_square = s2^2 + χ1^2 - 2 * s2 * χ1 * y
-    Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0
+    Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : zero(Δχ1_square)  # throw(AssertionError("Δχ1_square=$Δχ1_square : y=$y , s2=$s2 , χ1=$χ1"))
 
     factor = - 9 / 2 * D_s2 * Δχ1^4 * ℋ0^4 * Ω_M0^2 * D1 * (1 + ℜ_s2) / (s1 * a1 * a_s2)
     parenth = (s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2) 
 
-    I04_tilde = cosmo.tools.I04_tilde(Δχ1)
+    # for Δχ1 → 0 the whole term vanishes, since Δχ1^4 * Ĩ_0^4(Δχ1) → 0 ;
+    # see the "The Δχ → 0 limits" page of the documentation
+    I04_tilde = Δχ1 ≥ Δχ_min ? cosmo.tools.I04_tilde(Δχ1) : zero(Δχ1)
 
     return factor * parenth * I04_tilde
 end
@@ -223,7 +225,7 @@ integrand_ξ_GNCxLD_IntegratedGP_LocalGP
         s1, s2, y, cosmo::Cosmology;
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     	  𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
-        en::Float64 = 1e6, N_χs::Int = 100 ) ::Float64
+        en::AbstractFloat = 1e6, N_χs::Int = 100 ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation 
 between the Integrated Gravitational Potential (GP) effect arising from the 

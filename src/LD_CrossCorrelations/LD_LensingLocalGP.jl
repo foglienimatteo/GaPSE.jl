@@ -20,7 +20,7 @@
 
 function integrand_ξ_LD_Lensing_LocalGP(
     IP::Point, P1::Point, P2::Point,
-    y, cosmo::Cosmology)
+    y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1)
 
     s1 = P1.comdist
     s2, D_s2, a_s2, ℛ_s2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
@@ -28,7 +28,7 @@ function integrand_ξ_LD_Lensing_LocalGP(
     Ω_M0 = cosmo.params.Ω_M0
 
     Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
-    Δχ1 = Δχ1_square > 0.0 ? √(Δχ1_square) : 0.0
+    Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : zero(Δχ1_square)  # throw(AssertionError("Δχ1_square=$Δχ1_square : y=$y , χ1=$χ1 , s2=$s2"))
 
     common = 9 * ℋ0^4 * Ω_M0^2 * D_s2 * (1 + ℛ_s2) * s2 / (4 * a_s2 * s1)
     factor = D1 * (s1 - χ1) / a1
@@ -36,15 +36,22 @@ function integrand_ξ_LD_Lensing_LocalGP(
     new_J31 = -2 * y * Δχ1^2
     new_J22 = χ1 * s2 * (1 - y^2)
 
-    I13 = cosmo.tools.I13(Δχ1)
-    I22 = cosmo.tools.I22(Δχ1)
+    JI_sum = if Δχ1 ≥ Δχ_min
+        I13 = cosmo.tools.I13(Δχ1)
+        I22 = cosmo.tools.I22(Δχ1)
+        new_J22 * I22 + new_J31 * I13
+    else
+        # for Δχ1 → 0 the J22 * I22 term vanishes and J31 * I13 stays finite;
+        # see "The Δχ → 0 limits" page of the documentation
+        - 2 * cosmo.tools.σ_2 / 3
+    end
 
     #println("J00 = $new_J00, \\t I00(Δχ1) = $(I00)")
     #println("J02 = $new_J02, \\t I20(Δχ1) = $(I20)")
     #println("J31 = $new_J31, \\t I13(Δχ1) = $(I13)")
     #println("J22 = $new_J22, \\t I22(Δχ1) = $(I22)")
 
-    parenth = (new_J31 * I13 + new_J22 * I22)
+    parenth = JI_sum
 
     first = common * factor * parenth
 
@@ -54,11 +61,11 @@ end
 
 function integrand_ξ_LD_Lensing_LocalGP(
     χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
-    y, cosmo::Cosmology)
+    y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP = Point(χ1, cosmo)
-    return integrand_ξ_LD_Lensing_LocalGP(IP, P1, P2, y, cosmo)
+    return integrand_ξ_LD_Lensing_LocalGP(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
@@ -70,7 +77,7 @@ end
 
     integrand_ξ_LD_Lensing_LocalGP(
         χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
-        y, cosmo::Cosmology; kwargs... ) ::Float64
+        y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1, kwargs... ) ::Float64
 
 Return the integrand of the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Lensing and the Local Gravitational Potential (GP) effects arising from the 
@@ -192,7 +199,7 @@ integrand_ξ_LD_Lensing_LocalGP
 """
     ξ_LD_Lensing_LocalGP(
         s1, s2, y, cosmo::Cosmology;
-        en::Float64 = 1e6, N_χs::Int = 100 ) ::Float64
+        en::AbstractFloat = 1e6, N_χs::Int = 100 ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Lensing and the Local Gravitational Potential (GP) effects arising from the 
@@ -313,7 +320,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_LD_multipole`](@ref),
 [`map_ξ_LD_multipole`](@ref), [`print_map_ξ_LD_multipole`](@ref)
 """
 function ξ_LD_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
-    en::AbstractFloat = 1e6, N_χs::Int = 100)
+    en::AbstractFloat = 1e6, N_χs::Int = 100, kwargs...)
 
     adim_χs = range(1e-6, 1.0, N_χs)
     χ1s = adim_χs .* s1
@@ -322,7 +329,7 @@ function ξ_LD_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
     IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
     int_ξs = [
-        en * GaPSE.integrand_ξ_LD_Lensing_LocalGP(IP, P1, P2, y, cosmo)
+        en * GaPSE.integrand_ξ_LD_Lensing_LocalGP(IP, P1, P2, y, cosmo; kwargs...)
         for IP in IPs
     ]
 

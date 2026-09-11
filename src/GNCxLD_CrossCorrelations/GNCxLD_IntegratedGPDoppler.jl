@@ -19,32 +19,34 @@
 
 
 function integrand_ξ_GNCxLD_IntegratedGP_Doppler(
-	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
-	s1 = P1.comdist
-	s2, D_s2, f_s2, ℋ_s2, ℜ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
-	χ1, D1, a1, f1, ℋ1 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
+    s1 = P1.comdist
+    s2, D_s2, f_s2, ℋ_s2, ℜ_s2 = P2.comdist, P2.D, P2.f, P2.ℋ, P2.ℛ_LD
+    χ1, D1, a1, f1, ℋ1 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
 
-	Ω_M0 = cosmo.params.Ω_M0
+    Ω_M0 = cosmo.params.Ω_M0
     s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
     𝑓_evo_s1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
 
     s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
     ℛ_s1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b_s1, 𝑓_evo=𝑓_evo_s1, s_lim=s_lim)
 
-	Δχ1_square = s2^2 + χ1^2 - 2 * s2 * χ1 * y
-	Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0.0
+    Δχ1_square = s2^2 + χ1^2 - 2 * s2 * χ1 * y
+    Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : zero(Δχ1_square)  # throw(AssertionError("Δχ1_square=$Δχ1_square : y=$y , s2=$s2 , χ1=$χ1"))
 
-	common = 3 * ℋ_s2 * f_s2 * D_s2 * ℋ0^2 * Ω_M0 * ℜ_s2
+    common = 3 * ℋ_s2 * f_s2 * D_s2 * ℋ0^2 * Ω_M0 * ℜ_s2
 
-	new_J31 = Δχ1^2 * D1 * (s2 - χ1 * y) / (a1 * s1) * (s1 * ℛ_s1 * ℋ1 * (f1 - 1) - 5 * s_b_s1 + 2)
-	I13 = cosmo.tools.I13(Δχ1)
+    new_J31 = Δχ1^2 * D1 * (s2 - χ1 * y) / (a1 * s1) * (s1 * ℛ_s1 * ℋ1 * (f1 - 1) - 5 * s_b_s1 + 2)
+    # the whole term vanishes for Δχ1 → 0 : the geometric factor goes to zero while
+    # I13 diverges only as Δχ1^-2 ; see "The Δχ → 0 limits" in the documentation
+    I13 = Δχ1 ≥ Δχ_min ? cosmo.tools.I13(Δχ1) : zero(Δχ1)
 
-	res = common * new_J31 * I13
+    res = common * new_J31 * I13
 
-	return res
+    return res
 end
 
 
@@ -61,7 +63,7 @@ end
 
 """
     integrand_ξ_GNCxLD_IntegratedGP_Doppler(
-    	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+    	  IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 

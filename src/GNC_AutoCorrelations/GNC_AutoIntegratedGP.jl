@@ -19,7 +19,7 @@
 
 
 function integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
-    P1::Point, P2::Point, y, cosmo::Cosmology; 
+    P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1, 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
@@ -39,13 +39,15 @@ function integrand_ξ_GNC_IntegratedGP(IP1::Point, IP2::Point,
     ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-    Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
+    Δχ = Δχ_square > 0 ? √(Δχ_square) : zero(Δχ_square)  # throw(AssertionError("Δχ_square=$Δχ_square : y=$y, χ1=$χ1, χ2=$χ2"))
 
     factor = 9 * Δχ^4 * ℋ0^4 * Ω_M0^2 * D1 * D2 / (s1 * s2 * a1 * a2)
     parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 5 * s_b_s1 + 2
     parenth_2 = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2
 
-    I04_tilde = cosmo.tools.I04_tilde(Δχ)
+    # for Δχ → 0 the whole term vanishes, since Δχ^4 * Ĩ_0^4(Δχ) → 0 ;
+    # see the "The Δχ → 0 limits" page of the documentation
+    I04_tilde = Δχ ≥ Δχ_min ? cosmo.tools.I04_tilde(Δχ) : zero(Δχ)
 
     return factor * parenth_1 * parenth_2 * I04_tilde
 end
@@ -240,20 +242,19 @@ integrand_ξ_GNC_IntegratedGP
 
 
 function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::Float64=1e10, N_χs_2::Int=100, suit_sampling::Bool=true, kwargs...)
+    en::AbstractFloat=1e10, N_χs_2::Int=100, suit_sampling::Bool=true, kwargs...)
 
     #adim_χs = range(1e-12, 1, N_χs)
     #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
     χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
     χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
-
     IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
     IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
     int_ξ_igp = [
-      en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
-      for IP1 in IP1s, IP2 in IP2s
+        en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+        for IP1 in IP1s, IP2 in IP2s
     ]
 
     res = trapz((χ1s, χ2s), int_ξ_igp)

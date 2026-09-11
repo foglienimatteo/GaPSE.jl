@@ -104,7 +104,7 @@ end
 """
     my_println_vec(io::IO, vec::Vector{T}, name::String; N::Int=5) where {T}
     my_println_vec(vec::Vector{T}, name::String; N::Int=5) where {T}
-        my_println_vec(stdout, vec, name; N=N)
+    my_println_vec(stdout, vec, name; N=N)
 
 Print the input `vec::Vector{T}` as follows:
 ```julia

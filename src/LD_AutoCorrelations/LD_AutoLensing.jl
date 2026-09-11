@@ -31,7 +31,7 @@ function integrand_ξ_LD_Lensing(
     Ω_M0 = cosmo.params.Ω_M0
 
     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-    Δχ = Δχ_square > 0 ? √(Δχ_square) : 0.0
+    Δχ = Δχ_square > 0 ? √(Δχ_square) : zero(Δχ_square)  # throw(AssertionError("Δχ_square=$Δχ_square : y=$y , χ1=$χ1 , χ2=$χ2"))
     
     denomin = s1 * s2 * a_χ1 * a_χ2
     factor = ℋ0^4 * Ω_M0^2 * D1 * abs(s1 - χ1) * D2 * abs(s2 - χ2)
@@ -61,8 +61,12 @@ function integrand_ξ_LD_Lensing(
         resss
     else
 
-        lim = 4.0 / 15.0 * (5.0 * cosmo.tools.σ_2 + 6.0 * cosmo.tools.σ_0 * χ2^2)
-        9.0 / 4.0 * lim
+        # for Δχ → 0 the J02 term vanishes, the J31 one gives 3 * σ_2 and the
+        # direction-dependent parts of J00 and J22 cancel each other;
+        # see "The Δχ → 0 limits" page of the documentation.
+        # NOTE: this used to read `9/4 * 4/15 * (5σ_2 + 6σ_0*χ2^2)`, i.e.
+        # `3σ_2 + 18/5*χ2^2*σ_0`: the σ_0 coefficient was a factor 3 too large.
+        3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
     end
 
     res = factor / denomin * first_res
@@ -73,8 +77,7 @@ end
 function integrand_ξ_LD_Lensing(
     χ1::AbstractFloat, χ2::AbstractFloat,
     s1::AbstractFloat, s2::AbstractFloat,
-    y, cosmo::Cosmology;
-    kwargs...)
+    y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
@@ -87,7 +90,7 @@ end
         IP1::Point, IP2::Point,
         P1::Point, P2::Point,
         y, cosmo::Cosmology;
-        Δχ_min::Float64 = 1e-4) ::Float64
+        Δχ_min::AbstractFloat = 1e-4) ::Float64
 
     integrand_ξ_LD_Lensing(
         χ1::AbstractFloat, χ2::AbstractFloat,
@@ -253,7 +256,7 @@ integrand_ξ_LD_Lensing
 
 
 function ξ_LD_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::AbstractFloat = 1e6, N_χs_2::Int = 100, Δχ_min::AbstractFloat = 1e-4)
+    en::AbstractFloat=1e6, N_χs_2::Int=100, kwargs...)
 
     χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
     χ2s = P2.comdist .* range(1e-6, 1.0, length = N_χs_2 + 7)
@@ -262,7 +265,7 @@ function ξ_LD_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
     IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
     int_ξ_Lensings = [
-        en * GaPSE.integrand_ξ_LD_Lensing(IP1, IP2, P1, P2, y, cosmo; Δχ_min = Δχ_min)
+        en * GaPSE.integrand_ξ_LD_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
         for IP1 in IP1s, IP2 in IP2s
     ]
 
@@ -281,7 +284,7 @@ end
 
 """
     ξ_LD_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
-        en::AbstractFloat = 1e6, Δχ_min::AbstractFloat = 1e-3,
+        en::AbstractFloat = 1e6, Δχ_min::AbstractFloat = 1e-4,
         N_χs_2::Int = 100) ::Float64
 
     ξ_LD_Lensing(s1, s2, y, cosmo::Cosmology; kwargs...) ::Float64

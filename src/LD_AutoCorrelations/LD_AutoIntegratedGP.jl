@@ -19,7 +19,7 @@
 
 
 function integrand_ξ_LD_IntegratedGP(IP1::Point, IP2::Point,
-    P1::Point, P2::Point, y, cosmo::Cosmology)
+    P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1)
 
     s1, ℛ_s1 = P1.comdist, P1.ℛ_LD
     s2, ℛ_s2 = P2.comdist, P2.ℛ_LD
@@ -28,13 +28,15 @@ function integrand_ξ_LD_IntegratedGP(IP1::Point, IP2::Point,
     Ω_M0 = cosmo.params.Ω_M0
 
     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-    Δχ = Δχ_square > 0 ? √(Δχ_square) : 0
+    Δχ = Δχ_square > 0 ? √(Δχ_square) : zero(Δχ_square)  # throw(AssertionError("Δχ_square=$Δχ_square : y=$y , χ1=$χ1 , χ2=$χ2"))
 
     factor = 9 * ℋ0^4 * Ω_M0^2 * D1 * D2 * Δχ^4 / (s1 * s2 * a1 * a2)
     parenth_1 = s1 * ℋ1 * ℛ_s1 * (f1 - 1) - 1
     parenth_2 = s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 1
 
-    I04_tilde = cosmo.tools.I04_tilde(Δχ)
+    # for Δχ → 0 the whole term vanishes, since Δχ^4 * Ĩ_0^4(Δχ) → 0 ;
+    # see the "The Δχ → 0 limits" page of the documentation
+    I04_tilde = Δχ ≥ Δχ_min ? cosmo.tools.I04_tilde(Δχ) : zero(Δχ)
 
     return factor * parenth_1 * parenth_2 * I04_tilde
 end
@@ -42,8 +44,7 @@ end
 function integrand_ξ_LD_IntegratedGP(
     χ1::AbstractFloat, χ2::AbstractFloat,
     s1::AbstractFloat, s2::AbstractFloat,
-    y, cosmo::Cosmology;
-    kwargs...)
+    y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
@@ -179,7 +180,7 @@ integrand_ξ_LD_IntegratedGP
 
 
 function ξ_LD_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::AbstractFloat = 1e10, N_χs_2::Int = 100)
+    en::AbstractFloat = 1e10, N_χs_2::Int = 100, kwargs...)
 
 
     χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
@@ -189,7 +190,7 @@ function ξ_LD_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
     IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
     int_ξ_igp = [
-        en * GaPSE.integrand_ξ_LD_IntegratedGP(IP1, IP2, P1, P2, y, cosmo)
+        en * GaPSE.integrand_ξ_LD_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
         for IP1 in IP1s, IP2 in IP2s
     ]
 

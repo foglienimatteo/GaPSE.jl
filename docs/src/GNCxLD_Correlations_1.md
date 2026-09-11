@@ -4,9 +4,7 @@ DocTestSetup = quote
 end
 ```
 
-# GNCxLD TPCFs
-
-## Two-Point Cross-Correlation Functions
+## GNCxLD Two-Point Cross-Correlation Function
 
 ```@docs
 GaPSE.ξ_GNCxLD_Newtonian_Doppler

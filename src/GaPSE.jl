@@ -21,13 +21,14 @@ module GaPSE
 
 
 using TwoFAST # Licence: MIT "Expat" (o GPL ?)
+include("FFTLog.jl")
+using .FFTLog
+
 using FFTW
 using Base: @kwdef
 using SpecialFunctions: gamma
 import Base: *
 
-include("FFTLog.jl")
-using .FFTLog
 
 using Dierckx # Licence: BSD
 using HCubature, QuadGK, WignerSymbols # Licence: MIT "Expat"
@@ -69,6 +70,7 @@ const LENGTH_VALID_GROUPS = [18, 27, 22, 22, nothing]
 
 const HUBBLE_0 = 1e5 / 299792458.0
 
+include("Spline.jl")
 include("OtherUtils.jl")
 include("MathUtils.jl")
 #include("FFTLog.jl")

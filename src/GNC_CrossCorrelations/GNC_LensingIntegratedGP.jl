@@ -23,7 +23,7 @@
 function integrand_ξ_GNC_Lensing_IntegratedGP(
     IP1::Point, IP2::Point,
     P1::Point, P2::Point,
-    y, cosmo::Cosmology; 
+    y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1, 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
@@ -41,7 +41,7 @@ function integrand_ξ_GNC_Lensing_IntegratedGP(
     ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-    Δχ = √(Δχ_square) > 0 ? √(Δχ_square) : 0
+    Δχ = Δχ_square > 0 ? √(Δχ_square) : zero(Δχ_square)  # throw(AssertionError("Δχ_square=$Δχ_square : y=$y , χ1=$χ1 , χ2=$χ2"))
 
     denomin = a1 * a2 * s1 * s2
     common = 9 * χ2 * ℋ0^4 * Ω_M0^2 * D1 * (χ1 - s1) * D2 * (5 * s_b_s1 - 2)
@@ -50,40 +50,47 @@ function integrand_ξ_GNC_Lensing_IntegratedGP(
     new_J31 = y * Δχ^2
     new_J22 = χ1 * χ2 * (y^2 - 1) / 2
 
-    I13 = cosmo.tools.I13(Δχ)
-    I22 = cosmo.tools.I22(Δχ)
+    JI_sum = if Δχ ≥ Δχ_min
+        I13 = cosmo.tools.I13(Δχ)
+        I22 = cosmo.tools.I22(Δχ)
+        new_J22 * I22 + new_J31 * I13
+    else
+        # for Δχ → 0 the J22 * I22 term vanishes and J31 * I13 stays finite;
+        # see "The Δχ → 0 limits" page of the documentation
+        cosmo.tools.σ_2 / 3
+    end
 
-    return common * parenth * (new_J22 * I22 + new_J31 * I13) / denomin
+    return common * parenth * JI_sum / denomin
 end
 
 
 function integrand_ξ_GNC_Lensing_IntegratedGP(
-     χ1::AbstractFloat, χ2::AbstractFloat,
-     s1::AbstractFloat, s2::AbstractFloat,
-     y, cosmo::Cosmology;
-     kwargs...)
+    χ1::AbstractFloat, χ2::AbstractFloat,
+    s1::AbstractFloat, s2::AbstractFloat,
+    y, cosmo::Cosmology;
+    kwargs...)
 
-     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-     IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
-     return integrand_ξ_GNC_Lensing_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
+    return integrand_ξ_GNC_Lensing_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
 end
 
 
 
 
 """
-     integrand_ξ_GNC_Lensing_IntegratedGP(
-          IP1::Point, IP2::Point,
-          P1::Point, P2::Point,
-          y, cosmo::Cosmology; 
-          obs::Union{Bool,Symbol}=:noobsvel
-          ) ::Float64
+    integrand_ξ_GNC_Lensing_IntegratedGP(
+        IP1::Point, IP2::Point,
+        P1::Point, P2::Point,
+        y, cosmo::Cosmology; 
+        obs::Union{Bool,Symbol}=:noobsvel
+        ) ::Float64
 
-     integrand_ξ_GNC_Lensing_IntegratedGP(
-          χ1::AbstractFloat, χ2::AbstractFloat,
-          s1::AbstractFloat, s2::AbstractFloat,
-          y, cosmo::Cosmology;
-          kwargs...) ::Float64
+    integrand_ξ_GNC_Lensing_IntegratedGP(
+        χ1::AbstractFloat, χ2::AbstractFloat,
+        s1::AbstractFloat, s2::AbstractFloat,
+        y, cosmo::Cosmology;
+        kwargs...) ::Float64
 
 Return the integrand of the Two-Point Correlation Function (TPCF) given 
 by the cross correlation between the Lensing
@@ -105,7 +112,7 @@ The analytical expression of this integrand is the following:
     \\left[ 
         J_{31}^{\\kappa \\int\\!\\phi} I_1^3 ( \\Delta \\chi ) +
         J_{22}^{\\kappa \\int\\!\\phi} I_2^2 ( \\Delta \\chi ) 
-     \\right] \\, ,
+    \\right] \\, ,
 \\end{split}
 ```
 
@@ -261,7 +268,7 @@ end
 
 
 function ξ_GNC_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::Float64=1e6, N_χs_2::Int=100, suit_sampling::Bool=true, kwargs...)
+    en::AbstractFloat=1e6, N_χs_2::Int=100, suit_sampling::Bool=true, kwargs...)
 
     χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
     χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)

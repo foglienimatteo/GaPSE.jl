@@ -21,7 +21,7 @@
 function integrand_ξ_LD_Lensing_IntegratedGP(
         IP1::Point, IP2::Point,
         P1::Point, P2::Point,
-        y, cosmo::Cosmology)
+        y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1)
 
     s1 = P1.comdist
     s2, ℛ_s2 = P2.comdist, P2.ℛ_LD
@@ -30,7 +30,7 @@ function integrand_ξ_LD_Lensing_IntegratedGP(
     Ω_M0 = cosmo.params.Ω_M0
 
     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-    Δχ = √(Δχ_square) > 1e-8 ? √(Δχ_square) : 1e-8
+    Δχ = Δχ_square > 0 ? √(Δχ_square) : zero(Δχ_square)  # throw(AssertionError("Δχ_square=$Δχ_square : y=$y , χ1=$χ1 , χ2=$χ2"))
 
     prefactor = 9 / 2 * ℋ0^4 * Ω_M0^2
     factor = D1 * D2 * χ2 * (s1 - χ1) / (s1 * a1 * a2)
@@ -39,10 +39,17 @@ function integrand_ξ_LD_Lensing_IntegratedGP(
     new_J31 = -2 * y * Δχ^2
     new_J22 = χ1 * χ2 * (1 - y^2)
 
-    I13 = cosmo.tools.I13(Δχ)
-    I22 = cosmo.tools.I22(Δχ)
+    JI_sum = if Δχ ≥ Δχ_min
+        I13 = cosmo.tools.I13(Δχ)
+        I22 = cosmo.tools.I22(Δχ)
+        new_J22 * I22 + new_J31 * I13
+    else
+        # for Δχ → 0 the J22 * I22 term vanishes and J31 * I13 stays finite;
+        # see "The Δχ → 0 limits" page of the documentation
+        - 2 * cosmo.tools.σ_2 / 3
+    end
 
-    res = prefactor * factor * parenth * (new_J22 * I22 + new_J31 * I13)
+    res = prefactor * factor * parenth * JI_sum
 
     return res
 end
@@ -51,8 +58,7 @@ end
 function integrand_ξ_LD_Lensing_IntegratedGP(
         χ1::AbstractFloat, χ2::AbstractFloat,
         s1::AbstractFloat, s2::AbstractFloat,
-        y, cosmo::Cosmology;
-        kwargs...)
+        y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
@@ -196,7 +202,7 @@ integrand_ξ_LD_Lensing_IntegratedGP
 
 
 function ξ_LD_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::AbstractFloat = 1e6, N_χs_2::Int = 100)
+    en::AbstractFloat = 1e6, N_χs_2::Int = 100, kwargs...)
 
     χ1s = P1.comdist .* range(1.1e-4, 1.0, length = N_χs_2)
     χ2s = P2.comdist .* range(1.1e-4, 1.0, length = N_χs_2 + 7)
@@ -205,7 +211,7 @@ function ξ_LD_Lensing_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
     IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
     int_ξs = [
-        en * GaPSE.integrand_ξ_LD_Lensing_IntegratedGP(IP1, IP2, P1, P2, y, cosmo)
+        en * GaPSE.integrand_ξ_LD_Lensing_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
         for IP1 in IP1s, IP2 in IP2s
     ]
 
@@ -225,7 +231,7 @@ end
 """
     ξ_LD_Lensing_IntegratedGP(
         P1::Point, P2::Point, y, cosmo::Cosmology;
-        en::Float64 = 1e6, N_χs_2::Int = 100 ) ::Float64
+        en::AbstractFloat = 1e6, N_χs_2::Int = 100 ) ::Float64
     
     ξ_LD_Lensing_IntegratedGP(
         s1, s2, y, cosmo::Cosmology; kwargs... ) ::Float64

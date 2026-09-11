@@ -19,7 +19,7 @@
 
 function integrand_ξ_LD_LocalGP_IntegratedGP(
     IP::Point, P1::Point, P2::Point,
-    y, cosmo::Cosmology)
+    y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1)
 
     s1, a_s1, D_s1, ℛ_s1 = P1.comdist, P1.a, P1.D, P1.ℛ_LD
     s2, ℛ_s2 = P2.comdist, P2.ℛ_LD
@@ -27,11 +27,13 @@ function integrand_ξ_LD_LocalGP_IntegratedGP(
     Ω_M0 = cosmo.params.Ω_M0
 
     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0.0
+    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : zero(Δχ2_square)  # throw(AssertionError("Δχ2=$Δχ2 : y=$y , s1=$s1 , χ2=$χ2"))
 
     prefactor = 9 * ℋ0^4 * Ω_M0^2 * D_s1 * (ℛ_s1 + 1) / (2 * a_s1)
     factor = D2 * Δχ2^4 / a2 * (ℋ2 * ℛ_s2 * (f2 - 1) - 1 / s2)
-    I04_tilde = cosmo.tools.I04_tilde(Δχ2)
+    # for Δχ2 → 0 the whole term vanishes, since Δχ2^4 * Ĩ_0^4(Δχ2) → 0 ;
+    # see the "The Δχ → 0 limits" page of the documentation
+    I04_tilde = Δχ2 ≥ Δχ_min ? cosmo.tools.I04_tilde(Δχ2) : zero(Δχ2)
 
     res = prefactor * factor * I04_tilde
 
@@ -41,8 +43,7 @@ end
 
 function integrand_ξ_LD_LocalGP_IntegratedGP(
     χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
-    y, cosmo::Cosmology;
-    kwargs...)
+    y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP = Point(χ2, cosmo)
@@ -175,7 +176,7 @@ integrand_ξ_LD_LocalGP_IntegratedGP
 """
     ξ_LD_LocalGP_IntegratedGP(
         s1, s2, y, cosmo::Cosmology;
-        en::Float64 = 1e6, N_χs::Int = 100 ) ::Float64
+        en::AbstractFloat = 1e6, N_χs::Int = 100 ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Local Gravitational Potential (GP) and the Integrated GP effects arising from the 

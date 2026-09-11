@@ -3,6 +3,8 @@ DocTestSetup = quote
     using GaPSE
 end
 ```
+
+
 # GaPSE.jl : a Galaxy Power Spectrum Estimator
 
 
@@ -174,7 +176,7 @@ Quick summary of Docker commands, in case you don't know them:
 GaPSE.jl makes extensive use of the following packages:
 
 - [TwoFAST](https://github.com/hsgg/TwoFAST.jl)[[5]](#1), [FFTLog](https://github.com/marcobonici/FFTLog.jl) and [FFTW](https://github.com/JuliaMath/FFTW.jl) in order to perform Fast Fourier Transforms on integrals containing Spherical Bessel functions $j_\ell(x)$
-- [Dierckx](https://github.com/kbarbary/Dierckx.jl) and [GridInterpolations](https://github.com/sisl/GridInterpolations.jl) for 1D and 2D Splines respectively
+- our own cubic spline `MySpline` (`src/Spline.jl`) for the 1D interpolations, and [GridInterpolations](https://github.com/sisl/GridInterpolations.jl) for the 2D ones;  you can find the code of it under `src/Spline.jl`, and the mathematical procedure exploited in the Documentation (check for "Spline Theory"); [Dierckx](https://github.com/kbarbary/Dierckx.jl) is no longer used by the library itself, only by the test suite as an independent cross-check
 - [LsqFit](https://github.com/JuliaNLSolvers/LsqFit.jl) for basic least-squares fitting
 - [QuadGK](https://github.com/JuliaMath/QuadGK.jl), [Trapz](https://github.com/francescoalemanno/Trapz.jl) and [FastGaussQuadrature](https://github.com/JuliaApproximation/FastGaussQuadrature.jl) for preforming 1D integrations, and [HCubature](https://github.com/JuliaMath/HCubature.jl) for the 2D ones
 - [ArbNumerics](https://github.com/JeffreySarnoff/ArbNumerics.jl), [AssociatedLegendrePolynomials](https://github.com/jmert/AssociatedLegendrePolynomials.jl), [LegendrePolynomials](https://github.com/jishnub/LegendrePolynomials.jl) and [SpecialFunctions](https://github.com/JuliaMath/SpecialFunctions.jl) for mathematical function evaluations, especially for the Legendre Polinomials $\mathcal{L}_{\ell}(x)$ and the Gamma function $ \Gamma(x) $
