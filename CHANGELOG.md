@@ -46,6 +46,8 @@
 
 - added `theory/spherical_bessels.jl` and `theory/spherical_bessels.ipynb`, which reproduce the figures of the "Spherical Bessel Functions" page and check numerically the two quantitative claims it makes. Besides the `j_l(x)` figure that page already showed (which had no script behind it), they produce a log-log comparison of each `j_l` with its leading small-`x` term `x^l/(2l+1)!!` - showing that the truncation is legitimate only up to `x ~ 1`, which is the same statement as the `s << 1/k_max` condition of the `I_l^n` - and the first zero of `j_l` for `0 <= l <= 100` against both the linear regression and the exact `l + 1.8557 l^(1/3)`. The zeros are found by bisection and the straight line by least squares, so no new dependency is needed;
 
+- cosmetic fixes to the `theory/Iln_terms.jl` figures: the decade ticks are now generated from the plotted range (`logticks`) instead of once and for all, so they no longer pile up on the left edge of the figures that do not span all the 11 decades; the asymptote is drawn only up to `s = 1`, since being a pure power law it otherwise spans 25 decades and squashes everything else; the vertical range is set by the data alone; and the direct-quadrature curve is drawn on top of the asymptote rather than under it;
+
 
 ## development branch qls
 

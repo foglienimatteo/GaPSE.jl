@@ -213,16 +213,29 @@ asymptote_tilde(s) = -sigma(2) / (6 * s^2)
 ##########################################################################################92
 # Plots
 
-# common keyword arguments, so that all the figures look the same
-const LOGTICKS = (
-    vcat([a * 10.0^b for b in -6:4 for a in 1:9], 10.0^5),
-    vcat([a == 1 ? L"10^{%$b}" : nothing for b in -6:4 for a in 1:9], L"10^{5}")
-)
+"""
+    logticks(lo, hi)
 
-plot_kwargs() = Dict(
+Return the decade ticks (major labelled, minor unlabelled) that fall inside `[lo, hi]`.
+
+Generating them from the plotted range, instead of once and for all, is what keeps the
+labels of the left edge from piling up on each other when a figure does not span all the
+decades.
+"""
+function logticks(lo, hi)
+    b_min, b_max = floor(Int, log10(lo)), ceil(Int, log10(hi))
+    ts = [a * 10.0^b for b in b_min:b_max for a in 1:9]
+    ls = [a == 1 ? L"10^{%$b}" : nothing for b in b_min:b_max for a in 1:9]
+    keep = lo .<= ts .<= hi
+    return (ts[keep], ls[keep])
+end
+
+# common keyword arguments, so that all the figures look the same
+plot_kwargs(lo, hi) = Dict(
     :xaxis => :log, :yaxis => :log,
     :xlabel => L"s \quad [h_0^{-1}\mathrm{Mpc}]",
-    :xticks => LOGTICKS,
+    :xticks => logticks(lo, hi),
+    :xlims => (lo, hi),
     :legend => :bottomleft,
     :legendfontsize => 7,
     :size => (700, 470),
@@ -273,18 +286,28 @@ function plot_single(name, l, n, f; tilde=false)
     ys = [f(s) for s in SS]
     dir = tilde ? [I04_tilde_direct(s) for s in SS_DIRECT] :
           [I_direct(l, n, s) for s in SS_DIRECT]
-    asy = tilde ? [asymptote_tilde(s) for s in SS] : [asymptote(s, l, n) for s in SS]
 
-    lab = tilde ? L"|\tilde{I}_0^4(s)|\;\mathrm{(IPSTools)}" :
-          L"|I_{%$l}^{%$n}(s)|\;\mathrm{(IPSTools)}"
+    # The asymptote is drawn only up to s = 1: it is a pure power law, so over the whole
+    # 11 decades of `SS` it would span 25 of them and squash everything else.
+    ss_asy = SS[SS.<=1.0]
+    asy = tilde ? [asymptote_tilde(s) for s in ss_asy] :
+          [asymptote(s, l, n) for s in ss_asy]
+
+    lab = tilde ? L"|\tilde{I}_0^4(s)| \;\; \mathrm{(IPSTools)}" :
+          L"|I_{%$l}^{%$n}(s)| \;\; \mathrm{(IPSTools)}"
     asylab = tilde ? L"|-\sigma_2 / (6 s^2)|" :
-             L"|\sigma_{%$(n-l)} \, s^{%$(l-n)} / (2 \cdot %$l + 1)!!|"
+             L"|\sigma_{%$(n-l)} \, s^{%$(l-n)} / %$(dfact(2 * l + 1))|"
+
+    # the vertical range is set by the data alone, letting the asymptote clip
+    vals = filter(v -> isfinite(v) && v > 0, abs.(vcat(ys, dir)))
 
     p = plot(; ylabel=tilde ? L"|\tilde{I}_0^4(s)|" : L"|I_{\ell}^{n}(s)|",
-        title=tilde ? L"\tilde{I}_0^4" : L"I_{%$l}^{%$n}", plot_kwargs()...)
+        title=tilde ? L"\tilde{I}_0^4" : L"I_{%$l}^{%$n}",
+        ylims=(minimum(vals) / 30, maximum(vals) * 30),
+        plot_kwargs(SS[begin], SS[end])...)
+    plot!(p, ss_asy, abs.(asy); label=asylab, ls=:dash, lw=2, color=:black)
     plot!(p, SS, abs.(ys); label=lab, lw=2)
-    plot!(p, SS_DIRECT, abs.(dir); label=L"\mathrm{direct \; quadrature}", lw=3, ls=:dot)
-    plot!(p, SS, abs.(asy); label=asylab, ls=:dash, lw=2, color=:black)
+    plot!(p, SS_DIRECT, abs.(dir); label=L"\mathrm{direct \; quadrature}", lw=4, ls=:dot)
     shade_extrapolations!(p, f)
 
     savefig(p, joinpath(DIR, name * ".png"))
@@ -308,7 +331,7 @@ function plot_all()
     ss = SS[left .<= SS .<= right]
 
     p = plot(; ylabel=L"|I_{\ell}^{n}(s)|", title=L"\mathrm{All \; the} \; I_{\ell}^{n}",
-        plot_kwargs()...)
+        plot_kwargs(left, right)...)
     for (name, l, n, f) in ILN
         plot!(p, ss, abs.([f(s) for s in ss]); label=L"I_{%$l}^{%$n}", lw=2)
     end
@@ -335,7 +358,9 @@ function plot_ratios()
         xlabel=L"s \quad [h_0^{-1}\mathrm{Mpc}]",
         ylabel=L"I_{\ell}^{n}(s) \; / \; \mathrm{asymptote}(s)",
         title=L"\mathrm{Convergence \; to \; the} \; s \rightarrow 0 \; \mathrm{limits}",
-        xticks=LOGTICKS, legend=:bottomleft, legendfontsize=7, size=(700, 470))
+        xticks=logticks(SS_DIRECT[begin], SS_DIRECT[end]),
+        xlims=(SS_DIRECT[begin], SS_DIRECT[end]),
+        legend=:bottomleft, legendfontsize=7, size=(700, 470))
     for (name, l, n, f) in ILN
         plot!(p, SS_DIRECT, [I_direct(l, n, s) / asymptote(s, l, n) for s in SS_DIRECT];
             label=L"I_{%$l}^{%$n}", lw=2)
