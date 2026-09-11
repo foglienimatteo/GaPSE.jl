@@ -36,6 +36,14 @@
 
 - added the "The I_l^n integrals" page of the manual (`docs/src/IlnIntegrals.md`), which defines the `I_l^n`, proves that `I_l^n(s) -> sigma_{n-l} s^{l-n} / (2l+1)!!` and `I~_0^4(s) -> -sigma_2 / (6 s^2)` for `s -> 0`, and shows the figures produced by `theory/Iln_terms.jl`;
 
+- BUG FIX in `theory/Iln_terms.jl`: the plotted `I_l^n` did not match their analytic asymptotes, for three compounding reasons, none of them a flaw of the derivation. (i) An `IntegralIPS` is a spline only between its `left` (`= fit_min = 0.05`) and `right` fields: below `left` it returns a power law fitted on `[0.05, 0.5]` and seeded with a negative exponent, so the first three decades of the old plots were an extrapolation and not the integral. (ii) `IPSTools` hard-codes `kmin, kmax = 1e-5, 1e3` for the `xicalc` call that builds the `I_l^n`, while its `k_min`/`k_max` keywords only affect the `sigma_i` it stores; the script was computing the `sigma_i` of the asymptotes over `[1e-6, 10]`, which is harmless for `sigma_2` (0.1%) but wrong by a factor `5e4` for `sigma_-2` and `5e8` for `sigma_-4`. That is exactly why only `I_0^2`, `I_1^3` and `I~_0^4`, whose limits depend on `sigma_2` alone, appeared to be correct. (iii) The expansion needs `s << 1/k_max = 1e-3`, i.e. 50 times below `fit_min`, so the validity window of the limits and that of the spline do not overlap and the limits cannot be seen through `IPSTools` at all;
+
+- `theory/Iln_terms.jl`/`.ipynb` now use the right `sigma_i`, mark in grey the regions where an `IntegralIPS` is an extrapolation, and add `I_direct`/`I04_tilde_direct`, a brute-force quadrature over the same extremes `xicalc` uses, which confirms the analytic limits to four digits for `s <= 1e-4`. A new figure `ratios.png` plots the ratio to the asymptote for all of them. `docs/src/IlnIntegrals.md` gained the corresponding "A warning before looking at the plots" section, with the measured tables;
+
+- added `SpecialFunctions` to `theory/Project.toml`, needed by the direct quadrature;
+
+- DOCS FIX: `docs/src/SphericalBesselFunctions.md` was written with LaTeX that Documenter cannot render (`longtable`, `parbox`, `multirow`, `makecell`, `equation`/`label`, and the personal macros `\deriv`, `\secderiv`, `\dd`, `\versor`). The two-column table is now a sequence of subsections, the macros are expanded and the page renders. Its `j_l` identities were all verified numerically, and one of them was wrong: in `int_0^inf j_l(Kx) j_l(kx) dx = pi/(2(2l+1)) K^l/k^(l+1)` it is the SMALLER argument that goes to the numerator, so the condition is `K < k` and not `K > k`. The validity range `-2l-1 < p < 1` was added to the `int x^p j_l^2` formula, and the regression for the first zero of `j_l` (`x = 4.75 + 1.05 l`) was confirmed (fit gives `4.7466 + 1.0513 l`);
+
 
 ## development branch qls
 

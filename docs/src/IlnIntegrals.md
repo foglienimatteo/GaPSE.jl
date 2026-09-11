@@ -265,7 +265,7 @@ I_\ell^n \xrightarrow[s \rightarrow 0]{}
 | ``\, I_0^2 \,``         | ``\, 0 \,`` | ``\, 2 \,`` | ``\sigma_2 \, s^{-2}``             | ``+\infty`` |
 | ``\, I_2^2 \,``         | ``\, 2 \,`` | ``\, 2 \,`` | ``\frac{\sigma_0}{15}``            | const       |
 | ``\, I_3^1 \,``         | ``\, 3 \,`` | ``\, 1 \,`` | ``\frac{\sigma_{-2}}{105} \, s^2`` | ``0``       |
-| ``\, I_1^3 \,``         | ``\, 1 \,`` | ``\, 3 \,`` | ``\frac{\sigma_2}{3 \, s^{-2}}``   | ``+\infty`` |
+| ``\, I_1^3 \,``         | ``\, 1 \,`` | ``\, 3 \,`` | ``\frac{\sigma_2}{3} \, s^{-2}``   | ``+\infty`` |
 | ``\, I_1^1 \,``         | ``\, 1 \,`` | ``\, 1 \,`` | ``\frac{\sigma_0}{3}``             | const       |
 | ``\, \tilde{I}_0^4 \,`` |      -      |      -      | ``-\frac{\sigma_2}{6}\, s^{-2}``   | ``+\infty`` |
 
@@ -274,6 +274,91 @@ multiplied by a ``J`` carrying the matching positive power of ``\Delta\chi``, so
 product stays finite. How the cancellation works, term by term and for every TPCF, is the
 subject of "The ``\Delta\chi \rightarrow 0`` limits" page.
 
+## A warning before looking at the plots
+
+Everything above is exact. What `IPSTools` gives you, however, is **not** the integral
+everywhere, and a naive plot of it down to ``s = 10^{-4}`` looks nothing like (4a).
+Three distinct things have to be kept in mind.
+
+### 1. An `IntegralIPS` is a spline only between `left` and `right`
+
+Each ``I_\ell^n`` is stored as a [`GaPSE.IntegralIPS`](@ref), which evaluates as
+
+```math
+I_\ell^n(s) =
+\begin{cases}
+a_\mathrm{L} + b_\mathrm{L} \, s^{\,s_\mathrm{L}} \; ,  & s < \mathrm{left} \\[6pt]
+\mathrm{spline}(s) \; ,  & \mathrm{left} \leq s \leq \mathrm{right} \\[6pt]
+a_\mathrm{R} + b_\mathrm{R} \, s^{\,s_\mathrm{R}} \; ,  & s > \mathrm{right}
+\end{cases}
+```
+
+with ``\mathrm{left} = \mathrm{fit\_min} = 0.05 \, h_0^{-1}\mathrm{Mpc}`` for all the
+``I_\ell^n`` (and ``0.1`` for ``\tilde{I}_0^4``). The coefficients
+``a_\mathrm{L}, b_\mathrm{L}, s_\mathrm{L}`` are fitted on
+``[\mathrm{fit\_min}, \mathrm{fit\_max}] = [0.05, 0.5]``, i.e. on a region that is still
+very far from the asymptotic one, and the fit is seeded with a *negative* exponent.
+The consequence is that, with this input Power Spectrum, below ``s = 0.05``
+**every** ``I_\ell^n`` comes out with a negative fitted exponent and diverges, whatever
+its true behaviour. This is not a bug — GaPSE never evaluates
+them there — but it does mean that the region ``s < 0.05`` of any plot of an
+`IntegralIPS` carries no information about the limits derived above. In the figures
+below it is shaded in grey.
+
+### 2. The ``\sigma_i`` must use the same ``k`` extremes as the ``I_\ell^n``
+
+`IPSTools` hard-codes ``k_\mathrm{min}, k_\mathrm{max} = 10^{-5}, 10^{3}`` for the
+`xicalc` call that builds the ``I_\ell^n``, regardless of the `k_min`/`k_max` keywords,
+which are only used for the ``\sigma_i`` it stores. Comparing an ``I_\ell^n`` with an
+asymptote built out of ``\sigma_i`` computed over a different range is meaningless,
+because the ``\sigma_i`` with negative index are completely dominated by their upper
+extreme: with ``P(q) \propto q^{-2.64}`` at large ``q``, the integrand of
+``\sigma_{-2}`` grows as ``q^{1.36}`` and that of ``\sigma_{-4}`` as ``q^{3.36}``. For
+`data/WideA_ZA_pk.dat`:
+
+| ``i``      | over ``[10^{-6}, 10]`` | over ``[10^{-5}, 10^{3}]`` | ratio                 |
+| :--------: | ---------------------: | -------------------------: | --------------------: |
+| ``0``      | ``18.58``              | ``143.3``                  | ``7.7``               |
+| ``2``      | ``101.06``             | ``101.13``                 | ``1.001``             |
+| ``-2``     | ``437.8``              | ``2.35 \times 10^{7}``     | ``5.4 \times 10^{4}`` |
+| ``-4``     | ``2.41 \times 10^{4}`` | ``1.27 \times 10^{13}``    | ``5.3 \times 10^{8}`` |
+
+Only ``\sigma_2`` is insensitive to the choice, which is exactly why ``I_0^2``,
+``I_1^3`` and ``\tilde{I}_0^4`` — the three whose limits depend on ``\sigma_2`` alone —
+are the only ones that appear to obey (4a) even when the extremes are mismatched.
+
+### 3. The asymptotic regime starts below ``1/k_\mathrm{max}``
+
+Truncating the series at ``k = 0`` requires ``(qs)^2 \ll 1`` for every ``q`` that
+carries weight in the integral, i.e.
+
+```math
+s \; \ll \; \frac{1}{k_\mathrm{max}} = 10^{-3} \; h_0^{-1}\mathrm{Mpc} \; .
+```
+
+This is 50 times *smaller* than ``\mathrm{fit\_min} = 0.05``, so the window where the
+limits hold and the window where the spline is valid **do not overlap**. The limits are
+therefore not observable through `IPSTools`: to see them one has to compute the integrals
+directly, which is what the `I_direct` function of `theory/Iln_terms.jl` does.
+
+Doing so confirms (4a) to four digits. Calling ``R_\ell^n(s)`` the ratio between the
+directly-computed integral and its asymptote:
+
+| ``s``       | ``R_0^0`` | ``R_2^0`` | ``R_4^0`` | ``R_0^2`` | ``R_2^2`` | ``R_3^1`` | ``R_1^3`` | ``R_1^1`` |
+| :---------- | --------: | --------: | --------: | --------: | --------: | --------: | --------: | --------: |
+| ``10^{-5}`` | 1.0000    | 1.0000    | 1.0000    | 1.0000    | 1.0000    | 1.0000    | 1.0000    | 1.0000    |
+| ``10^{-4}`` | 0.9997    | 0.9996    | 0.9997    | 1.0000    | 0.9999    | 0.9997    | 1.0000    | 0.9998    |
+| ``10^{-3}`` | 0.9734    | 0.9621    | 0.9693    | 1.0000    | 0.9885    | 0.9704    | 1.0000    | 0.9839    |
+| ``10^{-2}`` | 0.4799    | 0.0661    | 0.0416    | 1.0000    | 0.5997    | 0.1018    | 1.0000    | 0.5521    |
+| ``0.05``    | 0.2337    | 0.0015    | 0.0000    | 0.9998    | 0.3033    | 0.0023    | 0.9999    | 0.2760    |
+
+![Convergence to the limits](assets/Iln_terms/ratios.png)
+
+The three ``\sigma_2``-only columns sit at 1 over the whole range, for the reason given
+in the previous point: their integrand ``q^2 P(q) \, j_\ell(qs)/(qs)^n`` is weighted so
+that only ``q \ll 1/s`` contributes, so the expansion is never actually stressed. All
+the others peel off from 1 exactly where ``s`` approaches ``1/k_\mathrm{max}``.
+
 ## The plots
 
 All the curves show ``|I_\ell^n(s)|`` rather than ``I_\ell^n(s)``: these integrals
@@ -281,6 +366,12 @@ oscillate and change sign at large ``s``, where a logarithmic vertical axis woul
 defined. At small ``s``, the regime this page is about, they keep a constant sign, so the
 absolute value is immaterial there and the asymptote (dashed, black) can be read off
 directly.
+
+Each of the individual figures carries four things: the `IntegralIPS` stored in
+`IPSTools` (solid), the direct quadrature for ``s \leq 10^{-2}`` (dotted), the analytic
+asymptote (dashed, black), and two grey bands marking where the `IntegralIPS` is a
+power-law extrapolation rather than the integral. The combined figure below is instead
+restricted to ``[\mathrm{left}, \mathrm{right}]``, where all of them are genuine splines.
 
 ```math
 \boxed{
