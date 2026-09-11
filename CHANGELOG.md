@@ -44,6 +44,8 @@
 
 - DOCS FIX: `docs/src/SphericalBesselFunctions.md` was written with LaTeX that Documenter cannot render (`longtable`, `parbox`, `multirow`, `makecell`, `equation`/`label`, and the personal macros `\deriv`, `\secderiv`, `\dd`, `\versor`). The two-column table is now a sequence of subsections, the macros are expanded and the page renders. Its `j_l` identities were all verified numerically, and one of them was wrong: in `int_0^inf j_l(Kx) j_l(kx) dx = pi/(2(2l+1)) K^l/k^(l+1)` it is the SMALLER argument that goes to the numerator, so the condition is `K < k` and not `K > k`. The validity range `-2l-1 < p < 1` was added to the `int x^p j_l^2` formula, and the regression for the first zero of `j_l` (`x = 4.75 + 1.05 l`) was confirmed (fit gives `4.7466 + 1.0513 l`);
 
+- added `theory/spherical_bessels.jl` and `theory/spherical_bessels.ipynb`, which reproduce the figures of the "Spherical Bessel Functions" page and check numerically the two quantitative claims it makes. Besides the `j_l(x)` figure that page already showed (which had no script behind it), they produce a log-log comparison of each `j_l` with its leading small-`x` term `x^l/(2l+1)!!` - showing that the truncation is legitimate only up to `x ~ 1`, which is the same statement as the `s << 1/k_max` condition of the `I_l^n` - and the first zero of `j_l` for `0 <= l <= 100` against both the linear regression and the exact `l + 1.8557 l^(1/3)`. The zeros are found by bisection and the straight line by least squares, so no new dependency is needed;
+
 
 ## development branch qls
 

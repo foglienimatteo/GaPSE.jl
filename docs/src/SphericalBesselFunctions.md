@@ -105,6 +105,14 @@ The complete series is
 which is the one used to derive the small-``s`` limits of the
 [``I_\ell^n`` integrals](IlnIntegrals.md).
 
+Keeping only the ``k = 0`` term is legitimate up to ``x \simeq 1``, and not beyond:
+
+![Where the small-x expansion holds](assets/misc/spherical_bessels_smallx.png)
+
+This is precisely why the ``I_\ell^n`` reach their asymptotic limits only for
+``s \ll 1/k_\mathrm{max}``: the argument of the Bessel function there is ``q s``, and the
+truncation needs ``q s \ll 1`` for *every* ``q`` carrying weight in the integral.
+
 ### Parity
 
 ```math
@@ -211,3 +219,20 @@ Note that this is an overestimate for very low ``\ell``: ``j_0(x)`` has its firs
 ``j_1(x)`` at ``x \simeq 4.493`` and ``j_2(x)`` at ``x \simeq 5.764``. The fit is instead accurate
 at large ``\ell``, where the exact asymptotic expansion reads
 ``x \simeq \ell + 1.8557 \, \ell^{1/3} + \mathcal{O}(\ell^{-1/3})``.
+
+![The first zero of j_l](assets/misc/spherical_bessels_firstzeros.png)
+
+
+## Reproducing the figures
+
+The figures are not built by the documentation: they are committed under
+`docs/src/assets/misc/`, and regenerated on demand by the script in the `theory/`
+directory. From `theory/`, after the one-time setup described in its `README.md`:
+
+```bash
+$ julia --project=. spherical_bessels.jl
+```
+
+which writes the plots and the table of the first zeros in `theory/spherical_bessels/`
+and, since `SAVE_TO_DOCS = true`, also refreshes the copies used by this page. The same
+computation is available step by step in the notebook `theory/spherical_bessels.ipynb`.

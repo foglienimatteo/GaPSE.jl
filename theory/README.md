@@ -42,3 +42,9 @@ $ julia --project=. Iln_terms.jl
   scale together with their small-``s`` asymptotes. It produces the figures used by the
   "The ``I_\ell^n`` integrals" page of the documentation, and, with `SAVE_TO_DOCS = true`,
   it writes a copy of them directly into `docs/src/assets/Iln_terms/`.
+
+- **`spherical_bessels`** : the spherical Bessel functions ``j_\ell(x)``, the region where
+  their small-``x`` expansion ``x^\ell/(2\ell+1)!!`` is legitimate, and the first zero of
+  ``j_\ell`` as a function of ``\ell``. It produces the figures used by the
+  "Spherical Bessel Functions" page of the documentation, writing them into
+  `docs/src/assets/misc/`.
