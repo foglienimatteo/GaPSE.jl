@@ -85,10 +85,15 @@ tools = GaPSE.IPSTools(ips; k_min=K_MIN, k_max=K_MAX, N=1024,
 # P(q) evaluated once and for all on `QUAD_GRID`, so that `I_direct` is cheap
 const PQ_GRID = [ips(q) for q in QUAD_GRID]
 
-# The small-q power law of the input Power Spectrum, P(q) = PS_AMP * q^NS, as `InputPS`
+# The small-q power law of the MATTER Power Spectrum, P(q) = PS_AMP * q^N_P, as `InputPS`
 # fits it on [1e-6, 3e-6] (with `con=false`, so that its `l_a` is exactly zero).
 # It is the only property of P(q) the large-s behaviour depends on.
-const NS, PS_AMP = ips.l_si, ips.l_b
+#
+# CAREFUL: N_P is the small-k slope of the matter P(k), NOT the exponent `n_s - 1` of the
+# dimensionless primordial curvature spectrum. The two are related by
+# P_m(k) ~ k^4 T^2(k) P_R(k) ~ k^n_s T^2(k), with T -> 1 on large scales, so N_P = n_s.
+# We measure it rather than assume it: for `WideA_ZA_pk.dat` it comes out +0.9600 .
+const N_P, PS_AMP = ips.l_si, ips.l_b
 
 
 const SIGMA_CACHE = Dict{Int,Float64}()
@@ -238,21 +243,28 @@ Return the leading large-``s`` behaviour of ``I_\\ell^n``:
 
 ```math
 I_\\ell^n(s) \\; \\xrightarrow[s \\rightarrow +\\infty]{} \\;
-    \\frac{A}{2\\pi^2} \\, \\mathcal{M}_\\ell(\\mu) \\, s^{-(3+n_s)} \\; ,
-    \\qquad \\mu = 3 + n_s - n \\; ,
+    \\frac{A}{2\\pi^2} \\, \\mathcal{M}_\\ell(\\mu) \\, s^{-(3+n_P)} \\; ,
+    \\qquad \\mu = 3 + n_P - n \\; ,
 ```
 
-with ``P(q) \\rightarrow A \\, q^{n_s}`` for ``q \\rightarrow 0`` and
-``\\mathcal{M}_\\ell`` the `mellin` transform above.
+with ``P(q) \\rightarrow A \\, q^{n_P}`` for ``q \\rightarrow 0`` and
+``\\mathcal{M}_\\ell`` the `mellin` transform above. ``n_P`` is the small-``k`` slope of the
+MATTER Power Spectrum (``\\simeq +0.96``), not the ``n_s - 1`` of the dimensionless
+primordial curvature one.
+
+It is NOT obtained by replacing ``P`` with its small-``q`` power law inside the integral:
+that interchange is illegitimate, and for ``\\mu \\geq 2`` it produces a divergent
+integral. It follows from the residue at the rightmost pole of the Mellin-Parseval
+representation; see the manual.
 
 The exponent does not depend on ``\\ell`` nor on ``n``: the ``s^{-n}`` coming from the
 ``(qs)^{-n}`` factor exactly cancels the ``n`` carried by ``\\mu``.
 
 It holds as long as the region ``q \\sim 1/s`` that dominates the integral still lies
-inside the ``P \\propto q^{n_s}`` regime, i.e. for
+inside the ``P \\propto q^{n_P}`` regime, i.e. for
 ``1 \\ll s \\ll 1/k_\\mathrm{min} = 10^5 \\, h_0^{-1}\\mathrm{Mpc}``.
 """
-asymptote_large(s, l, n) = PS_AMP / (2 * π^2) * mellin(l, 3 + NS - n) * s^(-(3 + NS))
+asymptote_large(s, l, n) = PS_AMP / (2 * π^2) * mellin(l, 3 + N_P - n) * s^(-(3 + N_P))
 
 
 ##########################################################################################92
@@ -355,7 +367,7 @@ function plot_single(name, l, n, f; tilde=false)
         plot_kwargs(SS[begin], SS[end])...)
     plot!(p, ss_asy, abs.(asy); label=asylab, ls=:dash, lw=2, color=:black)
     tilde || plot!(p, ss_big, abs.(big);
-        label=L"|A \, \mathcal{M}_{%$l}(\mu) \, s^{-(3+n_s)} / 2\pi^2|",
+        label=L"|A \, \mathcal{M}_{%$l}(\mu) \, s^{-(3+n_P)} / 2\pi^2|",
         ls=:dashdot, lw=2, color=:darkred)
     plot!(p, SS, abs.(ys); label=lab, lw=2)
     plot!(p, SS_DIRECT, abs.(dir); label=L"\mathrm{direct \; quadrature}", lw=4, ls=:dot)
@@ -434,10 +446,10 @@ Every curve must tend to 1, and it does to better than 1% around
 whole range shown lies inside ``[\\mathrm{left}, \\mathrm{right}]``, so the `IntegralIPS`
 IS the integral.
 
-``\\tilde{I}_0^4`` is left out on purpose: its ``\\mu = n_s - 1 \\simeq -0.04`` sits on the
+``\\tilde{I}_0^4`` is left out on purpose: its ``\\mu = n_P - 1 \\simeq -0.04`` sits on the
 pole of ``\\Gamma(\\mu/2)``, which is precisely the ``\\sigma_4 / s^4`` divergence its
-subtraction removes, so its two leading powers, ``s^{-(3+n_s)}`` and ``s^{-4}``, are
-degenerate up to ``1 - n_s = 0.04`` and it never reaches a clean power law inside its own
+subtraction removes, so its two leading powers, ``s^{-(3+n_P)}`` and ``s^{-4}``, are
+degenerate up to ``1 - n_P = 0.04`` and it never reaches a clean power law inside its own
 validity window.
 """
 function plot_ratios_large_s()
@@ -476,10 +488,10 @@ function save_large_s_data()
     open(out, "w") do io
         println(io, GaPSE.BRAND)
         println(io, "#\n# The I_l^n and their ratio to the analytic large-s asymptote")
-        println(io, "#   A / (2 pi^2) * M_l(mu) * s^-(3+n_s) ,   mu = 3 + n_s - n")
-        println(io, "# with P(q) -> A q^n_s for q -> 0 . All the ratios must tend to 1 .")
+        println(io, "#   A / (2 pi^2) * M_l(mu) * s^-(3+n_P) ,   mu = 3 + n_P - n")
+        println(io, "# with P(q) -> A q^n_P for q -> 0 . All the ratios must tend to 1 .")
         println(io, "#")
-        println(io, "# From the `InputPS` left fit: n_s = $NS , A = $PS_AMP")
+        println(io, "# From the `InputPS` left fit: n_P = $N_P , A = $PS_AMP")
         println(io, "# Shown only for $lo <= s <= $hi , where every I_l^n is a spline.")
         println(io, "#")
         println(io, "# s [h_0^{-1} Mpc] \t " *
