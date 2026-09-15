@@ -15,152 +15,227 @@ Several of these ``I_\ell^n`` diverge for ``\Delta\chi \rightarrow 0``, and seve
 This page derives that finite value for every affected TPCF. The results are the ones used in
 the `Δχ < Δχ_min` branch of the corresponding `integrand_ξ_...` functions.
 
-## Why the limit is needed
+## Definitions and why the limit is needed
 
-``\Delta\chi = 0`` is not a pathological configuration that can be avoided: it is reached
-deterministically by the quadrature.
+We report here the important definitions:
 
-- ``\Delta\chi^2 = \chi_1^2 + \chi_2^2 - 2\,\chi_1\chi_2\,y`` vanishes if and only if
-  ``y = 1`` **and** ``\chi_1 = \chi_2``, since ``\Delta\chi^2 = (\chi_1-\chi_2)^2 + 2\chi_1\chi_2(1-y)``
-  and both terms are non-negative for ``|y| \leq 1``.
-- ``y = 1`` exactly whenever ``\mu = 1``, because
-  ``y(s_1, s, \mu) = (\mu s + s_1)/s_2`` and ``s_2(s_1,s,1) = s_1 + s``. The nodes ``\mu = \pm 1``
-  **belong** to the Gauss-Lobatto grid (`alg = :lobatto`) and to the trapezoidal grid
-  (`alg = :trap`); only `alg = :quad` avoids them.
-- ``\chi_1 = \chi_2`` is hit whenever a sampling point of the ``\chi`` grid coincides with the
-  other distance. With `suit_sampling = true` this is not even accidental: 
-  `sample_subdivision_middle` deliberately places a dense, symmetric sub-grid around the
-  singular point, because that is where the integrand varies fastest.
-
-## The ``\sigma_i`` and the small-argument expansion of ``I_\ell^n``
-
-We recall the definitions used throughout GaPSE:
+![Positions of the observer $\mathbf{O}$ and of the galaxies $\vs_1$ and $\vs_2$, together with their separation $\vs = \vs_2 - \vs_2$](assets/sketches/sketch_s1-s2-s-1.png)
 
 ```math
-    I_\ell^n(s) = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \,
-        \frac{j_\ell(qs)}{(qs)^n} \; , \qquad
-    \sigma_i = \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^{2-i} \, P(q) \; ,
+\Delta\chi := \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \, \chi_2 \,y} \quad \quad (1.1) \\[10pt]
+
+\Delta\chi_1 := \sqrt{\chi_1^2 + s_2^2 - 2 \, \chi_1 \,s_2 \,y} \quad \quad (1.2) \\[10pt]
+\Delta\chi_2 := \sqrt{s_1^2 + \chi_2^2 - 2 \,s_1 \,\ \chi_2 \,y} \quad \quad (1.3)  \\[10pt]
+
+(1.4\mathrm{a}): \quad y = \cos{\theta} := \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2 \quad \Rightarrow \quad \; -1 \leq y \leq 1 \\[16pt]
 ```
 
-with ``P(q)`` the matter Power Spectrum at ``z=0`` and ``j_\ell`` the spherical Bessel function of
-order ``\ell``. Its Taylor series is
 
 ```math
-    j_\ell(x) = \sum_{k=0}^{+\infty} \frac{(-1)^k \, x^{\ell + 2k}}
-        {2^k \, k! \, (2\ell + 2k + 1)!!} \; ,
+\begin{align*}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    y &= \cos \theta = \hat{\mathbf{s}}_1 \cdot  \hat{\mathbf{s}}_2 
+        \quad &(1.4\mathrm{a}) \quad
+    && \mu &= \cos \varphi = \hat{\mathbf{s}}_1 \cdot  \hat{\mathbf{s}} 
+        \quad &(1.4\mathrm{b}) \\[15pt]
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    s(s_1, s_2, y) &= \sqrt{s_1^2 + s_2^2 - 2 \, s_1 \, s_2 \, y} 
+        \quad &(1.5\mathrm{a}) \quad
+    && s_2(s_1, s, \mu) &= \sqrt{s_1^2 + s^2 + 2 \, s_1 \, s \, \mu} 
+        \quad &(1.5\mathrm{b})\\[15pt]
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \mu(s_1, s_2, y) &= \frac{y \, s_2 - s_1}{s(s_1, s_2, y)} 
+        \quad &(1.6\mathrm{a})\quad
+    && y(s_1, s, \mu) &= \frac{\mu \, s + s_1}{s_2(s_1, s, \mu)}
+        \quad &(1.6\mathrm{b})
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{align*}
 ```
 
-so that, inserting it in the definition and integrating term by term,
+
+
+
+We will consider only ``\Delta\chi`` in the following steps, but the analysis is the same:
 
 ```math
-    I_\ell^n(s) = \sum_{k=0}^{+\infty} \frac{(-1)^k \; \sigma_{n - \ell - 2k}}
-        {2^k \, k! \, (2\ell + 2k + 1)!!} \; s^{\,\ell - n + 2k} \; .
+\begin{align*}
+\Delta\chi^2 &= \chi_1^2 + \chi_2^2 - 2\,\chi_1\chi_2 \,y  \\[10pt]
+&= \chi_1^2 + \chi_2^2 - 2\,\chi_1\chi_2 + 2\,\chi_1\chi_2 - 2\,\chi_1\chi_2 \,y  \\[10pt]
+&= (\chi_1-\chi_2)^2 + 2\chi_1\chi_2(1-y)\\[10pt]
+&\quad\quad\quad (\chi_1-\chi_2)^2 \geq 0 \;, \quad \forall\chi_1,\chi_2\in \mathbb{R}\\[10pt]
+&\quad\quad\quad 2\chi_1\chi_2(1-y)\geq 0 \quad \forall\chi_1,\chi_2\in \mathbb{R}\;, \quad \forall y \in [-1,1]\\[10pt]
+
+\quad\quad \Delta\chi = 0\, &\iff y=1 \; \land \; \chi_1=\chi_2 \quad\quad (1.7\mathrm{a})\\[10pt]
+\Rightarrow \quad \Delta\chi_1 = 0 &\iff y=1 \; \land \; \chi_1=s_2 \quad\quad (1.7\mathrm{b})\\[10pt]
+\quad\quad \Delta\chi_2 = 0 &\iff y=1 \; \land \; s_1=\chi_2 \quad\quad (1.7\mathrm{c})\\[10pt]
+\end{align*}
 ```
 
-The leading behaviour is therefore
+Putting the condition ``y=1`` into Eq. (1.6b) and Eq. (1.5b):
 
 ```math
-    I_\ell^n(s) \; \xrightarrow[s \rightarrow 0]{} \;
-        \frac{\sigma_{n-\ell}}{(2\ell+1)!!} \, s^{\,\ell - n} \; ,
+\begin{align*}
+(1.6\mathrm{b}) \; \mathrm{and} \; (1.6\mathrm{a})  \; : \quad y = 1 &\iff 1 = y(s_1, s, \mu) = \frac{\mu \, s + s_1}{s_2(s_1, s, \mu)} =  \frac{\mu \, s + s_1}{\sqrt{s_1^2 + s^2 + 2 \, s_1 \, s \, \mu} }\\[10pt]
+&\iff s_1^2 + s^2 + 2 \, s_1 \, s \, \mu = \left(\mu \, s + s_1 \right)^2 \\[10pt]
+&\iff s_1^2 + s^2 + 2 \, s_1 \, s \, \mu = \mu^2 \, s^2 + s_1^2 + 2 \, s_1 \, s \, \mu \\[10pt]
+&\iff s^2 (1 - \mu^2) = 0 \\[10pt]
+&\iff \mu = \pm 1 \\[15pt]
+\Rightarrow \quad y=1&\iff \mu = \pm 1 \quad \quad (1.8)\\[10pt]
+\end{align*}
 ```
 
-which gives three regimes:
+We then understand that ``\Delta\chi = 0`` is not a pathological configuration that can be avoided: it is reached deterministically by the quadrature.
 
-- ``\ell > n`` : the integral vanishes as ``s^{\ell-n}``;
-- ``\ell = n`` : the integral tends to the finite, non-zero value ``\sigma_0/(2\ell+1)!!``;
-- ``\ell < n`` : the integral diverges as ``s^{-(n-\ell)}``.
+The nodes ``\mu = \pm 1`` belong to the Gauss-Lobatto grid (`alg = :lobatto`) and to the trapezoidal grid (`alg = :trap`); only `alg = :quad` avoids them (which is a problem, because are the parts that contributes the most).
 
-Explicitly, for the eight ``I_\ell^n`` used in the code:
-
-```math
-\begin{split}
-    &I_0^0 = \sigma_0 - \frac{\sigma_{-2}}{6}s^2 + O(s^4) \; , \qquad
-     I_1^1 = \frac{\sigma_0}{3} + O(s^2) \; , \qquad
-     I_2^2 = \frac{\sigma_0}{15} + O(s^2) \; , \\
-    &I_2^0 = \frac{\sigma_{-2}}{15}s^2 + O(s^4) \; , \qquad
-     I_4^0 = \frac{\sigma_{-4}}{945}s^4 + O(s^6) \; , \qquad
-     I_3^1 = \frac{\sigma_{-2}}{105}s^2 + O(s^4) \; , \\
-    &I_0^2 = \frac{\sigma_2}{s^2} - \frac{\sigma_0}{6} + O(s^2) \; , \qquad
-     I_1^3 = \frac{\sigma_2}{3\,s^2} - \frac{\sigma_0}{30} + O(s^2) \; .
-\end{split}
-```
-
-Note that the ``\sigma_i`` with ``i<0`` never survive in the final results: they always appear
-multiplied by a positive power of ``\Delta\chi``.
-
-## The small-argument expansion of ``\tilde{I}_0^4``
-
-The `I04_tilde` integral, computed by `func_I04_tilde`, is
-
-```math
-    \tilde{I}_0^4(s) = \frac{1}{s^4}\int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \,
-        \frac{P(q)}{q^2} \, \left[ j_0(qs) - 1 \right] \; .
-```
-
-Using ``j_0(x) - 1 = \sum_{k \geq 1} (-1)^k x^{2k}/(2k+1)!`` we get
-
-```math
-    \tilde{I}_0^4(s) = \sum_{k=1}^{+\infty} \frac{(-1)^k \, \sigma_{4-2k}}{(2k+1)!} \,
-        s^{\,2k-4}
-    = -\frac{\sigma_2}{6\,s^2} + \frac{\sigma_0}{120} - \frac{\sigma_{-2}}{5040}s^2 + O(s^4) \; .
-```
-
-It diverges as ``s^{-2}``, and it always appears in the code multiplied by ``\Delta\chi^4``, so
-that ``\Delta\chi^4 \, \tilde{I}_0^4(\Delta\chi) \rightarrow 0``.
+``\chi_1 = \chi_2`` is hit whenever a sampling point of the ``\chi`` grid coincides with the other distance. With `suit_sampling = true` this is not even accidental: `sample_subdivision_middle` deliberately places a dense, symmetric sub-grid around the singular point, because that is where the integrand varies fastest.
 
 ## How the limit is taken
+
+We got the limit in the Iln Integral page:
+
+```math
+\boxed{
+    I_\ell^n(s) \; \underset{s \rightarrow 0}{\sim}  \;
+        \frac{\sigma_{n-\ell}}{(2\ell+1)!!} \, s^{\,\ell - n} 
+}
+\quad \quad (2.1\mathrm{a})
+\qquad\qquad
+\boxed{
+    \tilde{I}_0^4(s) \; \underset{s \rightarrow 0}{\sim} \; - \frac{\sigma_2}{6 \, s^2}
+}
+\quad \quad (2.1\mathrm{b})
+```
+
+So, written explicitly:
+```math
+\begin{align*}
+I_0^0           &\sim \sigma_0                         &&\rightarrow \mathrm{const} \quad\quad\quad
+    &I_2^2           &\sim \frac{\sigma_0}{15}              &&\rightarrow \mathrm{const} \\[10pt]
+I_2^0           &\sim \frac{\sigma_{-2}}{15} \, s^2    &&\rightarrow 0              
+    & I_3^1          &\sim \frac{\sigma_{-2}}{105} \, s^2   &&\rightarrow 0              \\[10pt]
+I_4^0           &\sim \frac{\sigma_{-4}}{945} \, s^4   &&\rightarrow 0              
+    &I_1^3           &\sim \frac{\sigma_2}{3} \, s^{-2}     &&\rightarrow +\infty        \\[10pt]
+I_0^2           &\sim \sigma_2 \, s^{-2}               &&\rightarrow +\infty        
+    &I_1^1           &\sim \frac{\sigma_0}{3}               &&\rightarrow \mathrm{const} \\[10pt]
+\end{align*}
+```
+
+```math
+\tilde{I}_0^4   \sim -\frac{\sigma_2}{6}\, s^{-2}     \rightarrow +\infty\\[10pt]
+```
 
 Since ``\Delta\chi \rightarrow 0`` forces both ``\chi_2 \rightarrow \chi_1`` and ``y \rightarrow 1``,
 the limit is a joint one and must be checked to be independent of the direction of approach.
 We therefore parametrise the approach with a single parameter ``p``,
 
 ```math
-    \chi_2 = \chi_1 + p \, \Delta\chi \; , \qquad
-    y = \frac{\chi_1^2 + \chi_2^2 - \Delta\chi^2}{2 \, \chi_1 \chi_2} \; ,
-    \qquad |p| \leq 1 \; ,
+    \chi_2 := \chi_1 + p \, \Delta\chi  \\[10pt]
+    |\chi_1 - \chi_2| \leq \Delta\chi \quad \Rightarrow \quad |p| \leq 1
+```
+NOTE: the bound on ``p`` follows from ``|\chi_1 - \chi_2| \leq \Delta\chi``
+
+```math
+\begin{align*}
+\mathrm{Inverting \; }(1.1)\; : \quad 
+    y &= \frac{\chi_1^2 + \chi_2^2 - \Delta\chi^2}{2 \, \chi_1 \chi_2} \\[10pt]
+      &= \frac{\chi_1^2 + \chi_1^2 + p^2 \Delta\chi^2 + 2 \chi_1 p \Delta \chi - \Delta\chi^2}{2 \, \chi_1 (\chi_1 + p \Delta \chi)} \\[10pt]
+      &= \frac{2\chi_1^2 + 2 \chi_1 p \Delta \chi - (1-p^2)\Delta\chi^2}{2 \, \chi_1 (\chi_1 + p \Delta \chi)} \\[10pt]
+
+\Rightarrow \quad 
+    y-1  &= \frac{2\chi_1^2 + 2 \chi_1 p \Delta \chi - (1-p^2)\Delta\chi^2 - 2 \chi_1^2 - 2 \chi_1 p \Delta \chi}{2 \, \chi_1 (\chi_1 + p \Delta \chi)} \\[10pt]
+        &= - \frac{(1-p^2)\Delta\chi^2}{2 \, \chi_1 (\chi_1 + p \Delta \chi)} \\[15pt]
+
+\Rightarrow \quad 
+    y-1  &\underset{\Delta\chi\rightarrow 0^{+}}{\sim} \Delta\chi^2 \\[10pt]
+\end{align*}
 ```
 
-where the second relation is just the definition of ``\Delta\chi`` solved for ``y``, and the bound
-on ``p`` follows from ``|\chi_1 - \chi_2| \leq \Delta\chi``. We then expand each
-``J^{(k)} I_{\ell_k}^{n_k}`` in powers of ``\Delta\chi`` and keep the ``\Delta\chi^0`` coefficient.
-**A result that still depends on ``p`` would mean that the limit does not exist**; in all the
+
+We then expand each ``J\, I_{\ell}^{n}`` in powers of ``\Delta\chi`` and keep the ``\Delta\chi^0`` coefficient.
+**If the result that still depends on ``p``, it means that the limit does not exist**; in all the
 cases below the ``p``-dependence cancels in the sum, which is a strong consistency check.
+
 
 ## Family 1: Lensing ``\times`` Lensing
 
 Concerned functions: `integrand_ξ_GNC_Lensing`, `integrand_ξ_LD_Lensing`,
-`integrand_ξ_GNCxLD_Lensing_Lensing`. Here ``\Delta\chi^2 = \chi_1^2 + \chi_2^2 - 2\chi_1\chi_2 y``
-and the four coefficients are
+`integrand_ξ_GNCxLD_Lensing_Lensing`.
+
+The analytical expression of the function `integrand_ξ_GNC_Lensing` is the following:
 
 ```math
-\begin{split}
-    J_{00} &= -\frac{3}{4}\frac{\chi_1^2\chi_2^2}{\Delta\chi^4}(y^2-1)
-        \left[8y(\chi_1^2+\chi_2^2) - \chi_1\chi_2(9y^2+7)\right] \; , \\
-    J_{02} &= -\frac{3}{2}\frac{\chi_1^2\chi_2^2}{\Delta\chi^4}(y^2-1)
-        \left[4y(\chi_1^2+\chi_2^2) - \chi_1\chi_2(3y^2+5)\right] \; , \\
-    J_{31} &= 9 \, y \, \Delta\chi^2 \; , \\
-    J_{22} &= \frac{9}{4}\frac{\chi_1\chi_2}{\Delta\chi^4}
-        \left[2(\chi_1^4+\chi_2^4)(7y^2-3) - 16y\chi_1\chi_2(y^2+1)(\chi_1^2+\chi_2^2)
-        + \chi_1^2\chi_2^2(11y^4+14y^2+23)\right] \; ,
-\end{split}
+f^{\kappa\kappa} (\chi_1, \chi_2, s_1, s_2, y) = 
+J^{\kappa\kappa}_{\alpha}
+\left[
+    J^{\kappa\kappa}_{00} I_0^0(\Delta\chi) + 
+    J^{\kappa\kappa}_{02} I_2^0(\Delta\chi) +
+    J^{\kappa\kappa}_{31} I_1^3(\Delta\chi) +
+    J^{\kappa\kappa}_{22} I_2^2(\Delta\chi)
+\right]  \, , 
 ```
 
-and the sum is ``J_{00}I_0^0 + J_{02}I_2^0 + J_{31}I_1^3 + J_{22}I_2^2``.
-
-All three square brackets vanish at the singular point. Setting ``y=1`` and
-``\chi_1 = \chi_2 = \chi``:
+with
 
 ```math
-\begin{split}
-    &8(2\chi^2) - \chi^2 (9+7) = 16\chi^2 - 16\chi^2 = 0 \; , \\
-    &4(2\chi^2) - \chi^2 (3+5) = 8\chi^2 - 8\chi^2 = 0 \; , \\
-    &2(2\chi^4)(4) - 16\chi^2(2)(2\chi^2) + \chi^4(11+14+23)
+\begin{align*}
+    J^{\kappa\kappa}_{\alpha} & = 
+    \frac{
+        \mathcal{H}_0^4 \Omega_{\mathrm{M}0}^2 D(\chi_1) D(\chi_2) 
+    }{
+        s_1 s_2 a(\chi_1) a(\chi_2)}
+    (\chi_1 - s_1)(\chi_2 - s_2)
+    (5 s_{\mathrm{b}, 1} - 2)(5 s_{\mathrm{b}, 2} - 2) 
+    \, , \\
+    %%%%&%%%%%%%%%%%%%
+    J^{\kappa\kappa}_{00} & = 
+    -\frac{3}{4}\frac{\chi_1^2 \chi_2^2}{\Delta\chi^4} (y^2 - 1)
+    \left[
+        8 y (\chi_1^2 + \chi_2^2) - \chi_1\chi_2 (9y^2+7)
+    \right] 
+    \, , \\
+    %%%%&%%%%%%%%%%%%%
+    J^{\kappa\kappa}_{02} & = 
+    -\frac{3}{2}\frac{\chi_1^2 \chi_2^2}{\Delta\chi^4}(y^2 - 1)
+    \left[
+        4 y (\chi_1^2 + \chi_2^2) - \chi_1 \chi_2 (3 y^2 + 5)
+    \right] 
+    \, , \\
+    %%%%%%%%%%%%%%%%%%
+    J^{\kappa\kappa}_{31} & = 9 y \Delta\chi^2 
+    \, , \\
+    %%%%%%%%%%%%%%%%%%
+    J^{\kappa\kappa}_{22} & = 
+    \frac{9}{4}\frac{\chi_1 \chi_2}{\Delta\chi^4}
+    \left[
+        2(\chi_1^4 + \chi_2^4)(7 y^2 - 3) - 
+        16 y \chi_1 \chi_2 (\chi_1^2 + \chi_2^2)(y^2 + 1) + 
+        \chi_1^2 \chi_2^2 (11y^4 + 14y^2 + 23) 
+    \right] 
+    \, .
+\end{align*}
+```
+
+
+
+Setting ``y=1`` and ``\chi_1 = \chi_2 = \chi``, all the square brackets of ``J_{00}^{\kappa\kappa}``, ``J_{02}^{\kappa\kappa}`` and ``J_{22}^{\kappa\kappa}`` vanish:
+
+```math
+\begin{align*}
+y=1 \; &\land \; \chi_1 = \chi_2 = \chi \; : \\[10pt]
+    J_{00}^{\kappa\kappa} \mathrm{\; square \; brakets} &= 8(2\chi^2) - \chi^2 (9+7) = 16\chi^2 - 16\chi^2 = 0 \; , \\
+    J_{02}^{\kappa\kappa} \mathrm{\; square \; brakets} &=4(2\chi^2) - \chi^2 (3+5) = 8\chi^2 - 8\chi^2 = 0 \; , \\
+    J_{22}^{\kappa\kappa} \mathrm{\; square \; brakets} &=2(2\chi^4)(7-3) - 16\chi^2(2\chi^2)(1+1) + \chi^4(11+14+23)
         = 16\chi^4 - 64\chi^4 + 48\chi^4 = 0 \; ,
-\end{split}
+\end{align*}
 ```
 
 so the leading order is not enough and the expansion must be pushed one order further.
-Doing so, the individual contributions are
+Doing so, the individual contributions are, using the ``I_\ell^n`` limits of Eq. (2.1a):
+
+```math
+J_{00} I_0^0 \sim -\frac{3}{4}\frac{\chi_1^4}{\Delta\chi^4}(y-1)^2 \chi_1^4 [9y^2-16y+7] \cdot \sigma_0
+```
 
 | term | limit |
 |:--|:--|

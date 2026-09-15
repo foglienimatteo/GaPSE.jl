@@ -12,7 +12,9 @@
   - [The plots](#the-plots)
     - [One by one](#one-by-one)
   - [The large-``s`` behaviour](#the-large-s-behaviour)
-    - [The proof](#the-proof)
+    - [The small-``k`` slope of the matter Power Spectrum](#the-small-k-slope-of-the-matter-power-spectrum)
+    - [Why the limit cannot be taken inside the integral](#why-the-limit-cannot-be-taken-inside-the-integral)
+    - [The proof, by Mellin transform](#the-proof-by-mellin-transform)
     - [The check](#the-check)
     - [Where it stops holding](#where-it-stops-holding)
     - [Why ``\tilde{I}_0^4`` is excluded](#why-tildei_04-is-excluded)
@@ -264,19 +266,26 @@ I_\ell^n \xrightarrow[s \rightarrow 0]{}
 \end{cases} 
 ```
 
+So, written explicitly:
 
 
-|                         |  ``\ell``   |    ``n``    | ``s \rightarrow 0``                | limit       |
-| :---------------------- | :---------: | :---------: | :--------------------------------- | :---------- |
-| ``\, I_0^0 \,``         | ``\, 0 \,`` | ``\, 0 \,`` | ``\sigma_0``                       | const       |
-| ``\, I_2^0 \,``         | ``\, 2 \,`` | ``\, 0 \,`` | ``\frac{\sigma_{-2}}{15} \, s^2 `` | ``0``       |
-| ``\, I_4^0 \,``         | ``\, 4 \,`` | ``\, 0 \,`` | ``\frac{\sigma_{-4}}{945} \, s^4`` | ``0``       |
-| ``\, I_0^2 \,``         | ``\, 0 \,`` | ``\, 2 \,`` | ``\sigma_2 \, s^{-2}``             | ``+\infty`` |
-| ``\, I_2^2 \,``         | ``\, 2 \,`` | ``\, 2 \,`` | ``\frac{\sigma_0}{15}``            | const       |
-| ``\, I_3^1 \,``         | ``\, 3 \,`` | ``\, 1 \,`` | ``\frac{\sigma_{-2}}{105} \, s^2`` | ``0``       |
-| ``\, I_1^3 \,``         | ``\, 1 \,`` | ``\, 3 \,`` | ``\frac{\sigma_2}{3} \, s^{-2}``   | ``+\infty`` |
-| ``\, I_1^1 \,``         | ``\, 1 \,`` | ``\, 1 \,`` | ``\frac{\sigma_0}{3}``             | const       |
-| ``\, \tilde{I}_0^4 \,`` |      -      |      -      | ``-\frac{\sigma_2}{6}\, s^{-2}``   | ``+\infty`` |
+```math
+\begin{align*}
+I_0^0           &\sim \sigma_0                         &&\rightarrow \mathrm{const} \quad\quad\quad
+    &I_2^2           &\sim \frac{\sigma_0}{15}              &&\rightarrow \mathrm{const} \\[10pt]
+I_2^0           &\sim \frac{\sigma_{-2}}{15} \, s^2    &&\rightarrow 0              
+    & I_3^1          &\sim \frac{\sigma_{-2}}{105} \, s^2   &&\rightarrow 0              \\[10pt]
+I_4^0           &\sim \frac{\sigma_{-4}}{945} \, s^4   &&\rightarrow 0              
+    &I_1^3           &\sim \frac{\sigma_2}{3} \, s^{-2}     &&\rightarrow +\infty        \\[10pt]
+I_0^2           &\sim \sigma_2 \, s^{-2}               &&\rightarrow +\infty        
+    &I_1^1           &\sim \frac{\sigma_0}{3}               &&\rightarrow \mathrm{const} \\[10pt]
+\end{align*}
+```
+
+```math
+\tilde{I}_0^4   \sim -\frac{\sigma_2}{6}\, s^{-2}     \rightarrow +\infty\\[10pt]
+```
+
 
 The diverging ones are never a problem in practice: inside a TPCF they always come
 multiplied by a ``J`` carrying the matching positive power of ``\Delta\chi``, so that the
@@ -421,15 +430,15 @@ side, because the obvious route does not work.
 
 ### The small-``k`` slope of the matter Power Spectrum
 
-Only one property of ``P`` enters: its behaviour at small ``k``. In the
-``\Lambda``CDM cosmology the primordial **curvature** perturbations are a pure power law
-(see the [Planck 2018 results, A&A 641, A10 (2020)](https://doi.org/10.1051/0004-6361/201833887)),
-usually quoted through the *dimensionless* spectrum:
+In the ``\Lambda``-CDM cosmology, the primordial curvature perturbations are a pure power law (see the [Planck 2018 results, A&A 641, A10 (2020)](https://doi.org/10.1051/0004-6361/201833887)), usually quoted through the dimensionless power spectrum ``\Delta^2_{\mathcal{R}}``:
+
+```math
+    \Delta^2_{\mathcal{R}}(k) := \frac{k^3}{2\pi^2} P_\mathcal{R}(k) \quad \quad (3.1)
+```
 
 ```math
 \begin{align*}
-    \Delta^2_{\mathcal{R}}(k) := \frac{k^3 \, P_\mathcal{R}(k)}{2\pi^2}
-    \; &\underset{k \rightarrow 0^{+}}{\sim} \; A_s \, \left( \frac{k}{k^*}\right)^{n_s-1} &&(3.1)\\[10pt]
+    \Delta^2_{\mathcal{R}}(k) &\underset{k \rightarrow 0^{+}}{\sim} \; A_s \, \left( \frac{k}{k^*}\right)^{n_s-1} &&(3.2)\\[10pt]
 
     n_s&\approx 0.965&&\mathrm{primordial \; spectral \; index}\\[8pt]
     \ln(10^{10} A_s) &\approx 3.043 &&\mathrm{ log \; power \; of \; primordial \; curvature \; perturbations} \Rightarrow A_s \approx 2.1 \times 10^{-9}\\[8pt]
@@ -437,39 +446,53 @@ usually quoted through the *dimensionless* spectrum:
 \end{align*}
 ```
 
-**Careful: Eq.(3.1) is NOT the ``P`` of Eq.(1).** What enters the ``I_\ell^n`` is the
-late-time **matter** Power Spectrum, a dimensional quantity in
-``(h^{-1}\mathrm{Mpc})^3``. The two are related by the Poisson equation and the transfer
-function ``T(k)``:
+```math
+    \Rightarrow P_\mathcal{R}(k) = \frac{2\pi^2}{k^3}\,\Delta^2_{\mathcal{R}}(k) \underset{k \rightarrow 0^{+}}{\sim} k^{\,n_s-4} \quad \quad (3.3) \\[10pt]
+```
+
+What enters the ``I_\ell^n`` is the matter Power Spectrum ``P_m(k,z)`` at present day (``z=0``), a dimensional quantity in ``(h^{-1}\mathrm{Mpc})^3``. The two are related by the Poisson equation and the transfer function ``T(k)``:
 
 ```math
-    P_\mathcal{R}(k) = \frac{2\pi^2}{k^3}\,\Delta^2_{\mathcal{R}}(k) \propto k^{\,n_s-4}
+    P_m(k, z)  \propto  k^4 \, T^2(k) \, D^2(z) \, P_\mathcal{R}(k)
+    \quad \quad (3.4)
+```
+
+The transfer function is normalized such that at large scales it goes to ``1``: 
+```math
+    T(k) \xrightarrow[k \rightarrow 0^{+}]{} 1 \quad \quad (3.5) \\[10pt]
+```
+
+so at present day:
+
+```math
+\begin{align*}
+    (3.4)\; \mathrm{with} \; z=0 : \quad \quad P_m(k, z=0)  & \propto  k^4 \, T^2(k) \, D^2(0) \, P_\mathcal{R}(k)\\[10pt]
+    \mathrm{Inserting} \; (3.5) \rightarrow  \quad \quad
+    &\underset{ k\rightarrow 0^{+}}{\sim} \; k^{4}  \; P_\mathcal{R}(k) \\[10pt]
+    \mathrm{Inserting} \; (3.3) \rightarrow  \quad \quad
+    &\underset{ k\rightarrow 0^{+}}{\sim} \; k^{4}  \, k^{\,n_s-4}  \\[10pt]
+    &= \; k^{n_s}\\[10pt]
+\end{align*}
+```
+
+```math
     \quad \Rightarrow \quad
-    P_m(k, z) \; \propto \; k^4 \, T^2(k) \, D^2(z) \, P_\mathcal{R}(k)
-    \; \propto \; k^{\,n_s} \, T^2(k) \, D^2(z) \; .
-    \quad \quad (3.2)
+    P(k) \; \underset{k \rightarrow 0^{+}}{\sim}  \, k^{n_s} \; ,
+    \quad \quad n_s \simeq 0.96
+    \quad \quad (3.6)
 ```
 
-On scales far above the equality one ``T(k) \rightarrow 1`` and only the primordial
-spectrum survives, so that
-
-```math
-    P(q) \; \underset{q \rightarrow 0^{+}}{\sim} \; A \, q^{\,n_P} \; ,
-    \qquad n_P = n_s \simeq 0.96 \; .
-    \quad \quad (3.3)
-```
-
-The matter Power Spectrum therefore *grows* as ``k^{+0.96}`` at small ``k``; it is the
-dimensionless curvature one that goes as ``k^{\,n_s-1} \simeq k^{-0.035}``. The four
+The matter Power Spectrum therefore *grows* as ``k^{+0.96}`` at small ``k``. The
+dimensionless curvature goes as ``k^{n_s-1} \simeq k^{-0.035}`` and the four
 powers of ``k`` supplied by Poisson, minus the three of the
 ``\Delta^2 \leftrightarrow P`` conversion, are exactly what separates them.
 
-This is directly visible in `data/WideA_ZA_pk.dat`, whose local slope
+NOTE: this is directly visible in `data/WideA_ZA_pk.dat`, whose local slope
 ``\mathrm{d}\ln P / \mathrm{d}\ln k`` is ``+0.9600`` for ``k \in [10^{-6}, 10^{-5}]`` and
 still ``+0.9599`` for ``k \in [10^{-5}, 10^{-4}]``, with an amplitude of order
-``10^{6} \, (h^{-1}\mathrm{Mpc})^3`` — nowhere near ``A_s``. `theory/Iln_terms.jl`
-therefore does not hard-code ``n_P``: it reads it, together with ``A``, out of the power
-law that `InputPS` itself fits on the left edge (`ips.l_si` and `ips.l_b`).
+``10^{6} \, (h^{-1}\mathrm{Mpc})^3``.
+
+
 
 ### Why the limit cannot be taken inside the integral
 
@@ -516,10 +539,11 @@ What follows instead is an argument that never forms that object.
 
 ### The proof, by Mellin transform
 
-Write Eq.(1) as a Mellin convolution, isolating the ``s^{-n}``:
 
+Write Eq.(1) as a Mellin convolution, isolating the ``s^{-n}``:
 ```math
-    I_\ell^n(s) = s^{-n} \int_0^{+\infty} \mathrm{d}q \; f(q) \, j_\ell(q s) \; ,
+    (1): \quad \quad I_\ell^n(s) := \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \\[14pt]
+    \Rightarrow \quad I_\ell^n(s) = s^{-n} \int_0^{+\infty} \mathrm{d}q \; f(q) \, j_\ell(q s) \; ,
     \qquad f(q) := \frac{q^{\,2-n} \, P(q)}{2\pi^2} \; .
     \quad \quad (3.7)
 ```
