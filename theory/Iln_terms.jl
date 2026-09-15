@@ -29,7 +29,7 @@ Pkg.activate(@__DIR__)
 using GaPSE
 
 using Plots, LaTeXStrings, QuadGK, DelimitedFiles, Printf
-using SpecialFunctions: sphericalbesselj
+using SpecialFunctions: sphericalbesselj, gamma
 
 pyplot() # if you do not have PyPlot/matplotlib installed, `gr()` works as well
 
@@ -84,6 +84,11 @@ tools = GaPSE.IPSTools(ips; k_min=K_MIN, k_max=K_MAX, N=1024,
 
 # P(q) evaluated once and for all on `QUAD_GRID`, so that `I_direct` is cheap
 const PQ_GRID = [ips(q) for q in QUAD_GRID]
+
+# The small-q power law of the input Power Spectrum, P(q) = PS_AMP * q^NS, as `InputPS`
+# fits it on [1e-6, 3e-6] (with `con=false`, so that its `l_a` is exactly zero).
+# It is the only property of P(q) the large-s behaviour depends on.
+const NS, PS_AMP = ips.l_si, ips.l_b
 
 
 const SIGMA_CACHE = Dict{Int,Float64}()
@@ -209,6 +214,46 @@ Return the leading small-``s`` behaviour of ``\\tilde{I}_0^4``, i.e.
 """
 asymptote_tilde(s) = -sigma(2) / (6 * s^2)
 
+"""
+    mellin(l, mu) ::Float64
+
+Return the Mellin transform of the spherical Bessel function,
+
+```math
+\\int_0^{+\\infty} \\mathrm{d}x \\, x^{\\mu-1} \\, j_\\ell(x) =
+    \\sqrt{\\frac{\\pi}{2}} \\; 2^{\\,\\mu-3/2} \\;
+    \\frac{\\Gamma\\left(\\frac{\\ell+\\mu}{2}\\right)}
+          {\\Gamma\\left(\\frac{\\ell-\\mu+3}{2}\\right)} \\; ,
+```
+
+which converges for ``-\\ell < \\mu < 2`` and is meant as its analytic continuation
+outside that strip.
+"""
+mellin(l, mu) = √(π / 2) * 2.0^(mu - 3 / 2) * gamma((l + mu) / 2) / gamma((l - mu + 3) / 2)
+
+"""
+    asymptote_large(s, l, n) ::Float64
+
+Return the leading large-``s`` behaviour of ``I_\\ell^n``:
+
+```math
+I_\\ell^n(s) \\; \\xrightarrow[s \\rightarrow +\\infty]{} \\;
+    \\frac{A}{2\\pi^2} \\, \\mathcal{M}_\\ell(\\mu) \\, s^{-(3+n_s)} \\; ,
+    \\qquad \\mu = 3 + n_s - n \\; ,
+```
+
+with ``P(q) \\rightarrow A \\, q^{n_s}`` for ``q \\rightarrow 0`` and
+``\\mathcal{M}_\\ell`` the `mellin` transform above.
+
+The exponent does not depend on ``\\ell`` nor on ``n``: the ``s^{-n}`` coming from the
+``(qs)^{-n}`` factor exactly cancels the ``n`` carried by ``\\mu``.
+
+It holds as long as the region ``q \\sim 1/s`` that dominates the integral still lies
+inside the ``P \\propto q^{n_s}`` regime, i.e. for
+``1 \\ll s \\ll 1/k_\\mathrm{min} = 10^5 \\, h_0^{-1}\\mathrm{Mpc}``.
+"""
+asymptote_large(s, l, n) = PS_AMP / (2 * π^2) * mellin(l, 3 + NS - n) * s^(-(3 + NS))
+
 
 ##########################################################################################92
 # Plots
@@ -287,11 +332,14 @@ function plot_single(name, l, n, f; tilde=false)
     dir = tilde ? [I04_tilde_direct(s) for s in SS_DIRECT] :
           [I_direct(l, n, s) for s in SS_DIRECT]
 
-    # The asymptote is drawn only up to s = 1: it is a pure power law, so over the whole
-    # 11 decades of `SS` it would span 25 of them and squash everything else.
+    # The asymptotes are drawn only over the side of the plot they describe: they are pure
+    # power laws, so over the whole 11 decades of `SS` they would span 25 of them and
+    # squash everything else.
     ss_asy = SS[SS.<=1.0]
     asy = tilde ? [asymptote_tilde(s) for s in ss_asy] :
           [asymptote(s, l, n) for s in ss_asy]
+    ss_big = SS[SS.>=10.0]
+    big = tilde ? nothing : [asymptote_large(s, l, n) for s in ss_big]
 
     lab = tilde ? L"|\tilde{I}_0^4(s)| \;\; \mathrm{(IPSTools)}" :
           L"|I_{%$l}^{%$n}(s)| \;\; \mathrm{(IPSTools)}"
@@ -306,6 +354,9 @@ function plot_single(name, l, n, f; tilde=false)
         ylims=(minimum(vals) / 30, maximum(vals) * 30),
         plot_kwargs(SS[begin], SS[end])...)
     plot!(p, ss_asy, abs.(asy); label=asylab, ls=:dash, lw=2, color=:black)
+    tilde || plot!(p, ss_big, abs.(big);
+        label=L"|A \, \mathcal{M}_{%$l}(\mu) \, s^{-(3+n_s)} / 2\pi^2|",
+        ls=:dashdot, lw=2, color=:darkred)
     plot!(p, SS, abs.(ys); label=lab, lw=2)
     plot!(p, SS_DIRECT, abs.(dir); label=L"\mathrm{direct \; quadrature}", lw=4, ls=:dot)
     shade_extrapolations!(p, f)
@@ -370,6 +421,77 @@ function plot_ratios()
     savefig(p, joinpath(DIR, "ratios.png"))
     SAVE_TO_DOCS && savefig(p, joinpath(DOCS_ASSETS, "ratios.png"))
     return p
+end
+
+"""
+    plot_ratios_large_s()
+
+Plot, for each ``I_\\ell^n``, the ratio between the `IntegralIPS` stored in `IPSTools` and
+its analytic large-``s`` asymptote, and save it as `Iln_terms/ratios_large_s.png`.
+
+Every curve must tend to 1, and it does to better than 1% around
+``s \\simeq 10^4 \\, h_0^{-1}\\mathrm{Mpc}``. Here there is no need for `I_direct`: the
+whole range shown lies inside ``[\\mathrm{left}, \\mathrm{right}]``, so the `IntegralIPS`
+IS the integral.
+
+``\\tilde{I}_0^4`` is left out on purpose: its ``\\mu = n_s - 1 \\simeq -0.04`` sits on the
+pole of ``\\Gamma(\\mu/2)``, which is precisely the ``\\sigma_4 / s^4`` divergence its
+subtraction removes, so its two leading powers, ``s^{-(3+n_s)}`` and ``s^{-4}``, are
+degenerate up to ``1 - n_s = 0.04`` and it never reaches a clean power law inside its own
+validity window.
+"""
+function plot_ratios_large_s()
+    lo, hi = 10.0, minimum(f.right for (_, _, _, f) in ILN)
+    ss = SS[lo.<=SS.<=hi]
+
+    p = plot(; xaxis=:log, yaxis=:identity, ylims=(0, 1.6),
+        xlabel=L"s \quad [h_0^{-1}\mathrm{Mpc}]",
+        ylabel=L"I_{\ell}^{n}(s) \; / \; \mathrm{asymptote}(s)",
+        title=L"\mathrm{Convergence \; to \; the} \; s \rightarrow +\infty \; \mathrm{limits}",
+        xticks=logticks(lo, hi), xlims=(lo, hi),
+        legend=:bottomright, legendfontsize=7, size=(700, 470))
+    for (name, l, n, f) in ILN
+        plot!(p, ss, [f(s) / asymptote_large(s, l, n) for s in ss];
+            label=L"I_{%$l}^{%$n}", lw=2)
+    end
+    hline!(p, [1.0]; color=:black, ls=:dash, lw=2, label="")
+
+    savefig(p, joinpath(DIR, "ratios_large_s.png"))
+    SAVE_TO_DOCS && savefig(p, joinpath(DOCS_ASSETS, "ratios_large_s.png"))
+    return p
+end
+
+"""
+    save_large_s_data()
+
+Save in `Iln_terms/Iln_large_s_values.txt` the ``I_\\ell^n`` and their ratio to the
+analytic large-``s`` asymptote, over the region where the `IntegralIPS` are splines.
+"""
+function save_large_s_data()
+    lo, hi = 10.0, minimum(f.right for (_, _, _, f) in ILN)
+    ss = SS[lo.<=SS.<=hi]
+
+    out = joinpath(DIR, "Iln_large_s_values.txt")
+    isfile(out) && rm(out)
+    open(out, "w") do io
+        println(io, GaPSE.BRAND)
+        println(io, "#\n# The I_l^n and their ratio to the analytic large-s asymptote")
+        println(io, "#   A / (2 pi^2) * M_l(mu) * s^-(3+n_s) ,   mu = 3 + n_s - n")
+        println(io, "# with P(q) -> A q^n_s for q -> 0 . All the ratios must tend to 1 .")
+        println(io, "#")
+        println(io, "# From the `InputPS` left fit: n_s = $NS , A = $PS_AMP")
+        println(io, "# Shown only for $lo <= s <= $hi , where every I_l^n is a spline.")
+        println(io, "#")
+        println(io, "# s [h_0^{-1} Mpc] \t " *
+                    join([n for (n, _, _, _) in ILN], " \t ") * " \t " *
+                    join([n * "_ratio" for (n, _, _, _) in ILN], " \t "))
+        for s in ss
+            vals = [f(s) for (_, _, _, f) in ILN]
+            rats = [v / asymptote_large(s, l, n) for (v, (_, l, n, _)) in zip(vals, ILN)]
+            println(io, "$s \t " * join(vals, " \t ") * " \t " * join(rats, " \t "))
+        end
+    end
+    return out
 end
 
 """
@@ -466,9 +588,13 @@ if abspath(PROGRAM_FILE) == @__FILE__
     println("\nPlotting the convergence to the s -> 0 limits ...")
     plot_ratios()
 
+    println("\nPlotting the convergence to the s -> +inf limits ...")
+    plot_ratios_large_s()
+
     println("\nSaving the data ...")
     println("\t saved in $(save_data())")
     println("\t saved in $(save_direct_data())")
+    println("\t saved in $(save_large_s_data())")
 
     println("\nAll the files are in $DIR .\n")
 end

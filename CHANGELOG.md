@@ -48,6 +48,12 @@
 
 - cosmetic fixes to the `theory/Iln_terms.jl` figures: the decade ticks are now generated from the plotted range (`logticks`) instead of once and for all, so they no longer pile up on the left edge of the figures that do not span all the 11 decades; the asymptote is drawn only up to `s = 1`, since being a pure power law it otherwise spans 25 decades and squashes everything else; the vertical range is set by the data alone; and the direct-quadrature curve is drawn on top of the asymptote rather than under it;
 
+- added the `s -> +infinity` counterpart to `docs/src/IlnIntegrals.md`, with proof. Substituting `x = q s` moves the whole `s` dependence into `P(x/s)`, so a large `s` probes the Power Spectrum at small argument, where `P(q) -> A q^n_s`; the residual `x` integral is the Mellin transform of the spherical Bessel function, `M_l(mu) = sqrt(pi/2) 2^(mu-3/2) Gamma((l+mu)/2)/Gamma((l-mu+3)/2)` with `mu = 3 + n_s - n`. The result is `I_l^n(s) -> A/(2 pi^2) M_l(3+n_s-n) s^-(3+n_s)`: the `s^-n` pulled out by the `(qs)^-n` factor exactly compensates the `n` it subtracts from `mu`, so THE EXPONENT DOES NOT DEPEND ON `l` NOR ON `n` - only the amplitude does - and the limit is always 0. This is also why `IntegralIPS` seeds its right-hand fit with `p0 = [-4.0, 1.0]`: `3 + n_s = 3.96`;
+
+- `theory/Iln_terms.jl`/`.ipynb` gained `mellin`, `asymptote_large`, `plot_ratios_large_s` and `save_large_s_data`, plus the large-`s` asymptote on each single figure. Reading `A` and `n_s` straight out of the `InputPS` left fit (`ips.l_b`, `ips.l_si`), the formula reproduces the stored `I_l^n` to better than 0.7% at `s = 1e4` for all eight, including the five whose `mu > 2` puts them outside the convergence strip of the Mellin integral (the analytic continuation is the right answer there, because `P(q)` bends away from the power law well before the `x` integral could diverge);
+
+- NOTE: `I~_0^4` is excluded from the large-`s` analysis. Its `mu = n_s - 1 = -0.04` sits on the pole of `Gamma(mu/2)`, which is exactly the `sigma_4/s^4` divergence its subtraction removes; what is left has two powers, `s^-(3+n_s)` and `s^-4`, degenerate up to `1 - n_s = 0.04`, so it never settles on a clean power law (measured local slope still `-3.6` at `s = 1e3`). Note also that its `right` is `9888`, well inside the `Dchi ~ 2 chi_max` a real run reaches, unlike the `96466` of the other `I_l^n`;
+
 
 ## development branch qls
 

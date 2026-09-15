@@ -408,6 +408,127 @@ blow up (``\ell < n``).
 |       ![I13](assets/Iln_terms/I13.png)       | ![I11](assets/Iln_terms/I11.png) |
 | ![I04_tilde](assets/Iln_terms/I04_tilde.png) |                                  |
 
+## The large-``s`` behaviour
+
+The opposite end is, if anything, simpler, and it has a pleasant surprise: **the exponent
+is the same for every ``\ell`` and every ``n``**.
+
+### The proof
+
+Substitute ``x = q s`` in (1). With ``\mathrm{d}q = \mathrm{d}x / s`` and
+``q = x/s``,
+
+```math
+\begin{align*}
+    I_\ell^n(s)
+    &= \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \,
+        \frac{j_\ell(q s)}{(q s)^n} \\[10pt]
+    &= \frac{1}{2\pi^2} \int_0^{+\infty} \frac{\mathrm{d}x}{s} \, \frac{x^2}{s^2} \,
+        P\!\left(\frac{x}{s}\right) \frac{j_\ell(x)}{x^n} \\[10pt]
+    &= \frac{s^{-3-n}}{2\pi^2} \int_0^{+\infty} \mathrm{d}x \; x^{2-n} \,
+        P\!\left(\frac{x}{s}\right) j_\ell(x) \; .
+    \quad \quad (12)
+\end{align*}
+```
+
+The whole ``s``-dependence now sits inside ``P(x/s)``: a large ``s`` means that the
+integral is fed by ``P`` at a *small* argument. There every ``\Lambda``CDM Power Spectrum
+is a pure power law, because on scales far above the equality one the transfer function
+tends to 1 and only the primordial spectrum survives:
+
+```math
+    P(q) \; \xrightarrow[q \rightarrow 0]{} \; A \, q^{\,n_s} \; ,
+```
+
+with ``n_s`` the primordial spectral index (``\simeq 0.96``), so that
+``P(x/s) \rightarrow A \, x^{n_s} s^{-n_s}`` and (12) becomes
+
+```math
+    I_\ell^n(s) \; \underset{s \rightarrow +\infty}{\sim} \;
+    \frac{A}{2\pi^2} \, s^{-(3+n_s)} \int_0^{+\infty} \mathrm{d}x \; x^{\,2-n+n_s} \,
+        j_\ell(x) \; .
+```
+
+The remaining integral is the Mellin transform of the spherical Bessel function,
+
+```math
+    \mathcal{M}_\ell(\mu) := \int_0^{+\infty} \mathrm{d}x \, x^{\,\mu-1} \, j_\ell(x) =
+    \sqrt{\frac{\pi}{2}} \; 2^{\,\mu-3/2} \;
+    \frac{\Gamma\!\left(\frac{\ell+\mu}{2}\right)}
+         {\Gamma\!\left(\frac{\ell-\mu+3}{2}\right)} \; ,
+    \quad \quad (13)
+```
+
+convergent for ``-\ell < \mu < 2`` and taken as its analytic continuation outside that
+strip (it is the general case of the [known infinite integrals](SphericalBesselFunctions.md)
+of the manual: ``\mu = 1`` gives back
+``\int_0^\infty j_\ell = \sqrt{\pi} \, \Gamma\!\left(\frac{\ell+1}{2}\right) /
+2\Gamma\!\left(1+\frac{\ell}{2}\right)``). Here ``\mu = 3 + n_s - n``, so
+
+```math
+\boxed{
+    I_\ell^n(s) \; \underset{s \rightarrow +\infty}{\sim} \;
+    \frac{A}{2\pi^2} \, \mathcal{M}_\ell(3 + n_s - n) \; s^{-(3+n_s)}
+}
+\quad \quad (14)
+```
+
+The ``s^{-n}`` that the ``(q s)^{-n}`` factor pulls out of the integral is exactly
+compensated by the ``n`` that the same factor subtracts from ``\mu``. **Only the amplitude
+depends on ``\ell`` and ``n``; the decay is always ``s^{-(3+n_s)}``, and the limit is
+always ``0``.**
+
+This is also the reason why `IntegralIPS` seeds its right-hand power-law fit with
+``p_0 = [-4.0, 1.0]``: with ``n_s \simeq 0.96``, ``3 + n_s \simeq 4``.
+
+### The check
+
+`theory/Iln_terms.jl` reads ``A`` and ``n_s`` straight out of the `InputPS` left fit
+(`ips.l_b` and `ips.l_si`; for `data/WideA_ZA_pk.dat`, ``n_s = 0.960`` and
+``A = 3.012 \times 10^6``) and compares (14) with the stored ``I_\ell^n``. The ratio
+``I_\ell^n(s) \, / \,`` (14):
+
+| ``s``      | ``I_0^0`` | ``I_2^0`` | ``I_4^0`` | ``I_0^2`` | ``I_2^2`` | ``I_3^1`` | ``I_1^3`` | ``I_1^1`` |
+| :--------- | --------: | --------: | --------: | --------: | --------: | --------: | --------: | --------: |
+| ``10^{3}`` | 1.049     | 1.035     | 0.876     | 1.022     | 0.927     | 0.900     | 0.960     | 1.031     |
+| ``3 \times 10^{3}`` | 1.024 | 1.015 | 0.978 | 1.006 | 0.990 | 0.984 | 0.995 | 1.011 |
+| ``10^{4}`` | 1.005     | 1.003     | 1.000     | 0.993     | 1.001     | 1.000     | 0.998     | 1.003     |
+
+![Convergence to the large-s limits](assets/Iln_terms/ratios_large_s.png)
+
+Better than 0.7% for all eight at ``s = 10^4 \, h_0^{-1}\mathrm{Mpc}``, including
+``I_0^0``, ``I_2^0``, ``I_4^0``, ``I_3^1`` and ``I_1^1``, whose ``\mu > 2`` puts them
+outside the convergence strip of (13): the analytic continuation is the right answer there,
+because the physical ``P(q)`` bends away from the power law well before the ``x``-integral
+could actually diverge.
+
+### Where it stops holding
+
+Two boundaries, mirroring the small-``s`` ones:
+
+- the region ``q \sim 1/s`` that dominates (12) must still lie inside the
+  ``P \propto q^{n_s}`` regime. Below, that fails when ``1/s`` drops under
+  ``k_\mathrm{min} = 10^{-5}``, i.e. for ``s \gtrsim 10^{5}``; above, it fails when
+  ``1/s`` climbs past the turnover of ``P``, around ``k_\mathrm{eq}``, which is why the
+  measured ratios are still 10% off at ``s = 10^{3}`` and only settle by ``10^{4}``;
+- ``\mathrm{right} = 96466 \, h_0^{-1}\mathrm{Mpc}`` for the ``I_\ell^n``, beyond which an
+  `IntegralIPS` is again a power-law extrapolation and not the integral. Note that
+  ``\tilde{I}_0^4`` has instead ``\mathrm{right} = 9888``, which a realistic
+  ``\Delta\chi \sim 2\chi_\mathrm{max}`` does reach.
+
+### Why ``\tilde{I}_0^4`` is excluded
+
+For ``\tilde{I}_0^4`` one has ``\ell = 0`` and ``n = 4``, hence
+``\mu = n_s - 1 \simeq -0.04``, which sits essentially *on* the pole of
+``\Gamma(\mu/2)`` at ``\mu = 0``. That pole is not an accident: it is precisely the
+``\sigma_4 / s^4`` divergence that the ``-1`` of the numerator subtracts away. What the
+subtraction leaves behind is the finite part, whose two surviving powers —
+``s^{-(3+n_s)}`` from (14) and ``s^{-4}`` from ``-\sigma_4/s^4`` — differ only by
+``1 - n_s = 0.04``. They are degenerate for any practical purpose, so
+``\tilde{I}_0^4`` never settles onto a clean power law: its measured local slope is still
+only ``-3.6`` at ``s = 10^{3}`` and ``-3.7`` at ``s = 9 \times 10^{3}``, where its spline
+already ends.
+
 ## Reproducing the figures
 
 The figures are not built by the documentation: they are committed under
@@ -418,7 +539,8 @@ directory. From `theory/`, after the one-time setup described in its `README.md`
 $ julia --project=. Iln_terms.jl
 ```
 
-which writes the plots and a table of the numerical values in `theory/Iln_terms/`, and,
+which writes the plots and the tables of numerical values (`Iln_values.txt`,
+`Iln_direct_values.txt` and `Iln_large_s_values.txt`) in `theory/Iln_terms/`, and,
 since `SAVE_TO_DOCS = true`, also refreshes the copies used by this page. The same
 computation is available step by step in the notebook `theory/Iln_terms.ipynb`.
 
