@@ -11,6 +11,11 @@
     - [3. The asymptotic regime starts below ``1/k_\mathrm{max}``](#3-the-asymptotic-regime-starts-below-1k_mathrmmax)
   - [The plots](#the-plots)
     - [One by one](#one-by-one)
+  - [The large-``s`` behaviour](#the-large-s-behaviour)
+    - [The proof](#the-proof)
+    - [The check](#the-check)
+    - [Where it stops holding](#where-it-stops-holding)
+    - [Why ``\tilde{I}_0^4`` is excluded](#why-tildei_04-is-excluded)
   - [Reproducing the figures](#reproducing-the-figures)
 
 
@@ -83,9 +88,9 @@ j_\ell(x) \mathrm{ \; series \; expansion \; near \; 0}&: \quad \quad
     j_\ell(x) = x^\ell \left( 
         \frac{\sqrt{\pi}}{2^{\ell+1}\, 
         \Gamma(\ell + 3/2)} + O(x^2)
-    \right) \quad \quad \mathrm{(I)}\\[10pt]
+    \right) \quad \quad \mathrm{(1.1)}\\[10pt]
 \Rightarrow j_\ell(x) \; &\underset{x \rightarrow 0}{\sim}  x^{\ell}
-\quad \quad \mathrm{(II)}
+\quad \quad \mathrm{(1.2)}
 \end{align*}
 ```
 
@@ -95,7 +100,7 @@ So:
 \begin{align*}
     (1): \quad \quad I_\ell^n(s) 
     &:= \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \\[10pt]
-    \mathrm{inserting\; (II) }  \; \rightarrow \;\; \quad
+    \mathrm{inserting\; (1.2) }  \; \rightarrow \;\; \quad
     &\underset{s \rightarrow 0}{\sim} \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{(qs)^{\ell}}{(qs)^n}\\[10pt] 
     &=  s^{\ell-n}\int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^{2-(n-\ell)} \, P(q) \, \\[10pt]
     &= \sigma_{n-\ell} \; s^{\ell-n}\\[10pt]
@@ -131,7 +136,7 @@ Acronym used for the sources:
 The Taylor series of the spherical Bessel function ``j_\ell(x)`` of order ``\ell`` is the following everywhere-convergent expansion (source: [U.S. NIST DLMF, Spherical Bessel Functions - Power Series, Section 10.53](https://dlmf.nist.gov/10.53) ):
 
 ```math
-    j_\ell(x) = \sum_{k=0}^{+\infty} \frac{(-1)^k \, x^{\ell + 2k}}{2^k \, k! \, (2\ell + 2k + 1)!!} \; \quad \quad (5)\\[10pt]
+    j_\ell(x) = \sum_{k=0}^{+\infty} \frac{(-1)^k \, x^{\ell + 2k}}{2^k \, k! \, (2\ell + 2k + 1)!!} \; \quad \quad (2.1)\\[10pt]
 
  \quad n!! := \begin{cases} 
     2 \cdot 4 \cdot 6 \cdot ... \cdot n & n \mathrm{\; is \; even} \\
@@ -144,19 +149,19 @@ The Taylor series of the spherical Bessel function ``j_\ell(x)`` of order ``\ell
 We can set ``x = qs`` and divide both terms by ``(qs)^n``:
 
 ```math
-    x:=qs \; \Rightarrow \;  \frac{(5)}{(qs)^n} : \quad \quad
+    x:=qs \; \Rightarrow \;  \frac{(2.1)}{(qs)^n} : \quad \quad
     \frac{j_\ell(qs)}{(qs)^n} = \sum_{k=0}^{+\infty} \frac{(-1)^k \, (qs)^{\ell + 2k - n}}
-        {2^k \, k! \, (2\ell + 2k + 1)!!} \; . \quad \quad (6)
+        {2^k \, k! \, (2\ell + 2k + 1)!!} \; . \quad \quad (2.2)
 ```
 
-We then insert this last Eq.(6) into the definition of ``I_\ell^n`` integrals Eq.(1), we bring the sum outside the integral (which is legitimate because the series converges uniformly on the compact integration range ``[k_\mathrm{min}, k_\mathrm{max}]``) and we insert the definition of ``\sigma_i`` Eq.(3):
+We then insert this last Eq.(2.2) into the definition of ``I_\ell^n`` integrals Eq.(1), we bring the sum outside the integral (which is legitimate because the series converges uniformly on the compact integration range ``[k_\mathrm{min}, k_\mathrm{max}]``) and we insert the definition of ``\sigma_i`` Eq.(3):
 
 
 ```math
 \begin{align*}
      (1): \quad \quad I_\ell^n(s) 
     &:= \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \\[10pt]
-    \mathrm{inserting\; } (6) \; \rightarrow \;\; \quad 
+    \mathrm{inserting\; } (2.2) \; \rightarrow \;\; \quad 
     &=  \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, 
         \sum_{k=0}^{+\infty} \frac{(-1)^k \, (qs)^{\ell + 2k - n}}
         {2^k \, k! \, (2\ell + 2k + 1)!!}  \\[10pt]
@@ -165,7 +170,7 @@ We then insert this last Eq.(6) into the definition of ``I_\ell^n`` integrals Eq
         \int \frac{\mathrm{d}q}{2\pi^2} \, q^{\,2 - (n - \ell - 2k)} \, P(q) \; \\[10pt]
     \mathrm{inserting\; } (3) \; \rightarrow \;\; \quad 
     &= \sum_{k=0}^{+\infty} \frac{(-1)^k \; \sigma_{n - \ell - 2k}}
-        {2^k \, k! \, (2\ell + 2k + 1)!!} \; s^{\,\ell + 2k - n} \; . \quad \quad (7)
+        {2^k \, k! \, (2\ell + 2k + 1)!!} \; s^{\,\ell + 2k - n} \; . \quad \quad (2.3)
 \end{align*}
 ```
 
@@ -175,7 +180,7 @@ Every term carries two more powers of ``s`` than the previous one, so for
 
 ```math
 \begin{align*}
-(7):\quad\quad I_\ell^n(s) &= \sum_{k=0}^{+\infty} \frac{(-1)^k \; \sigma_{n - \ell - 2k}}
+(2.3):\quad\quad I_\ell^n(s) &= \sum_{k=0}^{+\infty} \frac{(-1)^k \; \sigma_{n - \ell - 2k}}
         {2^k \, k! \, (2\ell + 2k + 1)!!} \; s^{\,\ell + 2k - n} \\[10pt]
     &= s^{\,\ell - n} \left[
         \frac{\sigma_{n-\ell}}{(2\ell+1)!!}  + 
@@ -183,7 +188,7 @@ Every term carries two more powers of ``s`` than the previous one, so for
         {2^k \, k! \, (2\ell + 2k + 1)!!} \; s^{2k}\right]\\[10pt]
     &= \frac{\sigma_{n-\ell}}{(2\ell+1)!!} s^{\,\ell - n}
         \left[1 + \alpha_1 s^2 + \alpha_2 s^4 + ...\right]\\[10pt]
-    &\underset{s \rightarrow 0}{\sim} \frac{\sigma_{n-\ell}}{(2\ell+1)!!} s^{\,\ell - n} \; . \quad\quad (8)
+    &\underset{s \rightarrow 0}{\sim} \frac{\sigma_{n-\ell}}{(2\ell+1)!!} s^{\,\ell - n} \; . \quad\quad (2.4)
 \end{align*}
 ```
 
@@ -193,7 +198,7 @@ For ``\tilde{I}_0^4`` the same argument applies to ``j_0(x) - 1``, whose series 
 
 ```math
 \begin{align*}
-    (5) \mathrm{\;with\;}\ell=0 : \quad \quad 
+    (2.1) \mathrm{\;with\;}\ell=0 : \quad \quad 
     j_0(x) &= \sum_{k=0}^{+\infty} \frac{(-1)^k \, x^{2k}}{2^k \, k! \, (2k + 1)!!}\; \\[10pt]
         &= 1+\sum_{k=1}^{+\infty} \frac{(-1)^k \, x^{2k}}{2^k \, k! \, (2k + 1)!!} \\[10pt]
     2^k \, k! \, (2k+1)!! = (2k+1)! \; \rightarrow \quad \quad
@@ -201,7 +206,7 @@ For ``\tilde{I}_0^4`` the same argument applies to ``j_0(x) - 1``, whose series 
 \end{align*}
 ```
 ```math
-\Rightarrow \quad \quad j_0(x) -1 = \sum_{k=1}^{+\infty} \frac{(-1)^k \, x^{2k}}{(2k+1)!} \quad \quad (9)
+\Rightarrow \quad \quad j_0(x) -1 = \sum_{k=1}^{+\infty} \frac{(-1)^k \, x^{2k}}{(2k+1)!} \quad \quad (2.5)
 ```
 
 Then
@@ -210,7 +215,7 @@ Then
 \begin{align*}
     (2): \quad \quad \tilde{I}_0^4(s) 
         &= \frac{1}{s^4} \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, \frac{P(q)}{q^2} \, \left[ j_0(qs) - 1 \right] \; \\[10pt]
-    \mathrm{inserting\; } (9) \; \rightarrow \;\; \quad
+    \mathrm{inserting\; } (2.6) \; \rightarrow \;\; \quad
         &= \frac{1}{s^4} \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, \frac{P(q)}{q^2}
         \sum_{k=1}^{+\infty} \frac{(-1)^k \, (qs)^{2k}}{(2k+1)!}\\[10pt]
         &= \frac{1}{s^4} \sum_{k=1}^{+\infty} \frac{(-1)^k \, s^{2k}}{(2k+1)!}
@@ -219,7 +224,7 @@ Then
         \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^{2-(4-2k)} \, P(q)\\[10pt]
     \mathrm{inserting\; } (3) \; \rightarrow \;\; \quad 
         &=\sum_{k=1}^{+\infty} \frac{(-1)^k \, \sigma_{4-2k}}{(2k+1)!} \, s^{\,2k-4} \; ,
-        \quad\quad (10)
+        \quad\quad (2.7)
 \end{align*}
 
 ```
@@ -229,7 +234,7 @@ And analogously, every term carries two more powers of ``s`` than the previous o
 
 ```math
 \begin{align*}
-(10):\quad\quad \tilde{I}_0^4(s) &= \sum_{k=1}^{+\infty} \frac{(-1)^k \, \sigma_{4-2k}}{(2k+1)!} \, s^{\,2k-4} \\[10pt]
+(2.7):\quad\quad \tilde{I}_0^4(s) &= \sum_{k=1}^{+\infty} \frac{(-1)^k \, \sigma_{4-2k}}{(2k+1)!} \, s^{\,2k-4} \\[10pt]
     &= s^{-2} \left[
         \sum_{k=1}^{+\infty} \frac{(-1)^k \; \sigma_{4 - 2k}}
         {(2k + 1)!} \; s^{2k-2}\right]\\[10pt]
@@ -237,7 +242,7 @@ And analogously, every term carries two more powers of ``s`` than the previous o
         - \frac{\sigma_{2}}{3!} + \frac{\sigma_0}{5!}s^2 - \frac{\sigma_{-2}}{7!}s^4 +...
         \right]\\[10pt]
     &= - \frac{\sigma_{2}}{6} s^{-2} + \frac{\sigma_0}{120} - \frac{\sigma_{-2}}{5040} s^2 + ... \\[10pt]
-    &\underset{s \rightarrow 0}{\sim} - \frac{\sigma_{2}}{6\,s^2} \; . \quad\quad (11)
+    &\underset{s \rightarrow 0}{\sim} - \frac{\sigma_{2}}{6\,s^2} \; . \quad\quad (2.8)
 \end{align*}
 ```
 
@@ -254,7 +259,7 @@ The sign of ``\ell - n`` decides everything:
 I_\ell^n \xrightarrow[s \rightarrow 0]{} 
 \begin{cases}
 \propto s^{\ell-n} \rightarrow 0                    & \ell > n \\[10pt]
-\frac{\sigma_0}{(2\ell+1)!!}                        & \ell = n \\[10pt]
+\frac{\sigma_0}{(2\ell+1)!!}                        & \ell = n  \quad \quad (5) \\[10pt]
 \propto \frac{1}{s^{n-\ell}} \rightarrow +\infty    & \ell < n
 \end{cases} 
 ```
@@ -415,19 +420,39 @@ is the same for every ``\ell`` and every ``n``**.
 
 ### The proof
 
-Substitute ``x = q s`` in (1). With ``\mathrm{d}q = \mathrm{d}x / s`` and
-``q = x/s``,
+In the ``\Lambda``-CMB cosmology, it is known that (see the [Plank 2018 results, A\&A 641, A10 (2020)](https://doi.org/10.1051/0004-6361/201833887)) at large scales the Power Spectrum is a pure power law, because on scales far above the equality one the transfer function
+tends to 1 and only the primordial spectrum survives:
 
 ```math
 \begin{align*}
-    I_\ell^n(s)
-    &= \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \,
-        \frac{j_\ell(q s)}{(q s)^n} \\[10pt]
-    &= \frac{1}{2\pi^2} \int_0^{+\infty} \frac{\mathrm{d}x}{s} \, \frac{x^2}{s^2} \,
+    P(k) \; &\underset{k \rightarrow 0^{+}}{\sim} \; A_s \, \left( \frac{k}{k^*}\right)^{n_s-1} &&(3.1)\\[10pt]
+
+    n_s&\approx 0.965&&\mathrm{primordial \; spectral \; index}\\[8pt]
+    \ln(10^{10} A_s) &\approx 3.043 &&\mathrm{ log \; power \; of \; primordial \; curvature \; perturbations} \Rightarrow A_s \approx 2.1 \times 10^{-9}\\[8pt]
+    k^* &\approx 0.05 \; h\,\mathrm{Mpc}^{-1}  &&\mathrm{arbitrary \; pivot \; scale}
+\end{align*}
+```
+
+
+
+Consequently, if we substitute ``q`` with ``x := q s`` in Eq. (1) and then expand 
+
+
+```math
+x:=qs \quad \Rightarrow \quad q = \frac{x}{s} \quad \Rightarrow \quad \mathrm{d}q = \frac{\mathrm{d}x}{s} \quad \quad (3.2)
+```
+
+So:
+
+```math
+\begin{align*}
+     (1): \quad \quad I_\ell^n(s) 
+    &:= \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \\[10pt]
+    \mathrm{Inserting \; (3.1)} \; \rightarrow \;\; \quad 
+    &=  \int_0^{+\infty} \frac{\mathrm{d}x}{2 \pi^2 s} \, \frac{x^2}{s^2} \,
         P\!\left(\frac{x}{s}\right) \frac{j_\ell(x)}{x^n} \\[10pt]
-    &= \frac{s^{-3-n}}{2\pi^2} \int_0^{+\infty} \mathrm{d}x \; x^{2-n} \,
-        P\!\left(\frac{x}{s}\right) j_\ell(x) \; .
-    \quad \quad (12)
+    &= \frac{s^{-3}}{2\pi^2} \int_0^{+\infty} \mathrm{d}x \; x^{2-n} \,
+        P\!\left(\frac{x}{s}\right) j_\ell(x) \; \quad \quad (3.3)
 \end{align*}
 ```
 
@@ -436,9 +461,7 @@ integral is fed by ``P`` at a *small* argument. There every ``\Lambda``CDM Power
 is a pure power law, because on scales far above the equality one the transfer function
 tends to 1 and only the primordial spectrum survives:
 
-```math
-    P(q) \; \xrightarrow[q \rightarrow 0]{} \; A \, q^{\,n_s} \; ,
-```
+
 
 with ``n_s`` the primordial spectral index (``\simeq 0.96``), so that
 ``P(x/s) \rightarrow A \, x^{n_s} s^{-n_s}`` and (12) becomes
