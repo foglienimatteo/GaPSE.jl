@@ -58,6 +58,14 @@
 
 - NOTE: `I~_0^4` is excluded from the large-`s` analysis. Its `mu = n_P - 1 = -0.04` sits on the pole of `M_0(z)` at `z = 0`, which is exactly the `sigma_4/s^4` divergence its subtraction removes; what is left has two powers, `s^-(3+n_P)` and `s^-4`, degenerate up to `1 - n_P = 0.04`, so it never settles on a clean power law (measured local slope still `-3.6` at `s = 1e3`). Note also that its `right` is `9888`, well inside the `Dchi ~ 2 chi_max` a real run reaches, unlike the `96466` of the other `I_l^n`;
 
+- rewrote `docs/src/DeltaChiLimits.md` with step-by-step derivations for all eight families, instead of the terse "the bracket vanishes at the singular point" arguments of the first version. Each family now shows the exact algebraic decomposition of its vanishing brackets, the order-by-order substitution, the per-term limit and the cancellation of the direction parameter `p`. Every one of the eight limits was re-verified symbolically and all of them, and the values coded in `src/`, are confirmed correct;
+
+- added the section "A trap: the two small parameters are NOT of the same order" to the same page. Along `chi2 = chi1 + p Dchi` one has `chi2 - chi1 = O(Dchi)` while `y - 1 = O(Dchi^2)`, so a term QUADRATIC in `(chi1 - chi2)` is the same order as a term LINEAR in `(y-1)`. Setting `chi1 = chi2` inside a bracket before expanding in `y` therefore silently loses a leading contribution. For the `J_00` bracket of the Lensing x Lensing family this is the difference between `8(chi1-chi2)^2 + 8(y-1)(chi1^2+chi2^2) - 9 chi1 chi2 (y^2-1) -> (1+7p^2) Dchi^2` and the wrong `(1-p^2) Dchi^2`, i.e. between `3/4 chi1^2 sigma_0 (1-p^2)(1+7p^2)` and `3/4 chi1^2 sigma_0 (1-p^2)^2`. The wrong form coincides with the right one at `p = 0` and `p = +-1`, so endpoint spot checks do not catch it - only the full `p` cancellation does. The page now carries this as an explicit warning box;
+
+- corrected the vanishing orders quoted for two families: the `J_02` and `J_04` numerators of Lensing x Doppler vanish as `Dchi^3`, not `Dchi`; the `J_04` bracket of Newtonian x Lensing vanishes as `Dchi^4`, not `Dchi^5`, so that `J_04` there is finite rather than `O(Dchi)`. The limits are unchanged;
+
+- added "A pattern worth noticing": the leading coefficients of these expansions are always low-order Legendre polynomials in the direction parameter, `35p^4-30p^2+3 = 8 L_4(p)` and `3p^2-1 = 2 L_2(p)`, which is a quick sanity check when redoing any of them;
+
 
 ## development branch qls
 
