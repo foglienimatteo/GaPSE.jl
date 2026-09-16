@@ -3,8 +3,8 @@
 ## Recap: everything this page needs
 
 This page is self-contained. All the results quoted here are derived in
-[The ``\Delta\chi \rightarrow 0`` limits](DeltaChiLimits.md), and the ``I_\ell^n``
-asymptotics in [The ``I_\ell^n`` integrals](IlnIntegrals.md).
+The ``\Delta\chi \rightarrow 0`` limits, and the ``I_\ell^n``
+asymptotics in The ``I_\ell^n`` integrals.
 
 **The separation and its singular point.** For this family the two competing distances are
 ``\chi_1`` and ``\chi_2``, so the relevant separation is
@@ -237,26 +237,34 @@ We can do for ``B_{02}`` exactly the same decomposition we did for ``B_{00}``, w
     B_{00} &:= 8 y (\chi_1^2 + \chi_2^2) - \chi_1\chi_2 (9y^2+7) \\[10pt]
     (3.2) \rightarrow \quad &= 8(\chi_1-\chi_2)^2
             + 8(y-1)(\chi_1^2+\chi_2^2) - 9\chi_1\chi_2(y^2-1) \\[15pt]
+        &\underset{\Delta\chi\rightarrow 0^{+}}{\sim} \left[ 8p^2 - 8(1-p^2) + 9(1-p^2) \right] \Delta\chi^2 \\[10pt]
+        &= \left( 1 + 7p^2 \right) \Delta\chi^2 \\[15pt]
     \Rightarrow \quad
     B_{02} &:= 4 y (\chi_1^2 + \chi_2^2) - \chi_1\chi_2 (3y^2+5) \\[10pt]
     &= 4(\chi_1-\chi_2)^2 + 4(y-1)(\chi_1^2+\chi_2^2) - 3\chi_1\chi_2(y^2-1) \\[10pt]
+    
     &\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
         \left[ 4p^2 - 4(1-p^2) + 3(1-p^2) \right] \Delta\chi^2 \\[10pt]
     &= \left( 5p^2 - 1 \right) \Delta\chi^2 \; . \quad \quad (3.5)
 \end{align*}
 ```
 
-so that ``J_{02}`` is finite, ``\mathcal{O}(\Delta\chi^0)``, while ``I_2^0`` vanishes:
+Consequently, ``J_{02}`` is finite, ``\mathcal{O}(\Delta\chi^0)``, while ``I_2^0`` vanishes:
 
 ```math
 \begin{align*}
-    J_{02} I_2^0 &\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
-        \underbrace{
+    J_{02} I_2^0 &= -\frac{3}{2}\frac{\chi_1^2\chi_2^2}{\Delta\chi^4}(y^2-1) B_{02} I_2^0
+    \; , \quad \\[10pt]
+    &\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
+        -\frac{3}{2}\frac{\chi_1^4}{\cancel{\Delta\chi^4}} 
+        \left[- \frac{(1-p^2)}{\chi_1^2}\cancel{\Delta\chi^2}\right]\left( 5p^2 - 1 \right) 
+        \cancel{\Delta\chi^2} \cdot \frac{\sigma_{-2}}{15}\Delta\chi^2\\[10pt]
+    &= \underbrace{
         \frac{3}{2}\,\chi_1^2 \,(1-p^2)(5p^2-1)
         }_{\mathcal{O}(\Delta\chi^0)}
         \cdot
-        \underbrace{\frac{\sigma_{-2}}{15}\Delta\chi^2}_{\rightarrow \, 0}
-    \; \xrightarrow[\Delta\chi \rightarrow 0^{+}]{} \; 0 \; . \quad \quad (3.6)
+        \underbrace{\frac{\sigma_{-2}}{15}\Delta\chi^2}_{\rightarrow \, 0} \\[25pt]
+    &\xrightarrow[\Delta\chi \rightarrow 0^{+}]{} \; 0 \; . \quad \quad (3.6)
 \end{align*}
 ```
 
@@ -264,7 +272,7 @@ so that ``J_{02}`` is finite, ``\mathcal{O}(\Delta\chi^0)``, while ``I_2^0`` van
 
 This is the only regular ``J`` of the family, ``J_{31} = 9 y \Delta\chi^2``: nothing
 vanishes, nothing has to be decomposed, and the ``\Delta\chi^2`` it carries is exactly what
-cancels the ``\Delta\chi^{-2}`` of ``I_1^3``.
+cancels the ``\Delta\chi^{-2}`` of ``I_1^3``:
 
 ```math
 \begin{align*}
@@ -289,8 +297,13 @@ being quartic in ``y``. But precisely because it is a **polynomial of degree 4**
 expansion around ``y=1`` is finite and exact after five terms:
 
 ```math
-    B_{22} = \sum_{k=0}^{4} \frac{1}{k!}
+\begin{align*}
+    B_{22} &= 
+         2(\chi_1^4 + \chi_2^4)(7 y^2 - 3) - 16 y \chi_1 \chi_2 (\chi_1^2 + \chi_2^2)(y^2 + 1)
+        + \chi_1^2 \chi_2^2 (11y^4 + 14y^2 + 23) \\[10pt]
+    &=\sum_{k=0}^{4} \frac{1}{k!}
         \frac{\partial^k B_{22}}{\partial y^k}\bigg|_{y=1} (y-1)^k \; .
+\end{align*}
 ```
 
 Computing the five coefficients (each of which factorises, showing explicitly how it
@@ -298,9 +311,17 @@ vanishes at ``\chi_1 = \chi_2``):
 
 ```math
 \begin{align*}
-    B_{22}\big|_{y=1} &= 8(\chi_1-\chi_2)^4
+    B_{22}\big|_{y=1} &= 8(\chi_1^4+\chi_2^4)-32\chi_1\chi_2(\chi_1^2+\chi_2^2)+48\chi_1^2\chi_2^2 \\[10pt]
+        &= 8\left[\chi_1^4 - 4 \chi_1^3\chi_2 + 6 \chi_1^2 \chi_2^2 - 4 \chi_1\chi_2^3  +\chi_2^4\right] \\[10pt]
+        &= 8(\chi_1-\chi_2)^4
         &&\rightarrow \; \mathcal{O}(\Delta\chi^4) \; , \\[6pt]
     \frac{\partial B_{22}}{\partial y}\bigg|_{y=1}
+        &= \left[ 28y(\chi_1^4 + \chi_2^4) - 16 \chi_1 \chi_2 (\chi_1^2 + \chi_2^2)(3y^2 + 1)
+        + \chi_1^2 \chi_2^2 (44y^3 + 28y)\right]\bigg|_{y=1}\\[10pt]
+        &= 28(\chi_1^4 + \chi_2^4) - 64 \chi_1 \chi_2 (\chi_1^2 + \chi_2^2)
+        + 72 \chi_1^2 \chi_2^2 \\[10pt]
+        &= 4\left[7\chi_1^4 + 7\chi_2^4 - 16 \chi_1 \chi_2 (\chi_1^2 + \chi_2^2 - 2 \chi_1\chi_2)
+        + 2 \chi_1^2 \chi_2^2\right] \\[10pt]
         &= 4(\chi_1-\chi_2)^2\left(7\chi_1^2 - 2\chi_1\chi_2 + 7\chi_2^2\right)
         &&\rightarrow \; \mathcal{O}(\Delta\chi^2) \; , \\[6pt]
     \frac{1}{2}\frac{\partial^2 B_{22}}{\partial y^2}\bigg|_{y=1}
