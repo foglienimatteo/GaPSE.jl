@@ -13,7 +13,17 @@ Documenter.makedocs(
                "Spline Theory" => "SplineTheory.md",
                "Spherical Bessel Functions" => "SphericalBesselFunctions.md",
                "The I_l^n integrals" => "IlnIntegrals.md",
-               "The Δχ → 0 limits" => "DeltaChiLimits.md",
+               "The Δχ → 0 limits" => [
+                    "Introduction and results" => "DeltaChiLimits.md",
+                    "Family 1: Lensing x Lensing" => "DeltaChiLimits_1_LensingLensing.md",
+                    "Family 2: Lensing x Doppler" => "DeltaChiLimits_2_LensingDoppler.md",
+                    "Family 3: Newtonian x Lensing" => "DeltaChiLimits_3_NewtonianLensing.md",
+                    "Family 4: Lensing x Local GP" => "DeltaChiLimits_4_LensingLocalGP.md",
+                    "Family 5: Newtonian x Integrated GP" => "DeltaChiLimits_5_NewtonianIntegratedGP.md",
+                    "Family 6: the Δχ⁴ Ĩ₀⁴ terms" => "DeltaChiLimits_6_Ichi4Tilde.md",
+                    "Family 7: the vanishing-factor terms" => "DeltaChiLimits_7_VanishingFactor.md",
+                    "Family 8: the J₂₂I₂² + J₃₁I₁³ terms" => "DeltaChiLimits_8_J22J31.md",
+               ],
           ],
           "The code basic structures" => [
                "Background Data" => "BackgroundData.md",

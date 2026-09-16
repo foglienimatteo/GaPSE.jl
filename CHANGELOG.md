@@ -66,6 +66,12 @@
 
 - added "A pattern worth noticing": the leading coefficients of these expansions are always low-order Legendre polynomials in the direction parameter, `35p^4-30p^2+3 = 8 L_4(p)` and `3p^2-1 = 2 L_2(p)`, which is a quick sanity check when redoing any of them;
 
+- split the `Delta chi -> 0` limits documentation, which had grown to ~1400 lines, into nine pages: `docs/src/DeltaChiLimits.md` now holds only the shared material - definitions, how the limit is taken, the trap about the two orders, the Legendre pattern, the index of the eight families, the integrand-by-integrand summary table, the small-`chi` corner and the discussion of `Dchi_min` - while each family gets its own page, `DeltaChiLimits_1_LensingLensing.md` ... `DeltaChiLimits_8_J22J31.md`, registered as a nested entry of the Theory section in `docs/make.jl`;
+
+- every family page opens with a "Recap: everything this page needs" section repeating the equations it uses - the definition of its own `Delta chi` and its singular point, the `I_l^n` limits (2.1a)/(2.1b) with the explicit table, the parametrisation (2.2) and its consequences (2.3a)/(2.3b), and the warning about the two orders - so that no page has to be read alongside another. Equations keep a single global numbering, the prefix identifying the page they belong to, and whenever a page quotes an equation derived elsewhere that equation is reproduced in full where it is used;
+
+- rewrote the derivations in a more explicit style throughout: `### Term N: J I` headings instead of `### Step N`, every intermediate algebraic manipulation written out rather than summarised, and an explicit order-counting table for the `B_22` Taylor expansion. Where a decomposition is compared with one from another family, the latter is now restated on the spot instead of being referenced;
+
 
 ## development branch qls
 
