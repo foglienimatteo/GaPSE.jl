@@ -130,7 +130,7 @@ the limit is a joint one and must be checked to be independent of the direction 
 We therefore parametrise the approach with a single parameter ``p``,
 
 ```math
-    \chi_2 := \chi_1 + p \, \Delta\chi  \\[10pt]
+    \chi_2 := \chi_1 + p \, \Delta\chi  \quad \quad (2.2)\\[10pt]
     |\chi_1 - \chi_2| \leq \Delta\chi \quad \Rightarrow \quad |p| \leq 1
 ```
 NOTE: the bound on ``p`` follows from ``|\chi_1 - \chi_2| \leq \Delta\chi``
@@ -162,10 +162,10 @@ NOTE: the bound on ``p`` follows from ``|\chi_1 - \chi_2| \leq \Delta\chi``
 ```math
 \Rightarrow \quad 
     y-1  \underset{\Delta\chi\rightarrow 0^{+}}{\sim}  - \frac{(1-p^2)}{2\chi_1^2}\Delta\chi^2
-    \quad \quad (2.2)
+    \quad \quad (2.3\mathrm{a})
     \quad , \quad \quad \quad 
     y^2-1 \underset{\Delta\chi \rightarrow 0^{+}}{\sim}- \frac{(1-p^2)}{\chi_1^2}\Delta\chi^2
-    \quad \quad (2.3) \\[10pt]
+    \quad \quad (2.3\mathrm{b}) \\[10pt]
 ```
 
 We then expand each ``J\, I_{\ell}^{n}`` in powers of ``\Delta\chi`` and keep the ``\Delta\chi^0`` coefficient.
@@ -326,57 +326,43 @@ y=1 \; &\land \; \chi_1 = \chi_2 = \chi \; : \\[10pt]
 \end{align*}
 ```
 
-so the leading order is not enough and the expansion must be pushed further. Following the
-recipe of Section 2, we do it **without** ever setting ``\chi_1 = \chi_2``.
+so the leading order is not enough and the expansion must be pushed further.
 
-### Step 1: exact decomposition of ``B_{00}``
 
-Add and subtract, so that every piece carries an explicit vanishing factor:
+### Term 1: ``J_{00} I_0^0``
+
+
 
 ```math
 \begin{align*}
     B_{00} &= 8 y (\chi_1^2 + \chi_2^2) - \chi_1\chi_2 (9y^2+7) \\[10pt]
-    \mathrm{split \;} 8y = 8 + 8(y-1) \; : \quad
+    8y = 8 + 8(y-1) \; \rightarrow \quad
+        &= [8+8(y-1)](\chi_1^2+\chi_2^2) - \chi_1\chi_2 (9y^2+7) \\[10pt]
         &= 8(\chi_1^2+\chi_2^2) + 8(y-1)(\chi_1^2+\chi_2^2) - \chi_1\chi_2 (9y^2+7) \\[10pt]
-    \mathrm{split \;} 9y^2+7 = 16 + 9(y^2-1) \; : \quad
+    9y^2+7 = 16 + 9(y^2-1) \; \rightarrow \quad
+        &= 8(\chi_1^2+\chi_2^2) + 8(y-1)(\chi_1^2+\chi_2^2) - \chi_1\chi_2[16+9(y^2-1)] \\[10pt]
         &= 8(\chi_1^2+\chi_2^2) - 16\chi_1\chi_2
             + 8(y-1)(\chi_1^2+\chi_2^2) - 9\chi_1\chi_2(y^2-1) \\[10pt]
         &= 8(\chi_1-\chi_2)^2
-            + 8(y-1)(\chi_1^2+\chi_2^2) - 9\chi_1\chi_2(y^2-1) \; . \quad \quad (3.2)
-\end{align*}
-```
-
-Eq.(3.2) is an **identity**: no limit has been taken. The first term is the one lost by
-setting ``\chi_1 = \chi_2`` too early.
-
-### Step 2: leading order of ``B_{00}``
-
-Now substitute ``\chi_2 = \chi_1 + p\Delta\chi`` and Eqs.(2.2), (2.3). To ``\mathcal{O}(\Delta\chi^2)``
-the regular coefficients can be evaluated at the singular point,
-``\chi_1^2+\chi_2^2 \rightarrow 2\chi_1^2`` and ``\chi_1\chi_2 \rightarrow \chi_1^2``:
-
-```math
-\begin{align*}
-    B_{00} &\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
+            + 8(y-1)(\chi_1^2+\chi_2^2) - 9\chi_1\chi_2(y^2-1) \; . \quad \quad (3.2)\\[10pt]
+    (2.2),\; (2.3\mathrm{a}),\; &(2.3\mathrm{b})\; \quad\rightarrow \quad
+        (\chi_2-\chi_1)=p\Delta\chi \; , \quad (\chi_1^2+\chi_2^2)=2\chi_1^2\\[10pt]
+    &\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
         8 \, p^2\Delta\chi^2
         + 8 \left[- \frac{(1-p^2)}{2\cancel{\chi_1^2}}\Delta\chi^2\right] 2\cancel{\chi_1^2}
         - 9 \cancel{\chi_1^2} \left[- \frac{(1-p^2)}{\cancel{\chi_1^2}}\Delta\chi^2\right] \\[10pt]
     &= \left[ 8p^2 - 8(1-p^2) + 9(1-p^2) \right] \Delta\chi^2 \\[10pt]
     &= \left[ 8p^2 + (1-p^2) \right] \Delta\chi^2 \\[10pt]
-    &= \left( 1 + 7p^2 \right) \Delta\chi^2 \; . \quad \quad (3.3)
+    &= \left( 1 + 7p^2 \right) \Delta\chi^2 \; . \quad \quad (3.3) \\[15pt]
 \end{align*}
 ```
 
-Note how the three contributions are all of the same size: dropping the first would give
-``(1-p^2)\Delta\chi^2`` instead, which is a **different** function of ``p``.
-
-### Step 3: the ``J_{00} I_0^0`` term
-
-With ``I_0^0 \rightarrow \sigma_0`` from Eq.(2.1a), and using (2.3) for the ``(y^2-1)`` prefactor:
 
 ```math
 \begin{align*}
+    \Rightarrow \quad 
     J_{00} I_0^0 &= -\frac{3}{4}\frac{\chi_1^2\chi_2^2}{\Delta\chi^4}(y^2-1) \, B_{00} \, I_0^0 \\[10pt]
+    (2.1\mathrm{a})\, ,\;(2.2)\, , \;  (2.3\mathrm{a}) \rightarrow \quad
     &\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
         -\frac{3}{4}\frac{\chi_1^4}{\Delta\chi^4}
         \left[- \frac{(1-p^2)}{\chi_1^2}\Delta\chi^2\right]
@@ -389,16 +375,21 @@ With ``I_0^0 \rightarrow \sigma_0`` from Eq.(2.1a), and using (2.3) for the ``(y
 \end{align*}
 ```
 
-### Step 4: the ``J_{02} I_2^0`` term
+### Term 2: ``J_{02} I_2^0``
 
-Exactly the same decomposition, with ``8 \rightarrow 4`` and ``9 \rightarrow 3``:
+We can do for ``B_{02}`` exactly the same decomposition we did for ``B_{00}``, with ``8 \rightarrow 4`` and ``9 \rightarrow 3``:
 
 ```math
 \begin{align*}
-    B_{02} &= 4(\chi_1-\chi_2)^2 + 4(y-1)(\chi_1^2+\chi_2^2) - 3\chi_1\chi_2(y^2-1) \\[10pt]
+    B_{00} &:= 8 y (\chi_1^2 + \chi_2^2) - \chi_1\chi_2 (9y^2+7) \\[10pt]
+    (3.2) \rightarrow \quad &= 8(\chi_1-\chi_2)^2
+            + 8(y-1)(\chi_1^2+\chi_2^2) - 9\chi_1\chi_2(y^2-1) \\[15pt]
+    \Rightarrow \quad
+    B_{02} &:= 4 y (\chi_1^2 + \chi_2^2) - \chi_1\chi_2 (3y^2+5) \\[10pt]
+    &= 4(\chi_1-\chi_2)^2 + 4(y-1)(\chi_1^2+\chi_2^2) - 3\chi_1\chi_2(y^2-1) \\[10pt]
     &\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
-        \left[ 4p^2 - 4(1-p^2) + 3(1-p^2) \right] \Delta\chi^2
-    = \left( 5p^2 - 1 \right) \Delta\chi^2 \; . \quad \quad (3.5)
+        \left[ 4p^2 - 4(1-p^2) + 3(1-p^2) \right] \Delta\chi^2 \\[10pt]
+    &= \left( 5p^2 - 1 \right) \Delta\chi^2 \; . \quad \quad (3.5)
 \end{align*}
 ```
 
