@@ -143,14 +143,28 @@ NOTE: the bound on ``p`` follows from ``|\chi_1 - \chi_2| \leq \Delta\chi``
       &= \frac{2\chi_1^2 + 2 \chi_1 p \Delta \chi - (1-p^2)\Delta\chi^2}{2 \, \chi_1 (\chi_1 + p \Delta \chi)} \\[10pt]
 
 \Rightarrow \quad 
-    y-1  &= \frac{2\chi_1^2 + 2 \chi_1 p \Delta \chi - (1-p^2)\Delta\chi^2 - 2 \chi_1^2 - 2 \chi_1 p \Delta \chi}{2 \, \chi_1 (\chi_1 + p \Delta \chi)} \\[10pt]
-        &= - \frac{(1-p^2)\Delta\chi^2}{2 \, \chi_1 (\chi_1 + p \Delta \chi)} \\[15pt]
+    y-1  &= \frac{2\chi_1^2 + 2 \chi_1 p \Delta \chi - (1-p^2)\Delta\chi^2 }{2 \, \chi_1 (\chi_1 + p \Delta \chi)} -1 \\[10pt]
+        &= \frac{2\chi_1^2 + 2 \chi_1 p \Delta \chi - (1-p^2)\Delta\chi^2 - 2 \chi_1^2 - 2 \chi_1 p \Delta \chi}{2 \, \chi_1 (\chi_1 + p \Delta \chi)} \\[10pt]
+        &= - \frac{(1-p^2)\Delta\chi^2}{2 \, \chi_1 (\chi_1 + p \Delta \chi)} \\[10pt]
+        &\underset{\Delta\chi \rightarrow 0^{+}}{\sim} - \frac{(1-p^2)}{2\chi_1^2}\Delta\chi^2 \\[10pt]
 
 \Rightarrow \quad 
-    y-1  &\underset{\Delta\chi\rightarrow 0^{+}}{\sim} \Delta\chi^2 \\[10pt]
+    y^2-1  &= (y-1)(y+1)\\[10pt]
+        &= - \frac{(1-p^2)\Delta\chi^2}{2 \, \chi_1 (\chi_1 + p \Delta \chi)} 
+        \left[ \frac{2\chi_1^2 + 2 \chi_1 p \Delta \chi - (1-p^2)\Delta\chi^2 }{2 \, \chi_1 (\chi_1 + p \Delta \chi)} +1 \right] \\[10pt]
+        &= - \frac{(1-p^2)\Delta\chi^2 [4\chi_1^2 + 4 \chi_1 p \Delta \chi + (1+p^2)\Delta\chi^2]}{4 \, \chi_1^2 (\chi_1 + p \Delta \chi)^2} 
+        \\[10pt]
+        &\underset{\Delta\chi \rightarrow 0^{+}}{\sim}- \frac{(1-p^2)}{\chi_1^2}\Delta\chi^2 \\[15pt]
+
 \end{align*}
 ```
 
+```math
+\Rightarrow \quad 
+    y-1  \underset{\Delta\chi\rightarrow 0^{+}}{\sim}  - \frac{(1-p^2)}{2\chi_1^2}\Delta\chi^2
+    \quad , \quad \quad \quad 
+    y^2-1 \underset{\Delta\chi \rightarrow 0^{+}}{\sim}- \frac{(1-p^2)}{\chi_1^2}\Delta\chi^2\\[10pt]
+```
 
 We then expand each ``J\, I_{\ell}^{n}`` in powers of ``\Delta\chi`` and keep the ``\Delta\chi^0`` coefficient.
 **If the result that still depends on ``p``, it means that the limit does not exist**; in all the
@@ -234,7 +248,19 @@ so the leading order is not enough and the expansion must be pushed one order fu
 Doing so, the individual contributions are, using the ``I_\ell^n`` limits of Eq. (2.1a):
 
 ```math
-J_{00} I_0^0 \sim -\frac{3}{4}\frac{\chi_1^4}{\Delta\chi^4}(y-1)^2 \chi_1^4 [9y^2-16y+7] \cdot \sigma_0
+\begin{align*}
+J_{00} I_0^0 &\underset{\Delta\chi\rightarrow 0^{+}}{\sim} 
+    -\frac{3}{4}\frac{\chi_1^4}{\Delta\chi^4}(y^2-1)\, \chi_1^4 [16y-9y^2-7] \cdot \sigma_0 \\[10pt]
+    &\quad \quad 9y^2-16y+7 = 9(y-1)\left(y-\frac{7}{9}\right) \\[10pt]
+    &= \frac{3}{4}\frac{\chi_1^4}{\Delta\chi^4}(y^2-1)\chi_1^2
+        (y-1)(9y-7)\cdot \sigma_0\\[10pt]
+    &\sim \frac{3}{4}\frac{\cancel{\chi_1^4}}{\cancel{\Delta\chi^4}}
+        \left[- \frac{(1-p^2)}{\cancel{\chi_1^2}} \cancel{\Delta\chi^2}\right]\chi_1^2
+        \left[- \frac{(1-p^2)}{\cancel{2}\cancel{\chi_1^2}}\cancel{\Delta\chi^2}\right]
+        \cancel{2}\cdot \sigma_0\\[10pt]
+    &= \frac{3}{4}(1-p^2)^2\,\chi_1^2 \, \sigma_0
+\end{align*}
+
 ```
 
 | term | limit |
