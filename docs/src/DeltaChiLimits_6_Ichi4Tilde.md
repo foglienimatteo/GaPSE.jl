@@ -3,8 +3,8 @@
 ## Recap: everything this page needs
 
 This page is self-contained. All the results quoted here are derived in
-The ``\Delta\chi \rightarrow 0`` limits, and the ``I_\ell^n``
-asymptotics in The ``I_\ell^n`` integrals.
+[The ``\Delta\chi \rightarrow 0`` limits](DeltaChiLimits.md), and the ``I_\ell^n``
+asymptotics in [The ``I_\ell^n`` integrals](IlnIntegrals.md).
 
 **The separation and its singular point.** For this family the two competing distances are
 ``\chi_1`` and ``\chi_2``, so the relevant separation is
@@ -104,7 +104,7 @@ enters. Only the explicit ``\Delta\chi^4`` against the ``\Delta\chi^{-2}`` of (2
 ### Term 1: ``\Delta\chi^4 \, \tilde{I}_0^4``
 
 The full series of ``\tilde{I}_0^4``, derived in
-The ``I_\ell^n`` integrals, is
+[The ``I_\ell^n`` integrals](IlnIntegrals.md), is
 
 ```math
     \tilde{I}_0^4(s) = \sum_{k=1}^{+\infty}

@@ -72,6 +72,12 @@
 
 - rewrote the derivations in a more explicit style throughout: `### Term N: J I` headings instead of `### Step N`, every intermediate algebraic manipulation written out rather than summarised, and an explicit order-counting table for the `B_22` Taylor expansion. Where a decomposition is compared with one from another family, the latter is now restated on the spot instead of being referenced;
 
+- restored the cross-page markdown links in the `Delta chi -> 0` documentation (the eight-family index, the Legendre-pattern table, the integrand summary, the small-`chi` corner table and the "derived in ..." lines of every recap), plus the two that link `IlnIntegrals.md` to `SphericalBesselFunctions.md` and back;
+
+- filled in the derivation steps that were only asserted. In Family 1 the five Taylor coefficients of `B_22` around `y = 1` are now computed one by one: the `y` derivative is taken term by term and shown, the result is evaluated at `y = 1`, and the factorisation is done through the symmetric combinations `u = chi1^2 + chi2^2` and `v = chi1 chi2`, for which `chi1^4 + chi2^4 = u^2 - 2v^2` and, crucially, `u - 2v = (chi1 - chi2)^2`. Every `(u - 2v)` is then an `O(Dchi^2)`, so reading the order off a coefficient becomes a matter of counting its powers: `8(u-2v)^2`, `4(u-2v)(7u-2v)`, `2(7u^2-24uv+26v^2)` (which does not contain one, hence `O(1)`), `-4v(4u-11v)` and `11v^2`;
+
+- same treatment for the numerators of Families 2 and 3, whose vanishing orders were previously quoted without proof: `N_02` and `N_04` of Lensing x Doppler are Taylor-expanded in `(y-1)`, their `k=0` coefficients factored as `4(chi1-s2)^3(chi1+2s2)` and half of it, their `k=1` ones as `2(chi1-s2)(...)`, the `k>=2` ones dropped by the order count, and the two surviving contributions summed to `-3 chi1 p (3p^2+1) Dchi1^3` and `3 chi1 p (3-5p^2) Dchi1^3`. Likewise `N_02^(b)`, `N_02^(f)` and `N_04` of Newtonian x Lensing, the last one with the same explicit order-counting table used for `B_22`. All the factorisations and derivatives were verified symbolically;
+
 
 ## development branch qls
 

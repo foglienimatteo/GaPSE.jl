@@ -560,7 +560,7 @@ Introduce the two Mellin transforms
 ```
 
 the second one being the general case of the known integrals of the
-Spherical Bessel Functions page (``z = 1`` gives back
+[Spherical Bessel Functions](SphericalBesselFunctions.md) page (``z = 1`` gives back
 ``\int_0^\infty j_\ell = \sqrt{\pi} \, \Gamma\!\left(\frac{\ell+1}{2}\right) /
 2\Gamma\!\left(1+\frac{\ell}{2}\right)``). Inserting the inverse transform of ``j_\ell``
 into Eq.(3.7) and exchanging the two integrals — legitimate here, the ``z``-contour being

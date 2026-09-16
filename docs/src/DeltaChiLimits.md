@@ -244,11 +244,11 @@ Legendre ones evaluated at the direction parameter ``p``:
 
 | where                             | leading coefficient                     |
 | :-------------------------------- | :-------------------------------------- |
-| ``B_{22}`` , Eq.(3.9) of Family 1 | ``35p^4-30p^2+3 = 8\,\mathcal{L}_4(p)`` |
-| ``N_{04}`` , Eq.(5.4) of Family 3 | ``35p^4-30p^2+3 = 8\,\mathcal{L}_4(p)`` |
-| ``N_{02}`` , Eq.(5.3) of Family 3 | ``3p^2-1 = 2\,\mathcal{L}_2(p)``        |
-| ``F`` , Eq.(6.2) of Family 4      | ``3p^2-1 = 2\,\mathcal{L}_2(p)``        |
-| ``F`` , Eq.(7.2) of Family 5      | ``3p^2-1 = 2\,\mathcal{L}_2(p)``        |
+| ``B_{22}`` , Eq.(3.9) of [Family 1](DeltaChiLimits_1_LensingLensing.md) | ``35p^4-30p^2+3 = 8\,\mathcal{L}_4(p)`` |
+| ``N_{04}`` , Eq.(5.4) of [Family 3](DeltaChiLimits_3_NewtonianLensing.md) | ``35p^4-30p^2+3 = 8\,\mathcal{L}_4(p)`` |
+| ``N_{02}`` , Eq.(5.3) of [Family 3](DeltaChiLimits_3_NewtonianLensing.md) | ``3p^2-1 = 2\,\mathcal{L}_2(p)``        |
+| ``F`` , Eq.(6.2) of [Family 4](DeltaChiLimits_4_LensingLocalGP.md)      | ``3p^2-1 = 2\,\mathcal{L}_2(p)``        |
+| ``F`` , Eq.(7.2) of [Family 5](DeltaChiLimits_5_NewtonianIntegratedGP.md)      | ``3p^2-1 = 2\,\mathcal{L}_2(p)``        |
 
 This is not a coincidence. The ``J`` coefficients come from expanding the TPCF kernels in
 Legendre polynomials of ``y = \cos\theta``, and along the path ``\chi_2 = \chi_1 + p\Delta\chi``
@@ -264,14 +264,14 @@ structure, and therefore the same derivation. One page each:
 
 |     | family                                               | ``J\,I`` structure                                                                  | limit                                       |
 | :-: | :--------------------------------------------------- | :---------------------------------------------------------------------------------- | :------------------------------------------ |
-|  1  | Lensing ``\times`` Lensing                           | ``J_{00}I_0^0 + J_{02}I_2^0 + J_{31}I_1^3 + J_{22}I_2^2``                           | ``3\sigma_2 + \frac{6}{5}\chi_1^2\sigma_0`` |
-|  2  | Lensing ``\times`` Doppler                           | ``J_{00}I_0^0 + J_{02}I_2^0 + J_{04}I_4^0 + J_{20}I_0^2``                           | ``\sigma_2``                                |
-|  3  | Newtonian ``\times`` Lensing                         | ``J_{00}I_0^0 + J_{02}I_2^0 + J_{04}I_4^0``                                         | ``-\frac{1}{5}s_1(f+5b)\sigma_0``           |
-|  4  | Lensing ``\times`` Local GP                          | ``F\left(\frac{I_0^0}{60}+\frac{I_2^0}{42}+\frac{I_4^0}{140}\right) + J_{20}I_0^2`` | ``\frac{1}{2}\sigma_2``                     |
-|  5  | Newtonian ``\times`` Integrated GP                   | ``F\left(\frac{I_0^0}{15}+\frac{2I_2^0}{21}+\frac{I_4^0}{35}\right) + J_{20}I_0^2`` | ``-(3b+f)\sigma_2``                         |
-|  6  | the ``\Delta\chi^4\,\tilde{I}_0^4`` terms            | ``\Delta\chi^4 \, \tilde{I}_0^4``                                                   | ``0``                                       |
-|  7  | the ``\Delta\chi^2 \times`` (vanishing factor) terms | ``\Delta\chi^2 \, G \left(\cdots + I_0^2\right)``                                   | ``0``                                       |
-|  8  | the ``J_{22}I_2^2 + J_{31}I_1^3`` terms              | ``J_{22}I_2^2 + J_{31}I_1^3``                                                       | ``\frac{A}{3}\sigma_2``                     |
+|  1  | [Lensing ``\times`` Lensing](DeltaChiLimits_1_LensingLensing.md) | ``J_{00}I_0^0 + J_{02}I_2^0 + J_{31}I_1^3 + J_{22}I_2^2``                           | ``3\sigma_2 + \frac{6}{5}\chi_1^2\sigma_0`` |
+|  2  | [Lensing ``\times`` Doppler](DeltaChiLimits_2_LensingDoppler.md) | ``J_{00}I_0^0 + J_{02}I_2^0 + J_{04}I_4^0 + J_{20}I_0^2``                           | ``\sigma_2``                                |
+|  3  | [Newtonian ``\times`` Lensing](DeltaChiLimits_3_NewtonianLensing.md) | ``J_{00}I_0^0 + J_{02}I_2^0 + J_{04}I_4^0``                                         | ``-\frac{1}{5}s_1(f+5b)\sigma_0``           |
+|  4  | [Lensing ``\times`` Local GP](DeltaChiLimits_4_LensingLocalGP.md) | ``F\left(\frac{I_0^0}{60}+\frac{I_2^0}{42}+\frac{I_4^0}{140}\right) + J_{20}I_0^2`` | ``\frac{1}{2}\sigma_2``                     |
+|  5  | [Newtonian ``\times`` Integrated GP](DeltaChiLimits_5_NewtonianIntegratedGP.md) | ``F\left(\frac{I_0^0}{15}+\frac{2I_2^0}{21}+\frac{I_4^0}{35}\right) + J_{20}I_0^2`` | ``-(3b+f)\sigma_2``                         |
+|  6  | [the ``\Delta\chi^4\,\tilde{I}_0^4`` terms](DeltaChiLimits_6_Ichi4Tilde.md) | ``\Delta\chi^4 \, \tilde{I}_0^4``                                                   | ``0``                                       |
+|  7  | [the ``\Delta\chi^2 \times`` (vanishing factor) terms](DeltaChiLimits_7_VanishingFactor.md) | ``\Delta\chi^2 \, G \left(\cdots + I_0^2\right)``                                   | ``0``                                       |
+|  8  | [the ``J_{22}I_2^2 + J_{31}I_1^3`` terms](DeltaChiLimits_8_J22J31.md) | ``J_{22}I_2^2 + J_{31}I_1^3``                                                       | ``\frac{A}{3}\sigma_2``                     |
 
 !!! note "Equation numbering"
     Equations are numbered **globally** across these nine pages, the prefix identifying the
@@ -285,36 +285,36 @@ structure, and therefore the same derivation. One page each:
 
 | integrand                                      | family | limit of the ``J\,I`` sum                   |
 | :--------------------------------------------- | :----: | :------------------------------------------ |
-| `integrand_ξ_GNC_Lensing`                      |   1    | ``3\sigma_2 + \frac{6}{5}\chi_1^2\sigma_0`` |
-| `integrand_ξ_LD_Lensing`                       |   1    | ``3\sigma_2 + \frac{6}{5}\chi_1^2\sigma_0`` |
-| `integrand_ξ_GNCxLD_Lensing_Lensing`           |   1    | ``3\sigma_2 + \frac{6}{5}\chi_1^2\sigma_0`` |
-| `integrand_ξ_GNC_Lensing_Doppler`              |   2    | ``\sigma_2``                                |
-| `integrand_ξ_GNCxLD_Lensing_Doppler`           |   2    | ``\sigma_2``                                |
-| `integrand_ξ_GNCxLD_Doppler_Lensing`           |   2    | ``\sigma_2``                                |
-| `integrand_ξ_LD_Lensing_Doppler`               |   2    | ``\sigma_2``                                |
-| `integrand_ξ_GNC_Newtonian_Lensing`            |   3    | ``-\frac{1}{5}s_1(f+5b)\sigma_0``           |
-| `integrand_ξ_GNCxLD_Newtonian_Lensing`         |   3    | ``-\frac{1}{5}s_1(f+5b)\sigma_0``           |
-| `integrand_ξ_GNC_Lensing_LocalGP`              |   4    | ``\frac{1}{2}\sigma_2``                     |
-| `integrand_ξ_GNCxLD_LocalGP_Lensing`           |   4    | ``\frac{1}{2}\sigma_2``                     |
-| `integrand_ξ_GNC_Newtonian_IntegratedGP`       |   5    | ``-(3b+f)\sigma_2``                         |
-| `integrand_ξ_GNCxLD_Newtonian_IntegratedGP`    |   5    | ``-(3b+f)\sigma_2``                         |
-| `integrand_ξ_GNC_IntegratedGP`                 |   6    | ``0``                                       |
-| `integrand_ξ_LD_IntegratedGP`                  |   6    | ``0``                                       |
-| `integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP` |   6    | ``0``                                       |
-| `integrand_ξ_GNC_LocalGP_IntegratedGP`         |   6    | ``0``                                       |
-| `integrand_ξ_GNCxLD_IntegratedGP_LocalGP`      |   6    | ``0``                                       |
-| `integrand_ξ_GNCxLD_LocalGP_IntegratedGP`      |   6    | ``0``                                       |
-| `integrand_ξ_LD_LocalGP_IntegratedGP`          |   6    | ``0``                                       |
-| `integrand_ξ_GNC_Doppler_IntegratedGP`         |   7    | ``0``                                       |
-| `integrand_ξ_GNCxLD_IntegratedGP_Doppler`      |   7    | ``0``                                       |
-| `integrand_ξ_GNCxLD_Doppler_IntegratedGP`      |   7    | ``0``                                       |
-| `integrand_ξ_LD_Doppler_IntegratedGP`          |   7    | ``0``                                       |
-| `integrand_ξ_GNC_Lensing_IntegratedGP`         |   8    | ``\frac{1}{3}\sigma_2``                     |
-| `integrand_ξ_GNCxLD_IntegratedGP_Lensing`      |   8    | ``\frac{2}{3}\sigma_2``                     |
-| `integrand_ξ_GNCxLD_Lensing_IntegratedGP`      |   8    | ``\frac{2}{3}\sigma_2``                     |
-| `integrand_ξ_GNCxLD_Lensing_LocalGP`           |   8    | ``-\frac{2}{3}\sigma_2``                    |
-| `integrand_ξ_LD_Lensing_IntegratedGP`          |   8    | ``-\frac{2}{3}\sigma_2``                    |
-| `integrand_ξ_LD_Lensing_LocalGP`               |   8    | ``-\frac{2}{3}\sigma_2``                    |
+| `integrand_ξ_GNC_Lensing`                      |   [1](DeltaChiLimits_1_LensingLensing.md)    | ``3\sigma_2 + \frac{6}{5}\chi_1^2\sigma_0`` |
+| `integrand_ξ_LD_Lensing`                       |   [1](DeltaChiLimits_1_LensingLensing.md)    | ``3\sigma_2 + \frac{6}{5}\chi_1^2\sigma_0`` |
+| `integrand_ξ_GNCxLD_Lensing_Lensing`           |   [1](DeltaChiLimits_1_LensingLensing.md)    | ``3\sigma_2 + \frac{6}{5}\chi_1^2\sigma_0`` |
+| `integrand_ξ_GNC_Lensing_Doppler`              |   [2](DeltaChiLimits_2_LensingDoppler.md)    | ``\sigma_2``                                |
+| `integrand_ξ_GNCxLD_Lensing_Doppler`           |   [2](DeltaChiLimits_2_LensingDoppler.md)    | ``\sigma_2``                                |
+| `integrand_ξ_GNCxLD_Doppler_Lensing`           |   [2](DeltaChiLimits_2_LensingDoppler.md)    | ``\sigma_2``                                |
+| `integrand_ξ_LD_Lensing_Doppler`               |   [2](DeltaChiLimits_2_LensingDoppler.md)    | ``\sigma_2``                                |
+| `integrand_ξ_GNC_Newtonian_Lensing`            |   [3](DeltaChiLimits_3_NewtonianLensing.md)    | ``-\frac{1}{5}s_1(f+5b)\sigma_0``           |
+| `integrand_ξ_GNCxLD_Newtonian_Lensing`         |   [3](DeltaChiLimits_3_NewtonianLensing.md)    | ``-\frac{1}{5}s_1(f+5b)\sigma_0``           |
+| `integrand_ξ_GNC_Lensing_LocalGP`              |   [4](DeltaChiLimits_4_LensingLocalGP.md)    | ``\frac{1}{2}\sigma_2``                     |
+| `integrand_ξ_GNCxLD_LocalGP_Lensing`           |   [4](DeltaChiLimits_4_LensingLocalGP.md)    | ``\frac{1}{2}\sigma_2``                     |
+| `integrand_ξ_GNC_Newtonian_IntegratedGP`       |   [5](DeltaChiLimits_5_NewtonianIntegratedGP.md)    | ``-(3b+f)\sigma_2``                         |
+| `integrand_ξ_GNCxLD_Newtonian_IntegratedGP`    |   [5](DeltaChiLimits_5_NewtonianIntegratedGP.md)    | ``-(3b+f)\sigma_2``                         |
+| `integrand_ξ_GNC_IntegratedGP`                 |   [6](DeltaChiLimits_6_Ichi4Tilde.md)    | ``0``                                       |
+| `integrand_ξ_LD_IntegratedGP`                  |   [6](DeltaChiLimits_6_Ichi4Tilde.md)    | ``0``                                       |
+| `integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP` |   [6](DeltaChiLimits_6_Ichi4Tilde.md)    | ``0``                                       |
+| `integrand_ξ_GNC_LocalGP_IntegratedGP`         |   [6](DeltaChiLimits_6_Ichi4Tilde.md)    | ``0``                                       |
+| `integrand_ξ_GNCxLD_IntegratedGP_LocalGP`      |   [6](DeltaChiLimits_6_Ichi4Tilde.md)    | ``0``                                       |
+| `integrand_ξ_GNCxLD_LocalGP_IntegratedGP`      |   [6](DeltaChiLimits_6_Ichi4Tilde.md)    | ``0``                                       |
+| `integrand_ξ_LD_LocalGP_IntegratedGP`          |   [6](DeltaChiLimits_6_Ichi4Tilde.md)    | ``0``                                       |
+| `integrand_ξ_GNC_Doppler_IntegratedGP`         |   [7](DeltaChiLimits_7_VanishingFactor.md)    | ``0``                                       |
+| `integrand_ξ_GNCxLD_IntegratedGP_Doppler`      |   [7](DeltaChiLimits_7_VanishingFactor.md)    | ``0``                                       |
+| `integrand_ξ_GNCxLD_Doppler_IntegratedGP`      |   [7](DeltaChiLimits_7_VanishingFactor.md)    | ``0``                                       |
+| `integrand_ξ_LD_Doppler_IntegratedGP`          |   [7](DeltaChiLimits_7_VanishingFactor.md)    | ``0``                                       |
+| `integrand_ξ_GNC_Lensing_IntegratedGP`         |   [8](DeltaChiLimits_8_J22J31.md)    | ``\frac{1}{3}\sigma_2``                     |
+| `integrand_ξ_GNCxLD_IntegratedGP_Lensing`      |   [8](DeltaChiLimits_8_J22J31.md)    | ``\frac{2}{3}\sigma_2``                     |
+| `integrand_ξ_GNCxLD_Lensing_IntegratedGP`      |   [8](DeltaChiLimits_8_J22J31.md)    | ``\frac{2}{3}\sigma_2``                     |
+| `integrand_ξ_GNCxLD_Lensing_LocalGP`           |   [8](DeltaChiLimits_8_J22J31.md)    | ``-\frac{2}{3}\sigma_2``                    |
+| `integrand_ξ_LD_Lensing_IntegratedGP`          |   [8](DeltaChiLimits_8_J22J31.md)    | ``-\frac{2}{3}\sigma_2``                    |
+| `integrand_ξ_LD_Lensing_LocalGP`               |   [8](DeltaChiLimits_8_J22J31.md)    | ``-\frac{2}{3}\sigma_2``                    |
 
 In every case the limit is multiplied by the same prefactor (`common`, `factor`, `denomin`,
 ...) that multiplies the ``J\,I`` sum in the `Δχ ≥ Δχ_min` branch, so only the bracket needs to
@@ -395,13 +395,13 @@ costs nothing. The seven integrands that need it are the double-``\chi`` ones:
 
 | integrand | family |
 |:--|:-:|
-| `integrand_ξ_GNC_Lensing` | 1 |
-| `integrand_ξ_LD_Lensing` | 1 |
-| `integrand_ξ_GNCxLD_Lensing_Lensing` | 1 |
-| `integrand_ξ_GNC_Lensing_IntegratedGP` | 8 |
-| `integrand_ξ_GNCxLD_IntegratedGP_Lensing` | 8 |
-| `integrand_ξ_GNCxLD_Lensing_IntegratedGP` | 8 |
-| `integrand_ξ_LD_Lensing_IntegratedGP` | 8 |
+| `integrand_ξ_GNC_Lensing` | [1](DeltaChiLimits_1_LensingLensing.md) |
+| `integrand_ξ_LD_Lensing` | [1](DeltaChiLimits_1_LensingLensing.md) |
+| `integrand_ξ_GNCxLD_Lensing_Lensing` | [1](DeltaChiLimits_1_LensingLensing.md) |
+| `integrand_ξ_GNC_Lensing_IntegratedGP` | [8](DeltaChiLimits_8_J22J31.md) |
+| `integrand_ξ_GNCxLD_IntegratedGP_Lensing` | [8](DeltaChiLimits_8_J22J31.md) |
+| `integrand_ξ_GNCxLD_Lensing_IntegratedGP` | [8](DeltaChiLimits_8_J22J31.md) |
+| `integrand_ξ_LD_Lensing_IntegratedGP` | [8](DeltaChiLimits_8_J22J31.md) |
 
 (`integrand_ξ_GNCxLD_Lensing_LocalGP` and `integrand_ξ_LD_Lensing_LocalGP` are family 8 but
 single-``\chi``, so they are not affected; giving them the `y` anyway keeps the six of the

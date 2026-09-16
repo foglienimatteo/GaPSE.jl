@@ -103,7 +103,7 @@ The complete series is
 ```
 
 which is the one used to derive the small-``s`` limits of the
-``I_\ell^n`` integrals.
+[``I_\ell^n`` integrals](IlnIntegrals.md).
 
 Keeping only the ``k = 0`` term is legitimate up to ``x \simeq 1``, and not beyond:
 

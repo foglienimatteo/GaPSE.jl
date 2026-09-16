@@ -3,8 +3,8 @@
 ## Recap: everything this page needs
 
 This page is self-contained. All the results quoted here are derived in
-The ``\Delta\chi \rightarrow 0`` limits, and the ``I_\ell^n``
-asymptotics in The ``I_\ell^n`` integrals.
+[The ``\Delta\chi \rightarrow 0`` limits](DeltaChiLimits.md), and the ``I_\ell^n``
+asymptotics in [The ``I_\ell^n`` integrals](IlnIntegrals.md).
 
 **The separation and its singular point.** For this family the two competing distances are
 ``s_1`` and ``\chi_2``, so the relevant separation is
@@ -156,18 +156,78 @@ two numerators vanish. They both vanish at the singular point:
 \end{align*}
 ```
 
-and expanding both along ``\chi_2 = s_1 + p\,\Delta\chi_2`` gives their common
-``\mathcal{O}(\Delta\chi_2^2)`` coefficient:
+but vanishing at the point is not the same as knowing *how fast*, so we Taylor-expand both in
+``(y-1)`` exactly as was done for ``B_{22}`` in Family 1.
+
+**``N_{02}^{(b)}``.** It is quadratic in ``y``, so three coefficients:
 
 ```math
 \begin{align*}
-    N_{02}^{(b)} &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim} \left(1 - 3p^2\right)\Delta\chi_2^2 \; ,
-    \qquad
-    N_{02}^{(f)} \underset{\Delta\chi_2\rightarrow 0^{+}}{\sim} s_1\left(3p^2 - 1\right)\Delta\chi_2^2 \; , \\[10pt]
-    \Rightarrow \quad
+    N_{02}^{(b)}\big|_{y=1} &= -2\chi_2^2 + \chi_2 s_1 (1+3) - 2 s_1^2
+        = -2\left(\chi_2^2 - 2\chi_2 s_1 + s_1^2\right) = -2(s_1-\chi_2)^2 \; , \\[10pt]
+    \frac{\partial N_{02}^{(b)}}{\partial y}\bigg|_{y=1}
+        &= \left[-2\chi_2^2 + 2y\chi_2 s_1 - 2 s_1^2\right]_{y=1}
+        = -2\left(s_1^2 - s_1\chi_2 + \chi_2^2\right) \; , \\[10pt]
+    \frac{1}{2}\frac{\partial^2 N_{02}^{(b)}}{\partial y^2}\bigg|_{y=1}
+        &= \frac{1}{2}\left(2\chi_2 s_1\right) = s_1 \chi_2 \; .
+\end{align*}
+```
+
+The first is ``\mathcal{O}(\Delta\chi_2^2)``, the second ``\mathcal{O}(1)`` and multiplies
+``(y-1) = \mathcal{O}(\Delta\chi_2^2)`` — so both contribute — while the third multiplies
+``(y-1)^2 = \mathcal{O}(\Delta\chi_2^4)`` and is dropped. With
+``(s_1-\chi_2) = -p\Delta\chi_2`` and ``\chi_2 \rightarrow s_1``:
+
+```math
+\begin{align*}
+    N_{02}^{(b)} &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        -2 \, p^2\Delta\chi_2^2
+        - 2\cancel{s_1^2}\left[- \frac{(1-p^2)}{2\cancel{s_1^2}}\Delta\chi_2^2\right] \\[10pt]
+    &= \left[-2p^2 + (1-p^2)\right]\Delta\chi_2^2
+    \; = \; \left(1 - 3p^2\right)\Delta\chi_2^2 \; .
+\end{align*}
+```
+
+**``N_{02}^{(f)}``.** Cubic in ``y``, so four coefficients; the two that matter are
+
+```math
+\begin{align*}
+    N_{02}^{(f)}\big|_{y=1} &= 4\chi_2^3(3-1) - 2\chi_2^2 s_1(3+8) + \chi_2 s_1^2(9+11) - 6 s_1^3 \\[10pt]
+        &= 8\chi_2^3 - 22\chi_2^2 s_1 + 20\chi_2 s_1^2 - 6 s_1^3 \\[10pt]
+        &= -2\left(3 s_1^3 - 10 s_1^2\chi_2 + 11 s_1\chi_2^2 - 4\chi_2^3\right) \\[10pt]
+        &= -2(s_1-\chi_2)^2\left(3 s_1 - 4\chi_2\right) \; , \\[16pt]
+    \frac{\partial N_{02}^{(f)}}{\partial y}\bigg|_{y=1}
+        &= \left[24 y\chi_2^3 - 2\chi_2^2 s_1(9y^2+8) + 18 y\chi_2 s_1^2 - 6 s_1^3\right]_{y=1} \\[10pt]
+        &= 24\chi_2^3 - 34\chi_2^2 s_1 + 18\chi_2 s_1^2 - 6 s_1^3 \\[10pt]
+        &= -2\left(3 s_1^3 - 9 s_1^2\chi_2 + 17 s_1\chi_2^2 - 12\chi_2^3\right) \; ,
+\end{align*}
+```
+
+(the factorisation of the first is checked by expanding
+``(s_1-\chi_2)^2(3s_1-4\chi_2) = 3s_1^3 - 10 s_1^2\chi_2 + 11 s_1\chi_2^2 - 4\chi_2^3``),
+while the ``k=2`` and ``k=3`` coefficients are ``\mathcal{O}(1)`` against
+``(y-1)^2, (y-1)^3`` and drop. Evaluating the two surviving ones at ``\chi_2 = s_1``
+(``3-4 = -1`` and ``3-9+17-12 = -1``):
+
+```math
+\begin{align*}
+    N_{02}^{(f)} &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        -2 \, p^2\Delta\chi_2^2 \,(-s_1)
+        - 2(-s_1^3)\left[- \frac{(1-p^2)}{2 s_1^{\cancel{2}}}\Delta\chi_2^2\right] \\[10pt]
+    &= 2 s_1 p^2\Delta\chi_2^2 - s_1(1-p^2)\Delta\chi_2^2 \\[10pt]
+    &= s_1\left[2p^2 - (1-p^2)\right]\Delta\chi_2^2
+    \; = \; s_1\left(3p^2 - 1\right)\Delta\chi_2^2 \; .
+\end{align*}
+```
+
+**Combining them**, the two ``\mathcal{O}(\Delta\chi_2^2)`` coefficients add up to
+
+```math
+\begin{align*}
     7 s_1 b \, N_{02}^{(b)} + f \, N_{02}^{(f)}
         &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
             \left[7 s_1 b \left(1-3p^2\right) + f s_1 \left(3p^2-1\right)\right]\Delta\chi_2^2 \\[10pt]
+        &= s_1\left(3p^2-1\right)\left[-7 b + f\right]\Delta\chi_2^2 \\[10pt]
         &= s_1\left(3p^2-1\right)\left(f - 7b\right)\Delta\chi_2^2 \; .
 \end{align*}
 ```
@@ -203,12 +263,70 @@ checking that it vanishes at the point is nowhere near enough. It does vanish th
 \end{align*}
 ```
 
-and the expansion along ``\chi_2 = s_1 + p\,\Delta\chi_2`` gives
+but, ``J_{04}`` carrying ``\Delta\chi_2^{-4}``, we need ``N_{04}`` to **fourth** order. It is
+quartic in ``y``, so its Taylor expansion around ``y=1`` again terminates after five terms,
+and each coefficient factorises in ``(s_1-\chi_2)``:
 
 ```math
-    N_{04} \underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-        s_1 \left(35p^4 - 30p^2 + 3\right)\Delta\chi_2^4
-    = 8 \, s_1 \, \mathcal{L}_4(p) \, \Delta\chi_2^4 \; ,
+\begin{align*}
+    N_{04}\big|_{y=1} &= 4(s_1-\chi_2)^4(s_1+\chi_2)
+        &&\rightarrow \; \mathcal{O}(\Delta\chi_2^4) \; , \\[6pt]
+    \frac{\partial N_{04}}{\partial y}\bigg|_{y=1}
+        &= 4(s_1-\chi_2)^2\left(s_1^3 + 2 s_1^2\chi_2 + 6 s_1\chi_2^2 + 3\chi_2^3\right)
+        &&\rightarrow \; \mathcal{O}(\Delta\chi_2^2) \; , \\[6pt]
+    \frac{1}{2}\frac{\partial^2 N_{04}}{\partial y^2}\bigg|_{y=1}
+        &= 6\chi_2^2\left(s_1^3 - 3 s_1^2\chi_2 + 3 s_1\chi_2^2 + \chi_2^3\right)
+        &&\rightarrow \; \mathcal{O}(1) \; , \\[6pt]
+    \frac{1}{6}\frac{\partial^3 N_{04}}{\partial y^3}\bigg|_{y=1}
+        &= 2 s_1\chi_2^2\left(s_1^2 - 2 s_1\chi_2 + 3\chi_2^2\right)
+        &&\rightarrow \; \mathcal{O}(1) \; , \\[6pt]
+    \frac{1}{24}\frac{\partial^4 N_{04}}{\partial y^4}\bigg|_{y=1}
+        &= - s_1^2\chi_2^3
+        &&\rightarrow \; \mathcal{O}(1) \; .
+\end{align*}
+```
+
+Counting orders exactly as for ``B_{22}``, with ``(y-1)^k = \mathcal{O}(\Delta\chi_2^{2k})``:
+
+```math
+\begin{align*}
+    k=0 \; &: \; \mathcal{O}(\Delta\chi_2^4)\cdot 1 = \mathcal{O}(\Delta\chi_2^4)
+        &&\Longrightarrow \; \mathrm{keep} \; , \\[4pt]
+    k=1 \; &: \; \mathcal{O}(\Delta\chi_2^2)\cdot\mathcal{O}(\Delta\chi_2^2) = \mathcal{O}(\Delta\chi_2^4)
+        &&\Longrightarrow \; \mathrm{keep} \; , \\[4pt]
+    k=2 \; &: \; \mathcal{O}(1)\cdot\mathcal{O}(\Delta\chi_2^4) = \mathcal{O}(\Delta\chi_2^4)
+        &&\Longrightarrow \; \mathrm{keep} \; , \\[4pt]
+    k=3,4 \; &: \; \mathcal{O}(1)\cdot\mathcal{O}(\Delta\chi_2^{6}),\;\mathcal{O}(\Delta\chi_2^{8})
+        &&\Longrightarrow \; \mathrm{drop} \; .
+\end{align*}
+```
+
+Substituting (2.2) and (2.3a), with the regular factors at ``\chi_2 = s_1``
+(``1+1 = 2``, ``1+2+6+3 = 12``, ``1-3+3+1 = 2``):
+
+```math
+\begin{align*}
+    k=0 \; &: \; 4(-p\Delta\chi_2)^4(2 s_1) = 8 \, s_1 \, p^4 \, \Delta\chi_2^4 \; , \\[8pt]
+    k=1 \; &: \; 4(-p\Delta\chi_2)^2 \left(12 s_1^3\right)
+        \left[- \frac{(1-p^2)}{2\cancel{s_1^2}}\Delta\chi_2^2\right]
+        = -24 \, s_1 \, p^2(1-p^2) \, \Delta\chi_2^4 \; , \\[8pt]
+    k=2 \; &: \; 6 s_1^2 \left(2 s_1^3\right)
+        \left[- \frac{(1-p^2)}{2 s_1^2}\Delta\chi_2^2\right]^{2}
+        = 12 \cancel{s_1^5} \frac{(1-p^2)^2}{4 \cancel{s_1^4}}\Delta\chi_2^4
+        = 3 \, s_1 \,(1-p^2)^2 \, \Delta\chi_2^4 \; ,
+\end{align*}
+```
+
+and summing the three:
+
+```math
+\begin{align*}
+    N_{04} &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        s_1 \left[8p^4 - 24p^2(1-p^2) + 3(1-p^2)^2\right]\Delta\chi_2^4 \\[10pt]
+    &= s_1 \left[8p^4 - 24p^2 + 24p^4 + 3 - 6p^2 + 3p^4\right]\Delta\chi_2^4 \\[10pt]
+    &= s_1 \left(35p^4 - 30p^2 + 3\right)\Delta\chi_2^4
+    \; = \; 8 \, s_1 \, \mathcal{L}_4(p) \, \Delta\chi_2^4 \; ,
+\end{align*}
 ```
 
 the very same ``8\mathcal{L}_4(p)`` that ``B_{22}`` produced in Family 1, Eq.(3.9). So here

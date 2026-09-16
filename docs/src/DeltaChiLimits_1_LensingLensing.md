@@ -3,8 +3,8 @@
 ## Recap: everything this page needs
 
 This page is self-contained. All the results quoted here are derived in
-The ``\Delta\chi \rightarrow 0`` limits, and the ``I_\ell^n``
-asymptotics in The ``I_\ell^n`` integrals.
+[The ``\Delta\chi \rightarrow 0`` limits](DeltaChiLimits.md), and the ``I_\ell^n``
+asymptotics in [The ``I_\ell^n`` integrals](IlnIntegrals.md).
 
 **The separation and its singular point.** For this family the two competing distances are
 ``\chi_1`` and ``\chi_2``, so the relevant separation is
@@ -306,22 +306,165 @@ expansion around ``y=1`` is finite and exact after five terms:
 \end{align*}
 ```
 
-Computing the five coefficients (each of which factorises, showing explicitly how it
-vanishes at ``\chi_1 = \chi_2``):
+Before computing the five coefficients, one remark that makes all of them easy. ``B_{22}``
+is **symmetric** under ``\chi_1 \leftrightarrow \chi_2``, so every coefficient can be written
+in terms of the two elementary symmetric combinations
+
+```math
+    u := \chi_1^2 + \chi_2^2 \; , \qquad \qquad v := \chi_1 \chi_2 \; ,
+```
+
+for which
+
+```math
+    \chi_1^4 + \chi_2^4 = u^2 - 2v^2 \; , \qquad
+    \chi_1\chi_2(\chi_1^2+\chi_2^2) = u\,v \; , \qquad
+    \chi_1^2\chi_2^2 = v^2 \; ,
+    \quad \quad (3.8\mathrm{a})
+```
+
+and, most importantly,
+
+```math
+    u - 2v = \chi_1^2 + \chi_2^2 - 2\chi_1\chi_2 = (\chi_1-\chi_2)^2 \; .
+    \quad \quad (3.8\mathrm{b})
+```
+
+Every ``(u-2v)`` that appears is therefore a ``(\chi_1-\chi_2)^2``, i.e. an
+``\mathcal{O}(\Delta\chi^2)``, and reading the order off a coefficient becomes a matter of
+counting the powers of ``(u-2v)`` in it.
+
+**The ``k=0`` coefficient.** Setting ``y=1`` in ``B_{22}``:
 
 ```math
 \begin{align*}
-    B_{22}\big|_{y=1} &= 8(\chi_1^4+\chi_2^4)-32\chi_1\chi_2(\chi_1^2+\chi_2^2)+48\chi_1^2\chi_2^2 \\[10pt]
-        &= 8\left[\chi_1^4 - 4 \chi_1^3\chi_2 + 6 \chi_1^2 \chi_2^2 - 4 \chi_1\chi_2^3  +\chi_2^4\right] \\[10pt]
-        &= 8(\chi_1-\chi_2)^4
+    B_{22}\big|_{y=1} &= 2(\chi_1^4+\chi_2^4)(7-3) - 16\chi_1\chi_2(\chi_1^2+\chi_2^2)(1+1)
+        + \chi_1^2\chi_2^2(11+14+23) \\[10pt]
+        &= 8(\chi_1^4+\chi_2^4) - 32\chi_1\chi_2(\chi_1^2+\chi_2^2) + 48\chi_1^2\chi_2^2 \\[10pt]
+    (3.8\mathrm{a}) \; \rightarrow \quad
+        &= 8(u^2 - 2v^2) - 32uv + 48v^2 \\[10pt]
+        &= 8u^2 - 16v^2 - 32uv + 48v^2 \\[10pt]
+        &= 8\left(u^2 - 4uv + 4v^2\right) \\[10pt]
+        &= 8(u-2v)^2 \\[10pt]
+    (3.8\mathrm{b}) \; \rightarrow \quad
+        &= 8(\chi_1-\chi_2)^4 \; \rightarrow \; \mathcal{O}(\Delta\chi^4) \; .
+\end{align*}
+```
+
+(equivalently, expanding ``8\left[\chi_1^4 - 4\chi_1^3\chi_2 + 6\chi_1^2\chi_2^2
+- 4\chi_1\chi_2^3 + \chi_2^4\right]`` and recognising the binomial coefficients of
+``(\chi_1-\chi_2)^4``.)
+
+**The ``k=1`` coefficient.** Differentiate ``B_{22}`` once with respect to ``y``, term by
+term — only the ``y``-dependent factors move:
+
+```math
+\begin{align*}
+    \frac{\partial B_{22}}{\partial y}
+    &= 2(\chi_1^4+\chi_2^4)\frac{\partial (7y^2-3)}{\partial y}
+        - 16\chi_1\chi_2(\chi_1^2+\chi_2^2)\frac{\partial \left[y(y^2+1)\right]}{\partial y}
+        + \chi_1^2\chi_2^2 \frac{\partial (11y^4+14y^2+23)}{\partial y} \\[10pt]
+    &= 2(\chi_1^4+\chi_2^4)(14y)
+        - 16\chi_1\chi_2(\chi_1^2+\chi_2^2)(3y^2+1)
+        + \chi_1^2\chi_2^2 (44y^3+28y) \\[10pt]
+    &= 28y(\chi_1^4+\chi_2^4)
+        - 16\chi_1\chi_2(\chi_1^2+\chi_2^2)(3y^2+1)
+        + \chi_1^2\chi_2^2 (44y^3+28y) \; ,
+\end{align*}
+```
+
+and evaluate at ``y=1``:
+
+```math
+\begin{align*}
+    \frac{\partial B_{22}}{\partial y}\bigg|_{y=1}
+    &= 28(\chi_1^4+\chi_2^4) - 16\chi_1\chi_2(\chi_1^2+\chi_2^2)(3+1)
+        + \chi_1^2\chi_2^2 (44+28) \\[10pt]
+    &= 28(\chi_1^4+\chi_2^4) - 64\chi_1\chi_2(\chi_1^2+\chi_2^2) + 72\chi_1^2\chi_2^2 \\[10pt]
+    (3.8\mathrm{a}) \; \rightarrow \quad
+    &= 28(u^2-2v^2) - 64uv + 72v^2 \\[10pt]
+    &= 28u^2 - 56v^2 - 64uv + 72v^2 \\[10pt]
+    &= 28u^2 - 64uv + 16v^2 \\[10pt]
+    &= 4\left(7u^2 - 16uv + 4v^2\right) \; .
+\end{align*}
+```
+
+The quadratic ``7u^2 - 16uv + 4v^2`` must contain a ``(u-2v)``, because we already know the
+coefficient has to vanish at ``\chi_1 = \chi_2``; dividing it out,
+
+```math
+    7u^2 - 16uv + 4v^2 = (u - 2v)(7u - 2v) \; ,
+```
+
+(check: ``7u^2 - 2uv - 14uv + 4v^2 = 7u^2 - 16uv + 4v^2`` ✓), so that
+
+```math
+\begin{align*}
+    \frac{\partial B_{22}}{\partial y}\bigg|_{y=1}
+    &= 4(u-2v)(7u-2v) \\[10pt]
+    (3.8\mathrm{b}) \; \rightarrow \quad
+    &= 4(\chi_1-\chi_2)^2 \left(7\chi_1^2 - 2\chi_1\chi_2 + 7\chi_2^2\right)
+    \; \rightarrow \; \mathcal{O}(\Delta\chi^2) \; .
+\end{align*}
+```
+
+**The ``k=2`` coefficient.** Differentiating once more,
+
+```math
+\begin{align*}
+    \frac{\partial^2 B_{22}}{\partial y^2}
+    &= 28(\chi_1^4+\chi_2^4) - 96 y \chi_1\chi_2(\chi_1^2+\chi_2^2)
+        + \chi_1^2\chi_2^2 (132y^2+28) \\[10pt]
+    \Rightarrow \quad
+    \frac{1}{2}\frac{\partial^2 B_{22}}{\partial y^2}\bigg|_{y=1}
+    &= 14(\chi_1^4+\chi_2^4) - 48\chi_1\chi_2(\chi_1^2+\chi_2^2) + 80\chi_1^2\chi_2^2 \\[10pt]
+    (3.8\mathrm{a}) \; \rightarrow \quad
+    &= 14(u^2-2v^2) - 48uv + 80v^2 \\[10pt]
+    &= 14u^2 - 48uv + 52v^2 \; = \; 2\left(7u^2 - 24uv + 26v^2\right) \; .
+\end{align*}
+```
+
+This one does **not** contain a ``(u-2v)``: at ``u = 2v`` it gives
+``2(28 - 48 + 26)v^2 = 12 v^2 \neq 0``. It is therefore ``\mathcal{O}(1)``, and going back to
+``\chi_1, \chi_2``,
+
+```math
+    \frac{1}{2}\frac{\partial^2 B_{22}}{\partial y^2}\bigg|_{y=1}
+    = 2\left(7\chi_1^4 - 24\chi_1^3\chi_2 + 40\chi_1^2\chi_2^2 - 24\chi_1\chi_2^3 + 7\chi_2^4\right)
+    \; \rightarrow \; \mathcal{O}(1) \; ,
+```
+
+whose value at ``\chi_1 = \chi_2 = \chi_1`` is ``2(7-24+40-24+7)\chi_1^4 = 12\chi_1^4``, i.e.
+the ``12v^2`` just found.
+
+**The ``k=3`` and ``k=4`` coefficients.** Two more derivatives, the ``(\chi_1^4+\chi_2^4)``
+term now being constant in ``y`` and dropping out:
+
+```math
+\begin{align*}
+    \frac{\partial^3 B_{22}}{\partial y^3}
+        &= - 96 \chi_1\chi_2(\chi_1^2+\chi_2^2) + 264 y \chi_1^2\chi_2^2
+    \quad \Rightarrow \quad
+    \frac{1}{6}\frac{\partial^3 B_{22}}{\partial y^3}\bigg|_{y=1}
+        = -16 uv + 44 v^2 \\[6pt]
+        &\phantom{= - 96 \chi_1\chi_2(\chi_1^2+\chi_2^2) + 264 y \chi_1^2\chi_2^2 \quad \Rightarrow \quad}
+        = -4v\left(4u - 11v\right)
+        = -4\chi_1\chi_2\left(4\chi_1^2 - 11\chi_1\chi_2 + 4\chi_2^2\right) \; , \\[14pt]
+    \frac{\partial^4 B_{22}}{\partial y^4}
+        &= 264 \chi_1^2\chi_2^2
+    \quad \Rightarrow \quad
+    \frac{1}{24}\frac{\partial^4 B_{22}}{\partial y^4}\bigg|_{y=1}
+        = 11 v^2 = 11 \chi_1^2\chi_2^2 \; ,
+\end{align*}
+```
+
+both ``\mathcal{O}(1)``. Collecting the five coefficients:
+
+```math
+\begin{align*}
+    B_{22}\big|_{y=1} &= 8(\chi_1-\chi_2)^4
         &&\rightarrow \; \mathcal{O}(\Delta\chi^4) \; , \\[6pt]
     \frac{\partial B_{22}}{\partial y}\bigg|_{y=1}
-        &= \left[ 28y(\chi_1^4 + \chi_2^4) - 16 \chi_1 \chi_2 (\chi_1^2 + \chi_2^2)(3y^2 + 1)
-        + \chi_1^2 \chi_2^2 (44y^3 + 28y)\right]\bigg|_{y=1}\\[10pt]
-        &= 28(\chi_1^4 + \chi_2^4) - 64 \chi_1 \chi_2 (\chi_1^2 + \chi_2^2)
-        + 72 \chi_1^2 \chi_2^2 \\[10pt]
-        &= 4\left[7\chi_1^4 + 7\chi_2^4 - 16 \chi_1 \chi_2 (\chi_1^2 + \chi_2^2 - 2 \chi_1\chi_2)
-        + 2 \chi_1^2 \chi_2^2\right] \\[10pt]
         &= 4(\chi_1-\chi_2)^2\left(7\chi_1^2 - 2\chi_1\chi_2 + 7\chi_2^2\right)
         &&\rightarrow \; \mathcal{O}(\Delta\chi^2) \; , \\[6pt]
     \frac{1}{2}\frac{\partial^2 B_{22}}{\partial y^2}\bigg|_{y=1}

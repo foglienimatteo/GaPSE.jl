@@ -3,8 +3,8 @@
 ## Recap: everything this page needs
 
 This page is self-contained. All the results quoted here are derived in
-The ``\Delta\chi \rightarrow 0`` limits, and the ``I_\ell^n``
-asymptotics in The ``I_\ell^n`` integrals.
+[The ``\Delta\chi \rightarrow 0`` limits](DeltaChiLimits.md), and the ``I_\ell^n``
+asymptotics in [The ``I_\ell^n`` integrals](IlnIntegrals.md).
 
 **The separation and its singular point.** For this family the two competing distances are
 ``\chi_1`` and ``s_2``, so the relevant separation is
@@ -161,27 +161,104 @@ Hence, with ``(\chi_1 - s_2) = -p\Delta\chi_1`` from (2.2) and ``s_2 \rightarrow
 ### Term 2: ``J_{02} I_2^0`` and Term 3: ``J_{04} I_4^0``
 
 Both ``J`` carry an explicit ``\Delta\chi_1^{-2}``, so what matters is the order at which
-their numerators ``N_{02}`` and ``N_{04}`` vanish. At the singular point ``y=1``,
-``s_2 = \chi_1``, collecting the overall ``\chi_1^4``:
+their numerators ``N_{02}`` and ``N_{04}`` vanish. As for ``B_{22}`` in Family 1, they are
+polynomials in ``y`` — of degree 2 and 3 respectively in each term, degree 3 overall — so
+their Taylor expansion around ``y=1`` terminates:
+
+```math
+    N = \sum_{k} \frac{1}{k!}\frac{\partial^k N}{\partial y^k}\bigg|_{y=1} (y-1)^k \; .
+```
+
+**The ``k=0`` coefficients.** Setting ``y = 1``:
 
 ```math
 \begin{align*}
-    N_{02}\big|_{y=1,\,s_2=\chi_1} &= \left[4 + 4(2-3) + (11-23) + (23-3) - 8\right]\chi_1^4 \\[6pt]
-        &= \left[4 - 4 - 12 + 20 - 8\right]\chi_1^4 = 0 \; , \\[10pt]
-    N_{04}\big|_{y=1,\,s_2=\chi_1} &= \left[2 + 2(2-3) - (1+5) + (1+9) - 4\right]\chi_1^4 \\[6pt]
-        &= \left[2 - 2 - 6 + 10 - 4\right]\chi_1^4 = 0 \; .
+    N_{02}\big|_{y=1} &= 4\chi_1^4 + 4\chi_1^3 (2-3) s_2 + \chi_1^2 (11-23) s_2^2
+        + \chi_1 (23-3) s_2^3 - 8 s_2^4 \\[10pt]
+        &= 4\chi_1^4 - 4\chi_1^3 s_2 - 12\chi_1^2 s_2^2 + 20\chi_1 s_2^3 - 8 s_2^4 \\[10pt]
+        &= 4\left(\chi_1^4 - \chi_1^3 s_2 - 3\chi_1^2 s_2^2 + 5\chi_1 s_2^3 - 2 s_2^4\right)
+        \\[10pt]
+        &= 4(\chi_1-s_2)^3(\chi_1+2s_2) \; , \\[16pt]
+    N_{04}\big|_{y=1} &= 2\chi_1^4 + 2\chi_1^3 (2-3) s_2 - \chi_1^2 (1+5) s_2^2
+        + \chi_1 (1+9) s_2^3 - 4 s_2^4 \\[10pt]
+        &= 2\chi_1^4 - 2\chi_1^3 s_2 - 6\chi_1^2 s_2^2 + 10\chi_1 s_2^3 - 4 s_2^4 \\[10pt]
+        &= 2(\chi_1-s_2)^3(\chi_1+2s_2) \; = \; \frac{1}{2} N_{02}\big|_{y=1} \; ,
 \end{align*}
 ```
 
-Pushing the expansion along ``s_2 = \chi_1 + p\,\Delta\chi_1`` shows that they vanish not
-just at the point but to **third** order:
+where the factorisation is checked by expanding back,
+
+```math
+    (\chi_1-s_2)^3(\chi_1+2s_2)
+    = \left(\chi_1^3 - 3\chi_1^2 s_2 + 3\chi_1 s_2^2 - s_2^3\right)(\chi_1+2s_2)
+    = \chi_1^4 - \chi_1^3 s_2 - 3\chi_1^2 s_2^2 + 5\chi_1 s_2^3 - 2 s_2^4 \; .
+```
+
+Both therefore vanish as ``(\chi_1-s_2)^3 = \mathcal{O}(\Delta\chi_1^3)`` — **cubically**, not
+just at the point.
+
+**The ``k=1`` coefficients.** Differentiating once in ``y``,
+
+```math
+\begin{align*}
+    \frac{\partial N_{02}}{\partial y} &= 4\chi_1^4 + 16\chi_1^3 y \, s_2
+        + \chi_1^2 (11 - 69y^2) s_2^2 + 46\chi_1 y \, s_2^3 - 8 s_2^4 \; , \\[6pt]
+    \frac{\partial N_{04}}{\partial y} &= 2\chi_1^4 + 8\chi_1^3 y \, s_2
+        - \chi_1^2 (3y^2+5) s_2^2 + 2\chi_1 y \, s_2^3 - 4 s_2^4 \; ,
+\end{align*}
+```
+
+and evaluating at ``y=1``,
+
+```math
+\begin{align*}
+    \frac{\partial N_{02}}{\partial y}\bigg|_{y=1}
+        &= 4\chi_1^4 + 16\chi_1^3 s_2 - 58\chi_1^2 s_2^2 + 46\chi_1 s_2^3 - 8 s_2^4 \\[10pt]
+        &= 2\left(2\chi_1^4 + 8\chi_1^3 s_2 - 29\chi_1^2 s_2^2 + 23\chi_1 s_2^3 - 4 s_2^4\right) \\[10pt]
+        &= 2(\chi_1-s_2)\left(2\chi_1^3 + 10\chi_1^2 s_2 - 19\chi_1 s_2^2 + 4 s_2^3\right)
+        \; , \\[16pt]
+    \frac{\partial N_{04}}{\partial y}\bigg|_{y=1}
+        &= 2\chi_1^4 + 8\chi_1^3 s_2 - 8\chi_1^2 s_2^2 + 2\chi_1 s_2^3 - 4 s_2^4 \\[10pt]
+        &= 2\left(\chi_1^4 + 4\chi_1^3 s_2 - 4\chi_1^2 s_2^2 + \chi_1 s_2^3 - 2 s_2^4\right) \\[10pt]
+        &= 2(\chi_1-s_2)\left(\chi_1^3 + 5\chi_1^2 s_2 + \chi_1 s_2^2 + 2 s_2^3\right) \; ,
+\end{align*}
+```
+
+both containing one power of ``(\chi_1-s_2)``, i.e. ``\mathcal{O}(\Delta\chi_1)``, so that —
+multiplied by ``(y-1) = \mathcal{O}(\Delta\chi_1^2)`` — they too contribute at
+``\mathcal{O}(\Delta\chi_1^3)``.
+
+**The ``k \geq 2`` coefficients.** These are ``\mathcal{O}(1)``,
+
+```math
+    \frac{1}{2}\frac{\partial^2 N_{02}}{\partial y^2}\bigg|_{y=1}
+        = \chi_1 s_2\left(8\chi_1^2 - 69\chi_1 s_2 + 23 s_2^2\right) \; , \qquad
+    \frac{1}{6}\frac{\partial^3 N_{02}}{\partial y^3}\bigg|_{y=1} = -23\chi_1^2 s_2^2 \; ,
+```
+
+and multiply ``(y-1)^2 = \mathcal{O}(\Delta\chi_1^4)`` or higher, so they are **dropped**
+(the same holds for ``N_{04}``).
+
+**Putting the two surviving orders together.** With ``(\chi_1 - s_2) = -p\Delta\chi_1`` from
+(2.2), ``(y-1)`` from (2.3a), and the cubics evaluated at ``s_2 = \chi_1``
+(``2+10-19+4 = -3`` and ``1+5+1+2 = 9``):
 
 ```math
 \begin{align*}
     N_{02} &\underset{\Delta\chi_1\rightarrow 0^{+}}{\sim}
-        -3\,\chi_1\, p \,(3p^2+1)\,\Delta\chi_1^3 \; , \\[6pt]
+        \underbrace{4(-p\Delta\chi_1)^3(3\chi_1)}_{k=0}
+        + \underbrace{2(-p\Delta\chi_1)(-3\chi_1^3)
+            \left[- \frac{(1-p^2)}{2\cancel{\chi_1^2}}\Delta\chi_1^2\right]}_{k=1} \\[10pt]
+    &= -12\,\chi_1\, p^3 \Delta\chi_1^3 - 3\,\chi_1\, p \,(1-p^2)\,\Delta\chi_1^3 \\[10pt]
+    &= -3\,\chi_1\, p \left[4p^2 + (1-p^2)\right]\Delta\chi_1^3 \\[10pt]
+    &= -3\,\chi_1\, p \,(3p^2+1)\,\Delta\chi_1^3 \; , \\[20pt]
     N_{04} &\underset{\Delta\chi_1\rightarrow 0^{+}}{\sim}
-        3\,\chi_1\, p \,(3-5p^2)\,\Delta\chi_1^3 \; .
+        \underbrace{2(-p\Delta\chi_1)^3(3\chi_1)}_{k=0}
+        + \underbrace{2(-p\Delta\chi_1)(9\chi_1^3)
+            \left[- \frac{(1-p^2)}{2\cancel{\chi_1^2}}\Delta\chi_1^2\right]}_{k=1} \\[10pt]
+    &= -6\,\chi_1\, p^3 \Delta\chi_1^3 + 9\,\chi_1\, p \,(1-p^2)\,\Delta\chi_1^3 \\[10pt]
+    &= 3\,\chi_1\, p \left[-2p^2 + 3(1-p^2)\right]\Delta\chi_1^3 \\[10pt]
+    &= 3\,\chi_1\, p \,(3-5p^2)\,\Delta\chi_1^3 \; .
 \end{align*}
 ```
 
