@@ -176,8 +176,9 @@ y=1 \; &amp;\land \; \chi_1 = \chi_2 = \chi \; : \\[10pt]
         &amp;= 8\left(u^2 - 4uv + 4v^2\right) \\[10pt]
         &amp;= 8(u-2v)^2 \\[10pt]
     (3.8\mathrm{b}) \; \rightarrow \quad
-        &amp;= 8(\chi_1-\chi_2)^4 \; \rightarrow \; \mathcal{O}(\Delta\chi^4) \; .
-\end{align*}\]</p><p>(equivalently, expanding ``8\left[\chi<em>1^4 - 4\chi</em>1^3\chi<em>2 + 6\chi</em>1^2\chi_2^2</p><ul><li>4\chi<em>1\chi</em>2^3 + \chi_2^4\right]`` and recognising the binomial coefficients of</li></ul><p><span>$(\chi_1-\chi_2)^4$</span>.)</p><p><strong>The <span>$k=1$</span> coefficient.</strong> Differentiate <span>$B_{22}$</span> once with respect to <span>$y$</span>, term by term — only the <span>$y$</span>-dependent factors move:</p><p class="math-container">\[\begin{align*}
+        &amp;= 8(\chi_1-\chi_2)^4 \\[10pt]
+        &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\rightarrow} \; \mathcal{O}(\Delta\chi^4) \; .
+\end{align*}\]</p><p>(equivalently, expanding <span>$8[\chi_1^4 - 4\chi_1^3\chi_2 + 6\chi_1^2\chi_2^2 - 4\chi_1\chi_2^3 + \chi_2^4]$</span> and recognising the binomial coefficients of <span>$(\chi_1-\chi_2)^4$</span>.)</p><p><strong>The <span>$k=1$</span> coefficient.</strong> Differentiate <span>$B_{22}$</span> once with respect to <span>$y$</span>, term by term — only the <span>$y$</span>-dependent factors move:</p><p class="math-container">\[\begin{align*}
     \frac{\partial B_{22}}{\partial y}
     &amp;= 2(\chi_1^4+\chi_2^4)\frac{\partial (7y^2-3)}{\partial y}
         - 16\chi_1\chi_2(\chi_1^2+\chi_2^2)\frac{\partial \left[y(y^2+1)\right]}{\partial y}
@@ -187,9 +188,9 @@ y=1 \; &amp;\land \; \chi_1 = \chi_2 = \chi \; : \\[10pt]
         + \chi_1^2\chi_2^2 (44y^3+28y) \\[10pt]
     &amp;= 28y(\chi_1^4+\chi_2^4)
         - 16\chi_1\chi_2(\chi_1^2+\chi_2^2)(3y^2+1)
-        + \chi_1^2\chi_2^2 (44y^3+28y) \; ,
-\end{align*}\]</p><p>and evaluate at <span>$y=1$</span>:</p><p class="math-container">\[\begin{align*}
-    \frac{\partial B_{22}}{\partial y}\bigg|_{y=1}
+        + \chi_1^2\chi_2^2 (44y^3+28y) \; ,\\[15pt]
+\end{align*}\]</p><p class="math-container">\[\begin{align*}
+    \Rightarrow \quad  \frac{\partial B_{22}}{\partial y}\bigg|_{y=1}
     &amp;= 28(\chi_1^4+\chi_2^4) - 16\chi_1\chi_2(\chi_1^2+\chi_2^2)(3+1)
         + \chi_1^2\chi_2^2 (44+28) \\[10pt]
     &amp;= 28(\chi_1^4+\chi_2^4) - 64\chi_1\chi_2(\chi_1^2+\chi_2^2) + 72\chi_1^2\chi_2^2 \\[10pt]
@@ -197,15 +198,19 @@ y=1 \; &amp;\land \; \chi_1 = \chi_2 = \chi \; : \\[10pt]
     &amp;= 28(u^2-2v^2) - 64uv + 72v^2 \\[10pt]
     &amp;= 28u^2 - 56v^2 - 64uv + 72v^2 \\[10pt]
     &amp;= 28u^2 - 64uv + 16v^2 \\[10pt]
-    &amp;= 4\left(7u^2 - 16uv + 4v^2\right) \; .
-\end{align*}\]</p><p>The quadratic <span>$7u^2 - 16uv + 4v^2$</span> must contain a <span>$(u-2v)$</span>, because we already know the coefficient has to vanish at <span>$\chi_1 = \chi_2$</span>; dividing it out,</p><p class="math-container">\[    7u^2 - 16uv + 4v^2 = (u - 2v)(7u - 2v) \; ,\]</p><p>(check: <span>$7u^2 - 2uv - 14uv + 4v^2 = 7u^2 - 16uv + 4v^2$</span> ✓), so that</p><p class="math-container">\[\begin{align*}
-    \frac{\partial B_{22}}{\partial y}\bigg|_{y=1}
+    &amp;= 4\left(7u^2 - 16uv + 4v^2\right) \; \\[10pt]
     &amp;= 4(u-2v)(7u-2v) \\[10pt]
     (3.8\mathrm{b}) \; \rightarrow \quad
-    &amp;= 4(\chi_1-\chi_2)^2 \left(7\chi_1^2 - 2\chi_1\chi_2 + 7\chi_2^2\right)
-    \; \rightarrow \; \mathcal{O}(\Delta\chi^2) \; .
+    &amp;= 4(\chi_1-\chi_2)^2 \left(7\chi_1^2 - 2\chi_1\chi_2 + 7\chi_2^2\right)\\[10pt]
+    &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\rightarrow} \; \mathcal{O}(\Delta\chi^2) \; .
 \end{align*}\]</p><p><strong>The <span>$k=2$</span> coefficient.</strong> Differentiating once more,</p><p class="math-container">\[\begin{align*}
     \frac{\partial^2 B_{22}}{\partial y^2}
+    &amp;= \frac{\partial}{\partial y}\left[\frac{\partial B_{22}}{\partial y}\right]\\[13pt]
+    &amp;= \frac{\partial}{\partial y}\left[
+        28y(\chi_1^4+\chi_2^4)
+        - 16\chi_1\chi_2(\chi_1^2+\chi_2^2)(3y^2+1)
+        + \chi_1^2\chi_2^2 (44y^3+28y)
+        \right]\\[13pt]
     &amp;= 28(\chi_1^4+\chi_2^4) - 96 y \chi_1\chi_2(\chi_1^2+\chi_2^2)
         + \chi_1^2\chi_2^2 (132y^2+28) \\[10pt]
     \Rightarrow \quad
@@ -213,23 +218,39 @@ y=1 \; &amp;\land \; \chi_1 = \chi_2 = \chi \; : \\[10pt]
     &amp;= 14(\chi_1^4+\chi_2^4) - 48\chi_1\chi_2(\chi_1^2+\chi_2^2) + 80\chi_1^2\chi_2^2 \\[10pt]
     (3.8\mathrm{a}) \; \rightarrow \quad
     &amp;= 14(u^2-2v^2) - 48uv + 80v^2 \\[10pt]
-    &amp;= 14u^2 - 48uv + 52v^2 \; = \; 2\left(7u^2 - 24uv + 26v^2\right) \; .
-\end{align*}\]</p><p>This one does <strong>not</strong> contain a <span>$(u-2v)$</span>: at <span>$u = 2v$</span> it gives <span>$2(28 - 48 + 26)v^2 = 12 v^2 \neq 0$</span>. It is therefore <span>$\mathcal{O}(1)$</span>, and going back to <span>$\chi_1, \chi_2$</span>,</p><p class="math-container">\[    \frac{1}{2}\frac{\partial^2 B_{22}}{\partial y^2}\bigg|_{y=1}
-    = 2\left(7\chi_1^4 - 24\chi_1^3\chi_2 + 40\chi_1^2\chi_2^2 - 24\chi_1\chi_2^3 + 7\chi_2^4\right)
-    \; \rightarrow \; \mathcal{O}(1) \; ,\]</p><p>whose value at <span>$\chi_1 = \chi_2 = \chi_1$</span> is <span>$2(7-24+40-24+7)\chi_1^4 = 12\chi_1^4$</span>, i.e. the <span>$12v^2$</span> just found.</p><p><strong>The <span>$k=3$</span> and <span>$k=4$</span> coefficients.</strong> Two more derivatives, the <span>$(\chi_1^4+\chi_2^4)$</span> term now being constant in <span>$y$</span> and dropping out:</p><p class="math-container">\[\begin{align*}
-    \frac{\partial^3 B_{22}}{\partial y^3}
-        &amp;= - 96 \chi_1\chi_2(\chi_1^2+\chi_2^2) + 264 y \chi_1^2\chi_2^2
-    \quad \Rightarrow \quad
+    &amp;= 14u^2 - 48uv + 52v^2 \; \\[10pt]
+    &amp;= \; 2\left(7u^2 - 24uv + 26v^2\right) \\[10pt]
+    &amp;\quad\quad \mathrm{This\; one \;does \; not \; contain \; a \; (u-2v) \; term!}\\[10pt]
+    &amp;\quad\quad \left[7u^2 - 24uv + 26v^2\right]\bigg|_{u = 2v} = 28v^2-48v^2+26v^2 = 6 v^2 \neq 0\\[10pt]
+    (3.8\mathrm{b}) \; \rightarrow \quad
+    &amp;= 2\left(7\chi_1^4 - 24\chi_1^3\chi_2 + 40\chi_1^2\chi_2^2 - 24\chi_1\chi_2^3 + 7\chi_2^4\right)\\[10pt]
+    &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\rightarrow} 2(7-24+40-24+7)\chi_1^4 \\[10pt]
+    &amp;= 12\chi_1^4 = \; \mathcal{O}(1) \; ,
+\end{align*}\]</p><p><strong>The <span>$k=3$</span> and <span>$k=4$</span> coefficients.</strong> Two more derivatives, the <span>$(\chi_1^4+\chi_2^4)$</span> term now being constant in <span>$y$</span> and dropping out:</p><p class="math-container">\[\begin{align*}
+    \frac{\partial^3 B_{22}}{\partial y^3} 
+        &amp;= \frac{\partial}{\partial y}\left[\frac{\partial^2 B_{22}}{\partial y^2}\right]\\[15pt]
+        &amp;= \frac{\partial}{\partial y}\left[
+            28(\chi_1^4+\chi_2^4) - 96 y \chi_1\chi_2(\chi_1^2+\chi_2^2)
+            + \chi_1^2\chi_2^2 (132y^2+28) 
+        \right]\\[15pt]
+        &amp;= - 96 \chi_1\chi_2(\chi_1^2+\chi_2^2) + 264 y \chi_1^2\chi_2^2\\[15pt]
+    \Rightarrow \quad
     \frac{1}{6}\frac{\partial^3 B_{22}}{\partial y^3}\bigg|_{y=1}
-        = -16 uv + 44 v^2 \\[6pt]
-        &amp;\phantom{= - 96 \chi_1\chi_2(\chi_1^2+\chi_2^2) + 264 y \chi_1^2\chi_2^2 \quad \Rightarrow \quad}
-        = -4v\left(4u - 11v\right)
-        = -4\chi_1\chi_2\left(4\chi_1^2 - 11\chi_1\chi_2 + 4\chi_2^2\right) \; , \\[14pt]
+        &amp;= - 16 \chi_1\chi_2(\chi_1^2+\chi_2^2) + 44 \chi_1^2\chi_2^2 \\[16pt]
+        &amp;= -4\chi_1\chi_2\left(4\chi_1^2 - 11\chi_1\chi_2 + 4\chi_2^2\right) , \\[14pt]
+        &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\rightarrow} -4(4-11+4)\chi_1^4 \\[10pt]
+        &amp;= 12\chi_1^4 = \; \mathcal{O}(1) \; \\[10pt]
+\end{align*}\]</p><p class="math-container">\[\begin{align*}
     \frac{\partial^4 B_{22}}{\partial y^4}
-        &amp;= 264 \chi_1^2\chi_2^2
+        &amp;= \frac{\partial}{\partial y}\left[\frac{\partial^3 B_{22}}{\partial y^3}\right]\\[15pt]
+        &amp;= \frac{\partial}{\partial y}\left[
+            - 96 \chi_1\chi_2(\chi_1^2+\chi_2^2) + 264 y \chi_1^2\chi_2^2
+        \right]\\[15pt]
+        &amp;= 264 \chi_1^2\chi_2^2\\[15pt]
     \quad \Rightarrow \quad
     \frac{1}{24}\frac{\partial^4 B_{22}}{\partial y^4}\bigg|_{y=1}
-        = 11 v^2 = 11 \chi_1^2\chi_2^2 \; ,
+        &amp;= 11 \chi_1^2\chi_2^2 , \\[14pt]
+        &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\rightarrow} 11\chi_1^4 = \; \mathcal{O}(1) \; \\[10pt]
 \end{align*}\]</p><p>both <span>$\mathcal{O}(1)$</span>. Collecting the five coefficients:</p><p class="math-container">\[\begin{align*}
     B_{22}\big|_{y=1} &amp;= 8(\chi_1-\chi_2)^4
         &amp;&amp;\rightarrow \; \mathcal{O}(\Delta\chi^4) \; , \\[6pt]
@@ -247,37 +268,63 @@ y=1 \; &amp;\land \; \chi_1 = \chi_2 = \chi \; : \\[10pt]
         &amp;= 11 \chi_1^2\chi_2^2
         &amp;&amp;\rightarrow \; \mathcal{O}(1) \; ,
 \end{align*}\]</p><p>so that, exactly,</p><p class="math-container">\[\begin{align*}
-    B_{22} = \; &amp;8(\chi_1-\chi_2)^4
+    B_{22} &amp;=
+        \sum_{k=0}^{4} \frac{1}{k!}
+        \frac{\partial^k B_{22}}{\partial y^k}\bigg|_{y=1} (y-1)^k \; \\[15pt]
+    &amp;= 8(\chi_1-\chi_2)^4
         + 4(\chi_1-\chi_2)^2\left(7\chi_1^2 - 2\chi_1\chi_2 + 7\chi_2^2\right)(y-1) \\
-        &amp;+ 2\left(7\chi_1^4 - 24\chi_1^3\chi_2 + 40\chi_1^2\chi_2^2 - 24\chi_1\chi_2^3
+        &amp;\quad+ 2\left(7\chi_1^4 - 24\chi_1^3\chi_2 + 40\chi_1^2\chi_2^2 - 24\chi_1\chi_2^3
             + 7\chi_2^4\right)(y-1)^2 \\
-        &amp;- 4\chi_1\chi_2\left(4\chi_1^2 - 11\chi_1\chi_2 + 4\chi_2^2\right)(y-1)^3
+        &amp;\quad- 4\chi_1\chi_2\left(4\chi_1^2 - 11\chi_1\chi_2 + 4\chi_2^2\right)(y-1)^3
         + 11 \chi_1^2\chi_2^2 (y-1)^4 \; . \quad \quad (3.8)
 \end{align*}\]</p><p>Now count the orders, remembering (D.4) and (2.4), <span>$(\chi_1-\chi_2) = -p\Delta\chi$</span> and <span>$(y-1) = \mathcal{O}(\Delta\chi^2)$</span>:</p><p class="math-container">\[\begin{align*}
     \mathrm{1st \; term} \; &amp;: \quad
-        \mathcal{O}(\Delta\chi^4) \cdot 1 = \mathcal{O}(\Delta\chi^4)
+        B_{22}\big|_{y=1} \cdot 1 &amp;&amp;=
+        \mathcal{O}(\Delta\chi^4) \cdot 1 
+        &amp;&amp;= \mathcal{O}(\Delta\chi^4)
         &amp;&amp;\Longrightarrow \; \mathrm{keep} \; , \\[6pt]
     \mathrm{2nd \; term} \; &amp;: \quad
-        \mathcal{O}(\Delta\chi^2) \cdot \mathcal{O}(\Delta\chi^2) = \mathcal{O}(\Delta\chi^4)
+        \frac{\partial B_{22}}{\partial y}\bigg|_{y=1}(y-1) &amp;&amp;=
+        \mathcal{O}(\Delta\chi^2) \cdot \mathcal{O}(\Delta\chi^2) 
+        &amp;&amp;= \mathcal{O}(\Delta\chi^4)
         &amp;&amp;\Longrightarrow \; \mathrm{keep} \; , \\[6pt]
     \mathrm{3rd \; term} \; &amp;: \quad
-        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi^4) = \mathcal{O}(\Delta\chi^4)
+        \frac{1}{2}\frac{\partial^2 B_{22}}{\partial y^2}\bigg|_{y=1} (y-1)^2 &amp;&amp;= 
+        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi^4) 
+        &amp;&amp;= \mathcal{O}(\Delta\chi^4)
         &amp;&amp;\Longrightarrow \; \mathrm{keep} \; , \\[6pt]
     \mathrm{4th \; term} \; &amp;: \quad
-        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi^6) = \mathcal{O}(\Delta\chi^6)
+        \frac{1}{6}\frac{\partial^3 B_{22}}{\partial y^3}\bigg|_{y=1}(y-1)^3 &amp;&amp;=
+        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi^6) 
+        &amp;&amp;= \mathcal{O}(\Delta\chi^6)
         &amp;&amp;\Longrightarrow \; \mathrm{drop} \; , \\[6pt]
     \mathrm{5th \; term} \; &amp;: \quad
-        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi^8) = \mathcal{O}(\Delta\chi^8)
+        \frac{1}{24}\frac{\partial^4 B_{22}}{\partial y^4}\bigg|_{y=1}(y-1)^4 &amp;&amp;=
+        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi^8) 
+        &amp;&amp;= \mathcal{O}(\Delta\chi^8)
         &amp;&amp;\Longrightarrow \; \mathrm{drop} \; .
 \end{align*}\]</p><p>Three terms survive. Substituting (D.4) and (2.3a), and evaluating the regular coefficients at <span>$\chi_1 = \chi_2$</span> (where <span>$7-2+7 = 12$</span> and <span>$7-24+40-24+7 = 6$</span>):</p><p class="math-container">\[\begin{align*}
-    \mathrm{1st} \; : \quad &amp; 8(-p\Delta\chi)^4 = 8 \, p^4 \, \Delta\chi^4 \; , \\[8pt]
-    \mathrm{2nd} \; : \quad &amp; 4 (-p\Delta\chi)^2 \cdot 12\cancel{\chi_1^2} \cdot
-        \left[- \frac{(1-p^2)}{2\cancel{\chi_1^2}}\Delta\chi^2\right]
-        = -24 \, p^2(1-p^2) \, \Delta\chi^4 \; , \\[8pt]
-    \mathrm{3rd} \; : \quad &amp; 2 \cdot 6 \, \chi_1^4 \cdot
-        \left[- \frac{(1-p^2)}{2\chi_1^2}\Delta\chi^2\right]^{2}
-        = 12 \, \cancel{\chi_1^4} \, \frac{(1-p^2)^2}{4\cancel{\chi_1^4}}\Delta\chi^4
-        = 3 \, (1-p^2)^2 \, \Delta\chi^4 \; ,
+&amp;\quad(D.4) : \quad \chi_2 := \chi_1 + p \, \Delta\chi\\[10pt]
+&amp;\quad (2.3\mathrm{a}): \quad y-1  \underset{\Delta\chi\rightarrow 0^{+}}{\sim}  - \frac{(1-p^2)}{2\chi_1^2}\Delta\chi^2\\[15pt]
+    \mathrm{1st} \; : \left[B_{22}\big|_{y=1} \cdot 1 \right]\bigg|_{(D.4)} 
+        &amp;= \left[8(\chi_1-\chi_2)^4\right]\bigg|_{(D.4)}
+        = \quad  8(-p\Delta\chi)^4  \\
+        &amp;= 8 \, p^4 \, \Delta\chi^4 \; , \\[8pt]
+    \mathrm{2nd} \; : \left[\frac{\partial B_{22}}{\partial y}\bigg|_{y=1}(y-1)\right]\bigg|_{(D.4)} 
+        &amp;= \left[4(\chi_1-\chi_2)^2\left(7\chi_1^2 - 2\chi_1\chi_2 + 7\chi_2^2\right)(y-1)\right]\bigg|_{(D.4)}\\
+        &amp;= \quad  4 (-p\Delta\chi)^2 \cdot (7-2+7)\cancel{\chi_1^2} \cdot
+        \left[- \frac{(1-p^2)}{2\cancel{\chi_1^2}}\Delta\chi^2\right]\\
+        &amp;= -24 \, p^2(1-p^2) \, \Delta\chi^4 \; , \\[8pt]
+    \mathrm{3rd} \; :
+        \left[\frac{1}{2}\frac{\partial^2 B_{22}}{\partial y^2}\bigg|_{y=1} (y-1)^2 \right]\bigg|_{(D.4)}
+        &amp;=\left[
+            2\left(7\chi_1^4 - 24\chi_1^3\chi_2 + 40\chi_1^2\chi_2^2 - 24\chi_1\chi_2^3
+            + 7\chi_2^4\right)(y-1)^2
+        \right]\bigg|_{(D.4)} \\
+        &amp;= \quad  2 \cdot 6 \, \chi_1^4 \cdot
+        \left[- \frac{(1-p^2)}{2\chi_1^2}\Delta\chi^2\right]^{2}\\
+        &amp;= 12 \, \cancel{\chi_1^4} \, \frac{(1-p^2)^2}{4\cancel{\chi_1^4}}\Delta\chi^4\\
+        &amp;= 3 \, (1-p^2)^2 \, \Delta\chi^4 \; ,
 \end{align*}\]</p><p>and summing:</p><p class="math-container">\[\begin{align*}
     B_{22} &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
         \left[ 8p^4 - 24p^2(1-p^2) + 3(1-p^2)^2 \right] \Delta\chi^4 \\[10pt]
@@ -303,4 +350,4 @@ y=1 \; &amp;\land \; \chi_1 = \chi_2 = \chi \; : \\[10pt]
     = 3\,\sigma_2 + \frac{6}{5}\,\chi_1^2\,\sigma_0 \; . }
     \quad \quad (3.11)\]</p><p>The cancellation of <span>$p$</span> is the proof that the limit exists and does not depend on the direction of approach.</p><div class="admonition is-warning" id="A-common-mistake-f9164ffd5646c3ee"><header class="admonition-header">A common mistake<a class="admonition-anchor" href="#A-common-mistake-f9164ffd5646c3ee" title="Permalink"></a></header><div class="admonition-body"><p>If in Term 1 one sets <span>$\chi_1 = \chi_2$</span> inside <span>$B_{00}$</span> before expanding, the <span>$8(\chi_1-\chi_2)^2 = 8p^2\Delta\chi^2$</span> term of Eq.(3.2) is lost. One is left with <span>$B_{00}\big|_{\chi_1=\chi_2} = \chi_1^2(16y-9y^2-7) = -\chi_1^2(y-1)(9y-7)$</span>, hence <span>$B_{00} \sim 2\chi_1^2(1-y) \sim (1-p^2)\Delta\chi^2$</span> instead of Eq.(3.3)&#39;s <span>$(1+7p^2)\Delta\chi^2$</span>, and therefore</p><p class="math-container">\[    J_{00}I_0^0 = \frac{3}{4}(1-p^2)^2\chi_1^2\sigma_0
     \qquad \mathrm{instead \; of \; Eq.(3.4)} \; .\]</p><p>That result is wrong: summed with Eq.(3.10) it leaves a residual <span>$p$</span>-dependence,</p><p class="math-container">\[    \frac{3}{4}(1-p^2)^2 + \frac{3}{20}\left(35p^4-30p^2+3\right)
-    = 6p^4 - 6p^2 + \frac{6}{5}\]</p><p>instead of the constant <span>$6/5$</span> of Eq.(3.11), which would mean that the limit does not exist. Note that this wrong expression happens to give the right value <span>$6/5$</span> at both <span>$p = 0$</span> and <span>$p = \pm 1$</span>, and is off by a factor <span>$-1/4$</span> at <span>$p^2 = 1/2$</span>: spot checks at the endpoints would not catch it. Only the full <span>$p$</span>-cancellation does.</p></div></div></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../DeltaChiLimits/">« Introduction and results</a><a class="docs-footer-nextpage" href="../DeltaChiLimits_2_LensingDoppler/">Family 2: Lensing x Doppler »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 08:26">Thursday 17 September 2026</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+    = 6p^4 - 6p^2 + \frac{6}{5}\]</p><p>instead of the constant <span>$6/5$</span> of Eq.(3.11), which would mean that the limit does not exist. Note that this wrong expression happens to give the right value <span>$6/5$</span> at both <span>$p = 0$</span> and <span>$p = \pm 1$</span>, and is off by a factor <span>$-1/4$</span> at <span>$p^2 = 1/2$</span>: spot checks at the endpoints would not catch it. Only the full <span>$p$</span>-cancellation does.</p></div></div></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../DeltaChiLimits/">« Introduction and results</a><a class="docs-footer-nextpage" href="../DeltaChiLimits_2_LensingDoppler/">Family 2: Lensing x Doppler »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 10:18">Thursday 17 September 2026</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
