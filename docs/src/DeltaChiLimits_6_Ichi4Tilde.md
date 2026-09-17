@@ -90,16 +90,51 @@ Concerned functions: `integrand_ξ_GNC_IntegratedGP`, `integrand_ξ_LD_Integrate
 `integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP`, `integrand_ξ_GNC_LocalGP_IntegratedGP`,
 `integrand_ξ_GNCxLD_IntegratedGP_LocalGP`, `integrand_ξ_GNCxLD_LocalGP_IntegratedGP`,
 `integrand_ξ_LD_LocalGP_IntegratedGP`.
-
-All of them contain a single term,
+The GNC IntegratedGP-IntegratedGP function is:
 
 ```math
-    \Delta\chi^4 \, \tilde{I}_0^4(\Delta\chi) \; ,
+\begin{split}
+    \xi^{\int\!\phi \int \!\phi }( s_1 , s_2, y ) = 
+    \int_0^{s_1}\mathrm{d} \chi_1  \int_0^{s_2}\mathrm{d} \chi_2 \;  
+    J^{\int \!\phi \int \!\phi}_{40} 
+    \tilde{I}_0^4 ( \Delta\chi) \, , 
+\end{split}
 ```
 
-everything else being regular at the singular point. This is the simplest family of all: no
-bracket vanishes, no cancellation is involved, and the direction parameter ``p`` never
-enters. Only the explicit ``\Delta\chi^4`` against the ``\Delta\chi^{-2}`` of (2.1b) matters.
+with
+
+```math
+\begin{split}
+    J^{\int \!\phi\int \!\phi}_{40} =
+    \frac{
+        9 \Delta\chi ^4 \mathcal{H}_0^4 \Omega_{\mathrm{M},  0}^2 D(\chi_1) D(\chi_2)
+    }{
+        a(\chi_1) a(\chi_2) s_1 s_2
+    }
+    &\left[
+        s_1 (f(\chi_1) - 1) \mathcal{H}(\chi_1) \mathcal{R}_1 - 5 s_{\mathrm{b},  1} + 2
+    \right] \times
+    \nonumber \\
+    &\left[
+        s_2 (f(\chi_2) - 1) \mathcal{H}(\chi_2) \mathcal{R}_2 - 5 s_{\mathrm{b},  2} + 2
+    \right]
+    \, .
+\end{split}
+```
+
+Everything in ``J^{\int \!\phi\int \!\phi}_{40}`` is regular at the singular point except
+the explicit ``\Delta\chi^4``, so the limit to be taken is simply:
+
+```math
+    \lim_{\Delta\chi\rightarrow 0^{+}}\left(\Delta\chi^4 \, \tilde{I}_0^4(\Delta\chi)\right) \; .
+```
+
+This is the simplest family of all: no bracket vanishes, no cancellation is involved, and
+the direction parameter ``p`` never enters. Only the explicit ``\Delta\chi^4`` against the
+``\Delta\chi^{-2}`` of (2.1b) matters.
+
+This analysis is valid for all the seven functions listed above, whatever the ``\chi``-pair
+their ``\Delta\chi`` is built on.
 
 ### Term 1: ``\Delta\chi^4 \, \tilde{I}_0^4``
 
@@ -107,9 +142,13 @@ The full series of ``\tilde{I}_0^4``, derived in
 [The ``I_\ell^n`` integrals](IlnIntegrals.md), is
 
 ```math
-    \tilde{I}_0^4(s) = \sum_{k=1}^{+\infty}
-        \frac{(-1)^k \, \sigma_{4-2k}}{(2k+1)!} \, s^{\,2k-4}
-    = -\frac{\sigma_2}{6\,s^2} + \frac{\sigma_0}{120} - \frac{\sigma_{-2}}{5040}\,s^2 + \dots
+\begin{align*}
+    \tilde{I}_0^4(s) &= \sum_{k=1}^{+\infty}
+        \frac{(-1)^k \, \sigma_{4-2k}}{(2k+1)!} \, s^{\,2k-4} \\[10pt]
+    &= \frac{(-1)^1 \sigma_{2}}{3!}s^{-2} + \frac{(-1)^2 \sigma_{0}}{5!}s^{0}
+        + \frac{(-1)^3 \sigma_{-2}}{7!}s^{2} + \dots \\[10pt]
+    &= -\frac{\sigma_2}{6\,s^2} + \frac{\sigma_0}{120} - \frac{\sigma_{-2}}{5040}\,s^2 + \dots \; ,
+\end{align*}
 ```
 
 whose leading term is exactly Eq.(2.1b). Multiplying by ``\Delta\chi^4``:
@@ -119,9 +158,12 @@ whose leading term is exactly Eq.(2.1b). Multiplying by ``\Delta\chi^4``:
     \Delta\chi^4 \, \tilde{I}_0^4(\Delta\chi)
     &= \Delta\chi^4 \left(-\frac{\sigma_2}{6\,\Delta\chi^2} + \frac{\sigma_0}{120}
         - \frac{\sigma_{-2}}{5040}\Delta\chi^2 + \dots \right) \\[10pt]
+    &= -\frac{\sigma_2}{6}\frac{\Delta\chi^{\cancel{4}\,2}}{\cancel{\Delta\chi^2}}
+        + \frac{\sigma_0}{120}\Delta\chi^4 - \frac{\sigma_{-2}}{5040}\Delta\chi^6 + \dots \\[10pt]
     &= -\frac{\sigma_2}{6}\Delta\chi^2 + \frac{\sigma_0}{120}\Delta\chi^4
         - \frac{\sigma_{-2}}{5040}\Delta\chi^6 + \dots \\[10pt]
     &\underset{\Delta\chi\rightarrow 0^{+}}{\sim} -\frac{\sigma_2}{6}\Delta\chi^2
+        \; = \; \mathcal{O}(\Delta\chi^2)
     \; \xrightarrow[\Delta\chi \rightarrow 0^{+}]{} \; 0 \; .
     \quad \quad (8.1)
 \end{align*}
@@ -130,10 +172,23 @@ whose leading term is exactly Eq.(2.1b). Multiplying by ``\Delta\chi^4``:
 Note that the ``\Delta\chi^{4}`` overwhelms the ``\Delta\chi^{-2}`` divergence by two orders,
 so the limit is not merely finite but **zero**, and it is approached as ``\Delta\chi^2``.
 
-### The result
+### The sum
+
+There is a single term:
+
+```math
+\begin{align*}
+(8.1) : \quad J_{40}^{\int \!\phi\int \!\phi} \, \tilde{I}_0^4
+    &\underset{\Delta\chi\rightarrow 0^{+}}{\sim} \mathcal{O}(\Delta\chi^2)
+    &&\rightarrow 0 \\[10pt]
+\end{align*}
+```
 
 ```math
     \boxed{\; \lim_{\Delta\chi \rightarrow 0}
-        \left(\Delta\chi^4 \, \tilde{I}_0^4(\Delta\chi)\right) = 0 \; . }
+        \left(\Delta\chi^4 \, \tilde{I}_0^4(\Delta\chi)\right) = 0
+    \quad \Longrightarrow \quad
+    J_{40}^{\int \!\phi\int \!\phi} \, \tilde{I}_0^4
+    \; \xrightarrow[\Delta\chi \rightarrow 0]{} \; 0 \; . }
     \quad \quad (8.2)
 ```

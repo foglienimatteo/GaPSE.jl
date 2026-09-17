@@ -80,6 +80,14 @@
 
 - every definition in the `Delta chi -> 0` documentation now carries a `(D.n)` number and is referenced by it throughout: `(D.1)`-`(D.3)` the three separations `Dchi`, `Dchi_1`, `Dchi_2`, `(D.4)` the direction of approach `chi2 := chi1 + p Dchi` (these four were previously numbered `(1.1)`-`(1.3)` and `(2.2)`, and are renumbered), then `(D.5)`-`(D.19)` for the symbols each family introduces - `B_00`, `B_02`, `B_22`, the symmetric pair `u`, `v`, the numerators `N_02`, `N_04`, `N_02^(b)`, `N_02^(f)`, the factors `F`, `J_20`, `G`, `J_22`, `J_31`. The introduction gained an "Index of the definitions" table listing all nineteen with a link to the page that uses them, and the numbering note now states that definitions carry the `D` prefix wherever they live, while everything else stays numbered by its page;
 
+- applied to Families 3 to 8 of the `Delta chi -> 0` documentation the style settled on Families 1 and 2: each page now opens with the full GNC TPCF whose limit is being taken (`xi^{delta kappa}`, `xi^{kappa phi}`, `xi^{delta int phi}`, `xi^{int phi int phi}`, `xi^{v_par int phi}`, `xi^{kappa int phi}`), copied from the corresponding docstring, followed by its `J` coefficients carrying the same superscript, an explicit "The limit to be taken is" display and a note on which combinations the analysis covers; the boxed result at the bottom carries the superscripted `J` as well;
+
+- the polynomial groupings are written out step by step everywhere, as in Family 2: the coefficient split (e.g. `-10 = -6-4`, `11 = 3+8`), the regrouping into two bracketed sums, the factoring out of the common linear factor and only then the result; the derivatives are shown as `d/dy[<full expression>]` before being evaluated; each Taylor coefficient is followed by its order; and every expansion restates `N = sum_k (1/k!) d^kN/dy^k|_(y=1) (y-1)^k`, then the surviving terms symbolically, then the explicit factored forms, then the `p` substitution;
+
+- the final-sum tables were replaced by `align*` blocks, each row tagged with the equation number it comes from;
+
+- BUG FIX in the docstring of `integrand_ξ_GNC_Newtonian_Lensing`: the `b_1` part of `J^{delta kappa}_{02}` is written as `[(9y^2+11) f_1 - 7(y^2+3) b_1] s_1^2 chi_2`, with a minus sign, while the code has a plus; the difference is `14 b_1 chi_2 s_1^2 (y^2+3)`. It matters: with the docstring sign the bracket does NOT vanish at the singular point (it gives `-5 s_1^2`), so `J_02` would diverge as `Dchi_2^-2` and the limit of the family would pick up an extra `-b_1 s_1^3 sigma_-2/6`. The code is the correct one; the discrepancy is flagged in a warning box on the Family 3 page, and the docstring still needs fixing;
+
 
 ## development branch qls
 

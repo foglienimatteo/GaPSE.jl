@@ -145,6 +145,15 @@ with
 
 
 
+The limit to be taken is:
+
+```math
+    \lim_{\Delta\chi\rightarrow 0^{+}}
+    \left(J_{00}I_0^0 + J_{02}I_2^0 + J_{31}I_1^3 + J_{22}I_2^2\right) \; .
+```
+
+This analysis is valid for Lensing-Lensing in all the 3 combinations (GNC, LD and GNCxLD).
+
 We abbreviate the three square brackets as
 
 ```math

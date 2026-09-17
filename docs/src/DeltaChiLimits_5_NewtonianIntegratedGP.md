@@ -87,21 +87,57 @@ at the singular point, and only then substitute (D.4), (2.3a), (2.3b).
 ## The integrand
 
 Concerned functions: `integrand_ξ_GNC_Newtonian_IntegratedGP`,
-`integrand_ξ_GNCxLD_Newtonian_IntegratedGP`. The sum to be taken to the limit is
+`integrand_ξ_GNCxLD_Newtonian_IntegratedGP`.
+The GNC Newtonian-IntegratedGP function is:
 
 ```math
-    F \left(\frac{I_0^0}{15} + \frac{2\,I_2^0}{21} + \frac{I_4^0}{35}\right)
-    + J_{20} \, I_0^2 \; ,
-```
-```math
-    F := f \left[(3y^2-1)\chi_2^2 - 4 y s_1 \chi_2 + 2 s_1^2\right] \; ,
-    \quad \quad (\mathrm{D}.16)
-    \qquad \qquad
-    J_{20} := -\Delta\chi_2^2 \, (3b + f) \; ,
-    \quad \quad (\mathrm{D}.17)
+\begin{split}
+    \xi^{\delta \int\!\phi} ( s_1 , s_2, y ) &=
+    D_1 \int_0^{s_2}\mathrm{d} \chi_2 \;
+    J^{\delta \int\!\phi}_{\alpha}\left[
+        J^{\delta \int\!\phi}_{20} I_0^2 ( \Delta \chi_2 ) +
+        \right.\nonumber \\
+        &\left.\qquad
+        J^{\delta \int\!\phi}_{\beta}
+        \left(
+            \frac{1}{15} I_0^0 ( \Delta \chi_2 ) +
+            \frac{2}{21} I_2^0 ( \Delta \chi_2 ) +
+            \frac{1}{35} I_4^0 ( \Delta \chi_2 )
+        \right)
+    \right] \, ,
+\end{split}
 ```
 
-with ``f`` the growth rate and ``b`` the bias, both at ``s_1``.
+with (``f_1 = f(s_1)`` the growth rate and ``b_1 = b(s_1)`` the bias)
+
+```math
+\begin{align*}
+    J^{\delta \int\!\phi}_{\alpha} &=
+    \frac{\mathcal{H}_0^2 \Omega_{\mathrm{M}0} D(\chi_2)}{3 a(\chi_2) s_2} 
+    \left[ 
+        s_2 \mathcal{R}_2 \mathcal{H}(\chi_2) ( f(\chi_2) - 1) - 5 s_{\mathrm{b}, 2} + 2
+    \right] 
+    \, , \\[6pt]
+    J^{\delta \int\!\phi}_{\beta} &=
+    \underbrace{f_1 \left[ 
+        (3 y^2 - 1) \chi_2^2 - 4 y s_1 \chi_2 + 2 s_1^2
+    \right]}_{=: \; F \; , \quad (\mathrm{D}.16)}
+    \, , \\[6pt]
+    J^{\delta \int\!\phi}_{20} &=
+    \underbrace{- \Delta\chi_2^2 ( 3 b_1 + f_1)}_{(\mathrm{D}.17)}
+    \, .
+\end{align*}
+```
+
+The limit to be taken is:
+
+```math
+    \lim_{\Delta\chi_2\rightarrow 0^{+}}\left[
+        F \left(\frac{I_0^0}{15} + \frac{2\,I_2^0}{21} + \frac{I_4^0}{35}\right)
+        + J_{20} \, I_0^2 \right] \; .
+```
+
+This analysis is valid for Newtonian-IntegratedGP in both the combinations (GNC and GNCxLD).
 
 ### Term 1: the ``F`` group
 
@@ -109,7 +145,7 @@ The structure is identical to Family 4, only with a different pair of distances 
 different numerical coefficients. ``F``, Eq.(D.16), vanishes at the singular point,
 
 ```math
-    \frac{F}{f}\bigg|_{y=1,\,\chi_2=s_1} = \left((3-1) - 4 + 2\right)s_1^2 = (2 - 4 + 2)\,s_1^2 = 0 \; ,
+    \frac{F}{f_1}\bigg|_{y=1,\,\chi_2=s_1} = \left((3-1) - 4 + 2\right)s_1^2 = (2 - 4 + 2)\,s_1^2 = 0 \; ,
 ```
 
 so we decompose it exactly. For reference, the two decompositions already met are
@@ -128,12 +164,16 @@ and this one comes out the same way:
 
 ```math
 \begin{align*}
-    \frac{F}{f} &= (3y^2-1)\chi_2^2 - 4 y s_1 \chi_2 + 2 s_1^2 \\[10pt]
-    3y^2-1 = 2 + 3(y^2-1) \; \rightarrow \quad
-        &= 2\chi_2^2 + 3(y^2-1)\chi_2^2 - 4 y s_1 \chi_2 + 2 s_1^2 \\[10pt]
-    4y = 4 + 4(y-1) \; \rightarrow \quad
+    \frac{F}{f_1} &= (3y^2-1)\chi_2^2 - 4 y s_1 \chi_2 + 2 s_1^2 \\[10pt]
+    &\quad\quad 3y^2-1 = 2 + 3(y^2-1) \\[10pt]
+        &= \left[2 + 3(y^2-1)\right]\chi_2^2 - 4 y s_1 \chi_2 + 2 s_1^2 \\[10pt]
+        &= 2\chi_2^2 + 2 s_1^2 + 3(y^2-1)\chi_2^2 - 4 y s_1 \chi_2 \\[10pt]
+    &\quad\quad 4y = 4 + 4(y-1) \\[10pt]
+        &= 2\chi_2^2 + 2 s_1^2 + 3(y^2-1)\chi_2^2
+            - \left[4 + 4(y-1)\right] s_1 \chi_2 \\[10pt]
         &= 2\chi_2^2 - 4 s_1\chi_2 + 2 s_1^2
             + 3(y^2-1)\chi_2^2 - 4(y-1) s_1 \chi_2 \\[10pt]
+    &\quad\quad 2\chi_2^2 - 4 s_1\chi_2 + 2 s_1^2 = 2(\chi_2 - s_1)^2 \\[10pt]
         &= 2(\chi_2 - s_1)^2 + 3(y^2-1)\chi_2^2 - 4(y-1) s_1 \chi_2 \; .
     \quad \quad (7.1)
 \end{align*}
@@ -144,12 +184,14 @@ Again the ``(\chi_2 - s_1)`` factor is **quadratic**, hence of the same order as
 
 ```math
 \begin{align*}
-    \frac{F}{f} &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-        2 \, p^2\Delta\chi_2^2
-        + 3\left[- \frac{(1-p^2)}{\cancel{s_1^2}}\Delta\chi_2^2\right]\cancel{s_1^2}
-        - 4\left[- \frac{(1-p^2)}{2\cancel{s_1^2}}\Delta\chi_2^2\right]\cancel{s_1^2} \\[10pt]
+    \frac{F}{f_1} &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        \underbrace{2 (-p\Delta\chi_2)^2}_{(\chi_2-s_1)^2}
+        + \underbrace{3\left[- \frac{(1-p^2)}{s_1^2}\Delta\chi_2^2\right]s_1^2}_{(y^2-1)}
+        - \underbrace{4\left[- \frac{(1-p^2)}{2 s_1^2}\Delta\chi_2^2\right]s_1^2}_{(y-1)} \\[10pt]
+    &= 2p^2\Delta\chi_2^2 - 3(1-p^2)\Delta\chi_2^2 + 2(1-p^2)\Delta\chi_2^2 \\[10pt]
     &= \left[2p^2 - 3(1-p^2) + 2(1-p^2)\right]\Delta\chi_2^2 \\[10pt]
     &= \left[2p^2 - (1-p^2)\right]\Delta\chi_2^2 \\[10pt]
+    &= \left[2p^2 - 1 + p^2\right]\Delta\chi_2^2 \\[10pt]
     &= \left(3p^2 - 1\right)\Delta\chi_2^2 \; = \; 2\,\mathcal{L}_2(p)\,\Delta\chi_2^2 \; ,
     \quad \quad (7.2)
 \end{align*}
@@ -159,12 +201,16 @@ the very same ``2\mathcal{L}_2(p)`` of Eq.(6.2), reached through different coeff
 Hence
 
 ```math
+\begin{align*}
     F \left(\frac{I_0^0}{15} + \frac{2 I_2^0}{21} + \frac{I_4^0}{35}\right)
-    \underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-        \underbrace{f\left(3p^2-1\right)\Delta\chi_2^2}_{\mathcal{O}(\Delta\chi_2^2)}
-        \cdot \underbrace{\frac{\sigma_0}{15}}_{\mathcal{O}(1)}
+    &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        \underbrace{f_1\left(3p^2-1\right)\Delta\chi_2^2}_{\mathcal{O}(\Delta\chi_2^2)}
+        \cdot \underbrace{\frac{\sigma_0}{15}}_{\mathcal{O}(1)} \\[10pt]
+    &= \frac{f_1\left(3p^2-1\right)\sigma_0}{15}\,\Delta\chi_2^2 \\[10pt]
+    &= \mathcal{O}(\Delta\chi_2^2)
     \; \xrightarrow[\Delta\chi_2\rightarrow 0^{+}]{} \; 0 \; .
     \quad \quad (7.3)
+\end{align*}
 ```
 
 ### Term 2: ``J_{20} I_0^2``
@@ -173,26 +219,33 @@ With ``J_{20}`` of Eq.(D.17):
 
 ```math
 \begin{align*}
-    J_{20} I_0^2 &= -\Delta\chi_2^2 (3b+f) \cdot I_0^2(\Delta\chi_2) \\[10pt]
+    J_{20}^{\delta \int\!\phi} I_0^2 &= -\Delta\chi_2^2 (3 b_1+f_1) \cdot I_0^2(\Delta\chi_2) \\[10pt]
     (2.1\mathrm{a}) \; \rightarrow \quad
         &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-            -\cancel{\Delta\chi_2^2}(3b+f)\,\frac{\sigma_2}{\cancel{\Delta\chi_2^2}}
-        = -(3b+f)\,\sigma_2 \; .
+            -\cancel{\Delta\chi_2^2}(3 b_1+f_1)\,\frac{\sigma_2}{\cancel{\Delta\chi_2^2}} \\[10pt]
+        &= -(3 b_1+f_1)\,\sigma_2 \; .
     \quad \quad (7.4)
 \end{align*}
 ```
 
 ### The sum
 
-| term | order | limit |
-|:--|:--|:--|
-| ``F\left(\frac{I_0^0}{15} + \frac{2I_2^0}{21} + \frac{I_4^0}{35}\right)`` , Eq.(7.3) | ``\mathcal{O}(\Delta\chi_2^2)`` | ``0`` |
-| ``J_{20} I_0^2`` , Eq.(7.4) | ``\mathcal{O}(1)`` | ``-(3b+f)\,\sigma_2`` |
+```math
+\begin{align*}
+(7.3) : \quad J_{\beta}^{\delta \int\!\phi}\left(\tfrac{I_0^0}{15} + \tfrac{2 I_2^0}{21} + \tfrac{I_4^0}{35}\right)
+    &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim} \mathcal{O}(\Delta\chi_2^2)
+    &&\rightarrow 0 \\[10pt]
+(7.4) : \quad J_{20}^{\delta \int\!\phi} I_0^2
+    &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim} \mathcal{O}(1)
+    &&\rightarrow -(3 b_1 + f_1)\,\sigma_2 \\[10pt]
+\end{align*}
+```
 
 ```math
     \boxed{\;
     \lim_{\Delta\chi_2 \rightarrow 0} \left[
-        F \left(\frac{I_0^0}{15} + \frac{2 I_2^0}{21} + \frac{I_4^0}{35}\right) + J_{20} I_0^2
-    \right] = -(3b + f) \, \sigma_2 \; . }
+        J_{\beta}^{\delta \int\!\phi} \left(\frac{I_0^0}{15} + \frac{2 I_2^0}{21} + \frac{I_4^0}{35}\right)
+        + J_{20}^{\delta \int\!\phi} I_0^2
+    \right] = -(3 b_1 + f_1) \, \sigma_2 \; . }
     \quad \quad (7.5)
 ```

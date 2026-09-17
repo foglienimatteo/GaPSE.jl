@@ -87,19 +87,56 @@ at the singular point, and only then substitute (D.4), (2.3a), (2.3b).
 ## The integrand
 
 Concerned functions: `integrand_ξ_GNC_Lensing_LocalGP`,
-`integrand_ξ_GNCxLD_LocalGP_Lensing`. The sum to be taken to the limit is
+`integrand_ξ_GNCxLD_LocalGP_Lensing`.
+The GNC Lensing-LocalGP function is:
 
 ```math
-    F \left(\frac{I_0^0}{60} + \frac{I_2^0}{42} + \frac{I_4^0}{140}\right)
-    + J_{20} \, I_0^2 \; ,
+\begin{split}
+    \xi^{\kappa \phi} ( s_1 , s_2, y ) &= 
+    D_2 \int_0^{s_1}\mathrm{d} \chi_1 \; 
+    J^{\kappa \phi}_{\alpha}\left[ 
+        J^{\kappa \phi}_{20} I_0^2 ( \Delta \chi_1 ) +
+        \right.\nonumber \\
+        &\left.\qquad
+        J^{\kappa \phi}_{\beta}
+        \left(
+            \frac{1}{60} I_0^0 ( \Delta \chi_1 ) +
+            \frac{1}{42} I_2^0 ( \Delta \chi_1 ) +
+            \frac{1}{140} I_4^0 ( \Delta \chi_1 ) 
+        \right)
+    \right] \, ,
+\end{split}
 ```
+
+with
+
 ```math
-    F := 2y\chi_1^2 - \chi_1 s_2 (y^2+3) + 2 y s_2^2 \; ,
-    \quad \quad (\mathrm{D}.14)
-    \qquad \qquad
-    J_{20} := \frac{y\,\Delta\chi_1^2}{2} \; .
-    \quad \quad (\mathrm{D}.15)
+\begin{align*}
+    J^{\kappa \phi}_{\alpha}  &= 
+    \frac{\mathcal{H}_0^2 \Omega_{\mathrm{M}0} s_2 D(\chi_1)}{a(\chi_1) a_2 s_1}
+    (\chi_1 - s_1)  (5s_{\mathrm{b}, 1} - 2) \times \\
+    &\qquad\qquad
+    \left[
+       2 f_2 a_2 \mathcal{H}_2^2 (\mathit{f}_{\mathrm{evo}, 2} - 3) + 
+       3 \mathcal{H}_0^2 \Omega_{\mathrm{M}0} (f_2 + \mathcal{R}_2 + 5s_{\mathrm{b}, 2} - 2)
+    \right]
+    \, , \\[6pt]
+    J^{\kappa \phi}_{\beta} &=
+    \underbrace{2 y \chi_1^2 - \chi_1 s_2 (y^2 + 3) + 2 y s_2^2}_{=: \; F \; , \quad (\mathrm{D}.14)}
+    \, ,\\[6pt]
+    J^{\kappa \phi}_{20} &= \underbrace{\frac{1}{2} y \Delta\chi_1^2}_{(\mathrm{D}.15)} \, .
+\end{align*}
 ```
+
+The limit to be taken is:
+
+```math
+    \lim_{\Delta\chi_1\rightarrow 0^{+}}\left[
+        F \left(\frac{I_0^0}{60} + \frac{I_2^0}{42} + \frac{I_4^0}{140}\right)
+        + J_{20} \, I_0^2 \right] \; .
+```
+
+This analysis is valid for Lensing-LocalGP in both the combinations (GNC and GNCxLD).
 
 ### Term 1: the ``F`` group
 
@@ -123,11 +160,15 @@ only with different coefficients and with ``s_2`` in place of ``\chi_2``:
 ```math
 \begin{align*}
     F &= 2y\chi_1^2 - \chi_1 s_2 (y^2+3) + 2 y s_2^2 \\[10pt]
-    2y = 2 + 2(y-1) \; \rightarrow \quad
-        &= 2\chi_1^2 + 2(y-1)\chi_1^2 - \chi_1 s_2 (y^2+3) + 2 s_2^2 + 2(y-1)s_2^2 \\[10pt]
-    y^2+3 = 4 + (y^2-1) \; \rightarrow \quad
+    &\quad\quad 2y = 2 + 2(y-1) \\[10pt]
+        &= \left[2 + 2(y-1)\right]\chi_1^2 - \chi_1 s_2 (y^2+3) + \left[2 + 2(y-1)\right] s_2^2 \\[10pt]
+        &= 2\chi_1^2 + 2 s_2^2 + 2(y-1)\left(\chi_1^2 + s_2^2\right) - \chi_1 s_2 (y^2+3) \\[10pt]
+    &\quad\quad y^2+3 = 4 + (y^2-1) \\[10pt]
+        &= 2\chi_1^2 + 2 s_2^2 + 2(y-1)\left(\chi_1^2 + s_2^2\right)
+            - \chi_1 s_2 \left[4 + (y^2-1)\right] \\[10pt]
         &= 2\chi_1^2 - 4\chi_1 s_2 + 2 s_2^2
             + 2(y-1)\left(\chi_1^2 + s_2^2\right) - (y^2-1)\chi_1 s_2 \\[10pt]
+    &\quad\quad 2\chi_1^2 - 4\chi_1 s_2 + 2 s_2^2 = 2(\chi_1 - s_2)^2 \\[10pt]
         &= 2(\chi_1 - s_2)^2 + 2(y-1)\left(\chi_1^2 + s_2^2\right)
             - (y^2-1)\chi_1 s_2 \; .
     \quad \quad (6.1)
@@ -142,27 +183,34 @@ coefficients:
 ```math
 \begin{align*}
     F &\underset{\Delta\chi_1\rightarrow 0^{+}}{\sim}
-        2 \, p^2\Delta\chi_1^2
-        + 2\left[- \frac{(1-p^2)}{2\cancel{\chi_1^2}}\Delta\chi_1^2\right]2\cancel{\chi_1^2}
-        - \left[- \frac{(1-p^2)}{\cancel{\chi_1^2}}\Delta\chi_1^2\right]\cancel{\chi_1^2} \\[10pt]
+        \underbrace{2 (-p\Delta\chi_1)^2}_{(\chi_1-s_2)^2}
+        + \underbrace{2\left[- \frac{(1-p^2)}{2\chi_1^2}\Delta\chi_1^2\right]\left(2\chi_1^2\right)}_{(y-1)}
+        - \underbrace{\left[- \frac{(1-p^2)}{\chi_1^2}\Delta\chi_1^2\right]\chi_1^2}_{(y^2-1)} \\[10pt]
+    &= 2p^2\Delta\chi_1^2 - 2(1-p^2)\Delta\chi_1^2 + (1-p^2)\Delta\chi_1^2 \\[10pt]
     &= \left[2p^2 - 2(1-p^2) + (1-p^2)\right]\Delta\chi_1^2 \\[10pt]
     &= \left[2p^2 - (1-p^2)\right]\Delta\chi_1^2 \\[10pt]
+    &= \left[2p^2 - 1 + p^2\right]\Delta\chi_1^2 \\[10pt]
     &= \left(3p^2 - 1\right)\Delta\chi_1^2 \; = \; 2\,\mathcal{L}_2(p)\,\Delta\chi_1^2 \; ,
     \quad \quad (6.2)
 \end{align*}
 ```
 
 ``\mathcal{L}_2`` being the second Legendre polynomial. So ``F`` is **not** zero: it is
-``\mathcal{O}(\Delta\chi_1^2)``. It multiplies a finite combination, since
+``\mathcal{O}(\Delta\chi_1^2)``. It multiplies a **finite** combination, since
 ``I_0^0 \rightarrow \sigma_0`` while ``I_2^0, I_4^0 \rightarrow 0``:
 
 ```math
 \begin{align*}
     F \left(\frac{I_0^0}{60} + \frac{I_2^0}{42} + \frac{I_4^0}{140}\right)
     &\underset{\Delta\chi_1\rightarrow 0^{+}}{\sim}
+        \left(3p^2-1\right)\Delta\chi_1^2 \left(
+            \frac{\sigma_0}{60} + \frac{1}{42}\frac{\sigma_{-2}}{15}\Delta\chi_1^2
+            + \frac{1}{140}\frac{\sigma_{-4}}{945}\Delta\chi_1^4 \right) \\[10pt]
+    &\underset{\Delta\chi_1\rightarrow 0^{+}}{\sim}
         \underbrace{\left(3p^2-1\right)\Delta\chi_1^2}_{\mathcal{O}(\Delta\chi_1^2)}
         \cdot \underbrace{\frac{\sigma_0}{60}}_{\mathcal{O}(1)} \\[10pt]
-    &= \frac{\left(3p^2-1\right)\sigma_0}{60}\,\Delta\chi_1^2
+    &= \frac{\left(3p^2-1\right)\sigma_0}{60}\,\Delta\chi_1^2 \\[10pt]
+    &= \mathcal{O}(\Delta\chi_1^2)
     \; \xrightarrow[\Delta\chi_1\rightarrow 0^{+}]{} \; 0 \; .
     \quad \quad (6.3)
 \end{align*}
@@ -174,26 +222,34 @@ With ``J_{20}`` of Eq.(D.15):
 
 ```math
 \begin{align*}
-    J_{20} I_0^2 &= \frac{y\,\Delta\chi_1^2}{2} \cdot I_0^2(\Delta\chi_1) \\[10pt]
+    J_{20}^{\kappa \phi} I_0^2 &= \frac{y\,\Delta\chi_1^2}{2} \cdot I_0^2(\Delta\chi_1) \\[10pt]
     (2.1\mathrm{a}) \; \rightarrow \quad
         &\underset{\Delta\chi_1\rightarrow 0^{+}}{\sim}
             \frac{\overbrace{y}^{\rightarrow 1}\cancel{\Delta\chi_1^2}}{2} \,
-            \frac{\sigma_2}{\cancel{\Delta\chi_1^2}} = \frac{\sigma_2}{2} \; .
+            \frac{\sigma_2}{\cancel{\Delta\chi_1^2}} \\[10pt]
+        &= \frac{\sigma_2}{2} \; .
     \quad \quad (6.4)
 \end{align*}
 ```
 
 ### The sum
 
-| term | order | limit |
-|:--|:--|:--|
-| ``F\left(\frac{I_0^0}{60} + \frac{I_2^0}{42} + \frac{I_4^0}{140}\right)`` , Eq.(6.3) | ``\mathcal{O}(\Delta\chi_1^2)`` | ``0`` |
-| ``J_{20} I_0^2`` , Eq.(6.4) | ``\mathcal{O}(1)`` | ``\dfrac{\sigma_2}{2}`` |
+```math
+\begin{align*}
+(6.3) : \quad J_{\beta}^{\kappa \phi}\left(\tfrac{I_0^0}{60} + \tfrac{I_2^0}{42} + \tfrac{I_4^0}{140}\right)
+    &\underset{\Delta\chi_1\rightarrow 0^{+}}{\sim} \mathcal{O}(\Delta\chi_1^2)
+    &&\rightarrow 0 \\[10pt]
+(6.4) : \quad J_{20}^{\kappa \phi} I_0^2
+    &\underset{\Delta\chi_1\rightarrow 0^{+}}{\sim} \mathcal{O}(1)
+    &&\rightarrow \frac{\sigma_2}{2} \\[10pt]
+\end{align*}
+```
 
 ```math
     \boxed{\;
     \lim_{\Delta\chi_1 \rightarrow 0} \left[
-        F \left(\frac{I_0^0}{60} + \frac{I_2^0}{42} + \frac{I_4^0}{140}\right) + J_{20} I_0^2
+        J_{\beta}^{\kappa \phi} \left(\frac{I_0^0}{60} + \frac{I_2^0}{42} + \frac{I_4^0}{140}\right)
+        + J_{20}^{\kappa \phi} I_0^2
     \right] = \frac{\sigma_2}{2} \; . }
     \quad \quad (6.5)
 ```

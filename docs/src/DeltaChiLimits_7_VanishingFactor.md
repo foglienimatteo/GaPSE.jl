@@ -89,27 +89,80 @@ at the singular point, and only then substitute (D.4), (2.3a), (2.3b).
 Concerned functions: `integrand_ξ_GNC_Doppler_IntegratedGP`,
 `integrand_ξ_GNCxLD_IntegratedGP_Doppler`, `integrand_ξ_GNCxLD_Doppler_IntegratedGP`,
 `integrand_ξ_LD_Doppler_IntegratedGP`.
-
-These carry an overall ``\Delta\chi_2^2`` together with a geometric factor
-``(\chi_2 y - s_1)`` (or ``(s_1 - \chi_2 y)``, with the opposite sign, which changes nothing
-since the limit is zero), multiplying the whole parenthesis:
+The GNC Doppler-IntegratedGP function is:
 
 ```math
-    \Delta\chi_2^2 \, \underbrace{(\chi_2 y - s_1)}_{=: \; G \; , \; (\mathrm{D}.18)} \left(
-        \frac{I_0^0}{15} + \frac{2 I_2^0}{21} + \frac{I_4^0}{35} + I_0^2 \right) \; .
+\begin{split}
+    \xi^{v_{\parallel} \int\!\phi} \left( s_1 , s_2, y \right) &= D_1 \int_0^{s_2}\mathrm{d} \chi_2 \; 
+    J^{v_{\parallel} \int\!\phi}_{\alpha} 
+    \left[
+        \frac{1}{15} I_0^0 ( \Delta\chi_2 ) +
+        \frac{2}{21} I_2^0 ( \Delta\chi_2 ) +
+        \right.  \\
+        &\left.
+        \frac{1}{35} I_4^0 ( \Delta\chi_2 ) +
+        I^2_0 ( \Delta\chi_2) 
+    \right]
+    + \int_0^{s_2}\mathrm{d} \chi_2  
+    J^{v_{\parallel} \int\!\phi}_{31} I^3_1 (\chi_2)  
+    \, ,\nonumber
+\end{split}
 ```
+
+with
+
+```math
+\begin{align*}
+    J^{v_{\parallel} \int\!\phi}_{\alpha} &=
+    \frac{f_1 \mathcal{H}_1 \mathcal{R}_1}{s_2 a(\chi_2)} 
+    D(\chi_2) \mathcal{H}_0^2 \Omega_{\mathrm{M}0} \; \Delta\chi_2^2 \;
+    \underbrace{(\chi_2 y - s_1)}_{=: \; G \; , \; (\mathrm{D}.18)}
+    \left[
+        s_2 \mathcal{H}(\chi_2) \mathcal{R}_2 (f(\chi_2) - 1) - 5 s_{\mathrm{b}, 2} + 2
+    \right]
+    \, , \\[6pt]
+    J^{v_{\parallel} \int\!\phi}_{31} &=
+    -\frac{
+        3 \chi_2^3 y f_0 \mathcal{H}_0^3 \Omega_{\mathrm{M}0} D(\chi_2)
+    }{
+        s_2 a(\chi_2)
+    }(\mathcal{R}_1 - 5 s_{\mathrm{b}, 1} + 2)
+    \left[
+        s_2 \mathcal{H}(\chi_2) \mathcal{R}_2 (f(\chi_2) - 1) - 5 s_{\mathrm{b}, 2} + 2
+    \right] 
+    \, . 
+\end{align*}
+```
+
+The ``J_{31}`` term multiplies ``I_1^3(\chi_2)``, **not** ``I_1^3(\Delta\chi_2)``, so it does
+not participate in the limit. Everything else in ``J_{\alpha}`` being regular,
+the limit to be taken is:
+
+```math
+    \lim_{\Delta\chi_2\rightarrow 0^{+}}\left[
+        \Delta\chi_2^2 \, G \left(
+            \frac{I_0^0}{15} + \frac{2 I_2^0}{21} + \frac{I_4^0}{35} + I_0^2 \right)\right] \; .
+```
+
+In some of the four functions the geometric factor is written as ``(s_1 - \chi_2 y)``, with
+the opposite sign; since the limit is ``0`` this changes nothing.
+
+This analysis is valid for Doppler-IntegratedGP in all the 4 combinations (GNC, LD, GNCxLD
+and LDxGNC).
 
 ### Term 1: the geometric factor ``G``
 
-``G``, Eq.(D.18), vanishes at the singular point, ``y \rightarrow 1`` and ``\chi_2 \rightarrow s_1``
-giving ``s_1 - s_1 = 0``, so it has to be decomposed — but this time the decomposition is a
-single line, and the ``(\chi_2 - s_1)`` factor appears **linearly**:
+``G``, Eq.(D.18), vanishes at the singular point, ``y \rightarrow 1`` and
+``\chi_2 \rightarrow s_1`` giving ``s_1 - s_1 = 0``, so it has to be decomposed — but this
+time the decomposition is a single line, and the ``(\chi_2 - s_1)`` factor appears
+**linearly**:
 
 ```math
 \begin{align*}
     G &= \chi_2 y - s_1 \\[10pt]
-    y = 1 + (y-1) \; \rightarrow \quad
-        &= \chi_2 + \chi_2 (y-1) - s_1 \\[10pt]
+    &\quad\quad y = 1 + (y-1) \\[10pt]
+        &= \chi_2 \left[1 + (y-1)\right] - s_1 \\[10pt]
+        &= \chi_2 - s_1 + \chi_2 (y-1) \\[10pt]
         &= \underbrace{(\chi_2 - s_1)}_{\mathcal{O}(\Delta\chi_2)}
             + \underbrace{\chi_2 (y-1)}_{\mathcal{O}(\Delta\chi_2^2)} \; .
     \quad \quad (9.1)
@@ -130,10 +183,11 @@ the ``(y-1)`` terms. Here it is linear, so it wins:
 ```math
 \begin{align*}
     G &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-        p \, \Delta\chi_2 + \cancel{s_1}\left[- \frac{(1-p^2)}{2 s_1^{\cancel{2}}}
-            \Delta\chi_2^2\right] \\[10pt]
+        \underbrace{p \, \Delta\chi_2}_{(\chi_2-s_1)}
+        + \underbrace{s_1\left[- \frac{(1-p^2)}{2 s_1^2}\Delta\chi_2^2\right]}_{\chi_2(y-1)} \\[10pt]
     &= p \, \Delta\chi_2 - \frac{(1-p^2)}{2 s_1}\Delta\chi_2^2 \\[10pt]
-    &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim} \; p \, \Delta\chi_2 \; .
+    &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim} \; p \, \Delta\chi_2
+    \; = \; \mathcal{O}(\Delta\chi_2) \; .
     \quad \quad (9.2)
 \end{align*}
 ```
@@ -149,21 +203,40 @@ Of the four ``I_\ell^n`` in the parenthesis, ``I_0^0 \rightarrow \sigma_0`` is f
     \Delta\chi_2^2 \, G \left(
         \frac{I_0^0}{15} + \frac{2 I_2^0}{21} + \frac{I_4^0}{35} + I_0^2 \right)
     &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        \Delta\chi_2^2 \cdot p \, \Delta\chi_2 \cdot
+        \left(\frac{\sigma_0}{15} + \frac{\sigma_2}{\Delta\chi_2^2}\right) \\[10pt]
+    &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
         \cancel{\Delta\chi_2^2} \cdot p \, \Delta\chi_2 \cdot
         \frac{\sigma_2}{\cancel{\Delta\chi_2^2}} \\[10pt]
-    &= p \, \sigma_2 \, \Delta\chi_2
+    &= p \, \sigma_2 \, \Delta\chi_2 \\[10pt]
+    &= \mathcal{O}(\Delta\chi_2)
     \; \xrightarrow[\Delta\chi_2\rightarrow 0^{+}]{} \; 0 \; .
+    \quad \quad (9.3)
 \end{align*}
 ```
 
-### The result
+### The sum
+
+There is a single term:
+
+```math
+\begin{align*}
+(9.3) : \quad
+    \Delta\chi_2^2 \, G \left(\tfrac{I_0^0}{15} + \tfrac{2 I_2^0}{21} + \tfrac{I_4^0}{35} + I_0^2 \right)
+    &\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim} \mathcal{O}(\Delta\chi_2)
+    &&\rightarrow 0 \\[10pt]
+\end{align*}
+```
 
 ```math
     \boxed{\; \lim_{\Delta\chi_2 \rightarrow 0}
-    \left[\Delta\chi_2^2 (\chi_2 y - s_1) \left(
+    \left[\Delta\chi_2^2 \, G \left(
         \frac{I_0^0}{15} + \frac{2 I_2^0}{21} + \frac{I_4^0}{35} + I_0^2 \right)\right]
-    = 0 \; . }
-    \quad \quad (9.3)
+    = 0
+    \quad \Longrightarrow \quad
+    J_{\alpha}^{v_{\parallel} \int\!\phi}\left[\;\cdots\;\right]
+    \; \xrightarrow[\Delta\chi_2 \rightarrow 0]{} \; 0 \; . }
+    \quad \quad (9.4)
 ```
 
 The rate of approach is ``\mathcal{O}(\Delta\chi_2)`` and carries a ``p``, but since the limit

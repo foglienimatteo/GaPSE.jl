@@ -90,11 +90,48 @@ Concerned functions: `integrand_ξ_GNC_Lensing_IntegratedGP`,
 `integrand_ξ_GNCxLD_IntegratedGP_Lensing`, `integrand_ξ_GNCxLD_Lensing_IntegratedGP`,
 `integrand_ξ_GNCxLD_Lensing_LocalGP`, `integrand_ξ_LD_Lensing_IntegratedGP`,
 `integrand_ξ_LD_Lensing_LocalGP`.
-
-They all share the structure
+The GNC Lensing-IntegratedGP function is:
 
 ```math
-    J_{22} \, I_2^2 + J_{31} \, I_1^3 \; , \qquad
+\begin{split}
+    \xi^{\kappa \int\!\phi} ( s_1 , s_2, y ) = 
+    \int_0^{s_1}\mathrm{d} \chi_1 \int_0^{s_2}\mathrm{d} \chi_2 \;
+    J_{\alpha}^{\kappa \int\!\phi} 
+    \left[ 
+        J_{31}^{\kappa \int\!\phi} I_1^3 ( \Delta \chi ) +
+        J_{22}^{\kappa \int\!\phi} I_2^2 ( \Delta \chi ) 
+     \right] \, ,
+\end{split}
+```
+
+with
+
+```math
+\begin{align*}
+     J_{\alpha}^{\kappa \int\!\phi} &=
+    \frac{
+        9 \chi_2 \ \mathcal{H}_0^4  \Omega_{\mathrm{M}0}^2 D(\chi_1) D(\chi_2) 
+    }{
+        a(\chi_1)  a(\chi_2) s_1  s_2
+    }
+    (\chi_1 - s_1) (5 s_{\mathrm{b}, 1} - 2) \times \\
+    &\qquad\qquad\qquad\qquad
+    \left[
+        \ \mathcal{H}(\chi_2)  \mathcal{R}_2 s_1 (f(\chi_2) - 1) - 5 s_{\mathrm{b}, 1} + 2
+    \right]
+    \, , \\[6pt]
+    J_{31}^{\kappa \int\!\phi} &=  y \, \Delta\chi^2
+    \, , \\[6pt]
+    J_{22}^{\kappa \int\!\phi} &= 
+    \frac{1}{2} (y^2 - 1) \chi_1 \chi_2 
+    \, .
+\end{align*}
+```
+
+The six functions share this structure up to an overall constant ``A``, which we factor out
+by writing (Eq.(D.19))
+
+```math
     J_{22} := \frac{A}{2}\,\chi_a \chi_b \, (y^2-1) \; , \qquad
     J_{31} := A \, y \, \Delta\chi^2 \; ,
     \quad \quad (\mathrm{D}.19)
@@ -109,13 +146,20 @@ with
 | ``-2`` | `integrand_ξ_GNCxLD_Lensing_LocalGP` , `integrand_ξ_LD_Lensing_IntegratedGP` , `integrand_ξ_LD_Lensing_LocalGP` |
 
 (in the last three the coefficients are written in the source as ``-2y\Delta\chi^2`` and
-``\chi_a\chi_b(1-y^2)``, which is the same thing with ``A = -2``).
+``\chi_a\chi_b(1-y^2)``, which is the same thing with ``A = -2``). The limit to be taken is:
+
+```math
+    \lim_{\Delta\chi\rightarrow 0^{+}}\left(J_{22} \, I_2^2 + J_{31} \, I_1^3\right) \; .
+```
+
+This analysis is valid for all the six functions listed above.
 
 ### Term 1: ``J_{22} I_2^2``
 
-``J_{22}`` of Eq.(D.19) carries **no** negative power of ``\Delta\chi``, and its only vanishing factor is
-``(y^2-1)`` on its own — there is no bracket to decompose, because nothing else cancels
-against it. Compare with the ``B_{00}`` of Family 1, Eq.(D.5) there, where
+``J_{22}`` of Eq.(D.19) carries **no** negative power of ``\Delta\chi``, and its only
+vanishing factor is ``(y^2-1)`` on its own — there is no bracket to decompose, because
+nothing else cancels against it. Compare with the ``B_{00}`` of Family 1, Eq.(D.5) there,
+where
 
 ```math
     B_{00} = 8(\chi_1-\chi_2)^2 + 8(y-1)(\chi_1^2+\chi_2^2) - 9\chi_1\chi_2(y^2-1) \; :
@@ -127,37 +171,46 @@ there the ``(y^2-1)`` was one of three competing contributions, here it stands a
 
 ```math
 \begin{align*}
-    J_{22} &= \frac{A}{2}\,\chi_a \chi_b \, (y^2-1) \\[10pt]
+    J_{22}^{\kappa \int\!\phi} &= \frac{A}{2}\,\chi_a \chi_b \, (y^2-1) \\[10pt]
     (2.3\mathrm{b}) \; \rightarrow \quad
         &\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
-            \frac{A}{2}\cancel{\chi_a\chi_b}
+            \frac{A}{2}\,\chi_a \chi_b
+            \left[- \frac{(1-p^2)}{\chi_a^2}\Delta\chi^2\right] \\[10pt]
+    \chi_b \rightarrow \chi_a \; \rightarrow \quad
+        &= \frac{A}{2}\cancel{\chi_a^2}
             \left[- \frac{(1-p^2)}{\cancel{\chi_a^2}}\Delta\chi^2\right] \\[10pt]
-        &= -\frac{A}{2}(1-p^2)\,\Delta\chi^2 \; .
+        &= -\frac{A}{2}(1-p^2)\,\Delta\chi^2 \; = \; \mathcal{O}(\Delta\chi^2) \; .
 \end{align*}
 ```
 
 Since ``I_2^2 \rightarrow \sigma_0/15`` is **finite**, the product vanishes:
 
 ```math
-    J_{22} I_2^2 \underset{\Delta\chi\rightarrow 0^{+}}{\sim}
-        \underbrace{-\frac{A}{2}(1-p^2)\,\Delta\chi^2}_{\mathcal{O}(\Delta\chi^2)}
-        \cdot \underbrace{\frac{\sigma_0}{15}}_{\mathcal{O}(1)}
-        = -\frac{A\,(1-p^2)\,\sigma_0}{30}\,\Delta\chi^2
+\begin{align*}
+    J_{22}^{\kappa \int\!\phi} I_2^2
+    &\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
+        \underbrace{\left[-\frac{A}{2}(1-p^2)\,\Delta\chi^2\right]}_{\mathcal{O}(\Delta\chi^2)}
+        \cdot \underbrace{\frac{\sigma_0}{15}}_{\mathcal{O}(1)} \\[10pt]
+    &= -\frac{A\,(1-p^2)\,\sigma_0}{30}\,\Delta\chi^2 \\[10pt]
+    &= \mathcal{O}(\Delta\chi^2)
     \; \xrightarrow[\Delta\chi\rightarrow 0^{+}]{} \; 0 \; .
     \quad \quad (10.1)
+\end{align*}
 ```
 
 ### Term 2: ``J_{31} I_1^3``
 
-``J_{31}``, also defined in Eq.(D.19), is regular and its ``\Delta\chi^2`` cancels the ``\Delta\chi^{-2}`` of ``I_1^3``:
+``J_{31}``, also defined in Eq.(D.19), is regular and its ``\Delta\chi^2`` cancels the
+``\Delta\chi^{-2}`` of ``I_1^3``:
 
 ```math
 \begin{align*}
-    J_{31} I_1^3 &= A \, y \, \Delta\chi^2 \cdot I_1^3(\Delta\chi) \\[10pt]
+    J_{31}^{\kappa \int\!\phi} I_1^3 &= A \, y \, \Delta\chi^2 \cdot I_1^3(\Delta\chi) \\[10pt]
     (2.1\mathrm{a}) \; \rightarrow \quad
         &\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
-            A \underbrace{y}_{\rightarrow 1}\cancel{\Delta\chi^2} \,
-            \frac{\sigma_2}{3\cancel{\Delta\chi^2}} \\[10pt]
+            A \, y \, \Delta\chi^2 \cdot \frac{\sigma_2}{3\,\Delta\chi^2} \\[10pt]
+    y \rightarrow 1 \; \rightarrow \quad
+        &= A \underbrace{y}_{\rightarrow 1}\frac{\cancel{\Delta\chi^2}}{3\cancel{\Delta\chi^2}}\,\sigma_2 \\[10pt]
         &= \frac{A}{3}\,\sigma_2 \; .
     \quad \quad (10.2)
 \end{align*}
@@ -165,14 +218,21 @@ Since ``I_2^2 \rightarrow \sigma_0/15`` is **finite**, the product vanishes:
 
 ### The sum
 
-| term | order | limit |
-|:--|:--|:--|
-| ``J_{22} I_2^2`` , Eq.(10.1) | ``\mathcal{O}(\Delta\chi^2)`` | ``0`` |
-| ``J_{31} I_1^3`` , Eq.(10.2) | ``\mathcal{O}(1)`` | ``\dfrac{A}{3}\,\sigma_2`` |
+```math
+\begin{align*}
+(10.1) : \quad J_{22}^{\kappa \int\!\phi} I_2^2
+    &\underset{\Delta\chi\rightarrow 0^{+}}{\sim} \mathcal{O}(\Delta\chi^2)
+    &&\rightarrow 0 \\[10pt]
+(10.2) : \quad J_{31}^{\kappa \int\!\phi} I_1^3
+    &\underset{\Delta\chi\rightarrow 0^{+}}{\sim} \mathcal{O}(1)
+    &&\rightarrow \frac{A}{3}\,\sigma_2 \\[10pt]
+\end{align*}
+```
 
 ```math
     \boxed{\; \lim_{\Delta\chi \rightarrow 0}
-    \left(J_{22} I_2^2 + J_{31} I_1^3\right) = \frac{A}{3}\,\sigma_2 \; . }
+    \left(J_{22}^{\kappa \int\!\phi} I_2^2 + J_{31}^{\kappa \int\!\phi} I_1^3\right)
+    = \frac{A}{3}\,\sigma_2 \; . }
     \quad \quad (10.3)
 ```
 
