@@ -20,32 +20,32 @@
 
 function ξ_GNCxLD_Doppler_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology;
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
-	𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
+    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
-	s1, D1, f1, ℋ1 = P1.comdist, P1.D, P1.f, P1.ℋ
-	s2, D2, a2, ℜ2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
+    s1, D1, f1, ℋ1 = P1.comdist, P1.D, P1.f, P1.ℋ
+    s2, D2, a2, ℜ2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
 
-	Ω_M0 = cosmo.params.Ω_M0
+    Ω_M0 = cosmo.params.Ω_M0
     s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
     𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
 
     s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
     ℛ1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b1, 𝑓_evo=𝑓_evo1, s_lim=s_lim)
 
-	Δs = s(s1, s2, y)
+    Δs = s(s1, s2, y)
 
-	prefac = - (3 * ℋ0^2 * Ω_M0) / (2 * a2) * ℋ1 * f1 * ℛ1 * (1 + ℜ2)
-	factor = D1 * D2 * (s2 * y - s1) * Δs^2
+    prefac = - (3 * ℋ0^2 * Ω_M0) / (2 * a2) * ℋ1 * f1 * ℛ1 * (1 + ℜ2)
+    factor = D1 * D2 * (s2 * y - s1) * Δs^2
 
-	I13 = cosmo.tools.I13(Δs)
+    I13 = cosmo.tools.I13(Δs)
 
-	return prefac * factor * I13
+    return prefac * factor * I13
 end
 
 
 function ξ_GNCxLD_Doppler_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-	return ξ_GNCxLD_Doppler_LocalGP(P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    return ξ_GNCxLD_Doppler_LocalGP(P1, P2, y, cosmo; kwargs...)
 end
 
 
@@ -232,7 +232,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`ξ_GNCxLD_Doppler_LocalGP`](@ref)
 """
 function ξ_LDxGNC_LocalGP_Doppler(s1, s2, y, cosmo::Cosmology; 
-	b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
+    b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
     𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, kwargs...)
 
     b1 = isnothing(b1) ? cosmo.params.b1 : b1
@@ -242,7 +242,7 @@ function ξ_LDxGNC_LocalGP_Doppler(s1, s2, y, cosmo::Cosmology;
     𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
     𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
     
-	ξ_GNCxLD_Doppler_LocalGP(s2, s1, y, cosmo; 
+    ξ_GNCxLD_Doppler_LocalGP(s2, s1, y, cosmo; 
         b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
         𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim,
 		kwargs...)

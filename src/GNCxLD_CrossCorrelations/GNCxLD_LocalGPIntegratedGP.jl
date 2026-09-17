@@ -19,55 +19,55 @@
 
 
 function integrand_ξ_GNCxLD_LocalGP_IntegratedGP(
-	IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
-	s1, D_s1, f_s1, a_s1, ℋ_s1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ
-	s2, ℜ_s2 = P2.comdist, P2.ℛ_LD
-	χ2, D2, a2, f2, ℋ2 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
-	
-	Ω_M0 = cosmo.params.Ω_M0
+    s1, D_s1, f_s1, a_s1, ℋ_s1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ
+    s2, ℜ_s2 = P2.comdist, P2.ℛ_LD
+    χ2, D2, a2, f2, ℋ2 = IP.comdist, IP.D, IP.a, IP.f, IP.ℋ
+    
+    Ω_M0 = cosmo.params.Ω_M0
     s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
     𝑓_evo_s1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
 
     s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
     ℛ_s1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b_s1, 𝑓_evo=𝑓_evo_s1, s_lim=s_lim)
 
-	Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-	Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : zero(Δχ2_square)  # throw(AssertionError("Δχ2_square=$Δχ2_square : y=$y , s1=$s1 , χ2=$χ2"))
+    Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
+    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : zero(Δχ2_square)  # throw(AssertionError("Δχ2_square=$Δχ2_square : y=$y , s1=$s1 , χ2=$χ2"))
 
-	factor = - 3 / 2 * D_s1 * Δχ2^4 * ℋ0^2 * Ω_M0 * D2 * (s2 * ℋ2 * ℜ_s2 * (f2 - 1) - 1) / (s2 * a2 * a_s1)
-	parenth = 2 * f_s1 * ℋ_s1^2 * a_s1 * (𝑓_evo_s1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f_s1 + ℛ_s1 + 5 * s_b_s1 - 2)
-	
-	# for Δχ2 → 0 the whole term vanishes, since Δχ2^4 * Ĩ_0^4(Δχ2) → 0 ;
+    factor = - 3 / 2 * D_s1 * Δχ2^4 * ℋ0^2 * Ω_M0 * D2 * (s2 * ℋ2 * ℜ_s2 * (f2 - 1) - 1) / (s2 * a2 * a_s1)
+    parenth = 2 * f_s1 * ℋ_s1^2 * a_s1 * (𝑓_evo_s1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f_s1 + ℛ_s1 + 5 * s_b_s1 - 2)
+    
+    # for Δχ2 → 0 the whole term vanishes, since Δχ2^4 * Ĩ_0^4(Δχ2) → 0 ;
     # see the "The Δχ → 0 limits" page of the documentation
     I04_tilde = Δχ2 ≥ Δχ_min ? cosmo.tools.I04_tilde(Δχ2) : zero(Δχ2)
 
-	return factor * parenth * I04_tilde
+    return factor * parenth * I04_tilde
 end
 
 
 function integrand_ξ_GNCxLD_LocalGP_IntegratedGP(
-	χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
-	y, cosmo::Cosmology; kwargs...)
+    χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
+    y, cosmo::Cosmology; kwargs...)
 
-	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-	IP = Point(χ2, cosmo)
-	return integrand_ξ_GNCxLD_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    IP = Point(χ2, cosmo)
+    return integrand_ξ_GNCxLD_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
 
 """
-	integrand_ξ_GNCxLD_LocalGP_IntegratedGP(
-		IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
-		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
-		𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
+    integrand_ξ_GNCxLD_LocalGP_IntegratedGP(
+        IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
-	integrand_ξ_GNCxLD_LocalGP_IntegratedGP(
-		χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
-		y, cosmo::Cosmology; kwargs... ) ::Float64
+    integrand_ξ_GNCxLD_LocalGP_IntegratedGP(
+        χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
+        y, cosmo::Cosmology; kwargs... ) ::Float64
 
 Return the integrand of the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Local Gravitational Potential (GP) effect arising from the Galaxy Number Counts (GNC) and the 
@@ -230,11 +230,11 @@ integrand_ξ_GNCxLD_LocalGP_IntegratedGP
 
 
 """
-	ξ_GNCxLD_LocalGP_IntegratedGP(
-		s1, s2, y, cosmo::Cosmology;
-		b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
-    𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
-    en::AbstractFloat=1e6, N_χs::Int=100 ) ::Float64
+    ξ_GNCxLD_LocalGP_IntegratedGP(
+        s1, s2, y, cosmo::Cosmology;
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        en::AbstractFloat=1e6, N_χs::Int=100 ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Local Gravitational Potential (GP) effect arising from the Galaxy Number Counts (GNC) and the 
@@ -392,19 +392,19 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNCxLD_multipole`](@ref),
 function ξ_GNCxLD_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
     en::AbstractFloat=1e6, N_χs::Int=100, kwargs...)
 
-	χ2s = s2 .* range(1e-6, 1.0, length = N_χs + 7)
+    χ2s = s2 .* range(1e-6, 1.0, length = N_χs + 7)
 
-	P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-	IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
+    P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
+    IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-	int_ξs = [
-		en * GaPSE.integrand_ξ_GNCxLD_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
-		for IP in IPs
-	]
+    int_ξs = [
+      en * GaPSE.integrand_ξ_GNCxLD_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
+      for IP in IPs
+    ]
 
-	res = trapz(χ2s, int_ξs)
-	#println("res = $res")
-	return res / en
+    res = trapz(χ2s, int_ξs)
+    #println("res = $res")
+    return res / en
 end
 
 
@@ -460,7 +460,7 @@ function ξ_LDxGNC_IntegratedGP_LocalGP(s1, s2, y, cosmo::Cosmology;
     𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
     𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
 
-	ξ_GNCxLD_LocalGP_IntegratedGP(s2, s1, y, cosmo; 
+    ξ_GNCxLD_LocalGP_IntegratedGP(s2, s1, y, cosmo; 
         b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
         𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end
