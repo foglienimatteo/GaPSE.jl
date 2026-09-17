@@ -539,8 +539,8 @@ at ``\chi_1 = \chi_2`` (where ``7-2+7 = 12`` and ``7-24+40-24+7 = 6``):
 
 ```math
 \begin{align*}
-&\quad(D.4) : \quad \chi_2 := \chi_1 + p \, \Delta\chi\\[10pt]
-&\quad (2.3\mathrm{a}): \quad y-1  \underset{\Delta\chi\rightarrow 0^{+}}{\sim}  - \frac{(1-p^2)}{2\chi_1^2}\Delta\chi^2\\[15pt]
+(D.4&) : \quad \chi_2 := \chi_1 + p \, \Delta\chi\\[10pt]
+(2.3\mathrm{a}&): \quad y-1  \underset{\Delta\chi\rightarrow 0^{+}}{\sim}  - \frac{(1-p^2)}{2\chi_1^2}\Delta\chi^2\\[15pt]
     \mathrm{1st} \; : \left[B_{22}\big|_{y=1} \cdot 1 \right]\bigg|_{(D.4)} 
         &= \left[8(\chi_1-\chi_2)^4\right]\bigg|_{(D.4)}
         = \quad  8(-p\Delta\chi)^4  \\
@@ -556,9 +556,9 @@ at ``\chi_1 = \chi_2`` (where ``7-2+7 = 12`` and ``7-24+40-24+7 = 6``):
             2\left(7\chi_1^4 - 24\chi_1^3\chi_2 + 40\chi_1^2\chi_2^2 - 24\chi_1\chi_2^3
             + 7\chi_2^4\right)(y-1)^2
         \right]\bigg|_{(D.4)} \\
-        &= \quad  2 \cdot 6 \, \chi_1^4 \cdot
+        &= \quad  2 \, (7-24+40-24+7) \, \chi_1^4 \cdot
         \left[- \frac{(1-p^2)}{2\chi_1^2}\Delta\chi^2\right]^{2}\\
-        &= 12 \, \cancel{\chi_1^4} \, \frac{(1-p^2)^2}{4\cancel{\chi_1^4}}\Delta\chi^4\\
+        &= 2 \cdot 6 \, \cancel{\chi_1^4} \, \frac{(1-p^2)^2}{4\cancel{\chi_1^4}}\Delta\chi^4\\
         &= 3 \, (1-p^2)^2 \, \Delta\chi^4 \; ,
 \end{align*}
 ```
@@ -567,15 +567,24 @@ and summing:
 
 ```math
 \begin{align*}
-    B_{22} &\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
-        \left[ 8p^4 - 24p^2(1-p^2) + 3(1-p^2)^2 \right] \Delta\chi^4 \\[10pt]
+    B_{22} &= \sum_{k=0}^{4} \frac{1}{k!}
+        \frac{\partial^k B_{22}}{\partial y^k}\bigg|_{y=1} (y-1)^k \; \\[15pt]
+    &\underset{\Delta\chi\rightarrow 0^{+}}{\sim} 
+        \left[B_{22}\big|_{y=1} \cdot 1 \right]\bigg|_{(D.4)} +
+        \left[\frac{\partial B_{22}}{\partial y}\bigg|_{y=1}(y-1)\right]\bigg|_{(D.4)} +
+        \left[\frac{1}{2}\frac{\partial^2 B_{22}}{\partial y^2}\bigg|_{y=1} (y-1)^2 \right]\bigg|_{(D.4)}
+    \\[15pt]
+    &= \left[8 \, p^4 \, \Delta\chi^4 \right] 
+        + \left[- 24 \, p^2(1-p^2) \, \Delta\chi^4 \right]
+        + \left[3 \, (1-p^2)^2 \, \Delta\chi^4 \right] \\[10pt]
+    &=    \left[ 8p^4 - 24p^2(1-p^2) + 3(1-p^2)^2 \right] \Delta\chi^4 \\[10pt]
     &= \left[ 8p^4 - 24p^2 + 24p^4 + 3 - 6p^2 + 3p^4 \right] \Delta\chi^4 \\[10pt]
-    &= \left( 35p^4 - 30p^2 + 3 \right) \Delta\chi^4
-    \; = \; 8 \, \mathcal{L}_4(p) \, \Delta\chi^4 \; , \quad \quad (3.9)
+    &= \left( 35p^4 - 30p^2 + 3 \right) \Delta\chi^4 \\[10pt]
+    &= \; 8 \, \mathcal{L}_4(p) \, \Delta\chi^4 \; , \quad \quad (3.9)
 \end{align*}
 ```
 
-``\mathcal{L}_4`` being the fourth Legendre polynomial — not a coincidence, since the whole
+where ``\mathcal{L}_4`` is  the fourth Legendre polynomial — not a coincidence, since the whole
 construction is an expansion in ``y = \cos\theta``. Finally:
 
 ```math
@@ -585,43 +594,63 @@ construction is an expansion in ``y = \cos\theta``. Finally:
         &\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
         \frac{9}{4}\frac{\chi_1^2}{\cancel{\Delta\chi^4}}
         \left( 35p^4 - 30p^2 + 3 \right) \cancel{\Delta\chi^4} \cdot \frac{\sigma_0}{15} \\[10pt]
-    &= \frac{9}{60}\,\chi_1^2 \, \sigma_0 \left( 35p^4 - 30p^2 + 3 \right) \\[10pt]
     &= \frac{3}{20}\,\chi_1^2 \, \sigma_0 \left( 35p^4 - 30p^2 + 3 \right) \; . \quad \quad (3.10)
 \end{align*}
 ```
 
 ### The sum
 
-| term | limit |
-|:--|:--|
-| ``J_{00} I_0^0`` , Eq.(3.4) | ``\dfrac{3}{4}\chi_1^2\sigma_0 \left(-7p^4 + 6p^2 + 1\right)`` |
-| ``J_{02} I_2^0`` , Eq.(3.6) | ``0`` |
-| ``J_{31} I_1^3`` , Eq.(3.7) | ``3\,\sigma_2`` |
-| ``J_{22} I_2^2`` , Eq.(3.10) | ``\dfrac{3}{20}\chi_1^2\sigma_0 \left(35p^4 - 30p^2 + 3\right)`` |
+
+```math
+\begin{align*}
+(3.4)  : \quad J_{00} I_0^0 &\underset{\Delta\chi\rightarrow 0^{+}}{\sim} 
+    \dfrac{3}{4}\chi_1^2\sigma_0 \left(-7p^4 + 6p^2 + 1\right) \\[13pt]
+(3.6)  : \quad J_{02} I_2^0 &\underset{\Delta\chi\rightarrow 0^{+}}{\sim} 
+    0 \\[13pt]
+(3.7)  : \quad J_{31} I_1^3 &\underset{\Delta\chi\rightarrow 0^{+}}{\sim} 
+    3\,\sigma_2 \\[13pt]
+(3.10) : \quad J_{22} I_2^2 &\underset{\Delta\chi\rightarrow 0^{+}}{\sim} 
+    \dfrac{3}{20}\chi_1^2\sigma_0 \left(35p^4 - 30p^2 + 3\right) \\[13pt]
+\end{align*}
+```
 
 Only two terms carry a ``p``, and it must cancel between them:
 
 ```math
 \begin{align*}
-    \frac{3}{4}\left(-7p^4+6p^2+1\right) + \frac{3}{20}\left(35p^4-30p^2+3\right)
-    &= \frac{3}{20}\left[ 5\left(-7p^4+6p^2+1\right) + \left(35p^4-30p^2+3\right) \right] \\[10pt]
-    &= \frac{3}{20}\left[ \cancel{-35p^4}+\cancel{30p^2}+5 + \cancel{35p^4}-\cancel{30p^2}+3 \right] \\[10pt]
-    &= \frac{3}{20}\cdot 8 = \frac{6}{5} \; ,
+    J^{\kappa\kappa}_{00} I_0^0 + 
+    J^{\kappa\kappa}_{02} I_2^0 +
+    J^{\kappa\kappa}_{31} I_1^3 +
+    J^{\kappa\kappa}_{22} I_2^2 
+    &\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
+        \dfrac{3}{4}\chi_1^2\sigma_0 \left(-7p^4 + 6p^2 + 1\right) +
+        0 + 3\,\sigma_2 + \dfrac{3}{20}\chi_1^2\sigma_0 \left(35p^4 - 30p^2 + 3\right)
+    \\[10pt]
+    &= 3\, \sigma_2+\frac{3}{20}\left[ 
+            5\left(-7p^4+6p^2+1\right) + \left(35p^4-30p^2+3\right) 
+        \right]\chi_1^2 \sigma_0 \\[10pt]
+    &= 3\, \sigma_2+ \frac{3}{20}\left[ 
+            \cancel{-35p^4}+\cancel{30p^2}+5 + \cancel{35p^4}-\cancel{30p^2}+3 
+        \right]\chi_1^2 \sigma_0 \\[10pt]
+    &= 3\, \sigma_2 + \frac{6}{5}\chi_1^2 \sigma_0  \; .
 \end{align*}
-```
-
-leaving
-
-```math
-    \boxed{\;
-    \lim_{\Delta\chi \rightarrow 0}
-    \left(J_{00}I_0^0 + J_{02}I_2^0 + J_{31}I_1^3 + J_{22}I_2^2\right)
-    = 3\,\sigma_2 + \frac{6}{5}\,\chi_1^2\,\sigma_0 \; . }
-    \quad \quad (3.11)
 ```
 
 The cancellation of ``p`` is the proof that the limit exists and does not depend on the
 direction of approach.
+
+```math
+    \boxed{\;
+    \lim_{\Delta\chi \rightarrow 0^{+}}
+    \left(
+        J_{00}^{\kappa\kappa}I_0^0 + J_{02}^{\kappa\kappa}I_2^0 + 
+        J_{31}^{\kappa\kappa}I_1^3 + J_{22}^{\kappa\kappa}I_2^2
+    \right)
+    = 3\,\sigma_2 + \frac{6}{5}\,\chi_1^2\,\sigma_0 \; . }
+    \quad \quad (3.11)
+```
+
+
 
 !!! warning "A common mistake"
     If in Term 1 one sets ``\chi_1 = \chi_2`` inside ``B_{00}`` before expanding, the
