@@ -354,7 +354,8 @@ counting the powers of ``(u-2v)`` in it.
         &= 8\left(u^2 - 4uv + 4v^2\right) \\[10pt]
         &= 8(u-2v)^2 \\[10pt]
     (3.8\mathrm{b}) \; \rightarrow \quad
-        &= 8(\chi_1-\chi_2)^4 \; \rightarrow \; \mathcal{O}(\Delta\chi^4) \; .
+        &= 8(\chi_1-\chi_2)^4 \\[10pt]
+        &\underset{\Delta\chi\rightarrow 0^{+}}{\rightarrow} \; \mathcal{O}(\Delta\chi^4) \; .
 \end{align*}
 ```
 
@@ -374,15 +375,13 @@ term — only the ``y``-dependent factors move:
         + \chi_1^2\chi_2^2 (44y^3+28y) \\[10pt]
     &= 28y(\chi_1^4+\chi_2^4)
         - 16\chi_1\chi_2(\chi_1^2+\chi_2^2)(3y^2+1)
-        + \chi_1^2\chi_2^2 (44y^3+28y) \; ,
+        + \chi_1^2\chi_2^2 (44y^3+28y) \; ,\\[15pt]
 \end{align*}
 ```
 
-and evaluate at ``y=1``:
-
 ```math
 \begin{align*}
-    \frac{\partial B_{22}}{\partial y}\bigg|_{y=1}
+    \Rightarrow \quad  \frac{\partial B_{22}}{\partial y}\bigg|_{y=1}
     &= 28(\chi_1^4+\chi_2^4) - 16\chi_1\chi_2(\chi_1^2+\chi_2^2)(3+1)
         + \chi_1^2\chi_2^2 (44+28) \\[10pt]
     &= 28(\chi_1^4+\chi_2^4) - 64\chi_1\chi_2(\chi_1^2+\chi_2^2) + 72\chi_1^2\chi_2^2 \\[10pt]
@@ -390,26 +389,11 @@ and evaluate at ``y=1``:
     &= 28(u^2-2v^2) - 64uv + 72v^2 \\[10pt]
     &= 28u^2 - 56v^2 - 64uv + 72v^2 \\[10pt]
     &= 28u^2 - 64uv + 16v^2 \\[10pt]
-    &= 4\left(7u^2 - 16uv + 4v^2\right) \; .
-\end{align*}
-```
-
-The quadratic ``7u^2 - 16uv + 4v^2`` must contain a ``(u-2v)``, because we already know the
-coefficient has to vanish at ``\chi_1 = \chi_2``; dividing it out,
-
-```math
-    7u^2 - 16uv + 4v^2 = (u - 2v)(7u - 2v) \; ,
-```
-
-(check: ``7u^2 - 2uv - 14uv + 4v^2 = 7u^2 - 16uv + 4v^2`` ✓), so that
-
-```math
-\begin{align*}
-    \frac{\partial B_{22}}{\partial y}\bigg|_{y=1}
+    &= 4\left(7u^2 - 16uv + 4v^2\right) \; \\[10pt]
     &= 4(u-2v)(7u-2v) \\[10pt]
     (3.8\mathrm{b}) \; \rightarrow \quad
-    &= 4(\chi_1-\chi_2)^2 \left(7\chi_1^2 - 2\chi_1\chi_2 + 7\chi_2^2\right)
-    \; \rightarrow \; \mathcal{O}(\Delta\chi^2) \; .
+    &= 4(\chi_1-\chi_2)^2 \left(7\chi_1^2 - 2\chi_1\chi_2 + 7\chi_2^2\right)\\[10pt]
+    &\underset{\Delta\chi\rightarrow 0^{+}}{\rightarrow} \; \mathcal{O}(\Delta\chi^2) \; .
 \end{align*}
 ```
 
@@ -418,6 +402,12 @@ coefficient has to vanish at ``\chi_1 = \chi_2``; dividing it out,
 ```math
 \begin{align*}
     \frac{\partial^2 B_{22}}{\partial y^2}
+    &= \frac{\partial}{\partial y}\left[\frac{\partial B_{22}}{\partial y}\right]\\[13pt]
+    &= \frac{\partial}{\partial y}\left[
+        28y(\chi_1^4+\chi_2^4)
+        - 16\chi_1\chi_2(\chi_1^2+\chi_2^2)(3y^2+1)
+        + \chi_1^2\chi_2^2 (44y^3+28y)
+        \right]\\[13pt]
     &= 28(\chi_1^4+\chi_2^4) - 96 y \chi_1\chi_2(\chi_1^2+\chi_2^2)
         + \chi_1^2\chi_2^2 (132y^2+28) \\[10pt]
     \Rightarrow \quad
@@ -425,41 +415,51 @@ coefficient has to vanish at ``\chi_1 = \chi_2``; dividing it out,
     &= 14(\chi_1^4+\chi_2^4) - 48\chi_1\chi_2(\chi_1^2+\chi_2^2) + 80\chi_1^2\chi_2^2 \\[10pt]
     (3.8\mathrm{a}) \; \rightarrow \quad
     &= 14(u^2-2v^2) - 48uv + 80v^2 \\[10pt]
-    &= 14u^2 - 48uv + 52v^2 \; = \; 2\left(7u^2 - 24uv + 26v^2\right) \; .
+    &= 14u^2 - 48uv + 52v^2 \; \\[10pt]
+    &= \; 2\left(7u^2 - 24uv + 26v^2\right) \\[10pt]
+    &\quad\quad \mathrm{This\; one \;does \; not \; contain \; a \; (u-2v) \; term!}\\[10pt]
+    &\quad\quad \left[7u^2 - 24uv + 26v^2\right]\bigg|_{u = 2v} = 28v^2-48v^2+26v^2 = 6 v^2 \neq 0\\[10pt]
+    (3.8\mathrm{b}) \; \rightarrow \quad
+    &= 2\left(7\chi_1^4 - 24\chi_1^3\chi_2 + 40\chi_1^2\chi_2^2 - 24\chi_1\chi_2^3 + 7\chi_2^4\right)\\[10pt]
+    &\underset{\Delta\chi\rightarrow 0^{+}}{\rightarrow} 2(7-24+40-24+7)\chi_1^4 \\[10pt]
+    &= 12\chi_1^4 = \; \mathcal{O}(1) \; ,
 \end{align*}
 ```
 
-This one does **not** contain a ``(u-2v)``: at ``u = 2v`` it gives
-``2(28 - 48 + 26)v^2 = 12 v^2 \neq 0``. It is therefore ``\mathcal{O}(1)``, and going back to
-``\chi_1, \chi_2``,
-
-```math
-    \frac{1}{2}\frac{\partial^2 B_{22}}{\partial y^2}\bigg|_{y=1}
-    = 2\left(7\chi_1^4 - 24\chi_1^3\chi_2 + 40\chi_1^2\chi_2^2 - 24\chi_1\chi_2^3 + 7\chi_2^4\right)
-    \; \rightarrow \; \mathcal{O}(1) \; ,
-```
-
-whose value at ``\chi_1 = \chi_2 = \chi_1`` is ``2(7-24+40-24+7)\chi_1^4 = 12\chi_1^4``, i.e.
-the ``12v^2`` just found.
 
 **The ``k=3`` and ``k=4`` coefficients.** Two more derivatives, the ``(\chi_1^4+\chi_2^4)``
 term now being constant in ``y`` and dropping out:
 
 ```math
 \begin{align*}
-    \frac{\partial^3 B_{22}}{\partial y^3}
-        &= - 96 \chi_1\chi_2(\chi_1^2+\chi_2^2) + 264 y \chi_1^2\chi_2^2
-    \quad \Rightarrow \quad
+    \frac{\partial^3 B_{22}}{\partial y^3} 
+        &= \frac{\partial}{\partial y}\left[\frac{\partial^2 B_{22}}{\partial y^2}\right]\\[15pt]
+        &= \frac{\partial}{\partial y}\left[
+            28(\chi_1^4+\chi_2^4) - 96 y \chi_1\chi_2(\chi_1^2+\chi_2^2)
+            + \chi_1^2\chi_2^2 (132y^2+28) 
+        \right]\\[15pt]
+        &= - 96 \chi_1\chi_2(\chi_1^2+\chi_2^2) + 264 y \chi_1^2\chi_2^2\\[15pt]
+    \Rightarrow \quad
     \frac{1}{6}\frac{\partial^3 B_{22}}{\partial y^3}\bigg|_{y=1}
-        = -16 uv + 44 v^2 \\[6pt]
-        &\phantom{= - 96 \chi_1\chi_2(\chi_1^2+\chi_2^2) + 264 y \chi_1^2\chi_2^2 \quad \Rightarrow \quad}
-        = -4v\left(4u - 11v\right)
-        = -4\chi_1\chi_2\left(4\chi_1^2 - 11\chi_1\chi_2 + 4\chi_2^2\right) \; , \\[14pt]
+        &= - 16 \chi_1\chi_2(\chi_1^2+\chi_2^2) + 44 \chi_1^2\chi_2^2 \\[16pt]
+        &= -4\chi_1\chi_2\left(4\chi_1^2 - 11\chi_1\chi_2 + 4\chi_2^2\right) , \\[14pt]
+        &\underset{\Delta\chi\rightarrow 0^{+}}{\rightarrow} -4(4-11+4)\chi_1^4 \\[10pt]
+        &= 12\chi_1^4 = \; \mathcal{O}(1) \; \\[10pt]
+\end{align*}
+```
+
+```math
+\begin{align*}
     \frac{\partial^4 B_{22}}{\partial y^4}
-        &= 264 \chi_1^2\chi_2^2
+        &= \frac{\partial}{\partial y}\left[\frac{\partial^3 B_{22}}{\partial y^3}\right]\\[15pt]
+        &= \frac{\partial}{\partial y}\left[
+            - 96 \chi_1\chi_2(\chi_1^2+\chi_2^2) + 264 y \chi_1^2\chi_2^2
+        \right]\\[15pt]
+        &= 264 \chi_1^2\chi_2^2\\[15pt]
     \quad \Rightarrow \quad
     \frac{1}{24}\frac{\partial^4 B_{22}}{\partial y^4}\bigg|_{y=1}
-        = 11 v^2 = 11 \chi_1^2\chi_2^2 \; ,
+        &= 11 \chi_1^2\chi_2^2 , \\[14pt]
+        &\underset{\Delta\chi\rightarrow 0^{+}}{\rightarrow} 11\chi_1^4 = \; \mathcal{O}(1) \; \\[10pt]
 \end{align*}
 ```
 
@@ -489,11 +489,14 @@ so that, exactly,
 
 ```math
 \begin{align*}
-    B_{22} = \; &8(\chi_1-\chi_2)^4
+    B_{22} &=
+        \sum_{k=0}^{4} \frac{1}{k!}
+        \frac{\partial^k B_{22}}{\partial y^k}\bigg|_{y=1} (y-1)^k \; \\[15pt]
+    &= 8(\chi_1-\chi_2)^4
         + 4(\chi_1-\chi_2)^2\left(7\chi_1^2 - 2\chi_1\chi_2 + 7\chi_2^2\right)(y-1) \\
-        &+ 2\left(7\chi_1^4 - 24\chi_1^3\chi_2 + 40\chi_1^2\chi_2^2 - 24\chi_1\chi_2^3
+        &\quad+ 2\left(7\chi_1^4 - 24\chi_1^3\chi_2 + 40\chi_1^2\chi_2^2 - 24\chi_1\chi_2^3
             + 7\chi_2^4\right)(y-1)^2 \\
-        &- 4\chi_1\chi_2\left(4\chi_1^2 - 11\chi_1\chi_2 + 4\chi_2^2\right)(y-1)^3
+        &\quad- 4\chi_1\chi_2\left(4\chi_1^2 - 11\chi_1\chi_2 + 4\chi_2^2\right)(y-1)^3
         + 11 \chi_1^2\chi_2^2 (y-1)^4 \; . \quad \quad (3.8)
 \end{align*}
 ```
@@ -504,19 +507,29 @@ Now count the orders, remembering (D.4) and (2.4), ``(\chi_1-\chi_2) = -p\Delta\
 ```math
 \begin{align*}
     \mathrm{1st \; term} \; &: \quad
-        \mathcal{O}(\Delta\chi^4) \cdot 1 = \mathcal{O}(\Delta\chi^4)
+        B_{22}\big|_{y=1} \cdot 1 &&=
+        \mathcal{O}(\Delta\chi^4) \cdot 1 
+        &&= \mathcal{O}(\Delta\chi^4)
         &&\Longrightarrow \; \mathrm{keep} \; , \\[6pt]
     \mathrm{2nd \; term} \; &: \quad
-        \mathcal{O}(\Delta\chi^2) \cdot \mathcal{O}(\Delta\chi^2) = \mathcal{O}(\Delta\chi^4)
+        \frac{\partial B_{22}}{\partial y}\bigg|_{y=1}(y-1) &&=
+        \mathcal{O}(\Delta\chi^2) \cdot \mathcal{O}(\Delta\chi^2) 
+        &&= \mathcal{O}(\Delta\chi^4)
         &&\Longrightarrow \; \mathrm{keep} \; , \\[6pt]
     \mathrm{3rd \; term} \; &: \quad
-        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi^4) = \mathcal{O}(\Delta\chi^4)
+        \frac{1}{2}\frac{\partial^2 B_{22}}{\partial y^2}\bigg|_{y=1} (y-1)^2 &&= 
+        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi^4) 
+        &&= \mathcal{O}(\Delta\chi^4)
         &&\Longrightarrow \; \mathrm{keep} \; , \\[6pt]
     \mathrm{4th \; term} \; &: \quad
-        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi^6) = \mathcal{O}(\Delta\chi^6)
+        \frac{1}{6}\frac{\partial^3 B_{22}}{\partial y^3}\bigg|_{y=1}(y-1)^3 &&=
+        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi^6) 
+        &&= \mathcal{O}(\Delta\chi^6)
         &&\Longrightarrow \; \mathrm{drop} \; , \\[6pt]
     \mathrm{5th \; term} \; &: \quad
-        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi^8) = \mathcal{O}(\Delta\chi^8)
+        \frac{1}{24}\frac{\partial^4 B_{22}}{\partial y^4}\bigg|_{y=1}(y-1)^4 &&=
+        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi^8) 
+        &&= \mathcal{O}(\Delta\chi^8)
         &&\Longrightarrow \; \mathrm{drop} \; .
 \end{align*}
 ```
@@ -526,14 +539,27 @@ at ``\chi_1 = \chi_2`` (where ``7-2+7 = 12`` and ``7-24+40-24+7 = 6``):
 
 ```math
 \begin{align*}
-    \mathrm{1st} \; : \quad & 8(-p\Delta\chi)^4 = 8 \, p^4 \, \Delta\chi^4 \; , \\[8pt]
-    \mathrm{2nd} \; : \quad & 4 (-p\Delta\chi)^2 \cdot 12\cancel{\chi_1^2} \cdot
-        \left[- \frac{(1-p^2)}{2\cancel{\chi_1^2}}\Delta\chi^2\right]
-        = -24 \, p^2(1-p^2) \, \Delta\chi^4 \; , \\[8pt]
-    \mathrm{3rd} \; : \quad & 2 \cdot 6 \, \chi_1^4 \cdot
-        \left[- \frac{(1-p^2)}{2\chi_1^2}\Delta\chi^2\right]^{2}
-        = 12 \, \cancel{\chi_1^4} \, \frac{(1-p^2)^2}{4\cancel{\chi_1^4}}\Delta\chi^4
-        = 3 \, (1-p^2)^2 \, \Delta\chi^4 \; ,
+&\quad(D.4) : \quad \chi_2 := \chi_1 + p \, \Delta\chi\\[10pt]
+&\quad (2.3\mathrm{a}): \quad y-1  \underset{\Delta\chi\rightarrow 0^{+}}{\sim}  - \frac{(1-p^2)}{2\chi_1^2}\Delta\chi^2\\[15pt]
+    \mathrm{1st} \; : \left[B_{22}\big|_{y=1} \cdot 1 \right]\bigg|_{(D.4)} 
+        &= \left[8(\chi_1-\chi_2)^4\right]\bigg|_{(D.4)}
+        = \quad  8(-p\Delta\chi)^4  \\
+        &= 8 \, p^4 \, \Delta\chi^4 \; , \\[8pt]
+    \mathrm{2nd} \; : \left[\frac{\partial B_{22}}{\partial y}\bigg|_{y=1}(y-1)\right]\bigg|_{(D.4)} 
+        &= \left[4(\chi_1-\chi_2)^2\left(7\chi_1^2 - 2\chi_1\chi_2 + 7\chi_2^2\right)(y-1)\right]\bigg|_{(D.4)}\\
+        &= \quad  4 (-p\Delta\chi)^2 \cdot (7-2+7)\cancel{\chi_1^2} \cdot
+        \left[- \frac{(1-p^2)}{2\cancel{\chi_1^2}}\Delta\chi^2\right]\\
+        &= -24 \, p^2(1-p^2) \, \Delta\chi^4 \; , \\[8pt]
+    \mathrm{3rd} \; :
+        \left[\frac{1}{2}\frac{\partial^2 B_{22}}{\partial y^2}\bigg|_{y=1} (y-1)^2 \right]\bigg|_{(D.4)}
+        &=\left[
+            2\left(7\chi_1^4 - 24\chi_1^3\chi_2 + 40\chi_1^2\chi_2^2 - 24\chi_1\chi_2^3
+            + 7\chi_2^4\right)(y-1)^2
+        \right]\bigg|_{(D.4)} \\
+        &= \quad  2 \cdot 6 \, \chi_1^4 \cdot
+        \left[- \frac{(1-p^2)}{2\chi_1^2}\Delta\chi^2\right]^{2}\\
+        &= 12 \, \cancel{\chi_1^4} \, \frac{(1-p^2)^2}{4\cancel{\chi_1^4}}\Delta\chi^4\\
+        &= 3 \, (1-p^2)^2 \, \Delta\chi^4 \; ,
 \end{align*}
 ```
 
