@@ -88,6 +88,8 @@
 
 - BUG FIX in the docstring of `integrand_ξ_GNC_Newtonian_Lensing`: the `b_1` part of `J^{delta kappa}_{02}` is written as `[(9y^2+11) f_1 - 7(y^2+3) b_1] s_1^2 chi_2`, with a minus sign, while the code has a plus; the difference is `14 b_1 chi_2 s_1^2 (y^2+3)`. It matters: with the docstring sign the bracket does NOT vanish at the singular point (it gives `-5 s_1^2`), so `J_02` would diverge as `Dchi_2^-2` and the limit of the family would pick up an extra `-b_1 s_1^3 sigma_-2/6`. The code is the correct one; the discrepancy is flagged in a warning box on the Family 3 page, and the docstring still needs fixing;
 
+- DOCSTRING FIX: the docstrings of `integrand_ξ_GNC_Newtonian_Lensing` and `integrand_ξ_GNCxLD_Newtonian_Lensing` wrote the `b_1` part of `J^{delta kappa}_{02}` as `[(9y^2+11) f_1 - 7(y^2+3) b_1] s_1^2 chi_2`, with a minus sign, while the code has a plus (4 occurrences, 2 per file, each docstring appearing once per method signature). The difference is `14 b_1 chi_2 s_1^2 (y^2+3)`: with the minus the bracket does NOT vanish at the singular point (it gives `-5 s_1^2`), `J_02` would diverge as `Dchi_2^-2` and the `Dchi -> 0` limit of that family would pick up a spurious `-b_1 s_1^3 sigma_-2/6`. Only the docstrings were wrong; the code is untouched. Every other `J` reproduced in the `Delta chi -> 0` pages - Families 1, 2, 4, 5, 7 and 8 - was compared symbolically against its code and matches;
+
 
 ## development branch qls
 

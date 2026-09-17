@@ -145,7 +145,7 @@ with
             \\right. \\nonumber \\\\
             &\\left.\\qquad \\qquad\\qquad
             \\left[
-                (9 y^2 + 11) f_1 - 7 (y^2 + 3) b_1
+                (9 y^2 + 11) f_1 + 7 (y^2 + 3) b_1
             \\right] s_1^2 \\chi_2 -
             2 y \\left[7 b_1 + 3 f_1 \\right] s_1^3
         \\right\\} 
@@ -341,7 +341,7 @@ with
             \\right. \\nonumber \\\\
             &\\left.\\qquad \\qquad\\qquad
             \\left[
-                (9 y^2 + 11) f_1 - 7 (y^2 + 3) b_1
+                (9 y^2 + 11) f_1 + 7 (y^2 + 3) b_1
             \\right] s_1^2 \\chi_2 -
             2 y \\left[7 b_1 + 3 f_1 \\right] s_1^3
         \\right\\} 
