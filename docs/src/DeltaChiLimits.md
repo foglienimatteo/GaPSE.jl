@@ -27,10 +27,10 @@ We report here the important definitions:
 ![Positions of the observer $\mathbf{O}$ and of the galaxies $\vs_1$ and $\vs_2$, together with their separation $\vs = \vs_2 - \vs_2$](assets/sketches/sketch_s1-s2-s-1.png)
 
 ```math
-\Delta\chi := \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \, \chi_2 \,y} \quad \quad (1.1) \\[10pt]
+\Delta\chi := \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \, \chi_2 \,y} \quad \quad (D.1) \\[10pt]
 
-\Delta\chi_1 := \sqrt{\chi_1^2 + s_2^2 - 2 \, \chi_1 \,s_2 \,y} \quad \quad (1.2) \\[10pt]
-\Delta\chi_2 := \sqrt{s_1^2 + \chi_2^2 - 2 \,s_1 \,\ \chi_2 \,y} \quad \quad (1.3)  \\[10pt]
+\Delta\chi_1 := \sqrt{\chi_1^2 + s_2^2 - 2 \, \chi_1 \,s_2 \,y} \quad \quad (D.2) \\[10pt]
+\Delta\chi_2 := \sqrt{s_1^2 + \chi_2^2 - 2 \,s_1 \,\ \chi_2 \,y} \quad \quad (D.3)  \\[10pt]
 
 (1.4\mathrm{a}): \quad y = \cos{\theta} := \hat{\mathbf{s}}_1 \cdot \hat{\mathbf{s}}_2 \quad \Rightarrow \quad \; -1 \leq y \leq 1 \\[16pt]
 ```
@@ -135,14 +135,14 @@ the limit is a joint one and must be checked to be independent of the direction 
 We therefore parametrise the approach with a single parameter ``p``,
 
 ```math
-    \chi_2 := \chi_1 + p \, \Delta\chi  \quad \quad (2.2)\\[10pt]
+    \chi_2 := \chi_1 + p \, \Delta\chi  \quad \quad (D.4)\\[10pt]
     |\chi_1 - \chi_2| \leq \Delta\chi \quad \Rightarrow \quad |p| \leq 1
 ```
 NOTE: the bound on ``p`` follows from ``|\chi_1 - \chi_2| \leq \Delta\chi``
 
 ```math
 \begin{align*}
-\mathrm{Inverting \; }(1.1)\; : \quad 
+\mathrm{Inverting \; }(D.1)\; : \quad 
     y &= \frac{\chi_1^2 + \chi_2^2 - \Delta\chi^2}{2 \, \chi_1 \chi_2} \\[10pt]
       &= \frac{\chi_1^2 + \chi_1^2 + p^2 \Delta\chi^2 + 2 \chi_1 p \Delta \chi - \Delta\chi^2}{2 \, \chi_1 (\chi_1 + p \Delta \chi)} \\[10pt]
       &= \frac{2\chi_1^2 + 2 \chi_1 p \Delta \chi - (1-p^2)\Delta\chi^2}{2 \, \chi_1 (\chi_1 + p \Delta \chi)} \\[10pt]
@@ -206,7 +206,8 @@ silently throws away every term quadratic in ``(\chi_1 - \chi_2)``, which is exa
 as the ``(y-1)`` terms that are being kept.
 
 A concrete example, the one that matters most below. Take the square bracket of
-``J^{\kappa\kappa}_{00}``:
+``J^{\kappa\kappa}_{00}``, i.e. Eq.(D.5) of
+[Family 1](DeltaChiLimits_1_LensingLensing.md):
 
 ```math
     B_{00} := 8 y (\chi_1^2 + \chi_2^2) - \chi_1\chi_2 (9y^2+7) \; .
@@ -232,7 +233,7 @@ The safe recipe, used systematically in every family page, is:
 
 > Rewrite the bracket **exactly** — no approximation — as a combination of the vanishing
 > quantities ``(\chi_1-\chi_2)``, ``(y-1)`` and ``(y^2-1)``, with coefficients that are
-> regular at the singular point. Only then substitute the leading orders (2.2), (2.3a),
+> regular at the singular point. Only then substitute the leading orders (D.4), (2.3a),
 > (2.3b).
 
 
@@ -252,7 +253,7 @@ Legendre ones evaluated at the direction parameter ``p``:
 
 This is not a coincidence. The ``J`` coefficients come from expanding the TPCF kernels in
 Legendre polynomials of ``y = \cos\theta``, and along the path ``\chi_2 = \chi_1 + p\Delta\chi``
-the angle and the radial separation are locked together by Eq.(1.1) in such a way that
+the angle and the radial separation are locked together by Eq.(D.1) in such a way that
 ``p`` inherits the role of ``\cos\theta``. It is a useful check when redoing any of these
 expansions: a leading coefficient that is *not* a low-order Legendre polynomial in ``p`` is
 a good sign that a term has been lost.
@@ -273,12 +274,41 @@ structure, and therefore the same derivation. One page each:
 |  7  | [the ``\Delta\chi^2 \times`` (vanishing factor) terms](DeltaChiLimits_7_VanishingFactor.md) | ``\Delta\chi^2 \, G \left(\cdots + I_0^2\right)``                                   | ``0``                                       |
 |  8  | [the ``J_{22}I_2^2 + J_{31}I_1^3`` terms](DeltaChiLimits_8_J22J31.md) | ``J_{22}I_2^2 + J_{31}I_1^3``                                                       | ``\frac{A}{3}\sigma_2``                     |
 
-!!! note "Equation numbering"
-    Equations are numbered **globally** across these nine pages, the prefix identifying the
-    page they belong to: ``(1.x)`` and ``(2.x)`` are on this page, ``(3.x)`` on Family 1,
-    ``(4.x)`` on Family 2, and so on up to ``(10.x)`` on Family 8. A family page sometimes
-    quotes an equation derived on another one — in that case the equation is reproduced in
-    full where it is used, and its prefix tells where it comes from.
+## Index of the definitions
+
+Every definition carries a ``(\mathrm{D}.n)`` number, so that it can be referred to from
+anywhere without being restated. The first four are shared by all the families and are
+repeated in the recap of each page; the others are local to the family that uses them.
+
+| | definition | where |
+|:-:|:--|:--|
+| ``(\mathrm{D}.1)`` | ``\Delta\chi := \sqrt{\chi_1^2+\chi_2^2-2\chi_1\chi_2 y}`` | this page, Families [1](DeltaChiLimits_1_LensingLensing.md), [6](DeltaChiLimits_6_Ichi4Tilde.md), [8](DeltaChiLimits_8_J22J31.md) |
+| ``(\mathrm{D}.2)`` | ``\Delta\chi_1 := \sqrt{\chi_1^2+s_2^2-2\chi_1 s_2 y}`` | this page, Families [2](DeltaChiLimits_2_LensingDoppler.md), [4](DeltaChiLimits_4_LensingLocalGP.md) |
+| ``(\mathrm{D}.3)`` | ``\Delta\chi_2 := \sqrt{s_1^2+\chi_2^2-2 s_1\chi_2 y}`` | this page, Families [3](DeltaChiLimits_3_NewtonianLensing.md), [5](DeltaChiLimits_5_NewtonianIntegratedGP.md), [7](DeltaChiLimits_7_VanishingFactor.md) |
+| ``(\mathrm{D}.4)`` | ``\chi_2 := \chi_1 + p \, \Delta\chi`` (the direction of approach) | this page and every family |
+| ``(\mathrm{D}.5)`` | ``B_{00} := 8y(\chi_1^2+\chi_2^2) - \chi_1\chi_2(9y^2+7)`` | [Family 1](DeltaChiLimits_1_LensingLensing.md) |
+| ``(\mathrm{D}.6)`` | ``B_{02} := 4y(\chi_1^2+\chi_2^2) - \chi_1\chi_2(3y^2+5)`` | [Family 1](DeltaChiLimits_1_LensingLensing.md) |
+| ``(\mathrm{D}.7)`` | ``B_{22} := 2(\chi_1^4+\chi_2^4)(7y^2-3) - \dots`` | [Family 1](DeltaChiLimits_1_LensingLensing.md) |
+| ``(\mathrm{D}.8)`` | ``u := \chi_1^2 + \chi_2^2`` , ``v := \chi_1\chi_2`` | [Family 1](DeltaChiLimits_1_LensingLensing.md) |
+| ``(\mathrm{D}.9)`` | ``N_{02}`` , the numerator of ``J_{02}`` | [Family 2](DeltaChiLimits_2_LensingDoppler.md) |
+| ``(\mathrm{D}.10)`` | ``N_{04}`` , the numerator of ``J_{04}`` | [Family 2](DeltaChiLimits_2_LensingDoppler.md) |
+| ``(\mathrm{D}.11)`` | ``N_{02}^{(b)}`` , the bias part of the ``J_{02}`` numerator | [Family 3](DeltaChiLimits_3_NewtonianLensing.md) |
+| ``(\mathrm{D}.12)`` | ``N_{02}^{(f)}`` , its growth-rate part | [Family 3](DeltaChiLimits_3_NewtonianLensing.md) |
+| ``(\mathrm{D}.13)`` | ``N_{04}`` , the numerator of ``J_{04}`` | [Family 3](DeltaChiLimits_3_NewtonianLensing.md) |
+| ``(\mathrm{D}.14)`` | ``F := 2y\chi_1^2 - \chi_1 s_2(y^2+3) + 2y s_2^2`` | [Family 4](DeltaChiLimits_4_LensingLocalGP.md) |
+| ``(\mathrm{D}.15)`` | ``J_{20} := y\,\Delta\chi_1^2/2`` | [Family 4](DeltaChiLimits_4_LensingLocalGP.md) |
+| ``(\mathrm{D}.16)`` | ``F := f\left[(3y^2-1)\chi_2^2 - 4y s_1\chi_2 + 2 s_1^2\right]`` | [Family 5](DeltaChiLimits_5_NewtonianIntegratedGP.md) |
+| ``(\mathrm{D}.17)`` | ``J_{20} := -\Delta\chi_2^2 (3b+f)`` | [Family 5](DeltaChiLimits_5_NewtonianIntegratedGP.md) |
+| ``(\mathrm{D}.18)`` | ``G := \chi_2 y - s_1`` | [Family 7](DeltaChiLimits_7_VanishingFactor.md) |
+| ``(\mathrm{D}.19)`` | ``J_{22} := \frac{A}{2}\chi_a\chi_b(y^2-1)`` , ``J_{31} := A y \Delta\chi^2`` | [Family 8](DeltaChiLimits_8_J22J31.md) |
+
+!!! note "Equation numbering\"
+    Equations are numbered **globally** across these nine pages. Definitions carry the
+    ``(\mathrm{D}.n)`` prefix of the index above, wherever they live; everything else is
+    numbered by the page it belongs to — ``(1.x)`` and ``(2.x)`` on this page, ``(3.x)`` on
+    Family 1, ``(4.x)`` on Family 2, and so on up to ``(10.x)`` on Family 8. A family page
+    sometimes quotes an equation derived on another one — in that case the equation is
+    reproduced in full where it is used, and its prefix tells where it comes from.
 
 
 ## Summary

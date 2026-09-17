@@ -78,6 +78,8 @@
 
 - same treatment for the numerators of Families 2 and 3, whose vanishing orders were previously quoted without proof: `N_02` and `N_04` of Lensing x Doppler are Taylor-expanded in `(y-1)`, their `k=0` coefficients factored as `4(chi1-s2)^3(chi1+2s2)` and half of it, their `k=1` ones as `2(chi1-s2)(...)`, the `k>=2` ones dropped by the order count, and the two surviving contributions summed to `-3 chi1 p (3p^2+1) Dchi1^3` and `3 chi1 p (3-5p^2) Dchi1^3`. Likewise `N_02^(b)`, `N_02^(f)` and `N_04` of Newtonian x Lensing, the last one with the same explicit order-counting table used for `B_22`. All the factorisations and derivatives were verified symbolically;
 
+- every definition in the `Delta chi -> 0` documentation now carries a `(D.n)` number and is referenced by it throughout: `(D.1)`-`(D.3)` the three separations `Dchi`, `Dchi_1`, `Dchi_2`, `(D.4)` the direction of approach `chi2 := chi1 + p Dchi` (these four were previously numbered `(1.1)`-`(1.3)` and `(2.2)`, and are renumbered), then `(D.5)`-`(D.19)` for the symbols each family introduces - `B_00`, `B_02`, `B_22`, the symmetric pair `u`, `v`, the numerators `N_02`, `N_04`, `N_02^(b)`, `N_02^(f)`, the factors `F`, `J_20`, `G`, `J_22`, `J_31`. The introduction gained an "Index of the definitions" table listing all nineteen with a link to the page that uses them, and the numbering note now states that definitions carry the `D` prefix wherever they live, while everything else stays numbered by its page;
+
 
 ## development branch qls
 

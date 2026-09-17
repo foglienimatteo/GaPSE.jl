@@ -10,7 +10,7 @@ asymptotics in [The ``I_\ell^n`` integrals](IlnIntegrals.md).
 ``s_1`` and ``\chi_2``, so the relevant separation is
 
 ```math
-    \Delta\chi_2 := \sqrt{s_1^2 + \chi_2^2 - 2 \, s_1 \, \chi_2 \, y} \quad \quad (1.3)
+    \Delta\chi_2 := \sqrt{s_1^2 + \chi_2^2 - 2 \, s_1 \, \chi_2 \, y} \quad \quad (D.3)
 ```
 
 ```math
@@ -54,11 +54,11 @@ I_0^2           &\sim \sigma_2 \, s^{-2}               &&\rightarrow +\infty
 independent of the direction of approach; we parametrise the latter with a single ``p``,
 
 ```math
-    \chi_2 := s_1 + p \, \Delta\chi_2  \quad \quad (2.2) \\[10pt]
+    \chi_2 := s_1 + p \, \Delta\chi_2  \quad \quad (D.4) \\[10pt]
     |s_1 - \chi_2| \leq \Delta\chi_2 \quad \Rightarrow \quad |p| \leq 1
 ```
 
-**and its two consequences**, obtained by inverting (1.3):
+**and its two consequences**, obtained by inverting (D.3):
 
 ```math
 \Rightarrow \quad 
@@ -82,7 +82,7 @@ so a term **quadratic** in ``(s_1 - \chi_2)`` contributes at the **same order** 
 **linear** in ``(y-1)``. One must therefore never set ``s_1 = \chi_2`` first and expand in ``y``
 afterwards: the safe recipe is to rewrite every vanishing bracket **exactly** as a
 combination of ``(s_1-\chi_2)``, ``(y-1)`` and ``(y^2-1)``, with coefficients that are regular
-at the singular point, and only then substitute (2.2), (2.3a), (2.3b).
+at the singular point, and only then substitute (D.4), (2.3a), (2.3b).
 
 ## The integrand
 
@@ -99,13 +99,13 @@ with (``f`` the growth rate and ``b`` the bias, both evaluated at ``s_1``)
 \begin{align*}
     J_{00} &= \frac{1}{5}\left[ f \chi_2 (3y^2-1) - 3 y s_1 f - 5 y s_1 b \right] \; , \\[6pt]
     J_{02} &= \frac{1}{14\,\Delta\chi_2^2}\Big[
-        7 s_1 b \underbrace{\left(-2\chi_2^2 y + \chi_2 s_1 (y^2+3) - 2 y s_1^2\right)}_{=: \; N_{02}^{(b)}} \\
+        7 s_1 b \underbrace{\left(-2\chi_2^2 y + \chi_2 s_1 (y^2+3) - 2 y s_1^2\right)}_{=: \; N_{02}^{(b)} \; , \; (\mathrm{D}.11)} \\
         &\phantom{= \frac{1}{14\,\Delta\chi_2^2}\Big[} + f\underbrace{\left(
             4\chi_2^3 (3y^2-1) - 2\chi_2^2 y s_1 (3y^2+8) + \chi_2 s_1^2 (9y^2+11) - 6 y s_1^3
-        \right)}_{=: \; N_{02}^{(f)}} \Big] \; , \\[6pt]
+        \right)}_{=: \; N_{02}^{(f)} \; , \; (\mathrm{D}.12)} \Big] \; , \\[6pt]
     J_{04} &= \frac{3 \, f}{70\,\Delta\chi_2^4} \underbrace{\Big[
         \chi_2^5 (6y^2-2) + 6\chi_2^4 y s_1 (y^2-3) - \chi_2^3 s_1^2 (y^4+12y^2-21)
-        + 2\chi_2^2 y s_1^3 (y^2+3) - 12 \chi_2 s_1^4 + 4 y s_1^5 \Big]}_{=: \; N_{04}} \; .
+        + 2\chi_2^2 y s_1^3 (y^2+3) - 12 \chi_2 s_1^4 + 4 y s_1^5 \Big]}_{=: \; N_{04} \; , \; (\mathrm{D}.13)} \; .
 \end{align*}
 ```
 
@@ -145,7 +145,8 @@ direction-independence is automatic for this term.
 
 ``J_{02}`` carries ``\Delta\chi_2^{-2}`` and ``I_2^0`` carries ``\Delta\chi_2^{+2}``, so the
 two exactly compensate and the product is **finite**: what decides is the order at which the
-two numerators vanish. They both vanish at the singular point:
+two numerators ``N_{02}^{(b)}`` and ``N_{02}^{(f)}``, Eqs.(D.11) and (D.12), vanish. They
+both vanish at the singular point:
 
 ```math
 \begin{align*}
@@ -253,7 +254,7 @@ but it multiplies a **vanishing** ``I_2^0``:
 ### Term 3: ``J_{04} I_4^0``
 
 This is the delicate one: ``J_{04} \propto \Delta\chi_2^{-4}`` against
-``I_4^0 \propto \Delta\chi_2^{4}``, so ``N_{04}`` must be expanded to **fourth** order, and
+``I_4^0 \propto \Delta\chi_2^{4}``, so ``N_{04}``, Eq.(D.13), must be expanded to **fourth** order, and
 checking that it vanishes at the point is nowhere near enough. It does vanish there,
 
 ```math
@@ -301,7 +302,7 @@ Counting orders exactly as for ``B_{22}``, with ``(y-1)^k = \mathcal{O}(\Delta\c
 \end{align*}
 ```
 
-Substituting (2.2) and (2.3a), with the regular factors at ``\chi_2 = s_1``
+Substituting (D.4) and (2.3a), with the regular factors at ``\chi_2 = s_1``
 (``1+1 = 2``, ``1+2+6+3 = 12``, ``1-3+3+1 = 2``):
 
 ```math

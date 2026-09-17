@@ -10,7 +10,7 @@ asymptotics in [The ``I_\ell^n`` integrals](IlnIntegrals.md).
 ``s_1`` and ``\chi_2``, so the relevant separation is
 
 ```math
-    \Delta\chi_2 := \sqrt{s_1^2 + \chi_2^2 - 2 \, s_1 \, \chi_2 \, y} \quad \quad (1.3)
+    \Delta\chi_2 := \sqrt{s_1^2 + \chi_2^2 - 2 \, s_1 \, \chi_2 \, y} \quad \quad (D.3)
 ```
 
 ```math
@@ -54,11 +54,11 @@ I_0^2           &\sim \sigma_2 \, s^{-2}               &&\rightarrow +\infty
 independent of the direction of approach; we parametrise the latter with a single ``p``,
 
 ```math
-    \chi_2 := s_1 + p \, \Delta\chi_2  \quad \quad (2.2) \\[10pt]
+    \chi_2 := s_1 + p \, \Delta\chi_2  \quad \quad (D.4) \\[10pt]
     |s_1 - \chi_2| \leq \Delta\chi_2 \quad \Rightarrow \quad |p| \leq 1
 ```
 
-**and its two consequences**, obtained by inverting (1.3):
+**and its two consequences**, obtained by inverting (D.3):
 
 ```math
 \Rightarrow \quad 
@@ -82,7 +82,7 @@ so a term **quadratic** in ``(s_1 - \chi_2)`` contributes at the **same order** 
 **linear** in ``(y-1)``. One must therefore never set ``s_1 = \chi_2`` first and expand in ``y``
 afterwards: the safe recipe is to rewrite every vanishing bracket **exactly** as a
 combination of ``(s_1-\chi_2)``, ``(y-1)`` and ``(y^2-1)``, with coefficients that are regular
-at the singular point, and only then substitute (2.2), (2.3a), (2.3b).
+at the singular point, and only then substitute (D.4), (2.3a), (2.3b).
 
 ## The integrand
 
@@ -95,13 +95,13 @@ These carry an overall ``\Delta\chi_2^2`` together with a geometric factor
 since the limit is zero), multiplying the whole parenthesis:
 
 ```math
-    \Delta\chi_2^2 \, \underbrace{(\chi_2 y - s_1)}_{=: \; G} \left(
+    \Delta\chi_2^2 \, \underbrace{(\chi_2 y - s_1)}_{=: \; G \; , \; (\mathrm{D}.18)} \left(
         \frac{I_0^0}{15} + \frac{2 I_2^0}{21} + \frac{I_4^0}{35} + I_0^2 \right) \; .
 ```
 
 ### Term 1: the geometric factor ``G``
 
-``G`` vanishes at the singular point, ``y \rightarrow 1`` and ``\chi_2 \rightarrow s_1``
+``G``, Eq.(D.18), vanishes at the singular point, ``y \rightarrow 1`` and ``\chi_2 \rightarrow s_1``
 giving ``s_1 - s_1 = 0``, so it has to be decomposed — but this time the decomposition is a
 single line, and the ``(\chi_2 - s_1)`` factor appears **linearly**:
 
@@ -116,7 +116,7 @@ single line, and the ``(\chi_2 - s_1)`` factor appears **linearly**:
 \end{align*}
 ```
 
-By (2.4) the first term dominates — compare with the ``B_{00}`` of Family 1,
+By (2.4) the first term dominates — compare with the ``B_{00}`` of Family 1, Eq.(D.5) there,
 
 ```math
     B_{00} = \underbrace{8(\chi_1-\chi_2)^2}_{\mathcal{O}(\Delta\chi^2)}

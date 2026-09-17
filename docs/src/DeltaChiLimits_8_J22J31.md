@@ -10,7 +10,7 @@ asymptotics in [The ``I_\ell^n`` integrals](IlnIntegrals.md).
 ``\chi_a`` and ``\chi_b``, so the relevant separation is
 
 ```math
-    \Delta\chi := \sqrt{\chi_a^2 + \chi_b^2 - 2 \, \chi_a \, \chi_b \, y} \quad \quad (1.1)
+    \Delta\chi := \sqrt{\chi_a^2 + \chi_b^2 - 2 \, \chi_a \, \chi_b \, y} \quad \quad (D.1)
 ```
 
 ```math
@@ -54,11 +54,11 @@ I_0^2           &\sim \sigma_2 \, s^{-2}               &&\rightarrow +\infty
 independent of the direction of approach; we parametrise the latter with a single ``p``,
 
 ```math
-    \chi_b := \chi_a + p \, \Delta\chi  \quad \quad (2.2) \\[10pt]
+    \chi_b := \chi_a + p \, \Delta\chi  \quad \quad (D.4) \\[10pt]
     |\chi_a - \chi_b| \leq \Delta\chi \quad \Rightarrow \quad |p| \leq 1
 ```
 
-**and its two consequences**, obtained by inverting (1.1):
+**and its two consequences**, obtained by inverting (D.1):
 
 ```math
 \Rightarrow \quad 
@@ -82,7 +82,7 @@ so a term **quadratic** in ``(\chi_a - \chi_b)`` contributes at the **same order
 **linear** in ``(y-1)``. One must therefore never set ``\chi_a = \chi_b`` first and expand in ``y``
 afterwards: the safe recipe is to rewrite every vanishing bracket **exactly** as a
 combination of ``(\chi_a-\chi_b)``, ``(y-1)`` and ``(y^2-1)``, with coefficients that are regular
-at the singular point, and only then substitute (2.2), (2.3a), (2.3b).
+at the singular point, and only then substitute (D.4), (2.3a), (2.3b).
 
 ## The integrand
 
@@ -95,8 +95,9 @@ They all share the structure
 
 ```math
     J_{22} \, I_2^2 + J_{31} \, I_1^3 \; , \qquad
-    J_{22} = \frac{A}{2}\,\chi_a \chi_b \, (y^2-1) \; , \qquad
-    J_{31} = A \, y \, \Delta\chi^2 \; ,
+    J_{22} := \frac{A}{2}\,\chi_a \chi_b \, (y^2-1) \; , \qquad
+    J_{31} := A \, y \, \Delta\chi^2 \; ,
+    \quad \quad (\mathrm{D}.19)
 ```
 
 with
@@ -112,9 +113,9 @@ with
 
 ### Term 1: ``J_{22} I_2^2``
 
-``J_{22}`` carries **no** negative power of ``\Delta\chi``, and its only vanishing factor is
+``J_{22}`` of Eq.(D.19) carries **no** negative power of ``\Delta\chi``, and its only vanishing factor is
 ``(y^2-1)`` on its own — there is no bracket to decompose, because nothing else cancels
-against it. Compare with the ``B_{00}`` of Family 1, where
+against it. Compare with the ``B_{00}`` of Family 1, Eq.(D.5) there, where
 
 ```math
     B_{00} = 8(\chi_1-\chi_2)^2 + 8(y-1)(\chi_1^2+\chi_2^2) - 9\chi_1\chi_2(y^2-1) \; :
@@ -148,7 +149,7 @@ Since ``I_2^2 \rightarrow \sigma_0/15`` is **finite**, the product vanishes:
 
 ### Term 2: ``J_{31} I_1^3``
 
-``J_{31}`` is regular and its ``\Delta\chi^2`` cancels the ``\Delta\chi^{-2}`` of ``I_1^3``:
+``J_{31}``, also defined in Eq.(D.19), is regular and its ``\Delta\chi^2`` cancels the ``\Delta\chi^{-2}`` of ``I_1^3``:
 
 ```math
 \begin{align*}
