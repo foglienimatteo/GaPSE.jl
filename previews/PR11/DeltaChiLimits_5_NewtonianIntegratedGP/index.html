@@ -27,46 +27,90 @@ I_0^2           &amp;\sim \sigma_2 \, s^{-2}               &amp;&amp;\rightarrow
     \quad \quad (2.3\mathrm{b}) \\[10pt]\]</p><p><strong>The trap to avoid.</strong> The two vanishing quantities have <strong>different orders</strong>,</p><p class="math-container">\[    \chi_2 - s_1 = p \, \Delta\chi_2 = \mathcal{O}(\Delta\chi_2)
     \qquad \qquad
     y - 1 = \mathcal{O}(\Delta\chi_2^2)
-    \quad \quad (2.4)\]</p><p>so a term <strong>quadratic</strong> in <span>$(s_1 - \chi_2)$</span> contributes at the <strong>same order</strong> as a term <strong>linear</strong> in <span>$(y-1)$</span>. One must therefore never set <span>$s_1 = \chi_2$</span> first and expand in <span>$y$</span> afterwards: the safe recipe is to rewrite every vanishing bracket <strong>exactly</strong> as a combination of <span>$(s_1-\chi_2)$</span>, <span>$(y-1)$</span> and <span>$(y^2-1)$</span>, with coefficients that are regular at the singular point, and only then substitute (D.4), (2.3a), (2.3b).</p><h2 id="The-integrand"><a class="docs-heading-anchor" href="#The-integrand">The integrand</a><a id="The-integrand-1"></a><a class="docs-heading-anchor-permalink" href="#The-integrand" title="Permalink"></a></h2><p>Concerned functions: <code>integrand_ξ_GNC_Newtonian_IntegratedGP</code>, <code>integrand_ξ_GNCxLD_Newtonian_IntegratedGP</code>. The sum to be taken to the limit is</p><p class="math-container">\[    F \left(\frac{I_0^0}{15} + \frac{2\,I_2^0}{21} + \frac{I_4^0}{35}\right)
-    + J_{20} \, I_0^2 \; ,\]</p><p class="math-container">\[    F := f \left[(3y^2-1)\chi_2^2 - 4 y s_1 \chi_2 + 2 s_1^2\right] \; ,
-    \quad \quad (\mathrm{D}.16)
-    \qquad \qquad
-    J_{20} := -\Delta\chi_2^2 \, (3b + f) \; ,
-    \quad \quad (\mathrm{D}.17)\]</p><p>with <span>$f$</span> the growth rate and <span>$b$</span> the bias, both at <span>$s_1$</span>.</p><h3 id="Term-1:-the-F-group"><a class="docs-heading-anchor" href="#Term-1:-the-F-group">Term 1: the <span>$F$</span> group</a><a id="Term-1:-the-F-group-1"></a><a class="docs-heading-anchor-permalink" href="#Term-1:-the-F-group" title="Permalink"></a></h3><p>The structure is identical to Family 4, only with a different pair of distances and different numerical coefficients. <span>$F$</span>, Eq.(D.16), vanishes at the singular point,</p><p class="math-container">\[    \frac{F}{f}\bigg|_{y=1,\,\chi_2=s_1} = \left((3-1) - 4 + 2\right)s_1^2 = (2 - 4 + 2)\,s_1^2 = 0 \; ,\]</p><p>so we decompose it exactly. For reference, the two decompositions already met are</p><p class="math-container">\[    B_{00} = 8(\chi_1-\chi_2)^2 + 8(y-1)(\chi_1^2+\chi_2^2) - 9\chi_1\chi_2(y^2-1) \; ,
+    \quad \quad (2.4)\]</p><p>so a term <strong>quadratic</strong> in <span>$(s_1 - \chi_2)$</span> contributes at the <strong>same order</strong> as a term <strong>linear</strong> in <span>$(y-1)$</span>. One must therefore never set <span>$s_1 = \chi_2$</span> first and expand in <span>$y$</span> afterwards: the safe recipe is to rewrite every vanishing bracket <strong>exactly</strong> as a combination of <span>$(s_1-\chi_2)$</span>, <span>$(y-1)$</span> and <span>$(y^2-1)$</span>, with coefficients that are regular at the singular point, and only then substitute (D.4), (2.3a), (2.3b).</p><h2 id="The-integrand"><a class="docs-heading-anchor" href="#The-integrand">The integrand</a><a id="The-integrand-1"></a><a class="docs-heading-anchor-permalink" href="#The-integrand" title="Permalink"></a></h2><p>Concerned functions: <code>integrand_ξ_GNC_Newtonian_IntegratedGP</code>, <code>integrand_ξ_GNCxLD_Newtonian_IntegratedGP</code>. The GNC Newtonian-IntegratedGP function is:</p><p class="math-container">\[\begin{split}
+    \xi^{\delta \int\!\phi} ( s_1 , s_2, y ) &amp;=
+    D_1 \int_0^{s_2}\mathrm{d} \chi_2 \;
+    J^{\delta \int\!\phi}_{\alpha}\left[
+        J^{\delta \int\!\phi}_{20} I_0^2 ( \Delta \chi_2 ) +
+        \right.\nonumber \\
+        &amp;\left.\qquad
+        J^{\delta \int\!\phi}_{\beta}
+        \left(
+            \frac{1}{15} I_0^0 ( \Delta \chi_2 ) +
+            \frac{2}{21} I_2^0 ( \Delta \chi_2 ) +
+            \frac{1}{35} I_4^0 ( \Delta \chi_2 )
+        \right)
+    \right] \, ,
+\end{split}\]</p><p>with (<span>$f_1 = f(s_1)$</span> the growth rate and <span>$b_1 = b(s_1)$</span> the bias)</p><p class="math-container">\[\begin{align*}
+    J^{\delta \int\!\phi}_{\alpha} &amp;=
+    \frac{\mathcal{H}_0^2 \Omega_{\mathrm{M}0} D(\chi_2)}{3 a(\chi_2) s_2} 
+    \left[ 
+        s_2 \mathcal{R}_2 \mathcal{H}(\chi_2) ( f(\chi_2) - 1) - 5 s_{\mathrm{b}, 2} + 2
+    \right] 
+    \, , \\[6pt]
+    J^{\delta \int\!\phi}_{\beta} &amp;=
+    \underbrace{f_1 \left[ 
+        (3 y^2 - 1) \chi_2^2 - 4 y s_1 \chi_2 + 2 s_1^2
+    \right]}_{=: \; F \; , \quad (\mathrm{D}.16)}
+    \, , \\[6pt]
+    J^{\delta \int\!\phi}_{20} &amp;=
+    \underbrace{- \Delta\chi_2^2 ( 3 b_1 + f_1)}_{(\mathrm{D}.17)}
+    \, .
+\end{align*}\]</p><p>The limit to be taken is:</p><p class="math-container">\[    \lim_{\Delta\chi_2\rightarrow 0^{+}}\left[
+        F \left(\frac{I_0^0}{15} + \frac{2\,I_2^0}{21} + \frac{I_4^0}{35}\right)
+        + J_{20} \, I_0^2 \right] \; .\]</p><p>This analysis is valid for Newtonian-IntegratedGP in both the combinations (GNC and GNCxLD).</p><h3 id="Term-1:-the-F-group"><a class="docs-heading-anchor" href="#Term-1:-the-F-group">Term 1: the <span>$F$</span> group</a><a id="Term-1:-the-F-group-1"></a><a class="docs-heading-anchor-permalink" href="#Term-1:-the-F-group" title="Permalink"></a></h3><p>The structure is identical to Family 4, only with a different pair of distances and different numerical coefficients. <span>$F$</span>, Eq.(D.16), vanishes at the singular point,</p><p class="math-container">\[    \frac{F}{f_1}\bigg|_{y=1,\,\chi_2=s_1} = \left((3-1) - 4 + 2\right)s_1^2 = (2 - 4 + 2)\,s_1^2 = 0 \; ,\]</p><p>so we decompose it exactly. For reference, the two decompositions already met are</p><p class="math-container">\[    B_{00} = 8(\chi_1-\chi_2)^2 + 8(y-1)(\chi_1^2+\chi_2^2) - 9\chi_1\chi_2(y^2-1) \; ,
     \quad \quad (3.2)\]</p><p class="math-container">\[    F^{\,(\mathrm{Family\;4})} = 2(\chi_1 - s_2)^2 + 2(y-1)\left(\chi_1^2 + s_2^2\right)
         - (y^2-1)\chi_1 s_2 \; ,
     \quad \quad (6.1)\]</p><p>and this one comes out the same way:</p><p class="math-container">\[\begin{align*}
-    \frac{F}{f} &amp;= (3y^2-1)\chi_2^2 - 4 y s_1 \chi_2 + 2 s_1^2 \\[10pt]
-    3y^2-1 = 2 + 3(y^2-1) \; \rightarrow \quad
-        &amp;= 2\chi_2^2 + 3(y^2-1)\chi_2^2 - 4 y s_1 \chi_2 + 2 s_1^2 \\[10pt]
-    4y = 4 + 4(y-1) \; \rightarrow \quad
+    \frac{F}{f_1} &amp;= (3y^2-1)\chi_2^2 - 4 y s_1 \chi_2 + 2 s_1^2 \\[10pt]
+    &amp;\quad\quad 3y^2-1 = 2 + 3(y^2-1) \\[10pt]
+        &amp;= \left[2 + 3(y^2-1)\right]\chi_2^2 - 4 y s_1 \chi_2 + 2 s_1^2 \\[10pt]
+        &amp;= 2\chi_2^2 + 2 s_1^2 + 3(y^2-1)\chi_2^2 - 4 y s_1 \chi_2 \\[10pt]
+    &amp;\quad\quad 4y = 4 + 4(y-1) \\[10pt]
+        &amp;= 2\chi_2^2 + 2 s_1^2 + 3(y^2-1)\chi_2^2
+            - \left[4 + 4(y-1)\right] s_1 \chi_2 \\[10pt]
         &amp;= 2\chi_2^2 - 4 s_1\chi_2 + 2 s_1^2
             + 3(y^2-1)\chi_2^2 - 4(y-1) s_1 \chi_2 \\[10pt]
+    &amp;\quad\quad 2\chi_2^2 - 4 s_1\chi_2 + 2 s_1^2 = 2(\chi_2 - s_1)^2 \\[10pt]
         &amp;= 2(\chi_2 - s_1)^2 + 3(y^2-1)\chi_2^2 - 4(y-1) s_1 \chi_2 \; .
     \quad \quad (7.1)
 \end{align*}\]</p><p>Again the <span>$(\chi_2 - s_1)$</span> factor is <strong>quadratic</strong>, hence of the same order as the <span>$(y-1)$</span> terms. Substituting (D.4), (2.3a), (2.3b) with <span>$\chi_2 \rightarrow s_1$</span>:</p><p class="math-container">\[\begin{align*}
-    \frac{F}{f} &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-        2 \, p^2\Delta\chi_2^2
-        + 3\left[- \frac{(1-p^2)}{\cancel{s_1^2}}\Delta\chi_2^2\right]\cancel{s_1^2}
-        - 4\left[- \frac{(1-p^2)}{2\cancel{s_1^2}}\Delta\chi_2^2\right]\cancel{s_1^2} \\[10pt]
+    \frac{F}{f_1} &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        \underbrace{2 (-p\Delta\chi_2)^2}_{(\chi_2-s_1)^2}
+        + \underbrace{3\left[- \frac{(1-p^2)}{s_1^2}\Delta\chi_2^2\right]s_1^2}_{(y^2-1)}
+        - \underbrace{4\left[- \frac{(1-p^2)}{2 s_1^2}\Delta\chi_2^2\right]s_1^2}_{(y-1)} \\[10pt]
+    &amp;= 2p^2\Delta\chi_2^2 - 3(1-p^2)\Delta\chi_2^2 + 2(1-p^2)\Delta\chi_2^2 \\[10pt]
     &amp;= \left[2p^2 - 3(1-p^2) + 2(1-p^2)\right]\Delta\chi_2^2 \\[10pt]
     &amp;= \left[2p^2 - (1-p^2)\right]\Delta\chi_2^2 \\[10pt]
+    &amp;= \left[2p^2 - 1 + p^2\right]\Delta\chi_2^2 \\[10pt]
     &amp;= \left(3p^2 - 1\right)\Delta\chi_2^2 \; = \; 2\,\mathcal{L}_2(p)\,\Delta\chi_2^2 \; ,
     \quad \quad (7.2)
-\end{align*}\]</p><p>the very same <span>$2\mathcal{L}_2(p)$</span> of Eq.(6.2), reached through different coefficients. Hence</p><p class="math-container">\[    F \left(\frac{I_0^0}{15} + \frac{2 I_2^0}{21} + \frac{I_4^0}{35}\right)
-    \underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-        \underbrace{f\left(3p^2-1\right)\Delta\chi_2^2}_{\mathcal{O}(\Delta\chi_2^2)}
-        \cdot \underbrace{\frac{\sigma_0}{15}}_{\mathcal{O}(1)}
+\end{align*}\]</p><p>the very same <span>$2\mathcal{L}_2(p)$</span> of Eq.(6.2), reached through different coefficients. Hence</p><p class="math-container">\[\begin{align*}
+    F \left(\frac{I_0^0}{15} + \frac{2 I_2^0}{21} + \frac{I_4^0}{35}\right)
+    &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        \underbrace{f_1\left(3p^2-1\right)\Delta\chi_2^2}_{\mathcal{O}(\Delta\chi_2^2)}
+        \cdot \underbrace{\frac{\sigma_0}{15}}_{\mathcal{O}(1)} \\[10pt]
+    &amp;= \frac{f_1\left(3p^2-1\right)\sigma_0}{15}\,\Delta\chi_2^2 \\[10pt]
+    &amp;= \mathcal{O}(\Delta\chi_2^2)
     \; \xrightarrow[\Delta\chi_2\rightarrow 0^{+}]{} \; 0 \; .
-    \quad \quad (7.3)\]</p><h3 id="Term-2:-J_{20}-I_02"><a class="docs-heading-anchor" href="#Term-2:-J_{20}-I_02">Term 2: <span>$J_{20} I_0^2$</span></a><a id="Term-2:-J_{20}-I_02-1"></a><a class="docs-heading-anchor-permalink" href="#Term-2:-J_{20}-I_02" title="Permalink"></a></h3><p>With <span>$J_{20}$</span> of Eq.(D.17):</p><p class="math-container">\[\begin{align*}
-    J_{20} I_0^2 &amp;= -\Delta\chi_2^2 (3b+f) \cdot I_0^2(\Delta\chi_2) \\[10pt]
+    \quad \quad (7.3)
+\end{align*}\]</p><h3 id="Term-2:-J_{20}-I_02"><a class="docs-heading-anchor" href="#Term-2:-J_{20}-I_02">Term 2: <span>$J_{20} I_0^2$</span></a><a id="Term-2:-J_{20}-I_02-1"></a><a class="docs-heading-anchor-permalink" href="#Term-2:-J_{20}-I_02" title="Permalink"></a></h3><p>With <span>$J_{20}$</span> of Eq.(D.17):</p><p class="math-container">\[\begin{align*}
+    J_{20}^{\delta \int\!\phi} I_0^2 &amp;= -\Delta\chi_2^2 (3 b_1+f_1) \cdot I_0^2(\Delta\chi_2) \\[10pt]
     (2.1\mathrm{a}) \; \rightarrow \quad
         &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-            -\cancel{\Delta\chi_2^2}(3b+f)\,\frac{\sigma_2}{\cancel{\Delta\chi_2^2}}
-        = -(3b+f)\,\sigma_2 \; .
+            -\cancel{\Delta\chi_2^2}(3 b_1+f_1)\,\frac{\sigma_2}{\cancel{\Delta\chi_2^2}} \\[10pt]
+        &amp;= -(3 b_1+f_1)\,\sigma_2 \; .
     \quad \quad (7.4)
-\end{align*}\]</p><h3 id="The-sum"><a class="docs-heading-anchor" href="#The-sum">The sum</a><a id="The-sum-1"></a><a class="docs-heading-anchor-permalink" href="#The-sum" title="Permalink"></a></h3><table><tr><th style="text-align: left">term</th><th style="text-align: left">order</th><th style="text-align: left">limit</th></tr><tr><td style="text-align: left"><span>$F\left(\frac{I_0^0}{15} + \frac{2I_2^0}{21} + \frac{I_4^0}{35}\right)$</span> , Eq.(7.3)</td><td style="text-align: left"><span>$\mathcal{O}(\Delta\chi_2^2)$</span></td><td style="text-align: left"><span>$0$</span></td></tr><tr><td style="text-align: left"><span>$J_{20} I_0^2$</span> , Eq.(7.4)</td><td style="text-align: left"><span>$\mathcal{O}(1)$</span></td><td style="text-align: left"><span>$-(3b+f)\,\sigma_2$</span></td></tr></table><p class="math-container">\[    \boxed{\;
+\end{align*}\]</p><h3 id="The-sum"><a class="docs-heading-anchor" href="#The-sum">The sum</a><a id="The-sum-1"></a><a class="docs-heading-anchor-permalink" href="#The-sum" title="Permalink"></a></h3><p class="math-container">\[\begin{align*}
+(7.3) : \quad J_{\beta}^{\delta \int\!\phi}\left(\tfrac{I_0^0}{15} + \tfrac{2 I_2^0}{21} + \tfrac{I_4^0}{35}\right)
+    &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim} \mathcal{O}(\Delta\chi_2^2)
+    &amp;&amp;\rightarrow 0 \\[10pt]
+(7.4) : \quad J_{20}^{\delta \int\!\phi} I_0^2
+    &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim} \mathcal{O}(1)
+    &amp;&amp;\rightarrow -(3 b_1 + f_1)\,\sigma_2 \\[10pt]
+\end{align*}\]</p><p class="math-container">\[    \boxed{\;
     \lim_{\Delta\chi_2 \rightarrow 0} \left[
-        F \left(\frac{I_0^0}{15} + \frac{2 I_2^0}{21} + \frac{I_4^0}{35}\right) + J_{20} I_0^2
-    \right] = -(3b + f) \, \sigma_2 \; . }
-    \quad \quad (7.5)\]</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../DeltaChiLimits_4_LensingLocalGP/">« Family 4: Lensing x Local GP</a><a class="docs-footer-nextpage" href="../DeltaChiLimits_6_Ichi4Tilde/">Family 6: the Δχ⁴ Ĩ₀⁴ terms »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 16:23">Thursday 17 September 2026</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+        J_{\beta}^{\delta \int\!\phi} \left(\frac{I_0^0}{15} + \frac{2 I_2^0}{21} + \frac{I_4^0}{35}\right)
+        + J_{20}^{\delta \int\!\phi} I_0^2
+    \right] = -(3 b_1 + f_1) \, \sigma_2 \; . }
+    \quad \quad (7.5)\]</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../DeltaChiLimits_4_LensingLocalGP/">« Family 4: Lensing x Local GP</a><a class="docs-footer-nextpage" href="../DeltaChiLimits_6_Ichi4Tilde/">Family 6: the Δχ⁴ Ĩ₀⁴ terms »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 16:40">Thursday 17 September 2026</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

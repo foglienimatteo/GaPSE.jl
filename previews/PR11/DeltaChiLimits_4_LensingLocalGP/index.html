@@ -27,49 +27,94 @@ I_0^2           &amp;\sim \sigma_2 \, s^{-2}               &amp;&amp;\rightarrow
     \quad \quad (2.3\mathrm{b}) \\[10pt]\]</p><p><strong>The trap to avoid.</strong> The two vanishing quantities have <strong>different orders</strong>,</p><p class="math-container">\[    s_2 - \chi_1 = p \, \Delta\chi_1 = \mathcal{O}(\Delta\chi_1)
     \qquad \qquad
     y - 1 = \mathcal{O}(\Delta\chi_1^2)
-    \quad \quad (2.4)\]</p><p>so a term <strong>quadratic</strong> in <span>$(\chi_1 - s_2)$</span> contributes at the <strong>same order</strong> as a term <strong>linear</strong> in <span>$(y-1)$</span>. One must therefore never set <span>$\chi_1 = s_2$</span> first and expand in <span>$y$</span> afterwards: the safe recipe is to rewrite every vanishing bracket <strong>exactly</strong> as a combination of <span>$(\chi_1-s_2)$</span>, <span>$(y-1)$</span> and <span>$(y^2-1)$</span>, with coefficients that are regular at the singular point, and only then substitute (D.4), (2.3a), (2.3b).</p><h2 id="The-integrand"><a class="docs-heading-anchor" href="#The-integrand">The integrand</a><a id="The-integrand-1"></a><a class="docs-heading-anchor-permalink" href="#The-integrand" title="Permalink"></a></h2><p>Concerned functions: <code>integrand_ξ_GNC_Lensing_LocalGP</code>, <code>integrand_ξ_GNCxLD_LocalGP_Lensing</code>. The sum to be taken to the limit is</p><p class="math-container">\[    F \left(\frac{I_0^0}{60} + \frac{I_2^0}{42} + \frac{I_4^0}{140}\right)
-    + J_{20} \, I_0^2 \; ,\]</p><p class="math-container">\[    F := 2y\chi_1^2 - \chi_1 s_2 (y^2+3) + 2 y s_2^2 \; ,
-    \quad \quad (\mathrm{D}.14)
-    \qquad \qquad
-    J_{20} := \frac{y\,\Delta\chi_1^2}{2} \; .
-    \quad \quad (\mathrm{D}.15)\]</p><h3 id="Term-1:-the-F-group"><a class="docs-heading-anchor" href="#Term-1:-the-F-group">Term 1: the <span>$F$</span> group</a><a id="Term-1:-the-F-group-1"></a><a class="docs-heading-anchor-permalink" href="#Term-1:-the-F-group" title="Permalink"></a></h3><p><span>$F$</span>, Eq.(D.14), vanishes at the singular point,</p><p class="math-container">\[    F\big|_{y=1,\,s_2=\chi_1} = \left(2 - (1+3) + 2\right)\chi_1^2 = (2 - 4 + 2)\,\chi_1^2 = 0 \; ,\]</p><p>so it must be decomposed exactly. The structure is the <strong>same</strong> as the <span>$B_{00}$</span> of Family 1, Eq.(D.5) there — which for reference reads</p><p class="math-container">\[    B_{00} := 8 y (\chi_1^2 + \chi_2^2) - \chi_1\chi_2 (9y^2+7)
+    \quad \quad (2.4)\]</p><p>so a term <strong>quadratic</strong> in <span>$(\chi_1 - s_2)$</span> contributes at the <strong>same order</strong> as a term <strong>linear</strong> in <span>$(y-1)$</span>. One must therefore never set <span>$\chi_1 = s_2$</span> first and expand in <span>$y$</span> afterwards: the safe recipe is to rewrite every vanishing bracket <strong>exactly</strong> as a combination of <span>$(\chi_1-s_2)$</span>, <span>$(y-1)$</span> and <span>$(y^2-1)$</span>, with coefficients that are regular at the singular point, and only then substitute (D.4), (2.3a), (2.3b).</p><h2 id="The-integrand"><a class="docs-heading-anchor" href="#The-integrand">The integrand</a><a id="The-integrand-1"></a><a class="docs-heading-anchor-permalink" href="#The-integrand" title="Permalink"></a></h2><p>Concerned functions: <code>integrand_ξ_GNC_Lensing_LocalGP</code>, <code>integrand_ξ_GNCxLD_LocalGP_Lensing</code>. The GNC Lensing-LocalGP function is:</p><p class="math-container">\[\begin{split}
+    \xi^{\kappa \phi} ( s_1 , s_2, y ) &amp;= 
+    D_2 \int_0^{s_1}\mathrm{d} \chi_1 \; 
+    J^{\kappa \phi}_{\alpha}\left[ 
+        J^{\kappa \phi}_{20} I_0^2 ( \Delta \chi_1 ) +
+        \right.\nonumber \\
+        &amp;\left.\qquad
+        J^{\kappa \phi}_{\beta}
+        \left(
+            \frac{1}{60} I_0^0 ( \Delta \chi_1 ) +
+            \frac{1}{42} I_2^0 ( \Delta \chi_1 ) +
+            \frac{1}{140} I_4^0 ( \Delta \chi_1 ) 
+        \right)
+    \right] \, ,
+\end{split}\]</p><p>with</p><p class="math-container">\[\begin{align*}
+    J^{\kappa \phi}_{\alpha}  &amp;= 
+    \frac{\mathcal{H}_0^2 \Omega_{\mathrm{M}0} s_2 D(\chi_1)}{a(\chi_1) a_2 s_1}
+    (\chi_1 - s_1)  (5s_{\mathrm{b}, 1} - 2) \times \\
+    &amp;\qquad\qquad
+    \left[
+       2 f_2 a_2 \mathcal{H}_2^2 (\mathit{f}_{\mathrm{evo}, 2} - 3) + 
+       3 \mathcal{H}_0^2 \Omega_{\mathrm{M}0} (f_2 + \mathcal{R}_2 + 5s_{\mathrm{b}, 2} - 2)
+    \right]
+    \, , \\[6pt]
+    J^{\kappa \phi}_{\beta} &amp;=
+    \underbrace{2 y \chi_1^2 - \chi_1 s_2 (y^2 + 3) + 2 y s_2^2}_{=: \; F \; , \quad (\mathrm{D}.14)}
+    \, ,\\[6pt]
+    J^{\kappa \phi}_{20} &amp;= \underbrace{\frac{1}{2} y \Delta\chi_1^2}_{(\mathrm{D}.15)} \, .
+\end{align*}\]</p><p>The limit to be taken is:</p><p class="math-container">\[    \lim_{\Delta\chi_1\rightarrow 0^{+}}\left[
+        F \left(\frac{I_0^0}{60} + \frac{I_2^0}{42} + \frac{I_4^0}{140}\right)
+        + J_{20} \, I_0^2 \right] \; .\]</p><p>This analysis is valid for Lensing-LocalGP in both the combinations (GNC and GNCxLD).</p><h3 id="Term-1:-the-F-group"><a class="docs-heading-anchor" href="#Term-1:-the-F-group">Term 1: the <span>$F$</span> group</a><a id="Term-1:-the-F-group-1"></a><a class="docs-heading-anchor-permalink" href="#Term-1:-the-F-group" title="Permalink"></a></h3><p><span>$F$</span>, Eq.(D.14), vanishes at the singular point,</p><p class="math-container">\[    F\big|_{y=1,\,s_2=\chi_1} = \left(2 - (1+3) + 2\right)\chi_1^2 = (2 - 4 + 2)\,\chi_1^2 = 0 \; ,\]</p><p>so it must be decomposed exactly. The structure is the <strong>same</strong> as the <span>$B_{00}$</span> of Family 1, Eq.(D.5) there — which for reference reads</p><p class="math-container">\[    B_{00} := 8 y (\chi_1^2 + \chi_2^2) - \chi_1\chi_2 (9y^2+7)
     = 8(\chi_1-\chi_2)^2 + 8(y-1)(\chi_1^2+\chi_2^2) - 9\chi_1\chi_2(y^2-1) \; ,
     \quad \quad (3.2)\]</p><p>only with different coefficients and with <span>$s_2$</span> in place of <span>$\chi_2$</span>:</p><p class="math-container">\[\begin{align*}
     F &amp;= 2y\chi_1^2 - \chi_1 s_2 (y^2+3) + 2 y s_2^2 \\[10pt]
-    2y = 2 + 2(y-1) \; \rightarrow \quad
-        &amp;= 2\chi_1^2 + 2(y-1)\chi_1^2 - \chi_1 s_2 (y^2+3) + 2 s_2^2 + 2(y-1)s_2^2 \\[10pt]
-    y^2+3 = 4 + (y^2-1) \; \rightarrow \quad
+    &amp;\quad\quad 2y = 2 + 2(y-1) \\[10pt]
+        &amp;= \left[2 + 2(y-1)\right]\chi_1^2 - \chi_1 s_2 (y^2+3) + \left[2 + 2(y-1)\right] s_2^2 \\[10pt]
+        &amp;= 2\chi_1^2 + 2 s_2^2 + 2(y-1)\left(\chi_1^2 + s_2^2\right) - \chi_1 s_2 (y^2+3) \\[10pt]
+    &amp;\quad\quad y^2+3 = 4 + (y^2-1) \\[10pt]
+        &amp;= 2\chi_1^2 + 2 s_2^2 + 2(y-1)\left(\chi_1^2 + s_2^2\right)
+            - \chi_1 s_2 \left[4 + (y^2-1)\right] \\[10pt]
         &amp;= 2\chi_1^2 - 4\chi_1 s_2 + 2 s_2^2
             + 2(y-1)\left(\chi_1^2 + s_2^2\right) - (y^2-1)\chi_1 s_2 \\[10pt]
+    &amp;\quad\quad 2\chi_1^2 - 4\chi_1 s_2 + 2 s_2^2 = 2(\chi_1 - s_2)^2 \\[10pt]
         &amp;= 2(\chi_1 - s_2)^2 + 2(y-1)\left(\chi_1^2 + s_2^2\right)
             - (y^2-1)\chi_1 s_2 \; .
     \quad \quad (6.1)
 \end{align*}\]</p><p>Here — exactly as in <span>$B_{00}$</span>, and unlike Family 2 — the <span>$(\chi_1 - s_2)$</span> factor is <strong>quadratic</strong>, so by (2.4) it is of the same order as the <span>$(y-1)$</span> terms and must be kept. Substituting (D.4), (2.3a), (2.3b) with <span>$s_2 \rightarrow \chi_1$</span> in the regular coefficients:</p><p class="math-container">\[\begin{align*}
     F &amp;\underset{\Delta\chi_1\rightarrow 0^{+}}{\sim}
-        2 \, p^2\Delta\chi_1^2
-        + 2\left[- \frac{(1-p^2)}{2\cancel{\chi_1^2}}\Delta\chi_1^2\right]2\cancel{\chi_1^2}
-        - \left[- \frac{(1-p^2)}{\cancel{\chi_1^2}}\Delta\chi_1^2\right]\cancel{\chi_1^2} \\[10pt]
+        \underbrace{2 (-p\Delta\chi_1)^2}_{(\chi_1-s_2)^2}
+        + \underbrace{2\left[- \frac{(1-p^2)}{2\chi_1^2}\Delta\chi_1^2\right]\left(2\chi_1^2\right)}_{(y-1)}
+        - \underbrace{\left[- \frac{(1-p^2)}{\chi_1^2}\Delta\chi_1^2\right]\chi_1^2}_{(y^2-1)} \\[10pt]
+    &amp;= 2p^2\Delta\chi_1^2 - 2(1-p^2)\Delta\chi_1^2 + (1-p^2)\Delta\chi_1^2 \\[10pt]
     &amp;= \left[2p^2 - 2(1-p^2) + (1-p^2)\right]\Delta\chi_1^2 \\[10pt]
     &amp;= \left[2p^2 - (1-p^2)\right]\Delta\chi_1^2 \\[10pt]
+    &amp;= \left[2p^2 - 1 + p^2\right]\Delta\chi_1^2 \\[10pt]
     &amp;= \left(3p^2 - 1\right)\Delta\chi_1^2 \; = \; 2\,\mathcal{L}_2(p)\,\Delta\chi_1^2 \; ,
     \quad \quad (6.2)
-\end{align*}\]</p><p><span>$\mathcal{L}_2$</span> being the second Legendre polynomial. So <span>$F$</span> is <strong>not</strong> zero: it is <span>$\mathcal{O}(\Delta\chi_1^2)$</span>. It multiplies a finite combination, since <span>$I_0^0 \rightarrow \sigma_0$</span> while <span>$I_2^0, I_4^0 \rightarrow 0$</span>:</p><p class="math-container">\[\begin{align*}
+\end{align*}\]</p><p><span>$\mathcal{L}_2$</span> being the second Legendre polynomial. So <span>$F$</span> is <strong>not</strong> zero: it is <span>$\mathcal{O}(\Delta\chi_1^2)$</span>. It multiplies a <strong>finite</strong> combination, since <span>$I_0^0 \rightarrow \sigma_0$</span> while <span>$I_2^0, I_4^0 \rightarrow 0$</span>:</p><p class="math-container">\[\begin{align*}
     F \left(\frac{I_0^0}{60} + \frac{I_2^0}{42} + \frac{I_4^0}{140}\right)
+    &amp;\underset{\Delta\chi_1\rightarrow 0^{+}}{\sim}
+        \left(3p^2-1\right)\Delta\chi_1^2 \left(
+            \frac{\sigma_0}{60} + \frac{1}{42}\frac{\sigma_{-2}}{15}\Delta\chi_1^2
+            + \frac{1}{140}\frac{\sigma_{-4}}{945}\Delta\chi_1^4 \right) \\[10pt]
     &amp;\underset{\Delta\chi_1\rightarrow 0^{+}}{\sim}
         \underbrace{\left(3p^2-1\right)\Delta\chi_1^2}_{\mathcal{O}(\Delta\chi_1^2)}
         \cdot \underbrace{\frac{\sigma_0}{60}}_{\mathcal{O}(1)} \\[10pt]
-    &amp;= \frac{\left(3p^2-1\right)\sigma_0}{60}\,\Delta\chi_1^2
+    &amp;= \frac{\left(3p^2-1\right)\sigma_0}{60}\,\Delta\chi_1^2 \\[10pt]
+    &amp;= \mathcal{O}(\Delta\chi_1^2)
     \; \xrightarrow[\Delta\chi_1\rightarrow 0^{+}]{} \; 0 \; .
     \quad \quad (6.3)
 \end{align*}\]</p><h3 id="Term-2:-J_{20}-I_02"><a class="docs-heading-anchor" href="#Term-2:-J_{20}-I_02">Term 2: <span>$J_{20} I_0^2$</span></a><a id="Term-2:-J_{20}-I_02-1"></a><a class="docs-heading-anchor-permalink" href="#Term-2:-J_{20}-I_02" title="Permalink"></a></h3><p>With <span>$J_{20}$</span> of Eq.(D.15):</p><p class="math-container">\[\begin{align*}
-    J_{20} I_0^2 &amp;= \frac{y\,\Delta\chi_1^2}{2} \cdot I_0^2(\Delta\chi_1) \\[10pt]
+    J_{20}^{\kappa \phi} I_0^2 &amp;= \frac{y\,\Delta\chi_1^2}{2} \cdot I_0^2(\Delta\chi_1) \\[10pt]
     (2.1\mathrm{a}) \; \rightarrow \quad
         &amp;\underset{\Delta\chi_1\rightarrow 0^{+}}{\sim}
             \frac{\overbrace{y}^{\rightarrow 1}\cancel{\Delta\chi_1^2}}{2} \,
-            \frac{\sigma_2}{\cancel{\Delta\chi_1^2}} = \frac{\sigma_2}{2} \; .
+            \frac{\sigma_2}{\cancel{\Delta\chi_1^2}} \\[10pt]
+        &amp;= \frac{\sigma_2}{2} \; .
     \quad \quad (6.4)
-\end{align*}\]</p><h3 id="The-sum"><a class="docs-heading-anchor" href="#The-sum">The sum</a><a id="The-sum-1"></a><a class="docs-heading-anchor-permalink" href="#The-sum" title="Permalink"></a></h3><table><tr><th style="text-align: left">term</th><th style="text-align: left">order</th><th style="text-align: left">limit</th></tr><tr><td style="text-align: left"><span>$F\left(\frac{I_0^0}{60} + \frac{I_2^0}{42} + \frac{I_4^0}{140}\right)$</span> , Eq.(6.3)</td><td style="text-align: left"><span>$\mathcal{O}(\Delta\chi_1^2)$</span></td><td style="text-align: left"><span>$0$</span></td></tr><tr><td style="text-align: left"><span>$J_{20} I_0^2$</span> , Eq.(6.4)</td><td style="text-align: left"><span>$\mathcal{O}(1)$</span></td><td style="text-align: left"><span>$\dfrac{\sigma_2}{2}$</span></td></tr></table><p class="math-container">\[    \boxed{\;
+\end{align*}\]</p><h3 id="The-sum"><a class="docs-heading-anchor" href="#The-sum">The sum</a><a id="The-sum-1"></a><a class="docs-heading-anchor-permalink" href="#The-sum" title="Permalink"></a></h3><p class="math-container">\[\begin{align*}
+(6.3) : \quad J_{\beta}^{\kappa \phi}\left(\tfrac{I_0^0}{60} + \tfrac{I_2^0}{42} + \tfrac{I_4^0}{140}\right)
+    &amp;\underset{\Delta\chi_1\rightarrow 0^{+}}{\sim} \mathcal{O}(\Delta\chi_1^2)
+    &amp;&amp;\rightarrow 0 \\[10pt]
+(6.4) : \quad J_{20}^{\kappa \phi} I_0^2
+    &amp;\underset{\Delta\chi_1\rightarrow 0^{+}}{\sim} \mathcal{O}(1)
+    &amp;&amp;\rightarrow \frac{\sigma_2}{2} \\[10pt]
+\end{align*}\]</p><p class="math-container">\[    \boxed{\;
     \lim_{\Delta\chi_1 \rightarrow 0} \left[
-        F \left(\frac{I_0^0}{60} + \frac{I_2^0}{42} + \frac{I_4^0}{140}\right) + J_{20} I_0^2
+        J_{\beta}^{\kappa \phi} \left(\frac{I_0^0}{60} + \frac{I_2^0}{42} + \frac{I_4^0}{140}\right)
+        + J_{20}^{\kappa \phi} I_0^2
     \right] = \frac{\sigma_2}{2} \; . }
-    \quad \quad (6.5)\]</p><p>The <span>$p$</span> of Eq.(6.2) disappears because it multiplies a vanishing <span>$\Delta\chi_1^2$</span>, so again nothing is left to cancel.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../DeltaChiLimits_3_NewtonianLensing/">« Family 3: Newtonian x Lensing</a><a class="docs-footer-nextpage" href="../DeltaChiLimits_5_NewtonianIntegratedGP/">Family 5: Newtonian x Integrated GP »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 16:23">Thursday 17 September 2026</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+    \quad \quad (6.5)\]</p><p>The <span>$p$</span> of Eq.(6.2) disappears because it multiplies a vanishing <span>$\Delta\chi_1^2$</span>, so again nothing is left to cancel.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../DeltaChiLimits_3_NewtonianLensing/">« Family 3: Newtonian x Lensing</a><a class="docs-footer-nextpage" href="../DeltaChiLimits_5_NewtonianIntegratedGP/">Family 5: Newtonian x Integrated GP »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 16:40">Thursday 17 September 2026</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

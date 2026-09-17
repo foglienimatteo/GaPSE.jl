@@ -27,11 +27,46 @@ I_0^2           &amp;\sim \sigma_2 \, s^{-2}               &amp;&amp;\rightarrow
     \quad \quad (2.3\mathrm{b}) \\[10pt]\]</p><p><strong>The trap to avoid.</strong> The two vanishing quantities have <strong>different orders</strong>,</p><p class="math-container">\[    \chi_2 - s_1 = p \, \Delta\chi_2 = \mathcal{O}(\Delta\chi_2)
     \qquad \qquad
     y - 1 = \mathcal{O}(\Delta\chi_2^2)
-    \quad \quad (2.4)\]</p><p>so a term <strong>quadratic</strong> in <span>$(s_1 - \chi_2)$</span> contributes at the <strong>same order</strong> as a term <strong>linear</strong> in <span>$(y-1)$</span>. One must therefore never set <span>$s_1 = \chi_2$</span> first and expand in <span>$y$</span> afterwards: the safe recipe is to rewrite every vanishing bracket <strong>exactly</strong> as a combination of <span>$(s_1-\chi_2)$</span>, <span>$(y-1)$</span> and <span>$(y^2-1)$</span>, with coefficients that are regular at the singular point, and only then substitute (D.4), (2.3a), (2.3b).</p><h2 id="The-integrand"><a class="docs-heading-anchor" href="#The-integrand">The integrand</a><a id="The-integrand-1"></a><a class="docs-heading-anchor-permalink" href="#The-integrand" title="Permalink"></a></h2><p>Concerned functions: <code>integrand_ξ_GNC_Doppler_IntegratedGP</code>, <code>integrand_ξ_GNCxLD_IntegratedGP_Doppler</code>, <code>integrand_ξ_GNCxLD_Doppler_IntegratedGP</code>, <code>integrand_ξ_LD_Doppler_IntegratedGP</code>.</p><p>These carry an overall <span>$\Delta\chi_2^2$</span> together with a geometric factor <span>$(\chi_2 y - s_1)$</span> (or <span>$(s_1 - \chi_2 y)$</span>, with the opposite sign, which changes nothing since the limit is zero), multiplying the whole parenthesis:</p><p class="math-container">\[    \Delta\chi_2^2 \, \underbrace{(\chi_2 y - s_1)}_{=: \; G \; , \; (\mathrm{D}.18)} \left(
-        \frac{I_0^0}{15} + \frac{2 I_2^0}{21} + \frac{I_4^0}{35} + I_0^2 \right) \; .\]</p><h3 id="Term-1:-the-geometric-factor-G"><a class="docs-heading-anchor" href="#Term-1:-the-geometric-factor-G">Term 1: the geometric factor <span>$G$</span></a><a id="Term-1:-the-geometric-factor-G-1"></a><a class="docs-heading-anchor-permalink" href="#Term-1:-the-geometric-factor-G" title="Permalink"></a></h3><p><span>$G$</span>, Eq.(D.18), vanishes at the singular point, <span>$y \rightarrow 1$</span> and <span>$\chi_2 \rightarrow s_1$</span> giving <span>$s_1 - s_1 = 0$</span>, so it has to be decomposed — but this time the decomposition is a single line, and the <span>$(\chi_2 - s_1)$</span> factor appears <strong>linearly</strong>:</p><p class="math-container">\[\begin{align*}
+    \quad \quad (2.4)\]</p><p>so a term <strong>quadratic</strong> in <span>$(s_1 - \chi_2)$</span> contributes at the <strong>same order</strong> as a term <strong>linear</strong> in <span>$(y-1)$</span>. One must therefore never set <span>$s_1 = \chi_2$</span> first and expand in <span>$y$</span> afterwards: the safe recipe is to rewrite every vanishing bracket <strong>exactly</strong> as a combination of <span>$(s_1-\chi_2)$</span>, <span>$(y-1)$</span> and <span>$(y^2-1)$</span>, with coefficients that are regular at the singular point, and only then substitute (D.4), (2.3a), (2.3b).</p><h2 id="The-integrand"><a class="docs-heading-anchor" href="#The-integrand">The integrand</a><a id="The-integrand-1"></a><a class="docs-heading-anchor-permalink" href="#The-integrand" title="Permalink"></a></h2><p>Concerned functions: <code>integrand_ξ_GNC_Doppler_IntegratedGP</code>, <code>integrand_ξ_GNCxLD_IntegratedGP_Doppler</code>, <code>integrand_ξ_GNCxLD_Doppler_IntegratedGP</code>, <code>integrand_ξ_LD_Doppler_IntegratedGP</code>. The GNC Doppler-IntegratedGP function is:</p><p class="math-container">\[\begin{split}
+    \xi^{v_{\parallel} \int\!\phi} \left( s_1 , s_2, y \right) &amp;= D_1 \int_0^{s_2}\mathrm{d} \chi_2 \; 
+    J^{v_{\parallel} \int\!\phi}_{\alpha} 
+    \left[
+        \frac{1}{15} I_0^0 ( \Delta\chi_2 ) +
+        \frac{2}{21} I_2^0 ( \Delta\chi_2 ) +
+        \right.  \\
+        &amp;\left.
+        \frac{1}{35} I_4^0 ( \Delta\chi_2 ) +
+        I^2_0 ( \Delta\chi_2) 
+    \right]
+    + \int_0^{s_2}\mathrm{d} \chi_2  
+    J^{v_{\parallel} \int\!\phi}_{31} I^3_1 (\chi_2)  
+    \, ,\nonumber
+\end{split}\]</p><p>with</p><p class="math-container">\[\begin{align*}
+    J^{v_{\parallel} \int\!\phi}_{\alpha} &amp;=
+    \frac{f_1 \mathcal{H}_1 \mathcal{R}_1}{s_2 a(\chi_2)} 
+    D(\chi_2) \mathcal{H}_0^2 \Omega_{\mathrm{M}0} \; \Delta\chi_2^2 \;
+    \underbrace{(\chi_2 y - s_1)}_{=: \; G \; , \; (\mathrm{D}.18)}
+    \left[
+        s_2 \mathcal{H}(\chi_2) \mathcal{R}_2 (f(\chi_2) - 1) - 5 s_{\mathrm{b}, 2} + 2
+    \right]
+    \, , \\[6pt]
+    J^{v_{\parallel} \int\!\phi}_{31} &amp;=
+    -\frac{
+        3 \chi_2^3 y f_0 \mathcal{H}_0^3 \Omega_{\mathrm{M}0} D(\chi_2)
+    }{
+        s_2 a(\chi_2)
+    }(\mathcal{R}_1 - 5 s_{\mathrm{b}, 1} + 2)
+    \left[
+        s_2 \mathcal{H}(\chi_2) \mathcal{R}_2 (f(\chi_2) - 1) - 5 s_{\mathrm{b}, 2} + 2
+    \right] 
+    \, . 
+\end{align*}\]</p><p>The <span>$J_{31}$</span> term multiplies <span>$I_1^3(\chi_2)$</span>, <strong>not</strong> <span>$I_1^3(\Delta\chi_2)$</span>, so it does not participate in the limit. Everything else in <span>$J_{\alpha}$</span> being regular, the limit to be taken is:</p><p class="math-container">\[    \lim_{\Delta\chi_2\rightarrow 0^{+}}\left[
+        \Delta\chi_2^2 \, G \left(
+            \frac{I_0^0}{15} + \frac{2 I_2^0}{21} + \frac{I_4^0}{35} + I_0^2 \right)\right] \; .\]</p><p>In some of the four functions the geometric factor is written as <span>$(s_1 - \chi_2 y)$</span>, with the opposite sign; since the limit is <span>$0$</span> this changes nothing.</p><p>This analysis is valid for Doppler-IntegratedGP in all the 4 combinations (GNC, LD, GNCxLD and LDxGNC).</p><h3 id="Term-1:-the-geometric-factor-G"><a class="docs-heading-anchor" href="#Term-1:-the-geometric-factor-G">Term 1: the geometric factor <span>$G$</span></a><a id="Term-1:-the-geometric-factor-G-1"></a><a class="docs-heading-anchor-permalink" href="#Term-1:-the-geometric-factor-G" title="Permalink"></a></h3><p><span>$G$</span>, Eq.(D.18), vanishes at the singular point, <span>$y \rightarrow 1$</span> and <span>$\chi_2 \rightarrow s_1$</span> giving <span>$s_1 - s_1 = 0$</span>, so it has to be decomposed — but this time the decomposition is a single line, and the <span>$(\chi_2 - s_1)$</span> factor appears <strong>linearly</strong>:</p><p class="math-container">\[\begin{align*}
     G &amp;= \chi_2 y - s_1 \\[10pt]
-    y = 1 + (y-1) \; \rightarrow \quad
-        &amp;= \chi_2 + \chi_2 (y-1) - s_1 \\[10pt]
+    &amp;\quad\quad y = 1 + (y-1) \\[10pt]
+        &amp;= \chi_2 \left[1 + (y-1)\right] - s_1 \\[10pt]
+        &amp;= \chi_2 - s_1 + \chi_2 (y-1) \\[10pt]
         &amp;= \underbrace{(\chi_2 - s_1)}_{\mathcal{O}(\Delta\chi_2)}
             + \underbrace{\chi_2 (y-1)}_{\mathcal{O}(\Delta\chi_2^2)} \; .
     \quad \quad (9.1)
@@ -39,21 +74,35 @@ I_0^2           &amp;\sim \sigma_2 \, s^{-2}               &amp;&amp;\rightarrow
         + \underbrace{8(y-1)(\chi_1^2+\chi_2^2) - 9\chi_1\chi_2(y^2-1)}_{\mathcal{O}(\Delta\chi^2)} \; ,
     \quad \quad (3.2)\]</p><p>where the <span>$(\chi_1-\chi_2)$</span> factor was <em>quadratic</em> and therefore of the <strong>same</strong> order as the <span>$(y-1)$</span> terms. Here it is linear, so it wins:</p><p class="math-container">\[\begin{align*}
     G &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-        p \, \Delta\chi_2 + \cancel{s_1}\left[- \frac{(1-p^2)}{2 s_1^{\cancel{2}}}
-            \Delta\chi_2^2\right] \\[10pt]
+        \underbrace{p \, \Delta\chi_2}_{(\chi_2-s_1)}
+        + \underbrace{s_1\left[- \frac{(1-p^2)}{2 s_1^2}\Delta\chi_2^2\right]}_{\chi_2(y-1)} \\[10pt]
     &amp;= p \, \Delta\chi_2 - \frac{(1-p^2)}{2 s_1}\Delta\chi_2^2 \\[10pt]
-    &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim} \; p \, \Delta\chi_2 \; .
+    &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim} \; p \, \Delta\chi_2
+    \; = \; \mathcal{O}(\Delta\chi_2) \; .
     \quad \quad (9.2)
 \end{align*}\]</p><h3 id="Term-2:-against-the-I_\\elln"><a class="docs-heading-anchor" href="#Term-2:-against-the-I_\\elln">Term 2: against the <span>$I_\ell^n$</span></a><a id="Term-2:-against-the-I_\\elln-1"></a><a class="docs-heading-anchor-permalink" href="#Term-2:-against-the-I_\\elln" title="Permalink"></a></h3><p>Of the four <span>$I_\ell^n$</span> in the parenthesis, <span>$I_0^0 \rightarrow \sigma_0$</span> is finite and <span>$I_2^0, I_4^0 \rightarrow 0$</span>, so the only one that matters is the divergent <span>$I_0^2 \sim \sigma_2 \Delta\chi_2^{-2}$</span>:</p><p class="math-container">\[\begin{align*}
     \Delta\chi_2^2 \, G \left(
         \frac{I_0^0}{15} + \frac{2 I_2^0}{21} + \frac{I_4^0}{35} + I_0^2 \right)
     &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        \Delta\chi_2^2 \cdot p \, \Delta\chi_2 \cdot
+        \left(\frac{\sigma_0}{15} + \frac{\sigma_2}{\Delta\chi_2^2}\right) \\[10pt]
+    &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
         \cancel{\Delta\chi_2^2} \cdot p \, \Delta\chi_2 \cdot
         \frac{\sigma_2}{\cancel{\Delta\chi_2^2}} \\[10pt]
-    &amp;= p \, \sigma_2 \, \Delta\chi_2
+    &amp;= p \, \sigma_2 \, \Delta\chi_2 \\[10pt]
+    &amp;= \mathcal{O}(\Delta\chi_2)
     \; \xrightarrow[\Delta\chi_2\rightarrow 0^{+}]{} \; 0 \; .
-\end{align*}\]</p><h3 id="The-result"><a class="docs-heading-anchor" href="#The-result">The result</a><a id="The-result-1"></a><a class="docs-heading-anchor-permalink" href="#The-result" title="Permalink"></a></h3><p class="math-container">\[    \boxed{\; \lim_{\Delta\chi_2 \rightarrow 0}
-    \left[\Delta\chi_2^2 (\chi_2 y - s_1) \left(
+    \quad \quad (9.3)
+\end{align*}\]</p><h3 id="The-sum"><a class="docs-heading-anchor" href="#The-sum">The sum</a><a id="The-sum-1"></a><a class="docs-heading-anchor-permalink" href="#The-sum" title="Permalink"></a></h3><p>There is a single term:</p><p class="math-container">\[\begin{align*}
+(9.3) : \quad
+    \Delta\chi_2^2 \, G \left(\tfrac{I_0^0}{15} + \tfrac{2 I_2^0}{21} + \tfrac{I_4^0}{35} + I_0^2 \right)
+    &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim} \mathcal{O}(\Delta\chi_2)
+    &amp;&amp;\rightarrow 0 \\[10pt]
+\end{align*}\]</p><p class="math-container">\[    \boxed{\; \lim_{\Delta\chi_2 \rightarrow 0}
+    \left[\Delta\chi_2^2 \, G \left(
         \frac{I_0^0}{15} + \frac{2 I_2^0}{21} + \frac{I_4^0}{35} + I_0^2 \right)\right]
-    = 0 \; . }
-    \quad \quad (9.3)\]</p><p>The rate of approach is <span>$\mathcal{O}(\Delta\chi_2)$</span> and carries a <span>$p$</span>, but since the limit itself is <span>$0$</span> the direction-independence is automatic.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../DeltaChiLimits_6_Ichi4Tilde/">« Family 6: the Δχ⁴ Ĩ₀⁴ terms</a><a class="docs-footer-nextpage" href="../DeltaChiLimits_8_J22J31/">Family 8: the J₂₂I₂² + J₃₁I₁³ terms »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 16:23">Thursday 17 September 2026</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+    = 0
+    \quad \Longrightarrow \quad
+    J_{\alpha}^{v_{\parallel} \int\!\phi}\left[\;\cdots\;\right]
+    \; \xrightarrow[\Delta\chi_2 \rightarrow 0]{} \; 0 \; . }
+    \quad \quad (9.4)\]</p><p>The rate of approach is <span>$\mathcal{O}(\Delta\chi_2)$</span> and carries a <span>$p$</span>, but since the limit itself is <span>$0$</span> the direction-independence is automatic.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../DeltaChiLimits_6_Ichi4Tilde/">« Family 6: the Δχ⁴ Ĩ₀⁴ terms</a><a class="docs-footer-nextpage" href="../DeltaChiLimits_8_J22J31/">Family 8: the J₂₂I₂² + J₃₁I₁³ terms »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 16:40">Thursday 17 September 2026</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

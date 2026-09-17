@@ -27,30 +27,71 @@ I_0^2           &amp;\sim \sigma_2 \, s^{-2}               &amp;&amp;\rightarrow
     \quad \quad (2.3\mathrm{b}) \\[10pt]\]</p><p><strong>The trap to avoid.</strong> The two vanishing quantities have <strong>different orders</strong>,</p><p class="math-container">\[    \chi_b - \chi_a = p \, \Delta\chi = \mathcal{O}(\Delta\chi)
     \qquad \qquad
     y - 1 = \mathcal{O}(\Delta\chi^2)
-    \quad \quad (2.4)\]</p><p>so a term <strong>quadratic</strong> in <span>$(\chi_a - \chi_b)$</span> contributes at the <strong>same order</strong> as a term <strong>linear</strong> in <span>$(y-1)$</span>. One must therefore never set <span>$\chi_a = \chi_b$</span> first and expand in <span>$y$</span> afterwards: the safe recipe is to rewrite every vanishing bracket <strong>exactly</strong> as a combination of <span>$(\chi_a-\chi_b)$</span>, <span>$(y-1)$</span> and <span>$(y^2-1)$</span>, with coefficients that are regular at the singular point, and only then substitute (D.4), (2.3a), (2.3b).</p><h2 id="The-integrand"><a class="docs-heading-anchor" href="#The-integrand">The integrand</a><a id="The-integrand-1"></a><a class="docs-heading-anchor-permalink" href="#The-integrand" title="Permalink"></a></h2><p>Concerned functions: <code>integrand_ξ_GNC_Lensing_IntegratedGP</code>, <code>integrand_ξ_GNCxLD_IntegratedGP_Lensing</code>, <code>integrand_ξ_GNCxLD_Lensing_IntegratedGP</code>, <code>integrand_ξ_GNCxLD_Lensing_LocalGP</code>, <code>integrand_ξ_LD_Lensing_IntegratedGP</code>, <code>integrand_ξ_LD_Lensing_LocalGP</code>.</p><p>They all share the structure</p><p class="math-container">\[    J_{22} \, I_2^2 + J_{31} \, I_1^3 \; , \qquad
-    J_{22} := \frac{A}{2}\,\chi_a \chi_b \, (y^2-1) \; , \qquad
+    \quad \quad (2.4)\]</p><p>so a term <strong>quadratic</strong> in <span>$(\chi_a - \chi_b)$</span> contributes at the <strong>same order</strong> as a term <strong>linear</strong> in <span>$(y-1)$</span>. One must therefore never set <span>$\chi_a = \chi_b$</span> first and expand in <span>$y$</span> afterwards: the safe recipe is to rewrite every vanishing bracket <strong>exactly</strong> as a combination of <span>$(\chi_a-\chi_b)$</span>, <span>$(y-1)$</span> and <span>$(y^2-1)$</span>, with coefficients that are regular at the singular point, and only then substitute (D.4), (2.3a), (2.3b).</p><h2 id="The-integrand"><a class="docs-heading-anchor" href="#The-integrand">The integrand</a><a id="The-integrand-1"></a><a class="docs-heading-anchor-permalink" href="#The-integrand" title="Permalink"></a></h2><p>Concerned functions: <code>integrand_ξ_GNC_Lensing_IntegratedGP</code>, <code>integrand_ξ_GNCxLD_IntegratedGP_Lensing</code>, <code>integrand_ξ_GNCxLD_Lensing_IntegratedGP</code>, <code>integrand_ξ_GNCxLD_Lensing_LocalGP</code>, <code>integrand_ξ_LD_Lensing_IntegratedGP</code>, <code>integrand_ξ_LD_Lensing_LocalGP</code>. The GNC Lensing-IntegratedGP function is:</p><p class="math-container">\[\begin{split}
+    \xi^{\kappa \int\!\phi} ( s_1 , s_2, y ) = 
+    \int_0^{s_1}\mathrm{d} \chi_1 \int_0^{s_2}\mathrm{d} \chi_2 \;
+    J_{\alpha}^{\kappa \int\!\phi} 
+    \left[ 
+        J_{31}^{\kappa \int\!\phi} I_1^3 ( \Delta \chi ) +
+        J_{22}^{\kappa \int\!\phi} I_2^2 ( \Delta \chi ) 
+     \right] \, ,
+\end{split}\]</p><p>with</p><p class="math-container">\[\begin{align*}
+     J_{\alpha}^{\kappa \int\!\phi} &amp;=
+    \frac{
+        9 \chi_2 \ \mathcal{H}_0^4  \Omega_{\mathrm{M}0}^2 D(\chi_1) D(\chi_2) 
+    }{
+        a(\chi_1)  a(\chi_2) s_1  s_2
+    }
+    (\chi_1 - s_1) (5 s_{\mathrm{b}, 1} - 2) \times \\
+    &amp;\qquad\qquad\qquad\qquad
+    \left[
+        \ \mathcal{H}(\chi_2)  \mathcal{R}_2 s_1 (f(\chi_2) - 1) - 5 s_{\mathrm{b}, 1} + 2
+    \right]
+    \, , \\[6pt]
+    J_{31}^{\kappa \int\!\phi} &amp;=  y \, \Delta\chi^2
+    \, , \\[6pt]
+    J_{22}^{\kappa \int\!\phi} &amp;= 
+    \frac{1}{2} (y^2 - 1) \chi_1 \chi_2 
+    \, .
+\end{align*}\]</p><p>The six functions share this structure up to an overall constant <span>$A$</span>, which we factor out by writing (Eq.(D.19))</p><p class="math-container">\[    J_{22} := \frac{A}{2}\,\chi_a \chi_b \, (y^2-1) \; , \qquad
     J_{31} := A \, y \, \Delta\chi^2 \; ,
-    \quad \quad (\mathrm{D}.19)\]</p><p>with</p><table><tr><th style="text-align: center"><span>$A$</span></th><th style="text-align: left">functions</th></tr><tr><td style="text-align: center"><span>$1$</span></td><td style="text-align: left"><code>integrand_ξ_GNC_Lensing_IntegratedGP</code></td></tr><tr><td style="text-align: center"><span>$2$</span></td><td style="text-align: left"><code>integrand_ξ_GNCxLD_IntegratedGP_Lensing</code> , <code>integrand_ξ_GNCxLD_Lensing_IntegratedGP</code></td></tr><tr><td style="text-align: center"><span>$-2$</span></td><td style="text-align: left"><code>integrand_ξ_GNCxLD_Lensing_LocalGP</code> , <code>integrand_ξ_LD_Lensing_IntegratedGP</code> , <code>integrand_ξ_LD_Lensing_LocalGP</code></td></tr></table><p>(in the last three the coefficients are written in the source as <span>$-2y\Delta\chi^2$</span> and <span>$\chi_a\chi_b(1-y^2)$</span>, which is the same thing with <span>$A = -2$</span>).</p><h3 id="Term-1:-J_{22}-I_22"><a class="docs-heading-anchor" href="#Term-1:-J_{22}-I_22">Term 1: <span>$J_{22} I_2^2$</span></a><a id="Term-1:-J_{22}-I_22-1"></a><a class="docs-heading-anchor-permalink" href="#Term-1:-J_{22}-I_22" title="Permalink"></a></h3><p><span>$J_{22}$</span> of Eq.(D.19) carries <strong>no</strong> negative power of <span>$\Delta\chi$</span>, and its only vanishing factor is <span>$(y^2-1)$</span> on its own — there is no bracket to decompose, because nothing else cancels against it. Compare with the <span>$B_{00}$</span> of Family 1, Eq.(D.5) there, where</p><p class="math-container">\[    B_{00} = 8(\chi_1-\chi_2)^2 + 8(y-1)(\chi_1^2+\chi_2^2) - 9\chi_1\chi_2(y^2-1) \; :
+    \quad \quad (\mathrm{D}.19)\]</p><p>with</p><table><tr><th style="text-align: center"><span>$A$</span></th><th style="text-align: left">functions</th></tr><tr><td style="text-align: center"><span>$1$</span></td><td style="text-align: left"><code>integrand_ξ_GNC_Lensing_IntegratedGP</code></td></tr><tr><td style="text-align: center"><span>$2$</span></td><td style="text-align: left"><code>integrand_ξ_GNCxLD_IntegratedGP_Lensing</code> , <code>integrand_ξ_GNCxLD_Lensing_IntegratedGP</code></td></tr><tr><td style="text-align: center"><span>$-2$</span></td><td style="text-align: left"><code>integrand_ξ_GNCxLD_Lensing_LocalGP</code> , <code>integrand_ξ_LD_Lensing_IntegratedGP</code> , <code>integrand_ξ_LD_Lensing_LocalGP</code></td></tr></table><p>(in the last three the coefficients are written in the source as <span>$-2y\Delta\chi^2$</span> and <span>$\chi_a\chi_b(1-y^2)$</span>, which is the same thing with <span>$A = -2$</span>). The limit to be taken is:</p><p class="math-container">\[    \lim_{\Delta\chi\rightarrow 0^{+}}\left(J_{22} \, I_2^2 + J_{31} \, I_1^3\right) \; .\]</p><p>This analysis is valid for all the six functions listed above.</p><h3 id="Term-1:-J_{22}-I_22"><a class="docs-heading-anchor" href="#Term-1:-J_{22}-I_22">Term 1: <span>$J_{22} I_2^2$</span></a><a id="Term-1:-J_{22}-I_22-1"></a><a class="docs-heading-anchor-permalink" href="#Term-1:-J_{22}-I_22" title="Permalink"></a></h3><p><span>$J_{22}$</span> of Eq.(D.19) carries <strong>no</strong> negative power of <span>$\Delta\chi$</span>, and its only vanishing factor is <span>$(y^2-1)$</span> on its own — there is no bracket to decompose, because nothing else cancels against it. Compare with the <span>$B_{00}$</span> of Family 1, Eq.(D.5) there, where</p><p class="math-container">\[    B_{00} = 8(\chi_1-\chi_2)^2 + 8(y-1)(\chi_1^2+\chi_2^2) - 9\chi_1\chi_2(y^2-1) \; :
     \quad \quad (3.2)\]</p><p>there the <span>$(y^2-1)$</span> was one of three competing contributions, here it stands alone, so (2.3b) can be applied directly:</p><p class="math-container">\[\begin{align*}
-    J_{22} &amp;= \frac{A}{2}\,\chi_a \chi_b \, (y^2-1) \\[10pt]
+    J_{22}^{\kappa \int\!\phi} &amp;= \frac{A}{2}\,\chi_a \chi_b \, (y^2-1) \\[10pt]
     (2.3\mathrm{b}) \; \rightarrow \quad
         &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
-            \frac{A}{2}\cancel{\chi_a\chi_b}
+            \frac{A}{2}\,\chi_a \chi_b
+            \left[- \frac{(1-p^2)}{\chi_a^2}\Delta\chi^2\right] \\[10pt]
+    \chi_b \rightarrow \chi_a \; \rightarrow \quad
+        &amp;= \frac{A}{2}\cancel{\chi_a^2}
             \left[- \frac{(1-p^2)}{\cancel{\chi_a^2}}\Delta\chi^2\right] \\[10pt]
-        &amp;= -\frac{A}{2}(1-p^2)\,\Delta\chi^2 \; .
-\end{align*}\]</p><p>Since <span>$I_2^2 \rightarrow \sigma_0/15$</span> is <strong>finite</strong>, the product vanishes:</p><p class="math-container">\[    J_{22} I_2^2 \underset{\Delta\chi\rightarrow 0^{+}}{\sim}
-        \underbrace{-\frac{A}{2}(1-p^2)\,\Delta\chi^2}_{\mathcal{O}(\Delta\chi^2)}
-        \cdot \underbrace{\frac{\sigma_0}{15}}_{\mathcal{O}(1)}
-        = -\frac{A\,(1-p^2)\,\sigma_0}{30}\,\Delta\chi^2
+        &amp;= -\frac{A}{2}(1-p^2)\,\Delta\chi^2 \; = \; \mathcal{O}(\Delta\chi^2) \; .
+\end{align*}\]</p><p>Since <span>$I_2^2 \rightarrow \sigma_0/15$</span> is <strong>finite</strong>, the product vanishes:</p><p class="math-container">\[\begin{align*}
+    J_{22}^{\kappa \int\!\phi} I_2^2
+    &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
+        \underbrace{\left[-\frac{A}{2}(1-p^2)\,\Delta\chi^2\right]}_{\mathcal{O}(\Delta\chi^2)}
+        \cdot \underbrace{\frac{\sigma_0}{15}}_{\mathcal{O}(1)} \\[10pt]
+    &amp;= -\frac{A\,(1-p^2)\,\sigma_0}{30}\,\Delta\chi^2 \\[10pt]
+    &amp;= \mathcal{O}(\Delta\chi^2)
     \; \xrightarrow[\Delta\chi\rightarrow 0^{+}]{} \; 0 \; .
-    \quad \quad (10.1)\]</p><h3 id="Term-2:-J_{31}-I_13"><a class="docs-heading-anchor" href="#Term-2:-J_{31}-I_13">Term 2: <span>$J_{31} I_1^3$</span></a><a id="Term-2:-J_{31}-I_13-1"></a><a class="docs-heading-anchor-permalink" href="#Term-2:-J_{31}-I_13" title="Permalink"></a></h3><p><span>$J_{31}$</span>, also defined in Eq.(D.19), is regular and its <span>$\Delta\chi^2$</span> cancels the <span>$\Delta\chi^{-2}$</span> of <span>$I_1^3$</span>:</p><p class="math-container">\[\begin{align*}
-    J_{31} I_1^3 &amp;= A \, y \, \Delta\chi^2 \cdot I_1^3(\Delta\chi) \\[10pt]
+    \quad \quad (10.1)
+\end{align*}\]</p><h3 id="Term-2:-J_{31}-I_13"><a class="docs-heading-anchor" href="#Term-2:-J_{31}-I_13">Term 2: <span>$J_{31} I_1^3$</span></a><a id="Term-2:-J_{31}-I_13-1"></a><a class="docs-heading-anchor-permalink" href="#Term-2:-J_{31}-I_13" title="Permalink"></a></h3><p><span>$J_{31}$</span>, also defined in Eq.(D.19), is regular and its <span>$\Delta\chi^2$</span> cancels the <span>$\Delta\chi^{-2}$</span> of <span>$I_1^3$</span>:</p><p class="math-container">\[\begin{align*}
+    J_{31}^{\kappa \int\!\phi} I_1^3 &amp;= A \, y \, \Delta\chi^2 \cdot I_1^3(\Delta\chi) \\[10pt]
     (2.1\mathrm{a}) \; \rightarrow \quad
         &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
-            A \underbrace{y}_{\rightarrow 1}\cancel{\Delta\chi^2} \,
-            \frac{\sigma_2}{3\cancel{\Delta\chi^2}} \\[10pt]
+            A \, y \, \Delta\chi^2 \cdot \frac{\sigma_2}{3\,\Delta\chi^2} \\[10pt]
+    y \rightarrow 1 \; \rightarrow \quad
+        &amp;= A \underbrace{y}_{\rightarrow 1}\frac{\cancel{\Delta\chi^2}}{3\cancel{\Delta\chi^2}}\,\sigma_2 \\[10pt]
         &amp;= \frac{A}{3}\,\sigma_2 \; .
     \quad \quad (10.2)
-\end{align*}\]</p><h3 id="The-sum"><a class="docs-heading-anchor" href="#The-sum">The sum</a><a id="The-sum-1"></a><a class="docs-heading-anchor-permalink" href="#The-sum" title="Permalink"></a></h3><table><tr><th style="text-align: left">term</th><th style="text-align: left">order</th><th style="text-align: left">limit</th></tr><tr><td style="text-align: left"><span>$J_{22} I_2^2$</span> , Eq.(10.1)</td><td style="text-align: left"><span>$\mathcal{O}(\Delta\chi^2)$</span></td><td style="text-align: left"><span>$0$</span></td></tr><tr><td style="text-align: left"><span>$J_{31} I_1^3$</span> , Eq.(10.2)</td><td style="text-align: left"><span>$\mathcal{O}(1)$</span></td><td style="text-align: left"><span>$\dfrac{A}{3}\,\sigma_2$</span></td></tr></table><p class="math-container">\[    \boxed{\; \lim_{\Delta\chi \rightarrow 0}
-    \left(J_{22} I_2^2 + J_{31} I_1^3\right) = \frac{A}{3}\,\sigma_2 \; . }
-    \quad \quad (10.3)\]</p><p>The only <span>$p$</span> appears in the term whose limit is <span>$0$</span>, so nothing has to cancel.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../DeltaChiLimits_7_VanishingFactor/">« Family 7: the vanishing-factor terms</a><a class="docs-footer-nextpage" href="../BackgroundData/">Background Data »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 16:23">Thursday 17 September 2026</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+\end{align*}\]</p><h3 id="The-sum"><a class="docs-heading-anchor" href="#The-sum">The sum</a><a id="The-sum-1"></a><a class="docs-heading-anchor-permalink" href="#The-sum" title="Permalink"></a></h3><p class="math-container">\[\begin{align*}
+(10.1) : \quad J_{22}^{\kappa \int\!\phi} I_2^2
+    &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\sim} \mathcal{O}(\Delta\chi^2)
+    &amp;&amp;\rightarrow 0 \\[10pt]
+(10.2) : \quad J_{31}^{\kappa \int\!\phi} I_1^3
+    &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\sim} \mathcal{O}(1)
+    &amp;&amp;\rightarrow \frac{A}{3}\,\sigma_2 \\[10pt]
+\end{align*}\]</p><p class="math-container">\[    \boxed{\; \lim_{\Delta\chi \rightarrow 0}
+    \left(J_{22}^{\kappa \int\!\phi} I_2^2 + J_{31}^{\kappa \int\!\phi} I_1^3\right)
+    = \frac{A}{3}\,\sigma_2 \; . }
+    \quad \quad (10.3)\]</p><p>The only <span>$p$</span> appears in the term whose limit is <span>$0$</span>, so nothing has to cancel.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../DeltaChiLimits_7_VanishingFactor/">« Family 7: the vanishing-factor terms</a><a class="docs-footer-nextpage" href="../BackgroundData/">Background Data »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 16:40">Thursday 17 September 2026</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

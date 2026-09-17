@@ -27,123 +27,265 @@ I_0^2           &amp;\sim \sigma_2 \, s^{-2}               &amp;&amp;\rightarrow
     \quad \quad (2.3\mathrm{b}) \\[10pt]\]</p><p><strong>The trap to avoid.</strong> The two vanishing quantities have <strong>different orders</strong>,</p><p class="math-container">\[    \chi_2 - s_1 = p \, \Delta\chi_2 = \mathcal{O}(\Delta\chi_2)
     \qquad \qquad
     y - 1 = \mathcal{O}(\Delta\chi_2^2)
-    \quad \quad (2.4)\]</p><p>so a term <strong>quadratic</strong> in <span>$(s_1 - \chi_2)$</span> contributes at the <strong>same order</strong> as a term <strong>linear</strong> in <span>$(y-1)$</span>. One must therefore never set <span>$s_1 = \chi_2$</span> first and expand in <span>$y$</span> afterwards: the safe recipe is to rewrite every vanishing bracket <strong>exactly</strong> as a combination of <span>$(s_1-\chi_2)$</span>, <span>$(y-1)$</span> and <span>$(y^2-1)$</span>, with coefficients that are regular at the singular point, and only then substitute (D.4), (2.3a), (2.3b).</p><h2 id="The-integrand"><a class="docs-heading-anchor" href="#The-integrand">The integrand</a><a id="The-integrand-1"></a><a class="docs-heading-anchor-permalink" href="#The-integrand" title="Permalink"></a></h2><p>Concerned functions: <code>integrand_ξ_GNC_Newtonian_Lensing</code>, <code>integrand_ξ_GNCxLD_Newtonian_Lensing</code>. The sum to be taken to the limit is</p><p class="math-container">\[    J_{00}I_0^0 + J_{02}I_2^0 + J_{04}I_4^0 \; ,\]</p><p>with (<span>$f$</span> the growth rate and <span>$b$</span> the bias, both evaluated at <span>$s_1$</span>)</p><p class="math-container">\[\begin{align*}
-    J_{00} &amp;= \frac{1}{5}\left[ f \chi_2 (3y^2-1) - 3 y s_1 f - 5 y s_1 b \right] \; , \\[6pt]
-    J_{02} &amp;= \frac{1}{14\,\Delta\chi_2^2}\Big[
-        7 s_1 b \underbrace{\left(-2\chi_2^2 y + \chi_2 s_1 (y^2+3) - 2 y s_1^2\right)}_{=: \; N_{02}^{(b)} \; , \; (\mathrm{D}.11)} \\
-        &amp;\phantom{= \frac{1}{14\,\Delta\chi_2^2}\Big[} + f\underbrace{\left(
-            4\chi_2^3 (3y^2-1) - 2\chi_2^2 y s_1 (3y^2+8) + \chi_2 s_1^2 (9y^2+11) - 6 y s_1^3
-        \right)}_{=: \; N_{02}^{(f)} \; , \; (\mathrm{D}.12)} \Big] \; , \\[6pt]
-    J_{04} &amp;= \frac{3 \, f}{70\,\Delta\chi_2^4} \underbrace{\Big[
+    \quad \quad (2.4)\]</p><p>so a term <strong>quadratic</strong> in <span>$(s_1 - \chi_2)$</span> contributes at the <strong>same order</strong> as a term <strong>linear</strong> in <span>$(y-1)$</span>. One must therefore never set <span>$s_1 = \chi_2$</span> first and expand in <span>$y$</span> afterwards: the safe recipe is to rewrite every vanishing bracket <strong>exactly</strong> as a combination of <span>$(s_1-\chi_2)$</span>, <span>$(y-1)$</span> and <span>$(y^2-1)$</span>, with coefficients that are regular at the singular point, and only then substitute (D.4), (2.3a), (2.3b).</p><h2 id="The-integrand"><a class="docs-heading-anchor" href="#The-integrand">The integrand</a><a id="The-integrand-1"></a><a class="docs-heading-anchor-permalink" href="#The-integrand" title="Permalink"></a></h2><p>Concerned functions: <code>integrand_ξ_GNC_Newtonian_Lensing</code>, <code>integrand_ξ_GNCxLD_Newtonian_Lensing</code>. The GNC Newtonian-Lensing function is:</p><p class="math-container">\[\begin{split}
+    \xi^{\delta \kappa} ( s_1 , s_2, y ) =
+    D_1  \int_0^{s_2}\mathrm{d} \chi_2
+    J^{\delta \kappa}_{\alpha}
+    \left[ 
+        J^{\delta \kappa}_{00} I_0^0 ( \Delta\chi_2 ) + 
+        J^{\delta \kappa}_{02} I_2^0 ( \Delta \chi_2 ) + 
+        J^{\delta \kappa}_{04} I_4^0 ( \Delta \chi_2 ) 
+    \right] \, ,
+\end{split}\]</p><p>with (<span>$f_1 = f(s_1)$</span> the growth rate and <span>$b_1 = b(s_1)$</span> the bias)</p><p class="math-container">\[\begin{align*}
+    J^{\delta \kappa}_{\alpha} &amp;=
+    \frac{
+        \mathcal{H}_0 ^2 \Omega_{\mathrm{M}0} D (\chi_2)
+    }{
+        a(\chi_2 ) s_2
+    } 
+    (\chi_2 - s_2 ) (5s_{\mathrm{b}, 2} - 2) 
+    \, , \\[6pt]
+    J^{\delta \kappa}_{00} &amp;=
+        \frac{1}{5}\left[ f_1 \chi_2 (3 y^2-1) - 3 y s_1 f_1 - 5 y s_1 b_1 \right] \; , \\[6pt]
+    J^{\delta \kappa}_{02} &amp;=
+        \frac{1}{14\,\Delta\chi_2^2}\left[
+        7 s_1 b_1 \underbrace{\left(-2\chi_2^2 y + \chi_2 s_1 (y^2+3) - 2 y s_1^2\right)}_{=: \; N_{02}^{(b)} \; , \; (\mathrm{D}.11)}
+        \right. \\
+        &amp;\phantom{= \frac{1}{14\,\Delta\chi_2^2}\Big[} \left.
+        + f_1 \underbrace{\left(
+            4\chi_2^3 (3y^2-1) - 2\chi_2^2 y s_1 (3y^2+8)
+            + \chi_2 s_1^2 (9y^2+11) - 6 y s_1^3
+        \right)}_{=: \; N_{02}^{(f)} \; , \; (\mathrm{D}.12)} \right] \; , \\[6pt]
+    J^{\delta \kappa}_{04} &amp;=
+        \frac{3 \, f_1}{70\,\Delta\chi_2^4} \underbrace{\left[
         \chi_2^5 (6y^2-2) + 6\chi_2^4 y s_1 (y^2-3) - \chi_2^3 s_1^2 (y^4+12y^2-21)
-        + 2\chi_2^2 y s_1^3 (y^2+3) - 12 \chi_2 s_1^4 + 4 y s_1^5 \Big]}_{=: \; N_{04} \; , \; (\mathrm{D}.13)} \; .
-\end{align*}\]</p><h3 id="Term-1:-J_{00}-I_00"><a class="docs-heading-anchor" href="#Term-1:-J_{00}-I_00">Term 1: <span>$J_{00} I_0^0$</span></a><a id="Term-1:-J_{00}-I_00-1"></a><a class="docs-heading-anchor-permalink" href="#Term-1:-J_{00}-I_00" title="Permalink"></a></h3><p>This family is the exception: <span>$J_{00}$</span> is regular <strong>and does not vanish</strong> at the singular point, so it is the only one whose surviving contribution comes from an <span>$I_0^0$</span> rather than from an <span>$I_0^2$</span> or an <span>$I_1^3$</span>. Precisely because nothing cancels, here we <em>may</em> set <span>$y = 1$</span> and <span>$\chi_2 = s_1$</span> straight away — the trap of (2.4) only bites when a bracket vanishes:</p><p class="math-container">\[\begin{align*}
-    J_{00} &amp;= \frac{1}{5}\left[ f \chi_2 (3y^2-1) - 3 y s_1 f - 5 y s_1 b \right] \\[10pt]
-    y = 1 \; , \; \chi_2 = s_1 \; \rightarrow \quad
+        + 2\chi_2^2 y s_1^3 (y^2+3) - 12 \chi_2 s_1^4 + 4 y s_1^5 \right]}_{=: \; N_{04} \; , \; (\mathrm{D}.13)} \; .
+\end{align*}\]</p><p>The limit to be taken is:</p><p class="math-container">\[    \lim_{\Delta\chi_2\rightarrow 0^{+}}
+    \left(J_{00}I_0^0 + J_{02}I_2^0 + J_{04}I_4^0\right) \; .\]</p><p>This analysis is valid for Newtonian-Lensing in both the combinations (GNC and GNCxLD).</p><h3 id="Term-1:-J_{00}-I_00"><a class="docs-heading-anchor" href="#Term-1:-J_{00}-I_00">Term 1: <span>$J_{00} I_0^0$</span></a><a id="Term-1:-J_{00}-I_00-1"></a><a class="docs-heading-anchor-permalink" href="#Term-1:-J_{00}-I_00" title="Permalink"></a></h3><p>This family is the exception: <span>$J_{00}$</span> is regular <strong>and does not vanish</strong> at the singular point, so it is the only one whose surviving contribution comes from an <span>$I_0^0$</span> rather than from an <span>$I_0^2$</span> or an <span>$I_1^3$</span>. Precisely because nothing cancels, here we <em>may</em> set <span>$y = 1$</span> and <span>$\chi_2 = s_1$</span> straight away — the trap of (2.4) only bites when a bracket vanishes:</p><p class="math-container">\[\begin{align*}
+    J_{00}^{\delta \kappa} &amp;= \frac{1}{5}\left[ f_1 \chi_2 (3y^2-1) - 3 y s_1 f_1 - 5 y s_1 b_1 \right] \\[10pt]
+    &amp;\quad\quad y = 1 \; , \; \chi_2 = s_1 \\[10pt]
         &amp;\xrightarrow[\Delta\chi_2\rightarrow 0^{+}]{}
-            \frac{1}{5}\left[ f s_1 (3-1) - 3 s_1 f - 5 s_1 b \right] \\[10pt]
-        &amp;= \frac{1}{5}\left[ 2 f s_1 - 3 f s_1 - 5 b s_1 \right] \\[10pt]
-        &amp;= \frac{1}{5}\left[ - f s_1 - 5 b s_1 \right] \\[10pt]
-        &amp;= -\frac{s_1 \, (f + 5b)}{5} \; ,
+            \frac{1}{5}\left[ f_1 s_1 (3-1) - 3 s_1 f_1 - 5 s_1 b_1 \right] \\[10pt]
+        &amp;= \frac{1}{5}\left[ 2 f_1 s_1 - 3 f_1 s_1 - 5 b_1 s_1 \right] \\[10pt]
+        &amp;= \frac{1}{5}\left[ (2-3) f_1 s_1 - 5 b_1 s_1 \right] \\[10pt]
+        &amp;= \frac{1}{5}\left[ - f_1 s_1 - 5 b_1 s_1 \right] \\[10pt]
+        &amp;= -\frac{s_1 \, (f_1 + 5 b_1)}{5} \; ,
     \quad \quad (5.1)
-\end{align*}\]</p><p>and therefore, with <span>$I_0^0 \rightarrow \sigma_0$</span> from (2.1a),</p><p class="math-container">\[    J_{00} I_0^0 \; \xrightarrow[\Delta\chi_2\rightarrow 0^{+}]{} \;
-        -\frac{s_1 \, (f + 5b) \, \sigma_0}{5} \; .
-    \quad \quad (5.2)\]</p><p>Being the value of a regular function at a point, this carries no <span>$p$</span>: the direction-independence is automatic for this term.</p><h3 id="Term-2:-J_{02}-I_20"><a class="docs-heading-anchor" href="#Term-2:-J_{02}-I_20">Term 2: <span>$J_{02} I_2^0$</span></a><a id="Term-2:-J_{02}-I_20-1"></a><a class="docs-heading-anchor-permalink" href="#Term-2:-J_{02}-I_20" title="Permalink"></a></h3><p><span>$J_{02}$</span> carries <span>$\Delta\chi_2^{-2}$</span> and <span>$I_2^0$</span> carries <span>$\Delta\chi_2^{+2}$</span>, so the two exactly compensate and the product is <strong>finite</strong>: what decides is the order at which the two numerators <span>$N_{02}^{(b)}$</span> and <span>$N_{02}^{(f)}$</span>, Eqs.(D.11) and (D.12), vanish. They both vanish at the singular point:</p><p class="math-container">\[\begin{align*}
-    N_{02}^{(b)}\big|_{y=1,\,\chi_2=s_1}
-        &amp;= \left(-2 + (1+3) - 2\right)s_1^2 = (-2 + 4 - 2)\,s_1^2 = 0 \; , \\[6pt]
-    N_{02}^{(f)}\big|_{y=1,\,\chi_2=s_1}
-        &amp;= \left(4(3-1) - 2(3+8) + (9+11) - 6\right)s_1^3 = (8 - 22 + 20 - 6)\,s_1^3 = 0 \; ,
-\end{align*}\]</p><p>but vanishing at the point is not the same as knowing <em>how fast</em>, so we Taylor-expand both in <span>$(y-1)$</span> exactly as was done for <span>$B_{22}$</span> in Family 1.</p><p><strong><span>$N_{02}^{(b)}$</span>.</strong> It is quadratic in <span>$y$</span>, so three coefficients:</p><p class="math-container">\[\begin{align*}
-    N_{02}^{(b)}\big|_{y=1} &amp;= -2\chi_2^2 + \chi_2 s_1 (1+3) - 2 s_1^2
-        = -2\left(\chi_2^2 - 2\chi_2 s_1 + s_1^2\right) = -2(s_1-\chi_2)^2 \; , \\[10pt]
-    \frac{\partial N_{02}^{(b)}}{\partial y}\bigg|_{y=1}
-        &amp;= \left[-2\chi_2^2 + 2y\chi_2 s_1 - 2 s_1^2\right]_{y=1}
-        = -2\left(s_1^2 - s_1\chi_2 + \chi_2^2\right) \; , \\[10pt]
-    \frac{1}{2}\frac{\partial^2 N_{02}^{(b)}}{\partial y^2}\bigg|_{y=1}
-        &amp;= \frac{1}{2}\left(2\chi_2 s_1\right) = s_1 \chi_2 \; .
-\end{align*}\]</p><p>The first is <span>$\mathcal{O}(\Delta\chi_2^2)$</span>, the second <span>$\mathcal{O}(1)$</span> and multiplies <span>$(y-1) = \mathcal{O}(\Delta\chi_2^2)$</span> — so both contribute — while the third multiplies <span>$(y-1)^2 = \mathcal{O}(\Delta\chi_2^4)$</span> and is dropped. With <span>$(s_1-\chi_2) = -p\Delta\chi_2$</span> and <span>$\chi_2 \rightarrow s_1$</span>:</p><p class="math-container">\[\begin{align*}
-    N_{02}^{(b)} &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-        -2 \, p^2\Delta\chi_2^2
-        - 2\cancel{s_1^2}\left[- \frac{(1-p^2)}{2\cancel{s_1^2}}\Delta\chi_2^2\right] \\[10pt]
-    &amp;= \left[-2p^2 + (1-p^2)\right]\Delta\chi_2^2
-    \; = \; \left(1 - 3p^2\right)\Delta\chi_2^2 \; .
-\end{align*}\]</p><p><strong><span>$N_{02}^{(f)}$</span>.</strong> Cubic in <span>$y$</span>, so four coefficients; the two that matter are</p><p class="math-container">\[\begin{align*}
-    N_{02}^{(f)}\big|_{y=1} &amp;= 4\chi_2^3(3-1) - 2\chi_2^2 s_1(3+8) + \chi_2 s_1^2(9+11) - 6 s_1^3 \\[10pt]
+\end{align*}\]</p><p>and therefore, with <span>$I_0^0 \rightarrow \sigma_0$</span> from (2.1a),</p><p class="math-container">\[\begin{align*}
+    J_{00}^{\delta \kappa} I_0^0
+    &amp;\xrightarrow[\Delta\chi_2\rightarrow 0^{+}]{}
+        -\frac{s_1 \, (f_1 + 5 b_1) \, \sigma_0}{5} \; ,\\[10pt]
+    &amp;\underset{\Delta\chi_2 \rightarrow 0^{+}}{\sim}\mathcal{O}(1)
+    \quad \quad (5.2)
+\end{align*}\]</p><p>Being the value of a regular function at a point, this carries no <span>$p$</span>: the direction-independence is automatic for this term.</p><h3 id="Term-2:-J_{02}-I_20"><a class="docs-heading-anchor" href="#Term-2:-J_{02}-I_20">Term 2: <span>$J_{02} I_2^0$</span></a><a id="Term-2:-J_{02}-I_20-1"></a><a class="docs-heading-anchor-permalink" href="#Term-2:-J_{02}-I_20" title="Permalink"></a></h3><p><span>$J_{02}$</span> carries <span>$\Delta\chi_2^{-2}$</span> and <span>$I_2^0$</span> carries <span>$\Delta\chi_2^{+2}$</span>, so the two exactly compensate and the product is <strong>finite</strong>: what decides is the order at which the two numerators <span>$N_{02}^{(b)}$</span> and <span>$N_{02}^{(f)}$</span>, Eqs.(D.11) and (D.12), vanish. Both are polynomials in <span>$y$</span> — of degree 2 and 3 — so their Taylor expansion around <span>$y=1$</span> terminates:</p><p class="math-container">\[    N = \sum_{k} \frac{1}{k!}\frac{\partial^k N}{\partial y^k}\bigg|_{y=1} (y-1)^k \; .\]</p><p><strong>The <span>$k=0$</span> coefficients.</strong> Setting <span>$y = 1$</span>:</p><p class="math-container">\[\begin{align*}
+(\mathrm{D}.11) : \quad N_{02}^{(b)} &amp;:= \left[-2\chi_2^2 y + \chi_2 s_1 (y^2+3) - 2 y s_1^2\right] \\[10pt]
+    \Rightarrow \quad
+    N_{02}^{(b)}\big|_{y=1} &amp;= -2\chi_2^2 + \chi_2 s_1 (1+3) - 2 s_1^2 \\[10pt]
+        &amp;= -2\chi_2^2 + 4\chi_2 s_1 - 2 s_1^2 \\[10pt]
+        &amp;= -2\left(\chi_2^2 - 2\chi_2 s_1 + s_1^2\right) \\[10pt]
+        &amp;= -2(s_1-\chi_2)^2 \; , \\[10pt]
+        &amp;\underset{\Delta\chi_2 \rightarrow 0^{+}}{\sim}\mathcal{O}(\Delta\chi_2^2) \\[16pt]
+(\mathrm{D}.12) : \quad N_{02}^{(f)} &amp;:= \left[
+        4\chi_2^3 (3y^2-1) - 2\chi_2^2 y s_1 (3y^2+8) + \chi_2 s_1^2 (9y^2+11) - 6 y s_1^3 \right] \\[10pt]
+    \Rightarrow \quad
+    N_{02}^{(f)}\big|_{y=1} &amp;= 4\chi_2^3 (3-1) - 2\chi_2^2 s_1 (3+8) + \chi_2 s_1^2 (9+11) - 6 s_1^3 \\[10pt]
         &amp;= 8\chi_2^3 - 22\chi_2^2 s_1 + 20\chi_2 s_1^2 - 6 s_1^3 \\[10pt]
         &amp;= -2\left(3 s_1^3 - 10 s_1^2\chi_2 + 11 s_1\chi_2^2 - 4\chi_2^3\right) \\[10pt]
-        &amp;= -2(s_1-\chi_2)^2\left(3 s_1 - 4\chi_2\right) \; , \\[16pt]
-    \frac{\partial N_{02}^{(f)}}{\partial y}\bigg|_{y=1}
-        &amp;= \left[24 y\chi_2^3 - 2\chi_2^2 s_1(9y^2+8) + 18 y\chi_2 s_1^2 - 6 s_1^3\right]_{y=1} \\[10pt]
-        &amp;= 24\chi_2^3 - 34\chi_2^2 s_1 + 18\chi_2 s_1^2 - 6 s_1^3 \\[10pt]
-        &amp;= -2\left(3 s_1^3 - 9 s_1^2\chi_2 + 17 s_1\chi_2^2 - 12\chi_2^3\right) \; ,
-\end{align*}\]</p><p>(the factorisation of the first is checked by expanding <span>$(s_1-\chi_2)^2(3s_1-4\chi_2) = 3s_1^3 - 10 s_1^2\chi_2 + 11 s_1\chi_2^2 - 4\chi_2^3$</span>), while the <span>$k=2$</span> and <span>$k=3$</span> coefficients are <span>$\mathcal{O}(1)$</span> against <span>$(y-1)^2, (y-1)^3$</span> and drop. Evaluating the two surviving ones at <span>$\chi_2 = s_1$</span> (<span>$3-4 = -1$</span> and <span>$3-9+17-12 = -1$</span>):</p><p class="math-container">\[\begin{align*}
-    N_{02}^{(f)} &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-        -2 \, p^2\Delta\chi_2^2 \,(-s_1)
-        - 2(-s_1^3)\left[- \frac{(1-p^2)}{2 s_1^{\cancel{2}}}\Delta\chi_2^2\right] \\[10pt]
-    &amp;= 2 s_1 p^2\Delta\chi_2^2 - s_1(1-p^2)\Delta\chi_2^2 \\[10pt]
-    &amp;= s_1\left[2p^2 - (1-p^2)\right]\Delta\chi_2^2
-    \; = \; s_1\left(3p^2 - 1\right)\Delta\chi_2^2 \; .
-\end{align*}\]</p><p><strong>Combining them</strong>, the two <span>$\mathcal{O}(\Delta\chi_2^2)$</span> coefficients add up to</p><p class="math-container">\[\begin{align*}
-    7 s_1 b \, N_{02}^{(b)} + f \, N_{02}^{(f)}
-        &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-            \left[7 s_1 b \left(1-3p^2\right) + f s_1 \left(3p^2-1\right)\right]\Delta\chi_2^2 \\[10pt]
-        &amp;= s_1\left(3p^2-1\right)\left[-7 b + f\right]\Delta\chi_2^2 \\[10pt]
-        &amp;= s_1\left(3p^2-1\right)\left(f - 7b\right)\Delta\chi_2^2 \; .
-\end{align*}\]</p><p>The explicit <span>$\Delta\chi_2^{-2}$</span> is thus exactly cancelled and <span>$J_{02}$</span> is finite,</p><p class="math-container">\[    J_{02} \underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-        \frac{s_1\left(3p^2-1\right)\left(f - 7b\right)}{14}
-        = \frac{s_1 \, \mathcal{L}_2(p) \left(f - 7b\right)}{7} \; ,\]</p><p>but it multiplies a <strong>vanishing</strong> <span>$I_2^0$</span>:</p><p class="math-container">\[    J_{02} I_2^0 \underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-        \underbrace{\frac{s_1\left(3p^2-1\right)\left(f - 7b\right)}{14}}_{\mathcal{O}(1)} \cdot
-        \underbrace{\frac{\sigma_{-2}}{15}\Delta\chi_2^2}_{\mathcal{O}(\Delta\chi_2^2)}
-    \; \xrightarrow[\Delta\chi_2\rightarrow 0^{+}]{} \; 0 \; .
-    \quad \quad (5.3)\]</p><h3 id="Term-3:-J_{04}-I_40"><a class="docs-heading-anchor" href="#Term-3:-J_{04}-I_40">Term 3: <span>$J_{04} I_4^0$</span></a><a id="Term-3:-J_{04}-I_40-1"></a><a class="docs-heading-anchor-permalink" href="#Term-3:-J_{04}-I_40" title="Permalink"></a></h3><p>This is the delicate one: <span>$J_{04} \propto \Delta\chi_2^{-4}$</span> against <span>$I_4^0 \propto \Delta\chi_2^{4}$</span>, so <span>$N_{04}$</span>, Eq.(D.13), must be expanded to <strong>fourth</strong> order, and checking that it vanishes at the point is nowhere near enough. It does vanish there,</p><p class="math-container">\[\begin{align*}
-    N_{04}\big|_{y=1,\,\chi_2=s_1} &amp;= \left[(6-2) + 6(1-3) - (1+12-21) + 2(1+3) - 12 + 4\right]s_1^5 \\[6pt]
-        &amp;= \left[4 - 12 + 8 + 8 - 12 + 4\right]s_1^5 = 0 \; ,
-\end{align*}\]</p><p>but, <span>$J_{04}$</span> carrying <span>$\Delta\chi_2^{-4}$</span>, we need <span>$N_{04}$</span> to <strong>fourth</strong> order. It is quartic in <span>$y$</span>, so its Taylor expansion around <span>$y=1$</span> again terminates after five terms, and each coefficient factorises in <span>$(s_1-\chi_2)$</span>:</p><p class="math-container">\[\begin{align*}
-    N_{04}\big|_{y=1} &amp;= 4(s_1-\chi_2)^4(s_1+\chi_2)
-        &amp;&amp;\rightarrow \; \mathcal{O}(\Delta\chi_2^4) \; , \\[6pt]
-    \frac{\partial N_{04}}{\partial y}\bigg|_{y=1}
-        &amp;= 4(s_1-\chi_2)^2\left(s_1^3 + 2 s_1^2\chi_2 + 6 s_1\chi_2^2 + 3\chi_2^3\right)
-        &amp;&amp;\rightarrow \; \mathcal{O}(\Delta\chi_2^2) \; , \\[6pt]
-    \frac{1}{2}\frac{\partial^2 N_{04}}{\partial y^2}\bigg|_{y=1}
-        &amp;= 6\chi_2^2\left(s_1^3 - 3 s_1^2\chi_2 + 3 s_1\chi_2^2 + \chi_2^3\right)
-        &amp;&amp;\rightarrow \; \mathcal{O}(1) \; , \\[6pt]
-    \frac{1}{6}\frac{\partial^3 N_{04}}{\partial y^3}\bigg|_{y=1}
-        &amp;= 2 s_1\chi_2^2\left(s_1^2 - 2 s_1\chi_2 + 3\chi_2^2\right)
-        &amp;&amp;\rightarrow \; \mathcal{O}(1) \; , \\[6pt]
-    \frac{1}{24}\frac{\partial^4 N_{04}}{\partial y^4}\bigg|_{y=1}
-        &amp;= - s_1^2\chi_2^3
-        &amp;&amp;\rightarrow \; \mathcal{O}(1) \; .
-\end{align*}\]</p><p>Counting orders exactly as for <span>$B_{22}$</span>, with <span>$(y-1)^k = \mathcal{O}(\Delta\chi_2^{2k})$</span>:</p><p class="math-container">\[\begin{align*}
-    k=0 \; &amp;: \; \mathcal{O}(\Delta\chi_2^4)\cdot 1 = \mathcal{O}(\Delta\chi_2^4)
-        &amp;&amp;\Longrightarrow \; \mathrm{keep} \; , \\[4pt]
-    k=1 \; &amp;: \; \mathcal{O}(\Delta\chi_2^2)\cdot\mathcal{O}(\Delta\chi_2^2) = \mathcal{O}(\Delta\chi_2^4)
-        &amp;&amp;\Longrightarrow \; \mathrm{keep} \; , \\[4pt]
-    k=2 \; &amp;: \; \mathcal{O}(1)\cdot\mathcal{O}(\Delta\chi_2^4) = \mathcal{O}(\Delta\chi_2^4)
-        &amp;&amp;\Longrightarrow \; \mathrm{keep} \; , \\[4pt]
-    k=3,4 \; &amp;: \; \mathcal{O}(1)\cdot\mathcal{O}(\Delta\chi_2^{6}),\;\mathcal{O}(\Delta\chi_2^{8})
+        &amp;= -2\left[3 s_1^3 + (-6-4) s_1^2\chi_2 + (3+8) s_1\chi_2^2 - 4\chi_2^3\right] \\[10pt]
+        &amp;= -2\left[\left(3 s_1^3 - 6 s_1^2\chi_2 + 3 s_1\chi_2^2\right)
+            - \left(4 s_1^2\chi_2 - 8 s_1\chi_2^2 + 4\chi_2^3\right)\right] \\[10pt]
+        &amp;= -2\left[3 s_1\left(s_1^2 - 2 s_1\chi_2 + \chi_2^2\right)
+            - 4\chi_2\left(s_1^2 - 2 s_1\chi_2 + \chi_2^2\right)\right] \\[10pt]
+        &amp;= -2\left(3 s_1 - 4\chi_2\right)\left(s_1^2 - 2 s_1\chi_2 + \chi_2^2\right) \\[10pt]
+        &amp;= -2(s_1-\chi_2)^2\left(3 s_1 - 4\chi_2\right) \; , \\[10pt]
+        &amp;\underset{\Delta\chi_2 \rightarrow 0^{+}}{\sim}\mathcal{O}(\Delta\chi_2^2)
+\end{align*}\]</p><p><strong>The <span>$k=1$</span> coefficients.</strong> Differentiating once in <span>$y$</span>, and evaluating at <span>$y=1$</span>:</p><p class="math-container">\[\begin{align*}
+\frac{\partial N_{02}^{(b)}}{\partial y}
+    &amp;= \frac{\partial}{\partial y}\left[-2\chi_2^2 y + \chi_2 s_1 (y^2+3) - 2 y s_1^2\right] \\[10pt]
+    &amp;= -2\chi_2^2 + 2\chi_2 s_1 y - 2 s_1^2 \; , \\[10pt]
+\Rightarrow \quad
+\frac{\partial N_{02}^{(b)}}{\partial y}\bigg|_{y=1}
+    &amp;= -2\chi_2^2 + 2\chi_2 s_1 - 2 s_1^2 \\[10pt]
+    &amp;= -2\left(s_1^2 - s_1\chi_2 + \chi_2^2\right) \; , \\[10pt]
+    &amp;\underset{\Delta\chi_2 \rightarrow 0^{+}}{\sim}\mathcal{O}(1) \\[16pt]
+\frac{\partial N_{02}^{(f)}}{\partial y}
+    &amp;= \frac{\partial}{\partial y}\left[
+        4\chi_2^3 (3y^2-1) - 2\chi_2^2 y s_1 (3y^2+8) + \chi_2 s_1^2 (9y^2+11) - 6 y s_1^3\right] \\[10pt]
+    &amp;= 24 y\chi_2^3 - 2\chi_2^2 s_1 (9y^2+8) + 18 y\chi_2 s_1^2 - 6 s_1^3 \; , \\[10pt]
+\Rightarrow \quad
+\frac{\partial N_{02}^{(f)}}{\partial y}\bigg|_{y=1}
+    &amp;= 24\chi_2^3 - 2\chi_2^2 s_1 (9+8) + 18\chi_2 s_1^2 - 6 s_1^3 \\[10pt]
+    &amp;= 24\chi_2^3 - 34\chi_2^2 s_1 + 18\chi_2 s_1^2 - 6 s_1^3 \\[10pt]
+    &amp;= -2\left(3 s_1^3 - 9 s_1^2\chi_2 + 17 s_1\chi_2^2 - 12\chi_2^3\right) \; , \\[10pt]
+    &amp;\underset{\Delta\chi_2 \rightarrow 0^{+}}{\sim}\mathcal{O}(1)
+\end{align*}\]</p><p>The <span>$k=2$</span> and <span>$k=3$</span> coefficients are also <span>$\mathcal{O}(1)$</span>, so that, counting the orders:</p><p class="math-container">\[\begin{align*}
+    &amp;N_{02}\big|_{y=1} \cdot 1 &amp;&amp;=
+        \mathcal{O}(\Delta\chi_2^2) \cdot 1
+        &amp;&amp;= \mathcal{O}(\Delta\chi_2^2)
+        &amp;&amp;\Longrightarrow \; \mathrm{keep} \; , \\[6pt]
+    &amp;\frac{\partial N_{02}}{\partial y}\bigg|_{y=1}(y-1) &amp;&amp;=
+        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi_2^2)
+        &amp;&amp;= \mathcal{O}(\Delta\chi_2^2)
+        &amp;&amp;\Longrightarrow \; \mathrm{keep} \; , \\[6pt]
+    \frac{1}{2}&amp;\frac{\partial^2 N_{02}}{\partial y^2}\bigg|_{y=1} (y-1)^2 &amp;&amp;=
+        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi_2^4)
+        &amp;&amp;= \mathcal{O}(\Delta\chi_2^4)
+        &amp;&amp;\Longrightarrow \; \mathrm{drop} \; , \\[6pt]
+    \frac{1}{6}&amp;\frac{\partial^3 N_{02}}{\partial y^3}\bigg|_{y=1}(y-1)^3 &amp;&amp;=
+        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi_2^6)
+        &amp;&amp;= \mathcal{O}(\Delta\chi_2^6)
         &amp;&amp;\Longrightarrow \; \mathrm{drop} \; .
-\end{align*}\]</p><p>Substituting (D.4) and (2.3a), with the regular factors at <span>$\chi_2 = s_1$</span> (<span>$1+1 = 2$</span>, <span>$1+2+6+3 = 12$</span>, <span>$1-3+3+1 = 2$</span>):</p><p class="math-container">\[\begin{align*}
-    k=0 \; &amp;: \; 4(-p\Delta\chi_2)^4(2 s_1) = 8 \, s_1 \, p^4 \, \Delta\chi_2^4 \; , \\[8pt]
-    k=1 \; &amp;: \; 4(-p\Delta\chi_2)^2 \left(12 s_1^3\right)
-        \left[- \frac{(1-p^2)}{2\cancel{s_1^2}}\Delta\chi_2^2\right]
-        = -24 \, s_1 \, p^2(1-p^2) \, \Delta\chi_2^4 \; , \\[8pt]
-    k=2 \; &amp;: \; 6 s_1^2 \left(2 s_1^3\right)
-        \left[- \frac{(1-p^2)}{2 s_1^2}\Delta\chi_2^2\right]^{2}
-        = 12 \cancel{s_1^5} \frac{(1-p^2)^2}{4 \cancel{s_1^4}}\Delta\chi_2^4
-        = 3 \, s_1 \,(1-p^2)^2 \, \Delta\chi_2^4 \; ,
-\end{align*}\]</p><p>and summing the three:</p><p class="math-container">\[\begin{align*}
-    N_{04} &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-        s_1 \left[8p^4 - 24p^2(1-p^2) + 3(1-p^2)^2\right]\Delta\chi_2^4 \\[10pt]
-    &amp;= s_1 \left[8p^4 - 24p^2 + 24p^4 + 3 - 6p^2 + 3p^4\right]\Delta\chi_2^4 \\[10pt]
-    &amp;= s_1 \left(35p^4 - 30p^2 + 3\right)\Delta\chi_2^4
+\end{align*}\]</p><p><strong>Putting the two surviving orders together.</strong> With <span>$(s_1 - \chi_2) = -p\Delta\chi_2$</span> from (D.4), <span>$(y-1)$</span> from (2.3a), and the regular factors evaluated at <span>$\chi_2 = s_1$</span> (<span>$3-4 = -1$</span> and <span>$3-9+17-12 = -1$</span>):</p><p class="math-container">\[\begin{align*}
+N_{02}^{(b)} &amp;= \sum_{k} \frac{1}{k!}\frac{\partial^k N_{02}^{(b)}}{\partial y^k}\bigg|_{y=1} (y-1)^k \\[15pt]
+    &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        N_{02}^{(b)}\big|_{y=1} \cdot 1 + \frac{\partial N_{02}^{(b)}}{\partial y}\bigg|_{y=1}(y-1) \\[15pt]
+    &amp;= -2(s_1-\chi_2)^2 \cdot 1 - 2\left(s_1^2 - s_1\chi_2 + \chi_2^2\right)\cdot(y-1) \\[15pt]
+    &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        \underbrace{-2(-p\Delta\chi_2)^2}_{k=0}
+        + \underbrace{\left(-2 s_1^2\right)\left[- \frac{(1-p^2)}{2 s_1^2}\Delta\chi_2^2\right]}_{k=1} \\[10pt]
+    &amp;= -2 p^2\Delta\chi_2^2 + (1-p^2)\Delta\chi_2^2 \\[10pt]
+    &amp;= \left[-2p^2 + (1-p^2)\right]\Delta\chi_2^2 \\[10pt]
+    &amp;= \left(1 - 3p^2\right)\Delta\chi_2^2 \; , \\[20pt]
+N_{02}^{(f)} &amp;= \sum_{k} \frac{1}{k!}\frac{\partial^k N_{02}^{(f)}}{\partial y^k}\bigg|_{y=1} (y-1)^k \\[15pt]
+    &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        N_{02}^{(f)}\big|_{y=1} \cdot 1 + \frac{\partial N_{02}^{(f)}}{\partial y}\bigg|_{y=1}(y-1) \\[15pt]
+    &amp;= -2(s_1-\chi_2)^2\left(3 s_1 - 4\chi_2\right) \cdot 1
+        - 2\left(3 s_1^3 - 9 s_1^2\chi_2 + 17 s_1\chi_2^2 - 12\chi_2^3\right)\cdot(y-1) \\[15pt]
+    &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        \underbrace{-2(-p\Delta\chi_2)^2 \left(-s_1\right)}_{k=0}
+        + \underbrace{\left(-2\right)\left(- s_1^3\right)
+            \left[- \frac{(1-p^2)}{2 s_1^2}\Delta\chi_2^2\right]}_{k=1} \\[10pt]
+    &amp;= 2 s_1 p^2\Delta\chi_2^2 - s_1(1-p^2)\Delta\chi_2^2 \\[10pt]
+    &amp;= s_1\left[2p^2 - (1-p^2)\right]\Delta\chi_2^2 \\[10pt]
+    &amp;= s_1\left(3p^2 - 1\right)\Delta\chi_2^2 \; .
+\end{align*}\]</p><p>Combining them, the two <span>$\mathcal{O}(\Delta\chi_2^2)$</span> coefficients add up to</p><p class="math-container">\[\begin{align*}
+    7 s_1 b_1 \, N_{02}^{(b)} + f_1 \, N_{02}^{(f)}
+        &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+            7 s_1 b_1 \left(1-3p^2\right)\Delta\chi_2^2
+            + f_1 s_1 \left(3p^2-1\right)\Delta\chi_2^2 \\[10pt]
+        &amp;= s_1\left(3p^2-1\right)\left[-7 b_1 + f_1\right]\Delta\chi_2^2 \\[10pt]
+        &amp;= s_1\left(3p^2-1\right)\left(f_1 - 7 b_1\right)\Delta\chi_2^2 \; ,
+\end{align*}\]</p><p>so that the explicit <span>$\Delta\chi_2^{-2}$</span> is exactly cancelled and <span>$J_{02}$</span> is <strong>finite</strong>, but it multiplies a vanishing <span>$I_2^0$</span>:</p><p class="math-container">\[\begin{align*}
+    J_{02}^{\delta \kappa} I_2^0
+    &amp;= \frac{1}{14\,\Delta\chi_2^2}\left[7 s_1 b_1 N_{02}^{(b)} + f_1 N_{02}^{(f)}\right] I_2^0 \\[12pt]
+    &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        \frac{1}{14\,\cancel{\Delta\chi_2^2}}
+        \left[s_1\left(3p^2-1\right)\left(f_1 - 7 b_1\right)\cancel{\Delta\chi_2^2}\right]
+        \cdot \frac{\sigma_{-2}}{15}\Delta\chi_2^2 \\[12pt]
+    &amp;= \frac{s_1\left(3p^2-1\right)\left(f_1 - 7 b_1\right)\sigma_{-2}}{210}\,\Delta\chi_2^2 \\[12pt]
+    &amp;= \mathcal{O}(\Delta\chi_2^2) \; \xrightarrow[\Delta\chi_2\rightarrow 0^{+}]{} \; 0 \; .
+    \quad \quad (5.3)
+\end{align*}\]</p><h3 id="Term-3:-J_{04}-I_40"><a class="docs-heading-anchor" href="#Term-3:-J_{04}-I_40">Term 3: <span>$J_{04} I_4^0$</span></a><a id="Term-3:-J_{04}-I_40-1"></a><a class="docs-heading-anchor-permalink" href="#Term-3:-J_{04}-I_40" title="Permalink"></a></h3><p>This is the delicate one: <span>$J_{04} \propto \Delta\chi_2^{-4}$</span> against <span>$I_4^0 \propto \Delta\chi_2^{4}$</span>, so <span>$N_{04}$</span>, Eq.(D.13), must be expanded to <strong>fourth</strong> order, and checking that it vanishes at the point is nowhere near enough.</p><p><strong>The <span>$k=0$</span> coefficient.</strong> Setting <span>$y=1$</span>:</p><p class="math-container">\[\begin{align*}
+(\mathrm{D}.13) : \quad N_{04} &amp;:= \left[
+        \chi_2^5 (6y^2-2) + 6\chi_2^4 y s_1 (y^2-3) - \chi_2^3 s_1^2 (y^4+12y^2-21)
+        + 2\chi_2^2 y s_1^3 (y^2+3) - 12 \chi_2 s_1^4 + 4 y s_1^5 \right] \\[10pt]
+    \Rightarrow \quad
+    N_{04}\big|_{y=1} &amp;= \chi_2^5 (6-2) + 6\chi_2^4 s_1 (1-3) - \chi_2^3 s_1^2 (1+12-21)
+        + 2\chi_2^2 s_1^3 (1+3) - 12\chi_2 s_1^4 + 4 s_1^5 \\[10pt]
+        &amp;= 4\chi_2^5 - 12\chi_2^4 s_1 + 8\chi_2^3 s_1^2 + 8\chi_2^2 s_1^3 - 12\chi_2 s_1^4 + 4 s_1^5 \\[10pt]
+        &amp;= 4\left(s_1^5 - 3 s_1^4\chi_2 + 2 s_1^3\chi_2^2 + 2 s_1^2\chi_2^3 - 3 s_1\chi_2^4 + \chi_2^5\right) \\[10pt]
+        &amp;= 4\left[s_1^5 + (-4+1) s_1^4\chi_2 + (6-4) s_1^3\chi_2^2
+            + (-4+6) s_1^2\chi_2^3 + (1-4) s_1\chi_2^4 + \chi_2^5\right] \\[10pt]
+        &amp;= 4\left[\left(s_1^5 - 4 s_1^4\chi_2 + 6 s_1^3\chi_2^2 - 4 s_1^2\chi_2^3 + s_1\chi_2^4\right)
+            \right. \\
+        &amp;\phantom{= 4[} \left.
+            + \left(s_1^4\chi_2 - 4 s_1^3\chi_2^2 + 6 s_1^2\chi_2^3 - 4 s_1\chi_2^4 + \chi_2^5\right)\right] \\[10pt]
+        &amp;= 4\left[s_1\left(s_1^4 - 4 s_1^3\chi_2 + 6 s_1^2\chi_2^2 - 4 s_1\chi_2^3 + \chi_2^4\right)
+            \right. \\
+        &amp;\phantom{= 4[} \left.
+            + \chi_2\left(s_1^4 - 4 s_1^3\chi_2 + 6 s_1^2\chi_2^2 - 4 s_1\chi_2^3 + \chi_2^4\right)\right] \\[10pt]
+        &amp;= 4\left(s_1 + \chi_2\right)\left(s_1^4 - 4 s_1^3\chi_2 + 6 s_1^2\chi_2^2 - 4 s_1\chi_2^3 + \chi_2^4\right) \\[10pt]
+        &amp;= 4(s_1-\chi_2)^4\left(s_1+\chi_2\right) \; , \\[10pt]
+        &amp;\underset{\Delta\chi_2 \rightarrow 0^{+}}{\sim}\mathcal{O}(\Delta\chi_2^4)
+\end{align*}\]</p><p><strong>The <span>$k=1$</span> and <span>$k=2$</span> coefficients.</strong> Differentiating,</p><p class="math-container">\[\begin{align*}
+\frac{\partial N_{04}}{\partial y}
+    &amp;= \frac{\partial}{\partial y}\left[
+        \chi_2^5 (6y^2-2) + 6\chi_2^4 y s_1 (y^2-3) - \chi_2^3 s_1^2 (y^4+12y^2-21)
+        + 2\chi_2^2 y s_1^3 (y^2+3) - 12 \chi_2 s_1^4 + 4 y s_1^5\right] \\[10pt]
+    &amp;= 12 y\chi_2^5 + 6\chi_2^4 s_1 (3y^2-3) - \chi_2^3 s_1^2 (4y^3+24y)
+        + 2\chi_2^2 s_1^3 (3y^2+3) + 4 s_1^5 \\[10pt]
+\Rightarrow \quad
+\frac{\partial N_{04}}{\partial y}\bigg|_{y=1}
+    &amp;= 12\chi_2^5 + 0 - 28\chi_2^3 s_1^2 + 12\chi_2^2 s_1^3 + 4 s_1^5 \\[10pt]
+    &amp;= 4\left(3\chi_2^5 - 7\chi_2^3 s_1^2 + 3\chi_2^2 s_1^3 + s_1^5\right) \; ,
+\end{align*}\]</p><p>which must contain <span>$(s_1-\chi_2)^2$</span>, since it vanishes twice there; dividing it out,</p><p class="math-container">\[    3\chi_2^5 - 7\chi_2^3 s_1^2 + 3\chi_2^2 s_1^3 + s_1^5
+    = (s_1-\chi_2)^2\left(3\chi_2^3 + 6\chi_2^2 s_1 + 2\chi_2 s_1^2 + s_1^3\right) \; ,\]</p><p>(check, by expanding the right-hand side: ``3\chi<em>2^5 + 6\chi</em>2^4 s<em>1 + 2\chi</em>2^3 s<em>1^2 + \chi</em>2^2 s_1^3</p><ul><li>6\chi<em>2^4 s</em>1 - 12\chi<em>2^3 s</em>1^2 - 4\chi<em>2^2 s</em>1^3 - 2\chi<em>2 s</em>1^4</li><li>3\chi<em>2^3 s</em>1^2 + 6\chi<em>2^2 s</em>1^3 + 2\chi<em>2 s</em>1^4 + s_1^5</li></ul><p>= 3\chi<em>2^5 - 7\chi</em>2^3 s<em>1^2 + 3\chi</em>2^2 s<em>1^3 + s</em>1^5`` ✓), so that</p><p class="math-container">\[\begin{align*}
+    \frac{\partial N_{04}}{\partial y}\bigg|_{y=1}
+    &amp;= 4(s_1-\chi_2)^2\left(3\chi_2^3 + 6\chi_2^2 s_1 + 2\chi_2 s_1^2 + s_1^3\right) \; , \\[10pt]
+    &amp;\underset{\Delta\chi_2 \rightarrow 0^{+}}{\sim}\mathcal{O}(\Delta\chi_2^2) \\[16pt]
+    \frac{\partial^2 N_{04}}{\partial y^2}
+    &amp;= \frac{\partial}{\partial y}\left[
+        12 y\chi_2^5 + 6\chi_2^4 s_1 (3y^2-3) - \chi_2^3 s_1^2 (4y^3+24y)
+        + 2\chi_2^2 s_1^3 (3y^2+3) + 4 s_1^5\right] \\[10pt]
+    &amp;= 12\chi_2^5 + 36 y\chi_2^4 s_1 - \chi_2^3 s_1^2 (12y^2+24) + 12 y\chi_2^2 s_1^3 \\[10pt]
+    \Rightarrow \quad
+    \frac{1}{2}\frac{\partial^2 N_{04}}{\partial y^2}\bigg|_{y=1}
+    &amp;= \frac{1}{2}\left(12\chi_2^5 + 36\chi_2^4 s_1 - 36\chi_2^3 s_1^2 + 12\chi_2^2 s_1^3\right) \\[10pt]
+    &amp;= 6\chi_2^5 + 18\chi_2^4 s_1 - 18\chi_2^3 s_1^2 + 6\chi_2^2 s_1^3 \\[10pt]
+    &amp;= 6\chi_2^2\left(\chi_2^3 + 3\chi_2^2 s_1 - 3\chi_2 s_1^2 + s_1^3\right) \; , \\[10pt]
+    &amp;\underset{\Delta\chi_2 \rightarrow 0^{+}}{\sim}\mathcal{O}(1)
+\end{align*}\]</p><p>The <span>$k=3$</span> and <span>$k=4$</span> coefficients are <span>$\mathcal{O}(1)$</span> as well. Counting the orders:</p><p class="math-container">\[\begin{align*}
+    &amp;N_{04}\big|_{y=1} \cdot 1 &amp;&amp;=
+        \mathcal{O}(\Delta\chi_2^4) \cdot 1
+        &amp;&amp;= \mathcal{O}(\Delta\chi_2^4)
+        &amp;&amp;\Longrightarrow \; \mathrm{keep} \; , \\[6pt]
+    &amp;\frac{\partial N_{04}}{\partial y}\bigg|_{y=1}(y-1) &amp;&amp;=
+        \mathcal{O}(\Delta\chi_2^2) \cdot \mathcal{O}(\Delta\chi_2^2)
+        &amp;&amp;= \mathcal{O}(\Delta\chi_2^4)
+        &amp;&amp;\Longrightarrow \; \mathrm{keep} \; , \\[6pt]
+    \frac{1}{2}&amp;\frac{\partial^2 N_{04}}{\partial y^2}\bigg|_{y=1} (y-1)^2 &amp;&amp;=
+        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi_2^4)
+        &amp;&amp;= \mathcal{O}(\Delta\chi_2^4)
+        &amp;&amp;\Longrightarrow \; \mathrm{keep} \; , \\[6pt]
+    \frac{1}{6}&amp;\frac{\partial^3 N_{04}}{\partial y^3}\bigg|_{y=1}(y-1)^3 &amp;&amp;=
+        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi_2^6)
+        &amp;&amp;= \mathcal{O}(\Delta\chi_2^6)
+        &amp;&amp;\Longrightarrow \; \mathrm{drop} \; , \\[6pt]
+    \frac{1}{24}&amp;\frac{\partial^4 N_{04}}{\partial y^4}\bigg|_{y=1}(y-1)^4 &amp;&amp;=
+        \mathcal{O}(1) \cdot \mathcal{O}(\Delta\chi_2^8)
+        &amp;&amp;= \mathcal{O}(\Delta\chi_2^8)
+        &amp;&amp;\Longrightarrow \; \mathrm{drop} \; .
+\end{align*}\]</p><p><strong>Putting the three surviving orders together.</strong> With the regular factors at <span>$\chi_2 = s_1$</span> (<span>$1+1 = 2$</span> , <span>$3+6+2+1 = 12$</span> and <span>$1+3-3+1 = 2$</span>):</p><p class="math-container">\[\begin{align*}
+N_{04} &amp;= \sum_{k} \frac{1}{k!}\frac{\partial^k N_{04}}{\partial y^k}\bigg|_{y=1} (y-1)^k \\[15pt]
+    &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        N_{04}\big|_{y=1} \cdot 1 + \frac{\partial N_{04}}{\partial y}\bigg|_{y=1}(y-1)
+        + \frac{1}{2}\frac{\partial^2 N_{04}}{\partial y^2}\bigg|_{y=1}(y-1)^2 \\[15pt]
+    &amp;= 4(s_1-\chi_2)^4\left(s_1+\chi_2\right) \cdot 1
+        + 4(s_1-\chi_2)^2\left(3\chi_2^3 + 6\chi_2^2 s_1 + 2\chi_2 s_1^2 + s_1^3\right)(y-1) \\
+    &amp;\phantom{=} + 6\chi_2^2\left(\chi_2^3 + 3\chi_2^2 s_1 - 3\chi_2 s_1^2 + s_1^3\right)(y-1)^2 \\[15pt]
+    &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        \underbrace{4(-p\Delta\chi_2)^4\left(2 s_1\right)}_{k=0}
+        + \underbrace{4(-p\Delta\chi_2)^2\left(12 s_1^3\right)
+            \left[- \frac{(1-p^2)}{2 s_1^2}\Delta\chi_2^2\right]}_{k=1} \\
+    &amp;\phantom{\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}}
+        + \underbrace{6 s_1^2\left(2 s_1^3\right)
+            \left[- \frac{(1-p^2)}{2 s_1^2}\Delta\chi_2^2\right]^{2}}_{k=2} \\[10pt]
+    &amp;= 8 s_1 p^4 \Delta\chi_2^4 - 24 s_1 p^2(1-p^2)\Delta\chi_2^4
+        + 12\cancel{s_1^5}\frac{(1-p^2)^2}{4\cancel{s_1^4}}\Delta\chi_2^4 \\[10pt]
+    &amp;= s_1\left[8p^4 - 24p^2(1-p^2) + 3(1-p^2)^2\right]\Delta\chi_2^4 \\[10pt]
+    &amp;= s_1\left[8p^4 - 24p^2 + 24p^4 + 3 - 6p^2 + 3p^4\right]\Delta\chi_2^4 \\[10pt]
+    &amp;= s_1\left(35p^4 - 30p^2 + 3\right)\Delta\chi_2^4
     \; = \; 8 \, s_1 \, \mathcal{L}_4(p) \, \Delta\chi_2^4 \; ,
-\end{align*}\]</p><p>the very same <span>$8\mathcal{L}_4(p)$</span> that <span>$B_{22}$</span> produced in Family 1, Eq.(3.9). So here too the explicit <span>$\Delta\chi_2^{-4}$</span> is exactly cancelled and <span>$J_{04}$</span> is <strong>finite</strong>,</p><p class="math-container">\[    J_{04} \underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-        \frac{3 \, f \, s_1 \left(35p^4 - 30p^2 + 3\right)}{70} \; ,\]</p><p>while <span>$I_4^0$</span> vanishes as <span>$\Delta\chi_2^4$</span>:</p><p class="math-container">\[    J_{04} I_4^0 \underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
-        \underbrace{\frac{3 \, f \, s_1 \left(35p^4 - 30p^2 + 3\right)}{70}}_{\mathcal{O}(1)} \cdot
-        \underbrace{\frac{\sigma_{-4}}{945}\Delta\chi_2^4}_{\mathcal{O}(\Delta\chi_2^4)}
-    \; \xrightarrow[\Delta\chi_2\rightarrow 0^{+}]{} \; 0 \; .
-    \quad \quad (5.4)\]</p><h3 id="The-sum"><a class="docs-heading-anchor" href="#The-sum">The sum</a><a id="The-sum-1"></a><a class="docs-heading-anchor-permalink" href="#The-sum" title="Permalink"></a></h3><table><tr><th style="text-align: left">term</th><th style="text-align: left">limit</th></tr><tr><td style="text-align: left"><span>$J_{00} I_0^0$</span> , Eq.(5.2)</td><td style="text-align: left"><span>$-\dfrac{s_1 (f+5b)\,\sigma_0}{5}$</span></td></tr><tr><td style="text-align: left"><span>$J_{02} I_2^0$</span> , Eq.(5.3)</td><td style="text-align: left"><span>$0$</span></td></tr><tr><td style="text-align: left"><span>$J_{04} I_4^0$</span> , Eq.(5.4)</td><td style="text-align: left"><span>$0$</span></td></tr></table><p class="math-container">\[    \boxed{\;
+\end{align*}\]</p><p>the very same <span>$8\mathcal{L}_4(p)$</span> that <span>$B_{22}$</span> produced in Family 1, Eq.(3.9). The explicit <span>$\Delta\chi_2^{-4}$</span> is therefore exactly cancelled and <span>$J_{04}$</span> is <strong>finite</strong>, while <span>$I_4^0$</span> vanishes as <span>$\Delta\chi_2^4$</span>:</p><p class="math-container">\[\begin{align*}
+    J_{04}^{\delta \kappa} I_4^0
+    &amp;= \frac{3 f_1}{70\,\Delta\chi_2^4} N_{04} \, I_4^0 \\[12pt]
+    &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim}
+        \frac{3 f_1}{70\,\cancel{\Delta\chi_2^4}}
+        \left[s_1\left(35p^4 - 30p^2 + 3\right)\cancel{\Delta\chi_2^4}\right]
+        \cdot \frac{\sigma_{-4}}{945}\Delta\chi_2^4 \\[12pt]
+    &amp;= \frac{f_1 s_1 \left(35p^4-30p^2+3\right)\sigma_{-4}}{22050}\,\Delta\chi_2^4 \\[12pt]
+    &amp;= \mathcal{O}(\Delta\chi_2^4) \; \xrightarrow[\Delta\chi_2\rightarrow 0^{+}]{} \; 0 \; .
+    \quad \quad (5.4)
+\end{align*}\]</p><h3 id="The-sum"><a class="docs-heading-anchor" href="#The-sum">The sum</a><a id="The-sum-1"></a><a class="docs-heading-anchor-permalink" href="#The-sum" title="Permalink"></a></h3><p class="math-container">\[\begin{align*}
+(5.2) : \quad J_{00}^{\delta \kappa} I_0^0 &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim} \mathcal{O}(1)
+    &amp;&amp;\rightarrow -\frac{s_1 (f_1+5 b_1)\,\sigma_0}{5} \\[10pt]
+(5.3) : \quad J_{02}^{\delta \kappa} I_2^0 &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim} \mathcal{O}(\Delta\chi_2^2)
+    &amp;&amp;\rightarrow 0 \\[10pt]
+(5.4) : \quad J_{04}^{\delta \kappa} I_4^0 &amp;\underset{\Delta\chi_2\rightarrow 0^{+}}{\sim} \mathcal{O}(\Delta\chi_2^4)
+    &amp;&amp;\rightarrow 0 \\[10pt]
+\end{align*}\]</p><p class="math-container">\[    \boxed{\;
     \lim_{\Delta\chi_2 \rightarrow 0}
-    \left(J_{00}I_0^0 + J_{02}I_2^0 + J_{04}I_4^0\right)
-    = -\frac{s_1 \, (f + 5b) \, \sigma_0}{5} \; . }
-    \quad \quad (5.5)\]</p><p>The two terms that do carry a <span>$p$</span> are the ones whose limit is <span>$0$</span>, so again nothing has to cancel.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../DeltaChiLimits_2_LensingDoppler/">« Family 2: Lensing x Doppler</a><a class="docs-footer-nextpage" href="../DeltaChiLimits_4_LensingLocalGP/">Family 4: Lensing x Local GP »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 16:23">Thursday 17 September 2026</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+    \left(J_{00}^{\delta \kappa}I_0^0 + J_{02}^{\delta \kappa}I_2^0
+    + J_{04}^{\delta \kappa}I_4^0\right)
+    = -\frac{s_1 \, (f_1 + 5 b_1) \, \sigma_0}{5} \; . }
+    \quad \quad (5.5)\]</p><p>The two terms that do carry a <span>$p$</span> are the ones whose limit is <span>$0$</span>, so nothing has to cancel.</p><div class="admonition is-warning" id="A-typo-in-the-docstring-of-integrand_ξ_GNC_Newtonian_Lensing-9d097d48084e9419"><header class="admonition-header">A typo in the docstring of `integrand_ξ_GNC_Newtonian_Lensing`<a class="admonition-anchor" href="#A-typo-in-the-docstring-of-integrand_ξ_GNC_Newtonian_Lensing-9d097d48084e9419" title="Permalink"></a></header><div class="admonition-body"><p>The docstring of that function writes the <span>$b_1$</span> part of <span>$J^{\delta\kappa}_{02}$</span> as <span>$\left[(9y^2+11) f_1 - 7(y^2+3) b_1\right] s_1^2 \chi_2$</span>, with a <strong>minus</strong> sign, while the code has a plus. The difference is <span>$14 \, b_1 \chi_2 s_1^2 (y^2+3)$</span>, and it matters: with the docstring sign <span>$N_{02}^{(b)}$</span> would <strong>not</strong> vanish at the singular point (it would give <span>$-5 s_1^2$</span> instead of <span>$0$</span>), so <span>$J_{02}$</span> would diverge as <span>$\Delta\chi_2^{-2}$</span> and the limit of this family would pick up an extra <span>$- b_1 s_1^3 \sigma_{-2}/6$</span>. The code is the correct one — every other <span>$J$</span> of this family is built to vanish at the singular point — so the docstring should be fixed.</p></div></div></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../DeltaChiLimits_2_LensingDoppler/">« Family 2: Lensing x Doppler</a><a class="docs-footer-nextpage" href="../DeltaChiLimits_4_LensingLocalGP/">Family 4: Lensing x Local GP »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 16:40">Thursday 17 September 2026</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
