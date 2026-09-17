@@ -304,8 +304,8 @@ y=1 \; &amp;\land \; \chi_1 = \chi_2 = \chi \; : \\[10pt]
         &amp;&amp;= \mathcal{O}(\Delta\chi^8)
         &amp;&amp;\Longrightarrow \; \mathrm{drop} \; .
 \end{align*}\]</p><p>Three terms survive. Substituting (D.4) and (2.3a), and evaluating the regular coefficients at <span>$\chi_1 = \chi_2$</span> (where <span>$7-2+7 = 12$</span> and <span>$7-24+40-24+7 = 6$</span>):</p><p class="math-container">\[\begin{align*}
-&amp;\quad(D.4) : \quad \chi_2 := \chi_1 + p \, \Delta\chi\\[10pt]
-&amp;\quad (2.3\mathrm{a}): \quad y-1  \underset{\Delta\chi\rightarrow 0^{+}}{\sim}  - \frac{(1-p^2)}{2\chi_1^2}\Delta\chi^2\\[15pt]
+(D.4&amp;) : \quad \chi_2 := \chi_1 + p \, \Delta\chi\\[10pt]
+(2.3\mathrm{a}&amp;): \quad y-1  \underset{\Delta\chi\rightarrow 0^{+}}{\sim}  - \frac{(1-p^2)}{2\chi_1^2}\Delta\chi^2\\[15pt]
     \mathrm{1st} \; : \left[B_{22}\big|_{y=1} \cdot 1 \right]\bigg|_{(D.4)} 
         &amp;= \left[8(\chi_1-\chi_2)^4\right]\bigg|_{(D.4)}
         = \quad  8(-p\Delta\chi)^4  \\
@@ -321,33 +321,64 @@ y=1 \; &amp;\land \; \chi_1 = \chi_2 = \chi \; : \\[10pt]
             2\left(7\chi_1^4 - 24\chi_1^3\chi_2 + 40\chi_1^2\chi_2^2 - 24\chi_1\chi_2^3
             + 7\chi_2^4\right)(y-1)^2
         \right]\bigg|_{(D.4)} \\
-        &amp;= \quad  2 \cdot 6 \, \chi_1^4 \cdot
+        &amp;= \quad  2 \, (7-24+40-24+7) \, \chi_1^4 \cdot
         \left[- \frac{(1-p^2)}{2\chi_1^2}\Delta\chi^2\right]^{2}\\
-        &amp;= 12 \, \cancel{\chi_1^4} \, \frac{(1-p^2)^2}{4\cancel{\chi_1^4}}\Delta\chi^4\\
+        &amp;= 2 \cdot 6 \, \cancel{\chi_1^4} \, \frac{(1-p^2)^2}{4\cancel{\chi_1^4}}\Delta\chi^4\\
         &amp;= 3 \, (1-p^2)^2 \, \Delta\chi^4 \; ,
 \end{align*}\]</p><p>and summing:</p><p class="math-container">\[\begin{align*}
-    B_{22} &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
-        \left[ 8p^4 - 24p^2(1-p^2) + 3(1-p^2)^2 \right] \Delta\chi^4 \\[10pt]
+    B_{22} &amp;= \sum_{k=0}^{4} \frac{1}{k!}
+        \frac{\partial^k B_{22}}{\partial y^k}\bigg|_{y=1} (y-1)^k \; \\[15pt]
+    &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\sim} 
+        \left[B_{22}\big|_{y=1} \cdot 1 \right]\bigg|_{(D.4)} +
+        \left[\frac{\partial B_{22}}{\partial y}\bigg|_{y=1}(y-1)\right]\bigg|_{(D.4)} +
+        \left[\frac{1}{2}\frac{\partial^2 B_{22}}{\partial y^2}\bigg|_{y=1} (y-1)^2 \right]\bigg|_{(D.4)}
+    \\[15pt]
+    &amp;= \left[8 \, p^4 \, \Delta\chi^4 \right] 
+        + \left[- 24 \, p^2(1-p^2) \, \Delta\chi^4 \right]
+        + \left[3 \, (1-p^2)^2 \, \Delta\chi^4 \right] \\[10pt]
+    &amp;=    \left[ 8p^4 - 24p^2(1-p^2) + 3(1-p^2)^2 \right] \Delta\chi^4 \\[10pt]
     &amp;= \left[ 8p^4 - 24p^2 + 24p^4 + 3 - 6p^2 + 3p^4 \right] \Delta\chi^4 \\[10pt]
-    &amp;= \left( 35p^4 - 30p^2 + 3 \right) \Delta\chi^4
-    \; = \; 8 \, \mathcal{L}_4(p) \, \Delta\chi^4 \; , \quad \quad (3.9)
-\end{align*}\]</p><p><span>$\mathcal{L}_4$</span> being the fourth Legendre polynomial — not a coincidence, since the whole construction is an expansion in <span>$y = \cos\theta$</span>. Finally:</p><p class="math-container">\[\begin{align*}
+    &amp;= \left( 35p^4 - 30p^2 + 3 \right) \Delta\chi^4 \\[10pt]
+    &amp;= \; 8 \, \mathcal{L}_4(p) \, \Delta\chi^4 \; , \quad \quad (3.9)
+\end{align*}\]</p><p>where <span>$\mathcal{L}_4$</span> is  the fourth Legendre polynomial — not a coincidence, since the whole construction is an expansion in <span>$y = \cos\theta$</span>. Finally:</p><p class="math-container">\[\begin{align*}
     J_{22} I_2^2 &amp;= \frac{9}{4}\frac{\chi_1\chi_2}{\Delta\chi^4} \, B_{22} \, I_2^2 \\[10pt]
     (2.1\mathrm{a})\, , \; (3.9) \; \rightarrow \quad
         &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
         \frac{9}{4}\frac{\chi_1^2}{\cancel{\Delta\chi^4}}
         \left( 35p^4 - 30p^2 + 3 \right) \cancel{\Delta\chi^4} \cdot \frac{\sigma_0}{15} \\[10pt]
-    &amp;= \frac{9}{60}\,\chi_1^2 \, \sigma_0 \left( 35p^4 - 30p^2 + 3 \right) \\[10pt]
     &amp;= \frac{3}{20}\,\chi_1^2 \, \sigma_0 \left( 35p^4 - 30p^2 + 3 \right) \; . \quad \quad (3.10)
-\end{align*}\]</p><h3 id="The-sum"><a class="docs-heading-anchor" href="#The-sum">The sum</a><a id="The-sum-1"></a><a class="docs-heading-anchor-permalink" href="#The-sum" title="Permalink"></a></h3><table><tr><th style="text-align: left">term</th><th style="text-align: left">limit</th></tr><tr><td style="text-align: left"><span>$J_{00} I_0^0$</span> , Eq.(3.4)</td><td style="text-align: left"><span>$\dfrac{3}{4}\chi_1^2\sigma_0 \left(-7p^4 + 6p^2 + 1\right)$</span></td></tr><tr><td style="text-align: left"><span>$J_{02} I_2^0$</span> , Eq.(3.6)</td><td style="text-align: left"><span>$0$</span></td></tr><tr><td style="text-align: left"><span>$J_{31} I_1^3$</span> , Eq.(3.7)</td><td style="text-align: left"><span>$3\,\sigma_2$</span></td></tr><tr><td style="text-align: left"><span>$J_{22} I_2^2$</span> , Eq.(3.10)</td><td style="text-align: left"><span>$\dfrac{3}{20}\chi_1^2\sigma_0 \left(35p^4 - 30p^2 + 3\right)$</span></td></tr></table><p>Only two terms carry a <span>$p$</span>, and it must cancel between them:</p><p class="math-container">\[\begin{align*}
-    \frac{3}{4}\left(-7p^4+6p^2+1\right) + \frac{3}{20}\left(35p^4-30p^2+3\right)
-    &amp;= \frac{3}{20}\left[ 5\left(-7p^4+6p^2+1\right) + \left(35p^4-30p^2+3\right) \right] \\[10pt]
-    &amp;= \frac{3}{20}\left[ \cancel{-35p^4}+\cancel{30p^2}+5 + \cancel{35p^4}-\cancel{30p^2}+3 \right] \\[10pt]
-    &amp;= \frac{3}{20}\cdot 8 = \frac{6}{5} \; ,
-\end{align*}\]</p><p>leaving</p><p class="math-container">\[    \boxed{\;
-    \lim_{\Delta\chi \rightarrow 0}
-    \left(J_{00}I_0^0 + J_{02}I_2^0 + J_{31}I_1^3 + J_{22}I_2^2\right)
+\end{align*}\]</p><h3 id="The-sum"><a class="docs-heading-anchor" href="#The-sum">The sum</a><a id="The-sum-1"></a><a class="docs-heading-anchor-permalink" href="#The-sum" title="Permalink"></a></h3><p class="math-container">\[\begin{align*}
+(3.4)  : \quad J_{00} I_0^0 &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\sim} 
+    \dfrac{3}{4}\chi_1^2\sigma_0 \left(-7p^4 + 6p^2 + 1\right) \\[13pt]
+(3.6)  : \quad J_{02} I_2^0 &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\sim} 
+    0 \\[13pt]
+(3.7)  : \quad J_{31} I_1^3 &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\sim} 
+    3\,\sigma_2 \\[13pt]
+(3.10) : \quad J_{22} I_2^2 &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\sim} 
+    \dfrac{3}{20}\chi_1^2\sigma_0 \left(35p^4 - 30p^2 + 3\right) \\[13pt]
+\end{align*}\]</p><p>Only two terms carry a <span>$p$</span>, and it must cancel between them:</p><p class="math-container">\[\begin{align*}
+    J^{\kappa\kappa}_{00} I_0^0 + 
+    J^{\kappa\kappa}_{02} I_2^0 +
+    J^{\kappa\kappa}_{31} I_1^3 +
+    J^{\kappa\kappa}_{22} I_2^2 
+    &amp;\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
+        \dfrac{3}{4}\chi_1^2\sigma_0 \left(-7p^4 + 6p^2 + 1\right) +
+        0 + 3\,\sigma_2 + \dfrac{3}{20}\chi_1^2\sigma_0 \left(35p^4 - 30p^2 + 3\right)
+    \\[10pt]
+    &amp;= 3\, \sigma_2+\frac{3}{20}\left[ 
+            5\left(-7p^4+6p^2+1\right) + \left(35p^4-30p^2+3\right) 
+        \right]\chi_1^2 \sigma_0 \\[10pt]
+    &amp;= 3\, \sigma_2+ \frac{3}{20}\left[ 
+            \cancel{-35p^4}+\cancel{30p^2}+5 + \cancel{35p^4}-\cancel{30p^2}+3 
+        \right]\chi_1^2 \sigma_0 \\[10pt]
+    &amp;= 3\, \sigma_2 + \frac{6}{5}\chi_1^2 \sigma_0  \; .
+\end{align*}\]</p><p>The cancellation of <span>$p$</span> is the proof that the limit exists and does not depend on the direction of approach.</p><p class="math-container">\[    \boxed{\;
+    \lim_{\Delta\chi \rightarrow 0^{+}}
+    \left(
+        J_{00}^{\kappa\kappa}I_0^0 + J_{02}^{\kappa\kappa}I_2^0 + 
+        J_{31}^{\kappa\kappa}I_1^3 + J_{22}^{\kappa\kappa}I_2^2
+    \right)
     = 3\,\sigma_2 + \frac{6}{5}\,\chi_1^2\,\sigma_0 \; . }
-    \quad \quad (3.11)\]</p><p>The cancellation of <span>$p$</span> is the proof that the limit exists and does not depend on the direction of approach.</p><div class="admonition is-warning" id="A-common-mistake-f9164ffd5646c3ee"><header class="admonition-header">A common mistake<a class="admonition-anchor" href="#A-common-mistake-f9164ffd5646c3ee" title="Permalink"></a></header><div class="admonition-body"><p>If in Term 1 one sets <span>$\chi_1 = \chi_2$</span> inside <span>$B_{00}$</span> before expanding, the <span>$8(\chi_1-\chi_2)^2 = 8p^2\Delta\chi^2$</span> term of Eq.(3.2) is lost. One is left with <span>$B_{00}\big|_{\chi_1=\chi_2} = \chi_1^2(16y-9y^2-7) = -\chi_1^2(y-1)(9y-7)$</span>, hence <span>$B_{00} \sim 2\chi_1^2(1-y) \sim (1-p^2)\Delta\chi^2$</span> instead of Eq.(3.3)&#39;s <span>$(1+7p^2)\Delta\chi^2$</span>, and therefore</p><p class="math-container">\[    J_{00}I_0^0 = \frac{3}{4}(1-p^2)^2\chi_1^2\sigma_0
+    \quad \quad (3.11)\]</p><div class="admonition is-warning" id="A-common-mistake-f9164ffd5646c3ee"><header class="admonition-header">A common mistake<a class="admonition-anchor" href="#A-common-mistake-f9164ffd5646c3ee" title="Permalink"></a></header><div class="admonition-body"><p>If in Term 1 one sets <span>$\chi_1 = \chi_2$</span> inside <span>$B_{00}$</span> before expanding, the <span>$8(\chi_1-\chi_2)^2 = 8p^2\Delta\chi^2$</span> term of Eq.(3.2) is lost. One is left with <span>$B_{00}\big|_{\chi_1=\chi_2} = \chi_1^2(16y-9y^2-7) = -\chi_1^2(y-1)(9y-7)$</span>, hence <span>$B_{00} \sim 2\chi_1^2(1-y) \sim (1-p^2)\Delta\chi^2$</span> instead of Eq.(3.3)&#39;s <span>$(1+7p^2)\Delta\chi^2$</span>, and therefore</p><p class="math-container">\[    J_{00}I_0^0 = \frac{3}{4}(1-p^2)^2\chi_1^2\sigma_0
     \qquad \mathrm{instead \; of \; Eq.(3.4)} \; .\]</p><p>That result is wrong: summed with Eq.(3.10) it leaves a residual <span>$p$</span>-dependence,</p><p class="math-container">\[    \frac{3}{4}(1-p^2)^2 + \frac{3}{20}\left(35p^4-30p^2+3\right)
-    = 6p^4 - 6p^2 + \frac{6}{5}\]</p><p>instead of the constant <span>$6/5$</span> of Eq.(3.11), which would mean that the limit does not exist. Note that this wrong expression happens to give the right value <span>$6/5$</span> at both <span>$p = 0$</span> and <span>$p = \pm 1$</span>, and is off by a factor <span>$-1/4$</span> at <span>$p^2 = 1/2$</span>: spot checks at the endpoints would not catch it. Only the full <span>$p$</span>-cancellation does.</p></div></div></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../DeltaChiLimits/">« Introduction and results</a><a class="docs-footer-nextpage" href="../DeltaChiLimits_2_LensingDoppler/">Family 2: Lensing x Doppler »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 10:18">Thursday 17 September 2026</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+    = 6p^4 - 6p^2 + \frac{6}{5}\]</p><p>instead of the constant <span>$6/5$</span> of Eq.(3.11), which would mean that the limit does not exist. Note that this wrong expression happens to give the right value <span>$6/5$</span> at both <span>$p = 0$</span> and <span>$p = \pm 1$</span>, and is off by a factor <span>$-1/4$</span> at <span>$p^2 = 1/2$</span>: spot checks at the endpoints would not catch it. Only the full <span>$p$</span>-cancellation does.</p></div></div></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../DeltaChiLimits/">« Introduction and results</a><a class="docs-footer-nextpage" href="../DeltaChiLimits_2_LensingDoppler/">Family 2: Lensing x Doppler »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 16:23">Thursday 17 September 2026</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
