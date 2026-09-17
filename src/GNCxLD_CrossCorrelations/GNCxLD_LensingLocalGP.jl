@@ -63,11 +63,11 @@ end
 
 
 function integrand_ξ_GNCxLD_Lensing_LocalGP(
-	χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat, y, cosmo::Cosmology; kwargs...)
+    χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat, y, cosmo::Cosmology; kwargs...)
 
-	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-	IP = Point(χ1, cosmo)
-	return integrand_ξ_GNCxLD_Lensing_LocalGP(IP, P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    IP = Point(χ1, cosmo)
+    return integrand_ξ_GNCxLD_Lensing_LocalGP(IP, P1, P2, y, cosmo; kwargs...)
 end
 
 
@@ -243,11 +243,11 @@ integrand_ξ_GNCxLD_Lensing_LocalGP
 
 
 """
-	  ξ_GNCxLD_Lensing_LocalGP(
-		    s1, s2, y, cosmo::Cosmology;
+    ξ_GNCxLD_Lensing_LocalGP(
+        s1, s2, y, cosmo::Cosmology;
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
-    	  𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
-    	  en::AbstractFloat = 1e6, N_χs::Int = 100) ::Float64
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        en::AbstractFloat = 1e6, N_χs::Int = 100) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation 
 between the Lensing effect arising from the 
@@ -476,7 +476,7 @@ function ξ_LDxGNC_LocalGP_Lensing(s1, s2, y, cosmo::Cosmology;
     s_b2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
     𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
     𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
-	
+
     ξ_GNCxLD_Lensing_LocalGP(s2, s1, y, cosmo; 
         b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
         𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)

@@ -131,7 +131,7 @@ vector = [
 3.7 , 3.8 , 3.9 , 
 4.0 , 
 ];
-	
+
 ```
 
 See also: [`my_println_dict`](@ref)

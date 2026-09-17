@@ -508,16 +508,3 @@ while ``I_4^0`` vanishes as ``\Delta\chi_2^4``:
 
 The two terms that do carry a ``p`` are the ones whose limit is ``0``, so nothing has to
 cancel.
-
-!!! note "A typo that used to be in the docstring"
-    Until this was corrected, the docstrings of `integrand_ξ_GNC_Newtonian_Lensing` and
-    `integrand_ξ_GNCxLD_Newtonian_Lensing` wrote the ``b_1`` part of
-    ``J^{\delta\kappa}_{02}`` as
-    ``\left[(9y^2+11) f_1 - 7(y^2+3) b_1\right] s_1^2 \chi_2``, with a **minus** sign,
-    while the code has a plus. The difference is ``14 \, b_1 \chi_2 s_1^2 (y^2+3)``, and it
-    matters: with the minus, ``N_{02}^{(b)}`` would **not** vanish at the singular point
-    (it would give ``-5 s_1^2`` instead of ``0``), so ``J_{02}`` would diverge as
-    ``\Delta\chi_2^{-2}`` and the limit of this family would pick up an extra
-    ``- b_1 s_1^3 \sigma_{-2}/6``. The code was the correct one — every other ``J`` of this
-    family is built to vanish at the singular point — and the docstrings now match it.
-    Anyone cross-checking against a release older than this fix should be aware of it.

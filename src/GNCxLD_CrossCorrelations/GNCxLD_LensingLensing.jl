@@ -304,7 +304,7 @@ end
     ξ_GNCxLD_Lensing_Lensing(
         P1::Point, P2::Point, y, cosmo::Cosmology;
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
-    	  𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
         en::AbstractFloat=1e6, N_χs_2::Int=100 ) ::Float64
 
     ξ_GNCxLD_Lensing_Lensing(s1, s2, y, cosmo::Cosmology; kwargs... ) ::Float64
@@ -549,7 +549,7 @@ function ξ_LDxGNC_Lensing_Lensing(s1, s2, y, cosmo::Cosmology;
     𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
     𝑓_evo2 = isnothing(𝑓_evo2) ? cosmo.params.𝑓_evo2 : 𝑓_evo2
 
-	ξ_GNCxLD_Lensing_Lensing(s2, s1, y, cosmo; 
+    ξ_GNCxLD_Lensing_Lensing(s2, s1, y, cosmo; 
         b1=b2, b2=b1, s_b1=s_b2, s_b2=s_b1,
         𝑓_evo1=𝑓_evo2, 𝑓_evo2=𝑓_evo1, s_lim=s_lim, kwargs...)
 end

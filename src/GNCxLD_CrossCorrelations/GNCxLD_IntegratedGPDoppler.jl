@@ -63,7 +63,7 @@ end
 
 """
     integrand_ξ_GNCxLD_IntegratedGP_Doppler(
-    	  IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+        IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 

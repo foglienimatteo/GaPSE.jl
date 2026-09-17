@@ -30,14 +30,13 @@ using SpecialFunctions: gamma
 import Base: *
 
 
-using Dierckx # Licence: BSD
 using HCubature, QuadGK, WignerSymbols # Licence: MIT "Expat"
 using LegendrePolynomials, AssociatedLegendrePolynomials # Licence: MIT "Expat"
 using SpecialFunctions, Trapz, LsqFit, FastGaussQuadrature, LinearAlgebra  # Licence: MIT
 using GridInterpolations  # Licence: MIT "Expat"
 using ProgressMeter, Printf  # Licence: MIT "Expat"
 
-using Test, Documenter, DelimitedFiles  # Licence: MIT "Expat"
+using DelimitedFiles  # Licence: MIT "Expat"
 
 
 const BRAND_simple = """

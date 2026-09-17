@@ -21,19 +21,21 @@
 using Pkg
 Pkg.activate(normpath(@__DIR__))
 
+# Keep this list in sync with the [deps] of ./Project.toml : the test-only
+# dependencies live in ./test/Project.toml and the documentation-only ones in
+# ./docs/Project.toml, so they must NOT be added to this environment.
 let
      pkgs = [
-          "IJulia", "LinearAlgebra",
-          "DelimitedFiles", "Documenter", "Suppressor", "Test",
-          "Printf", "NPZ", "ProgressMeter",
+          "LinearAlgebra", "DelimitedFiles",
+          "Printf", "ProgressMeter",
 
           "FFTW", "TwoFAST", 
           
-          "ArbNumerics", "AssociatedLegendrePolynomials",
+          "AssociatedLegendrePolynomials",
           "LegendrePolynomials", "SpecialFunctions",
           "WignerSymbols",
 
-          "Dierckx", "GridInterpolations",
+          "GridInterpolations",
 
           "LsqFit",
 
