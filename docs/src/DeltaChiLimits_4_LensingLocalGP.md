@@ -10,7 +10,7 @@ asymptotics in [The ``I_\ell^n`` integrals](IlnIntegrals.md).
 ``\chi_1`` and ``s_2``, so the relevant separation is
 
 ```math
-    \Delta\chi_1 := \sqrt{\chi_1^2 + s_2^2 - 2 \, \chi_1 \, s_2 \, y} \quad \quad (1.2)
+    \Delta\chi_1 := \sqrt{\chi_1^2 + s_2^2 - 2 \, \chi_1 \, s_2 \, y} \quad \quad (D.2)
 ```
 
 ```math
@@ -54,11 +54,11 @@ I_0^2           &\sim \sigma_2 \, s^{-2}               &&\rightarrow +\infty
 independent of the direction of approach; we parametrise the latter with a single ``p``,
 
 ```math
-    s_2 := \chi_1 + p \, \Delta\chi_1  \quad \quad (2.2) \\[10pt]
+    s_2 := \chi_1 + p \, \Delta\chi_1  \quad \quad (D.4) \\[10pt]
     |\chi_1 - s_2| \leq \Delta\chi_1 \quad \Rightarrow \quad |p| \leq 1
 ```
 
-**and its two consequences**, obtained by inverting (1.2):
+**and its two consequences**, obtained by inverting (D.2):
 
 ```math
 \Rightarrow \quad 
@@ -82,7 +82,7 @@ so a term **quadratic** in ``(\chi_1 - s_2)`` contributes at the **same order** 
 **linear** in ``(y-1)``. One must therefore never set ``\chi_1 = s_2`` first and expand in ``y``
 afterwards: the safe recipe is to rewrite every vanishing bracket **exactly** as a
 combination of ``(\chi_1-s_2)``, ``(y-1)`` and ``(y^2-1)``, with coefficients that are regular
-at the singular point, and only then substitute (2.2), (2.3a), (2.3b).
+at the singular point, and only then substitute (D.4), (2.3a), (2.3b).
 
 ## The integrand
 
@@ -95,20 +95,22 @@ Concerned functions: `integrand_ξ_GNC_Lensing_LocalGP`,
 ```
 ```math
     F := 2y\chi_1^2 - \chi_1 s_2 (y^2+3) + 2 y s_2^2 \; ,
+    \quad \quad (\mathrm{D}.14)
     \qquad \qquad
     J_{20} := \frac{y\,\Delta\chi_1^2}{2} \; .
+    \quad \quad (\mathrm{D}.15)
 ```
 
 ### Term 1: the ``F`` group
 
-``F`` vanishes at the singular point,
+``F``, Eq.(D.14), vanishes at the singular point,
 
 ```math
     F\big|_{y=1,\,s_2=\chi_1} = \left(2 - (1+3) + 2\right)\chi_1^2 = (2 - 4 + 2)\,\chi_1^2 = 0 \; ,
 ```
 
 so it must be decomposed exactly. The structure is the **same** as the ``B_{00}`` of
-Family 1 — which for reference reads
+Family 1, Eq.(D.5) there — which for reference reads
 
 ```math
     B_{00} := 8 y (\chi_1^2 + \chi_2^2) - \chi_1\chi_2 (9y^2+7)
@@ -134,7 +136,7 @@ only with different coefficients and with ``s_2`` in place of ``\chi_2``:
 
 Here — exactly as in ``B_{00}``, and unlike Family 2 — the ``(\chi_1 - s_2)`` factor is
 **quadratic**, so by (2.4) it is of the same order as the ``(y-1)`` terms and must be kept.
-Substituting (2.2), (2.3a), (2.3b) with ``s_2 \rightarrow \chi_1`` in the regular
+Substituting (D.4), (2.3a), (2.3b) with ``s_2 \rightarrow \chi_1`` in the regular
 coefficients:
 
 ```math
@@ -167,6 +169,8 @@ coefficients:
 ```
 
 ### Term 2: ``J_{20} I_0^2``
+
+With ``J_{20}`` of Eq.(D.15):
 
 ```math
 \begin{align*}

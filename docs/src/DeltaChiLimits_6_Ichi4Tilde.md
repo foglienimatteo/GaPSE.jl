@@ -10,7 +10,7 @@ asymptotics in [The ``I_\ell^n`` integrals](IlnIntegrals.md).
 ``\chi_1`` and ``\chi_2``, so the relevant separation is
 
 ```math
-    \Delta\chi := \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \, \chi_2 \, y} \quad \quad (1.1)
+    \Delta\chi := \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \, \chi_2 \, y} \quad \quad (D.1)
 ```
 
 ```math
@@ -54,11 +54,11 @@ I_0^2           &\sim \sigma_2 \, s^{-2}               &&\rightarrow +\infty
 independent of the direction of approach; we parametrise the latter with a single ``p``,
 
 ```math
-    \chi_2 := \chi_1 + p \, \Delta\chi  \quad \quad (2.2) \\[10pt]
+    \chi_2 := \chi_1 + p \, \Delta\chi  \quad \quad (D.4) \\[10pt]
     |\chi_1 - \chi_2| \leq \Delta\chi \quad \Rightarrow \quad |p| \leq 1
 ```
 
-**and its two consequences**, obtained by inverting (1.1):
+**and its two consequences**, obtained by inverting (D.1):
 
 ```math
 \Rightarrow \quad 
@@ -82,7 +82,7 @@ so a term **quadratic** in ``(\chi_1 - \chi_2)`` contributes at the **same order
 **linear** in ``(y-1)``. One must therefore never set ``\chi_1 = \chi_2`` first and expand in ``y``
 afterwards: the safe recipe is to rewrite every vanishing bracket **exactly** as a
 combination of ``(\chi_1-\chi_2)``, ``(y-1)`` and ``(y^2-1)``, with coefficients that are regular
-at the singular point, and only then substitute (2.2), (2.3a), (2.3b).
+at the singular point, and only then substitute (D.4), (2.3a), (2.3b).
 
 ## The integrand
 

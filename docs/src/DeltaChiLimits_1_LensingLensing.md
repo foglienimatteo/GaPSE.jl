@@ -10,7 +10,7 @@ asymptotics in [The ``I_\ell^n`` integrals](IlnIntegrals.md).
 ``\chi_1`` and ``\chi_2``, so the relevant separation is
 
 ```math
-    \Delta\chi := \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \, \chi_2 \, y} \quad \quad (1.1)
+    \Delta\chi := \sqrt{\chi_1^2 + \chi_2^2 - 2 \, \chi_1 \, \chi_2 \, y} \quad \quad (D.1)
 ```
 
 ```math
@@ -54,11 +54,11 @@ I_0^2           &\sim \sigma_2 \, s^{-2}               &&\rightarrow +\infty
 independent of the direction of approach; we parametrise the latter with a single ``p``,
 
 ```math
-    \chi_2 := \chi_1 + p \, \Delta\chi  \quad \quad (2.2) \\[10pt]
+    \chi_2 := \chi_1 + p \, \Delta\chi  \quad \quad (D.4) \\[10pt]
     |\chi_1 - \chi_2| \leq \Delta\chi \quad \Rightarrow \quad |p| \leq 1
 ```
 
-**and its two consequences**, obtained by inverting (1.1):
+**and its two consequences**, obtained by inverting (D.1):
 
 ```math
 \Rightarrow \quad 
@@ -82,7 +82,7 @@ so a term **quadratic** in ``(\chi_1 - \chi_2)`` contributes at the **same order
 **linear** in ``(y-1)``. One must therefore never set ``\chi_1 = \chi_2`` first and expand in ``y``
 afterwards: the safe recipe is to rewrite every vanishing bracket **exactly** as a
 combination of ``(\chi_1-\chi_2)``, ``(y-1)`` and ``(y^2-1)``, with coefficients that are regular
-at the singular point, and only then substitute (2.2), (2.3a), (2.3b).
+at the singular point, and only then substitute (D.4), (2.3a), (2.3b).
 
 ## The integrand
 
@@ -149,10 +149,13 @@ We abbreviate the three square brackets as
 
 ```math
 \begin{align*}
-    B_{00} &:= 8 y (\chi_1^2 + \chi_2^2) - \chi_1\chi_2 (9y^2+7) \; , \\[6pt]
-    B_{02} &:= 4 y (\chi_1^2 + \chi_2^2) - \chi_1\chi_2 (3y^2+5) \; , \\[6pt]
+    B_{00} &:= 8 y (\chi_1^2 + \chi_2^2) - \chi_1\chi_2 (9y^2+7)
+        &&\quad \quad (\mathrm{D}.5) \\[6pt]
+    B_{02} &:= 4 y (\chi_1^2 + \chi_2^2) - \chi_1\chi_2 (3y^2+5)
+        &&\quad \quad (\mathrm{D}.6) \\[6pt]
     B_{22} &:= 2(\chi_1^4 + \chi_2^4)(7 y^2 - 3) - 16 y \chi_1 \chi_2 (\chi_1^2 + \chi_2^2)(y^2 + 1)
-        + \chi_1^2 \chi_2^2 (11y^4 + 14y^2 + 23) \; ,
+        + \chi_1^2 \chi_2^2 (11y^4 + 14y^2 + 23)
+        &&\quad \quad (\mathrm{D}.7)
 \end{align*}
 ```
 
@@ -167,7 +170,7 @@ so that
     \quad \quad (3.1)
 ```
 
-All three brackets vanish at the singular point ``y=1 \land \chi_1 = \chi_2 = \chi``:
+All three brackets (D.5), (D.6), (D.7) vanish at the singular point ``y=1 \land \chi_1 = \chi_2 = \chi``:
 
 ```math
 \begin{align*}
@@ -184,6 +187,8 @@ so the leading order is not enough and the expansion must be pushed further.
 
 ### Term 1: ``J_{00} I_0^0``
 
+We start by decomposing ``B_{00}``, Eq.(D.5), exactly:
+
 
 
 ```math
@@ -198,7 +203,7 @@ so the leading order is not enough and the expansion must be pushed further.
             + 8(y-1)(\chi_1^2+\chi_2^2) - 9\chi_1\chi_2(y^2-1) \\[10pt]
         &= 8(\chi_1-\chi_2)^2
             + 8(y-1)(\chi_1^2+\chi_2^2) - 9\chi_1\chi_2(y^2-1) \; . \quad \quad (3.2)\\[10pt]
-    (2.2),\; (2.3\mathrm{a}),\; &(2.3\mathrm{b})\; \quad\rightarrow \quad
+    (D.4),\; (2.3\mathrm{a}),\; &(2.3\mathrm{b})\; \quad\rightarrow \quad
         (\chi_2-\chi_1)=p\Delta\chi \; , \quad (\chi_1^2+\chi_2^2)=2\chi_1^2\\[10pt]
     &\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
         8 \, p^2\Delta\chi^2
@@ -215,7 +220,7 @@ so the leading order is not enough and the expansion must be pushed further.
 \begin{align*}
     \Rightarrow \quad 
     J_{00} I_0^0 &= -\frac{3}{4}\frac{\chi_1^2\chi_2^2}{\Delta\chi^4}(y^2-1) \, B_{00} \, I_0^0 \\[10pt]
-    (2.1\mathrm{a})\, ,\;(2.2)\, , \;  (2.3\mathrm{a}) \rightarrow \quad
+    (2.1\mathrm{a})\, ,\;(D.4)\, , \;  (2.3\mathrm{a}) \rightarrow \quad
     &\underset{\Delta\chi\rightarrow 0^{+}}{\sim}
         -\frac{3}{4}\frac{\chi_1^4}{\Delta\chi^4}
         \left[- \frac{(1-p^2)}{\chi_1^2}\Delta\chi^2\right]
@@ -230,7 +235,8 @@ so the leading order is not enough and the expansion must be pushed further.
 
 ### Term 2: ``J_{02} I_2^0``
 
-We can do for ``B_{02}`` exactly the same decomposition we did for ``B_{00}``, with ``8 \rightarrow 4`` and ``9 \rightarrow 3``:
+We can do for ``B_{02}``, Eq.(D.6), exactly the same decomposition we did for ``B_{00}``,
+Eq.(D.5), with ``8 \rightarrow 4`` and ``9 \rightarrow 3``:
 
 ```math
 \begin{align*}
@@ -289,7 +295,7 @@ cancels the ``\Delta\chi^{-2}`` of ``I_1^3``:
 ### Term 4: ``J_{22} I_2^2``
 
 ``I_2^2 \rightarrow \sigma_0/15`` is finite, while ``J_{22}`` carries an explicit
-``\Delta\chi^{-4}``. We therefore need ``B_{22}`` to order ``\Delta\chi^4`` — two orders
+``\Delta\chi^{-4}``. We therefore need ``B_{22}``, Eq.(D.7), to order ``\Delta\chi^4`` — two orders
 deeper than ``B_{00}`` and ``B_{02}``, which only needed ``\Delta\chi^2``.
 
 The add-and-subtract trick used for ``B_{00}`` and ``B_{02}`` is impractical here, ``B_{22}``
@@ -312,6 +318,7 @@ in terms of the two elementary symmetric combinations
 
 ```math
     u := \chi_1^2 + \chi_2^2 \; , \qquad \qquad v := \chi_1 \chi_2 \; ,
+    \quad \quad (\mathrm{D}.8)
 ```
 
 for which
@@ -330,7 +337,7 @@ and, most importantly,
     \quad \quad (3.8\mathrm{b})
 ```
 
-Every ``(u-2v)`` that appears is therefore a ``(\chi_1-\chi_2)^2``, i.e. an
+Every ``(u-2v)`` of the definitions (D.8) that appears is therefore a ``(\chi_1-\chi_2)^2``, i.e. an
 ``\mathcal{O}(\Delta\chi^2)``, and reading the order off a coefficient becomes a matter of
 counting the powers of ``(u-2v)`` in it.
 
@@ -341,7 +348,7 @@ counting the powers of ``(u-2v)`` in it.
     B_{22}\big|_{y=1} &= 2(\chi_1^4+\chi_2^4)(7-3) - 16\chi_1\chi_2(\chi_1^2+\chi_2^2)(1+1)
         + \chi_1^2\chi_2^2(11+14+23) \\[10pt]
         &= 8(\chi_1^4+\chi_2^4) - 32\chi_1\chi_2(\chi_1^2+\chi_2^2) + 48\chi_1^2\chi_2^2 \\[10pt]
-    (3.8\mathrm{a}) \; \rightarrow \quad
+    (\mathrm{D}.8),\;(3.8\mathrm{a}) \; \rightarrow \quad
         &= 8(u^2 - 2v^2) - 32uv + 48v^2 \\[10pt]
         &= 8u^2 - 16v^2 - 32uv + 48v^2 \\[10pt]
         &= 8\left(u^2 - 4uv + 4v^2\right) \\[10pt]
@@ -493,7 +500,7 @@ so that, exactly,
 \end{align*}
 ```
 
-Now count the orders, remembering (2.2) and (2.4), ``(\chi_1-\chi_2) = -p\Delta\chi`` and
+Now count the orders, remembering (D.4) and (2.4), ``(\chi_1-\chi_2) = -p\Delta\chi`` and
 ``(y-1) = \mathcal{O}(\Delta\chi^2)``:
 
 ```math
@@ -516,7 +523,7 @@ Now count the orders, remembering (2.2) and (2.4), ``(\chi_1-\chi_2) = -p\Delta\
 \end{align*}
 ```
 
-Three terms survive. Substituting (2.2) and (2.3a), and evaluating the regular coefficients
+Three terms survive. Substituting (D.4) and (2.3a), and evaluating the regular coefficients
 at ``\chi_1 = \chi_2`` (where ``7-2+7 = 12`` and ``7-24+40-24+7 = 6``):
 
 ```math

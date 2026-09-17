@@ -10,7 +10,7 @@ asymptotics in [The ``I_\ell^n`` integrals](IlnIntegrals.md).
 ``s_1`` and ``\chi_2``, so the relevant separation is
 
 ```math
-    \Delta\chi_2 := \sqrt{s_1^2 + \chi_2^2 - 2 \, s_1 \, \chi_2 \, y} \quad \quad (1.3)
+    \Delta\chi_2 := \sqrt{s_1^2 + \chi_2^2 - 2 \, s_1 \, \chi_2 \, y} \quad \quad (D.3)
 ```
 
 ```math
@@ -54,11 +54,11 @@ I_0^2           &\sim \sigma_2 \, s^{-2}               &&\rightarrow +\infty
 independent of the direction of approach; we parametrise the latter with a single ``p``,
 
 ```math
-    \chi_2 := s_1 + p \, \Delta\chi_2  \quad \quad (2.2) \\[10pt]
+    \chi_2 := s_1 + p \, \Delta\chi_2  \quad \quad (D.4) \\[10pt]
     |s_1 - \chi_2| \leq \Delta\chi_2 \quad \Rightarrow \quad |p| \leq 1
 ```
 
-**and its two consequences**, obtained by inverting (1.3):
+**and its two consequences**, obtained by inverting (D.3):
 
 ```math
 \Rightarrow \quad 
@@ -82,7 +82,7 @@ so a term **quadratic** in ``(s_1 - \chi_2)`` contributes at the **same order** 
 **linear** in ``(y-1)``. One must therefore never set ``s_1 = \chi_2`` first and expand in ``y``
 afterwards: the safe recipe is to rewrite every vanishing bracket **exactly** as a
 combination of ``(s_1-\chi_2)``, ``(y-1)`` and ``(y^2-1)``, with coefficients that are regular
-at the singular point, and only then substitute (2.2), (2.3a), (2.3b).
+at the singular point, and only then substitute (D.4), (2.3a), (2.3b).
 
 ## The integrand
 
@@ -95,8 +95,10 @@ Concerned functions: `integrand_ξ_GNC_Newtonian_IntegratedGP`,
 ```
 ```math
     F := f \left[(3y^2-1)\chi_2^2 - 4 y s_1 \chi_2 + 2 s_1^2\right] \; ,
+    \quad \quad (\mathrm{D}.16)
     \qquad \qquad
     J_{20} := -\Delta\chi_2^2 \, (3b + f) \; ,
+    \quad \quad (\mathrm{D}.17)
 ```
 
 with ``f`` the growth rate and ``b`` the bias, both at ``s_1``.
@@ -104,7 +106,7 @@ with ``f`` the growth rate and ``b`` the bias, both at ``s_1``.
 ### Term 1: the ``F`` group
 
 The structure is identical to Family 4, only with a different pair of distances and
-different numerical coefficients. ``F`` vanishes at the singular point,
+different numerical coefficients. ``F``, Eq.(D.16), vanishes at the singular point,
 
 ```math
     \frac{F}{f}\bigg|_{y=1,\,\chi_2=s_1} = \left((3-1) - 4 + 2\right)s_1^2 = (2 - 4 + 2)\,s_1^2 = 0 \; ,
@@ -138,7 +140,7 @@ and this one comes out the same way:
 ```
 
 Again the ``(\chi_2 - s_1)`` factor is **quadratic**, hence of the same order as the
-``(y-1)`` terms. Substituting (2.2), (2.3a), (2.3b) with ``\chi_2 \rightarrow s_1``:
+``(y-1)`` terms. Substituting (D.4), (2.3a), (2.3b) with ``\chi_2 \rightarrow s_1``:
 
 ```math
 \begin{align*}
@@ -166,6 +168,8 @@ Hence
 ```
 
 ### Term 2: ``J_{20} I_0^2``
+
+With ``J_{20}`` of Eq.(D.17):
 
 ```math
 \begin{align*}

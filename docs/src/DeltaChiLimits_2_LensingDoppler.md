@@ -10,7 +10,7 @@ asymptotics in [The ``I_\ell^n`` integrals](IlnIntegrals.md).
 ``\chi_1`` and ``s_2``, so the relevant separation is
 
 ```math
-    \Delta\chi_1 := \sqrt{\chi_1^2 + s_2^2 - 2 \, \chi_1 \, s_2 \, y} \quad \quad (1.2)
+    \Delta\chi_1 := \sqrt{\chi_1^2 + s_2^2 - 2 \, \chi_1 \, s_2 \, y} \quad \quad (D.2)
 ```
 
 ```math
@@ -54,11 +54,11 @@ I_0^2           &\sim \sigma_2 \, s^{-2}               &&\rightarrow +\infty
 independent of the direction of approach; we parametrise the latter with a single ``p``,
 
 ```math
-    s_2 := \chi_1 + p \, \Delta\chi_1  \quad \quad (2.2) \\[10pt]
+    s_2 := \chi_1 + p \, \Delta\chi_1  \quad \quad (D.4) \\[10pt]
     |\chi_1 - s_2| \leq \Delta\chi_1 \quad \Rightarrow \quad |p| \leq 1
 ```
 
-**and its two consequences**, obtained by inverting (1.2):
+**and its two consequences**, obtained by inverting (D.2):
 
 ```math
 \Rightarrow \quad 
@@ -82,7 +82,7 @@ so a term **quadratic** in ``(\chi_1 - s_2)`` contributes at the **same order** 
 **linear** in ``(y-1)``. One must therefore never set ``\chi_1 = s_2`` first and expand in ``y``
 afterwards: the safe recipe is to rewrite every vanishing bracket **exactly** as a
 combination of ``(\chi_1-s_2)``, ``(y-1)`` and ``(y^2-1)``, with coefficients that are regular
-at the singular point, and only then substitute (2.2), (2.3a), (2.3b).
+at the singular point, and only then substitute (D.4), (2.3a), (2.3b).
 
 ## The integrand
 
@@ -101,10 +101,10 @@ with
     J_{00} &= \frac{1}{15}\left(\chi_1^2 y + \chi_1 s_2 (4y^2-3) - 2 y s_2^2\right) \; , \\[6pt]
     J_{02} &= \frac{1}{42\,\Delta\chi_1^2}\underbrace{\left(
         4\chi_1^4 y + 4\chi_1^3 (2y^2-3) s_2 + \chi_1^2 y (11 - 23y^2) s_2^2
-        + \chi_1 (23y^2-3) s_2^3 - 8 y s_2^4 \right)}_{=: \; N_{02}} \; , \\[6pt]
+        + \chi_1 (23y^2-3) s_2^3 - 8 y s_2^4 \right)}_{=: \; N_{02} \; , \quad (\mathrm{D}.9)} \; , \\[6pt]
     J_{04} &= \frac{1}{70\,\Delta\chi_1^2}\underbrace{\left(
         2\chi_1^4 y + 2\chi_1^3 (2y^2-3) s_2 - \chi_1^2 y (y^2+5) s_2^2
-        + \chi_1 (y^2+9) s_2^3 - 4 y s_2^4 \right)}_{=: \; N_{04}} \; , \\[6pt]
+        + \chi_1 (y^2+9) s_2^3 - 4 y s_2^4 \right)}_{=: \; N_{04} \; , \quad (\mathrm{D}.10)} \; , \\[6pt]
     J_{20} &= y \, \Delta\chi_1^2 \; .
 \end{align*}
 ```
@@ -143,7 +143,7 @@ Now the crucial difference with Family 1: here the ``(\chi_1 - s_2)`` factor app
 
 i.e. the first one **dominates** and the other two are subleading — the opposite of what
 happened to ``B_{00}``, where the ``(\chi_1-\chi_2)^2`` was of the same order as the rest.
-Hence, with ``(\chi_1 - s_2) = -p\Delta\chi_1`` from (2.2) and ``s_2 \rightarrow \chi_1``:
+Hence, with ``(\chi_1 - s_2) = -p\Delta\chi_1`` from (D.4) and ``s_2 \rightarrow \chi_1``:
 
 ```math
 \begin{align*}
@@ -161,7 +161,7 @@ Hence, with ``(\chi_1 - s_2) = -p\Delta\chi_1`` from (2.2) and ``s_2 \rightarrow
 ### Term 2: ``J_{02} I_2^0`` and Term 3: ``J_{04} I_4^0``
 
 Both ``J`` carry an explicit ``\Delta\chi_1^{-2}``, so what matters is the order at which
-their numerators ``N_{02}`` and ``N_{04}`` vanish. As for ``B_{22}`` in Family 1, they are
+their numerators ``N_{02}`` and ``N_{04}``, Eqs.(D.9) and (D.10), vanish. As for ``B_{22}`` in Family 1, they are
 polynomials in ``y`` — of degree 2 and 3 respectively in each term, degree 3 overall — so
 their Taylor expansion around ``y=1`` terminates:
 
@@ -240,7 +240,7 @@ and multiply ``(y-1)^2 = \mathcal{O}(\Delta\chi_1^4)`` or higher, so they are **
 (the same holds for ``N_{04}``).
 
 **Putting the two surviving orders together.** With ``(\chi_1 - s_2) = -p\Delta\chi_1`` from
-(2.2), ``(y-1)`` from (2.3a), and the cubics evaluated at ``s_2 = \chi_1``
+(D.4), ``(y-1)`` from (2.3a), and the cubics evaluated at ``s_2 = \chi_1``
 (``2+10-19+4 = -3`` and ``1+5+1+2 = 9``):
 
 ```math
