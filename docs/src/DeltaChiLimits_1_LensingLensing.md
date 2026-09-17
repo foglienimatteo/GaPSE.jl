@@ -351,9 +351,7 @@ counting the powers of ``(u-2v)`` in it.
 \end{align*}
 ```
 
-(equivalently, expanding ``8\left[\chi_1^4 - 4\chi_1^3\chi_2 + 6\chi_1^2\chi_2^2
-- 4\chi_1\chi_2^3 + \chi_2^4\right]`` and recognising the binomial coefficients of
-``(\chi_1-\chi_2)^4``.)
+(equivalently, expanding ``8[\chi_1^4 - 4\chi_1^3\chi_2 + 6\chi_1^2\chi_2^2 - 4\chi_1\chi_2^3 + \chi_2^4]`` and recognising the binomial coefficients of ``(\chi_1-\chi_2)^4``.)
 
 **The ``k=1`` coefficient.** Differentiate ``B_{22}`` once with respect to ``y``, term by
 term — only the ``y``-dependent factors move:
