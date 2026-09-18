@@ -41,7 +41,7 @@ function integrand_ξ_GNC_Lensing(
     denomin = s1 * s2 * a1 * a2
     factor = ℋ0^4 * Ω_M0^2 * D1 * (s1 - χ1) * D2 * (s2 - χ2) * (5 * s_b_s1 - 2) * (5 * s_b_s2 - 2)
 
-    first_res = if Δχ > Δχ_min
+    first_res = if Δχ > min(Δχ_min, Δχ_min * max(χ1, χ2))
         χ1χ2 = χ1 * χ2
 
         new_J00 = -3 / 4 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))

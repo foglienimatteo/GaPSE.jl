@@ -42,7 +42,7 @@ function integrand_ξ_GNCxLD_Lensing_IntegratedGP(
     new_J31 = 2 * y * Δχ^2
     new_J22 = χ1 * χ2 * (y^2 - 1)
 
-    JI_sum = if Δχ ≥ Δχ_min
+    JI_sum = if Δχ ≥ min(Δχ_min, Δχ_min * max(χ1, χ2))
         I13 = cosmo.tools.I13(Δχ)
         I22 = cosmo.tools.I22(Δχ)
         new_J22 * I22 + new_J31 * I13

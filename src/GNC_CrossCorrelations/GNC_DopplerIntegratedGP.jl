@@ -50,7 +50,7 @@ function integrand_ξ_GNC_Doppler_IntegratedGP(
     I40 = cosmo.tools.I40(Δχ2)
     # the whole term vanishes for Δχ2 → 0 : the geometric factor goes to zero while
     # I02 diverges only as Δχ2^-2 ; see "The Δχ → 0 limits" in the documentation
-    I02 = Δχ2 ≥ Δχ_min ? cosmo.tools.I02(Δχ2) : zero(Δχ2)
+    I02 = Δχ2 ≥ min(Δχ_min, Δχ_min * max(s1, χ2)) ? cosmo.tools.I02(Δχ2) : zero(Δχ2)
 
     #if(y≈1.0 && s2 ≈ χ2)
     #  println(

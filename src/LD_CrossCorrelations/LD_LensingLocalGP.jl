@@ -36,7 +36,7 @@ function integrand_ξ_LD_Lensing_LocalGP(
     new_J31 = -2 * y * Δχ1^2
     new_J22 = χ1 * s2 * (1 - y^2)
 
-    JI_sum = if Δχ1 ≥ Δχ_min
+    JI_sum = if Δχ1 ≥ min(Δχ_min, Δχ_min * max(χ1, s2))
         I13 = cosmo.tools.I13(Δχ1)
         I22 = cosmo.tools.I22(Δχ1)
         new_J22 * I22 + new_J31 * I13

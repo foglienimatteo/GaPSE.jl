@@ -49,7 +49,7 @@ function integrand_ξ_GNCxLD_Lensing_Lensing(
     )
 
 
-    res = if Δχ ≥ Δχ_min
+    res = if Δχ ≥ min(Δχ_min, Δχ_min * max(χ1, χ2))
         I00 = cosmo.tools.I00(Δχ)
         I20 = cosmo.tools.I20(Δχ)
         I13 = cosmo.tools.I13(Δχ)

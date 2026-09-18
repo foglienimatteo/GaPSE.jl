@@ -37,7 +37,7 @@ function integrand_ξ_GNC_Newtonian_Lensing(
 
     common = D_s1 * ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) * (5 * s_b_s2 - 2) / (a2 * s2)
 
-    if Δχ2 ≥ Δχ_min
+    if Δχ2 ≥ min(Δχ_min, Δχ_min * max(s1, χ2))
         new_J00 = 1 / 5 * (f_s1 * χ2 * (3 * y^2 - 1) - 3 * y * s1 * f_s1 - 5 * y * s1 * b_s1)
         new_J02 = 1 / (14 * Δχ2^2) * (
             7 * s1 * b_s1 * (-2 * χ2^2 * y + χ2 * s1 * (y^2 + 3) - 2 * y * s1^2) +

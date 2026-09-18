@@ -42,7 +42,7 @@ function integrand_ξ_GNCxLD_IntegratedGP_LocalGP(
 
     # for Δχ1 → 0 the whole term vanishes, since Δχ1^4 * Ĩ_0^4(Δχ1) → 0 ;
     # see the "The Δχ → 0 limits" page of the documentation
-    I04_tilde = Δχ1 ≥ Δχ_min ? cosmo.tools.I04_tilde(Δχ1) : zero(Δχ1)
+    I04_tilde = Δχ1 ≥ min(Δχ_min, Δχ_min * max(s2, χ1)) ? cosmo.tools.I04_tilde(Δχ1) : zero(Δχ1)
 
     return factor * parenth * I04_tilde
 end

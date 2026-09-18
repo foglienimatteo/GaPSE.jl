@@ -44,7 +44,7 @@ function integrand_ξ_GNCxLD_IntegratedGP_IntegratedGP(IP1::Point, IP2::Point,
 
     # for Δχ → 0 the whole term vanishes, since Δχ^4 * Ĩ_0^4(Δχ) → 0 ;
     # see the "The Δχ → 0 limits" page of the documentation
-    I04_tilde = Δχ ≥ Δχ_min ? cosmo.tools.I04_tilde(Δχ) : zero(Δχ)
+    I04_tilde = Δχ ≥ min(Δχ_min, Δχ_min * max(χ1, χ2)) ? cosmo.tools.I04_tilde(Δχ) : zero(Δχ)
 
     return factor * parenth_1 * parenth_2 * I04_tilde
 end

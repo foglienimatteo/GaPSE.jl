@@ -455,26 +455,42 @@ the singular configuration simply does not occur. The current branch is therefor
 good value by one that is a factor ``1/y`` too large — and, for ``y < 0``, of the wrong sign.
 
 Integrated up, this moves `ξ_GNCxLD_Lensing_Lensing` by ``2\%`` at ``\mu = 0.5`` and ``4\%`` at
-``s = 10``, ``\mu = 1``, which is what makes 8 assertions of
-`test_GNCxLD_SumXiMultipoles_P1.jl` fail against reference data generated before the limit
-branches existed.
+``s = 10``, ``\mu = 1``. In the multipoles it shows up as a **uniform** ``1.5\%`` bias of the
+windowed ``\xi_{\kappa\kappa}`` at ``s = 1000``, the same for every ``L`` and every quadrature,
+which is what made 24 assertions of `test_GNCxLD_SumXiMultipoles_P1.jl` fail.
 
-### A better guard
+### The guard that is implemented
 
-The clean way to keep both regimes apart is to make the threshold **relative to the local
-comoving distances** rather than an absolute length,
+What separates the two regimes is a threshold **relative to the local comoving distances**
+rather than an absolute length: in the corner ``\Delta\chi/\chi = O(1)``, so the branch must
+not be taken and the well-conditioned ``J\,I`` sum must be used, while near the singular
+configuration ``\Delta\chi/\chi \rightarrow 0`` and it must. This is the role the commented-out
+`func_Δχ_min` was meant to play, except that it scales with the separation ``s``, which stays
+of order hundreds while ``\chi \rightarrow 0`` and so does not separate the two cases.
+
+A *purely* relative threshold is not enough on its own, because the limit has its own upper
+validity bound: the next section shows it is accurate only for
+``\Delta\chi \ll 1/k_\mathrm{max} = 0.1 \, h^{-1}\mathrm{Mpc}``. Taking
+``\Delta\chi < \Delta\chi_\mathrm{min} \, \max(\chi_1,\chi_2)`` while keeping
+`Δχ_min = 1e-1` would allow ``\Delta\chi`` up to ``0.1\,\chi``, i.e. up to ``100`` for
+``\chi \sim 10^3`` — the branch would fire far outside the regime where the expansion holds.
+(Measured, that combination is catastrophic: errors of ``10^3`` to ``3\cdot10^3`` percent.) It
+becomes usable only if ``\Delta\chi_\mathrm{min}`` is simultaneously lowered to
+``\simeq \varepsilon^{1/4} \simeq 10^{-4}``, which changes the behaviour everywhere, not just
+in the corner.
+
+The threshold therefore has to be bounded **both** ways, and what the code implements is the
+minimal form that keeps the absolute cap and only tightens it where ``\chi`` is small:
 
 ```julia
-Δχ < Δχ_min * max(χ1, χ2)     # Δχ_min ≃ 1e-4 ≃ eps()^(1/4)
+Δχ ≥ min(Δχ_min, Δχ_min * max(χ1, χ2))     # Δχ_min = 1e-1 unchanged
 ```
 
-which is what the roundoff analysis of the previous section asks for anyway
-(``\Delta\chi_\mathrm{break} \sim \chi\,\varepsilon^{1/4}``). In the corner
-``\Delta\chi/\chi = O(1)``, so the branch is simply not taken and the well-conditioned ``J\,I``
-sum is used; near the singular configuration ``\Delta\chi/\chi \rightarrow 0`` and it is. This
-is the role the commented-out `func_Δχ_min` was meant to play, except that it scales with the
-separation ``s``, which stays of order hundreds while ``\chi \rightarrow 0`` and so does not
-separate the two cases.
+For ``\max(\chi_1,\chi_2) \geq 1`` the `min` selects ``\Delta\chi_\mathrm{min}`` and nothing
+changes; below that it scales down with ``\chi`` and the corner is excluded. The same form is
+applied to all thirty limit branches, each with its own pair of distances — ``(\chi_1,\chi_2)``
+for the double-``\chi`` families, ``(s_1,\chi_2)`` or ``(\chi_1,s_2)`` for the others, where it
+is a no-op in practice since the ``s`` are of order hundreds.
 
 ## On the value of `Δχ_min`
 

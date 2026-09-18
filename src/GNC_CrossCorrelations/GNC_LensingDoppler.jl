@@ -44,7 +44,7 @@ function integrand_ξ_GNC_Lensing_Doppler(
     common = ℋ0^2 * Ω_M0 * D1 * (χ1 - s1) * (5 * s_b_s1 - 2) / (s1 * a1)
     factor = D_s2 * f_s2 * ℋ_s2 * ℛ_s2
 
-    first_part = if Δχ1 ≥ Δχ_min
+    first_part = if Δχ1 ≥ min(Δχ_min, Δχ_min * max(χ1, s2))
         new_J00 = 1 / 15 * (χ1^2 * y + χ1 * s2 * (4 * y^2 - 3) - 2 * y * s2^2)
         new_J02 = 1 / (42 * Δχ1^2) * (
             4 * χ1^4 * y + 4 * χ1^3 * (2 * y^2 - 3) * s2

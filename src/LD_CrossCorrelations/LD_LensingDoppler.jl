@@ -53,7 +53,7 @@ function integrand_ξ_LD_Lensing_Doppler(
     #println("J31 = $new_J31, \t I13(Δχ1) = $(I13)")
     #println("J22 = $new_J22, \t I22(Δχ1) = $(I22)")
 
-    parenth = if Δχ1 ≥ Δχ_min
+    parenth = if Δχ1 ≥ min(Δχ_min, Δχ_min * max(χ1, s2))
         I00 = cosmo.tools.I00(Δχ1)
         I20 = cosmo.tools.I20(Δχ1)
         I40 = cosmo.tools.I40(Δχ1)

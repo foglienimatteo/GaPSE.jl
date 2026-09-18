@@ -42,7 +42,7 @@ function integrand_ξ_GNCxLD_IntegratedGP_Doppler(
     new_J31 = Δχ1^2 * D1 * (s2 - χ1 * y) / (a1 * s1) * (s1 * ℛ_s1 * ℋ1 * (f1 - 1) - 5 * s_b_s1 + 2)
     # the whole term vanishes for Δχ1 → 0 : the geometric factor goes to zero while
     # I13 diverges only as Δχ1^-2 ; see "The Δχ → 0 limits" in the documentation
-    I13 = Δχ1 ≥ Δχ_min ? cosmo.tools.I13(Δχ1) : zero(Δχ1)
+    I13 = Δχ1 ≥ min(Δχ_min, Δχ_min * max(s2, χ1)) ? cosmo.tools.I13(Δχ1) : zero(Δχ1)
 
     res = common * new_J31 * I13
 

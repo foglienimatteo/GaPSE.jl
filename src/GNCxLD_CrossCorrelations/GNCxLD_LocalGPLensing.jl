@@ -46,7 +46,7 @@ function integrand_ξ_GNCxLD_LocalGP_Lensing(
 
     J20 = 1 / 2 * y * Δχ2^2
 
-    JI_sum = if Δχ2 ≥ Δχ_min
+    JI_sum = if Δχ2 ≥ min(Δχ_min, Δχ_min * max(χ2, s1))
         I00 = cosmo.tools.I00(Δχ2)
         I20 = cosmo.tools.I20(Δχ2)
         I40 = cosmo.tools.I40(Δχ2)

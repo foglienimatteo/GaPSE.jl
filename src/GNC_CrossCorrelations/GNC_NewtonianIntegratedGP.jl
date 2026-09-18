@@ -44,7 +44,7 @@ function integrand_ξ_GNC_Newtonian_IntegratedGP(
     J20 = -Δχ2^2 * (3 * b_s1 + f_s1)
 
 
-    JI_sum = if Δχ2 ≥ Δχ_min
+    JI_sum = if Δχ2 ≥ min(Δχ_min, Δχ_min * max(s1, χ2))
         I00 = cosmo.tools.I00(Δχ2)
         I20 = cosmo.tools.I20(Δχ2)
         I40 = cosmo.tools.I40(Δχ2)

@@ -36,7 +36,7 @@ function integrand_ξ_LD_Lensing(
     denomin = s1 * s2 * a_χ1 * a_χ2
     factor = ℋ0^4 * Ω_M0^2 * D1 * abs(s1 - χ1) * D2 * abs(s2 - χ2)
 
-    first_res = if Δχ > Δχ_min
+    first_res = if Δχ > min(Δχ_min, Δχ_min * max(χ1, χ2))
         χ1χ2 = χ1 * χ2
 
         new_J00 = 0.75 * χ1χ2^2 / Δχ^4 * abs(1.0 - y^2) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
