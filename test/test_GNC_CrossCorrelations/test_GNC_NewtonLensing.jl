@@ -38,8 +38,8 @@
 
     rm(name)
 
-    println("xis = $xis ;")
-    println("calc_xis = $calc_xis ;")
+    #println("xis = $xis ;")
+    #println("calc_xis = $calc_xis ;")
 end
 
 
@@ -64,8 +64,8 @@ end
 
     rm(name)
 
-    println("xis = $xis ;")
-    println("calc_xis = $calc_xis ;")
+    #println("xis = $xis ;")
+    #println("calc_xis = $calc_xis ;")
 end
 
 @testset "test xi newton_lensing L = 0 with observer terms" begin
@@ -89,8 +89,8 @@ end
 
     rm(name)
 
-    println("xis = $xis ;")
-    println("calc_xis = $calc_xis ;")
+    #println("xis = $xis ;")
+    #println("calc_xis = $calc_xis ;")
 end
 
 
@@ -122,8 +122,8 @@ end
 
     rm(name)
 
-    println("xis = $xis ;")
-    println("calc_xis = $calc_xis ;")
+    #println("xis = $xis ;")
+    #println("calc_xis = $calc_xis ;")
 end
 
 
@@ -148,8 +148,8 @@ end
 
     rm(name)
 
-    println("xis = $xis ;")
-    println("calc_xis = $calc_xis ;")
+    #println("xis = $xis ;")
+    #println("calc_xis = $calc_xis ;")
 end
 
 
@@ -174,6 +174,6 @@ end
 
     rm(name)
 
-    println("xis = $xis ;")
-    println("calc_xis = $calc_xis ;")
+    #println("xis = $xis ;")
+    #println("calc_xis = $calc_xis ;")
 end
