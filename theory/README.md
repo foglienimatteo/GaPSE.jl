@@ -43,6 +43,16 @@ $ julia --project=. Iln_terms.jl
   "The ``I_\ell^n`` integrals" page of the documentation, and, with `SAVE_TO_DOCS = true`,
   it writes a copy of them directly into `docs/src/assets/Iln_terms/`.
 
+- **`sigma_i`** : the moments ``\sigma_i = \int \mathrm{d}q \, q^{2-i} P(q) / 2\pi^2`` of
+  the input Power Spectrum, which is what every ``\Delta\chi \rightarrow 0`` limit of the
+  TPCFs reduces to. It plots the five integrands and the fraction of each moment already
+  collected below a given ``q``, and prints the moments over a grid of integration
+  extremes, so that one can see which of them converge and which ones are defined by the
+  cut itself. It also compares the two ranges GaPSE actually uses - the `k_min`/`k_max`
+  given to `IPSTools`, which fix the stored ``\sigma_i``, and the `1e-5, 1e3` that
+  `IPSTools` hard-codes for the `xicalc` call that builds the ``I_\ell^n``. Figures go to
+  `docs/src/assets/sigma_i/`.
+
 - **`spherical_bessels`** : the spherical Bessel functions ``j_\ell(x)``, the region where
   their small-``x`` expansion ``x^\ell/(2\ell+1)!!`` is legitimate, and the first zero of
   ``j_\ell`` as a function of ``\ell``. It produces the figures used by the
