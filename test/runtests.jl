@@ -35,7 +35,7 @@ TEST_TWOSPECIES = true
 
 
 using GaPSE, Test
-using Dierckx, DelimitedFiles, QuadGK, Suppressor, NPZ
+using Dierckx, DelimitedFiles, QuadGK, Suppressor, NPZ, Random
 
 
 const FILE_F_MAP = "datatest/F_REFERENCE_pi2.txt"

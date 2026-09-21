@@ -79,6 +79,9 @@ end
 
         #N1, N2 = Int64(ceil(N*lp)), N-Int64(floor(N*hp))
 
+        # fixed seed: rs samples a random point inside each knot interval, so without
+        # it this testset checks a different point on every run
+        Random.seed!(20250921)
         rs = [xs[i] + (xs[i+1] - xs[i]) * rand() for i in 1:length(xs)-1]
 
         dierckx_sp = Dierckx.Spline1D(xs, ys; bc="error")
@@ -130,6 +133,9 @@ end
 
         #N1, N2 = Int64(ceil(N*lp)), N-Int64(floor(N*hp))
 
+        # fixed seed: rs samples a random point inside each knot interval, so without
+        # it this testset checks a different point on every run
+        Random.seed!(20250921)
         rs = [xs[i] + (xs[i+1] - xs[i]) * rand() for i in 1:length(xs)-1]
 
         dierckx_sp = Dierckx.Spline1D(xs, ys; bc="error")
@@ -138,13 +144,20 @@ end
         best_sp_3 = GaPSE.MySpline(xs, ys, ic="ThirdDerivative")
 
         dierckx_ys = Dierckx.derivative(dierckx_sp, rs[N1:N2])
+
+        # d^1y/dx^1 crosses zero inside the interval, and next to a zero a purely
+        # relative tolerance is meaningless: the two splines agree to ~1e-5 in absolute
+        # terms, but |y1-y2|/|y1| is unbounded as y1 -> 0. The floor below is the typical
+        # size of this derivative over the interval that is actually sampled.
+        ATOL = RTOL * maximum(abs, Dierckx.derivative(dierckx_sp,
+            collect(range(xs[N1], xs[N2+1], length=101)); nu=1))
         my_sp_1_ys = GaPSE.derivative(best_sp_1, rs[N1:N2]; nu=1)
         my_sp_2_ys = GaPSE.derivative(best_sp_2, rs[N1:N2])
         my_sp_3_ys = GaPSE.derivative(best_sp_3, rs[N1:N2]; nu=1)
 
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_1_ys)])
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_2_ys)])
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_3_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_1_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_2_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_3_ys)])
 
     end
 
@@ -160,6 +173,9 @@ end
 
         #N1, N2 = Int64(ceil(N*lp)), N-Int64(floor(N*hp))
 
+        # fixed seed: rs samples a random point inside each knot interval, so without
+        # it this testset checks a different point on every run
+        Random.seed!(20250921)
         rs = [xs[i] + (xs[i+1] - xs[i]) * rand() for i in 1:length(xs)-1]
 
         dierckx_sp = Dierckx.Spline1D(xs, ys; bc="error")
@@ -168,13 +184,20 @@ end
         best_sp_3 = GaPSE.MySpline(xs, ys, ic="ThirdDerivative")
 
         dierckx_ys = Dierckx.derivative(dierckx_sp, rs[N1:N2]; nu=2)
+
+        # d^2y/dx^2 crosses zero inside the interval, and next to a zero a purely
+        # relative tolerance is meaningless: the two splines agree to ~1e-5 in absolute
+        # terms, but |y1-y2|/|y1| is unbounded as y1 -> 0. The floor below is the typical
+        # size of this derivative over the interval that is actually sampled.
+        ATOL = RTOL * maximum(abs, Dierckx.derivative(dierckx_sp,
+            collect(range(xs[N1], xs[N2+1], length=101)); nu=2))
         my_sp_1_ys = GaPSE.derivative(best_sp_1, rs[N1:N2]; nu=2)
         my_sp_2_ys = GaPSE.derivative(best_sp_2, rs[N1:N2]; nu=2)
         my_sp_3_ys = GaPSE.derivative(best_sp_3, rs[N1:N2]; nu=2)
 
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_1_ys)])
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_2_ys)])
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_3_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_1_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_2_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_3_ys)])
 
     end
 
@@ -190,6 +213,9 @@ end
 
         #N1, N2 = Int64(ceil(N*lp)), N-Int64(floor(N*hp))
 
+        # fixed seed: rs samples a random point inside each knot interval, so without
+        # it this testset checks a different point on every run
+        Random.seed!(20250921)
         rs = [xs[i] + (xs[i+1] - xs[i]) * rand() for i in 1:length(xs)-1]
 
         dierckx_sp = Dierckx.Spline1D(xs, ys; bc="error")
@@ -198,13 +224,20 @@ end
         best_sp_3 = GaPSE.MySpline(xs, ys, ic="ThirdDerivative")
 
         dierckx_ys = Dierckx.derivative(dierckx_sp, rs[N1:N2]; nu=3)
+
+        # d^3y/dx^3 crosses zero inside the interval, and next to a zero a purely
+        # relative tolerance is meaningless: the two splines agree to ~1e-5 in absolute
+        # terms, but |y1-y2|/|y1| is unbounded as y1 -> 0. The floor below is the typical
+        # size of this derivative over the interval that is actually sampled.
+        ATOL = RTOL * maximum(abs, Dierckx.derivative(dierckx_sp,
+            collect(range(xs[N1], xs[N2+1], length=101)); nu=3))
         my_sp_1_ys = GaPSE.derivative(best_sp_1, rs[N1:N2]; nu=3)
         my_sp_2_ys = GaPSE.derivative(best_sp_2, rs[N1:N2]; nu=3)
         my_sp_3_ys = GaPSE.derivative(best_sp_3, rs[N1:N2]; nu=3)
 
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_1_ys)])
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_2_ys)])
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_3_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_1_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_2_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_3_ys)])
 
     end
 
@@ -220,6 +253,9 @@ end
 
         #N1, N2 = Int64(ceil(N*lp)), N-Int64(floor(N*hp))
 
+        # fixed seed: rs samples a random point inside each knot interval, so without
+        # it this testset checks a different point on every run
+        Random.seed!(20250921)
         rs = [xs[i] + (xs[i+1] - xs[i]) * rand() for i in 1:length(xs)-1]
 
         #dierckx_sp = Dierckx.Spline1D(xs, ys; bc="error")
@@ -249,6 +285,9 @@ end
 
         #N1, N2 = Int64(ceil(N*lp)), N-Int64(floor(N*hp))
 
+        # fixed seed: rs samples a random point inside each knot interval, so without
+        # it this testset checks a different point on every run
+        Random.seed!(20250921)
         rs = [xs[i] + (xs[i+1] - xs[i]) * rand() for i in 1:length(xs)-1]
 
         dierckx_sp = Dierckx.Spline1D(xs, ys; bc="error")
@@ -257,13 +296,20 @@ end
         best_sp_3 = GaPSE.MySpline(xs, ys, ic="ThirdDerivative")
 
         dierckx_ys = Dierckx.derivative(dierckx_sp, rs[N1:N2]; nu=1)
+
+        # d^1y/dx^1 crosses zero inside the interval, and next to a zero a purely
+        # relative tolerance is meaningless: the two splines agree to ~1e-5 in absolute
+        # terms, but |y1-y2|/|y1| is unbounded as y1 -> 0. The floor below is the typical
+        # size of this derivative over the interval that is actually sampled.
+        ATOL = RTOL * maximum(abs, Dierckx.derivative(dierckx_sp,
+            collect(range(xs[N1], xs[N2+1], length=101)); nu=1))
         my_sp_1_ys = GaPSE.derivative(best_sp_1, rs[N1:N2]; nu=1)
         my_sp_2_ys = GaPSE.derivative(best_sp_2, rs[N1:N2]; nu=1)
         my_sp_3_ys = GaPSE.derivative(best_sp_3, rs[N1:N2]; nu=1)
 
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_1_ys)])
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_2_ys)])
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_3_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_1_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_2_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_3_ys)])
     end
 
     @testset "test Spline derivative - log range - nu=2" begin
@@ -278,6 +324,9 @@ end
 
         #N1, N2 = Int64(ceil(N*lp)), N-Int64(floor(N*hp))
 
+        # fixed seed: rs samples a random point inside each knot interval, so without
+        # it this testset checks a different point on every run
+        Random.seed!(20250921)
         rs = [xs[i] + (xs[i+1] - xs[i]) * rand() for i in 1:length(xs)-1]
 
         dierckx_sp = Dierckx.Spline1D(xs, ys; bc="error")
@@ -286,13 +335,20 @@ end
         best_sp_3 = GaPSE.MySpline(xs, ys, ic="ThirdDerivative")
 
         dierckx_ys = Dierckx.derivative(dierckx_sp, rs[N1:N2]; nu=2)
+
+        # d^2y/dx^2 crosses zero inside the interval, and next to a zero a purely
+        # relative tolerance is meaningless: the two splines agree to ~1e-5 in absolute
+        # terms, but |y1-y2|/|y1| is unbounded as y1 -> 0. The floor below is the typical
+        # size of this derivative over the interval that is actually sampled.
+        ATOL = RTOL * maximum(abs, Dierckx.derivative(dierckx_sp,
+            collect(range(xs[N1], xs[N2+1], length=101)); nu=2))
         my_sp_1_ys = GaPSE.derivative(best_sp_1, rs[N1:N2]; nu=2)
         my_sp_2_ys = GaPSE.derivative(best_sp_2, rs[N1:N2]; nu=2)
         my_sp_3_ys = GaPSE.derivative(best_sp_3, rs[N1:N2]; nu=2)
 
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_1_ys)])
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_2_ys)])
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_3_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_1_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_2_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_3_ys)])
     end
 
     @testset "test Spline derivative - log range - nu=3" begin
@@ -307,6 +363,9 @@ end
 
         #N1, N2 = Int64(ceil(N*lp)), N-Int64(floor(N*hp))
 
+        # fixed seed: rs samples a random point inside each knot interval, so without
+        # it this testset checks a different point on every run
+        Random.seed!(20250921)
         rs = [xs[i] + (xs[i+1] - xs[i]) * rand() for i in 1:length(xs)-1]
 
         dierckx_sp = Dierckx.Spline1D(xs, ys; bc="error")
@@ -315,13 +374,20 @@ end
         best_sp_3 = GaPSE.MySpline(xs, ys, ic="ThirdDerivative")
 
         dierckx_ys = Dierckx.derivative(dierckx_sp, rs[N1:N2]; nu=3)
+
+        # d^3y/dx^3 crosses zero inside the interval, and next to a zero a purely
+        # relative tolerance is meaningless: the two splines agree to ~1e-5 in absolute
+        # terms, but |y1-y2|/|y1| is unbounded as y1 -> 0. The floor below is the typical
+        # size of this derivative over the interval that is actually sampled.
+        ATOL = RTOL * maximum(abs, Dierckx.derivative(dierckx_sp,
+            collect(range(xs[N1], xs[N2+1], length=101)); nu=3))
         my_sp_1_ys = GaPSE.derivative(best_sp_1, rs[N1:N2]; nu=3)
         my_sp_2_ys = GaPSE.derivative(best_sp_2, rs[N1:N2]; nu=3)
         my_sp_3_ys = GaPSE.derivative(best_sp_3, rs[N1:N2]; nu=3)
 
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_1_ys)])
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_2_ys)])
-        @test all([isapprox(y1, y2; rtol=RTOL) for (y1, y2) in zip(dierckx_ys, my_sp_3_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_1_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_2_ys)])
+        @test all([isapprox(y1, y2; rtol=RTOL, atol=ATOL) for (y1, y2) in zip(dierckx_ys, my_sp_3_ys)])
     end
 
     @testset "test Spline derivative - log range - nu=4,5,6" begin
@@ -336,6 +402,9 @@ end
 
         #N1, N2 = Int64(ceil(N*lp)), N-Int64(floor(N*hp))
 
+        # fixed seed: rs samples a random point inside each knot interval, so without
+        # it this testset checks a different point on every run
+        Random.seed!(20250921)
         rs = [xs[i] + (xs[i+1] - xs[i]) * rand() for i in 1:length(xs)-1]
 
         #dierckx_sp = Dierckx.Spline1D(xs, ys; bc="error")
