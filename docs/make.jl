@@ -12,6 +12,7 @@ Documenter.makedocs(
           "Theory" => [
                "Spline Theory" => "SplineTheory.md",
                "Spherical Bessel Functions" => "SphericalBesselFunctions.md",
+               "The input Power Spectrum" => "InputPowerSpectrum.md",
                "The I_l^n integrals" => "IlnIntegrals.md",
                "The Δχ → 0 limits" => [
                     "Introduction and results" => "DeltaChiLimits.md",

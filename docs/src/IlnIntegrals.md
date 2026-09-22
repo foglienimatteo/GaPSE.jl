@@ -430,69 +430,20 @@ side, because the obvious route does not work.
 
 ### The small-``k`` slope of the matter Power Spectrum
 
-In the ``\Lambda``-CDM cosmology, the primordial curvature perturbations are a pure power law (see the [Planck 2018 results, A&A 641, A10 (2020)](https://doi.org/10.1051/0004-6361/201833887)), usually quoted through the dimensionless power spectrum ``\Delta^2_{\mathcal{R}}``:
+The proof that
 
 ```math
-    \Delta^2_{\mathcal{R}}(k) := \frac{k^3}{2\pi^2} P_\mathcal{R}(k) \quad \quad (3.1)
+    P(k) \; \underset{k \rightarrow 0^{+}}{\sim}  \, k^{\,n_P} \; ,
+    \quad \quad n_P = n_s \simeq 0.96
 ```
 
-```math
-\begin{align*}
-    \Delta^2_{\mathcal{R}}(k) &\underset{k \rightarrow 0^{+}}{\sim} \; A_s \, \left( \frac{k}{k^*}\right)^{n_s-1} &&(3.2)\\[10pt]
-
-    n_s&\approx 0.965&&\mathrm{primordial \; spectral \; index}\\[8pt]
-    \ln(10^{10} A_s) &\approx 3.043 &&\mathrm{ log \; power \; of \; primordial \; curvature \; perturbations} \Rightarrow A_s \approx 2.1 \times 10^{-9}\\[8pt]
-    k^* &\approx 0.05 \; h\,\mathrm{Mpc}^{-1}  &&\mathrm{arbitrary \; pivot \; scale}
-\end{align*}
-```
-
-```math
-    \Rightarrow P_\mathcal{R}(k) = \frac{2\pi^2}{k^3}\,\Delta^2_{\mathcal{R}}(k) \underset{k \rightarrow 0^{+}}{\sim} k^{\,n_s-4} \quad \quad (3.3) \\[10pt]
-```
-
-What enters the ``I_\ell^n`` is the matter Power Spectrum ``P_m(k,z)`` at present day (``z=0``), a dimensional quantity in ``(h^{-1}\mathrm{Mpc})^3``. The two are related by the Poisson equation and the transfer function ``T(k)``:
-
-```math
-    P_m(k, z)  \propto  k^4 \, T^2(k) \, D^2(z) \, P_\mathcal{R}(k)
-    \quad \quad (3.4)
-```
-
-The transfer function is normalized such that at large scales it goes to ``1``: 
-```math
-    T(k) \xrightarrow[k \rightarrow 0^{+}]{} 1 \quad \quad (3.5) \\[10pt]
-```
-
-so at present day:
-
-```math
-\begin{align*}
-    (3.4)\; \mathrm{with} \; z=0 : \quad \quad P_m(k, z=0)  & \propto  k^4 \, T^2(k) \, D^2(0) \, P_\mathcal{R}(k)\\[10pt]
-    \mathrm{Inserting} \; (3.5) \rightarrow  \quad \quad
-    &\underset{ k\rightarrow 0^{+}}{\sim} \; k^{4}  \; P_\mathcal{R}(k) \\[10pt]
-    \mathrm{Inserting} \; (3.3) \rightarrow  \quad \quad
-    &\underset{ k\rightarrow 0^{+}}{\sim} \; k^{4}  \, k^{\,n_s-4}  \\[10pt]
-    &= \; k^{n_s}\\[10pt]
-\end{align*}
-```
-
-```math
-    \quad \Rightarrow \quad
-    P(k) \; \underset{k \rightarrow 0^{+}}{\sim}  \, k^{n_s} \; ,
-    \quad \quad n_s \simeq 0.96
-    \quad \quad (3.6)
-```
-
-The matter Power Spectrum therefore *grows* as ``k^{+0.96}`` at small ``k``. The
-dimensionless curvature goes as ``k^{n_s-1} \simeq k^{-0.035}`` and the four
-powers of ``k`` supplied by Poisson, minus the three of the
-``\Delta^2 \leftrightarrow P`` conversion, are exactly what separates them.
-
-NOTE: this is directly visible in `data/WideA_ZA_pk.dat`, whose local slope
-``\mathrm{d}\ln P / \mathrm{d}\ln k`` is ``+0.9600`` for ``k \in [10^{-6}, 10^{-5}]`` and
-still ``+0.9599`` for ``k \in [10^{-5}, 10^{-4}]``, with an amplitude of order
-``10^{6} \, (h^{-1}\mathrm{Mpc})^3``.
-
-
+— together with the large-``k`` tail, the power laws `InputPS` extrapolates with, and
+which ``\sigma_i`` converge at all — now lives in its own page,
+[The input Power Spectrum](InputPowerSpectrum.md), since it is needed by the
+``\Delta\chi \rightarrow 0`` limits as much as by what follows here. Only the result
+is used below: the small-``k`` slope of the *matter* Power Spectrum is ``n_P = n_s``,
+**not** ``n_s - 1``, which is the slope of the dimensionless primordial curvature
+spectrum ``\Delta^2_{\mathcal{R}}``.
 
 ### Why the limit cannot be taken inside the integral
 
@@ -596,7 +547,7 @@ contour sits.
     \tilde{f}(1-z) = \frac{1}{2\pi^2}\int_0^{+\infty}\mathrm{d}q \; q^{\,2-n-z} \, P(q) \;.
 ```
 
-Splitting at any scale ``q_0`` inside the power-law region and using Eq.(3.3) below it,
+Splitting at any scale ``q_0`` inside the power-law region and using ``P(q) \sim A\,q^{\,n_P}`` below it (see [The input Power Spectrum](InputPowerSpectrum.md)),
 
 ```math
     \frac{1}{2\pi^2}\int_0^{q_0}\mathrm{d}q \; A \, q^{\,2-n-z+n_P}

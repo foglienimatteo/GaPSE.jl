@@ -43,6 +43,12 @@ $ julia --project=. Iln_terms.jl
   "The ``I_\ell^n`` integrals" page of the documentation, and, with `SAVE_TO_DOCS = true`,
   it writes a copy of them directly into `docs/src/assets/Iln_terms/`.
 
+- **`input_ps`** : the input matter Power Spectrum itself, plotted over twelve decades
+  together with the two power laws `InputPS` extrapolates with outside the tabulated
+  range, plus its local slope and a table of which ``\sigma_i`` converge. It produces
+  the figures of the "The input Power Spectrum" page of the documentation, writing them
+  into `docs/src/assets/input_ps/`.
+
 - **`sigma_i`** : the moments ``\sigma_i = \int \mathrm{d}q \, q^{2-i} P(q) / 2\pi^2`` of
   the input Power Spectrum, which is what every ``\Delta\chi \rightarrow 0`` limit of the
   TPCFs reduces to. It plots the five integrands and the fraction of each moment already

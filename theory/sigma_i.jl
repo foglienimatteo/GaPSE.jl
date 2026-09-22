@@ -35,11 +35,46 @@
 
 using Pkg
 Pkg.activate(@__DIR__)
+
+# This environment is (re)built here, so that a fresh clone - or a different
+# Julia version - needs no manual setup step.
+#  - GaPSE is NOT a registered package: an environment reaches it only through
+#    the `path` entry that `Pkg.develop` writes into `Manifest.toml`. Checking
+#    `Base.identify_package` alone is not enough: it resolves the UUID from
+#    `Project.toml` and succeeds even when the source cannot be found.
+#  - `Project.toml` holds names and UUIDs only, is Julia-version INdependent and
+#    is tracked by git; it is rebuilt from `THEORY_DEPS` if it is missing.
+#  - `Manifest.toml` holds the resolved versions, IS Julia-version specific and
+#    is gitignored; `Pkg.resolve()` + `Pkg.instantiate()` rebuild it for the
+#    Julia that is running. `resolve` first, or `instantiate` refuses whenever
+#    `Project.toml` declares more than the manifest knows about.
+# Nothing is downloaded when the environment is already complete.
+let THEORY_DEPS = ["Plots", "PyPlot", "LaTeXStrings", "QuadGK",
+                   "DelimitedFiles", "Printf", "SpecialFunctions"]
+    declared = collect(keys(Pkg.project().dependencies))
+    id = Base.identify_package("GaPSE")
+    if !("GaPSE" in declared) || isnothing(id) || isnothing(Base.locate_package(id))
+        @info "theory/: making the GaPSE of this repository available"
+        Pkg.develop(path=dirname(@__DIR__))
+    end
+    todo = filter(d -> !(d in declared), THEORY_DEPS)
+    isempty(todo) || (@info "theory/: adding the missing dependencies" todo; Pkg.add(todo))
+    Pkg.resolve()
+    Pkg.instantiate()
+end
+
 using GaPSE
 
 using Plots, LaTeXStrings, QuadGK, DelimitedFiles, Printf
 
-pyplot() # if you do not have PyPlot/matplotlib installed, `gr()` works as well
+# `pyplot()` needs a working matplotlib; `gr()` is used instead where it is absent
+try
+    pyplot()
+catch err
+    @warn "theory/: PyPlot cannot be initialised; falling back to the GR backend. " *
+          "The figures will look slightly different." exception = err
+    gr()
+end
 
 
 ##########################################################################################92
