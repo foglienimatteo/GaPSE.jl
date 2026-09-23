@@ -3,8 +3,8 @@
 ## Recap: everything this page needs
 
 This page is self-contained. All the results quoted here are derived in
-[The ``\Delta\chi \rightarrow 0`` limits](DeltaChiLimits.md), and the ``I_\ell^n``
-asymptotics in [The ``I_\ell^n`` integrals](IlnIntegrals.md).
+[The ``\Delta\chi \rightarrow 0`` limits](theory_DeltaChiLimits.md), and the ``I_\ell^n``
+asymptotics in [The ``I_\ell^n`` integrals](theory_IlnIntegrals.md).
 
 **The separation and its singular point.** For this family the two competing distances are
 ``\chi_a`` and ``\chi_b``, so the relevant separation is

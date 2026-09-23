@@ -439,7 +439,7 @@ The proof that
 
 — together with the large-``k`` tail, the power laws `InputPS` extrapolates with, and
 which ``\sigma_i`` converge at all — now lives in its own page,
-[The input Power Spectrum](InputPowerSpectrum.md), since it is needed by the
+[The input Power Spectrum](theory_InputPowerSpectrum.md), since it is needed by the
 ``\Delta\chi \rightarrow 0`` limits as much as by what follows here. Only the result
 is used below: the small-``k`` slope of the *matter* Power Spectrum is ``n_P = n_s``,
 **not** ``n_s - 1``, which is the slope of the dimensionless primordial curvature
@@ -511,7 +511,7 @@ Introduce the two Mellin transforms
 ```
 
 the second one being the general case of the known integrals of the
-[Spherical Bessel Functions](SphericalBesselFunctions.md) page (``z = 1`` gives back
+[Spherical Bessel Functions](theory_SphericalBesselFunctions.md) page (``z = 1`` gives back
 ``\int_0^\infty j_\ell = \sqrt{\pi} \, \Gamma\!\left(\frac{\ell+1}{2}\right) /
 2\Gamma\!\left(1+\frac{\ell}{2}\right)``). Inserting the inverse transform of ``j_\ell``
 into Eq.(3.7) and exchanging the two integrals — legitimate here, the ``z``-contour being
@@ -547,7 +547,7 @@ contour sits.
     \tilde{f}(1-z) = \frac{1}{2\pi^2}\int_0^{+\infty}\mathrm{d}q \; q^{\,2-n-z} \, P(q) \;.
 ```
 
-Splitting at any scale ``q_0`` inside the power-law region and using ``P(q) \sim A\,q^{\,n_P}`` below it (see [The input Power Spectrum](InputPowerSpectrum.md)),
+Splitting at any scale ``q_0`` inside the power-law region and using ``P(q) \sim A\,q^{\,n_P}`` below it (see [The input Power Spectrum](theory_InputPowerSpectrum.md)),
 
 ```math
     \frac{1}{2\pi^2}\int_0^{q_0}\mathrm{d}q \; A \, q^{\,2-n-z+n_P}

@@ -1,7 +1,7 @@
 # The Spherical Bessel Functions ``j_\ell(x)``
 
 ```@contents
-Pages = ["SphericalBesselFunctions.md"]
+Pages = ["theory_SphericalBesselFunctions.md"]
 Depth = 3
 ```
 
@@ -103,7 +103,7 @@ The complete series is
 ```
 
 which is the one used to derive the small-``s`` limits of the
-[``I_\ell^n`` integrals](IlnIntegrals.md).
+[``I_\ell^n`` integrals](theory_IlnIntegrals.md).
 
 Keeping only the ``k = 0`` term is legitimate up to ``x \simeq 1``, and not beyond:
 

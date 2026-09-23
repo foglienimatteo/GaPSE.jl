@@ -12,12 +12,12 @@ large ``q`` — are not a detail: they decide whether each moment
 
 is a number, or is set by where the integral happens to be cut. Since the
 ``\Delta\chi \rightarrow 0`` limits of every TPCF reduce to combinations of ``\sigma_i``
-(see [The ``\Delta\chi \rightarrow 0`` limits](DeltaChiLimits.md)), and the
+(see [The ``\Delta\chi \rightarrow 0`` limits](theory_DeltaChiLimits.md)), and the
 ``I_\ell^n`` reduce to them as ``s \rightarrow 0``
-(see [The ``I_\ell^n`` integrals](IlnIntegrals.md)), the answer matters.
+(see [The ``I_\ell^n`` integrals](theory_IlnIntegrals.md)), the answer matters.
 
 ```@contents
-Pages = ["InputPowerSpectrum.md"]
+Pages = ["theory_InputPowerSpectrum.md"]
 Depth = 3
 ```
 

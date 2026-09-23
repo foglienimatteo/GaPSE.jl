@@ -111,28 +111,132 @@ const KS_XICALC = (1e-5, 1e3)
 ##########################################################################################92
 # Plots
 
-plot_kwargs() = Dict(
-    :size => (1400, 800), :dpi => 300,
-    :legendfontsize => 11, :guidefontsize => 14, :tickfontsize => 11,
-    :titlefontsize => 16, :margin => 8Plots.mm,
+"""
+    plot_kwargs(kwargs...) :: Dict
+
+The defaults every figure of this directory shares, with anything in `kwargs...`
+overriding them. `merge` keeps the value of the **last** dictionary for a repeated
+key, so whatever is passed in always wins:
+
+```julia
+plot_kwargs()                       # the defaults
+plot_kwargs(:dpi => 150)            # the defaults, with dpi = 150
+plot_kwargs(:whatever => 3)         # unknown keys are passed through to Plots
+```
+"""
+function plot_kwargs(kwargs...)
+    dict_defaults = Dict(
+        :size => (1000, 400), :dpi => 300, :legendposition => :outerright,
+        :legendfontsize => 11, :guidefontsize => 14, :tickfontsize => 11,
+        :titlefontsize => 16, :left_margin => 10Plots.mm, :bottom_margin => 6Plots.mm,
+        # a y label that reads horizontally: see `hlabel` for the padding it needs
+        :yguidefontrotation => -90,
+    )
+    # in `merge`, if a key is repeated the LAST collection has priority
+    merge(dict_defaults, Dict(kwargs))
+end
+
+"""
+    logticks(lo, hi; step=1) :: Vector{Float64}
+    logticks(xs; step=1) :: Vector{Float64}
+
+Decade ticks covering `[lo, hi]`, one every `step` decades. The second form reads the
+range off the extrema of `xs`, which is handy when the ticks should simply follow the
+data:
+
+```julia
+logticks(1e-7, 1e4; step=2)     # 1e-7, 1e-5, ..., 1e3
+logticks(qs)                    # one tick per decade spanned by qs
+```
+"""
+logticks(lo, hi; step=1) = 10.0 .^ (floor(Int, log10(lo)):step:ceil(Int, log10(hi)))
+logticks(xs; step=1) = logticks(extrema(xs)...; step=step)
+
+"""
+    hlabel(s; pad=10) :: String
+
+A y-axis label meant to be read horizontally, i.e. together with
+`yguidefontrotation = -90` (which `plot_kwargs` sets by default).
+
+`Plots` places the y guide at a fixed offset from the axis, measured as if the label
+were vertical. Once it is rotated flat it therefore lands on top of the tick labels,
+and there is no portable option to move it: padding it with trailing spaces is the
+only thing that works across backends. Keeping that hack inside one function means
+only `pad` has to be tuned per figure, and a better mechanism - should `Plots` ever
+grow one - has to be applied in a single place.
+"""
+hlabel(s; pad=10) = s * " "^pad
+
+"""
+    vspec(r, l; ls=:dash, lw=2, c=:black, alpha=0.55, fmt=:sci1) :: NamedTuple
+
+One entry for `vlines!`: a pair of vertical lines at `r = (lo, hi)`, labelled `l`,
+drawn with the given style. `fmt` is `:sci1` for `1.0e-06` or `:sci0` for `1e-06`.
+Passing `r = nothing` makes `vlines!` skip it, which is how a figure drops one of the
+markers without having to rebuild the whole list.
+"""
+vspec(r, l; ls=:dash, lw=2, c=:black, alpha=0.55, fmt=:sci1) =
+    (r=r, l=l, ls=ls, lw=lw, c=c, alpha=alpha, fmt=fmt)
+
+"""
+    vlines!(p, specs) :: Plots.Plot
+
+Draw every `vspec` of `specs` on `p`.
+
+This takes the place of the earlier `r1/l1/ls1/lw1/c1/alpha1`, `r2/...`, `r3/...`
+keyword triplets: eighteen keywords that only ever described three lines, could not
+describe a fourth, and had to be forwarded by hand through every plotting function.
+A figure now carries a single `specs` keyword, overriding one entry is
+`vspec(KS_DATA, "input file"; c=:green)`, and adding a fourth marker is one more
+element of the vector.
+"""
+function vlines!(p, specs)
+    for v in specs
+        isnothing(v.r) && continue
+        lab = v.fmt === :sci0 ? @sprintf("%s: [%.0e, %.0e]", v.l, v.r...) :
+              @sprintf("%s: [%.1e, %.1e]", v.l, v.r...)
+        vline!(p, [v.r...]; ls=v.ls, lw=v.lw, c=v.c, alpha=v.alpha, label=lab)
+    end
+    p
+end
+
+# The vertical markers this page uses. A figure overrides one entry with e.g.
+# `vspec((K_MIN_TAB, K_MAX_TAB), "data"; c=:green)`, drops it with `r = nothing`,
+# or adds a fourth simply by appending to the vector it is given.
+VSPECS_PS() = [
+    vspec((K_MIN_TAB, K_MAX_TAB), "tabulated range"; c=:gray, alpha=0.6, ls=:solid),
+]
+
+
+"""
+    plot_input_ps(; qs, xscale, yscale, xlabel, ylabel, title, specs,
+                    xticksmin, xticksmax, xticksstep, kwargs...) :: Plots.Plot
+
+``P(q)`` over many decades, with the two asymptotic power laws drawn through it and
+the tabulated range marked. Outside that range the curve *is* the power law: the
+dashed lines and the solid one lie on top of each other there, which is the point of
+the figure.
+
+Every label, scale, tick range and marker is a keyword, and anything not listed is
+handed on to `plot_kwargs`, so a one-off variant needs no editing of this function:
+
+```julia
+plot_input_ps(; title = "", specs = [], size = (1400, 600))
+```
+"""
+function plot_input_ps(;
+    qs=10 .^ range(-8, 4, length=2000),
+    xscale=:log10, yscale=:log10,
+    xlabel=L"q \; [h \, \mathrm{Mpc}^{-1}]",
+    ylabel=hlabel(L"P(q)"; pad=8),
+    title="The input matter Power Spectrum",
+    specs=VSPECS_PS(),
+    xticksmin=1e-8, xticksmax=1e4, xticksstep=2,
+    yticksmin=nothing, yticksmax=1e10, yticksstep=5,
+    kwargs...
 )
-
-logticks(lo, hi) = 10.0 .^ (floor(Int, log10(lo)):ceil(Int, log10(hi)))
-
-"""
-    plot_input_ps(; qs) :: Plots.Plot
-
-``P(q)`` over many decades, with the two asymptotic power laws drawn through it
-and the tabulated range marked. Outside that range the curve *is* the power law:
-the dashed lines and the solid one lie on top of each other there, which is the
-point of the figure.
-"""
-function plot_input_ps(; qs=10 .^ range(-8, 4, length=2000))
-    p = plot(; xscale=:log10, yscale=:log10,
-        xlabel=L"q \; [h \, \mathrm{Mpc}^{-1}]",
-        ylabel=L"P(q) \; [h^{-3} \, \mathrm{Mpc}^3]",
-        legend=:bottomleft, title="The input matter Power Spectrum",
-        plot_kwargs()...)
+    p = plot(; xscale=xscale, yscale=yscale, xlabel=xlabel, ylabel=ylabel,
+        title=title, plot_kwargs(kwargs...)...)
 
     plot!(p, qs, [IPS(q) for q in qs], lw=2.5, c=:black, label="InputPS")
     scatter!(p, K_TAB, P_TAB, ms=1.6, mc=:orange, msw=0, label="tabulated data")
@@ -144,36 +248,49 @@ function plot_input_ps(; qs=10 .^ range(-8, 4, length=2000))
     plot!(p, rs, right_powerlaw.(rs), lw=2, ls=:dash, c=:blue,
         label=@sprintf("right: P ~ q^{%+.3f}", IPS.r_si))
 
-    vline!(p, [K_MIN_TAB, K_MAX_TAB], lw=2, c=:gray, alpha=0.6,
-        label=@sprintf("tabulated range [%.1e, %.1e]", K_MIN_TAB, K_MAX_TAB))
-    xticks!(p, logticks(1e-8, 1e4))
+    vlines!(p, specs)
+    xticks!(p, logticks(xticksmin, xticksmax; step=xticksstep))
+    isnothing(yticksmin) || yticks!(p, logticks(yticksmin, yticksmax; step=yticksstep))
     p
 end
 
-"""
-    plot_local_slope(; qs) :: Plots.Plot
 
-The local logarithmic slope ``\\mathrm{d}\\ln P / \\mathrm{d}\\ln q``. It is what
-decides the convergence of each ``\\sigma_i``: the integrand of ``\\sigma_i`` goes
-as ``q^{\\,2-i+\\mathrm{d}\\ln P/\\mathrm{d}\\ln q}``, so the moment converges at
-the UV end when that exponent is below ``-1``, and at the IR end when it is above.
 """
-function plot_local_slope(; qs=10 .^ range(-8, 4, length=2000))
+    plot_local_slope(; qs, xscale, yscale, xlabel, ylabel, title, specs,
+                       show_cdm_tail, xticksmin, xticksmax, xticksstep,
+                       left_margin, kwargs...) :: Plots.Plot
+
+The local logarithmic slope ``\\mathrm{d}\\ln P / \\mathrm{d}\\ln q``. It is what decides
+the convergence of each ``\\sigma_i``: the integrand of ``\\sigma_i`` goes as
+``q^{\\,2-i+\\mathrm{d}\\ln P/\\mathrm{d}\\ln q}``, so the moment converges at the UV end
+when that exponent is below ``-1``, and at the IR end when it is above.
+
+The y axis is linear here, so it keeps the default ticks instead of `logticks`.
+"""
+function plot_local_slope(;
+    qs=10 .^ range(-8, 4, length=2000),
+    xscale=:log10, yscale=:identity,
+    xlabel=L"q \; [h \, \mathrm{Mpc}^{-1}]",
+    ylabel=hlabel(L"\mathrm{d}\ln P / \mathrm{d}\ln q"; pad=4),
+    title="Local slope of the input Power Spectrum",
+    specs=VSPECS_PS(),
+    show_cdm_tail=true,
+    xticksmin=1e-8, xticksmax=1e4, xticksstep=2,
+    left_margin=28Plots.mm,
+    kwargs...
+)
     sl = [(log(IPS(q * 1.01)) - log(IPS(q / 1.01))) / (2 * log(1.01)) for q in qs]
-    p = plot(; xscale=:log10, xlabel=L"q \; [h \, \mathrm{Mpc}^{-1}]",
-        ylabel=L"\mathrm{d}\ln P / \mathrm{d}\ln q", legend=:bottomleft,
-        title="Local slope of the input Power Spectrum", plot_kwargs()...)
+    p = plot(; xscale=xscale, yscale=yscale, xlabel=xlabel, ylabel=ylabel,
+        title=title, plot_kwargs(:left_margin => left_margin, kwargs...)...)
     plot!(p, qs, sl, lw=2.5, c=:black, label="InputPS")
     hline!(p, [IPS.l_si], ls=:dash, lw=2, c=:red,
         label=@sprintf("left fit: %+.3f", IPS.l_si))
     hline!(p, [IPS.r_si], ls=:dash, lw=2, c=:blue,
         label=@sprintf("right fit: %+.3f", IPS.r_si))
-    hline!(p, [-3.0], ls=:dot, lw=2, c=:green,
-        label=L"-3\;:\;\mathrm{the\;CDM\;tail}\;P \sim k^{n_s-4}\ln^2 k")
-    # the exponent at which the sigma_0 integrand q^2 P(q) stops converging
-    hline!(p, [-3.0], ls=:dot, lw=0, label="")
-    vline!(p, [K_MIN_TAB, K_MAX_TAB], lw=2, c=:gray, alpha=0.6, label="tabulated range")
-    xticks!(p, logticks(1e-8, 1e4))
+    show_cdm_tail && hline!(p, [-3.0], ls=:dot, lw=2, c=:green,
+        label=L"-3 \;:\; \mathrm{the \; CDM \; tail}")
+    vlines!(p, specs)
+    xticks!(p, logticks(xticksmin, xticksmax; step=xticksstep))
     p
 end
 
