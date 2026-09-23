@@ -53,45 +53,114 @@ function integrand_ξ_GNCxLD_Lensing_Lensing(
 
     # ---------------------------------------------------------------------------------
     # NUMERICAL STABILITY. The four brackets below are written as an expansion around
-    # the singular configuration y = 1, chi1 = chi2, instead of in their "natural" form
+    # the singular configuration y = 1, χ1 = χ2, instead of in their "natural" form
     # (kept commented out above each of them).
+    #
     #
     # WHY IT IS NEEDED. Every one of those brackets VANISHES at that configuration,
     # while each is evaluated as a sum of terms of size ~chi^4. Near it the answer is
     # therefore the difference of numbers many orders of magnitude larger than itself,
-    # and the significant digits cancel away. For J_22 the bracket is exactly 8*Dchi^4
-    # at y = 1: with chi = 1000 and Dchi = 0.1 that is 8e-4 obtained from terms of size
+    # and the significant digits cancel away. For J_22 the bracket is exactly 8*Δχ^4
+    # at y = 1: with chi = 1000 and Δχ = 0.1 that is 8e-4 obtained from terms of size
     # 8e12, a ratio of 1e-16, i.e. below eps(Float64). Checked against exact rational
-    # arithmetic, the old form has ZERO correct digits there, and Dchi^2, B_00 and B_02
-    # keep only 5 to 9 of them. This is not academic: the Dchi -> 0 branch below takes
-    # over only for Dchi < Dchi_min, so the worst case is exactly where the direct
+    # arithmetic, the old form has ZERO correct digits there, and Δχ^2, B_00 and B_02
+    # keep only 5 to 9 of them. This is not academic: the Δχ -> 0 branch below takes
+    # over only for Δχ < Δχ_min, so the worst case is exactly where the direct
     # evaluation is still the one being used.
     #
     # THE DERIVATION. Write everything in the symmetric combinations
-    #     u := chi1^2 + chi2^2 ,    v := chi1*chi2 ,    t := y - 1 ,
+    #     u := χ1^2 + χ2^2 ,    v := χ1*χ2 ,    t := y - 1 ,
     # and use the identity that carries all of the cancellation,
-    #     u - 2v = (chi1 - chi2)^2 =: w ,
-    # which is a square, so forming it directly costs no digits. Substituting
-    # y = 1 + t and collecting the powers of t:
+    #     u - 2v = (χ1 - χ2)^2 =: w ,
+    # which is a square, so forming it directly costs no digits.
+    # Substituting also
+    #      y = 1 + t ,
+    #      Δχ^2 = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
+    #           = (χ1 - χ2)^2 + 2 * χ1 * χ2 * (1 - y)
+    #           = w - 2*v*t
+    # and collecting the powers of t:
     #
-    #   Dchi^2 = u - 2*v*y            = w - 2*v*t
-    #   B_00   = 8*y*u - v*(9*y^2+7)  = 8*w + (8*u - 18*v)*t - 9*v*t^2
-    #   B_02   = 4*y*u - v*(3*y^2+5)  = 4*w + (4*u - 6*v)*t - 3*v*t^2
-    #   B_22   = 2*(chi1^4+chi2^4)*(7*y^2-3) - 16*y*v*(y^2+1)*u + v^2*(11*y^4+14*y^2+23)
-    #          = 8*w^2 + 4*w*(7*u-2*v)*t + 2*(7*u^2-24*u*v+26*v^2)*t^2
-    #            - 4*v*(4*u-11*v)*t^3 + 11*v^2*t^4
+    # new_J00 := -3/4 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (8*y*(χ1^2+χ2^2) - χ1χ2*(9*y^2+7))
+    #          = -3/4 * v^2 / Δχ^4 * (y^2 - 1) * B_00
+    # new_J02 := -3/2 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (4*y*(χ1^2+χ2^2) - χ1χ2*(3*y^2+5))
+    #          = -3/2 * v^2 / Δχ^4 * (y^2 - 1) * B_02
+    # new_J31 := 9 * y * Δχ^2
+    # new_J22 := 9/4 * χ1χ2 / Δχ^4 * (2*(χ1^4+χ2^4)*(7*y^2-3)
+    #                                 - 16*y*χ1χ2*(y^2+1)*(χ1^2+χ2^2)
+    #                                 + χ1χ2^2*(11y^4+14y^2+23))
+    #          = 9/4 * v / Δχ^4 * B_22
     #
-    # the last one also using chi1^4 + chi2^4 = u^2 - 2*v^2. For B_00, for instance:
-    # 8*y*u = 8*u + 8*u*t and 9*y^2 + 7 = 16 + 18*t + 9*t^2, so
-    # B_00 = 8*u + 8*u*t - v*(16 + 18*t + 9*t^2) = 8*(u - 2*v) + (8*u - 18*v)*t - 9*v*t^2,
-    # and the leading term is 8*w, manifestly O(Dchi^2), instead of a cancellation
-    # between 8*y*u and v*(9*y^2+7).
+    # The elementary expansions used below, all obtained by putting y = 1 + t:
+    #      7*y^2 - 3        = 7*t^2 + 14*t + 4
+    #      9*y^2 + 7        = 9*t^2 + 18*t + 16
+    #      3*y^2 + 5        = 3*t^2 +  6*t +  8
+    #      y*(y^2 + 1)      = t^3 + 3*t^2 + 4*t + 2
+    #      11*y^4+14*y^2+23 = 11*t^4 + 44*t^3 + 80*t^2 + 72*t + 48
     #
-    # These are ALGEBRAIC IDENTITIES, not approximations: each was checked to agree
-    # exactly with the expression it replaces on 3000 random rational (chi1, chi2, y).
-    # What changes is only that w and t are formed directly from the inputs, so the
-    # vanishing is explicit rather than the result of a subtraction: 10 to 12 correct
-    # digits instead of 0 to 9.
+    #   Δχ^2  = u - 2*v*y
+    #         = u - 2*v*(1 + t)
+    #         = (u - 2*v) - 2*v*t
+    #         = w - 2*v*t
+    #
+    #   B_00 := 8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7)
+    #         = 8*y*u - v*(9*y^2+7)
+    #         = 8*u*(1+t) - v*(9*t^2 + 18*t + 16)
+    #         = 8*u - 16*v + (8*u - 18*v)*t - 9*v*t^2
+    #         = 8*w + (8*u - 18*v)*t - 9*v*t^2
+    #
+    #   B_02 := 4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5)
+    #         = 4*y*u - v*(3*y^2+5)
+    #         = 4*u*(1+t) - v*(3*t^2 + 6*t + 8)
+    #         = 4*u - 8*v + (4*u - 6*v)*t - 3*v*t^2
+    #         = 4*w + (4*u - 6*v)*t - 3*v*t^2
+    #
+    #   B_22 := 2*(χ1^4+χ2^4)*(7*y^2-3) - 16*y*χ1χ2*(y^2+1)*(χ1^2+χ2^2)
+    #           + χ1χ2^2*(11y^4+14y^2+23)
+    #               with   χ1^4 + χ2^4 = u^2 - 2*v^2
+    #         = 2*(u^2 - 2*v^2)*(7*t^2 + 14*t + 4)
+    #           - 16*u*v*(t^3 + 3*t^2 + 4*t + 2)
+    #           + v^2*(11*t^4 + 44*t^3 + 80*t^2 + 72*t + 48)
+    #     collecting the powers of t:
+    #       t^0:  8*u^2 - 16*v^2 - 32*u*v + 48*v^2 = 8*(u^2 - 4*u*v + 4*v^2)
+    #                                              = 8*(u-2*v)^2 = 8*w^2
+    #       t^1:  28*u^2 - 56*v^2 - 64*u*v + 72*v^2 = 4*(7*u^2 - 16*u*v + 4*v^2)
+    #                                              = 4*(u-2*v)*(7*u-2*v) = 4*w*(7*u-2*v)
+    #       t^2:  14*u^2 - 28*v^2 - 48*u*v + 80*v^2 = 2*(7*u^2 - 24*u*v + 26*v^2)
+    #       t^3:  -16*u*v + 44*v^2 = -4*v*(4*u - 11*v)
+    #       t^4:  11*v^2
+    #         = 8*w^2 + 4*w*(7*u-2*v)*t + 2*(7*u^2-24*u*v+26*v^2)*t^2
+    #           - 4*v*(4*u-11*v)*t^3 + 11*v^2*t^4
+    #
+    # WHY THIS IS BETTER. Along χ2 = χ1 + p*Δχ one has w = p^2*Δχ^2 and
+    # t = y - 1 ~ -(1-p^2)*Δχ^2/(2*χ1^2), so BOTH w and v*t are O(Δχ^2) while u and v
+    # are O(chi^2). Every term above therefore carries an explicit w or t, and the
+    # order of each bracket can be read off by counting them:
+    #   Δχ^2 = w - 2*v*t                       -> O(Δχ^2), two terms of that size
+    #   B_00 = 8*w + (8*u-18*v)*t - 9*v*t^2    -> O(Δχ^2), leading term 8*w
+    #   B_02 = 4*w + (4*u-6*v)*t - 3*v*t^2     -> O(Δχ^2), leading term 4*w
+    #   B_22 = 8*w^2 + 4*w*(7*u-2*v)*t + 2*(7*u^2-24*u*v+26*v^2)*t^2 + ...
+    #                                          -> O(Δχ^4): w^2, w*t and t^2 all are
+    # and that O(Δχ^4) is exactly what cancels the 1/Δχ^4 in front of J_22, leaving it
+    # finite. In the old form none of this was visible: the vanishing came out of a
+    # subtraction between terms of size ~chi^4, i.e. it was produced by the rounding
+    # rather than by the algebra.
+    #
+    # Three things are worth singling out in the B_22 collection above:
+    #   - the t^0 coefficient is a PERFECT SQUARE. The -16*v^2 of the first term and
+    #     the +48*v^2 of the third conspire with the -32*u*v to give 8*(u-2*v)^2, i.e.
+    #     exactly 8*Δχ^4 at y = 1: that is the identity quoted at the top;
+    #   - the t^1 coefficient FACTORS, and it has to. Had it not contained (u-2*v) as
+    #     a factor there would be a surviving term of order Δχ^2*chi^2 in B_22, and
+    #     J_22 ~ B_22/Δχ^4 would diverge as Δχ^-2. The factorisation is the algebraic
+    #     statement that it does not;
+    #   - the t^2 coefficient does NOT factor, and must not: at χ1 = χ2 it is
+    #     2*(28-48+26)*chi^4 = 12*chi^4, genuinely O(chi^4), and paired with
+    #     t^2 = O(Δχ^4/chi^4) it contributes at the same O(Δχ^4) as the other two.
+    #     This is the usual trap of these limits showing up again: a term quadratic in
+    #     t is the same size as one linear in w.
+    #
+    # These are ALGEBRAIC IDENTITIES, not approximations: each was verified with exact
+    # rational arithmetic on 3000 random (χ1, χ2, y), and symbolically term by term.
     # ---------------------------------------------------------------------------------
     u = χ1^2 + χ2^2
     v = χ1 * χ2

@@ -89,58 +89,74 @@ function integrand_ξ_LD_Lensing(
         #                                  + χ1χ2^2*(11y^4+14y^2+23))
         #          = 2.25 * v / Δχ^4 * B_22
         #
-        # The three elementary expansions used below, all obtained by putting y = 1 + t:
+        # The elementary expansions used below, all obtained by putting y = 1 + t:
         #      7*y^2 - 3        = 7*t^2 + 14*t + 4
         #      9*y^2 + 7        = 9*t^2 + 18*t + 16
         #      3*y^2 + 5        = 3*t^2 +  6*t +  8
         #      y*(y^2 + 1)      = t^3 + 3*t^2 + 4*t + 2
         #      11*y^4+14*y^2+23 = 11*t^4 + 44*t^3 + 80*t^2 + 72*t + 48
         #
-        #   Δχ^2   = u - 2*v*y
-        #          = u - 2*v*(1 + t)
-        #          = (u - 2*v) - 2*v*t
-        #          = w - 2*v*t
+        #   Δχ^2  = u - 2*v*y
+        #         = u - 2*v*(1 + t)
+        #         = (u - 2*v) - 2*v*t
+        #         = w - 2*v*t
         #
-        #   B_00   := 8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7)
-        #           = 8*y*u - v*(9*y^2+7)
-        #           = 8*u*(1+t) - v*(9*t^2 + 18*t + 16)
-        #           = 8*u - 16*v + (8*u-18*v)*t - 9*v*t^2
-        #           = 8*w + (8*u - 18*v)*t - 9*v*t^2
+        #   B_00 := 8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7)
+        #         = 8*y*u - v*(9*y^2+7)
+        #         = 8*u*(1+t) - v*(9*t^2 + 18*t + 16)
+        #         = 8*u - 16*v + (8*u - 18*v)*t - 9*v*t^2
+        #         = 8*w + (8*u - 18*v)*t - 9*v*t^2
         #
-        #   B_02  := 4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5)
-        #          = 4*y*u - v*(3*y^2+5)
-        #          = 4*u*(1+t) - v*(3*t^2 + 6*t + 8)
-        #          = 4*u - 8*v + (4*u - 6*v)*t - 3*v*t^2
-        #          = 4*w + (4*u - 6*v)*t - 3*v*t^2
+        #   B_02 := 4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5)
+        #         = 4*y*u - v*(3*y^2+5)
+        #         = 4*u*(1+t) - v*(3*t^2 + 6*t + 8)
+        #         = 4*u - 8*v + (4*u - 6*v)*t - 3*v*t^2
+        #         = 4*w + (4*u - 6*v)*t - 3*v*t^2
         #
-        #   B_22  := 2*(χ1^4+χ2^4)*(7*y^2-3) - 16*y*χ1χ2*(y^2+1)*(χ1^2+χ2^2) + χ1χ2^2*(11y^4+14y^2+23)
-        #                χ1^4 + χ2^4 = u^2 - 2*v^2
-        #          = 2*(u^2 - 2*v^2)*(7*t^2 + 14*t + 4) - 16*u*v*(t^3 + 3*t^2 + 4*t + 2) + v^2*(11*t^4 + 44*t^3 + 80*t^2 + 72*t + 48)
-        #              collecting the powers of t:
-        #                t^0:  8*u^2 - 16*v^2 - 32*u*v + 48*v^2  = 8*(u^2 - 4*u*v + 4*v^2) 
-        #                                                        = 8*(u-2*v)^2 
-        #                                                        = 8*w^2
-        #                t^1:  28*u^2 - 56*v^2 - 64*u*v + 72*v^2 = 4*(7*u^2 - 16*u*v + 4*v^2)
-        #                                                        = 4*(u-2*v)*(7*u-2*v) 
-        #                                                        = 4*w*(7*u-2*v)
-        #                t^2:  14*u^2 - 28*v^2 - 48*u*v + 80*v^2 = 2*(7*u^2 - 24*u*v + 26*v^2)
-        #                t^3:  -16*u*v + 44*v^2                  = -4*v*(4*u - 11*v)
-        #                t^4:  11*v^2
-        #          = 8*w^2 + 4*w*(7*u-2*v)*t + 2*(7*u^2-24*u*v+26*v^2)*t^2 - 4*v*(4*u-11*v)*t^3 + 11*v^2*t^4
+        #   B_22 := 2*(χ1^4+χ2^4)*(7*y^2-3) - 16*y*χ1χ2*(y^2+1)*(χ1^2+χ2^2)
+        #           + χ1χ2^2*(11y^4+14y^2+23)
+        #               with   χ1^4 + χ2^4 = u^2 - 2*v^2
+        #         = 2*(u^2 - 2*v^2)*(7*t^2 + 14*t + 4)
+        #           - 16*u*v*(t^3 + 3*t^2 + 4*t + 2)
+        #           + v^2*(11*t^4 + 44*t^3 + 80*t^2 + 72*t + 48)
+        #     collecting the powers of t:
+        #       t^0:  8*u^2 - 16*v^2 - 32*u*v + 48*v^2 = 8*(u^2 - 4*u*v + 4*v^2)
+        #                                              = 8*(u-2*v)^2 = 8*w^2
+        #       t^1:  28*u^2 - 56*v^2 - 64*u*v + 72*v^2 = 4*(7*u^2 - 16*u*v + 4*v^2)
+        #                                              = 4*(u-2*v)*(7*u-2*v) = 4*w*(7*u-2*v)
+        #       t^2:  14*u^2 - 28*v^2 - 48*u*v + 80*v^2 = 2*(7*u^2 - 24*u*v + 26*v^2)
+        #       t^3:  -16*u*v + 44*v^2 = -4*v*(4*u - 11*v)
+        #       t^4:  11*v^2
+        #         = 8*w^2 + 4*w*(7*u-2*v)*t + 2*(7*u^2-24*u*v+26*v^2)*t^2
+        #           - 4*v*(4*u-11*v)*t^3 + 11*v^2*t^4
         #
         # WHY THIS IS BETTER. Along χ2 = χ1 + p*Δχ one has w = p^2*Δχ^2 and
         # t = y - 1 ~ -(1-p^2)*Δχ^2/(2*χ1^2), so BOTH w and v*t are O(Δχ^2) while u and v
-        # are O(χ^2). Every term above therefore carries an explicit w or t, and the order
-        # of each bracket can be read off by counting them:
-        #   Δχ^2 = w - 2*v*t                          -> O(Δχ^2), two terms of that size
-        #   B_00 = 8*w + (8*u-18*v)*t - 9*v*t^2       -> O(Δχ^2), leading term 8*w
-        #   B_02 = 4*w + (4*u-6*v)*t - 3*v*t^2        -> O(Δχ^2), leading term 4*w
-        #   B_22 = 8*w^2 + 4*w*(7*u-2*v)*t + 2*(...)*t^2 + ...
-        #                                             -> O(Δχ^4): w^2, w*t and t^2 all are
+        # are O(chi^2). Every term above therefore carries an explicit w or t, and the
+        # order of each bracket can be read off by counting them:
+        #   Δχ^2 = w - 2*v*t                       -> O(Δχ^2), two terms of that size
+        #   B_00 = 8*w + (8*u-18*v)*t - 9*v*t^2    -> O(Δχ^2), leading term 8*w
+        #   B_02 = 4*w + (4*u-6*v)*t - 3*v*t^2     -> O(Δχ^2), leading term 4*w
+        #   B_22 = 8*w^2 + 4*w*(7*u-2*v)*t + 2*(7*u^2-24*u*v+26*v^2)*t^2 + ...
+        #                                          -> O(Δχ^4): w^2, w*t and t^2 all are
         # and that O(Δχ^4) is exactly what cancels the 1/Δχ^4 in front of J_22, leaving it
         # finite. In the old form none of this was visible: the vanishing came out of a
         # subtraction between terms of size ~chi^4, i.e. it was produced by the rounding
         # rather than by the algebra.
+        #
+        # Three things are worth singling out in the B_22 collection above:
+        #   - the t^0 coefficient is a PERFECT SQUARE. The -16*v^2 of the first term and
+        #     the +48*v^2 of the third conspire with the -32*u*v to give 8*(u-2*v)^2, i.e.
+        #     exactly 8*Δχ^4 at y = 1: that is the identity quoted at the top;
+        #   - the t^1 coefficient FACTORS, and it has to. Had it not contained (u-2*v) as
+        #     a factor there would be a surviving term of order Δχ^2*chi^2 in B_22, and
+        #     J_22 ~ B_22/Δχ^4 would diverge as Δχ^-2. The factorisation is the algebraic
+        #     statement that it does not;
+        #   - the t^2 coefficient does NOT factor, and must not: at χ1 = χ2 it is
+        #     2*(28-48+26)*chi^4 = 12*chi^4, genuinely O(chi^4), and paired with
+        #     t^2 = O(Δχ^4/chi^4) it contributes at the same O(Δχ^4) as the other two.
+        #     This is the usual trap of these limits showing up again: a term quadratic in
+        #     t is the same size as one linear in w.
         #
         # These are ALGEBRAIC IDENTITIES, not approximations: each was verified with exact
         # rational arithmetic on 3000 random (χ1, χ2, y), and symbolically term by term.
