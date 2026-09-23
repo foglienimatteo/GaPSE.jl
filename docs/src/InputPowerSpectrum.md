@@ -7,7 +7,7 @@ large ``q`` — are not a detail: they decide whether each moment
 ```math
     \sigma_i = \int_{k_\mathrm{min}}^{k_\mathrm{max}} \frac{\mathrm{d}q}{2\pi^2}
     \, q^{\,2-i} \, P(q)
-    \quad \quad (\mathrm{P}.1)
+    \quad \quad (1)
 ```
 
 is a number, or is set by where the integral happens to be cut. Since the
@@ -21,7 +21,9 @@ Pages = ["InputPowerSpectrum.md"]
 Depth = 3
 ```
 
-## The small-``k`` slope
+
+## The metter Power Spectrum at present day
+
 
 In the ``\Lambda``-CDM cosmology, the primordial curvature perturbations are a pure power law (see the [Planck 2018 results, A&A 641, A10 (2020)](https://doi.org/10.1051/0004-6361/201833887)), usually quoted through the dimensionless power spectrum ``\Delta^2_{\mathcal{R}}``:
 
@@ -29,9 +31,29 @@ In the ``\Lambda``-CDM cosmology, the primordial curvature perturbations are a p
     \Delta^2_{\mathcal{R}}(k) := \frac{k^3}{2\pi^2} P_\mathcal{R}(k) \quad \quad (\mathrm{P}.2)
 ```
 
+What enters the ``I_\ell^n`` is the matter Power Spectrum ``P_m(k,z)`` at present day (``z=0``), a dimensional quantity in ``(h^{-1}\mathrm{Mpc})^3``. The two are related by the Poisson equation and the transfer function ``T(k)``:
+
+```math
+    P_m(k, z)  \propto  k^4 \, T^2(k) \, D^2(z) \, P_\mathcal{R}(k)
+    \quad \quad (\mathrm{P}.5)
+```
+
+The transfer function is asymptotic to ``k^{-2}\ln k`` at small scales, and constant at large ones It is normalized such that at large scales it goes to ``1``:
+
+```math
+    T(k) \xrightarrow[k \rightarrow 0^{+}]{} 1 \quad \quad (\mathrm{P}.6) \\[10pt]
+    T(k) \underset{k \rightarrow +\infty}{\sim} k^{-2}\ln k
+```
+
+
+
+## The small-``k`` slope
+
+At large scales, it's known that:
+
 ```math
 \begin{align*}
-    \Delta^2_{\mathcal{R}}(k) &\underset{k \rightarrow 0^{+}}{\sim} \; A_s \, \left( \frac{k}{k^*}\right)^{n_s-1} &&(\mathrm{P}.3)\\[10pt]
+    \Delta^2_{\mathcal{R}}(k) &\underset{k \rightarrow 0^{+}}{\sim} \; A_s \, \left( \frac{k}{k^*}\right)^{n_s-1} &&(\mathrm{P}.1)\\[10pt]
 
     n_s&\approx 0.965&&\mathrm{primordial \; spectral \; index}\\[8pt]
     \ln(10^{10} A_s) &\approx 3.043 &&\mathrm{ log \; power \; of \; primordial \; curvature \; perturbations} \Rightarrow A_s \approx 2.1 \times 10^{-9}\\[8pt]
@@ -40,14 +62,15 @@ In the ``\Lambda``-CDM cosmology, the primordial curvature perturbations are a p
 ```
 
 ```math
-    \Rightarrow P_\mathcal{R}(k) = \frac{2\pi^2}{k^3}\,\Delta^2_{\mathcal{R}}(k) \underset{k \rightarrow 0^{+}}{\sim} k^{\,n_s-4} \quad \quad (\mathrm{P}.4) \\[10pt]
+    \Rightarrow P_\mathcal{R}(k) = \frac{2\pi^2}{k^3}\,\Delta^2_{\mathcal{R}}(k) \underset{k \rightarrow 0^{+}}{\sim} k^{\,n_s-4} \quad \quad (\mathrm{P}.2) \\[10pt]
 ```
 
-What enters the ``I_\ell^n`` is the matter Power Spectrum ``P_m(k,z)`` at present day (``z=0``), a dimensional quantity in ``(h^{-1}\mathrm{Mpc})^3``. The two are related by the Poisson equation and the transfer function ``T(k)``:
+First of all, we start from the Poisson equation in real comoving space
 
 ```math
-    P_m(k, z)  \propto  k^4 \, T^2(k) \, D^2(z) \, P_\mathcal{R}(k)
-    \quad \quad (\mathrm{P}.5)
+\begin{align*}
+    \nabla^2 \phi(\mathbf{s}, z) = - \frac{4 \pi G}{c^2}\langle\rho\rangle D^2(z) \, \Delta(\mathbf{s}) \, ,
+\end{align*}
 ```
 
 The transfer function is normalized such that at large scales it goes to ``1``:
@@ -75,14 +98,12 @@ so at present day:
     \quad \quad (\mathrm{P}.7)
 ```
 
-The matter Power Spectrum therefore *grows* as ``k^{+0.96}`` at small ``k``. The
-dimensionless curvature goes as ``k^{n_s-1} \simeq k^{-0.035}`` and the four
-powers of ``k`` supplied by Poisson, minus the three of the
-``\Delta^2 \leftrightarrow P`` conversion, are exactly what separates them.
+The matter Power Spectrum therefore *grows* as ``k^{+0.96}`` at small ``k``. 
+The dimensionless curvature goes as ``k^{n_s-1} \simeq k^{-0.035}`` and the four powers of ``k`` supplied by Poisson, minus the three of the ``\Delta^2 \leftrightarrow P`` conversion, are exactly what separates them.
 
-NOTE: this is directly visible in `data/WideA_ZA_pk.dat`, whose local slope
-``\mathrm{d}\ln P / \mathrm{d}\ln k`` is ``+0.9600`` over the first decade of the
-tabulated range, with an amplitude of order ``10^{6} \, (h^{-1}\mathrm{Mpc})^3``.
+NOTE: this is directly visible in `data/WideA_ZA_pk.dat`, whose local slope ``\mathrm{d}\ln P / \mathrm{d}\ln k`` is ``+0.9600`` over the first decade of the tabulated range, with an amplitude of order ``10^{6} \, (h^{-1}\mathrm{Mpc})^3``.
+
+
 
 ## The large-``k`` tail
 
