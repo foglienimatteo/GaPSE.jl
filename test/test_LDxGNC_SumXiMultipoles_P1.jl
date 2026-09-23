@@ -1241,6 +1241,8 @@ println("\nDon't worry, I am on it...")
             @test isapprox(res_sum_spec_ss_lob, calc_res_sum_spec_ss_lob; rtol=RTOL)
             @test all([isapprox(a, r; rtol=RTOL) for (a, r) in zip(calc_res_xis_spec_ss_lob, res_xis_spec_ss_lob)])
 
+            #println("calc_res_sum_spec_ss_lob = $calc_res_sum_spec_ss_lob ;")
+            #println("res_sum_spec_ss_lob = $res_sum_spec_ss_lob ;")
         end
     end
 end
