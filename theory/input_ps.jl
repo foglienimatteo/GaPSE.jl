@@ -228,18 +228,23 @@ function plot_input_ps(;
     qs=10 .^ range(-8, 4, length=2000),
     xscale=:log10, yscale=:log10,
     xlabel=L"q \; [h \, \mathrm{Mpc}^{-1}]",
-    ylabel=hlabel(L"P(q)"; pad=8),
+    ylabel=hlabel(L"P(q)"; pad=2),
     title="The input matter Power Spectrum",
     specs=VSPECS_PS(),
     xticksmin=1e-8, xticksmax=1e4, xticksstep=2,
-    yticksmin=nothing, yticksmax=1e10, yticksstep=5,
+    yticksmin=1e-10, yticksmax=1e8, yticksstep=2,
+    left_margin=16Plots.mm,
     kwargs...
 )
     p = plot(; xscale=xscale, yscale=yscale, xlabel=xlabel, ylabel=ylabel,
-        title=title, plot_kwargs(kwargs...)...)
+        title=title, plot_kwargs(:left_margin => left_margin, kwargs...)...)
 
     plot!(p, qs, [IPS(q) for q in qs], lw=2.5, c=:black, label="InputPS")
-    scatter!(p, K_TAB, P_TAB, ms=1.6, mc=:orange, msw=0, label="tabulated data")
+    # NOT `scatter!`: with the PyPlot backend that routes to `plt.scatter`, which warns
+    # "No data for colormapping provided via 'c'" when the colour is a single value.
+    # A `plot!` series with `lw=0` and a marker shape goes to `plt.plot` instead.
+    plot!(p, K_TAB, P_TAB, lw=0, markershape=:circle, ms=1.6, mc=:orange, msw=0,
+        label="tabulated data")
 
     ls = 10 .^ range(-8, log10(K_MIN_TAB) + 1.5, length=200)
     rs = 10 .^ range(log10(K_MAX_TAB) - 1.5, 4, length=200)
@@ -271,12 +276,12 @@ function plot_local_slope(;
     qs=10 .^ range(-8, 4, length=2000),
     xscale=:log10, yscale=:identity,
     xlabel=L"q \; [h \, \mathrm{Mpc}^{-1}]",
-    ylabel=hlabel(L"\mathrm{d}\ln P / \mathrm{d}\ln q"; pad=4),
+    ylabel=hlabel(L"\frac{\mathrm{d}\ln P}{\mathrm{d}\ln q}"; pad=6),
     title="Local slope of the input Power Spectrum",
     specs=VSPECS_PS(),
     show_cdm_tail=true,
     xticksmin=1e-8, xticksmax=1e4, xticksstep=2,
-    left_margin=28Plots.mm,
+    left_margin=32Plots.mm,
     kwargs...
 )
     sl = [(log(IPS(q * 1.01)) - log(IPS(q / 1.01))) / (2 * log(1.01)) for q in qs]
