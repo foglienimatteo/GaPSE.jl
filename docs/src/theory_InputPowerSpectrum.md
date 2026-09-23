@@ -223,14 +223,14 @@ tail does not reach.
 
 ## Reproducing the figures
 
-Both figures, and the tables above, are produced by `theory/input_ps.jl` (or the
-equivalent `theory/input_ps.ipynb`):
+Both figures, and the tables above, are produced by the notebook
+`theory/input_ps.ipynb`:
 
 ```bash
 $ cd theory
-$ julia --project=. input_ps.jl
+$ jupyter lab input_ps.ipynb
 ```
 
-The companion analysis `theory/sigma_i.jl` plots the five ``\sigma_i`` integrands and
+The companion notebook `theory/sigma_i.ipynb` plots the five ``\sigma_i`` integrands and
 the fraction of each moment collected below a given ``q``, and lets any pair of
 integration extremes be tried.

@@ -11,8 +11,8 @@ manual can be reproduced and re-checked later.
 
 Each analysis is made of
 
-- `<name>.jl` : the script, runnable from the terminal;
-- `<name>.ipynb` : the same computation as a notebook, with the theory written out;
+- `<name>.ipynb` : the notebook holding both the computation and the theory behind
+  it. It is the only source - there is no parallel `.jl` script to keep in sync;
 - `<name>/` : the directory where that analysis saves its plots and data.
 
 ## Setup
@@ -33,7 +33,7 @@ julia> Pkg.instantiate()
 Then a script is run simply with
 
 ```bash
-$ julia --project=. Iln_terms.jl
+$ jupyter lab Iln_terms.ipynb
 ```
 
 ## Contents

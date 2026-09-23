@@ -230,7 +230,7 @@ The figures are not built by the documentation: they are committed under
 directory. From `theory/`, after the one-time setup described in its `README.md`:
 
 ```bash
-$ julia --project=. spherical_bessels.jl
+$ jupyter lab spherical_bessels.ipynb
 ```
 
 which writes the plots and the table of the first zeros in `theory/spherical_bessels/`

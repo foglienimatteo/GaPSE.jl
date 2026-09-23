@@ -29,7 +29,7 @@ terms of the form ``J(\chi, s, y) \, I_\ell^n(\Delta\chi)``. This page collects 
 definition of these ``I_\ell^n``, proves their behaviour for small separations, and shows
 what they look like.
 
-The plots are produced by the script `theory/Iln_terms.jl` (or, equivalently, by the
+The plots are produced by the notebook `theory/Iln_terms.ipynb` (or, equivalently, by the
 notebook `theory/Iln_terms.ipynb`); see the end of this page.
 
 
@@ -357,7 +357,7 @@ s \; \ll \; \frac{1}{k_\mathrm{max}} = 10^{-3} \; h_0^{-1}\mathrm{Mpc} \; .
 This is 50 times *smaller* than ``\mathrm{fit\_min} = 0.05``, so the window where the
 limits hold and the window where the spline is valid **do not overlap**. The limits are
 therefore not observable through `IPSTools`: to see them one has to compute the integrals
-directly, which is what the `I_direct` function of `theory/Iln_terms.jl` does.
+directly, which is what the `I_direct` function of `theory/Iln_terms.ipynb` does.
 
 Doing so confirms (4a) to four digits. Calling ``R_\ell^n(s)`` the ratio between the
 directly-computed integral and its asymptote:
@@ -608,7 +608,7 @@ This is also why `IntegralIPS` seeds its right-hand power-law fit with
 
 ### The check
 
-`theory/Iln_terms.jl` reads ``A`` and ``n_P`` out of the `InputPS` left fit (for
+`theory/Iln_terms.ipynb` reads ``A`` and ``n_P`` out of the `InputPS` left fit (for
 `data/WideA_ZA_pk.dat`, ``n_P = 0.960`` and ``A = 3.012 \times 10^6``) and compares
 Eq.(3.10) with the stored ``I_\ell^n``. The ratio ``I_\ell^n(s) \, / \,`` Eq.(3.10):
 
@@ -661,7 +661,7 @@ The figures are not built by the documentation: they are committed under
 directory. From `theory/`, after the one-time setup described in its `README.md`:
 
 ```bash
-$ julia --project=. Iln_terms.jl
+$ jupyter lab Iln_terms.ipynb
 ```
 
 which writes the plots and the tables of numerical values (`Iln_values.txt`,
