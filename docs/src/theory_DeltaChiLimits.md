@@ -115,7 +115,7 @@ We got the limit in the Iln Integral page:
 So, written explicitly:
 ```math
 \begin{align*}
-I_0^0           &\sim \sigma_0                         &&\rightarrow \mathrm{const} \quad\quad\quad
+I_0^0           &\sim \sigma_0                         &&\rightarrow \mathrm{const}^{(*)} \quad\quad\quad
     &I_2^2           &\sim \frac{\sigma_0}{15}              &&\rightarrow \mathrm{const} \\[10pt]
 I_2^0           &\sim \frac{\sigma_{-2}}{15} \, s^2    &&\rightarrow 0              
     & I_3^1          &\sim \frac{\sigma_{-2}}{105} \, s^2   &&\rightarrow 0              \\[10pt]
@@ -129,6 +129,11 @@ I_0^2           &\sim \sigma_2 \, s^{-2}               &&\rightarrow +\infty
 ```math
 \tilde{I}_0^4   \sim -\frac{\sigma_2}{6}\, s^{-2}     \rightarrow +\infty\\[10pt]
 ```
+
+``{}^{(*)}`` ``\sigma_0`` is **not** a constant: it diverges, and ``I_0^0`` has no
+``s \rightarrow 0`` limit. See
+[``\sigma_0`` and ``\sigma_4`` are not constants](#\sigma_0-and-\sigma_4-are-not-constants)
+below — nothing in the results changes, but what the symbol means does.
 
 Since ``\Delta\chi \rightarrow 0`` forces both ``\chi_2 \rightarrow \chi_1`` and ``y \rightarrow 1``,
 the limit is a joint one and must be checked to be independent of the direction of approach.
@@ -237,6 +242,75 @@ The safe recipe, used systematically in every family page, is:
 > (2.3b).
 
 
+
+
+### ``\sigma_0`` and ``\sigma_4`` are not constants
+
+The table above, and every boxed result of the eight family pages, is written as if the
+``\sigma_i`` were numbers. Three of them are. Two are not, and it is worth being precise
+about what that does and does not break.
+
+With the power laws `InputPS` extrapolates with (see
+[The input Power Spectrum](theory_InputPowerSpectrum.md)), the integrand
+``q^{\,2-i}P(q)`` of ``\sigma_i`` goes as ``q^{\,2-i+0.960}`` at small ``q`` and as
+``q^{\,2-i-2.641}`` at large ``q``. So ``\sigma_1``, ``\sigma_2`` and ``\sigma_3``
+converge at both ends, while
+
+- **``\sigma_0`` diverges in the ultraviolet**, as ``\sigma_0(<K) \sim K^{\,0.359}``
+  (with the true CDM tail ``P \sim k^{-3}\ln^2 k`` it would diverge logarithmically
+  instead). It is the density variance ``\langle\delta^2\rangle`` smoothed on *zero*
+  scale, which is genuinely infinite in CDM;
+- **``\sigma_4`` diverges in the infrared**, as ``\sigma_4(>k) \sim k^{-0.040}``.
+
+**Where the derivation breaks.** Eq.(2.1a) was obtained by expanding ``j_\ell(q\Delta\chi)``
+in powers of ``q\Delta\chi`` and integrating term by term. That expansion holds only where
+``q\Delta\chi \ll 1``, while the ``q`` integral runs up to ``k_\mathrm{max}``, so there is
+always a region ``q > 1/\Delta\chi`` in which it is invalid. Exchanging the sum and the
+integral is legitimate only if what comes out converges — and for ``I_0^0`` what comes out
+is ``\sigma_0``, which does not. The correct statement is therefore **not** that
+``\sigma_0`` is infinite and the limit explodes, but that
+
+```math
+    I_0^0(s) \; \text{has no } s \rightarrow 0 \text{ limit:} \quad
+    I_0^0(s) \; \simeq \; \sigma_0(< 1/s) \; \sim \; s^{-0.359} \; .
+```
+
+What regulates the integral is ``j_0`` itself, which oscillates away everything above
+``q \simeq 1/s``. Direct integration confirms it: the ratio ``I_0^0(s)/\sigma_0(<1/s)`` is
+``1.28``, ``1.22``, ``0.97``, ``1.00``, ``1.00`` at ``s = 10^{-1} \ldots 10^{-5}``.
+
+**Why nothing explodes in the code.** The limit branch is never evaluated at
+``\Delta\chi = 0``. It takes over at ``\Delta\chi < \Delta\chi_\mathrm{min}``, and there
+``I_0^0`` is an ordinary finite number — ``23.7`` for the default
+``\Delta\chi_\mathrm{min} = 0.1``. The ``\sigma_0`` of the five branches that use it
+(Families 1 and 3) is standing in for *that* number, and it is a good stand-in exactly
+because ``I_0^0`` varies so slowly: ``s^{-0.359}`` changes by a factor ``2.3`` per decade,
+and the branch spans no decades at all — it is evaluated at one value of ``\Delta\chi``.
+
+So the honest form of the Family 1 and Family 3 results is
+
+```math
+    \ldots \; + \; \frac{6}{5}\chi_1^2 \, \sigma_0\big(< 1/\Delta\chi_\mathrm{min}\big)
+    \quad \text{rather than} \quad \ldots \; + \; \frac{6}{5}\chi_1^2 \, \sigma_0 \; ,
+```
+
+i.e. ``\sigma_0`` frozen at the branch boundary rather than a universal constant. The
+consistent regulator is ``k_\mathrm{max} \simeq 1/\Delta\chi_\mathrm{min}``, which for
+``\Delta\chi_\mathrm{min} = 0.1`` is ``k_\mathrm{max} = 10``: the `IPSTools` default, so
+the code is close to consistent as it stands (``\sigma_0(<10) = 18.6`` against
+``I_0^0(0.1) = 23.7``).
+
+!!! warning "Do not widen the σ_i integration range to 'improve' this"
+    Recomputing the stored ``\sigma_i`` over the ``[10^{-5}, 10^{3}]`` that `xicalc` uses
+    for the ``I_\ell^n`` gives ``\sigma_0 = 143`` against ``I_0^0(0.1) = 23.7``, i.e. a
+    factor ``6`` jump at the branch boundary instead of the present ``1.28``. For the
+    converged moments the range makes no difference; for ``\sigma_0`` the only range that
+    means anything is the one set by ``\Delta\chi_\mathrm{min}``.
+
+``\sigma_4`` enters only through ``\tilde{I}_0^4``, whose limit (2.1b) carries ``\sigma_2``,
+so the infrared divergence of ``\sigma_4`` does not reach any of the eight results; it does
+affect the stored value that `IPSTools` prints, and the ``I_\ell^n`` themselves at small
+``s``.
 
 ## A pattern worth noticing
 
