@@ -22,30 +22,192 @@ Depth = 3
 ```
 
 
-## The metter Power Spectrum at present day
+## The matter Power Spectrum at present day
+
+In the ``\Lambda``-CDM cosmology, the primordial curvature perturbations ``\mathcal{R}`` are Gaussian, with a pure power-law spectrum (see the [Planck 2018 results, A&A 641, A10 (2020)](https://doi.org/10.1051/0004-6361/201833887)).
+Their power spectrum ``P_\mathcal{R}(k)`` is defined through the two-point function in Fourier space:
+
+```math
+    \langle \mathcal{R}(\mathbf{k}) \, \mathcal{R}^*(\mathbf{k}') \rangle
+        = (2\pi)^3 \, \delta_\mathrm{D}^{(3)}(\mathbf{k} - \mathbf{k}') \, P_\mathcal{R}(k)
+    \quad \quad (\mathrm{P}.1)
+```
+
+and it is usually quoted through the dimensionless power spectrum ``\Delta^2_{\mathcal{R}}``, which at large scales goes as:
+
+At large scales, it's known that:
+
+```math
+\begin{align*}
+    \Delta^2_{\mathcal{R}}(k)  := \frac{k^3}{2\pi^2} P_\mathcal{R}(k) 
+        &\underset{k \rightarrow 0^{+}}{\sim} \; A_s \, \left( \frac{k}{k^*}\right)^{n_s-1} &&(\mathrm{P}.2)\\[10pt]
+
+    n_s&\approx 0.965&&\mathrm{primordial \; spectral \; index}\\[8pt]
+    \ln(10^{10} A_s) &\approx 3.043 &&\mathrm{ log \; power \; of \; primordial \; curvature \; perturbations} \Rightarrow A_s \approx 2.10 \times 10^{-9}\\[8pt]
+    k^* &\approx 0.05 \; \mathrm{Mpc}^{-1}  &&\mathrm{arbitrary \; pivot \; scale}
+\end{align*}
+```
+
+The factor ``k^3 / 2\pi^2`` in the definition of ``\Delta^2_{\mathcal{R}}`` is chosen such that
+
+```math
+\langle \mathcal{R}^2 \rangle = \int \mathrm{d}\ln k \, \Delta^2_\mathcal{R}(k)
+```
+
+so ``n_s = 1`` corresponds to a scale-invariant spectrum.
+
+What enters the ``I_\ell^n`` is the matter Power Spectrum ``P_m(k,z)`` at present day (``z=0``), 
+a dimensional quantity in ``(h^{-1}\mathrm{Mpc})^3``, defined as in (P.1) with ``\mathcal{R} \rightarrow \delta_m``.
+The two are related by the Poisson equation and the matter transfer function ``T(k)``; we'll refresh the derivation of their relation.
+
+We start from the Poisson equation in real comoving space, valid from the matter-dominated epoch onwards, 
+when radiation is negligible and the cosmological constant does not cluster:
+
+```math
+    \nabla^2 \phi(\mathbf{s}, z) = - \frac{4 \pi G}{c^2} \, a^2(z) \, \langle\rho_m(z)\rangle \, \delta_m(\mathbf{s}, z)
+    \quad \quad (\mathrm{P}.3)
+```
+
+where:
+
+- the minus sign comes from the fact that we define ``\phi`` as minus the Newtonian gravitational potential
+- the ``c^2`` arises because we set the gravitational potentials as adimensional quantities
+- the ``a^2`` because the Laplacian is taken with respect to the comoving coordinates ``\mathbf{s}``.
+
+
+In General Relativity, (P.3) holds on all linear scales if ``\delta_m`` is the comoving-gauge density contrast, which at late times coincides with the synchronous-gauge one computed by CLASS.
+
+The matter density dilutes as ``a^{-3} = (1+z)^3``, and its present-day value is fixed by the first Friedmann equation for a flat Universe, with ``H(z) = a^{-1} \mathrm{d}a/\mathrm{d}t`` the non-comoving Hubble parameter and ``\Omega_{\mathrm{M}0}`` the present-day matter density parameter:
+
+
+We replace ``\langle{\rho}\rangle``  with the first Friedmann equation for a flat Universe
+
+```math
+
+    \left(\frac{\mathrm{d}{a}}{\mathrm{d}t}\right)^2 = \frac{4 \pi G}{3}\langle\rho\rangle a^2 \, ,
+```
+
+```math
+    H^2(z) = \frac{8 \pi G}{3} \, \bar{\rho}_\mathrm{tot}(z)
+    \quad \Longrightarrow \quad
+    \bar{\rho}_m(z) = \frac{3 H_0^2}{8 \pi G} \, \Omega_{\mathrm{M}0} \, (1+z)^3
+    \quad \quad (\mathrm{P}.4)
+```
+
+Inserting (P.4) in (P.3) and going to Fourier space (``\nabla^2 \rightarrow -k^2``), we obtain:
+
+```math
+    k^2 \, \phi(\mathbf{k}, z) = \frac{3}{2} \, \Omega_{\mathrm{M}0}
+        \frac{H_0^2}{c^2} \, (1+z) \, \delta_m(\mathbf{k}, z)
+    \quad \quad (\mathrm{P}.5)
+```
+
+For an accurate description, we need to relate the potential at redshift ``z`` to the primordial one ``\phi_p``, i.e. its value on super-horizon scales during matter domination.
+This is done through the matter transfer function ``T(k)``, which describes the evolution of perturbations through the epochs of horizon crossing and radiation/matter transition, and the linear growth factor ``D(z)``:
+
+```math
+    \phi(\mathbf{k}, z) = \phi_p(\mathbf{k}) \, T(k) \, (1+z) \, D(z)
+    \quad \quad (\mathrm{P}.6)
+```
+
+Here ``D(z)`` is normalized such that ``D(z) = (1+z)^{-1}`` during matter domination, when the potential is therefore constant; it decays only once the cosmological constant dominates.
+This factorization holds at late times, as long as the growth is scale-independent (e.g. neglecting massive neutrinos).
+
+Below we plot the matter transfer function ``T(k)`` at redshift ``z = 0``, obtained from the CLASS code.
+
+![The Matter Transfer Function](assets/misc/Matter_Transfer_Function.png)
+
+The transfer function is normalized such that it goes to ``1`` at large scales, i.e. for modes that entered the horizon well after matter-radiation equality.
+At small scales it is asymptotic to ``k^{-2}\ln k``: the potential of modes entering the horizon during radiation domination decays, while the matter perturbations grow only logarithmically (Mészáros effect):
+
+```math
+    \begin{aligned}
+        & T(k) \xrightarrow[k \rightarrow 0^{+}]{} 1 \\[10pt]
+        & T(k) \underset{k \rightarrow +\infty}{\sim} k^{-2}\ln k
+    \end{aligned}
+    \quad \quad (\mathrm{P}.7)
+```
+
+Combining (P.5) and (P.6), the factor ``(1+z)`` cancels out and the matter density contrast turns out to be linear in the primordial potential:
+
+```math
+    \delta_m(\mathbf{k}, z) = \alpha(k,z) \, \phi_p(\mathbf{k}) \, ,
+    \qquad \qquad
+    \alpha(k,z) := \frac{2}{3}
+        \frac{k^2 \, T(k) \, D(z)}{\Omega_{\mathrm{M}0}}
+        \left(\frac{c}{H_0}\right)^2
+    \quad \quad (\mathrm{P}.8)
+```
+
+The primordial potential is in turn fixed by the curvature perturbation.
+On super-horizon scales ``\mathcal{R}`` is conserved and, for a constant equation of state ``w`` and no anisotropic stress, the potential is constant as well, with:
+
+```math
+    \phi = \frac{3(1+w)}{5+3w} \, \mathcal{R}
+    \quad \Longrightarrow \quad
+    \phi_p(\mathbf{k}) = \frac{3}{5} \, \mathcal{R}(\mathbf{k})
+    \quad \quad (\mathrm{P}.9)
+```
+
+where the last equality holds in matter domination (``w = 0``).
+During radiation domination (``w = 1/3``) one has instead ``\phi = 2\mathcal{R}/3``: the ratio ``9/10`` between the two is the well-known suppression of the super-horizon potential across matter-radiation equality.
+The overall sign depends on the convention adopted for ``\mathcal{R}``, and drops out of the power spectrum.
+
+Inserting (P.9) in (P.8) and computing the two-point function as in (P.1), we finally obtain the matter power spectrum:
+
+```math
+    P_m(k, z) = \frac{9}{25} \, \alpha^2(k, z) \, P_\mathcal{R}(k)
+        = \frac{4}{25} \, \frac{k^4 \, T^2(k) \, D^2(z)}{\Omega_{\mathrm{M}0}^2}
+        \left(\frac{c}{H_0}\right)^4 P_\mathcal{R}(k)
+    \quad \quad (\mathrm{P}.10)
+```
+
+i.e. ``P_m \propto k^4 \, T^2(k) \, D^2(z) \, P_\mathcal{R}(k)``. Using the power law (P.2), this becomes:
+
+```math
+    P_m(k, z) = \frac{8 \pi^2}{25} \, \frac{A_s}{\Omega_{\mathrm{M}0}^2}
+        \left(\frac{c}{H_0}\right)^4 k_*^{1 - n_s} \, k^{n_s} \, T^2(k) \, D^2(z)
+    \quad \quad (\mathrm{P}.11)
+```
+
+Given (P.7), ``P_m \propto k^{n_s}`` at large scales and ``P_m \propto k^{n_s - 4} \ln^2 k`` at small ones, with the turnover set by the horizon scale at matter-radiation equality, ``k_\mathrm{eq} \simeq 0.015 \, h \, \mathrm{Mpc}^{-1}``.
+With ``k`` in ``h \, \mathrm{Mpc}^{-1}``, one has ``c/H_0 \simeq 2997.92 \, h^{-1}\mathrm{Mpc}`` and ``k_* = (0.05/h) \, h \, \mathrm{Mpc}^{-1}``, so that ``P_m`` is in ``(h^{-1}\mathrm{Mpc})^3``.
+
+!!! note "Normalization of the growth factor"
+    In (P.6)-(P.11) ``D(z)`` is normalized such that ``D(z) = (1+z)^{-1}`` during matter domination, which gives ``D(0) \simeq 0.79`` for ``\Omega_{\mathrm{M}0} \simeq 0.315``.
+    If a growth factor ``\tilde{D}(z)`` normalized as ``\tilde{D}(0) = 1`` is used instead, replace ``D(z) \rightarrow D(0) \, \tilde{D}(z)`` in these equations.
+
+
 
 
 In the ``\Lambda``-CDM cosmology, the primordial curvature perturbations are a pure power law (see the [Planck 2018 results, A&A 641, A10 (2020)](https://doi.org/10.1051/0004-6361/201833887)), usually quoted through the dimensionless power spectrum ``\Delta^2_{\mathcal{R}}``:
 
 ```math
-    \Delta^2_{\mathcal{R}}(k) := \frac{k^3}{2\pi^2} P_\mathcal{R}(k) \quad \quad (\mathrm{P}.2)
+    \Delta^2_{\mathcal{R}}(k) := \frac{k^3}{2\pi^2} P_\mathcal{R}(k) \quad \quad (\mathrm{P}.1)
 ```
 
-What enters the ``I_\ell^n`` is the matter Power Spectrum ``P_m(k,z)`` at present day (``z=0``), a dimensional quantity in ``(h^{-1}\mathrm{Mpc})^3``. The two are related by the Poisson equation and the transfer function ``T(k)``:
+What enters the ``I_\ell^n`` is the matter Power Spectrum ``P_m(k,z)`` at present day (``z=0``), a dimensional quantity in ``(h^{-1}\mathrm{Mpc})^3``. 
+The two are related by the Poisson equation and the matter transfer function ``T(k)``, which describes 
+the evolution of perturbations through the epochs of horizon crossing and radiation/matter transition:
 
 ```math
     P_m(k, z)  \propto  k^4 \, T^2(k) \, D^2(z) \, P_\mathcal{R}(k)
     \quad \quad (\mathrm{P}.5)
 ```
 
-The transfer function is asymptotic to ``k^{-2}\ln k`` at small scales, and constant at large ones It is normalized such that at large scales it goes to ``1``:
+
+
+Below we plot the matter transfer function ``T_m(k)`` at redshift ``z = 0``, obtained from the CLASS code.
+
+![The Matter Transfer Function](assets/misc/Matter_Transfer_Function.png)
+
+The transfer function is asymptotic to ``k^{-2}\ln k`` at small scales, and constant at large ones.
+It is normalized such that at large scales it goes to ``1``:
 
 ```math
     T(k) \xrightarrow[k \rightarrow 0^{+}]{} 1 \quad \quad (\mathrm{P}.6) \\[10pt]
     T(k) \underset{k \rightarrow +\infty}{\sim} k^{-2}\ln k
 ```
-
-
 
 ## The small-``k`` slope
 
@@ -157,22 +319,24 @@ Two of the five do not exist as numbers:
 
 Measured on `data/WideA_ZA_pk.dat`, with ``k_\mathrm{min} = 10^{-5}``:
 
-| ``k_\mathrm{max}`` | ``1`` | ``10`` | ``10^2`` | ``10^3`` | ``10^4`` |
-|:--|--:|--:|--:|--:|--:|
-| ``\sigma_0`` | ``3.41`` | ``18.6`` | ``56.5`` | ``143`` | ``341`` |
-| ``\sigma_2`` | ``98.8`` | ``101.06`` | ``101.13`` | ``101.13`` | ``101.13`` |
+| ``k_\mathrm{max}`` |    ``1`` |     ``10`` |   ``10^2`` |   ``10^3`` |   ``10^4`` |
+| :----------------- | -------: | ---------: | ---------: | ---------: | ---------: |
+| ``\sigma_0``       | ``3.41`` |   ``18.6`` |   ``56.5`` |    ``143`` |    ``341`` |
+| ``\sigma_2``       | ``98.8`` | ``101.06`` | ``101.13`` | ``101.13`` | ``101.13`` |
 
 ``\sigma_2`` has converged by ``k \simeq 1``; ``\sigma_0`` has not converged anywhere.
 
+
 ### What this means for the ``\Delta\chi \rightarrow 0`` limits
 
-``\sigma_0`` enters five limit branches — the three of the Lensing-Lensing family
-(``3\sigma_2 + \frac{6}{5}\chi_1^2\sigma_0``) and the two of Newtonian ``\times``
-Lensing (``-s_1(f_1+5b_1)\sigma_0/5``). The derivation of those limits assumed
-``I_0^0(s) \rightarrow \sigma_0 = \mathrm{const}``, which is exactly the step that
-fails.
+``\sigma_0`` enters five limit branches:
 
-What actually happens is that ``j_0(qs)`` cuts the ``q`` integral at ``q \sim 1/s``, so
+-  the three of the Lensing-Lensing family: ``3\sigma_2 + \frac{6}{5}\chi_1^2\sigma_0``
+-  the two of Newtonian-Lensing: ``-s_1(f_1+5b_1)\sigma_0/5`` 
+
+The derivation of those limits assumes ``\sigma_0 = \mathrm{const}``, which is not actually true.
+
+What happens is that ``j_0(qs)`` cuts the ``q`` integral at ``q \sim 1/s``, so
 
 ```math
     I_0^0(s) \; \underset{s \rightarrow 0^{+}}{\simeq} \; \sigma_0(< 1/s)

@@ -4,7 +4,7 @@
 The mathematical procedure we implemented in GaPSE is based on:
 - Parviz Moin, _"Fundamentals of Engineering Numerical Analysis"_ (2010), 
   Cambridge University Press: Second edition, Chapter 1.2, "Cubic Spline Interpolation"
-- 
+
 
 ## Derivation of the equation system for the cubic spline
 
