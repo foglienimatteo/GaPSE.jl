@@ -15,7 +15,7 @@ Several of these ``I_\ell^n`` diverge for ``\Delta\chi \rightarrow 0``, and seve
 This page sets up the problem, fixes the notation and collects **all** the results, which are
 the ones used in the `Δχ < Δχ_min` branch of the corresponding `integrand_ξ_...` functions.
 The derivations themselves are one per page, grouped into eight *families* of integrands that
-share the same singular structure — see [The eight families](#The-eight-families) below.
+share the same singular structure — see [The eight families](@ref "The eight families") below.
 
 Each family page is self-contained: it repeats at the top every equation of this one that it
 needs, so that it can be read without jumping back and forth.
@@ -132,7 +132,7 @@ I_0^2           &\sim \sigma_2 \, s^{-2}               &&\rightarrow +\infty
 
 ``{}^{(*)}`` ``\sigma_0`` depends on the integration range over which it is computed,
 unlike ``\sigma_2`` and ``\sigma_3``. See
-[What the ``\sigma_i`` depend on](#what-the-sigma_i-depend-on) below: the results do not
+[What the ``\sigma_i`` depend on](@ref "What the ``\sigma_i`` depend on") below: the results do not
 change, but the range has to be quoted with them.
 
 Since ``\Delta\chi \rightarrow 0`` forces both ``\chi_2 \rightarrow \chi_1`` and ``y \rightarrow 1``,
@@ -248,34 +248,37 @@ The safe recipe, used systematically in every family page, is:
 
 The table above, and every boxed result of the eight family pages, is written as if the
 ``\sigma_i`` were numbers. They are — but numbers *attached to an integration range*, and
-that is worth one paragraph because it is easy to get wrong.
+the range deserves one paragraph of its own.
 
-The ``\sigma_i`` and the ``I_\ell^n`` are defined over the same finite
-``[k_\mathrm{min}, k_\mathrm{max}]`` (see
-[The ``I_\ell^n`` integrals](theory_IlnIntegrals.md)). Over that range every ``\sigma_i``
-is finite, and Eq.(2.1a) follows rigorously: ``q s \leq k_\mathrm{max} s`` uniformly, so
-the small-argument form of ``j_\ell`` may be inserted under the integral. Three of the
-five moments, ``\sigma_1``, ``\sigma_2`` and ``\sigma_3``, would remain finite even if the
-cuts were removed, so their value does not really depend on the range. The other two do:
+The ``\sigma_i`` are defined over a finite ``[k_\mathrm{min}, k_\mathrm{max}]``, exactly
+as the ``I_\ell^n`` they are the limit of (see
+[The ``I_\ell^n`` integrals](theory_IlnIntegrals.md)). Over such a range every
+``\sigma_i`` is finite and Eq.(2.1a) follows rigorously, because
+``q \, \Delta\chi \leq k_\mathrm{max} \Delta\chi`` uniformly, so the small-argument form
+of ``j_\ell`` may be inserted under the integral. Three of the five moments,
+``\sigma_1``, ``\sigma_2`` and ``\sigma_3``, would remain finite even if the cuts were
+removed, so their value does not depend on the range in any practical sense. The other
+two do:
 
-- ``\sigma_0`` grows with ``k_\mathrm{max}`` (as ``K^{0.359}`` with the fitted tail of the
-  input spectrum, logarithmically with the asymptotic CDM one) — it is the density
-  variance smoothed on zero scale;
+- ``\sigma_0`` grows with ``k_\mathrm{max}`` (as ``k_\mathrm{max}^{\,0.359}`` with the
+  fitted tail of the input spectrum, logarithmically with the asymptotic CDM one) — it is
+  the density variance smoothed on zero scale;
 - ``\sigma_4`` grows as ``k_\mathrm{min}`` is lowered.
 
 So ``\sigma_0`` cannot be quoted without saying over which range it was computed, and the
 five branches that use it — the three of Family 1 and the two of Family 3 — inherit that
 dependence.
 
-**Where the approximation actually sits.** Eq.(2.1a) is exact only for
-``\Delta\chi \ll 1/k_\mathrm{max}``, while the limit branch switches over at
-``\Delta\chi < \Delta\chi_\mathrm{min} = 0.1``. With the `xicalc` range
-``k_\mathrm{max} = 10^{3}`` the two are three decades apart:
-``I_0^0(0.1) = 23.7`` against ``\sigma_0 = 143.3``. This is a real approximation in the
-code, not a bookkeeping subtlety, and it is the reason the stored ``\sigma_i`` and the
-``I_\ell^n`` should be computed consistently — the discussion, with both options written
-out, is in
-[What this means for the limits](theory_InputPowerSpectrum.md#what-this-means-for-the-delta-chi-rightarrow-0-limits).
+**How the range is chosen.** Eq.(2.1a) is an asymptotic statement, exact for
+``\Delta\chi \ll 1/k_\mathrm{max}``, whereas the branch switches over at the finite
+``\Delta\chi_\mathrm{min} = 0.1``. What the branch has to reproduce there is therefore not
+the ``\Delta\chi \rightarrow 0`` limit of ``I_0^0`` but its value at the switch-over,
+``I_0^0(0.1) = 23.7``. Cutting ``\sigma_0`` at ``k_\mathrm{max} \simeq
+1/\Delta\chi_\mathrm{min} = 10`` gives ``18.6``, i.e. ``22\%`` below it; this is the
+`IPSTools` default, and it is why the ``\sigma_i`` do not use the wider range of the
+`xicalc` call that builds the ``I_\ell^n`` (which would give ``143.3``, a factor ``6``
+away). The trade-off, and the numbers behind it, are in
+[The ranges the code uses](@ref "2. The ranges the code uses").
 
 ## A pattern worth noticing
 
@@ -391,12 +394,13 @@ be replaced.
 
 ## A second way to reach ``\Delta\chi = 0``: the small-``\chi`` corner
 
-!!! warning "This is a known bug, not yet fixed in the code"
-    The `Δχ < Δχ_min` branches implemented in the integrands use the limits of the previous
-    sections, which are derived under the assumption that ``y \rightarrow 1``. That assumption
-    fails in the corner described here, and the seven integrands listed at the end of this
-    section return a wrong value there. The derivation below gives the correct expression and
-    the one-line change that fixes it.
+!!! note "Why the branch uses a threshold relative to the distances"
+    The limits of the previous sections are derived under the assumption that
+    ``y \rightarrow 1``, which ``\Delta\chi \rightarrow 0`` forces only at *fixed, non-zero*
+    comoving distances. The corner described here is the configuration where it does not,
+    and it is the reason the switch-over condition in the code is
+    ``\Delta\chi \geq \min(\Delta\chi_\mathrm{min}, \Delta\chi_\mathrm{min}\max(\chi_1,\chi_2))``
+    rather than the plain ``\Delta\chi \geq \Delta\chi_\mathrm{min}``.
 
 The statement "``\Delta\chi^2 = 0`` if and only if ``y = 1`` and ``\chi_1 = \chi_2``" is true for
 *fixed, non-zero* comoving distances. It is not true uniformly: writing
@@ -448,19 +452,33 @@ and ``y \rightarrow 1``: they have no corner. Family 6 is double-``\chi`` but it
 both regimes, since ``\Delta\chi^4\tilde{I}_0^4 = -\sigma_2\Delta\chi^2/6 + O(\Delta\chi^4)``
 vanishes however ``\Delta\chi`` is made small.
 
-### The fix
+### The two ways out, and the one the code takes
 
-The two limits are the two iterated limits of the same function, and a single expression
-covers both, because ``3y\sigma_2 \rightarrow 3\sigma_2`` as ``y \rightarrow 1`` while
-``\frac{6}{5}\chi_1^2\sigma_0 \rightarrow 0`` as ``\chi_1 \rightarrow 0``:
+There are two ways to keep the corner from being evaluated with the wrong expression.
 
-| family | currently in the code | correct in both regimes |
+**Do not enter the branch there.** This is what the code does, through a switch-over threshold
+that scales with the local distances; it is written out in
+[The guard that is implemented](@ref "The guard that is implemented") below. In the corner
+``\chi_1 = a\epsilon``, ``\chi_2 = b\epsilon`` that threshold scales with ``\epsilon`` exactly as
+``\Delta\chi = c\epsilon`` does, so the branch does not fire for any ``y`` bounded away from
+``1``, and the ``J\,I`` sum — perfectly well conditioned there, since
+``\Delta\chi/\chi = O(1)`` — is used instead.
+
+**Or make one expression cover both limits.** They are the two iterated limits of the same
+function, and a single formula covers them, because ``3y\sigma_2 \rightarrow 3\sigma_2`` as
+``y \rightarrow 1`` while ``\frac{6}{5}\chi_1^2\sigma_0 \rightarrow 0`` as
+``\chi_1 \rightarrow 0``:
+
+| family | in the code | valid in both regimes |
 |:-:|:--|:--|
 | 1 | `3 * σ_2 + 6/5 * χ1^2 * σ_0` | `3 * y * σ_2 + 6/5 * χ1^2 * σ_0` |
 | 8 | `A/3 * σ_2` | `A/3 * y * σ_2` |
 
 Multiplying the ``\sigma_2`` coefficient by ``y`` is exact to leading order in both limits and
-costs nothing. The seven integrands that need it are the double-``\chi`` ones:
+costs nothing. It is *not* applied in the code, because the threshold above already keeps the
+branch out of the corner, and inside the region where the branch does fire ``y`` is within
+``O(\Delta\chi^2/\chi^2)`` of ``1``. It is recorded here as the independent check that the two
+routes agree. The seven integrands it would concern are the double-``\chi`` ones:
 
 | integrand | family |
 |:--|:-:|
@@ -473,10 +491,9 @@ costs nothing. The seven integrands that need it are the double-``\chi`` ones:
 | `integrand_ξ_LD_Lensing_IntegratedGP` | [8](theory_DeltaChiLimits_8_J22J31.md) |
 
 (`integrand_ξ_GNCxLD_Lensing_LocalGP` and `integrand_ξ_LD_Lensing_LocalGP` are family 8 but
-single-``\chi``, so they are not affected; giving them the `y` anyway keeps the six of the
-family uniform and changes nothing.)
+single-``\chi``, so they have no corner.)
 
-### Measured effect
+### Measured effect, before the threshold was introduced
 
 `integrand_ξ_GNCxLD_Lensing_Lensing` at ``s_1 = 435.37``, ``s_2 = 1000``, ``y = 0.7``, with
 ``\chi_1 = 0.9\,\epsilon`` and ``\chi_2 = 1.1\,\epsilon``:
@@ -490,8 +507,10 @@ family uniform and changes nothing.)
 
 The ratio is ``y``, exactly as predicted, and the ``J\,I`` sum is perfectly well conditioned here:
 ``\Delta\chi/\chi = O(1)`` in the corner, so the bracket cancellation that ruins the sum near
-the singular configuration simply does not occur. The current branch is therefore replacing a
-good value by one that is a factor ``1/y`` too large — and, for ``y < 0``, of the wrong sign.
+the singular configuration does not occur. With the absolute threshold the branch was therefore
+replacing a good value by one a factor ``1/y`` too large — and, for ``y < 0``, of the wrong
+sign. With the relative threshold it does not fire at all at these ``\epsilon``, and the ``J\,I``
+column above is what the code returns.
 
 Integrated up, this moves `ξ_GNCxLD_Lensing_Lensing` by ``2\%`` at ``\mu = 0.5`` and ``4\%`` at
 ``s = 10``, ``\mu = 1``. In the multipoles it shows up as a **uniform** ``1.5\%`` bias of the
@@ -543,15 +562,15 @@ combination ``q \, \Delta\chi``, and the ``q`` integration runs up to ``k_\mathr
 limit is ``O\left[(k_\mathrm{max}\Delta\chi)^2\right]``: at the default
 `Δχ_min = 1e-1` it is of order unity.
 
-**From below**, the ``J\,I`` sum becomes unusable, but not for the reason one might expect: the
-four products ``J^{(k)} I_{\ell_k}^{n_k}`` do *not* nearly cancel against each other. The loss
-of significance happens one level down, **inside each ``J^{(k)}``**. Take ``J_{22}`` of family 1:
-its square bracket is a sum of terms of size ``O(\chi^6)`` whose value at the singular point is
-zero (that is exactly what was shown in the derivation), so for small ``\Delta\chi`` the bracket
-is ``O(\chi^4\Delta\chi^2)`` — a relative cancellation of ``(\Delta\chi/\chi)^2`` — and the result
-is then divided by ``\Delta\chi^4``. The absolute rounding error of the bracket,
-``\varepsilon\,\chi^6``, therefore reaches ``J_{22}`` multiplied by ``\chi/\Delta\chi^4``, while
-``J_{22}`` itself is ``O(\chi^3)``:
+**From below**, the ``J\,I`` sum stops being the integral, for two distinct reasons that used
+to be one.
+
+*The conditioning of the brackets*, which is no longer the binding one. Before the three
+Lensing-Lensing integrands were rewritten (see the comment at the top of
+`GNC_AutoLensing.jl`), each ``J^{(k)}`` was evaluated as a difference of terms of size
+``O(\chi^6)`` whose exact value at the singular point is zero, so for small ``\Delta\chi`` the
+bracket was obtained with a relative cancellation of ``(\Delta\chi/\chi)^2`` and then divided by
+``\Delta\chi^4``:
 
 ```math
     \frac{\delta J_{22}}{J_{22}} \; \sim \; \varepsilon
@@ -561,46 +580,66 @@ is then divided by ``\Delta\chi^4``. The absolute rounding error of the bracket,
         \; \simeq \; 1.2 \cdot 10^{-4} \, \chi \; .
 ```
 
-The same argument applies to ``J_{00}`` and ``J_{02}``, whose brackets vanish too. Evaluating the
-four terms of `integrand_ξ_GNC_Lensing` separately at ``\chi_1 = 250``,
-``\chi_2 = \chi_1 + 0.4\,\Delta\chi`` (all values in units of the enhancer):
+Measured at ``\chi_1 = 250``, that was exactly what happened: ``J_{22}I_2^2`` rounded to zero at
+``\Delta\chi = 5\cdot10^{-2}``, reached ``+4.0\cdot10^{7}`` at ``3\cdot10^{-2}`` and
+``-9.1\cdot10^{13}`` at ``10^{-3}``, where the whole sum came out ``6.6\cdot10^{7}`` times the
+limit. Writing the brackets as expansions around the singular configuration removes it: the same
+``J_{22}I_2^2`` is now ``-4.9\cdot10^{5}``, ``-8.5\cdot10^{5}`` and ``-2.7\cdot10^{6}`` at those
+three points, smooth and monotone.
 
-| ``\Delta\chi`` | ``J_{00}I_0^0`` | ``J_{02}I_2^0`` | ``J_{31}I_1^3`` | ``J_{22}I_2^2`` | sum | limit |
+*The ``I_\ell^n`` below* ``\mathrm{fit\_min}``, which is now the binding one. An `IntegralIPS`
+is a spline only on ``[\mathrm{left}, \mathrm{right}] = [0.05, 96466]``; below ``\mathrm{left}``
+it is a fitted power law that, with this input spectrum, has a negative exponent for every
+``(\ell, n)`` and therefore grows without bound — see
+[1. An `IntegralIPS` is a spline only between `left` and `right`](theory_IlnIntegrals.md).
+Evaluating the four terms of `integrand_ξ_GNC_Lensing` with the current code at
+``\chi_1 = 250``, ``\chi_2 = \chi_1 + 0.4\,\Delta\chi`` (all values in units of the enhancer,
+and the limit is ``3\sigma_2 + \frac{6}{5}\chi_1^2\sigma_0 = 1.394\cdot10^{6}`` with the stored
+``\sigma_i``):
+
+| ``\Delta\chi`` | ``J_{00}I_0^0`` | ``J_{02}I_2^0`` | ``J_{31}I_1^3`` | ``J_{22}I_2^2`` | sum | sum / limit |
 |--:|--:|--:|--:|--:|--:|--:|
-| ``1`` | ``4.28\cdot10^{5}`` | ``-2.37\cdot10^{4}`` | ``3.00\cdot10^{2}`` | ``-6.44\cdot10^{4}`` | ``3.40\cdot10^{5}`` | ``1.17\cdot10^{6}`` |
-| ``3\cdot10^{-1}`` | ``9.28\cdot10^{5}`` | ``-3.64\cdot10^{4}`` | ``3.02\cdot10^{2}`` | ``-1.26\cdot10^{5}`` | ``7.65\cdot10^{5}`` | ``1.17\cdot10^{6}`` |
-| ``1\cdot10^{-1}`` | ``1.61\cdot10^{6}`` | ``-5.33\cdot10^{4}`` | ``3.03\cdot10^{2}`` | ``-7.12\cdot10^{4}`` | ``1.49\cdot10^{6}`` | ``1.17\cdot10^{6}`` |
-| ``5\cdot10^{-2}`` | ``2.20\cdot10^{6}`` | ``-6.78\cdot10^{4}`` | ``3.03\cdot10^{2}`` | ``0`` | ``2.13\cdot10^{6}`` | ``1.17\cdot10^{6}`` |
-| ``3\cdot10^{-2}`` | ``2.73\cdot10^{6}`` | ``-8.09\cdot10^{4}`` | ``3.03\cdot10^{2}`` | ``1.45\cdot10^{7}`` | ``1.72\cdot10^{7}`` | ``1.17\cdot10^{6}`` |
-| ``1\cdot10^{-2}`` | ``4.26\cdot10^{6}`` | ``-1.18\cdot10^{5}`` | ``3.03\cdot10^{2}`` | ``-1.81\cdot10^{9}`` | ``-1.81\cdot10^{9}`` | ``1.17\cdot10^{6}`` |
-| ``1\cdot10^{-3}`` | ``1.02\cdot10^{7}`` | ``-2.61\cdot10^{5}`` | ``3.03\cdot10^{2}`` | ``-4.26\cdot10^{13}`` | ``-4.26\cdot10^{13}`` | ``1.17\cdot10^{6}`` |
+| ``1`` | ``4.33\cdot10^{5}`` | ``-2.81\cdot10^{4}`` | ``3.00\cdot10^{2}`` | ``-6.92\cdot10^{4}`` | ``3.36\cdot10^{5}`` | ``0.241`` |
+| ``3\cdot10^{-1}`` | ``1.05\cdot10^{6}`` | ``-4.91\cdot10^{4}`` | ``3.03\cdot10^{2}`` | ``-1.50\cdot10^{5}`` | ``8.52\cdot10^{5}`` | ``0.611`` |
+| ``1\cdot10^{-1}`` | ``1.98\cdot10^{6}`` | ``-7.41\cdot10^{4}`` | ``3.03\cdot10^{2}`` | ``-2.67\cdot10^{5}`` | ``1.64\cdot10^{6}`` | ``1.177`` |
+| ``5\cdot10^{-2}`` | ``2.80\cdot10^{6}`` | ``-9.52\cdot10^{4}`` | ``3.03\cdot10^{2}`` | ``-3.68\cdot10^{5}`` | ``2.34\cdot10^{6}`` | ``1.675`` |
+| ``3\cdot10^{-2}`` | ``3.80\cdot10^{6}`` | ``-1.16\cdot10^{5}`` | ``3.03\cdot10^{2}`` | ``-4.85\cdot10^{5}`` | ``3.19\cdot10^{6}`` | ``2.291`` |
+| ``1\cdot10^{-2}`` | ``6.96\cdot10^{6}`` | ``-1.74\cdot10^{5}`` | ``3.04\cdot10^{2}`` | ``-8.46\cdot10^{5}`` | ``5.94\cdot10^{6}`` | ``4.259`` |
+| ``1\cdot10^{-3}`` | ``2.48\cdot10^{7}`` | ``-4.12\cdot10^{5}`` | ``3.04\cdot10^{2}`` | ``-2.71\cdot10^{6}`` | ``2.17\cdot10^{7}`` | ``15.54`` |
 
-``J_{22}I_2^2`` rounds to exactly zero at ``\Delta\chi = 5\cdot10^{-2}`` and is pure noise below
-it — right at the predicted ``\chi\,\varepsilon^{1/4} \simeq 3\cdot 10^{-2}`` — after which it
-runs away by four orders of magnitude per decade. A single quadrature node landing at
-``\Delta\chi = 10^{-3}`` contributes an integrand ``10^{7}`` times too large: enough to destroy
-the whole ``\chi`` integral.
+Every column is now smooth; what the last one shows is that the sum does not settle onto the
+limit but keeps climbing, by a factor of about ``3.6`` per decade of ``\Delta\chi``. That is the
+``I_\ell^n`` extrapolation, not the brackets: ``\mathrm{left} = 0.05`` is crossed between the
+third and the fourth row, and below it the ``I_\ell^n`` are no longer the integrals whose limit
+the branch reproduces.
 
-The two errors cross between ``\Delta\chi = 10^{-1}`` and ``3\cdot10^{-1}``: the sum still tracks
-the true bracket at ``3\cdot10^{-1}`` (where the limit is ``35\%`` off), already overshoots it by
-``27\%`` at ``10^{-1}``, and is meaningless below ``5\cdot10^{-2}``. So `Δχ_min = 1e-1` sits close
-to the optimum, and **lowering it is not safer, it is dangerous**.
+The two errors therefore still cross in the same place, for a different reason. The sum tracks
+the limit to within a factor two between ``\Delta\chi = 3\cdot10^{-1}`` and ``5\cdot10^{-2}``,
+and the best agreement is around ``8\cdot10^{-2}``. So `Δχ_min = 1e-1` sits close to the
+optimum: it is the largest value still of order ``1/k_\mathrm{max}``, and it is safely above
+``\mathrm{fit\_min} = 0.05``. **Lowering it is still not safer** — below ``0.05`` the branch
+would be compared against, and eventually replaced by, an extrapolation.
 
 Two consequences worth keeping in mind:
 
-- The breakdown scale is ``\chi\,\varepsilon^{1/4}``, so the right threshold is **proportional
-  to the comoving distances**, not an absolute length. A fixed `Δχ_min = 1e-1` is tuned for
-  ``\chi \sim`` a few hundred ``h^{-1}\mathrm{Mpc}`` and is too small at large ``\chi``, too large
-  at small ``\chi``. The commented-out `func_Δχ_min(s1, s2, y; frac)` in
-  `GNC_LensingIntegratedGP.jl` is exactly the relative threshold this argument calls for; it
-  wants ``\mathrm{frac} \simeq \varepsilon^{1/4} \simeq 10^{-4}`` against ``s``, and reviving it
-  would remove the tuning.
+- ``\mathrm{fit\_min}`` is a property of the ``I_\ell^n``, not of ``\chi``, so unlike the
+  rounding scale ``\chi\,\varepsilon^{1/4}`` it sets an **absolute** floor on
+  ``\Delta\chi_\mathrm{min}``, the same at every distance. The relative part of the threshold
+  is still needed, but for the corner of the previous section rather than for conditioning,
+  which is why the implemented form takes the `min` of the two. Lowering the floor further
+  would mean extending the ``I_\ell^n`` splines below ``0.05`` rather than retuning
+  ``\Delta\chi_\mathrm{min}``.
 - The residual error of the limit is confined to an interval of length `Δχ_min` out of a
   ``\chi`` range of hundreds of ``h^{-1}\mathrm{Mpc}``, so its effect on the integrated TPCF stays
   at the ``10^{-3}`` level for a generic ``y``; it grows to a few per cent at ``y = 1``, where the
   quadrature deliberately samples the singular point.
 
-!!! warning "`integrand_ξ_LD_Lensing`"
-    This is the one function that still uses `Δχ_min = 1e-4`, inherited from before these
-    limits were derived. That is three orders of magnitude inside the region where the
-    ``J^{(k)}`` are noise, so it should be aligned with the `1e-1` used everywhere else.
+!!! note "`integrand_ξ_LD_Lensing` uses a different `Δχ_min`"
+    Forty-five of the fifty `Δχ_min` keyword defaults in `src/` are `1e-1`. The other five are
+    all in `LD_AutoLensing.jl` - `integrand_ξ_LD_Lensing` and the functions that wrap it - and
+    are `1e-4`, inherited from before these limits were derived, so in practice they evaluate the
+    ``J\,I`` sum down to ``\Delta\chi \simeq 10^{-4}`` — three decades below
+    ``\mathrm{fit\_min}``, i.e. entirely inside the extrapolated region of the ``I_\ell^n``.
+    Aligning it with the `1e-1` of the others is a one-line change, and it moves the reference
+    data of the LD suite, so it is deliberately left for a separate step rather than folded
+    into this release.

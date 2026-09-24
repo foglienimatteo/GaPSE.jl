@@ -1,22 +1,9 @@
 # The ``I_\ell^n`` integrals
 
-- [The ``I_\ell^n`` integrals](#the-i_elln-integrals)
-  - [Definitions](#definitions)
-  - [TLDR; the easy-to-get small-``s`` behaviour](#tldr-the-easy-to-get-small-s-behaviour)
-  - [The exact small-``s`` behaviour](#the-exact-small-s-behaviour)
-    - [Why the cut cannot be dropped](#why-the-cut-cannot-be-dropped)
-    - [The three regimes](#the-three-regimes)
-  - [A warning before looking at the plots](#a-warning-before-looking-at-the-plots)
-    - [1. An `IntegralIPS` is a spline only between `left` and `right`](#1-an-integralips-is-a-spline-only-between-left-and-right)
-    - [2. The ``\sigma_i`` must use the same ``k`` extremes as the ``I_\ell^n``](#2-the-sigma_i-must-use-the-same-k-extremes-as-the-i_elln)
-    - [3. The asymptotic regime starts below ``1/k_\mathrm{max}``](#3-the-asymptotic-regime-starts-below-1k_mathrmmax)
-  - [The plots](#the-plots)
-    - [One by one](#one-by-one)
-  - [Reproducing the figures](#reproducing-the-figures)
-
-
-
-
+```@contents
+Pages = ["theory_IlnIntegrals.md"]
+Depth = 3
+```
 
 Every Two-Point Correlation Function (TPCF) that GaPSE computes is, in the end, a sum of
 terms of the form ``J(\chi, s, y) \, I_\ell^n(\Delta\chi)``. This page collects the
@@ -45,10 +32,12 @@ with ``P(q)`` the matter Power Spectrum at ``z=0`` stored inside the `Cosmology`
 !!! note "The integration range is part of the definition"
     ``k_\mathrm{min}`` and ``k_\mathrm{max}`` are **not** a numerical detail to be sent to
     ``0`` and ``+\infty`` at the end: they are part of what ``I_\ell^n`` *means* here.
-    `IPSTools` hands ``k_\mathrm{min}, k_\mathrm{max} = 10^{-5}, 10^{3}`` to `xicalc`, and
-    every result on this page is a statement about *that* integral. The section
-    [Why the cut cannot be dropped](#why-the-cut-cannot-be-dropped) shows what changes if
-    one insists on ``\int_0^{+\infty}`` instead — it is not a harmless idealisation.
+    `IPSTools` hands ``k_\mathrm{min}, k_\mathrm{max} = 10^{-5}, 10^{3}`` to `xicalc` for
+    the ``I_\ell^n``, and every result on this page is a statement about *that* integral.
+    The ``\sigma_i`` of (3) are cut elsewhere, for a reason given in
+    [2. The ranges the code uses](@ref "2. The ranges the code uses"), and
+    [Why the cut cannot be dropped](@ref "Why the cut cannot be dropped") shows what changes
+    if one insists on ``\int_0^{+\infty}`` instead — it is not a harmless idealisation.
 
 The eight combinations ``(\ell, n)`` that appear in the code are
 
@@ -133,7 +122,7 @@ makes ``qs \ll 1`` hold **uniformly** over the whole range, and the series may b
 and integrated term by term. Had the integral run to ``+\infty`` there would always be a
 region ``q > 1/s`` in which the replacement is simply false, no matter how small ``s`` is,
 and the manipulation above would be wrong. This is the content of
-[Why the cut cannot be dropped](#why-the-cut-cannot-be-dropped).
+[Why the cut cannot be dropped](@ref "Why the cut cannot be dropped").
 
 
 ## The exact small-``s`` behaviour
@@ -283,9 +272,9 @@ And analogously, every term carries two more powers of ``s`` than the previous o
 
 It is tempting to write (1) with ``\int_0^{+\infty}``, treat
 ``k_\mathrm{min}, k_\mathrm{max}`` as a numerical approximation to it, and let the
-``\sigma_i`` inherit the same infinite range. That is wrong, and it is worth seeing
-exactly where it breaks, because the mistake produces a *fake divergence* that looks like
-a bug in the code.
+``\sigma_i`` inherit the same infinite range. That substitution is not legitimate, and it
+is worth seeing exactly where it breaks: it produces a spurious divergence of
+``I_0^0(s \rightarrow 0)`` that the integral of (1) does not have.
 
 Split the infinite integral at the two cuts:
 
@@ -424,33 +413,42 @@ Each ``I_\ell^n`` is stored as a [`GaPSE.IntegralIPS`](@ref), which evaluates as
 ```math
 I_\ell^n(s) =
 \begin{cases}
-a_\mathrm{L} + b_\mathrm{L} \, s^{\,s_\mathrm{L}} \; ,  & s < \mathrm{left} \\[6pt]
+a_\mathrm{L} + b_\mathrm{L} \, s^{\,\nu_\mathrm{L}} \; ,  & s < \mathrm{left} \\[6pt]
 \mathrm{spline}(s) \; ,  & \mathrm{left} \leq s \leq \mathrm{right} \\[6pt]
-a_\mathrm{R} + b_\mathrm{R} \, s^{\,s_\mathrm{R}} \; ,  & s > \mathrm{right}
+a_\mathrm{R} + b_\mathrm{R} \, s^{\,\nu_\mathrm{R}} \; ,  & s > \mathrm{right}
 \end{cases}
 ```
 
 with ``\mathrm{left} = \mathrm{fit\_min} = 0.05 \, h_0^{-1}\mathrm{Mpc}`` for all the
 ``I_\ell^n`` (and ``0.1`` for ``\tilde{I}_0^4``). The coefficients
-``a_\mathrm{L}, b_\mathrm{L}, s_\mathrm{L}`` are fitted on
+``a_\mathrm{L}, b_\mathrm{L}, \nu_\mathrm{L}`` are fitted on
 ``[\mathrm{fit\_min}, \mathrm{fit\_max}] = [0.05, 0.5]``, i.e. on a region that is still
 very far from the asymptotic one, and the fit is seeded with a *negative* exponent.
 The consequence is that, with this input Power Spectrum, below ``s = 0.05``
-**every** ``I_\ell^n`` comes out with a negative fitted exponent and diverges, whatever
-its true behaviour. This is not a bug — GaPSE never evaluates
-them there — but it does mean that the region ``s < 0.05`` of any plot of an
-`IntegralIPS` carries no information about the limits derived above. In the figures
-below it is shaded in grey.
+**every** ``I_\ell^n`` comes out with a negative fitted exponent and grows without bound,
+whatever its true behaviour. The extrapolation is there to keep the object callable
+outside the tabulated range, not to reproduce the limits: GaPSE never evaluates the
+``I_\ell^n`` below ``\Delta\chi_\mathrm{min}``, where the analytic branch takes over. The
+practical consequence for a reader is that the region ``s < 0.05`` of any plot of an
+`IntegralIPS` carries no information about the limits derived above; in the figures below
+it is shaded in grey.
 
-### 2. The ``\sigma_i`` must use the same ``k`` extremes as the ``I_\ell^n``
+### 2. The ranges the code uses
 
-`IPSTools` hard-codes ``k_\mathrm{min}, k_\mathrm{max} = 10^{-5}, 10^{3}`` for the
-`xicalc` call that builds the ``I_\ell^n``, regardless of the `k_min`/`k_max` keywords,
-which are only used for the ``\sigma_i`` it stores. Comparing an ``I_\ell^n`` with an
-asymptote built out of ``\sigma_i`` computed over a different range is meaningless,
-because the ``\sigma_i`` with negative index are completely dominated by their upper
-extreme: with ``P(q) \propto q^{-2.64}`` at large ``q``, the integrand of
-``\sigma_{-2}`` grows as ``q^{1.36}`` and that of ``\sigma_{-4}`` as ``q^{3.36}``. For
+`IPSTools` builds its two families of objects over two different ``k`` ranges:
+
+- the ``I_\ell^n`` come from a `xicalc` call with
+  ``k_\mathrm{min}, k_\mathrm{max} = 10^{-5}, 10^{3}``, fixed in the constructor. A Hankel
+  transform needs a wide, densely sampled ``k`` grid, and this one covers the whole ``s``
+  interval over which the resulting splines are then evaluated;
+- the ``\sigma_i`` come from a direct quadrature over the `k_min`/`k_max` keywords of
+  `IPSTools`, whose defaults are ``10^{-6}`` and ``10``.
+
+For ``\sigma_1``, ``\sigma_2`` and ``\sigma_3`` the distinction is immaterial: they
+converge at both ends, so any wide enough range returns the same number. For ``\sigma_0``
+and for the negative-index moments it is not, because those are dominated by their upper
+extreme — with ``P(q) \propto q^{-2.64}`` at large ``q``, the integrand of ``\sigma_{-2}``
+grows as ``q^{1.36}`` and that of ``\sigma_{-4}`` as ``q^{3.36}``. On
 `data/WideA_ZA_pk.dat`:
 
 | ``i``  | over ``[10^{-6}, 10]`` | over ``[10^{-5}, 10^{3}]`` |                 ratio |
@@ -460,9 +458,32 @@ extreme: with ``P(q) \propto q^{-2.64}`` at large ``q``, the integrand of
 | ``-2`` |              ``437.8`` |     ``2.35 \times 10^{7}`` | ``5.4 \times 10^{4}`` |
 | ``-4`` | ``2.41 \times 10^{4}`` |    ``1.27 \times 10^{13}`` | ``5.3 \times 10^{8}`` |
 
-Only ``\sigma_2`` is insensitive to the choice, which is exactly why ``I_0^2``,
-``I_1^3`` and ``\tilde{I}_0^4`` — the three whose limits depend on ``\sigma_2`` alone —
-are the only ones that appear to obey (4a) even when the extremes are mismatched.
+Which range is the right one depends on what the moment is for, and inside GaPSE
+``\sigma_0`` has exactly one job: it is the value the ``\Delta\chi \rightarrow 0`` branch
+uses in place of ``I_0^0(\Delta\chi)`` below ``\Delta\chi_\mathrm{min}``. The best stand-in
+for that number is the moment cut where the Bessel function stops contributing, i.e. at
+``k_\mathrm{max} \simeq 1 / \Delta\chi_\mathrm{min}``, and with the default
+``\Delta\chi_\mathrm{min} = 0.1`` that is ``k_\mathrm{max} = 10`` — the `IPSTools`
+default. Measured:
+
+| quantity | value |
+| :-- | --: |
+| ``\sigma_0`` over ``[10^{-6}, 10]`` (the default) | ``18.58`` |
+| ``I_0^0(\Delta\chi_\mathrm{min}) = I_0^0(0.1)``   | ``23.73`` |
+| ``\sigma_0`` over ``[10^{-5}, 10^{3}]`` (the `xicalc` range) | ``143.3`` |
+
+so the default is ``22\%`` below the number it replaces, while the `xicalc` range would be
+a factor ``6`` above it. Should ``\Delta\chi_\mathrm{min}`` be changed, `k_max` should
+follow it.
+
+The one place where the two ranges *must* be the same is a comparison between an
+``I_\ell^n`` and the asymptote (4a) built out of ``\sigma_{n-\ell}``: these are two
+expressions for the same integral, so they only agree if they integrate the same thing.
+The tables and figures below therefore use the `xicalc` range for both. Only
+``\sigma_2`` is insensitive enough for the distinction not to show, which is why
+``I_0^2``, ``I_1^3`` and ``\tilde{I}_0^4`` — the three whose limits depend on
+``\sigma_2`` alone — are the only ones that appear to obey (4a) even with mismatched
+extremes.
 
 ### 3. The asymptotic regime starts below ``1/k_\mathrm{max}``
 

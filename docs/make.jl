@@ -1,6 +1,7 @@
 push!(LOAD_PATH, "../src/")
 
 using Documenter
+using Documenter.JSON
 using GaPSE
 
 Documenter.makedocs(
@@ -81,6 +82,29 @@ Documenter.makedocs(
           ],
      ],
 )
+
+# Pages that live in `docs/src/` but are absent from the `pages` list above are still
+# built and deployed by Documenter; they simply get no entry in the navigation menu.
+# That is how the draft pages below are published: reachable by URL, invisible otherwise.
+# Documenter offers no per-page switch to keep them out of the site search, so their
+# records are dropped from `search_index.js` here, after `makedocs` has written it.
+const UNLISTED_PAGES = ["theory_Ilnintegrals-mellin"]
+
+let file = joinpath(@__DIR__, "build", "search_index.js")
+     if isfile(file) && !isempty(UNLISTED_PAGES)
+          text = read(file, String)
+          # the file is `var documenterSearchIndex = {"docs": [ ... ]\n}`
+          m = match(r"^(var documenterSearchIndex = \{\"docs\":\n)(.*)(\n\}\n?)$"s, text)
+          if isnothing(m)
+               @warn "make.jl: unexpected search_index.js layout, leaving it untouched." file
+          else
+               records = JSON.parse(m[2])
+               kept = filter(r -> !any(p -> startswith(r["location"], p * "."), UNLISTED_PAGES), records)
+               write(file, m[1], JSON.json(kept), m[3])
+               @info "make.jl: dropped $(length(records) - length(kept)) search records" UNLISTED_PAGES
+          end
+     end
+end
 
 deploydocs(
      repo = "github.com/foglienimatteo/GaPSE.jl.git",

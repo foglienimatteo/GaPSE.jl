@@ -1,6 +1,6 @@
 # GaPSE - a model for the Galaxy Power Spectrum Estimator
 
-![julia-version](https://img.shields.io/badge/julia_version-v1.9-9558B2?style=flat&logo=julia) 
+![julia-version](https://img.shields.io/badge/julia_version-v1.12-9558B2?style=flat&logo=julia) 
 ![package-version](https://img.shields.io/github/v/release/foglienimatteo/GaPSE.jl?include_prereleases)
 ![CI-build](https://img.shields.io/github/actions/workflow/status/foglienimatteo/GaPSE.jl/UnitTests.yml)
 ![size](https://img.shields.io/github/repo-size/foglienimatteo/GaPSE.jl) 
@@ -82,7 +82,7 @@ This project, and the analytical expressions used for the TPCFs, are based on th
 Currently, this package is not in the Julia package registries. 
 There are two main ways to install and use GaPSE on your local machine:
 
--  the traditional way: you clone this gitrepo locally and you install the librarires that GaPSE needs in a suited Julia enviroment; it requires a compatible Julia version ≥1.8;
+-  the traditional way: you clone this gitrepo locally and you install the librarires that GaPSE needs in a suited Julia enviroment; it requires Julia 1.12 or newer, as declared by the `[compat]` section of `Project.toml`;
 -  using a Docker container (experimental): you pull and run the GaPSE container; it requires a [Docker](https://www.docker.com) installation.
 
 <br>
@@ -179,7 +179,7 @@ The code is well tested and documented: almost each struct/function has a docstr
 The `Dockerfile` we provide in this directory is the one we used to create the container image corresponding to this GaPSE version.
 
 The images are saved in <https://hub.docker.com/repository/docker/matteofoglieni/gapse/general> and the tag is the same as the GaPSE version the container refers to + a latin letter (alphabetically orderer), to take into account different version of the Dockerfile which refer to the same GaPSE one.
-The latest container name is then `gapse:0.8.0a`.
+The latest container name is then `gapse:0.10.0a`.
 
 These containers have already installed all the Julia packages that GaPSE needs (i.e. the ones listed in `Project.toml`) + come others for the ipynbs (check the Dockerfile itself).
 
@@ -187,12 +187,12 @@ Supposing that you have already installed Docker, so as to use GaPSE as a contai
 
 - download the image: 
   ```bash
-  $ sudo docker pull matteofoglieni/gapse:0.8.0a
+  $ sudo docker pull matteofoglieni/gapse:0.10.0a
   ```
 - choose a free port where to access the JupyterLab of the container; we will use `10000`;
 - run the container with that port:
   ```bash
-  $ sudo docker run -d -p 10000:8888 matteofoglieni/gapse:0.8.0a
+  $ sudo docker run -d -p 10000:8888 matteofoglieni/gapse:0.10.0a
   ```
 - get the logs of the container and copy the Jupyter token (in the following output is `531vbeb08567581944e486d47e1tee15683757086205da68`):
   ```bash

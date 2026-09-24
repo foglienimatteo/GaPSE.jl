@@ -227,11 +227,11 @@ diverges, and the formula correctly returns a pole of the ``\Gamma`` functions).
     \quad \forall \, K < k
 ```
 
-CAREFUL with the last one: it is the **smaller** of the two arguments that goes to the
-numerator, so the condition is ``K < k`` and not the other way round. A quick sanity
-check is ``K \rightarrow k``, which gives back ``\pi / [2(2\ell+1)k]``, i.e. the
-previous integral rescaled; the other ordering would instead diverge for
-``K \gg k``, which is impossible since ``|j_\ell| \leq 1``.
+Note the ordering in the last one: it is the **smaller** of the two arguments that goes to
+the numerator, so the condition is ``K < k`` and not the other way round. A quick sanity
+check is ``K \rightarrow k``, which gives back ``\pi / [2(2\ell+1)k]``, i.e. the previous
+integral rescaled; the other ordering would instead diverge for ``K \gg k``, which is
+impossible since ``|j_\ell| \leq 1``.
 
 
 ## The first zero of ``j_\ell(x)``

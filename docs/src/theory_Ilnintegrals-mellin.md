@@ -1,10 +1,25 @@
-## TO-BE-CHECKED-STILL:  The `I_l^n` large-``s`` behaviour
+# The large-``s`` behaviour of the ``I_\ell^n``
 
-The opposite end has a pleasant surprise: **the exponent is the same for every ``\ell``
-and every ``n``**. Getting there, however, needs more care than the ``s \rightarrow 0``
-side, because the obvious route does not work.
+```@contents
+Pages = ["theory_Ilnintegrals-mellin.md"]
+Depth = 3
+```
 
-### The integral this section works with
+!!! warning "Draft"
+    This page is a companion to [The ``I_\ell^n`` integrals](theory_IlnIntegrals.md) and
+    is not yet part of its navigation: the Mellin argument below has not been reviewed to
+    the same standard as the rest of the documentation. The numerical check of the final
+    result is reported in [The check](@ref "The check"), and is the only part of this
+    page that is independent of the derivation.
+
+This page covers the opposite end to the one treated in
+[The ``I_\ell^n`` integrals](theory_IlnIntegrals.md), whose notation and equation numbers
+(1), (2), (3) and (1.3) it uses throughout. There is a pleasant surprise there:
+**the exponent is the same for every ``\ell`` and every ``n``**. Getting to it, however,
+needs more care than the ``s \rightarrow 0`` side, because the obvious route does not
+work.
+
+## The integral this section works with
 
 Everything below is derived for the *idealised* integral
 
@@ -16,7 +31,7 @@ Everything below is derived for the *idealised* integral
 
 i.e. Eq.(1) with the two cuts sent to ``0`` and ``+\infty``. Unlike the
 ``s \rightarrow 0`` side — where the cuts *are* the answer, as
-[Why the cut cannot be dropped](#why-the-cut-cannot-be-dropped) shows — here the
+[Why the cut cannot be dropped](@ref "Why the cut cannot be dropped") shows — here the
 replacement is harmless, and for a reason that is easy to state: the substitution
 ``x := qs`` makes it explicit that the weight of the integral sits around
 ``q \sim 1/s``. For large ``s`` that region is well inside ``[k_\mathrm{min},
@@ -28,10 +43,10 @@ k_\mathrm{max}]``, and both the piece below ``k_\mathrm{min}`` (integrand
 is dropped from here on.
 
 The two boundaries of that statement are exactly the two listed in
-[Where it stops holding](#where-it-stops-holding) below, and they are what the last
+[Where it stops holding](@ref "Where it stops holding") below, and they are what the last
 section measures.
 
-### The small-``k`` slope of the matter Power Spectrum
+## The small-``k`` slope of the matter Power Spectrum
 
 The proof that
 
@@ -48,7 +63,7 @@ is used below: the small-``k`` slope of the *matter* Power Spectrum is ``n_P = n
 **not** ``n_s - 1``, which is the slope of the dimensionless primordial curvature
 spectrum ``\Delta^2_{\mathcal{R}}``.
 
-### Why the limit cannot be taken inside the integral
+## Why the limit cannot be taken inside the integral
 
 The tempting move is to substitute ``q`` with ``x := q s`` in Eq.(3.1),
 
@@ -91,7 +106,7 @@ an unboundedly growing amplitude. Five of the eight cases would produce no answe
 
 What follows instead is an argument that never forms that object.
 
-### The proof, by Mellin transform
+## The proof, by Mellin transform
 
 
 Write Eq.(3.1) as a Mellin convolution, isolating the ``s^{-n}``:
@@ -209,7 +224,7 @@ Three things are worth underlining.
 This is also why `IntegralIPS` seeds its right-hand power-law fit with
 ``p_0 = [-4.0, 1.0]``: with ``n_P = n_s \simeq 0.96``, ``3 + n_P \simeq 4``.
 
-### The check
+## The check
 
 `theory/Iln_terms.ipynb` reads ``A`` and ``n_P`` out of the `InputPS` left fit (for
 `data/WideA_ZA_pk.dat`, ``n_P = 0.960`` and ``A = 3.012 \times 10^6``) and compares
@@ -230,7 +245,7 @@ Better than 0.7% for all eight at ``s = 10^4 \, h_0^{-1}\mathrm{Mpc}``, the five
 continuation is the right object. The approach is not monotonic and not a single power,
 as anticipated above.
 
-### Where it stops holding
+## Where it stops holding
 
 Two boundaries, mirroring the small-``s`` ones:
 
@@ -245,7 +260,7 @@ Two boundaries, mirroring the small-``s`` ones:
   ``\tilde{I}_0^4`` has instead ``\mathrm{right} = 9888``, which a realistic
   ``\Delta\chi \sim 2\chi_\mathrm{max}`` does reach.
 
-### Why ``\tilde{I}_0^4`` is excluded
+## Why ``\tilde{I}_0^4`` is excluded
 
 For ``\tilde{I}_0^4`` one has ``\ell = 0`` and ``n = 4``, hence
 ``\mu = n_P - 1 \simeq -0.04``, which sits essentially *on* the pole of

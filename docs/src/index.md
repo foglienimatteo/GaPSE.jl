@@ -45,7 +45,7 @@ This project, and the analytical expressions used for the TPCFs, are based on th
 
 Currently, this package is not in the Julia package registries. 
 There are two main ways to install and use GaPSE on your local machine:
--  the traditional way: you clone this gitrepo locally and you install the librarires that GaPSE needs in a suited Julia enviroment; it requires a compatible Julia version ≥1.8;
+-  the traditional way: you clone this gitrepo locally and you install the librarires that GaPSE needs in a suited Julia enviroment; it requires Julia 1.12 or newer, as declared by the `[compat]` section of `Project.toml`;
 -  using a Docker container (experimental): you pull and run the GaPSE container; it requires a [Docker](https://www.docker.com) installation.
 
 
@@ -122,19 +122,19 @@ The code is well tested and documented: almost each struct/function has a docstr
 The `Dockerfile` we provide in this directory is the one we used to create the container image corresponding to this GaPSE version.
 
 The images are saved in https://hub.docker.com/repository/docker/matteofoglieni/gapse/general and the tag is the same as the GaPSE version the container refers to + a latin letter (alphabetically orderer), to take into account different version of the Dockerfile which refer to the same GaPSE one.
-The latest container name is then `gapse:0.8.0a`.
+The latest container name is then `gapse:0.10.0a`.
 
 These containers have already installed all the Julia packages that GaPSE needs (i.e. the ones listed in `Project.toml`) + come others for the ipynbs (check the Dockerfile itself).
 
 Supposing that you have already installed Docker, so as to use GaPSE as a container:
 - download the image: 
   ```bash
-  $ sudo docker pull matteofoglieni/gapse:0.8.0a
+  $ sudo docker pull matteofoglieni/gapse:0.10.0a
   ```
 - choose a free port where to access the JupyterLab of the container; we will use `10000`;
 - run the container with that port:
   ```bash
-  $ sudo docker run -d -p 10000:8888 matteofoglieni/gapse:0.8.0a
+  $ sudo docker run -d -p 10000:8888 matteofoglieni/gapse:0.10.0a
   ```
 - get the logs of the container and copy the Jupyter token (in the following output is `531vbeb08567581944e486d47e1tee15683757086205da68`):
   ```bash
@@ -240,6 +240,47 @@ Gebhardt, Jeong et al, _Fast and accurate computation of projected two-point fun
 ## Contents
 
 ```@contents
+Pages = [
+    "index.md",
+    "theory_SplineTheory.md",
+    "theory_SphericalBesselFunctions.md",
+    "theory_InputPowerSpectrum.md",
+    "theory_IlnIntegrals.md",
+    "theory_DeltaChiLimits.md",
+    "theory_DeltaChiLimits_1_LensingLensing.md",
+    "theory_DeltaChiLimits_2_LensingDoppler.md",
+    "theory_DeltaChiLimits_3_NewtonianLensing.md",
+    "theory_DeltaChiLimits_4_LensingLocalGP.md",
+    "theory_DeltaChiLimits_5_NewtonianIntegratedGP.md",
+    "theory_DeltaChiLimits_6_Ichi4Tilde.md",
+    "theory_DeltaChiLimits_7_VanishingFactor.md",
+    "theory_DeltaChiLimits_8_J22J31.md",
+    "BackgroundData.md",
+    "CosmoParams.md",
+    "Cosmology.md",
+    "WindowF.md",
+    "WindowFIntegrated.md",
+    "GNC_Correlations_1-2.md",
+    "GNC_Correlations_3.md",
+    "LD_Correlations_1.md",
+    "LD_Correlations_2.md",
+    "GNCxLD_Correlations_1.md",
+    "GNCxLD_Correlations_2.md",
+    "LDxGNC_Correlations_1.md",
+    "LDxGNC_Correlations_2.md",
+    "GNC_Correlations_1.md",
+    "GNC_Correlations_2.md",
+    "PlaneParallelApprox.md",
+    "PowerSpectra.md",
+    "PowerSpectraGenWin.md",
+    "PNG.md",
+    "Spline.md",
+    "Dicts.md",
+    "MathUtils.md",
+    "CosmoUtils.md",
+    "IPSTools.md",
+    "OtherUtils.md",
+]
 ```
 
 ## Index

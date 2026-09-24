@@ -33,9 +33,8 @@ Their power spectrum ``P_\mathcal{R}(k)`` is defined through the two-point funct
     \quad \quad (\mathrm{P}.1)
 ```
 
-and it is usually quoted through the dimensionless power spectrum ``\Delta^2_{\mathcal{R}}``, which at large scales goes as:
-
-At large scales, it's known that:
+and it is usually quoted through the dimensionless power spectrum
+``\Delta^2_{\mathcal{R}}``, which at large scales goes as
 
 ```math
 \begin{align*}
@@ -64,57 +63,64 @@ We start from the Poisson equation in real comoving space, valid from the matter
 when radiation is negligible and the cosmological constant does not cluster:
 
 ```math
-    \nabla^2 \phi(\mathbf{s}, z) = - \frac{4 \pi G}{c^2} \, D^2(z) \, \langle\rho_m(z)\rangle \, \delta_m(\mathbf{s}, z)
+    \nabla^2 \phi(\mathbf{s}, z) = - \frac{4 \pi G}{c^2} \, a^2(z) \, \langle\rho_m(z)\rangle \, \delta_m(\mathbf{s}, z)
     \quad \quad (\mathrm{P}.3)
 ```
 
 where:
 
-- the minus sign comes from the fact that we define ``\phi`` as minus the Newtonian gravitational potential
-- the ``c^2`` arises because we set the gravitational potentials as adimensional quantities
-- the ``D^2`` because the Laplacian is taken with respect to the comoving coordinates ``\mathbf{s}``.
-
+- the minus sign comes from the fact that we define ``\phi`` as minus the Newtonian gravitational potential;
+- the ``c^2`` arises because we set the gravitational potentials as adimensional quantities;
+- the ``a^2(z) = (1+z)^{-2}`` because the Laplacian is taken with respect to the comoving
+  coordinates ``\mathbf{s}``, and ``\nabla^2_{\mathbf{s}} = a^2 \, \nabla^2_{\mathrm{phys}}``.
+  Note that this is the *scale factor*, not the growth factor ``D(z)`` that will enter
+  through (P.6): the two coincide only during matter domination.
 
 In General Relativity, (P.3) holds on all linear scales if ``\delta_m`` is the comoving-gauge density contrast, which at late times coincides with the synchronous-gauge one computed by CLASS.
 
-The matter density dilutes as ``a^{-3} = (1+z)^3``, and its present-day value is fixed by the first Friedmann equation for a flat Universe, with ``H(z) = a^{-1} \mathrm{d}a/\mathrm{d}t`` the non-comoving Hubble parameter and ``\Omega_{\mathrm{M}0}`` the present-day matter density parameter:
-
-
-The first Friedmann equation for a flat Universe reads
+What is left to fix is ``\langle\rho_m(z)\rangle``. The first Friedmann equation for a flat Universe reads
 
 ```math
-    \left(\frac{\mathrm{d}{a}}{\mathrm{d}t}\right)^2 = \frac{8 \pi G}{3}\langle\rho_m\rangle a^2 \, .
+    \left(\frac{\mathrm{d}a}{\mathrm{d}t}\right)^2
+        = \frac{8 \pi G}{3} \, \langle\rho_{\mathrm{tot}}(z)\rangle \, a^2 \; ,
 ```
 
-Using the non-comoving Hubble parameter ``H(a) = a^{-1} \mathrm{d}d a/\mathrm{d}t``, we get
+so that, introducing the non-comoving Hubble parameter ``H(z) := a^{-1}\,\mathrm{d}a/\mathrm{d}t``,
 
 ```math
-    \quad \Rightarrow \quad
-    H^2(z) =\frac{1}{a^2}\left(\frac{\mathrm{d}{a}}{\mathrm{d}t}\right)^2 = \frac{8 \pi G}{3}\langle\rho_m\rangle \\[10pt]
-    \quad \Rightarrow \quad
-    \langle\rho_m(z)\rangle = \frac{3}{8 \pi G}\, H^{2}(z) \\[10pt]
-
+\begin{align*}
+    H^2(z) &= \frac{1}{a^2}\left(\frac{\mathrm{d}a}{\mathrm{d}t}\right)^2
+        = \frac{8 \pi G}{3} \, \langle\rho_{\mathrm{tot}}(z)\rangle \\[10pt]
+    \underset{z \, = \, 0}{\Longrightarrow} \quad
+    \langle\rho_{\mathrm{tot},0}\rangle &= \frac{3 H_0^2}{8 \pi G} \; .
+\end{align*}
 ```
 
-Taking into account the Hubble parameter evolution in an Einstein-De Sitter Universe, with ``\Omega_{\mathrm{M}0}`` as the present-day matter density parameter,
+Matter dilutes as ``a^{-3} = (1+z)^3``, and its present-day share of the total is by
+definition ``\Omega_{\mathrm{M}0} := \langle\rho_{m,0}\rangle / \langle\rho_{\mathrm{tot},0}\rangle``,
+so that
 
 ```math
-    H(z) = H_0 \,D^{-3/2}(z)\, \Omega_{\mathrm{M}0}^{1/2} \, , \\[10pt]
-    \quad \Rightarrow \quad
-    \langle\rho_m(z)\rangle = \frac{3 H_0^2}{8 \pi G} \, \Omega_{\mathrm{M}0} \, D^{-3}(z)
-    \quad \quad (\mathrm{P}.4) \\[10pt]
+    \langle\rho_m(z)\rangle = \langle\rho_{m,0}\rangle \, (1+z)^3
+        = \frac{3 H_0^2}{8 \pi G} \, \Omega_{\mathrm{M}0} \, (1+z)^3
+    \quad \quad (\mathrm{P}.4)
 ```
 
-
-Inserting (P.4) into (P.3) and going in Fourier space (``\nabla^2 \rightarrow -k^2``), we get
+Inserting (P.4) into (P.3) and going to Fourier space (``\nabla^2 \rightarrow -k^2``), the
+three powers of ``(1+z)`` carried by the density are cut down to one by the ``a^2`` of the
+comoving Laplacian:
 
 ```math
-    (P.4) \;\mathrm{into} \; (P.3) \quad \Rightarrow \quad 
-    -k^2 \phi(\mathbf{k}, z) = - \frac{3}{2}\, \frac{\Omega_{\mathrm{M}0}}{D(z)} \, \frac{H_0^2}{c^2} \, \delta_m(\mathbf{k}, z) \, , \\[10pt]
-    \quad \Rightarrow \quad
-    k^2 \, \phi(\mathbf{k}, z) = \frac{3}{2} \, \Omega_{\mathrm{M}0}
+\begin{align*}
+    (\mathrm{P}.4) \; \mathrm{into} \; (\mathrm{P}.3) \quad \Longrightarrow \quad
+    -k^2 \, \phi(\mathbf{k}, z) &= - \frac{4 \pi G}{c^2} \, (1+z)^{-2} \,
+        \frac{3 H_0^2}{8 \pi G} \, \Omega_{\mathrm{M}0} \, (1+z)^{3} \,
+        \delta_m(\mathbf{k}, z) \\[10pt]
+    \Longrightarrow \quad
+    k^2 \, \phi(\mathbf{k}, z) &= \frac{3}{2} \, \Omega_{\mathrm{M}0} \,
         \frac{H_0^2}{c^2} \, (1+z) \, \delta_m(\mathbf{k}, z)
     \quad \quad (\mathrm{P}.5)
+\end{align*}
 ```
 
 For an accurate description, we need to relate the potential at redshift ``z`` to the primordial one ``\phi_p``, i.e. its value on super-horizon scales during matter domination.
@@ -242,8 +248,10 @@ At the other end the transfer function is no longer ``1``. For CDM it falls as
 That ``k^{-3}`` is the exponent that matters for the moments (3) of
 [The ``I_\ell^n`` integrals](theory_IlnIntegrals.md), and it is **not** what GaPSE
 actually uses. `InputPS` continues the tabulated spectrum with a power law
-``P(q) = a + b \, q^{\,s}`` fitted on `[fit_right_min, fit_right_max]`, and on
-`data/WideA_ZA_pk.dat` that fit gives
+``P(q) = a + b \, q^{\,\nu}`` fitted on `[fit_right_min, fit_right_max]` and stored in
+the fields `r_a`, `r_b`, `r_si` (and `l_a`, `l_b`, `l_si` for the left one). We write the
+exponent ``\nu`` rather than ``s``, which everywhere else on these pages is the comoving
+separation. On `data/WideA_ZA_pk.dat` the right fit gives
 
 ```math
     P(q) \; \underset{q \, > \, 20.2}{=} \; 91.60 \; q^{-2.641}
@@ -261,11 +269,10 @@ number. The question this section answers is a different one: **which of them wo
 be finite if the two cuts were removed**, i.e. which of them can be quoted without also
 quoting ``k_\mathrm{min}`` and ``k_\mathrm{max}``.
 
-Inserting ``P \sim q^{\,s}`` into the definition of ``\sigma_i``, the integrand goes as
-``q^{\,2-i+s}``. The
-integral converges at ``q \rightarrow 0`` when ``2-i+s > -1``, and at
-``q \rightarrow +\infty`` when ``2-i+s < -1``. With ``s = +0.960`` on the left and
-``s = -2.641`` on the right:
+Inserting ``P \sim q^{\,\nu}`` into the definition of ``\sigma_i``, the integrand goes
+as ``q^{\,2-i+\nu}``. The integral converges at ``q \rightarrow 0`` when
+``2-i+\nu > -1``, and at ``q \rightarrow +\infty`` when ``2-i+\nu < -1``. With
+``\nu = +0.960`` on the left and ``\nu = -2.641`` on the right:
 
 | | IR exponent | IR | UV exponent | UV |
 |:--|--:|:--|--:|:--|
@@ -275,8 +282,7 @@ integral converges at ``q \rightarrow 0`` when ``2-i+s > -1``, and at
 | ``\sigma_3`` | ``-0.040`` | converges | ``-3.641`` | converges |
 | ``\sigma_4`` | ``-1.040`` | **diverges** | ``-4.641`` | converges |
 
-Two of the five would not exist as numbers **if the range were infinite**, and this is
-where the wording has to be careful.
+Two of the five would not exist as numbers **if the range were infinite**:
 
 - **``\sigma_0`` has no ``k_\mathrm{max} \rightarrow +\infty`` limit.** With the true tail
   (P.13) its integrand goes as ``q^{-1}``, so the integral would grow logarithmically;
@@ -287,20 +293,19 @@ where the wording has to be careful.
 - **``\sigma_4`` has no ``k_\mathrm{min} \rightarrow 0`` limit**, its integrand going as
   ``q^{-1.040}`` there.
 
-Neither statement says that anything in GaPSE diverges. The moments are **defined** over
-``[k_\mathrm{min}, k_\mathrm{max}]``, exactly as the ``I_\ell^n`` that they are the limit
-of, and over that range all five are ordinary finite numbers. What the two statements do
-say is that ``\sigma_0`` and ``\sigma_4`` *depend on the range* and cannot be quoted
-without it, while ``\sigma_1``, ``\sigma_2`` and ``\sigma_3`` are insensitive to it: they
-would converge even if the cuts were removed, so any reasonable choice gives the same
-number.
+What the two entries mean is that ``\sigma_0`` and ``\sigma_4`` *depend on the range*
+and cannot be quoted without it, while ``\sigma_1``, ``\sigma_2`` and ``\sigma_3`` are
+insensitive to it: they would converge even if the cuts were removed, so any reasonable
+choice gives the same number. The moments themselves are, over the finite range of their
+definition, five ordinary numbers in all cases.
 
 This is the same point made from the other side in
-[Why the cut cannot be dropped](theory_IlnIntegrals.md#why-the-cut-cannot-be-dropped):
-the range belongs to the definition, for the ``\sigma_i`` just as for the ``I_\ell^n``,
-and the two must use the same one for
-``I_\ell^n(s) \rightarrow \sigma_{n-\ell}s^{\ell-n}/(2\ell+1)!!`` to hold — which,
-numerically, it does to six digits.
+[Why the cut cannot be dropped](@ref "Why the cut cannot be dropped"):
+the range belongs to the definition, for the ``\sigma_i`` just as for the ``I_\ell^n``.
+Computed over one and the same range, the two obey
+``I_\ell^n(s) \rightarrow \sigma_{n-\ell}\,s^{\ell-n}/(2\ell+1)!!`` to six digits;
+which ranges GaPSE actually hands to each of them, and why they are not the same one, is
+in [The ranges the code uses](@ref "2. The ranges the code uses").
 
 Measured on `data/WideA_ZA_pk.dat`, with ``k_\mathrm{min} = 10^{-5}``:
 

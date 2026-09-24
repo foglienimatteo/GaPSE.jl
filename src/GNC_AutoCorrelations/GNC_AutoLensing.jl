@@ -198,8 +198,6 @@ function integrand_ξ_GNC_Lensing(
         # for Δχ → 0 the J02 term vanishes, the J31 one gives 3 * σ_2 and the
         # direction-dependent parts of J00 and J22 cancel each other;
         # see "The Δχ → 0 limits" page of the documentation.
-        # NOTE: do not restore `3/5 * (5σ_2 + 6σ_0*χ2^2)` = `3σ_2 + 18/5*χ2^2*σ_0`:
-        # its σ_0 coefficient is a factor 3 too large.
         3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
     end
 
