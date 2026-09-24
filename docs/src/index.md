@@ -268,8 +268,6 @@ Pages = [
     "GNCxLD_Correlations_2.md",
     "LDxGNC_Correlations_1.md",
     "LDxGNC_Correlations_2.md",
-    "GNC_Correlations_1.md",
-    "GNC_Correlations_2.md",
     "PlaneParallelApprox.md",
     "PowerSpectra.md",
     "PowerSpectraGenWin.md",
