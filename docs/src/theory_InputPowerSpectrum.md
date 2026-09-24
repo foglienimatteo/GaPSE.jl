@@ -64,7 +64,7 @@ We start from the Poisson equation in real comoving space, valid from the matter
 when radiation is negligible and the cosmological constant does not cluster:
 
 ```math
-    \nabla^2 \phi(\mathbf{s}, z) = - \frac{4 \pi G}{c^2} \, a^2(z) \, \langle\rho_m(z)\rangle \, \delta_m(\mathbf{s}, z)
+    \nabla^2 \phi(\mathbf{s}, z) = - \frac{4 \pi G}{c^2} \, D^2(z) \, \langle\rho_m(z)\rangle \, \delta_m(\mathbf{s}, z)
     \quad \quad (\mathrm{P}.3)
 ```
 
@@ -72,7 +72,7 @@ where:
 
 - the minus sign comes from the fact that we define ``\phi`` as minus the Newtonian gravitational potential
 - the ``c^2`` arises because we set the gravitational potentials as adimensional quantities
-- the ``a^2`` because the Laplacian is taken with respect to the comoving coordinates ``\mathbf{s}``.
+- the ``D^2`` because the Laplacian is taken with respect to the comoving coordinates ``\mathbf{s}``.
 
 
 In General Relativity, (P.3) holds on all linear scales if ``\delta_m`` is the comoving-gauge density contrast, which at late times coincides with the synchronous-gauge one computed by CLASS.
@@ -80,23 +80,38 @@ In General Relativity, (P.3) holds on all linear scales if ``\delta_m`` is the c
 The matter density dilutes as ``a^{-3} = (1+z)^3``, and its present-day value is fixed by the first Friedmann equation for a flat Universe, with ``H(z) = a^{-1} \mathrm{d}a/\mathrm{d}t`` the non-comoving Hubble parameter and ``\Omega_{\mathrm{M}0}`` the present-day matter density parameter:
 
 
-We replace ``\langle{\rho}\rangle``  with the first Friedmann equation for a flat Universe
+The first Friedmann equation for a flat Universe reads
 
 ```math
-
-    \left(\frac{\mathrm{d}{a}}{\mathrm{d}t}\right)^2 = \frac{4 \pi G}{3}\langle\rho\rangle a^2 \, ,
+    \left(\frac{\mathrm{d}{a}}{\mathrm{d}t}\right)^2 = \frac{8 \pi G}{3}\langle\rho_m\rangle a^2 \, .
 ```
 
+Using the non-comoving Hubble parameter ``H(a) = a^{-1} \mathrm{d}d a/\mathrm{d}t``, we get
+
 ```math
-    H^2(z) = \frac{8 \pi G}{3} \, \bar{\rho}_\mathrm{tot}(z)
-    \quad \Longrightarrow \quad
-    \bar{\rho}_m(z) = \frac{3 H_0^2}{8 \pi G} \, \Omega_{\mathrm{M}0} \, (1+z)^3
-    \quad \quad (\mathrm{P}.4)
+    \quad \Rightarrow \quad
+    H^2(z) =\frac{1}{a^2}\left(\frac{\mathrm{d}{a}}{\mathrm{d}t}\right)^2 = \frac{8 \pi G}{3}\langle\rho_m\rangle \\[10pt]
+    \quad \Rightarrow \quad
+    \langle\rho_m(z)\rangle = \frac{3}{8 \pi G}\, H^{2}(z) \\[10pt]
+
 ```
 
-Inserting (P.4) in (P.3) and going to Fourier space (``\nabla^2 \rightarrow -k^2``), we obtain:
+Taking into account the Hubble parameter evolution in an Einstein-De Sitter Universe, with ``\Omega_{\mathrm{M}0}`` as the present-day matter density parameter,
 
 ```math
+    H(z) = H_0 \,D^{-3/2}(z)\, \Omega_{\mathrm{M}0}^{1/2} \, , \\[10pt]
+    \quad \Rightarrow \quad
+    \langle\rho_m(z)\rangle = \frac{3 H_0^2}{8 \pi G} \, \Omega_{\mathrm{M}0} \, D^{-3}(z)
+    \quad \quad (\mathrm{P}.4) \\[10pt]
+```
+
+
+Inserting (P.4) into (P.3) and going in Fourier space (``\nabla^2 \rightarrow -k^2``), we get
+
+```math
+    (P.4) \;\mathrm{into} \; (P.3) \quad \Rightarrow \quad 
+    -k^2 \phi(\mathbf{k}, z) = - \frac{3}{2}\, \frac{\Omega_{\mathrm{M}0}}{D(z)} \, \frac{H_0^2}{c^2} \, \delta_m(\mathbf{k}, z) \, , \\[10pt]
+    \quad \Rightarrow \quad
     k^2 \, \phi(\mathbf{k}, z) = \frac{3}{2} \, \Omega_{\mathrm{M}0}
         \frac{H_0^2}{c^2} \, (1+z) \, \delta_m(\mathbf{k}, z)
     \quad \quad (\mathrm{P}.5)
@@ -304,38 +319,6 @@ reaches at ``k_\mathrm{max}``. This is why ``k_\mathrm{max}`` is part of the def
 and not a convergence parameter.
 
 
-### What this means for the ``\Delta\chi \rightarrow 0`` limits
-
-``\sigma_0`` enters five limit branches — the three of the Lensing-Lensing family
-(``3\sigma_2 + \frac{6}{5}\chi_1^2\sigma_0``) and the two of Newtonian ``\times``
-Lensing (``-s_1(f_1+5b_1)\sigma_0/5``). Since ``\sigma_0`` depends on the range, those
-five results depend on it too, and the choice is not free: the limit branch replaces
-``I_0^0(\Delta\chi)`` for ``\Delta\chi < \Delta\chi_\mathrm{min}``, so the ``\sigma_0``
-it needs is the one belonging to the same integral, i.e. computed over the
-``[k_\mathrm{min}, k_\mathrm{max}]`` of (1) in
-[The ``I_\ell^n`` integrals](theory_IlnIntegrals.md).
-
-Two consequences follow, and they pull in opposite directions:
-
-1. **the ranges must agree.** `IPSTools` hard-codes ``[10^{-5}, 10^{3}]`` for the
-   `xicalc` call that builds the ``I_\ell^n``, while the stored ``\sigma_i`` use its
-   `k_min`/`k_max` keywords. When the two differ, the limit branch and the
-   ``J \, I_\ell^n`` branch are describing different integrals. For ``\sigma_2`` and
-   ``\sigma_3`` this is immaterial; for ``\sigma_0`` it is a factor of several;
-2. **the limit is only reached below ``1/k_\mathrm{max}``.** Condition (1.3) of the
-   ``I_\ell^n`` page says the asymptotic form holds for
-   ``s \ll 1/k_\mathrm{max}``. With ``k_\mathrm{max} = 10^{3}`` that is
-   ``s \ll 10^{-3}``, far below the ``\Delta\chi_\mathrm{min} = 0.1`` at which the branch
-   actually switches over, where ``I_0^0(0.1) = 23.7`` against ``\sigma_0 = 143.3``.
-
-The second point is the sharper one, and it is a genuine approximation in the code rather
-than a matter of bookkeeping: at the switch-over the true ``I_0^0`` has not yet reached
-its asymptotic value. Using a ``\sigma_0`` computed over
-``[k_\mathrm{min}, 1/\Delta\chi_\mathrm{min}]`` instead of the full range would make the
-two branches agree at the boundary — ``\sigma_0(<10) = 18.6`` against
-``I_0^0(0.1) = 23.7`` — and it is what the default `IPSTools`
-``k_\mathrm{max} = 10`` amounts to. Both options are stated here rather than left
-implicit; the code currently uses the stored ``\sigma_i``.
 
 ## The figures
 

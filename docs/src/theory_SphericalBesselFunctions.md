@@ -57,8 +57,7 @@ The first few ``j_\ell(x)`` are the following, with the terms grouped by ``\sin`
 \begin{align*}
     j_0(x) &= \frac{\sin(x)}{x} \, , \\[10pt]
     j_1(x) &= \frac{\sin(x)}{x^2} - \frac{\cos(x)}{x} \, , \\[10pt]
-    j_2(x) &= \left( \frac{3}{x^3} - \frac{1}{x} \right) \sin(x)
-             - \frac{3}{x^2} \, \cos(x) \, , \\[10pt]
+    j_2(x) &= \left( \frac{3}{x^3} - \frac{1}{x} \right) \sin(x) - \frac{3}{x^2} \, \cos(x) \, , \\[10pt]
     j_3(x) &= \left( \frac{15}{x^4} - \frac{6}{x^2} \right) \sin(x)
              - \left( \frac{15}{x^3} - \frac{1}{x} \right) \cos(x) \, , \\[10pt]
     j_4(x) &= \left( \frac{105}{x^5} - \frac{45}{x^3} + \frac{1}{x} \right) \sin(x)
@@ -66,18 +65,20 @@ The first few ``j_\ell(x)`` are the following, with the terms grouped by ``\sin`
 \end{align*}
 ```
 
-Written this way the pattern is evident: ``j_\ell`` is a finite combination of
-``\sin(x)`` and ``\cos(x)``, the coefficient of ``\sin`` being a polynomial in ``1/x``
-of degree ``\ell+1`` and the one of ``\cos`` of degree ``\ell``, both alternating in
-sign and containing only every other power. They are all generated from ``j_0`` by
-Rayleigh's formula, or in practice by the upward recurrence
-``j_{\ell+1}(x) = \frac{2\ell+1}{x} j_\ell(x) - j_{\ell-1}(x)``, both reported among
-the properties below.
+Written this way the pattern is evident: 
 
-These closed forms are however *not* how the functions should be evaluated: for
-``x \lesssim \ell`` the two groups cancel almost exactly against each other, so the
-result is obtained as a small difference of large numbers and loses precision. Over
-``x \in [0.3, 40]`` the expressions above agree with
+- ``j_\ell`` is a finite combination of ``\sin(x)`` and ``\cos(x)``
+- the coefficient of ``\sin`` is a polynomial in ``1/x`` of degree ``\ell+1``
+- the one of ``\cos`` of degree ``\ell``
+- both coefficients alternate in sign and contain only every other power
+
+They are all generated from ``j_0`` by Rayleigh's formula, or in practice by the upward recurrence
+``j_{\ell+1}(x) = \frac{2\ell+1}{x} j_\ell(x) - j_{\ell-1}(x)``, both reported among the properties below.
+
+These closed forms are however *not* how the functions should be evaluated: 
+for ``x \lesssim \ell`` the two groups cancel almost exactly against each other, so the
+result is obtained as a small difference of large numbers and loses precision. 
+Over ``x \in [0.3, 40]`` the expressions above agree with
 `SpecialFunctions.sphericalbesselj` to ``6 \cdot 10^{-12}`` at worst, with the error
 growing with ``\ell`` precisely because of this cancellation.
 
@@ -131,10 +132,7 @@ Keeping only the ``k = 0`` term is legitimate up to ``x \simeq 1``, and not beyo
 
 ![Where the small-x expansion holds](assets/misc/spherical_bessels_smallx.png)
 
-On the log-log scale of the upper panel the two curves of each ``\ell`` look
-superimposed over a dozen decades, which is exactly the impression that has to be
-resisted; the lower panel is their ratio on a scale narrow enough to read it. The
-truncation is good to 10% up to ``x = 0.79`` for ``\ell = 0``, and the bound drifts only
+The truncation is good to 10% up to ``x = 0.79`` for ``\ell = 0``, and the bound drifts only
 slowly with the order — ``1.02``, ``1.21``, ``1.37``, ``1.52`` for ``\ell = 1 \ldots 4``
 — so ``x \simeq 1`` is the right single number to remember.
 
@@ -251,8 +249,6 @@ at large ``\ell``, where the exact asymptotic expansion reads
 
 ![The first zero of j_l](assets/misc/spherical_bessels_firstzeros.png)
 
-The lower panel divides each approximation by the numerical value, which is the only way
-to see anything: on the linear scale above the three curves are indistinguishable.
 Neither approximation is within 10% below ``\ell = 4``; past that the straight line is
 within 1% from ``\ell = 12``, while the asymptotic form, which is the one that is right
 in the limit, needs ``\ell = 69`` to get there.
