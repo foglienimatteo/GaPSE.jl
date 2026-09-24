@@ -7,10 +7,10 @@ large ``q`` — are not a detail: they decide whether each moment
 ```math
     \sigma_i = \int_{k_\mathrm{min}}^{k_\mathrm{max}} \frac{\mathrm{d}q}{2\pi^2}
     \, q^{\,2-i} \, P(q)
-    \quad \quad (1)
 ```
 
-is a number, or is set by where the integral happens to be cut. Since the
+(Eq.(3) of [The ``I_\ell^n`` integrals](theory_IlnIntegrals.md)) is a number on its own,
+or only together with the range it is computed over. Since the
 ``\Delta\chi \rightarrow 0`` limits of every TPCF reduce to combinations of ``\sigma_i``
 (see [The ``\Delta\chi \rightarrow 0`` limits](theory_DeltaChiLimits.md)), and the
 ``I_\ell^n`` reduce to them as ``s \rightarrow 0``
@@ -180,92 +180,38 @@ With ``k`` in ``h \, \mathrm{Mpc}^{-1}``, one has ``c/H_0 \simeq 2997.92 \, h^{-
 
 
 
-In the ``\Lambda``-CDM cosmology, the primordial curvature perturbations are a pure power law (see the [Planck 2018 results, A&A 641, A10 (2020)](https://doi.org/10.1051/0004-6361/201833887)), usually quoted through the dimensionless power spectrum ``\Delta^2_{\mathcal{R}}``:
-
-```math
-    \Delta^2_{\mathcal{R}}(k) := \frac{k^3}{2\pi^2} P_\mathcal{R}(k) \quad \quad (\mathrm{P}.1)
-```
-
-What enters the ``I_\ell^n`` is the matter Power Spectrum ``P_m(k,z)`` at present day (``z=0``), a dimensional quantity in ``(h^{-1}\mathrm{Mpc})^3``. 
-The two are related by the Poisson equation and the matter transfer function ``T(k)``, which describes 
-the evolution of perturbations through the epochs of horizon crossing and radiation/matter transition:
-
-```math
-    P_m(k, z)  \propto  k^4 \, T^2(k) \, D^2(z) \, P_\mathcal{R}(k)
-    \quad \quad (\mathrm{P}.5)
-```
-
-
-
-Below we plot the matter transfer function ``T_m(k)`` at redshift ``z = 0``, obtained from the CLASS code.
-
-![The Matter Transfer Function](assets/misc/Matter_Transfer_Function.png)
-
-The transfer function is asymptotic to ``k^{-2}\ln k`` at small scales, and constant at large ones.
-It is normalized such that at large scales it goes to ``1``:
-
-```math
-    T(k) \xrightarrow[k \rightarrow 0^{+}]{} 1 \quad \quad (\mathrm{P}.6) \\[10pt]
-    T(k) \underset{k \rightarrow +\infty}{\sim} k^{-2}\ln k
-```
-
 ## The small-``k`` slope
 
-At large scales, it's known that:
+Everything needed is already in (P.2) and (P.11). On large scales the transfer function
+is ``1`` by construction, (P.7), so (P.11) reduces to a pure power law:
 
 ```math
 \begin{align*}
-    \Delta^2_{\mathcal{R}}(k) &\underset{k \rightarrow 0^{+}}{\sim} \; A_s \, \left( \frac{k}{k^*}\right)^{n_s-1} &&(\mathrm{P}.1)\\[10pt]
-
-    n_s&\approx 0.965&&\mathrm{primordial \; spectral \; index}\\[8pt]
-    \ln(10^{10} A_s) &\approx 3.043 &&\mathrm{ log \; power \; of \; primordial \; curvature \; perturbations} \Rightarrow A_s \approx 2.1 \times 10^{-9}\\[8pt]
-    k^* &\approx 0.05 \; \mathrm{Mpc}^{-1}  &&\mathrm{arbitrary \; pivot \; scale}
+    (\mathrm{P}.11) \; \mathrm{with} \; T(k) \rightarrow 1 \; : \quad \quad
+    P_m(k, z=0) &\; \propto \; k^{\,n_s} \, T^2(k) \, D^2(0) \\[10pt]
+    &\underset{k \rightarrow 0^{+}}{\sim} \; k^{\,n_s}
 \end{align*}
 ```
 
 ```math
-    \Rightarrow P_\mathcal{R}(k) = \frac{2\pi^2}{k^3}\,\Delta^2_{\mathcal{R}}(k) \underset{k \rightarrow 0^{+}}{\sim} k^{\,n_s-4} \quad \quad (\mathrm{P}.2) \\[10pt]
+\boxed{
+    P(k) \; \underset{k \rightarrow 0^{+}}{\sim}  \, k^{\,n_P} \; , \quad \quad
+    n_P = n_s \simeq 0.96
+}
+\quad \quad (\mathrm{P}.12)
 ```
 
-First of all, we start from the Poisson equation in real comoving space
+The matter Power Spectrum therefore **grows** as ``k^{+0.96}`` at small ``k``, while the
+dimensionless curvature ``\Delta^2_\mathcal{R}`` *falls* as
+``k^{\,n_s-1} \simeq k^{-0.035}``. The two are not in conflict: the four powers of ``k``
+supplied by the Poisson equation, minus the three of the
+``\Delta^2_\mathcal{R} \leftrightarrow P_\mathcal{R}`` conversion (P.2), are exactly what
+separates them. The distinction matters because ``n_P`` and ``n_s - 1`` are easy to
+confuse, and it is ``n_P`` that governs the ``I_\ell^n``.
 
-```math
-\begin{align*}
-    \nabla^2 \phi(\mathbf{s}, z) = - \frac{4 \pi G}{c^2}\langle\rho\rangle D^2(z) \, \Delta(\mathbf{s}) \, ,
-\end{align*}
-```
-
-The transfer function is normalized such that at large scales it goes to ``1``:
-```math
-    T(k) \xrightarrow[k \rightarrow 0^{+}]{} 1 \quad \quad (\mathrm{P}.6) \\[10pt]
-```
-
-so at present day:
-
-```math
-\begin{align*}
-    (\mathrm{P}.5)\; \mathrm{with} \; z=0 : \quad \quad P_m(k, z=0)  & \propto  k^4 \, T^2(k) \, D^2(0) \, P_\mathcal{R}(k)\\[10pt]
-    \mathrm{Inserting} \; (\mathrm{P}.6) \rightarrow  \quad \quad
-    &\underset{ k\rightarrow 0^{+}}{\sim} \; k^{4}  \; P_\mathcal{R}(k) \\[10pt]
-    \mathrm{Inserting} \; (\mathrm{P}.4) \rightarrow  \quad \quad
-    &\underset{ k\rightarrow 0^{+}}{\sim} \; k^{4}  \, k^{\,n_s-4}  \\[10pt]
-    &= \; k^{n_s}\\[10pt]
-\end{align*}
-```
-
-```math
-    \quad \Rightarrow \quad
-    P(k) \; \underset{k \rightarrow 0^{+}}{\sim}  \, k^{n_s} \; ,
-    \quad \quad n_s \simeq 0.96
-    \quad \quad (\mathrm{P}.7)
-```
-
-The matter Power Spectrum therefore *grows* as ``k^{+0.96}`` at small ``k``. 
-The dimensionless curvature goes as ``k^{n_s-1} \simeq k^{-0.035}`` and the four powers of ``k`` supplied by Poisson, minus the three of the ``\Delta^2 \leftrightarrow P`` conversion, are exactly what separates them.
-
-NOTE: this is directly visible in `data/WideA_ZA_pk.dat`, whose local slope ``\mathrm{d}\ln P / \mathrm{d}\ln k`` is ``+0.9600`` over the first decade of the tabulated range, with an amplitude of order ``10^{6} \, (h^{-1}\mathrm{Mpc})^3``.
-
-
+This is directly visible in `data/WideA_ZA_pk.dat`, whose local slope
+``\mathrm{d}\ln P / \mathrm{d}\ln k`` is ``+0.9600`` over the first decade of the
+tabulated range, with an amplitude of order ``10^{6} \, (h^{-1}\mathrm{Mpc})^3``.
 
 ## The large-``k`` tail
 
@@ -275,25 +221,33 @@ At the other end the transfer function is no longer ``1``. For CDM it falls as
 ```math
     P_m(k) \; \underset{k \rightarrow +\infty}{\sim} \; k^{4} \, T^2(k) \, k^{\,n_s-4}
     \; \sim \; k^{\,n_s - 4} \, \ln^2 k \; \simeq \; k^{-3} \, \ln^2 k
-    \quad \quad (\mathrm{P}.8)
+    \quad \quad (\mathrm{P}.13)
 ```
 
-That ``k^{-3}`` is the number that matters for (P.1), and it is **not** what GaPSE
+That ``k^{-3}`` is the exponent that matters for the moments (3) of
+[The ``I_\ell^n`` integrals](theory_IlnIntegrals.md), and it is **not** what GaPSE
 actually uses. `InputPS` continues the tabulated spectrum with a power law
 ``P(q) = a + b \, q^{\,s}`` fitted on `[fit_right_min, fit_right_max]`, and on
 `data/WideA_ZA_pk.dat` that fit gives
 
 ```math
     P(q) \; \underset{q \, > \, 20.2}{=} \; 91.60 \; q^{-2.641}
-    \quad \quad (\mathrm{P}.9)
+    \quad \quad (\mathrm{P}.14)
 ```
 
 i.e. a tail *shallower* than the asymptotic ``k^{-3}``, simply because at
 ``k \simeq 20 \, h\,\mathrm{Mpc}^{-1}`` the true spectrum has not reached its asymptote yet.
 
-## Which ``\sigma_i`` converge
+## Which ``\sigma_i`` survive the removal of the cuts
 
-Inserting ``P \sim q^{\,s}`` into (P.1), the integrand goes as ``q^{\,2-i+s}``. The
+Over the range of its definition, Eq.(3) of
+[The ``I_\ell^n`` integrals](theory_IlnIntegrals.md), every ``\sigma_i`` is a finite
+number. The question this section answers is a different one: **which of them would still
+be finite if the two cuts were removed**, i.e. which of them can be quoted without also
+quoting ``k_\mathrm{min}`` and ``k_\mathrm{max}``.
+
+Inserting ``P \sim q^{\,s}`` into the definition of ``\sigma_i``, the integrand goes as
+``q^{\,2-i+s}``. The
 integral converges at ``q \rightarrow 0`` when ``2-i+s > -1``, and at
 ``q \rightarrow +\infty`` when ``2-i+s < -1``. With ``s = +0.960`` on the left and
 ``s = -2.641`` on the right:
@@ -306,16 +260,32 @@ integral converges at ``q \rightarrow 0`` when ``2-i+s > -1``, and at
 | ``\sigma_3`` | ``-0.040`` | converges | ``-3.641`` | converges |
 | ``\sigma_4`` | ``-1.040`` | **diverges** | ``-4.641`` | converges |
 
-Two of the five do not exist as numbers:
+Two of the five would not exist as numbers **if the range were infinite**, and this is
+where the wording has to be careful.
 
-- **``\sigma_0`` diverges in the ultraviolet.** With the true tail (P.8) the exponent
-  would be exactly ``-1``, i.e. ``\sigma_0`` would diverge *logarithmically*; with the
-  fitted tail (P.9) it diverges as a power,
-  ``\sigma_0(<K) \sim K^{\,0.359}``. This is not a defect of the code: ``\sigma_0`` is
-  the density variance ``\langle \delta^2 \rangle`` smoothed on *zero* scale, which is
-  genuinely infinite in CDM. What makes it finite in GaPSE is ``k_\mathrm{max}``.
-- **``\sigma_4`` diverges in the infrared**, as ``\sigma_4(>k) \sim k^{-0.040}``, i.e.
-  slowly but without bound.
+- **``\sigma_0`` has no ``k_\mathrm{max} \rightarrow +\infty`` limit.** With the true tail
+  (P.13) its integrand goes as ``q^{-1}``, so the integral would grow logarithmically;
+  with the fitted tail (P.14) it grows as ``\sigma_0(<K) \sim K^{\,0.359}``. That is a
+  property of ``P(q)``, not a defect: ``\sigma_0`` is the density variance
+  ``\langle \delta^2 \rangle`` smoothed on *zero* scale, which is not a finite quantity in
+  CDM.
+- **``\sigma_4`` has no ``k_\mathrm{min} \rightarrow 0`` limit**, its integrand going as
+  ``q^{-1.040}`` there.
+
+Neither statement says that anything in GaPSE diverges. The moments are **defined** over
+``[k_\mathrm{min}, k_\mathrm{max}]``, exactly as the ``I_\ell^n`` that they are the limit
+of, and over that range all five are ordinary finite numbers. What the two statements do
+say is that ``\sigma_0`` and ``\sigma_4`` *depend on the range* and cannot be quoted
+without it, while ``\sigma_1``, ``\sigma_2`` and ``\sigma_3`` are insensitive to it: they
+would converge even if the cuts were removed, so any reasonable choice gives the same
+number.
+
+This is the same point made from the other side in
+[Why the cut cannot be dropped](theory_IlnIntegrals.md#why-the-cut-cannot-be-dropped):
+the range belongs to the definition, for the ``\sigma_i`` just as for the ``I_\ell^n``,
+and the two must use the same one for
+``I_\ell^n(s) \rightarrow \sigma_{n-\ell}s^{\ell-n}/(2\ell+1)!!`` to hold — which,
+numerically, it does to six digits.
 
 Measured on `data/WideA_ZA_pk.dat`, with ``k_\mathrm{min} = 10^{-5}``:
 
@@ -324,47 +294,48 @@ Measured on `data/WideA_ZA_pk.dat`, with ``k_\mathrm{min} = 10^{-5}``:
 | ``\sigma_0``       | ``3.41`` |   ``18.6`` |   ``56.5`` |    ``143`` |    ``341`` |
 | ``\sigma_2``       | ``98.8`` | ``101.06`` | ``101.13`` | ``101.13`` | ``101.13`` |
 
-``\sigma_2`` has converged by ``k \simeq 1``; ``\sigma_0`` has not converged anywhere.
+``\sigma_2`` has settled by ``k \simeq 1`` and is then flat to five digits.
+``\sigma_0`` never settles, and it is important to read that correctly: it is not a
+numerical problem that a finer grid or a wider range would cure. With the fitted tail
+(P.14) every extra decade of ``k`` multiplies it by ``10^{\,0.359} \simeq 2.3``, for ever.
+A cumulative plot of ``\sigma_0(<k)`` therefore **cannot** show a plateau — by
+construction, not by accident — and the value of ``\sigma_0`` is whatever the integral
+reaches at ``k_\mathrm{max}``. This is why ``k_\mathrm{max}`` is part of the definition
+and not a convergence parameter.
 
 
 ### What this means for the ``\Delta\chi \rightarrow 0`` limits
 
-``\sigma_0`` enters five limit branches:
+``\sigma_0`` enters five limit branches — the three of the Lensing-Lensing family
+(``3\sigma_2 + \frac{6}{5}\chi_1^2\sigma_0``) and the two of Newtonian ``\times``
+Lensing (``-s_1(f_1+5b_1)\sigma_0/5``). Since ``\sigma_0`` depends on the range, those
+five results depend on it too, and the choice is not free: the limit branch replaces
+``I_0^0(\Delta\chi)`` for ``\Delta\chi < \Delta\chi_\mathrm{min}``, so the ``\sigma_0``
+it needs is the one belonging to the same integral, i.e. computed over the
+``[k_\mathrm{min}, k_\mathrm{max}]`` of (1) in
+[The ``I_\ell^n`` integrals](theory_IlnIntegrals.md).
 
--  the three of the Lensing-Lensing family: ``3\sigma_2 + \frac{6}{5}\chi_1^2\sigma_0``
--  the two of Newtonian-Lensing: ``-s_1(f_1+5b_1)\sigma_0/5`` 
+Two consequences follow, and they pull in opposite directions:
 
-The derivation of those limits assumes ``\sigma_0 = \mathrm{const}``, which is not actually true.
+1. **the ranges must agree.** `IPSTools` hard-codes ``[10^{-5}, 10^{3}]`` for the
+   `xicalc` call that builds the ``I_\ell^n``, while the stored ``\sigma_i`` use its
+   `k_min`/`k_max` keywords. When the two differ, the limit branch and the
+   ``J \, I_\ell^n`` branch are describing different integrals. For ``\sigma_2`` and
+   ``\sigma_3`` this is immaterial; for ``\sigma_0`` it is a factor of several;
+2. **the limit is only reached below ``1/k_\mathrm{max}``.** Condition (1.3) of the
+   ``I_\ell^n`` page says the asymptotic form holds for
+   ``s \ll 1/k_\mathrm{max}``. With ``k_\mathrm{max} = 10^{3}`` that is
+   ``s \ll 10^{-3}``, far below the ``\Delta\chi_\mathrm{min} = 0.1`` at which the branch
+   actually switches over, where ``I_0^0(0.1) = 23.7`` against ``\sigma_0 = 143.3``.
 
-What happens is that ``j_0(qs)`` cuts the ``q`` integral at ``q \sim 1/s``, so
-
-```math
-    I_0^0(s) \; \underset{s \rightarrow 0^{+}}{\simeq} \; \sigma_0(< 1/s)
-    \; \sim \; s^{-0.359} \; ,
-```
-
-as the direct integration confirms — the ratio ``I_0^0(s)/\sigma_0(<1/s)`` is
-``1.28``, ``1.22``, ``0.97``, ``1.00``, ``1.00`` at ``s = 10^{-1} \ldots 10^{-5}``, the
-saturation at the end being only the effect of the ``k_\mathrm{max} = 10^3`` cut.
-
-So ``I_0^0`` has **no** finite ``s \rightarrow 0`` limit, and the ``\sigma_0`` appearing
-in those five branches is the ``\sigma_0`` regulated at some ``k_\mathrm{max}``. The
-consistent choice is ``k_\mathrm{max} \simeq 1/\Delta\chi_\mathrm{min}``: the limit
-branch replaces ``I_0^0(\Delta\chi)`` for ``\Delta\chi < \Delta\chi_\mathrm{min}``, and
-``I_0^0(\Delta\chi_\mathrm{min}) \simeq \sigma_0(< 1/\Delta\chi_\mathrm{min})``. With the
-default ``\Delta\chi_\mathrm{min} = 0.1`` that is ``k_\mathrm{max} = 10``, which is the
-`IPSTools` default — so the code is, by luck rather than design, close to consistent:
-``I_0^0(0.1) = 23.7`` against ``\sigma_0(<10) = 18.6``.
-
-!!! warning "Do not unify the σ_i onto the xicalc range"
-    `IPSTools` hard-codes ``[10^{-5}, 10^{3}]`` for the `xicalc` call that builds the
-    ``I_\ell^n``, while the stored ``\sigma_i`` use its `k_min`/`k_max` keywords.
-    Making the ``\sigma_i`` use the `xicalc` range too would give
-    ``\sigma_0 = 143`` against ``I_0^0(0.1) = 23.7``, i.e. a factor ``6`` jump at the
-    branch boundary instead of the present ``1.28``. For the *converged* moments
-    (``\sigma_2``, ``\sigma_3``) the choice is irrelevant; for ``\sigma_0`` the range
-    that matters is the one set by ``\Delta\chi_\mathrm{min}``, not the one used by
-    `xicalc`.
+The second point is the sharper one, and it is a genuine approximation in the code rather
+than a matter of bookkeeping: at the switch-over the true ``I_0^0`` has not yet reached
+its asymptotic value. Using a ``\sigma_0`` computed over
+``[k_\mathrm{min}, 1/\Delta\chi_\mathrm{min}]`` instead of the full range would make the
+two branches agree at the boundary — ``\sigma_0(<10) = 18.6`` against
+``I_0^0(0.1) = 23.7`` — and it is what the default `IPSTools`
+``k_\mathrm{max} = 10`` amounts to. Both options are stated here rather than left
+implicit; the code currently uses the stored ``\sigma_i``.
 
 ## The figures
 
@@ -374,7 +345,7 @@ default ``\Delta\chi_\mathrm{min} = 0.1`` that is ``k_\mathrm{max} = 10``, which
 
 ``P(q)`` over twelve decades. Outside the tabulated range (grey lines) the solid curve
 *is* the dashed power law, which is the point of the figure: what GaPSE integrates
-beyond ``q \simeq 20`` is the extrapolation (P.9), not data.
+beyond ``q \simeq 20`` is the extrapolation (P.14), not data.
 
 ```@raw html
 <img src="../assets/input_ps/input_ps_slope.png" alt="Local slope of the input Power Spectrum"/>
@@ -382,7 +353,7 @@ beyond ``q \simeq 20`` is the extrapolation (P.9), not data.
 
 The same information as a local slope ``\mathrm{d}\ln P/\mathrm{d}\ln q``: flat at
 ``+0.960`` on the left, flat at ``-2.641`` on the right, with the turnover around the
-equality scale in between. The dotted line marks the ``-3`` of (P.8), which the fitted
+equality scale in between. The dotted line marks the ``-3`` of (P.13), which the fitted
 tail does not reach.
 
 ## Reproducing the figures

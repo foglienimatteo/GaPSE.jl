@@ -4,6 +4,7 @@
   - [Definitions](#definitions)
   - [TLDR; the easy-to-get small-``s`` behaviour](#tldr-the-easy-to-get-small-s-behaviour)
   - [The exact small-``s`` behaviour](#the-exact-small-s-behaviour)
+    - [Why the cut cannot be dropped](#why-the-cut-cannot-be-dropped)
     - [The three regimes](#the-three-regimes)
   - [A warning before looking at the plots](#a-warning-before-looking-at-the-plots)
     - [1. An `IntegralIPS` is a spline only between `left` and `right`](#1-an-integralips-is-a-spline-only-between-left-and-right)
@@ -12,6 +13,7 @@
   - [The plots](#the-plots)
     - [One by one](#one-by-one)
   - [The large-``s`` behaviour](#the-large-s-behaviour)
+    - [The integral this section works with](#the-integral-this-section-works-with)
     - [The small-``k`` slope of the matter Power Spectrum](#the-small-k-slope-of-the-matter-power-spectrum)
     - [Why the limit cannot be taken inside the integral](#why-the-limit-cannot-be-taken-inside-the-integral)
     - [The proof, by Mellin transform](#the-proof-by-mellin-transform)
@@ -29,8 +31,7 @@ terms of the form ``J(\chi, s, y) \, I_\ell^n(\Delta\chi)``. This page collects 
 definition of these ``I_\ell^n``, proves their behaviour for small separations, and shows
 what they look like.
 
-The plots are produced by the notebook `theory/Iln_terms.ipynb` (or, equivalently, by the
-notebook `theory/Iln_terms.ipynb`); see the end of this page.
+The plots are produced by the notebook `theory/Iln_terms.ipynb`; see the end of this page.
 
 
 
@@ -43,12 +44,21 @@ notebook `theory/Iln_terms.ipynb`); see the end of this page.
 The integrals are
 
 ```math
-    I_\ell^n(s) := \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \;, \quad \quad (1)
+    I_\ell^n(s) := \int_{k_\mathrm{min}}^{k_\mathrm{max}} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \;, \quad \quad (1)
 ```
 
-with ``P(q)`` the matter Power Spectrum at ``z=0`` stored inside the `Cosmology`, and
-``j_\ell`` the spherical Bessel function of order ``\ell``. The eight combinations
-``(\ell, n)`` that appear in the code are
+with ``P(q)`` the matter Power Spectrum at ``z=0`` stored inside the `Cosmology``, and
+``j_\ell`` the spherical Bessel function of order ``\ell``.
+
+!!! note "The integration range is part of the definition"
+    ``k_\mathrm{min}`` and ``k_\mathrm{max}`` are **not** a numerical detail to be sent to
+    ``0`` and ``+\infty`` at the end: they are part of what ``I_\ell^n`` *means* here.
+    `IPSTools` hands ``k_\mathrm{min}, k_\mathrm{max} = 10^{-5}, 10^{3}`` to `xicalc`, and
+    every result on this page is a statement about *that* integral. The section
+    [Why the cut cannot be dropped](#why-the-cut-cannot-be-dropped) shows what changes if
+    one insists on ``\int_0^{+\infty}`` instead — it is not a harmless idealisation.
+
+The eight combinations ``(\ell, n)`` that appear in the code are
 
 ```math
     (0,0) \, , \quad (2,0) \, , \quad (4,0) \, , \quad (0,2) \, , \quad
@@ -61,8 +71,8 @@ them there is the auxiliary integral
 
 ```math
 \begin{align*}
-    \tilde{I}_0^4(s) &:= \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_0(qs) - 1 }{(qs)^4} \quad \quad (2) \\[10pt]
-        &= \frac{1}{s^4} \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, \frac{P(q)}{q^2} \, \left[ j_0(qs) - 1 \right] \; .
+    \tilde{I}_0^4(s) &:= \int_{k_\mathrm{min}}^{k_\mathrm{max}} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_0(qs) - 1 }{(qs)^4} \quad \quad (2) \\[10pt]
+        &= \frac{1}{s^4} \int_{k_\mathrm{min}}^{k_\mathrm{max}} \frac{\mathrm{d}q}{2\pi^2} \, \frac{P(q)}{q^2} \, \left[ j_0(qs) - 1 \right] \; .
 \end{align*}
 ```
 
@@ -74,10 +84,17 @@ We also need the moments of the Power Spectrum
     \sigma_i := \int_{k_\mathrm{min}}^{k_\mathrm{max}} \frac{\mathrm{d}q}{2 \pi^2} \, q^{2-i} \, P(q) \; , \quad \quad (3)
 ```
 
-of which `IPSTools` stores ``\sigma_0``, ``\sigma_1``, ``\sigma_2``, ``\sigma_3`` and
-``\sigma_4``. Note that ``\sigma_i`` with ``i<0`` also appear below; they are perfectly
-finite as long as ``k_\mathrm{max}`` is finite, but they are not stored, so the script
+over **the same** ``[k_\mathrm{min}, k_\mathrm{max}]`` as (1) and (2), of which `IPSTools`
+stores ``\sigma_0``, ``\sigma_1``, ``\sigma_2``, ``\sigma_3`` and ``\sigma_4``. Note that
+``\sigma_i`` with ``i<0`` also appear below; they are not stored, so the notebook
 recomputes them when needed.
+
+Every ``\sigma_i`` is a finite number, for every ``i``, because the range is finite. That
+is worth stating explicitly, because some of these integrands do **not** decay fast enough
+for the integral to exist over ``(0, +\infty)``: the moment is defined by its range, and
+the range is the one in (1). See
+[The input Power Spectrum](theory_InputPowerSpectrum.md) for which ones, and why that is a
+property of ``P(q)`` rather than a defect of the code.
 
 
 
@@ -101,14 +118,30 @@ So:
 ```math
 \begin{align*}
     (1): \quad \quad I_\ell^n(s) 
-    &:= \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \\[10pt]
+    &:= \int_{k_\mathrm{min}}^{k_\mathrm{max}} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \\[10pt]
     \mathrm{inserting\; (1.2) }  \; \rightarrow \;\; \quad
-    &\underset{s \rightarrow 0}{\sim} \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{(qs)^{\ell}}{(qs)^n}\\[10pt] 
-    &=  s^{\ell-n}\int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^{2-(n-\ell)} \, P(q) \, \\[10pt]
+    &\underset{s \rightarrow 0}{\sim} \int_{k_\mathrm{min}}^{k_\mathrm{max}} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{(qs)^{\ell}}{(qs)^n}\\[10pt] 
+    &=  s^{\ell-n}\int_{k_\mathrm{min}}^{k_\mathrm{max}} \frac{\mathrm{d}q}{2\pi^2} \, q^{2-(n-\ell)} \, P(q) \, \\[10pt]
     &= \sigma_{n-\ell} \; s^{\ell-n}\\[10pt]
     &\underset{s \rightarrow 0}{\sim} s^{\ell-n}
 \end{align*}
 ```
+
+The step that matters is the first one, and it is legitimate **only because the range is
+finite**. Replacing ``j_\ell(qs)`` by its small-argument form requires ``qs \ll 1``; on
+``[k_\mathrm{min}, k_\mathrm{max}]`` the largest argument is ``k_\mathrm{max} s``, so the
+single condition
+
+```math
+    s \; \ll \; \frac{1}{k_\mathrm{max}}
+    \quad \quad \mathrm{(1.3)}
+```
+
+makes ``qs \ll 1`` hold **uniformly** over the whole range, and the series may be inserted
+and integrated term by term. Had the integral run to ``+\infty`` there would always be a
+region ``q > 1/s`` in which the replacement is simply false, no matter how small ``s`` is,
+and the manipulation above would be wrong. This is the content of
+[Why the cut cannot be dropped](#why-the-cut-cannot-be-dropped).
 
 
 ## The exact small-``s`` behaviour
@@ -252,6 +285,100 @@ And analogously, every term carries two more powers of ``s`` than the previous o
 
 
 
+
+
+### Why the cut cannot be dropped
+
+It is tempting to write (1) with ``\int_0^{+\infty}``, treat
+``k_\mathrm{min}, k_\mathrm{max}`` as a numerical approximation to it, and let the
+``\sigma_i`` inherit the same infinite range. That is wrong, and it is worth seeing
+exactly where it breaks, because the mistake produces a *fake divergence* that looks like
+a bug in the code.
+
+Split the infinite integral at the two cuts:
+
+```math
+    \int_0^{+\infty} = \underbrace{\int_0^{k_\mathrm{min}}}_{\mathrm{(A)}}
+    + \underbrace{\int_{k_\mathrm{min}}^{k_\mathrm{max}}}_{\mathrm{(B)}}
+    + \underbrace{\int_{k_\mathrm{max}}^{+\infty}}_{\mathrm{(C)}}
+    \quad \quad \mathrm{(1.4)}
+```
+
+**(B) is the one we computed**, and the derivation above applies to it word for word:
+``qs \leq k_\mathrm{max}s \ll 1`` uniformly, so
+
+```math
+    \mathrm{(B)} \; = \; \frac{\sigma_{n-\ell}}{(2\ell+1)!!} \, s^{\,\ell-n}
+    \left[ 1 + \mathcal{O}\!\left( (k_\mathrm{max}s)^2 \right) \right] \; .
+```
+
+**(A) keeps the expansion but may lose the integral.** For ``q < k_\mathrm{min}`` the
+argument ``qs`` is even smaller, so ``j_\ell`` may again be replaced by ``x^\ell``; what
+can fail is the ``q`` integral itself. With ``P(q) \sim B\,q^{\,n_s}`` as
+``q \rightarrow 0`` (see [The input Power Spectrum](theory_InputPowerSpectrum.md)),
+
+```math
+    \int_0 \mathrm{d}q \; q^{\,2-i+n_s}
+    \quad \text{converges} \iff 2 - i + n_s > -1
+    \iff i < 3 + n_s \simeq 3.96 \; .
+```
+
+So ``\sigma_0 \ldots \sigma_3`` would survive ``k_\mathrm{min} \rightarrow 0``, while
+``\sigma_4`` would not. Nothing about the code changes: with ``k_\mathrm{min} > 0`` the
+piece (A) is simply not part of the definition.
+
+**(C) is where the expansion itself fails.** For ``q > 1/s`` the argument ``qs`` is large,
+however small ``s`` is, so ``j_\ell(qs)`` cannot be replaced by ``(qs)^\ell``. The honest
+way to evaluate it is to rescale. With ``P(q) \simeq A \, q^{-\alpha}`` at large ``q``
+(``\alpha \simeq 2.64`` for the fitted tail, ``\alpha = 3`` for the asymptotic CDM one)
+and ``x := qs``,
+
+```math
+\begin{align*}
+    \mathrm{(C)} &= \frac{1}{2\pi^2} \int_{k_\mathrm{max}}^{+\infty} \mathrm{d}q \;
+        q^2 \, A \, q^{-\alpha} \, \frac{j_\ell(qs)}{(qs)^n} \\[10pt]
+    x := qs \; \rightarrow \; \quad
+    &= \frac{A}{2\pi^2} \, s^{\,\alpha-3} \int_{k_\mathrm{max}s}^{+\infty} \mathrm{d}x \;
+        x^{\,2-\alpha-n} \, j_\ell(x)
+    \quad \quad \mathrm{(1.5)}
+\end{align*}
+```
+
+The remaining integral tends to a finite number as ``s \rightarrow 0`` (its lower limit
+goes to ``0`` and ``j_\ell(x) \sim \sin(x - \ell\pi/2)/x`` makes the upper end converge),
+so **(C) scales as ``s^{\,\alpha-3}``** — a power that has nothing to do with
+``s^{\,\ell-n}``. For the asymptotic CDM tail ``\alpha = 3`` it is a constant; for the
+fitted ``\alpha \simeq 2.64`` it grows as ``s^{-0.36}``.
+
+The conclusion is the important part:
+
+!!! warning "``\sigma_{n-\ell} s^{\ell-n}`` is the limit of (1), not of the infinite integral"
+    With the range of (1) the answer is ``\sigma_{n-\ell}s^{\ell-n}/(2\ell+1)!!``, every
+    ``\sigma_i`` is finite, and the numerical check below confirms it to six digits.
+
+    With ``\int_0^{+\infty}`` instead, the piece (C) adds a term ``\propto s^{\alpha-3}``
+    that the naive manipulation never produces, because that manipulation assumed an
+    expansion valid over the whole range. For ``I_0^0`` that term dominates and one
+    concludes that the limit "diverges" — which is a statement about the infinite-range
+    integral, not about anything GaPSE computes.
+
+Concretely, for ``I_0^0`` over the range actually used, ``[10^{-5}, 10^{3}]``:
+
+| ``s`` | ``I_0^0(s)`` | ``\sigma_0`` | ratio |
+|:--|--:|--:|--:|
+| ``10^{-1}`` | ``23.730`` | ``143.285`` | ``0.166`` |
+| ``10^{-2}`` | ``68.766`` | ``143.285`` | ``0.480`` |
+| ``10^{-3}`` | ``139.478`` | ``143.285`` | ``0.973`` |
+| ``10^{-4}`` | ``143.246`` | ``143.285`` | ``0.99973`` |
+| ``10^{-5}`` | ``143.285`` | ``143.285`` | ``0.999997`` |
+| ``10^{-6}`` | ``143.285`` | ``143.285`` | ``1.000000`` |
+
+The approach to the limit is exactly what (1.3) predicts. At ``s = 10^{-1}`` only the part
+of the range with ``q \lesssim 10`` satisfies ``qs \ll 1``, and indeed
+``I_0^0(0.1) \simeq \sigma_0(<10) = 18.6``; as ``s`` decreases more of the range comes
+inside the condition, and at ``s \lesssim 1/k_\mathrm{max} = 10^{-3}`` all of it does and
+the ratio saturates at ``1``. It is a monotone approach to a finite number, not a
+divergence.
 
 ### The three regimes
 
@@ -428,6 +555,33 @@ The opposite end has a pleasant surprise: **the exponent is the same for every `
 and every ``n``**. Getting there, however, needs more care than the ``s \rightarrow 0``
 side, because the obvious route does not work.
 
+### The integral this section works with
+
+Everything below is derived for the *idealised* integral
+
+```math
+    \bar{I}_\ell^n(s) := \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q)
+        \, \frac{j_\ell(qs)}{(qs)^n} \; ,
+    \quad \quad (3.1)
+```
+
+i.e. Eq.(1) with the two cuts sent to ``0`` and ``+\infty``. Unlike the
+``s \rightarrow 0`` side — where the cuts *are* the answer, as
+[Why the cut cannot be dropped](#why-the-cut-cannot-be-dropped) shows — here the
+replacement is harmless, and for a reason that is easy to state: the substitution
+``x := qs`` makes it explicit that the weight of the integral sits around
+``q \sim 1/s``. For large ``s`` that region is well inside ``[k_\mathrm{min},
+k_\mathrm{max}]``, and both the piece below ``k_\mathrm{min}`` (integrand
+``\propto q^{\,2+n_P}``, i.e. vanishing) and the piece above ``k_\mathrm{max}``
+(argument ``qs \gg 1``, i.e. an oscillation with an amplitude already decaying as
+``q^{-\alpha-n-1}``) contribute a vanishing fraction. So
+``I_\ell^n(s) \rightarrow \bar{I}_\ell^n(s)`` as ``s`` grows, and the ``\bar{\cdot}``
+is dropped from here on.
+
+The two boundaries of that statement are exactly the two listed in
+[Where it stops holding](#where-it-stops-holding) below, and they are what the last
+section measures.
+
 ### The small-``k`` slope of the matter Power Spectrum
 
 The proof that
@@ -438,7 +592,7 @@ The proof that
 ```
 
 — together with the large-``k`` tail, the power laws `InputPS` extrapolates with, and
-which ``\sigma_i`` converge at all — now lives in its own page,
+which ``\sigma_i`` survive the removal of the cuts — now lives in its own page,
 [The input Power Spectrum](theory_InputPowerSpectrum.md), since it is needed by the
 ``\Delta\chi \rightarrow 0`` limits as much as by what follows here. Only the result
 is used below: the small-``k`` slope of the *matter* Power Spectrum is ``n_P = n_s``,
@@ -447,23 +601,23 @@ spectrum ``\Delta^2_{\mathcal{R}}``.
 
 ### Why the limit cannot be taken inside the integral
 
-The tempting move is to substitute ``q`` with ``x := q s`` in Eq.(1),
+The tempting move is to substitute ``q`` with ``x := q s`` in Eq.(3.1),
 
 ```math
-x:=qs \quad \Rightarrow \quad q = \frac{x}{s} \quad \Rightarrow \quad \mathrm{d}q = \frac{\mathrm{d}x}{s} \quad \quad (3.4)
+x:=qs \quad \Rightarrow \quad q = \frac{x}{s} \quad \Rightarrow \quad \mathrm{d}q = \frac{\mathrm{d}x}{s} \quad \quad (3.2)
 ```
 
 so that
 
 ```math
 \begin{align*}
-     (1): \quad \quad I_\ell^n(s)
+     (3.1): \quad \quad I_\ell^n(s)
     &:= \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \\[10pt]
-    \mathrm{inserting \; (3.4)} \; \rightarrow \;\; \quad
+    \mathrm{inserting \; (3.2)} \; \rightarrow \;\; \quad
     &=  \int_0^{+\infty} \frac{\mathrm{d}x}{2 \pi^2 s} \, \frac{x^2}{s^2} \,
         P\!\left(\frac{x}{s}\right) \frac{j_\ell(x)}{x^n} \\[10pt]
     &= \frac{s^{-3-n}}{2\pi^2} \int_0^{+\infty} \mathrm{d}x \; x^{2-n} \,
-        P\!\left(\frac{x}{s}\right) j_\ell(x) \; , \quad \quad (3.5)
+        P\!\left(\frac{x}{s}\right) j_\ell(x) \; , \quad \quad (3.3)
 \end{align*}
 ```
 
@@ -478,7 +632,7 @@ The failure is not academic. Doing it anyway leaves
 ```math
     \int_0^{+\infty} \mathrm{d}x \; x^{\,\mu-1} \, j_\ell(x) \; ,
     \qquad \mu := 3 + n_P - n \; ,
-    \quad \quad (3.6)
+    \quad \quad (3.4)
 ```
 
 which converges only for ``-\ell < \mu < 2``. For ``I_0^0``, ``I_2^0``, ``I_4^0``
@@ -491,12 +645,12 @@ What follows instead is an argument that never forms that object.
 ### The proof, by Mellin transform
 
 
-Write Eq.(1) as a Mellin convolution, isolating the ``s^{-n}``:
+Write Eq.(3.1) as a Mellin convolution, isolating the ``s^{-n}``:
 ```math
-    (1): \quad \quad I_\ell^n(s) := \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \\[14pt]
+    (3.1): \quad \quad I_\ell^n(s) := \int_0^{+\infty} \frac{\mathrm{d}q}{2\pi^2} \, q^2 \, P(q) \, \frac{j_\ell(qs)}{(qs)^n} \\[14pt]
     \Rightarrow \quad I_\ell^n(s) = s^{-n} \int_0^{+\infty} \mathrm{d}q \; f(q) \, j_\ell(q s) \; ,
     \qquad f(q) := \frac{q^{\,2-n} \, P(q)}{2\pi^2} \; .
-    \quad \quad (3.7)
+    \quad \quad (3.5)
 ```
 
 Introduce the two Mellin transforms
@@ -507,14 +661,14 @@ Introduce the two Mellin transforms
     \mathcal{M}_\ell(z) := \int_0^{+\infty} \mathrm{d}x \; x^{\,z-1} j_\ell(x)
     = \sqrt{\frac{\pi}{2}} \; 2^{\,z-3/2} \;
     \frac{\Gamma\!\left(\frac{\ell+z}{2}\right)}{\Gamma\!\left(\frac{\ell-z+3}{2}\right)} \; ,
-    \quad (3.8)
+    \quad (3.6)
 ```
 
 the second one being the general case of the known integrals of the
 [Spherical Bessel Functions](theory_SphericalBesselFunctions.md) page (``z = 1`` gives back
 ``\int_0^\infty j_\ell = \sqrt{\pi} \, \Gamma\!\left(\frac{\ell+1}{2}\right) /
 2\Gamma\!\left(1+\frac{\ell}{2}\right)``). Inserting the inverse transform of ``j_\ell``
-into Eq.(3.7) and exchanging the two integrals — legitimate here, the ``z``-contour being
+into Eq.(3.5) and exchanging the two integrals — legitimate here, the ``z``-contour being
 a vertical line on which everything is absolutely convergent — gives the
 Mellin-Parseval representation
 
@@ -527,7 +681,7 @@ Mellin-Parseval representation
         \mathcal{M}_\ell(z) \, s^{-z} \int_0^{+\infty} \mathrm{d}q \; q^{-z} f(q) \\[10pt]
     &= \frac{s^{-n}}{2\pi i} \int_{c - i\infty}^{c + i\infty} \mathrm{d}z \;
         \mathcal{M}_\ell(z) \, \tilde{f}(1-z) \, s^{-z} \; .
-    \quad \quad (3.9)
+    \quad \quad (3.7)
 \end{align*}
 ```
 
@@ -535,7 +689,7 @@ This is exact: no limit has been taken yet. The large-``s`` behaviour is now rea
 **analytic structure in ``z``**, because ``s^{-z}`` decays faster the further right the
 contour sits.
 
-**Poles of ``\mathcal{M}_\ell``.** From Eq.(3.8),
+**Poles of ``\mathcal{M}_\ell``.** From Eq.(3.6),
 ``\Gamma\!\left(\frac{\ell+z}{2}\right)`` has simple poles at ``z = -\ell - 2k``,
 ``k \geq 0``, while ``1/\Gamma\!\left(\frac{\ell-z+3}{2}\right)`` is entire. So
 ``\mathcal{M}_\ell(z)`` is **analytic for ``\mathrm{Re}\,z > -\ell``**: in particular at
@@ -571,7 +725,7 @@ contour to the right subtracts the residues crossed,
 and only ``z = \mu`` is crossed. Since
 ``\mathrm{Res}_{z=\mu}\left[\mathcal{M}_\ell(z)\tilde{f}(1-z)s^{-z}\right]
 = -\frac{A}{2\pi^2}\mathcal{M}_\ell(\mu) \, s^{-\mu}`` and the leftover integral is
-``\mathcal{O}(s^{-c'})``, Eq.(3.9) gives
+``\mathcal{O}(s^{-c'})``, Eq.(3.7) gives
 
 ```math
     I_\ell^n(s) = s^{-n}\left[
@@ -586,7 +740,7 @@ and with ``\mu + n = 3 + n_P``:
     I_\ell^n(s) \; \underset{s \rightarrow +\infty}{\sim} \;
     \frac{A}{2\pi^2} \, \mathcal{M}_\ell(3 + n_P - n) \; s^{-(3+n_P)}
 }
-\quad \quad (3.10)
+\quad \quad (3.8)
 ```
 
 Three things are worth underlining.
@@ -598,7 +752,7 @@ Three things are worth underlining.
 - **``\mathcal{M}_\ell(\mu)`` for ``\mu \geq 2`` is not a fudge.** It is never used as a
   convergent integral: the residue theorem evaluates the *function*
   ``\mathcal{M}_\ell(z)`` at ``z = \mu``, and that function is analytic there. The
-  divergence of Eq.(3.6) is an artefact of the naive route, not a property of the answer.
+  divergence of Eq.(3.4) is an artefact of the naive route, not a property of the answer.
 - **The corrections are not a single clean power.** They are governed by the next
   singularities to the right, i.e. by how ``P`` leaves its ``A q^{n_P}`` behaviour — the
   transfer function and, on top of it, the BAO wiggles.
@@ -610,7 +764,7 @@ This is also why `IntegralIPS` seeds its right-hand power-law fit with
 
 `theory/Iln_terms.ipynb` reads ``A`` and ``n_P`` out of the `InputPS` left fit (for
 `data/WideA_ZA_pk.dat`, ``n_P = 0.960`` and ``A = 3.012 \times 10^6``) and compares
-Eq.(3.10) with the stored ``I_\ell^n``. The ratio ``I_\ell^n(s) \, / \,`` Eq.(3.10):
+Eq.(3.8) with the stored ``I_\ell^n``. The ratio ``I_\ell^n(s) \, / \,`` Eq.(3.8):
 
 | ``s``      | ``I_0^0`` | ``I_2^0`` | ``I_4^0`` | ``I_0^2`` | ``I_2^2`` | ``I_3^1`` | ``I_1^3`` | ``I_1^1`` |
 | :--------- | --------: | --------: | --------: | --------: | --------: | --------: | --------: | --------: |
@@ -649,7 +803,7 @@ For ``\tilde{I}_0^4`` one has ``\ell = 0`` and ``n = 4``, hence
 ``\mathcal{M}_0(z)`` at ``z = 0``. That pole is not an accident: it is precisely the
 ``\sigma_4 / s^4`` divergence that the ``-1`` of the numerator subtracts away. What the
 subtraction leaves behind is the finite part, whose two surviving powers —
-``s^{-(3+n_P)}`` from Eq.(3.10) and ``s^{-4}`` from ``-\sigma_4/s^4`` — differ only by
+``s^{-(3+n_P)}`` from Eq.(3.8) and ``s^{-4}`` from ``-\sigma_4/s^4`` — differ only by
 ``1 - n_P = 0.04``. They are degenerate for any practical purpose, so ``\tilde{I}_0^4``
 never settles onto a clean power law: its measured local slope is still only ``-3.6`` at
 ``s = 10^{3}`` and ``-3.7`` at ``s = 9 \times 10^{3}``, where its spline already ends.
@@ -657,17 +811,17 @@ never settles onto a clean power law: its measured local slope is still only ``-
 ## Reproducing the figures
 
 The figures are not built by the documentation: they are committed under
-`docs/src/assets/Iln_terms/`, and regenerated on demand by the script in the `theory/`
+`docs/src/assets/Iln_terms/`, and regenerated on demand by the notebook in the `theory/`
 directory. From `theory/`, after the one-time setup described in its `README.md`:
 
 ```bash
 $ jupyter lab Iln_terms.ipynb
 ```
 
-which writes the plots and the tables of numerical values (`Iln_values.txt`,
-`Iln_direct_values.txt` and `Iln_large_s_values.txt`) in `theory/Iln_terms/`, and,
-since `SAVE_TO_DOCS = true`, also refreshes the copies used by this page. The same
-computation is available step by step in the notebook `theory/Iln_terms.ipynb`.
+Running it top to bottom writes the plots and the tables of numerical values
+(`Iln_values.txt`, `Iln_direct_values.txt` and `Iln_large_s_values.txt`) in
+`theory/Iln_terms/`, and, since `SAVE_TO_DOCS = true`, also refreshes the copies used by
+this page.
 
 See also: [`GaPSE.IPSTools`](@ref), [`GaPSE.IntegralIPS`](@ref),
 [`GaPSE.func_I04_tilde`](@ref).
