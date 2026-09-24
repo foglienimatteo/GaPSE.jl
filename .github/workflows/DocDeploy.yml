@@ -44,11 +44,12 @@ jobs:
       contents: write        # push to gh-pages
       pull-requests: read    # preview builds on PRs
       statuses: write        # documentation link status
+      actions: write         # let julia-actions/cache delete stale caches
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
         with:
-          version: '1.9'
+          version: '1.12'
       - uses: julia-actions/cache@v2
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-docdeploy@v1
