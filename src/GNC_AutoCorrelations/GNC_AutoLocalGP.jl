@@ -83,9 +83,9 @@ function ξ_GNC_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology;
 end
 
 
-function ξ_GNC_LocalGP(s1, s2, y, cosmo::Cosmology; obs::Union{Bool, Symbol} = :noobsvel)
+function ξ_GNC_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-    return ξ_GNC_LocalGP(P1, P2, y, cosmo; obs = obs)
+    return ξ_GNC_LocalGP(P1, P2, y, cosmo; kwargs...)
 end
 
 """

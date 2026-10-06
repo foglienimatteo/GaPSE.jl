@@ -33,11 +33,11 @@ function integrand_ξ_GNC_Newtonian_Lensing(
     s_b_s2 = isnothing(s_b2) ? cosmo.params.s_b2 : s_b2
 
     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
+    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : zero(Δχ2_square)  # throw(AssertionError("Δχ2_square=$Δχ2_square : y=$y , s1=$s1 , χ2=$χ2"))
 
     common = D_s1 * ℋ0^2 * Ω_M0 * D2 * (χ2 - s2) * (5 * s_b_s2 - 2) / (a2 * s2)
 
-    if Δχ2 ≥ Δχ_min
+    if Δχ2 ≥ min(Δχ_min, Δχ_min * max(s1, χ2))
         new_J00 = 1 / 5 * (f_s1 * χ2 * (3 * y^2 - 1) - 3 * y * s1 * f_s1 - 5 * y * s1 * b_s1)
         new_J02 = 1 / (14 * Δχ2^2) * (
             7 * s1 * b_s1 * (-2 * χ2^2 * y + χ2 * s1 * (y^2 + 3) - 2 * y * s1^2) +
@@ -150,7 +150,7 @@ with
             \\right. \\nonumber \\\\
             &\\left.\\qquad \\qquad\\qquad
             \\left[
-                (9 y^2 + 11) f_1 - 7 (y^2 + 3) b_1
+                (9 y^2 + 11) f_1 + 7 (y^2 + 3) b_1
             \\right] s_1^2 \\chi_2 -
             2 y \\left[7 b_1 + 3 f_1 \\right] s_1^3
         \\right\\} 
@@ -277,7 +277,7 @@ This function is used inside `ξ_GNC_Newton_Lensing` with the trapz() from the
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
     will be neglected, the other ones will be taken into account
 
-- `Δχ_min::AbstractFloat = 1e-4` : when ``\\Delta\\chi_2 = \\sqrt{s_1^2 + \\chi_2^2 - 2 \\, s_1 \\chi_2 y} \\to 0^{+}``,
+- `Δχ_min::AbstractFloat = 1e-1` : when ``\\Delta\\chi_2 = \\sqrt{s_1^2 + \\chi_2^2 - 2 \\, s_1 \\chi_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math
@@ -307,7 +307,7 @@ integrand_ξ_GNC_Newtonian_Lensing
 
 
 function ξ_GNC_Newtonian_Lensing(s1, s2, y, cosmo::Cosmology;
-    en::Float64=1e6, N_χs::Int=100, suit_sampling::Bool=true,
+    en::AbstractFloat=1e6, N_χs::Int=100, suit_sampling::Bool=true,
     kwargs...)
 
     STARTING = 0.0
@@ -406,7 +406,7 @@ with
             \\right. \\nonumber \\\\
             &\\left.\\qquad \\qquad\\qquad
             \\left[
-                (9 y^2 + 11) f_1 - 7 (y^2 + 3) b_1
+                (9 y^2 + 11) f_1 + 7 (y^2 + 3) b_1
             \\right] s_1^2 \\chi_2 -
             2 y \\left[7 b_1 + 3 f_1 \\right] s_1^3
         \\right\\} 
@@ -526,7 +526,7 @@ This function is computed integrating `integrand_ξ_GNC_Newtonian_Lensing` with 
 - `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
-- `Δχ_min::AbstractFloat = 1e-4` : when ``\\Delta\\chi_2 = \\sqrt{s_1^2 + \\chi_2^2 - 2 \\, s_1 \\chi_2 y} \\to 0^{+}``,
+- `Δχ_min::AbstractFloat = 1e-1` : when ``\\Delta\\chi_2 = \\sqrt{s_1^2 + \\chi_2^2 - 2 \\, s_1 \\chi_2 y} \\to 0^{+}``,
   some ``I_\\ell^n`` term diverges, but the overall parenthesis has a known limit:
 
   ```math

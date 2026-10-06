@@ -22,42 +22,42 @@ function ξ_GNCxLD_LocalGP_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology;
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
-	s1, D1, f1, a1, ℋ1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ
-	s2, D2, a2, ℜ2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
+    s1, D1, f1, a1, ℋ1 = P1.comdist, P1.D, P1.f, P1.a, P1.ℋ
+    s2, D2, a2, ℜ2 = P2.comdist, P2.D, P2.a, P2.ℛ_LD
 
-	Ω_M0 = cosmo.params.Ω_M0
-	s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
-	𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
+    Ω_M0 = cosmo.params.Ω_M0
+    s_b1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
+    𝑓_evo1 = isnothing(𝑓_evo1) ? cosmo.params.𝑓_evo1 : 𝑓_evo1
 
-	s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
-	ℛ1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b1, 𝑓_evo=𝑓_evo1, s_lim=s_lim)
+    s_lim = isnothing(s_lim) ? cosmo.params.s_lim : s_lim
+    ℛ1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b1, 𝑓_evo=𝑓_evo1, s_lim=s_lim)
 
-	Δs = s(s1, s2, y)
+    Δs = s(s1, s2, y)
 
-	factor = - 3 * Δs^4 * ℋ0^2 * Ω_M0 * D1 * D2 * (1 + ℜ2) / (4 * a1 * a2)
-	parenth = 2 * f1 * ℋ1^2 * a1 * (𝑓_evo1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f1 + ℛ1 + 5 * s_b1 - 2)
+    factor = - 3 * Δs^4 * ℋ0^2 * Ω_M0 * D1 * D2 * (1 + ℜ2) / (4 * a1 * a2)
+    parenth = 2 * f1 * ℋ1^2 * a1 * (𝑓_evo1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f1 + ℛ1 + 5 * s_b1 - 2)
 
-	I04_tilde = cosmo.tools.I04_tilde(Δs)
+    I04_tilde = cosmo.tools.I04_tilde(Δs)
 
-	res = factor * parenth * I04_tilde
+    res = factor * parenth * I04_tilde
 
-	return res
+    return res
 end
 
 
 function ξ_GNCxLD_LocalGP_LocalGP(s1, s2, y, cosmo::Cosmology; kwargs...)
-	P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
-	return ξ_GNCxLD_LocalGP_LocalGP(P1, P2, y, cosmo; kwargs...)
+    P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
+    return ξ_GNCxLD_LocalGP_LocalGP(P1, P2, y, cosmo; kwargs...)
 end
 
 
 """
-	ξ_GNCxLD_LocalGP_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-    	b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
-    	𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
+    ξ_GNCxLD_LocalGP_LocalGP(P1::Point, P2::Point, y, cosmo::Cosmology;
+        b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
-	ξ_GNCxLD_LocalGP_LocalGP(
-		s1, s2, y, cosmo::Cosmology; kwargs... ) ::Float64
+    ξ_GNCxLD_LocalGP_LocalGP(
+      s1, s2, y, cosmo::Cosmology; kwargs... ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Local Gravitational pential (GP) effect arising from the Galaxy Number Counts (GNC) and the 

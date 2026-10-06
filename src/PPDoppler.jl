@@ -250,7 +250,7 @@ end
         L::Int = 0, use_windows::Bool = true,
         atol_quad::AbstractFloat = 0.0,
         rtol_quad::AbstractFloat = 1e-2,
-        enhancer::Float64 = 1e6 ) ::Float64
+        enhancer::AbstractFloat = 1e6 ) ::Float64
 
 
 Evaluate the multipole of order `L` of the Doppler effect Two-Point Correlation Function (TPCF) in the Plane 

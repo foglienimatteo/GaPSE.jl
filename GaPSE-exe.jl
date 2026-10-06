@@ -73,25 +73,33 @@ function main()
 
      FILE_BACKGROUND = PATH_TO_GAPSE * "data/WideA_ZA_background.dat"
 
-     WFI_opts = Dict(
-          :ss_start => 0.0, :ss_stop => 0.0,
-          :ss_step => 100, :llim => 0.0, :rlim => Inf,
-          :rtol => 5e-2, :atol => 0.0, :N => 1000, #:pr => true,
-     )
-
+     # NOTE: the bias-like parameters are now specified per-species: `b1`, `s_b1`
+     # and `𝑓_evo1` refer to the first species, while `b2`, `s_b2` and `𝑓_evo2`
+     # refer to the second one. If you leave the latter to `nothing` (the
+     # default), they are set equal to the former ones, i.e. you are doing an
+     # auto-correlation of a single species.
+     #WFI_opts = Dict(
+     #     :ss_start => 0.0, :ss_stop => 0.0,
+     #     :ss_step => 100, :llim => 0.0, :rlim => Inf,
+     #     :rtol => 5e-2, :atol => 0.0, :N => 1000, #:pr => true,
+     #)
      params = GaPSE.CosmoParams(z_min, z_max, θ_max;
           Ω_b=0.0489, Ω_cdm=0.251020, h_0=0.70, s_lim=1e-2,
-          s_b=0.0, 𝑓_evo=0.0, b=1.5,
+          b1=1.5, s_b1=0.0, 𝑓_evo1=0.0,
+          b2=nothing, s_b2=nothing, 𝑓_evo2=nothing,
           IPS_opts=Dict(
                :fit_left_min => 1e-6, :fit_left_max => 3e-6,
                :fit_right_min => 1e1, :fit_right_max => 2e1),
           IPSTools_opts=Dict(
                :N => 1024, :fit_min => 0.05, :fit_max => 0.5,
                :con => true, :k_min => 1e-8, :k_max => 10.0),
-          WFI_opts=WFI_opts
+          #WFI_opts=WFI_opts
      )
 
-     FILE_IF_MAP = PATH_TO_GAPSE * "data/IntegrF_REFERENCE_pi2_z005020.txt"
+     # This integrated window function map must be computed for the same
+     # (z_min, z_max, θ_max) of `params`; the one below matches z_min=1.0,
+     # z_max=1.5 and θ_max=π/2.
+     FILE_IF_MAP = PATH_TO_GAPSE * "data/IntegrF_REFERENCE_pi2_z115.txt"
 
      #=
      double_z_max = GaPSE.corresponding_redshift(z_max, 3.0, FILE_BACKGROUND)
@@ -105,7 +113,7 @@ function main()
      GaPSE.print_map_IntegratedF(
           z_min, z_max, calc_zs, calc_μs,
           PATH_TO_GAPSE * "data/F_REFERENCE_pi2.txt", 
-          PATH_TO_GAPSE * "data/IntegrF_REFERENCE_pi2_z005020.txt", 
+          PATH_TO_GAPSE * "data/IntegrF_REFERENCE_pi2_z115.txt", 
           FILE_BACKGROUND;
           alg = :trap, Dict(
                :llim => nothing, :rlim => nothing, 
@@ -141,7 +149,7 @@ function main()
                     :N_left => 12, :N_right => 12,
                     :p0_left => [-2.0, 1.0], :p0_right => [-2.0, 1.0],
                     :int_s_min => 1e0, :int_s_max => 1200.0,
-                    cut_first_n => 6, cut_last_n => 3,
+                    #cut_first_n => 6, cut_last_n => 3,
                ) 
           elseif alg == :fftlog
           
