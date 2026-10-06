@@ -6,7 +6,8 @@ large ``q`` — are not a detail: they decide whether each moment
 
 ```math
     \sigma_i = \int_{k_\mathrm{min}}^{k_\mathrm{max}} \frac{\mathrm{d}q}{2\pi^2}
-    \, q^{\,2-i} \, P(q) (\mathrm{P}.0)
+    \, q^{\,2-i} \, P(q)
+    \quad \quad (\mathrm{P}.1)
 ```
 
 (Eq.(3) of [The ``I_\ell^n`` integrals](theory_IlnIntegrals.md)) is a number on its own,
@@ -22,59 +23,77 @@ Depth = 3
 ```
 
 
-## Universe Metric considered
+## The metric of the Universe considered
 
-First of all, we show the metric of the Universe we started from. 
-We choose a perturbed Friedmann-Lemaitre-Robertson-Walker (FLRW) metric, which has the following general analytical expression:
-    
+We start from a perturbed Friedmann-Lemaitre-Robertson-Walker (FLRW) metric, whose
+general expression is
 
 ```math
 \begin{align*}
-\mathrm{d} s^2 &= -(1 + 2\Psi)\mathrm{d} \tau^2 + (1 - 2 \Phi)\gamma_{ij} \mathrm{d} x^i \mathrm{d} x^j \, ,\\[13pt]
-\gamma_{ij} \mathrm{d} x^i \mathrm{d} x^j &= \mathrm{d} r^2 + S_K^2(r)(\mathrm{d} \theta + \sin^2\theta \, \mathrm{d} \varphi^2) \, ,\\[13pt]
+\mathrm{d} s^2 &= a^2(\tau) \left[
+    -(1 + 2\Psi)\,\mathrm{d} \tau^2 + (1 - 2 \Phi)\,\gamma_{ij} \, \mathrm{d} x^i \mathrm{d} x^j
+    \right] \, , \\[13pt]
+\gamma_{ij} \, \mathrm{d} x^i \mathrm{d} x^j &=
+    \mathrm{d} r^2 + S_K^2(r)\left(\mathrm{d} \theta^2 + \sin^2\theta \, \mathrm{d} \varphi^2\right) \, ,
+    && (\mathrm{P}.2)
 \end{align*}
 ```
 
 ```math
-S_K(r) = \begin{cases} 
-    K^{-1/2} \, \sin\left(\sqrt{K}r\right)\, , \quad  \quad \; \; \, \mathrm{for} \; K>0 \\
+S_K(r) = \begin{cases}
+    K^{-1/2} \, \sin\left(\sqrt{K}\,r\right) \, , \quad  \quad \; \; \, \mathrm{for} \; K>0 \\
     \quad \quad r \, ,\quad \quad \quad \quad \quad \quad \quad \quad \; \,  \mathrm{for} \; K=0 \\
-    |K|^{-1/2} \, \sinh\left(\sqrt{|K|}r\right)\, , \quad \mathrm{for} \; K<0 \\
+    |K|^{-1/2} \, \sinh\left(\sqrt{|K|}\,r\right) \, , \quad \mathrm{for} \; K<0 \\
 \end{cases}
+\quad \quad (\mathrm{P}.3)
 ```
 
 where:
 
-- ``K := - H_0^2 (1 - \Omega_{M0})`` is the curvature
-- ``\tau`` the comoving time
-- ``r`` the comoving distance
+- ``\tau`` is the conformal time and ``a(\tau)`` the scale factor, normalised to
+  ``a_0 = a(\tau_0) = 1`` today, so that ``a = (1+z)^{-1}``;
+- ``r`` is the comoving radial distance;
+- ``K := \frac{H_0^2}{c^2}\left(\Omega_{\mathrm{tot}0} - 1\right)`` is the spatial
+  curvature, with ``\Omega_{\mathrm{tot}0}`` the present-day density parameter of
+  *all* components. It is the sign of ``\Omega_{\mathrm{tot}0} - 1`` that selects the
+  branch of (P.3), and a flat Universe is ``\Omega_{\mathrm{tot}0} = 1``, i.e.
+  ``K = 0``;
+- ``\Phi`` and ``\Psi`` are the two Bardeen potentials.
 
-We consider only scalar perturbations, i.e. the Bardeen potentials ``\Phi`` and ``\Psi``, because vector perturbations (if they even exist) 
-are diluted in the Universe expansion and tensors ones are even less important. 
-Note that we set the speed of light ``c=1``, so these potentials are adimensionals. This convention can be also thought as the redefinition ``\phi \rightarrow \phi \, c^2`` of the gravitational potentials.
+**We consider only the flat case**, ``K = 0`` and ``S_K(r) = r``, which is what the rest
+of this page and the whole of GaPSE assume.
 
-We consider only the flat-geometry case, i.e. ``K=0`` and ``S_K(r) = r``. 
+We also keep only the scalar perturbations, i.e. the two Bardeen potentials: vector
+perturbations have no growing mode and are diluted away by the expansion, while tensor
+ones are constrained to be small and, unlike the scalars, do not couple to the galaxy
+density at linear order.
 
-We define the Galaxy Number Counts (GNC) in terms of the direction of observation ``-\mathbf{n}`` and redshift ``z`` as
+The potentials are **dimensionless**, which is the content of the usual shorthand
+``c = 1``: equivalently, ``\Phi`` and ``\Psi`` are the Newtonian potentials divided by
+``c^2``. Below we keep ``c`` explicit, so that the dimensions of ``P_m`` come out as
+``(h^{-1}\mathrm{Mpc})^3``.
+
+In the absence of anisotropic stress — which holds at linear order once radiation is
+negligible — Einstein's equations give ``\Phi = \Psi``, and this common value is the one
+that enters the Poisson equation (P.7) below, up to the sign convention stated there.
+
+Finally, the Galaxy Number Counts (GNC) are defined, in terms of the redshift ``z`` and
+of the photon propagation direction ``\mathbf{n}`` (so that the line of sight points
+along ``-\mathbf{n}``), as
 
 ```math
-\Delta(\mathbf{n}, z) = 
+\Delta(\mathbf{n}, z) =
     \frac{
         n_{\mathrm{g}}(\mathbf{n}, z) -  \langle n_{\mathrm{g}} \rangle(z)
     }{\langle n_{\mathrm{g}} \rangle(z)} \, ,
+    \quad \quad (\mathrm{P}.4)
 ```
-
-
 
 where:
 
-- ``\mathbf{n}`` is the propagation direction of photons
-- ``\langle ... \rangle`` denotes the angular mean at fixed observed ``z``
-- ``n_{\mathrm{g}}(\mathbf{n}, z) = \mathrm{d} N/(\mathrm{d} z \, \mathrm{d} \Omega)`` is the number density of sources per redshift and solid angle.
-
-
-
-
+- ``n_{\mathrm{g}}(\mathbf{n}, z) = \mathrm{d} N/(\mathrm{d} z \, \mathrm{d} \Omega)`` is
+  the number density of sources per unit redshift and solid angle;
+- ``\langle \, \cdot \, \rangle`` denotes the angular mean at fixed observed ``z``.
 
 
 ## The matter Power Spectrum at present day
@@ -85,7 +104,7 @@ Their power spectrum ``P_\mathcal{R}(k)`` is defined through the two-point funct
 ```math
     \langle \mathcal{R}(\mathbf{k}) \, \mathcal{R}^*(\mathbf{k}') \rangle
         = (2\pi)^3 \, \delta_\mathrm{D}^{(3)}(\mathbf{k} - \mathbf{k}') \, P_\mathcal{R}(k)
-    \quad \quad (\mathrm{P}.1)
+    \quad \quad (\mathrm{P}.5)
 ```
 
 and it is usually quoted through the dimensionless power spectrum
@@ -94,7 +113,7 @@ and it is usually quoted through the dimensionless power spectrum
 ```math
 \begin{align*}
     \Delta^2_{\mathcal{R}}(k)  &:= \frac{k^3}{2\pi^2} P_\mathcal{R}(k) \\[10pt]
-        &\underset{k \rightarrow 0^{+}}{\sim} \; A_s \, \left( \frac{k}{k^*}\right)^{n_s-1} &&(\mathrm{P}.2)\\[19pt]
+        &\underset{k \rightarrow 0^{+}}{\sim} \; A_s \, \left( \frac{k}{k^*}\right)^{n_s-1} &&(\mathrm{P}.6)\\[19pt]
 
     n_s&\approx 0.965&&\mathrm{primordial \; spectral \; index}\\[8pt]
     \ln(10^{10} A_s) &\approx 3.043 &&\mathrm{ log \; power \; of \; primordial \; curvature \; perturbations} \Rightarrow A_s \approx 2.10 \times 10^{-9}\\[8pt]
@@ -111,7 +130,7 @@ The factor ``k^3 / 2\pi^2`` in the definition of ``\Delta^2_{\mathcal{R}}`` is c
 so ``n_s = 1`` corresponds to a scale-invariant spectrum.
 
 What enters the ``I_\ell^n`` is the matter Power Spectrum ``P_m(k,z)`` at present day (``z=0``), 
-a dimensional quantity in ``(h^{-1}\mathrm{Mpc})^3``, defined as in (P.1) with ``\mathcal{R} \rightarrow \delta_m``.
+a dimensional quantity in ``(h^{-1}\mathrm{Mpc})^3``, defined as in (P.5) with ``\mathcal{R} \rightarrow \delta_m``.
 The two are related by the Poisson equation and the matter transfer function ``T(k)``; we'll refresh the derivation of their relation.
 
 We start from the Poisson equation in real comoving space, valid from the matter-dominated epoch onwards, 
@@ -119,19 +138,22 @@ when radiation is negligible and the cosmological constant does not cluster:
 
 ```math
     \nabla^2 \phi(\mathbf{s}, z) = - \frac{4 \pi G}{c^2} \, a^2(z) \, \langle\rho_m(z)\rangle \, \delta_m(\mathbf{s}, z)
-    \quad \quad (\mathrm{P}.3)
+    \quad \quad (\mathrm{P}.7)
 ```
 
 where:
 
-- the minus sign comes from the fact that we define ``\phi`` as minus the Newtonian gravitational potential;
-- the ``c^2`` arises because we set the gravitational potentials as adimensional quantities;
+- the minus sign comes from the fact that we define ``\phi`` as minus the Newtonian
+  gravitational potential, i.e. ``\phi = -\Psi = -\Phi`` with the Bardeen potentials of
+  (P.2);
+- the ``c^2`` arises because, as stated above, the gravitational potentials are
+  dimensionless;
 - the ``a^2(z) = (1+z)^{-2}`` because the Laplacian is taken with respect to the comoving
   coordinates ``\mathbf{s}``, and ``\nabla^2_{\mathbf{s}} = a^2 \, \nabla^2_{\mathrm{phys}}``.
   Note that this is the *scale factor*, not the growth factor ``D(z)`` that will enter
-  through (P.6): the two coincide only during matter domination.
+  through (P.10): the two coincide only during matter domination.
 
-In General Relativity, (P.3) holds on all linear scales if ``\delta_m`` is the comoving-gauge density contrast, which at late times coincides with the synchronous-gauge one computed by CLASS.
+In General Relativity, (P.7) holds on all linear scales if ``\delta_m`` is the comoving-gauge density contrast, which at late times coincides with the synchronous-gauge one computed by CLASS.
 
 What is left to fix is ``\langle\rho_m(z)\rangle``. The first Friedmann equation for a flat Universe reads
 
@@ -158,23 +180,23 @@ so that
 ```math
     \langle\rho_m(z)\rangle = \langle\rho_{m,0}\rangle \, (1+z)^3
         = \frac{3 H_0^2}{8 \pi G} \, \Omega_{\mathrm{M}0} \, (1+z)^3
-    \quad \quad (\mathrm{P}.4)
+    \quad \quad (\mathrm{P}.8)
 ```
 
-Inserting (P.4) into (P.3) and going to Fourier space (``\nabla^2 \rightarrow -k^2``), the
+Inserting (P.8) into (P.7) and going to Fourier space (``\nabla^2 \rightarrow -k^2``), the
 three powers of ``(1+z)`` carried by the density are cut down to one by the ``a^2`` of the
 comoving Laplacian:
 
 ```math
 \begin{align*}
-    (\mathrm{P}.4) \; \mathrm{into} \; (\mathrm{P}.3) \quad \Longrightarrow \quad
+    (\mathrm{P}.8) \; \mathrm{into} \; (\mathrm{P}.7) \quad \Longrightarrow \quad
     -k^2 \, \phi(\mathbf{k}, z) &= - \frac{4 \pi G}{c^2} \, (1+z)^{-2} \,
         \frac{3 H_0^2}{8 \pi G} \, \Omega_{\mathrm{M}0} \, (1+z)^{3} \,
         \delta_m(\mathbf{k}, z) \\[10pt]
     \Longrightarrow \quad
     k^2 \, \phi(\mathbf{k}, z) &= \frac{3}{2} \, \Omega_{\mathrm{M}0} \,
         \frac{H_0^2}{c^2} \, (1+z) \, \delta_m(\mathbf{k}, z)
-    \quad \quad (\mathrm{P}.5)
+    \quad \quad (\mathrm{P}.9)
 \end{align*}
 ```
 
@@ -183,7 +205,7 @@ This is done through the matter transfer function ``T(k)``, which describes the 
 
 ```math
     \phi(\mathbf{k}, z) = \phi_p(\mathbf{k}) \, T(k) \, (1+z) \, D(z)
-    \quad \quad (\mathrm{P}.6)
+    \quad \quad (\mathrm{P}.10)
 ```
 
 Here ``D(z)`` is normalized such that ``D(z) = (1+z)^{-1}`` during matter domination, when the potential is therefore constant; it decays only once the cosmological constant dominates.
@@ -201,10 +223,10 @@ At small scales it is asymptotic to ``k^{-2}\ln k``: the potential of modes ente
         & T(k) \xrightarrow[k \rightarrow 0^{+}]{} 1 \\[10pt]
         & T(k) \underset{k \rightarrow +\infty}{\sim} k^{-2}\ln k
     \end{aligned}
-    \quad \quad (\mathrm{P}.7)
+    \quad \quad (\mathrm{P}.11)
 ```
 
-Combining (P.5) and (P.6), the factor ``(1+z)`` cancels out and the matter density contrast turns out to be linear in the primordial potential:
+Combining (P.9) and (P.10), the factor ``(1+z)`` cancels out and the matter density contrast turns out to be linear in the primordial potential:
 
 ```math
     \delta_m(\mathbf{k}, z) = \alpha(k,z) \, \phi_p(\mathbf{k}) \, ,
@@ -212,7 +234,7 @@ Combining (P.5) and (P.6), the factor ``(1+z)`` cancels out and the matter densi
     \alpha(k,z) := \frac{2}{3}
         \frac{k^2 \, T(k) \, D(z)}{\Omega_{\mathrm{M}0}}
         \left(\frac{c}{H_0}\right)^2
-    \quad \quad (\mathrm{P}.8)
+    \quad \quad (\mathrm{P}.12)
 ```
 
 The primordial potential is in turn fixed by the curvature perturbation.
@@ -222,35 +244,35 @@ On super-horizon scales ``\mathcal{R}`` is conserved and, for a constant equatio
     \phi = \frac{3(1+w)}{5+3w} \, \mathcal{R}
     \quad \Longrightarrow \quad
     \phi_p(\mathbf{k}) = \frac{3}{5} \, \mathcal{R}(\mathbf{k})
-    \quad \quad (\mathrm{P}.9)
+    \quad \quad (\mathrm{P}.13)
 ```
 
 where the last equality holds in matter domination (``w = 0``).
 During radiation domination (``w = 1/3``) one has instead ``\phi = 2\mathcal{R}/3``: the ratio ``9/10`` between the two is the well-known suppression of the super-horizon potential across matter-radiation equality.
 The overall sign depends on the convention adopted for ``\mathcal{R}``, and drops out of the power spectrum.
 
-Inserting (P.9) in (P.8) and computing the two-point function as in (P.1), we finally obtain the matter power spectrum:
+Inserting (P.13) in (P.12) and computing the two-point function as in (P.5), we finally obtain the matter power spectrum:
 
 ```math
     P_m(k, z) = \frac{9}{25} \, \alpha^2(k, z) \, P_\mathcal{R}(k)
         = \frac{4}{25} \, \frac{k^4 \, T^2(k) \, D^2(z)}{\Omega_{\mathrm{M}0}^2}
         \left(\frac{c}{H_0}\right)^4 P_\mathcal{R}(k)
-    \quad \quad (\mathrm{P}.10)
+    \quad \quad (\mathrm{P}.14)
 ```
 
-i.e. ``P_m \propto k^4 \, T^2(k) \, D^2(z) \, P_\mathcal{R}(k)``. Using the power law (P.2), this becomes:
+i.e. ``P_m \propto k^4 \, T^2(k) \, D^2(z) \, P_\mathcal{R}(k)``. Using the power law (P.6), this becomes:
 
 ```math
     P_m(k, z) = \frac{8 \pi^2}{25} \, \frac{A_s}{\Omega_{\mathrm{M}0}^2}
         \left(\frac{c}{H_0}\right)^4 k_*^{1 - n_s} \, k^{n_s} \, T^2(k) \, D^2(z)
-    \quad \quad (\mathrm{P}.11)
+    \quad \quad (\mathrm{P}.15)
 ```
 
-Given (P.7), ``P_m \propto k^{n_s}`` at large scales and ``P_m \propto k^{n_s - 4} \ln^2 k`` at small ones, with the turnover set by the horizon scale at matter-radiation equality, ``k_\mathrm{eq} \simeq 0.015 \, h \, \mathrm{Mpc}^{-1}``.
+Given (P.11), ``P_m \propto k^{n_s}`` at large scales and ``P_m \propto k^{n_s - 4} \ln^2 k`` at small ones, with the turnover set by the horizon scale at matter-radiation equality, ``k_\mathrm{eq} \simeq 0.015 \, h \, \mathrm{Mpc}^{-1}``.
 With ``k`` in ``h \, \mathrm{Mpc}^{-1}``, one has ``c/H_0 \simeq 2997.92 \, h^{-1}\mathrm{Mpc}`` and ``k_* = (0.05/h) \, h \, \mathrm{Mpc}^{-1}``, so that ``P_m`` is in ``(h^{-1}\mathrm{Mpc})^3``.
 
 !!! note "Normalization of the growth factor"
-    In (P.6)-(P.11) ``D(z)`` is normalized such that ``D(z) = (1+z)^{-1}`` during matter domination, which gives ``D(0) \simeq 0.79`` for ``\Omega_{\mathrm{M}0} \simeq 0.315``.
+    In (P.10)-(P.15) ``D(z)`` is normalized such that ``D(z) = (1+z)^{-1}`` during matter domination, which gives ``D(0) \simeq 0.79`` for ``\Omega_{\mathrm{M}0} \simeq 0.315``.
     If a growth factor ``\tilde{D}(z)`` normalized as ``\tilde{D}(0) = 1`` is used instead, replace ``D(z) \rightarrow D(0) \, \tilde{D}(z)`` in these equations.
 
 
@@ -258,12 +280,12 @@ With ``k`` in ``h \, \mathrm{Mpc}^{-1}``, one has ``c/H_0 \simeq 2997.92 \, h^{-
 
 ## The small-``k`` slope
 
-Everything needed is already in (P.2) and (P.11). On large scales the transfer function
-is ``1`` by construction, (P.7), so (P.11) reduces to a pure power law:
+Everything needed is already in (P.6) and (P.15). On large scales the transfer function
+is ``1`` by construction, (P.11), so (P.15) reduces to a pure power law:
 
 ```math
 \begin{align*}
-    (\mathrm{P}.11) \; \mathrm{with} \; T(k) \rightarrow 1 \; : \quad \quad
+    (\mathrm{P}.15) \; \mathrm{with} \; T(k) \rightarrow 1 \; : \quad \quad
     P_m(k, z=0) &\; \propto \; k^{\,n_s} \, T^2(k) \, D^2(0) \\[10pt]
     &\underset{k \rightarrow 0^{+}}{\sim} \; k^{\,n_s}
 \end{align*}
@@ -274,14 +296,14 @@ is ``1`` by construction, (P.7), so (P.11) reduces to a pure power law:
     P(k) \; \underset{k \rightarrow 0^{+}}{\sim}  \, k^{\,n_P} \; , \quad \quad
     n_P = n_s \simeq 0.96
 }
-\quad \quad (\mathrm{P}.12)
+\quad \quad (\mathrm{P}.16)
 ```
 
 The matter Power Spectrum therefore **grows** as ``k^{+0.96}`` at small ``k``, while the
 dimensionless curvature ``\Delta^2_\mathcal{R}`` *falls* as
 ``k^{\,n_s-1} \simeq k^{-0.035}``. The two are not in conflict: the four powers of ``k``
 supplied by the Poisson equation, minus the three of the
-``\Delta^2_\mathcal{R} \leftrightarrow P_\mathcal{R}`` conversion (P.2), are exactly what
+``\Delta^2_\mathcal{R} \leftrightarrow P_\mathcal{R}`` conversion (P.6), are exactly what
 separates them. The distinction matters because ``n_P`` and ``n_s - 1`` are easy to
 confuse, and it is ``n_P`` that governs the ``I_\ell^n``.
 
@@ -297,7 +319,7 @@ At the other end the transfer function is no longer ``1``. For CDM it falls as
 ```math
     P_m(k) \; \underset{k \rightarrow +\infty}{\sim} \; k^{4} \, T^2(k) \, k^{\,n_s-4}
     \; \sim \; k^{\,n_s - 4} \, \ln^2 k \; \simeq \; k^{-3} \, \ln^2 k
-    \quad \quad (\mathrm{P}.13)
+    \quad \quad (\mathrm{P}.17)
 ```
 
 That ``k^{-3}`` is the exponent that matters for the moments (3) of
@@ -310,7 +332,7 @@ separation. On `data/WideA_ZA_pk.dat` the right fit gives
 
 ```math
     P(q) \; \underset{q \, > \, 20.2}{=} \; 91.60 \; q^{-2.641}
-    \quad \quad (\mathrm{P}.14)
+    \quad \quad (\mathrm{P}.18)
 ```
 
 i.e. a tail *shallower* than the asymptotic ``k^{-3}``, simply because at
@@ -340,8 +362,8 @@ as ``q^{\,2-i+\nu}``. The integral converges at ``q \rightarrow 0`` when
 Two of the five would not exist as numbers **if the range were infinite**:
 
 - **``\sigma_0`` has no ``k_\mathrm{max} \rightarrow +\infty`` limit.** With the true tail
-  (P.13) its integrand goes as ``q^{-1}``, so the integral would grow logarithmically;
-  with the fitted tail (P.14) it grows as ``\sigma_0(<K) \sim K^{\,0.359}``. That is a
+  (P.17) its integrand goes as ``q^{-1}``, so the integral would grow logarithmically;
+  with the fitted tail (P.18) it grows as ``\sigma_0(<K) \sim K^{\,0.359}``. That is a
   property of ``P(q)``, not a defect: ``\sigma_0`` is the density variance
   ``\langle \delta^2 \rangle`` smoothed on *zero* scale, which is not a finite quantity in
   CDM.
@@ -372,7 +394,7 @@ Measured on `data/WideA_ZA_pk.dat`, with ``k_\mathrm{min} = 10^{-5}``:
 ``\sigma_2`` has settled by ``k \simeq 1`` and is then flat to five digits.
 ``\sigma_0`` never settles, and it is important to read that correctly: it is not a
 numerical problem that a finer grid or a wider range would cure. With the fitted tail
-(P.14) every extra decade of ``k`` multiplies it by ``10^{\,0.359} \simeq 2.3``, for ever.
+(P.18) every extra decade of ``k`` multiplies it by ``10^{\,0.359} \simeq 2.3``, for ever.
 A cumulative plot of ``\sigma_0(<k)`` therefore **cannot** show a plateau — by
 construction, not by accident — and the value of ``\sigma_0`` is whatever the integral
 reaches at ``k_\mathrm{max}``. This is why ``k_\mathrm{max}`` is part of the definition
@@ -388,7 +410,7 @@ and not a convergence parameter.
 
 ``P(q)`` over twelve decades. Outside the tabulated range (grey lines) the solid curve
 *is* the dashed power law, which is the point of the figure: what GaPSE integrates
-beyond ``q \simeq 20`` is the extrapolation (P.14), not data.
+beyond ``q \simeq 20`` is the extrapolation (P.18), not data.
 
 ```@raw html
 <img src="../assets/input_ps/input_ps_slope.png" alt="Local slope of the input Power Spectrum"/>
@@ -396,7 +418,7 @@ beyond ``q \simeq 20`` is the extrapolation (P.14), not data.
 
 The same information as a local slope ``\mathrm{d}\ln P/\mathrm{d}\ln q``: flat at
 ``+0.960`` on the left, flat at ``-2.641`` on the right, with the turnover around the
-equality scale in between. The dotted line marks the ``-3`` of (P.13), which the fitted
+equality scale in between. The dotted line marks the ``-3`` of (P.17), which the fitted
 tail does not reach.
 
 ## Reproducing the figures

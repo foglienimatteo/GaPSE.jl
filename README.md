@@ -183,6 +183,17 @@ The latest container name is then `gapse:0.10.0a`.
 
 These containers have already installed all the Julia packages that GaPSE needs (i.e. the ones listed in `Project.toml`) + come others for the ipynbs (check the Dockerfile itself).
 
+To rebuild the image from this directory, and to check that the GaPSE inside it works:
+
+```bash
+$ sudo docker build -t matteofoglieni/gapse:0.10.0a .
+$ sudo docker run --rm matteofoglieni/gapse:0.10.0a \
+      julia --project=/home/jovyan/GaPSE -e 'using Pkg; Pkg.test("GaPSE")'
+```
+
+The second command runs the whole unit-test suite inside the container; it takes about
+half an hour.
+
 Supposing that you have already installed Docker, so as to use GaPSE as a container:
 
 - download the image: 
