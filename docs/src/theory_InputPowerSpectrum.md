@@ -6,7 +6,7 @@ large ``q`` — are not a detail: they decide whether each moment
 
 ```math
     \sigma_i = \int_{k_\mathrm{min}}^{k_\mathrm{max}} \frac{\mathrm{d}q}{2\pi^2}
-    \, q^{\,2-i} \, P(q)
+    \, q^{\,2-i} \, P(q) (\mathrm{P}.0)
 ```
 
 (Eq.(3) of [The ``I_\ell^n`` integrals](theory_IlnIntegrals.md)) is a number on its own,
@@ -20,6 +20,61 @@ or only together with the range it is computed over. Since the
 Pages = ["theory_InputPowerSpectrum.md"]
 Depth = 3
 ```
+
+
+## Universe Metric considered
+
+First of all, we show the metric of the Universe we started from. 
+We choose a perturbed Friedmann-Lemaitre-Robertson-Walker (FLRW) metric, which has the following general analytical expression:
+    
+
+```math
+\begin{align*}
+\mathrm{d} s^2 &= -(1 + 2\Psi)\mathrm{d} \tau^2 + (1 - 2 \Phi)\gamma_{ij} \mathrm{d} x^i \mathrm{d} x^j \, ,\\[13pt]
+\gamma_{ij} \mathrm{d} x^i \mathrm{d} x^j &= \mathrm{d} r^2 + S_K^2(r)(\mathrm{d} \theta + \sin^2\theta \, \mathrm{d} \varphi^2) \, ,\\[13pt]
+\end{align*}
+```
+
+```math
+S_K(r) = \begin{cases} 
+    K^{-1/2} \, \sin\left(\sqrt{K}r\right)\, , \quad  \quad \; \; \, \mathrm{for} \; K>0 \\
+    \quad \quad r \, ,\quad \quad \quad \quad \quad \quad \quad \quad \; \,  \mathrm{for} \; K=0 \\
+    |K|^{-1/2} \, \sinh\left(\sqrt{|K|}r\right)\, , \quad \mathrm{for} \; K<0 \\
+\end{cases}
+```
+
+where:
+
+- ``K := - H_0^2 (1 - \Omega_{M0})`` is the curvature
+- ``\tau`` the comoving time
+- ``r`` the comoving distance
+
+We consider only scalar perturbations, i.e. the Bardeen potentials ``\Phi`` and ``\Psi``, because vector perturbations (if they even exist) 
+are diluted in the Universe expansion and tensors ones are even less important. 
+Note that we set the speed of light ``c=1``, so these potentials are adimensionals. This convention can be also thought as the redefinition ``\phi \rightarrow \phi \, c^2`` of the gravitational potentials.
+
+We consider only the flat-geometry case, i.e. ``K=0`` and ``S_K(r) = r``. 
+
+We define the Galaxy Number Counts (GNC) in terms of the direction of observation ``-\mathbf{n}`` and redshift ``z`` as
+
+```math
+\Delta(\mathbf{n}, z) = 
+    \frac{
+        n_{\mathrm{g}}(\mathbf{n}, z) -  \langle n_{\mathrm{g}} \rangle(z)
+    }{\langle n_{\mathrm{g}} \rangle(z)} \, ,
+```
+
+
+
+where:
+
+- ``\mathbf{n}`` is the propagation direction of photons
+- ``\langle ... \rangle`` denotes the angular mean at fixed observed ``z``
+- ``n_{\mathrm{g}}(\mathbf{n}, z) = \mathrm{d} N/(\mathrm{d} z \, \mathrm{d} \Omega)`` is the number density of sources per redshift and solid angle.
+
+
+
+
 
 
 ## The matter Power Spectrum at present day
@@ -38,8 +93,8 @@ and it is usually quoted through the dimensionless power spectrum
 
 ```math
 \begin{align*}
-    \Delta^2_{\mathcal{R}}(k)  := \frac{k^3}{2\pi^2} P_\mathcal{R}(k) 
-        &\underset{k \rightarrow 0^{+}}{\sim} \; A_s \, \left( \frac{k}{k^*}\right)^{n_s-1} &&(\mathrm{P}.2)\\[10pt]
+    \Delta^2_{\mathcal{R}}(k)  &:= \frac{k^3}{2\pi^2} P_\mathcal{R}(k) \\[10pt]
+        &\underset{k \rightarrow 0^{+}}{\sim} \; A_s \, \left( \frac{k}{k^*}\right)^{n_s-1} &&(\mathrm{P}.2)\\[19pt]
 
     n_s&\approx 0.965&&\mathrm{primordial \; spectral \; index}\\[8pt]
     \ln(10^{10} A_s) &\approx 3.043 &&\mathrm{ log \; power \; of \; primordial \; curvature \; perturbations} \Rightarrow A_s \approx 2.10 \times 10^{-9}\\[8pt]
@@ -274,13 +329,13 @@ as ``q^{\,2-i+\nu}``. The integral converges at ``q \rightarrow 0`` when
 ``2-i+\nu > -1``, and at ``q \rightarrow +\infty`` when ``2-i+\nu < -1``. With
 ``\nu = +0.960`` on the left and ``\nu = -2.641`` on the right:
 
-| | IR exponent | IR | UV exponent | UV |
-|:--|--:|:--|--:|:--|
-| ``\sigma_0`` | ``+2.960`` | converges | ``-0.641`` | **diverges** |
-| ``\sigma_1`` | ``+1.960`` | converges | ``-1.641`` | converges |
-| ``\sigma_2`` | ``+0.960`` | converges | ``-2.641`` | converges |
-| ``\sigma_3`` | ``-0.040`` | converges | ``-3.641`` | converges |
-| ``\sigma_4`` | ``-1.040`` | **diverges** | ``-4.641`` | converges |
+|              | IR exponent | IR           | UV exponent | UV           |
+| :----------- | ----------: | :----------- | ----------: | :----------- |
+| ``\sigma_0`` |  ``+2.960`` | converges    |  ``-0.641`` | **diverges** |
+| ``\sigma_1`` |  ``+1.960`` | converges    |  ``-1.641`` | converges    |
+| ``\sigma_2`` |  ``+0.960`` | converges    |  ``-2.641`` | converges    |
+| ``\sigma_3`` |  ``-0.040`` | converges    |  ``-3.641`` | converges    |
+| ``\sigma_4`` |  ``-1.040`` | **diverges** |  ``-4.641`` | converges    |
 
 Two of the five would not exist as numbers **if the range were infinite**:
 
