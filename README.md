@@ -118,17 +118,19 @@ If there are no error messages at the end of the installations, than GaPSE is co
 NOTE: instead of using the `install_gapse.jl` script, you can also do the same in a more interactive way, if you prefer:
 
 ```bash
-$ cd ~/mypath/GaPSE.jl
-# open a Julia REPL session and activate the project
-$ julia 
-julia>      # enter Pkg mode by typing "]"
-(@v1.12) activate .
-(GaPSE) activate .
-(GaPSE) instantiate   # this will detect and install all the dependecies listed in "Project.toml"
-(GaPSE)     # go back to Command mode by typing "Backspace"
-julia> 
-# DONE! You can now use GaPSE
+$ cd ~/mypath/GaPSE.jl  # go to GaPSE directory
+$ julia                 # open a Julia REPL session 
+julia>                  # enter Pkg mode by typing "]"  => prompt will change
+(@v1.12) activate .     # activate the GaPSE project    => prompt will change again
+(GaPSE) instantiate     # resolves the dependency graph, generate Manifest.toml, download and install all the dependecies listed in it
+  ...
+(GaPSE) precompile      # compile the source code of these packages into efficient cached artifacts (.ji files)
+  ...
+(GaPSE)                 # go back to command mode by typing "Backspace"
+julia> using GaPSE
+# DONE! You can now use GaPSE in this REPL
 ```
+
 
 <br>
 
@@ -143,9 +145,13 @@ There are three ways to use this code:
 
 - **RECOMMENDED**: you can run `include("<path-to-GaPSE.jl-directory>/src/GaPSE.jl")` command in a Jupyter Notebook (with a Julia 1.12 kernel, see [IJulia](https://github.com/JuliaLang/IJulia.jl) pkg), and use the code functions inside it
 
-- you can open a Julia REPL session, include the code with
+- in a REPL session
   ```julia
-     include("<path-to-GaPSE-directory>/src/GaPSE.jl")
+    $ julia                 # open a Julia REPL session 
+    julia>                  # enter Pkg mode by typing "]"  => prompt will change
+    (@v1.12) activate .      # activate the GaPSE project    => prompt will change again
+    (GaPSE)                 # go back to command mode by typing "Backspace"
+    julia> using GaPSE
   ```
   and then use interactively the GaPSE functions
 
