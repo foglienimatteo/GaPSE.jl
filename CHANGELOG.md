@@ -6,7 +6,7 @@ Minor bump and not a patch: this release changes results that callers can observ
 
 - **IMPORTANT CHANGE**: replaced [Dierckx](https://github.com/kbarbary/Dierckx.jl) with our own cubic spline `MySpline` (new `src/Spline.jl`) for every 1D interpolation; `Dierckx` is now only a *test* dependency, where the suite uses it as an independent cross-check. Note that `MySpline` only supports `bc="error"`, so `spline_com_H` throws outside its range instead of clamping, and that it is not bit-identical to `Spline1D`: 33 reference files in `test/datatest` were regenerated and a few tolerances relaxed;
 
-- **IMPORTANT CHANGE**: `Δχ = 0` limits`
+- **IMPORTANT CHANGE**: the `Δχ → 0` limits
   * `Δχ = 0` is no longer an error. It is the exactly-collinear, coincident-point configuration, which the quadrature reaches deterministically, so the 21 `throw(AssertionError(...))` are now a fall-through to `zero(Δχ_square)`. The three `√(Δχ_square) > 1e-8 ? ... : 1e-8` clamps evaluated `√` before the comparison, so a negative argument raised a `DomainError` before the guard could act;
   * every `χ`-integrated integrand now evaluates its analytic `Δχ → 0` limit instead of the `J * I_l^n` sum when `Δχ` is small, and `Δχ_min::AbstractFloat=1e-1` was added to the 26 integrands that lacked it. The derivations of the eight families of limits are in the new "The Δχ → 0 limits" pages of the manual, each obtained by expanding along `χ2 = χ1 + p Δχ` and checked to be independent of `p`;
   * BUG FIX: those branches use a threshold **relative** to the local comoving distances where those are small, `Δχ ≥ min(Δχ_min, Δχ_min * max(χ1, χ2))`, applied to all thirty of them. The limits assume `y → 1`, which `Δχ → 0` forces only at *fixed, non-zero* distances; in the small-χ corner, where `χ1` and `χ2` vanish together at any `y`, the absolute threshold fired with `y` nowhere near 1 and returned a value a factor `1/y` too large. The `min` keeps the absolute cap, since the expansion needs `Δχ << 1/k_max`: a purely relative threshold would let the branch fire up to `Δχ = 0.1 χ ≃ 100` (measured: errors of 1000-3000%). Measured on `ξ_GNCxLD_Lensing_Lensing`, this removes a uniform 1.5% bias of the windowed multipoles at `s = 1000`;
@@ -28,13 +28,13 @@ Minor bump and not a patch: this release changes results that callers can observ
 
 - `Project.toml` has now a `[compat]` section with a lower bound per dependency and `julia = "1.12"`, plus the `[workspace]` table declaring `test`;
 
-- the unit tests run on **Julia 1.12 only**: the 1.9 job and the advisory `continue-on-error` 1.12 probe are replaced by one blocking matrix entry per platform, `ubuntu-latest/x64` (where coverage is taken) and `macos-latest/aarch64`. The previous workflow declared `aarch64` in the matrix but hard-coded `arch: x64` in the setup step, so macOS was in fact running x86_64 under Rosetta; 
+- the unit tests run on **Julia 1.12 only**: the 1.9 job and the advisory `continue-on-error` 1.12 probe are replaced by one blocking matrix entry per platform, `ubuntu-latest/x64` (where coverage is taken) and `macos-latest/aarch64`. The previous workflow declared `aarch64` in the matrix but hard-coded `arch: x64` in the setup step, so macOS was in fact running x86_64 under Rosetta;
 
 - DOCKERFILE: the `Dockerfile` moves to `quay.io/jupyter/julia-notebook:julia-1.12.7`. The Jupyter Docker Stacks publish on Quay since 2023, so the `jupyter/*` repositories on Docker Hub are the stale ones, not the project. The base image already provides Julia, IJulia and a registered kernel, so only GaPSE and the plotting extras are added, with `PYTHON` pinned to the stack's interpreter so PyCall does not build a private one;
 
 - DEPENDENCIES: the test-only and documentation-only dependencies are out of the package. `Project.toml` loses `ArbNumerics`, `IJulia`, `Documenter`, `Dierckx`, `NPZ`, `Suppressor` and `Test`; the last four, plus `DelimitedFiles` and `QuadGK`, live in the new `test/Project.toml`. `src/GaPSE.jl` drops `using Dierckx`, `using Test` and `using Documenter`, which also removes a latent name clash on `derivative`. `install_gapse.jl` was trimmed to the same list;
 
-- TEST FIX: `test_Spline.jl` drew its evaluation points with an unseeded `rand()` and compared them with a purely relative tolerance, which is meaningless where the derivative crosses zero: `linear range - nu=2` failed for about 10% of the seeds. The draws are now seeded and the six testsets that compare against `Dierckx` use `atol = RTOL * maximum(abs, ...)`.
+- TEST FIX: `test_Spline.jl` drew its evaluation points with an unseeded `rand()` and compared them with a purely relative tolerance, which is meaningless where the derivative crosses zero: `linear range - nu=2` failed for about 6% of the seeds. The draws are now seeded and the six testsets that compare against `Dierckx` use `atol = RTOL * maximum(abs, ...)`.
 
 - `test/runtests.jl` gained the `TEST_BASICS`, `TEST_PP_PNG`, `TEST_LD`, `TEST_GNC`, `TEST_GNCxLD_LDxGNC` and `TEST_TWOSPECIES` switches, to run a subset of the suite while developing. They must all be `true` on the shared branches;
 
@@ -63,8 +63,6 @@ Minor bump and not a patch: this release changes results that callers can observ
 ## branch oneapi -> should have lead to version 0.9.0
 
 - added `MySpline`
-
-- the `print_map_*` functions truncate to 20 characters the keyword values they write into the output headers, so a large object no longer makes the header unreadable.
 
 - trying to parallelize the code with `KernelAbstractions`; seems that the GPU offloading is overkill, due to small size of matrixes in the single (Lensing-... and IntegratedGP-...) and double integral terms (Lensing-Lensing, IntegratedGP-IntegratedGP)
 
