@@ -1,4 +1,4 @@
-# GaPSE - a model for the Galaxy Power Spectrum Estimator
+# GaPSE.jl - a model for the Galaxy Power Spectrum Estimator
 
 ![julia-version](https://img.shields.io/badge/julia_version-v1.12-9558B2?style=flat&logo=julia) 
 ![package-version](https://img.shields.io/github/v/release/foglienimatteo/GaPSE.jl?include_prereleases)
@@ -13,17 +13,21 @@ GaPSE (Galaxy Power Spectrum Estimator) is a software for cosmological computati
 > [!TIP]
 > FIRST TIME HERE? Have a look at the `ipynbs/TUTORIAL.ipynb`
 
-> [!TIP]
-> In the [latest stable documentation](https://foglienimatteo.github.io/GaPSE.jl/stable) you can find also the physical and numerical theory behind this package
+!!! note
+    * In the [GaPSE GitHub Pages documentation](https://foglienimatteo.github.io/GaPSE.jl/stable) you can find also the physical and numerical theory behind this package
+    * The code functions are all well documented; again, check the [GaPSE GitHub Pages documentation](https://foglienimatteo.github.io/GaPSE.jl/stable) if you can't see correctly the analytical expressions written in the docstrings inside the REPL
 
-IMPORTANT NOTE: This is a work-in-progress project! As a consequence, currently in this pre-release:
 
-- **a lot of changes have been made to upgrade to version `v0.10.0`**; see the changelog for a complete list
-- it is possible to compute the power spectrum/correlation function multipoles with `L=1,2,3,...` of the effects we'll show next, but 2 effects among the Galaxy Number Counts multipoles (Newton-Lensing and Lensing-Newton) converge very slowly, so their computation is not still 100% ready. However, the monopole (L=0) computations do not have any problem with `quad`, and even the GNC sum for higher order multipoles is not affected;
-- The Power Spectrum computations with `:twofast` do not work properly, you should always prefer `:fftlog`. However, due to the fact that with `:fftlog` you must specify manually the bias parameter, the Power Spectra of a whole group of terms creates FFT oscillations in the smallest ones. The leading ones and the sum are not however affected.  
-- the code functions are well documented; check the github pages website https://foglienimatteo.github.io/GaPSE.jl/stable if you can't see correctly the analytical expressions written in the docstrings; 
-- few people used this code, so bugs are behind the corner; do not hesitate to raise the finger to point out them (see in the [How to report bugs, suggest improvements and/or contribute](#how-to-report-bugs-suggest-improvements-andor-contribute) section below)!
-- if you use this code, please read the [Using this code](#using-this-code) section below
+!!! warning
+    **IMPORTANT NOTE**: This is a work-in-progress project! As a consequence, currently in this pre-release:
+
+    - **a lot of changes have been made to upgrade to version `v0.10.0`**; see the changelog for a complete list
+    - it is possible to compute the power spectrum/correlation function multipoles with `L=1,2,3,...` of the effects we'll show next, but 2 effects among the Galaxy Number Counts multipoles (Newton-Lensing and Lensing-Newton) converge very slowly, so their computation is not still 100% ready. However, the monopole (L=0) computations do not have any problem with `quad`, and even the GNC sum for higher order multipoles is not affected;
+    - The Power Spectrum computations with `:twofast` do not work properly, you should always prefer `:fftlog`. However, due to the fact that with `:fftlog` you must specify manually the bias parameter, the Power Spectra of a whole group of terms creates FFT oscillations in the smallest ones. The leading ones and the sum are not however affected.  
+    - few people used this code, so bugs are behind the corner; do not hesitate to raise the finger to point out them (see in the [How to report bugs, suggest improvements and/or contribute](#how-to-report-bugs-suggest-improvements-andor-contribute) section below)!
+
+> [!IMPORTANT]
+> If you use this code, please read the [Using this code](#using-this-code) section below
 
 
 
@@ -35,7 +39,7 @@ IMPORTANT NOTE: This is a work-in-progress project! As a consequence, currently 
 
 ## Table of Contents
 
-- [GaPSE - a model for the Galaxy Power Spectrum Estimator](#gapse---a-model-for-the-galaxy-power-spectrum-estimator)
+- [GaPSE.jl - a model for the Galaxy Power Spectrum Estimator](#gapsejl---a-model-for-the-galaxy-power-spectrum-estimator)
   - [Table of Contents](#table-of-contents)
   - [Brief description](#brief-description)
   - [Installation and Usage](#installation-and-usage)
@@ -192,12 +196,6 @@ The images are saved in <https://hub.docker.com/repository/docker/matteofoglieni
 
 These containers have already installed all the Julia packages that GaPSE needs (i.e. the ones listed in `Project.toml`) + some others for the ipynbs (check the Dockerfile itself).
 
-To rebuild the image from this directory, and to check that the GaPSE inside it works:
-
-```bash
-$ sudo docker build -t matteofoglieni/gapse:0.10.0a .
-$ sudo docker run --rm matteofoglieni/gapse:0.10.0a julia --project=/home/jovyan/GaPSE -e 'using Pkg; Pkg.test("GaPSE")'
-```
 
 The second command runs the whole unit-test suite inside the container; it takes about
 half an hour.
