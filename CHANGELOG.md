@@ -38,6 +38,8 @@ Minor bump and not a patch: this release changes results that callers can observ
 
 - `test/runtests.jl` gained the `TEST_BASICS`, `TEST_PP_PNG`, `TEST_LD`, `TEST_GNC`, `TEST_GNCxLD_LDxGNC` and `TEST_TWOSPECIES` switches, to run a subset of the suite while developing. They must all be `true` on the shared branches;
 
+- NOTEBOOK FIX: the notebooks in `ipynbs/` ran `include(PATH_TO_GAPSE * "src/GaPSE.jl")`, which evaluates the sources in `Main`: GaPSE's own `Project.toml` is never read, so its dependencies are looked for in the kernel's active project and the include fails with `Package TwoFAST [...] is required but does not seem to be installed`. They now activate the new `ipynbs/Project.toml`, `Pkg.develop` the GaPSE of this repository when it is not reachable, and `using GaPSE`, as the `theory/` notebooks do. This also repairs `Generic_Window.ipynb` and `eBOSS_Window.ipynb`, that `using Dierckx` while it is no longer a dependency of the package;
+
 
 ### The theory in the manual
 
