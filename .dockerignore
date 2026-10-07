@@ -1,9 +1,8 @@
 .github/*
 .ipynb_checkpoints/*
-*/.ipynb_checkpoints/*
-build.log
+**/.ipynb_checkpoints/*
+*.log
 
 .DS_Store
-*/.DS_Store
 Manifest.toml
-newimage.sh
+

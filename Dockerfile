@@ -18,14 +18,13 @@
 #
 
 # The image ships GaPSE together with a JupyterLab that can run both the notebooks
-# of `theory/` and the examples of `ipynbs/`.
+# of "theory/" and the examples of "ipynbs/".
 #
-# The base image comes from the Jupyter Docker Stacks. Since 2023 they publish on
-# Quay, so the tag has to be taken from quay.io/jupyter/julia-notebook and not from
-# the `jupyter/*` repositories on Docker Hub, which are no longer updated. It already
-# ships Julia, IJulia and a registered Julia kernel, so only GaPSE and the plotting
-# extras are added here. The Julia version is pinned to match the `julia = "1.12"`
-# of `Project.toml`.
+# The base image comes from the Jupyter Docker Stacks. 
+# Since 2023 they publish on Quay, so the tag has to be taken from quay.io/jupyter/julia-notebook 
+# and not from the "jupyter/*" repositories on Docker Hub, which are no longer updated. 
+# This image already ships Julia, IJulia and a registered Julia kernel, so 
+# only GaPSE and the plotting extras are added here.
 
 FROM quay.io/jupyter/julia-notebook:julia-1.12.7
 
@@ -49,18 +48,18 @@ ENV JULIA_NUM_THREADS=auto
 
 RUN pip install --no-cache-dir matplotlib
 
-# The package itself. `Pkg.instantiate()` resolves `test/` as well, since the
-# `[workspace]` table of `Project.toml` declares it as a member.
+# Precompilation of the package itself. "Pkg.instantiate()" resolves "test/" as well, since the
+# "[workspace]" table of "Project.toml" declares it as a member.
 RUN julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
 
-# The extras the notebooks need. They are deliberately absent from the `[deps]` of
-# `Project.toml`: `Plots`, `LaTeXStrings` and `PyPlot` are needed to redraw the
-# figures, never by the library itself.
-RUN julia --project=. -e 'using Pkg; Pkg.add(["Plots", "LaTeXStrings", "PyPlot"]); \
-                          Pkg.build("PyCall"); Pkg.build("PyPlot"); Pkg.precompile()'
+# The extra packages that the notebooks need but GaPSE doesn't. 
+# They are deliberately absent from the "[deps]" of "Project.toml": 
+# "Plots", "LaTeXStrings" and "PyPlot" are needed to redraw the figures, never by the library itself.
+RUN julia --project=. -e 'using Pkg; Pkg.add(["Plots", "LaTeXStrings", "PyPlot"]); Pkg.build("PyCall"); Pkg.build("PyPlot"); Pkg.precompile()'
 
 # The base image already defines the entrypoint and the command that start JupyterLab
-# on port 8888, so neither is overridden here. To run the test suite instead:
+# on port 8888, so neither has to be overridden here. 
+# To run the test suite instead:
 #
-#   docker run --rm matteofoglieni/gapse:0.10.0a \
-#       julia --project=/home/jovyan/GaPSE -e 'using Pkg; Pkg.test("GaPSE")'
+#   $ docker run --rm matteofoglieni/gapse:0.10.0a julia --project=/home/jovyan/GaPSE -e 'using Pkg; Pkg.test("GaPSE")'
+

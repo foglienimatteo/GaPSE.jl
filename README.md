@@ -10,13 +10,22 @@
 
 GaPSE (Galaxy Power Spectrum Estimator) is a software for cosmological computations written in the [Julia Programming Language](https://julialang.org).
 
+> [!TIP]
+> FIRST TIME HERE? Have a look at the `ipynbs/TUTORIAL.ipynb`
+
+> [!TIP]
+> In the [latest stable documentation](https://foglienimatteo.github.io/GaPSE/stable) you can find also the physical and numerical theory behind this package
+
 IMPORTANT NOTE: This is a work-in-progress project! As a consequence, currently in this pre-release:
 
+- **a lot of changes has been made to upgrade to version `v0.10.0`**; see the changelog for a complete list
 - it is possible to compute the power spectrum/correlation function multipoles with `L=1,2,3,...` of the effects we'll show next, but 2 effects among the Galaxy Number Counts multipoles (Newton-Lensing and Lensing-Newton) converge very slowly, so their computation is not still 100% ready. However, the monopole (L=0) computations do not have any problem with `quad`, and even the GNC sum for higher order multipoles is not affected;
 - The Power Spectrum computations with `:twofast` do not work properly, you should always prefer `:fftog`. However, due to the fact that with `:fftlog` you must specify manually the bias parameter, the Power Spectra of a whole group of terms creates FFT oscillations in the smallest ones. The leading ones and the sum are not however affected.  
 - the code functions are well documented; check the github pages website https://foglienimatteo.github.io/GaPSE.jl/stable if you can't see correctly the analytical expressions written in the docstrings; 
 - few people used this code, so bugs are behind the corner; do not hesitate to raise the finger to point out them (see in the [How to report bugs, suggest improvements and/or contribute](#how-to-report-bugs-suggest-improvements-andor-contribute) section below)!
 - if you use this code, please read the [Using this code](##using-this-code) section below
+
+
 
 <br>
 <br>
@@ -41,8 +50,7 @@ IMPORTANT NOTE: This is a work-in-progress project! As a consequence, currently 
 
 
 <br>
-<br>
-<br>
+
 
 
 
@@ -70,8 +78,6 @@ All these calculations can be performed both with and without a survey window fu
 This project, and the analytical expressions used for the TPCFs, are based on the article of Emanuele Castorina and Enea Di Dio [[3]](#1).
 
 <br>
-<br>
-<br>
 
 
 
@@ -82,8 +88,8 @@ This project, and the analytical expressions used for the TPCFs, are based on th
 Currently, this package is not in the Julia package registries. 
 There are two main ways to install and use GaPSE on your local machine:
 
--  the traditional way: you clone this gitrepo locally and you install the librarires that GaPSE needs in a suited Julia enviroment; it requires Julia 1.12 or newer, as declared by the `[compat]` section of `Project.toml`;
--  using a Docker container (experimental): you pull and run the GaPSE container; it requires a [Docker](https://www.docker.com) installation.
+-  the traditional way: you clone this gitrepo locally and you install the librarires that GaPSE needs in a suited Julia enviroment; it requires Julia 1.12 or newer;
+-  using a Docker container: you pull and run the GaPSE container; it requires a [Docker](https://www.docker.com) installation.
 
 <br>
 
@@ -91,46 +97,38 @@ There are two main ways to install and use GaPSE on your local machine:
 
 
 
-
-
 ### traditional way: Installation
 
-Assuming that you have already installed a coompatible Julia version, the simplest way to install this software is then the following:
+Assuming that you have already installed a compatible Julia version (see here <https://julialang.org/downloads/>), the simplest way to install this software is then the following:
 
-- in the terminal, go to the directory where you want to install this package;
-  
-- clone this repository with Git
-  ```bash
-  $ git clone https://github.com/foglienimatteo/GaPSE.jl
-  ```
-  or manually download the source code from the url https://github.com/foglienimatteo/GaPSE.jl (Code > Download Zip)
-
-- go inside the directory of GaPSE (`$ cd GaPSE.jl` in the shell) 
-
-Inside the directory, there is a file called `install_gapse.jl`, which is a Julia script conceived for downloading and installing all the dependencies of GaPSE. You can run it by typing in the terminal:
 
 ```bash
-     $ julia install_gapse.jl
+$ mkdir ~/mypath && cd ~/mypath   # directory where you want to install this package
+$ git clone https://github.com/foglienimatteo/GaPSE.jl
+# or download GaPSE manually from https://github.com/foglienimatteo/GaPSE.jl under "Code > Download Zip"
+$ cd GaPSE.jl
+
+# "install_gapse.jl" is a Julia script conceived for downloading and installing all the dependencies of GaPSE
+$ julia install_gapse.jl
 ```
+
 If there are no error messages at the end of the installations, than GaPSE is corretly configured and you can start to use it!
-  
-NOTE: the packages that this script will install are the ones strictly required for GaPSE. The ipynbs we provide need however some more, as `Plots`, `LaTeXStrings` and `PyPlot` (which in turn requires a python kernel with `Matplotlib` installed); in case you don't have them, run with a terminal in this directory:
-```bash
-$ pip3 install matplotlib
-$ julia --activate=. --eval 'using Pkg; for p in ["Plots", "LaTeXStrings", "PyPlot"]; Pkg.add(p); end; Pkg.resolve()'
-```
+
 
 NOTE: instead of using the `install_gapse.jl` script, you can also do the same in a more interactive way, if you prefer:
 
-- open a Julia REPL session and activate the project; you can achieve that opening the REPL with 
-  ```bash
-  $ julia --activate=.
-  ```
-  or directy inside the REPL entering the Pkg mode (`]`) and running `activate .`
-
-- enter the Pkg mode (if you haven't done in the previous step) typing `]` and run `instantiate`; this command will automatically detect and install all the package dependecies (listed in `Project.toml`)
-
-- done! You can exit from the package mode (press the Backspace key on an empty line) and start to use GaPSE
+```bash
+$ cd ~/mypath/GaPSE.jl
+# open a Julia REPL session and activate the project
+$ julia 
+julia>      # enter Pkg mode by typing "]"
+(@v1.12) activate .
+(GaPSE) activate .
+(GaPSE) instantiate   # this will detect and install all the dependecies listed in "Project.toml"
+(GaPSE)     # go back to Command mode by typing "Backspace"
+julia> 
+# DONE! You can now use GaPSE
+```
 
 <br>
 
@@ -141,22 +139,24 @@ NOTE: instead of using the `install_gapse.jl` script, you can also do the same i
 
 ### traditional way: Usage
 
-There are three ways in order to use this code:
+There are three ways to use this code:
+
+- **RECOMMENDED**: you can run `include("<path-to-GaPSE.jl-directory>/src/GaPSE.jl")` command in a Jupyter Notebook (with a Julia 1.12 kernel, see [IJulia](https://github.com/JuliaLang/IJulia.jl) pkg), and use the code functions inside it
+
+- you can open a Julia REPL session, include the code with
+  ```julia
+     include("<path-to-GaPSE-directory>/src/GaPSE.jl")
+  ```
+  and then use interactively the GaPSE functions
 
 - you can write whatever instruction inside the file `GaPSE-exe.jl` and then run in the command line
   ```bash
     $ julia GaPSE-exe.jl
   ```
 
-- you can open a Julia REPL session, include the code with
-  ```julia
-     include("<path-to-GaPSE.jl-directory>/src/GaPSE.jl")
-  ```
-  and then use interactively the GaPSE functions
-
-- you can run the same `include("<path-to-GaPSE.jl-directory>/src/GaPSE.jl")` command in a Jupyter Notebook, and use the code functions inside it. This is by far the most confortable way.
 
 Some `.ipynb`s are already provided in the directory `ipynbs` :
+
 - we encourage you to follow the `ipynbs/TUTORIAL.ipynb` file first. The basic structure of the code and the most important functions are there presented;
 - `ipynbs/Computations_b1p5-sb0-fevo0.ipynb` explains the analytical Primordial Non-Gaussianities model we use here, compute its contribution in the redshift bin $1.0 \leq z \leq 1.5$ and compare it with the GNC effects, all using our toy-model window function with angular opening $\theta_{\rm max} = \pi/2$;
 - `ipynbs/Generic_Window.ipynb` explains how to use GaPSE with a generic Window Function of your choice;
@@ -166,7 +166,7 @@ Some `.ipynb`s are already provided in the directory `ipynbs` :
     $ julia Computations_b1p5-sb0-fevo0.jl
   ```
 
-The code is well tested and documented: almost each struct/function has a docstring that you can easily access in Julia with `?<name-of-the-struct/function>`, and there is an acitive GitHub Pages website with the [latest stable documentation](https://foglienimatteo.github.io/GaPSE/stable).
+The code is well tested and documented: almost each struct/function has a docstring that you can easily access in Julia with `?<name-of-the-struct/function>`, and there is an active GitHub Pages website with the [latest stable documentation](https://foglienimatteo.github.io/GaPSE/stable).
 
 <br>
 
@@ -178,72 +178,58 @@ The code is well tested and documented: almost each struct/function has a docstr
 
 The `Dockerfile` we provide in this directory is the one we used to create the container image corresponding to this GaPSE version.
 
-The images are saved in <https://hub.docker.com/repository/docker/matteofoglieni/gapse/general> and the tag is the same as the GaPSE version the container refers to + a latin letter (alphabetically orderer), to take into account different version of the Dockerfile which refer to the same GaPSE one.
-The latest container name is then `gapse:0.10.0a`.
+The images are saved in <https://hub.docker.com/repository/docker/matteofoglieni/gapse/general>; their tag is a combination of:
 
-These containers have already installed all the Julia packages that GaPSE needs (i.e. the ones listed in `Project.toml`) + come others for the ipynbs (check the Dockerfile itself).
+- the same as the GaPSE version the container refers to;
+- a latin letter (alphabetically orderer), to take into account different Dockerfile versions which refer to the same GaPSE one.
+
+These containers have already installed all the Julia packages that GaPSE needs (i.e. the ones listed in `Project.toml`) + some others for the ipynbs (check the Dockerfile itself).
 
 To rebuild the image from this directory, and to check that the GaPSE inside it works:
 
 ```bash
-$ sudo docker build -t matteofoglieni/gapse:0.10.0a .
-$ sudo docker run --rm matteofoglieni/gapse:0.10.0a \
-      julia --project=/home/jovyan/GaPSE -e 'using Pkg; Pkg.test("GaPSE")'
+$ sudo docker run matteofoglieni/gapse:0.10.0a 
+$ sudo docker run --rm matteofoglieni/gapse:0.10.0a julia --project=/home/jovyan/GaPSE -e 'using Pkg; Pkg.test("GaPSE")'
 ```
 
 The second command runs the whole unit-test suite inside the container; it takes about
 half an hour.
 
-Supposing that you have already installed Docker, so as to use GaPSE as a container:
+Supposing that you have already installed Docker (see the [Docker official website](https://docs.docker.com/get-started/get-docker/)), to use GaPSE in a container:
 
-- download the image: 
-  ```bash
-  $ sudo docker pull matteofoglieni/gapse:0.10.0a
-  ```
-- choose a free port where to access the JupyterLab of the container; we will use `10000`;
-- run the container with that port:
-  ```bash
-  $ sudo docker run -d -p 10000:8888 matteofoglieni/gapse:0.10.0a
-  ```
-- get the logs of the container and copy the Jupyter token (in the following output is `531vbeb08567581944e486d47e1tee15683757086205da68`):
-  ```bash
-  $ sudo docker logs $(sudo docker ps -ql)
-  ...
-  [I 2023-09-13 12:51:47.960 ServerApp] Jupyter Server 2.7.0 is running at:
-  [I 2023-09-13 12:51:47.960 ServerApp] http://7b1ca9747263:8888/lab?token=531vbeb08567581944e486d47e1tee15683757086205da68
-  [I 2023-09-13 12:51:47.960 ServerApp]     http://127.0.0.1:8888/lab?token=531vbeb08567581944e486d47e1tee15683757086205da68
-  [I 2023-09-13 12:51:47.960 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
-  [C 2023-09-13 12:51:47.962 ServerApp] 
-      
-      To access the server, open this file in a browser:
-          file:///home/jovyan/.local/share/jupyter/runtime/jpserver-7-open.html
-      Or copy and paste one of these URLs:
-          http://7f1ca9847263:8888/lab?token=531vbeb08567581944e486d47e1tee15683757086205da68
-          http://127.0.0.1:8888/lab?token=531vbeb08567581944e486d47e1tee15683757086205da68
-  [I 2023-09-13 12:51:48.653 ServerApp] Skipped non-installed server(s): bash-language-server, dockerfile-language-server-nodejs, javascript-typescript-langserver, jedi-language-server, julia-language-server, pyright, python-language-server, python-lsp-server, r-languageserver, sql-language-server, texlab, typescript-language-server, unified-language-server, vscode-css-languageserver-bin, vscode-html-languageserver-bin, vscode-json-languageserver-bin, yaml-language-server
-  ...
-  ```
-- open a browser of your choice on your local machine and paste as URL  `http://127.0.0.1:10000/lab?token=531vbeb08567581944e486d47e1tee15683757086205da68` (essentially, you just have to substitute the port `8888` with the one you choose in the URL showed in the previous logs).
-- now you should see a JupyterLab page containing the GaPSE files.
+
+```bash
+# visit the website https://hub.docker.com/repository/docker/matteofoglieni/gapse/general
+# to choose which image to download
+$ docker pull matteofoglieni/gapse:0.10.0a       # download the specific GaPSE image you want
+
+# choose a free port on your machine where to access the JupyterLab of the container; 
+# we will use "10000"
+
+# run the GaPSE container and expose that port 
+$ docker run --env JUPYTER_TOKEN=test --detach --publish 10000:8888 matteofoglieni/gapse:0.10.0a 
+
+# open a browser of your choice on your local machine and go to
+#   http://127.0.0.1:10000
+# and paste there "test" as password
+```
 
 Now you can use GaPSE inside the Jupyter interface as normally!
 
 Quick summary of Docker commands, in case you don't know them:
 
-- `sudo docker ps [-a]` : list running containers (`-a` to list also stopped ones);
-- `sudo docker logs <container-name/id>` : get the logs of a container;
-- `sudo docker start/stop <container-name/id>` : start a stopped container/stop a running container;
-- `sudo docker rm <container-id/name>` : delete a container;
-- `sudo docker pull <image>` : download a container image;
-- `sudo docker run <image>` : create a running container from an image;
-- `sudo docker image list` : list all the local images;
-- `sudo docker image rm <image>` : delete an image.
+```bash
+$ docker ps [-a]                        # list running containers ("-a" to list also stopped ones)
+$ docker logs <container-name/id>       # get logs of a container
+$ docker start/stop <container-name/id> # start a stopped container/stop a running container
+$ docker rm <container-id/name>         # delete a container
+$ docker pull <image>                   # download a container image
+$ docker run <image>                    # create a running container from an image
+$ docker image list                     # list all the local images
+$ docker image rm <image>               # delete an image
+```
 
 <br>
-<br>
-<br>
-
-
 
 
 
@@ -266,26 +252,22 @@ Furthermore, the notebooks we provide in `ipynbs` use:
 - [PyPlot](https://github.com/JuliaPy/PyPlot.jl) for the julian plots in the python style; this package is based on the [Matplotlib](https://matplotlib.org) Python package, and it requires it in order to run properly.
 
 <br>
-<br>
-<br>
 
 
 
 
 ## How to report bugs, suggest improvements and/or contribute
 
-As already mentioned above, this is a WIP project used mostly by the authors themselves, and so bugs are behind the corner. If you discover one of them, or if you would like to make a suggestion about a possible new feature that the code might implement, do not hesitate to contact the authors via email (<matteo.foglieni@lrz.de>) or fork the repository and open a pull request like follows:
+As already mentioned above, this is a WIP project used mostly by the authors themselves, and so bugs are behind the corner. If you discover one of them, or if you would like to make a suggestion about a possible new feature that the code might implement, do not hesitate to contact the authors via email (<matteo.foglieni16@gmail.com>) or fork the repository and open a pull request like follows:
 
-- fork the project: on the top of the GaPSE.jl Github page, go to Fork > Create a new Fork
+- fork the project: on the top of the GaPSE.jl Github page, go to **Fork > Create a new Fork**
 - download your forked repository from your GitHub profile
 - create your branch: in the terminal, run `$ git checkout -b feature/<your-feature-name>`
 - make the changes/improvements you want in that branch
 - commit your changes in that branch: in the terminal, run `$ git commit -m 'added the feature <your-feature-name>'`
-- push:  in the terminal, run `$ git push origin feature/<your-feature-name>`
-- open a Pull Request for that branch
+- push: in the terminal, run `$ git push origin feature/<your-feature-name>`
+- open a **Pull Request** for that branch
 
-<br>
-<br>
 <br>
 
 
@@ -303,9 +285,6 @@ If you also use the code to compute the perturbations in the luminosity distance
 - Pantiri, Foglieni, Di Dio, Castorina,  _The power spectrum of luminosity distance fluctuations in General Relativity_ (2024), Journal of Cosmology and Astroparticle Physics, DOI: [10.1088/1475-7516/2024/11/021](https://doi.org/10.1088/1475-7516/2024/11/021) (arXiv [2407.01486](https://arxiv.org/abs/2407.01486))
 
 <br>
-<br>
-<br>
-
 
 
 
@@ -314,8 +293,7 @@ If you also use the code to compute the perturbations in the luminosity distance
 This software is under the [GNU 3.0 General Public Licence](https://www.gnu.org/licenses/gpl-3.0.en.html). See the file [LICENCE.md](./LICENCE.md).
 
 <br>
-<br>
-<br>
+
 
 
 
