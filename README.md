@@ -4,7 +4,7 @@
 ![package-version](https://img.shields.io/github/v/release/foglienimatteo/GaPSE.jl?include_prereleases)
 ![CI-build](https://img.shields.io/github/actions/workflow/status/foglienimatteo/GaPSE.jl/UnitTests.yml)
 ![size](https://img.shields.io/github/repo-size/foglienimatteo/GaPSE.jl) 
-![license]( https://img.shields.io/github/license/foglienimatteo/GaPSE.jl)
+![license](https://img.shields.io/github/license/foglienimatteo/GaPSE.jl)
 [![codecov](https://codecov.io/gh/foglienimatteo/GaPSE.jl/branch/main/graph/badge.svg?token=67GIZ9RA8Y)](https://codecov.io/gh/foglienimatteo/GaPSE.jl)
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://foglienimatteo.github.io/GaPSE.jl/stable) 
 

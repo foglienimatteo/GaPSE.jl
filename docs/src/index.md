@@ -11,7 +11,7 @@ end
 ![package-version](https://img.shields.io/github/v/release/foglienimatteo/GaPSE.jl?include_prereleases)
 ![CI-build](https://img.shields.io/github/actions/workflow/status/foglienimatteo/GaPSE.jl/UnitTests.yml)
 ![size](https://img.shields.io/github/repo-size/foglienimatteo/GaPSE.jl) 
-![license]( https://img.shields.io/github/license/foglienimatteo/GaPSE.jl)
+![license](https://img.shields.io/github/license/foglienimatteo/GaPSE.jl)
 [![codecov](https://codecov.io/gh/foglienimatteo/GaPSE.jl/branch/main/graph/badge.svg?token=67GIZ9RA8Y)](https://codecov.io/gh/foglienimatteo/GaPSE.jl)
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://foglienimatteo.github.io/GaPSE.jl/stable) 
 
@@ -31,10 +31,10 @@ GaPSE (Galaxy Power Spectrum Estimator) is a software for cosmological computati
     - **a lot of changes have been made to upgrade to version `v0.10.0`**; see the changelog for a complete list
     - it is possible to compute the power spectrum/correlation function multipoles with `L=1,2,3,...` of the effects we'll show next, but 2 effects among the Galaxy Number Counts multipoles (Newton-Lensing and Lensing-Newton) converge very slowly, so their computation is not still 100% ready. However, the monopole (L=0) computations do not have any problem with `quad`, and even the GNC sum for higher order multipoles is not affected;
     - The Power Spectrum computations with `:twofast` do not work properly, you should always prefer `:fftlog`. However, due to the fact that with `:fftlog` you must specify manually the bias parameter, the Power Spectra of a whole group of terms creates FFT oscillations in the smallest ones. The leading ones and the sum are not however affected.  
-    - few people used this code, so bugs are behind the corner; do not hesitate to raise the finger to point out them (see in the [How to report bugs, suggest improvements and/or contribute](#how-to-report-bugs-suggest-improvements-andor-contribute) section below)!
+    - few people used this code, so bugs are behind the corner; do not hesitate to raise the finger to point out them (see in the [How to report bugs, suggest improvements and/or contribute](@ref) section below)!
 
 > [!IMPORTANT]
-> If you use this code, please read the [Using this code](#using-this-code) section below
+> If you use this code, please read the [Using this code](@ref) section below
 
 
 
