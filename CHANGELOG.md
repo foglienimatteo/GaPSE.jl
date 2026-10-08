@@ -40,7 +40,9 @@ Minor bump and not a patch: this release changes results that callers can observ
 
 - NOTEBOOK FIX: the notebooks in `ipynbs/` ran `include(PATH_TO_GAPSE * "src/GaPSE.jl")`, which evaluates the sources in `Main`: GaPSE's own `Project.toml` is never read, so its dependencies are looked for in the kernel's active project and the include fails with `Package TwoFAST [...] is required but does not seem to be installed`. They now just `using GaPSE`, out of the new `ipynbs/Project.toml`, which declares GaPSE through a `[sources]` entry - the only place where the path of an unregistered package is written down *and* tracked by git, since `Pkg.develop` records it in the gitignored `Manifest.toml`. The new `ipynbs/README.md` documents how that environment was built and why. The same `[sources]` entry was added to `theory/Project.toml`;
 
-- the `pyplot()` backend calls become `pythonplot()`, and `PyPlot` becomes `PythonPlot` in `ipynbs/Project.toml` and `theory/Project.toml`
+- NOTEBOOK FIX: the `using` lines of the `ipynbs/` notebooks listed six packages that no cell ever calls (`ProgressMeter`, `QuadGK`, `Trapz`, `LegendrePolynomials`, `SpecialFunctions`, `TwoFAST`), left over from the `include` days and all of them dependencies of GaPSE anyway; they are out of both the notebooks and `ipynbs/Project.toml`;
+
+- BACKEND: every notebook selects `gr()`, and `PyPlot` leaves both `Project.toml` without a replacement. Under Julia 1.12 `pythonplot()` warns that it accesses `Plots._py_drawfig` "in a world prior to its definition world" and "will error in future versions of Julia" - `Plots` `include`s its backend file lazily, so its bindings land in a later world age than the code calling them - while `pyplot()` is implemented in `Plots/src/backends/deprecated/`. GR needs no Python at all and draws everything these notebooks use, `st = :surface` and `heatmap` included;
 
 
 ### The theory in the manual
@@ -57,7 +59,7 @@ Minor bump and not a patch: this release changes results that callers can observ
 
 
 - added the `theory/` directory, which collects the notebooks that reproduce the figures and the numbers of the Theory pages, together with the plots and data they produce
-  * they share `theory/Project.toml`, which declares GaPSE through a `[sources]` entry, so a fresh clone only needs `Pkg.instantiate()`; each notebook opens with `Pkg.activate(@__DIR__)`, and `pythonplot()` falls back to `gr()` where matplotlib is missing;
+  * they share `theory/Project.toml`, which declares GaPSE through a `[sources]` entry, so a fresh clone only needs `Pkg.instantiate()`, and the default IJulia kernel activates it by itself (it runs Julia with `--project=@.`);
   * `sigma_i.ipynb` studies the moments every `Δχ → 0` limit reduces to, plotting the five integrands and the fraction of each collected below a given `q`
   * `spherical_bessels.ipynb` reproduces the figures of the "Spherical Bessel Functions" page
   * `Iln_terms.ipynb` studies the Iln integrals

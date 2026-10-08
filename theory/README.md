@@ -30,8 +30,8 @@ julia> Pkg.instantiate()          # downloads and installs everything, GaPSE inc
 ```
 
 `Manifest.toml` is gitignored and is rebuilt by `instantiate` on each machine.
-`../ipynbs/README.md` explains how that `Project.toml` was built, and why every notebook
-opens with `Pkg.activate(@__DIR__)`.
+`../ipynbs/README.md` explains how that `Project.toml` was built, and why a notebook needs
+nothing more than `using GaPSE` to find it.
 
 Then a notebook is opened simply with
 
