@@ -18,25 +18,36 @@ Each analysis is made of
 ## Setup
 
 This directory has its own environment, so that the plotting packages are not added to
-the dependencies of GaPSE itself. The first time, from the `theory/` directory:
+the dependencies of GaPSE itself. `Project.toml` is tracked by git and declares the GaPSE of
+this repository through a `[sources]` entry, so the first time, from the `theory/` directory:
 
 ```julia
 julia> using Pkg
 
 julia> Pkg.activate(".")
 
-julia> Pkg.develop(path = "..")   # use the GaPSE of this repository
-
-julia> Pkg.instantiate()
+julia> Pkg.instantiate()          # downloads and installs everything, GaPSE included
 ```
 
-Then a script is run simply with
+`Manifest.toml` is gitignored and is rebuilt by `instantiate` on each machine.
+`../ipynbs/README.md` explains how that `Project.toml` was built, and why every notebook
+opens with `Pkg.activate(@__DIR__)`.
+
+Then a notebook is opened simply with
 
 ```bash
 $ jupyter lab Iln_terms.ipynb
 ```
 
 ## Contents
+
+- **`deltachi_limits`** : the `Δχ_min` where a ``\chi``-integrated TPCF switches from the
+  ``J \cdot I_\ell^n`` sum to its analytic ``\Delta\chi \rightarrow 0`` limit, and how
+  visible that switch is. It plots both branches for the two GNC auto-correlations,
+  Lensing-Lensing and IntegratedGP-IntegratedGP, explains the step of the first one
+  through the ``k_\mathrm{max}`` dependence of ``\sigma_0``, and closes by measuring how
+  much the integrated TPCF really moves when `Δχ_min` is changed by four orders of
+  magnitude (it does not).
 
 - **`Iln_terms`** : the ``I_\ell^n`` integrals that build every TPCF, plotted in log-log
   scale together with their small-``s`` asymptotes. It produces the figures used by the
@@ -64,3 +75,10 @@ $ jupyter lab Iln_terms.ipynb
   ``j_\ell`` as a function of ``\ell``. It produces the figures used by the
   "Spherical Bessel Functions" page of the documentation, writing them into
   `docs/src/assets/misc/`.
+
+- **`spline_comparison`** : `MySpline`, the cubic spline of `src/Spline.jl`, against
+  [Dierckx](https://github.com/kbarbary/Dierckx.jl), in accuracy and in speed, on
+  ``j_0(x)``, on the input ``P(q)`` and on ``I_0^0(s)``. Each function is plotted with
+  the two interpolants on top of each other and their ratio underneath, the error
+  against the exact ``j_0`` separates the three `ic` options, and the benchmarks time
+  both the construction and the evaluation from ``N = 10^2`` to ``N = 10^5``.
