@@ -9,7 +9,7 @@ julia> using Pkg
 
 julia> Pkg.activate(".")        # from inside this directory
 
-julia> Pkg.instantiate()        # downloads and installs everything, GaPSE included
+julia> Pkg.instantiate()        # once for all, downloads and installs everything, GaPSE included
 ```
 
 `Project.toml` is tracked by git, `Manifest.toml` is not: it is rebuilt by `instantiate` on each machine.
@@ -95,14 +95,15 @@ julia>                          # enter Pkg mode by typing "]"  => prompt will c
 (@v1.12) pkg> activate .        # activate the current dir project  => prompt will change again
 (ipynbs) pkg> add Plots, LaTeXStrings, DelimitedFiles, Printf
 (ipynbs) pkg> add Dierckx, GridInterpolations
+(ipynbs) pkg> instantiate       # resolve the dependency graph, generate Manifest.toml, download and install all the dependencies listed in it
 (ipynbs) pkg> precompile        # compile the source code of these packages into efficient cached artifacts (.ji files)
 ```
 
 This creates `ipynbs/Project.toml` and `ipynbs/Manifest.toml`.
 
-(`add` already resolves the dependency graph, writes `Manifest.toml` and installs everything, so
-`instantiate` right after it has nothing left to do; it is the command *another* user needs, who starts
-from the `Project.toml` committed here.)
+NOTE: `add` already resolves the dependency graph, writes `Manifest.toml` and installs everything, so
+`instantiate` right after it has actually nothing left to do; it is the command *another* user needs, who starts
+from the `Project.toml` committed here.
 
 The resulting `Project.toml` will have the essential structure:
 

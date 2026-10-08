@@ -47,8 +47,9 @@ docs/build/
 *.txt
 *.dat
 *.pdf
-build.log
+*.log
 newimage.sh
+.CondaPkg
 
 # ... but the plots and the data produced by the scripts inside `theory/` are part of
 # the repository, since the documentation shows them
