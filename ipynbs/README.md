@@ -216,33 +216,3 @@ the `[deps]` entry, and records the path in `Manifest.toml` - which is gitignore
 `[sources]` a fresh clone would not know where GaPSE is.
 
 <br>
-
-
-
-## 3. The packages of this environment
-
-| package | why |
-|---|---|
-| `GaPSE` | the package itself, through its `[sources]` path |
-| `Plots` | every figure |
-| `PythonPlot` | the matplotlib backend of `Plots`, selected with `pythonplot()` |
-| `LaTeXStrings` | the `L"..."` labels |
-| `Printf` | `@printf` / `@sprintf` |
-| `DelimitedFiles` | `readdlm`, to read the `.txt` outputs back |
-| `Dierckx` | `Spline1D`, used to interpolate the results *after* GaPSE computed them |
-| `GridInterpolations` | `RectangleGrid` + `interpolate`, for the 2D window-function maps |
-
-Which notebook needs what:
-
-| notebook | `using` |
-|---|---|
-| `TUTORIAL.ipynb` | `Plots`, `LaTeXStrings`, `Printf` |
-| `Generic_Window.ipynb` | `Plots`, `LaTeXStrings`, `Printf`, `Dierckx` |
-| `eBOSS_Window.ipynb` | `Plots`, `LaTeXStrings` |
-| `PS_L01234.ipynb` | `Plots`, `LaTeXStrings`, `Printf`, `DelimitedFiles`, `Dierckx`, `GridInterpolations` |
-| `Computations_b1p5-sb0-fevo0.ipynb` | the same as `PS_L01234.ipynb` |
-
-`ProgressMeter`, `QuadGK`, `Trapz`, `LegendrePolynomials`, `SpecialFunctions` and `TwoFAST` used to be
-in these `using` lines, left over from the `include` days: none of them is used by any cell of these
-notebooks, and they are all dependencies of GaPSE anyway, so they were removed from both the notebooks
-and the `Project.toml`. Add them back here if you start calling them directly.
