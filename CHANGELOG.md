@@ -23,6 +23,10 @@ Minor bump and not a patch: this release changes results that callers can observ
 
 - the `print_map_*` functions truncate to 20 characters the keyword values they write into the output headers, so a large object no longer makes the header unreadable.
 
+- THREADS: the four `map_ξ_*_multipole` functions spread their `s` values over the available threads, through the new `map_over_ss` (`src/OtherUtils.jl`). The `s` points are independent and the `Cosmology` is read-only on that path, so the results are bit-for-bit the serial ones; the scheduling is `:dynamic`, the cost of one `s` growing with `s`. Measured 3.56x on 4 threads. With one thread it is an ordinary loop, so Julia must be started with `-t auto` (or `JULIA_NUM_THREADS`) to get anything out of it;
+
+- new `print_log_generic`/`print_log` (`src/OtherUtils.jl`): log on `stdout`, on an open stream or on a file, with an optional `[yyyy-mm-dd HH:MM:SS]` stamp, and with a method that redirects `stdout` around a function that prints on its own. `Dates` is a new (stdlib) dependency.
+
 
 ### Release and infrastructure
 
@@ -37,6 +41,10 @@ Minor bump and not a patch: this release changes results that callers can observ
 - TEST FIX: `test_Spline.jl` drew its evaluation points with an unseeded `rand()` and compared them with a purely relative tolerance, which is meaningless where the derivative crosses zero: `linear range - nu=2` failed for about 6% of the seeds. The draws are now seeded and the six testsets that compare against `Dierckx` use `atol = RTOL * maximum(abs, ...)`.
 
 - `test/runtests.jl` gained the `TEST_BASICS`, `TEST_PP_PNG`, `TEST_LD`, `TEST_GNC`, `TEST_GNCxLD_LDxGNC` and `TEST_TWOSPECIES` switches, to run a subset of the suite while developing. They must all be `true` on the shared branches;
+
+- a third matrix entry runs the whole suite on `ubuntu-latest/x64` with `JULIA_NUM_THREADS: 4`, against the same reference files: the parallel path has to give the single-threaded numbers. 4 is a literal and not `auto` on purpose, `auto` degrading silently to one thread on a smaller runner;
+
+- `test/runtests.jl` prints at the start the thread-related environment variables, `Threads.nthreads()`, `Sys.CPU_THREADS`, the BLAS thread count and `Sys.cpu_summary()`, so a log says on how many threads it ran;
 
 - NOTEBOOK FIX: the notebooks in `ipynbs/` ran `include(PATH_TO_GAPSE * "src/GaPSE.jl")`, which evaluates the sources in `Main`: GaPSE's own `Project.toml` is never read, so its dependencies are looked for in the kernel's active project and the include fails with `Package TwoFAST [...] is required but does not seem to be installed`. They now just `using GaPSE`, out of the new `ipynbs/Project.toml`, which declares GaPSE through a `[sources]` entry - the only place where the path of an unregistered package is written down *and* tracked by git, since `Pkg.develop` records it in the gitignored `Manifest.toml`. The new `ipynbs/README.md` documents how that environment was built and why. The same `[sources]` entry was added to `theory/Project.toml`;
 

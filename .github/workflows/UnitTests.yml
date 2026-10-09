@@ -35,18 +35,28 @@ on:
 
 jobs:
   test:
-    name: Julia ${{ matrix.julia-version }} - ${{ matrix.os }} - ${{ matrix.arch }}
+    name: Julia ${{ matrix.julia-version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ matrix.threads }} thread(s)
     runs-on: ${{ matrix.os }}
+    env:
+      # read by Julia itself to size the default thread pool; `Pkg.test` forwards
+      # it to the test worker as `--threads`
+      JULIA_NUM_THREADS: ${{ matrix.threads }}
     strategy:
       fail-fast: false
       matrix:
         include:
           # the reference run, the one coverage is taken from
-          - {os: ubuntu-latest, arch: x64,     julia-version: '1.12', coverage: true}
+          - {os: ubuntu-latest, arch: x64,     julia-version: '1.12', threads: 1, coverage: true}
           # an Apple-silicon runner: note the aarch64 arch, since an x86_64 Julia
           # running under Rosetta 2 produces spurious DomainErrors from `cos`
-          - {os: macos-latest,  arch: aarch64, julia-version: '1.12', coverage: false}
-          #- {os: windows-latest, arch: x64,   julia-version: '1.12', coverage: false}
+          - {os: macos-latest,  arch: aarch64, julia-version: '1.12', threads: 1, coverage: false}
+          # the same tests with the parallel `map_over_ss` actually parallel: the
+          # results must be bit-for-bit the ones of the single-threaded runs.
+          # 4 is a literal and not `auto` on purpose: `auto` would silently become
+          # 1 on a smaller runner, and a 1-thread run is what the first entry
+          # already does
+          - {os: ubuntu-latest, arch: x64,     julia-version: '1.12', threads: 4, coverage: false}
+          #- {os: windows-latest, arch: x64,   julia-version: '1.12', threads: 1, coverage: false}
     steps:
       - uses: actions/checkout@v4
       - name: "Set up Julia"

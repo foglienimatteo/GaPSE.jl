@@ -728,3 +728,87 @@ function map_over_ss(f, v_ss::AbstractVector, desc::AbstractString; pr::Bool=tru
     isnothing(p) || finish!(p)
     return xis
 end
+
+
+##########################################################################################92
+
+
+
+"""
+    print_log_generic(x...; writemode::String="a",
+        iostream::Union{IO,String}=stdout, printdate::Bool=true)
+
+    print_log_generic(f::T; writemode::String="a",
+        iostream::Union{IO,String}=stdout, kwargs...) where {T<:Function}
+
+Print all the inputs `x...` (former method) or the input function `f` output (latter one) to
+the input file/iostream (all the `kwargs` are passed to `f`).
+
+`iostream` is either an already-open stream or the name of a file. The type is `IO` and not
+a union of the concrete stream types because `stdout` is not always a `Base.TTY`: it is a
+`Base.PipeEndpoint` whenever the output is a pipe (which is the case under CI, under
+`Pkg.test` and under any `julia ... | tee`) and an `IOStream` when the shell redirects it to
+a file. A signature listing the concrete types would therefore throw a `MethodError` exactly
+where a log is most useful.
+
+The `writemode::String="a"` option is used in the `open` function to specify the write mode
+on the file. It is used only if `iostream` is a `String` (i.e. the name of the file where to
+write to).
+
+The bool `printdate` allows you to choose between prepend or not the current date, in the
+format `[yyyy-mm-dd HH:MM:SS] :`
+```julia
+julia> print_log_generic("Defining matrixes A, B and C")
+[2024-05-17 15:49:04] : Defining matrixes A, B and C
+
+julia> print_log_generic("Defining matrixes A, B and C"; printdate=false)
+Defining matrixes A, B and C
+```
+
+The method taking a function is for printing something that writes on its own: `f` is called
+as `f(iostream; kwargs...)` and, on top of that, `stdout` is redirected to `iostream` for the
+duration of the call, so that what `f` prints without being told where ends up in the same
+place. A function of the `f(io::IO, ...)` family is hence logged as it is:
+```julia
+julia> print_log_generic(Sys.cpu_summary)
+```
+
+See also: [`print_log`](@ref)
+"""
+function print_log_generic(f::T; writemode::String="a",
+    iostream::Union{IO,String}=stdout, kwargs...) where {T<:Function}
+
+    if iostream isa String
+        open(iostream, writemode) do io
+            redirect_stdout(io) do
+                f(io; kwargs...)
+            end
+        end
+    else
+        redirect_stdout(iostream) do
+            f(iostream; kwargs...)
+        end
+    end
+end
+
+function print_log_generic(x...; writemode::String="a",
+    iostream::Union{IO,String}=stdout, printdate::Bool=true)
+
+    stamp = printdate ? Dates.format(Dates.now(), "[yyyy-mm-dd HH:MM:SS] : ") : ""
+
+    if iostream isa String
+        open(iostream, writemode) do io
+            println(io, stamp, x...)
+        end
+    else
+        println(iostream, stamp, x...)
+    end
+end
+
+
+"""
+    print_log(x...; kwargs...)
+
+Shorthand for [`print_log_generic`](@ref) on `stdout`; all the `kwargs` are passed to it.
+"""
+print_log(x...; kwargs...) = print_log_generic(x...; iostream=stdout, kwargs...)
