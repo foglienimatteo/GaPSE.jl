@@ -488,7 +488,7 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
     if alg == :lobatto
         μs, ws = gausslobatto(N_lob)
 
-        global xis = pr ? begin
+        xis = pr ? begin
             @showprogress "$effect, L=$L: " [
                 dot(ws, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
             ]
@@ -498,7 +498,7 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
 
     elseif alg == :quad
 
-        global xis = pr ? begin
+        xis = pr ? begin
             @showprogress "$effect, L=$L: " [
                 quadgk(μ -> orig_f(μ, s), -1.0, 1.0;
                         atol=atol_quad, rtol=rtol_quad)[1] / enhancer for s in v_ss
@@ -517,7 +517,7 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
         )
         #μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_trap)
 
-        global xis = pr ? begin
+        xis = pr ? begin
             @showprogress "$effect, L=$L: " [
                 trapz(μs, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
             ]
