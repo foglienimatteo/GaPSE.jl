@@ -1,7 +1,91 @@
-## HEAD
+## VERSION 0.10.0
+
+Minor bump and not a patch: this release changes results that callers can observe.
+
+### The code
+
+- **IMPORTANT CHANGE**: replaced [Dierckx](https://github.com/kbarbary/Dierckx.jl) with our own cubic spline `MySpline` (new `src/Spline.jl`) for every 1D interpolation; `Dierckx` is now only a *test* dependency, where the suite uses it as an independent cross-check. Note that `MySpline` only supports `bc="error"`, so `spline_com_H` throws outside its range instead of clamping, and that it is not bit-identical to `Spline1D`: 33 reference files in `test/datatest` were regenerated and a few tolerances relaxed;
+
+- **IMPORTANT CHANGE**: the `Δχ → 0` limits
+  * `Δχ = 0` is no longer an error. It is the exactly-collinear, coincident-point configuration, which the quadrature reaches deterministically, so the 21 `throw(AssertionError(...))` are now a fall-through to `zero(Δχ_square)`. The three `√(Δχ_square) > 1e-8 ? ... : 1e-8` clamps evaluated `√` before the comparison, so a negative argument raised a `DomainError` before the guard could act;
+  * every `χ`-integrated integrand now evaluates its analytic `Δχ → 0` limit instead of the `J * I_l^n` sum when `Δχ` is small, and `Δχ_min::AbstractFloat=1e-1` was added to the 26 integrands that lacked it. The derivations of the eight families of limits are in the new "The Δχ → 0 limits" pages of the manual, each obtained by expanding along `χ2 = χ1 + p Δχ` and checked to be independent of `p`;
+  * BUG FIX: those branches use a threshold **relative** to the local comoving distances where those are small, `Δχ ≥ min(Δχ_min, Δχ_min * max(χ1, χ2))`, applied to all thirty of them. The limits assume `y → 1`, which `Δχ → 0` forces only at *fixed, non-zero* distances; in the small-χ corner, where `χ1` and `χ2` vanish together at any `y`, the absolute threshold fired with `y` nowhere near 1 and returned a value a factor `1/y` too large. The `min` keeps the absolute cap, since the expansion needs `Δχ << 1/k_max`: a purely relative threshold would let the branch fire up to `Δχ = 0.1 χ ≃ 100` (measured: errors of 1000-3000%). Measured on `ξ_GNCxLD_Lensing_Lensing`, this removes a uniform 1.5% bias of the windowed multipoles at `s = 1000`;
+  * corrected the `Δχ → 0` branch of `integrand_ξ_LD_Lensing`, whose `σ_0` coefficient was a factor 3 too large: its `J` coefficients are algebraically identical to those of `integrand_ξ_GNC_Lensing`, so the limit must be the same;
+  * BUG FIX: `Δχ_min` had been added to the *scalar* method of six `LD` integrands instead of the `Vector` one, so it never reached the limit branch;
+
+- NUMERICAL STABILITY: in the three Lensing-Lensing integrands the brackets of `J_00`, `J_02`, `J_22` and `Δχ^2` are now written as expansions around the singular configuration, in `u = χ1²+χ2²`, `v = χ1χ2`, `t = y-1` and `w = (χ1-χ2)²`. All four vanish there while being evaluated as sums of terms of size `~χ⁴`: for `J_22` the bracket is exactly `8Δχ⁴` at `y = 1`, i.e. `8e-4` out of terms of `8e12` at `χ = 1000, Δχ = 0.1`, a ratio below `eps(Float64)`. Against exact rational arithmetic the old form had **0** correct digits there and the new one has 10 to 12. The rewrites are algebraic identities, checked to agree exactly on 3000 random rational `(χ1, χ2, y)`;
+
+- `WindowF` and `WindowFIntegrated` build their `GridInterpolations.RectangleGrid` once, in the constructor, instead of rebuilding it on every integrand evaluation;
+
+- the `::Float64` annotations are now `::AbstractFloat` and the `Vector{Float64}` ones `Vector{T} where {T<:AbstractFloat}`, so another float type can flow through the code; nothing changes for `Float64`;
+
+- removed the inert `x::T` type assertions from the `DEFAULT_*_OPTS` dictionaries: in expression position they always passed and constrained nothing, the types being enforced by `check_compatible_dicts`;
+
+- the `print_map_*` functions truncate to 20 characters the keyword values they write into the output headers, so a large object no longer makes the header unreadable.
+
+- THREADS: the four `map_ξ_*_multipole` functions spread their `s` values over the available threads, through the new `map_over_ss` (`src/OtherUtils.jl`). The `s` points are independent and the `Cosmology` is read-only on that path, so the results are bit-for-bit the serial ones; the scheduling is `:dynamic`, the cost of one `s` growing with `s`. Measured 3.56x on 4 threads. With one thread it is an ordinary loop, so Julia must be started with `-t auto` (or `JULIA_NUM_THREADS`) to get anything out of it;
+
+- new `print_log_generic`/`print_log` (`src/OtherUtils.jl`): log on `stdout`, on an open stream or on a file, with an optional `[yyyy-mm-dd HH:MM:SS]` stamp, and with a method that redirects `stdout` around a function that prints on its own. `Dates` is a new (stdlib) dependency.
 
 
-## development branch qls
+### Release and infrastructure
+
+- `Project.toml` has now a `[compat]` section with a lower bound per dependency and `julia = "1.12"`, plus the `[workspace]` table declaring `test`;
+
+- the unit tests run on **Julia 1.12 only**: the 1.9 job and the advisory `continue-on-error` 1.12 probe are replaced by one blocking matrix entry per platform, `ubuntu-latest/x64` (where coverage is taken) and `macos-latest/aarch64`. The previous workflow declared `aarch64` in the matrix but hard-coded `arch: x64` in the setup step, so macOS was in fact running x86_64 under Rosetta;
+
+- DOCKERFILE: the `Dockerfile` moves to `quay.io/jupyter/julia-notebook:julia-1.12.7`. The Jupyter Docker Stacks publish on Quay since 2023, so the `jupyter/*` repositories on Docker Hub are the stale ones, not the project. The base image already provides Julia, IJulia and a registered kernel, so only GaPSE and the plotting extras are added, with `PYTHON` pinned to the stack's interpreter so PyCall does not build a private one;
+
+- DEPENDENCIES: the test-only and documentation-only dependencies are out of the package. `Project.toml` loses `ArbNumerics`, `IJulia`, `Documenter`, `Dierckx`, `NPZ`, `Suppressor` and `Test`; the last four, plus `DelimitedFiles` and `QuadGK`, live in the new `test/Project.toml`. `src/GaPSE.jl` drops `using Dierckx`, `using Test` and `using Documenter`, which also removes a latent name clash on `derivative`. `install_gapse.jl` was trimmed to the same list;
+
+- TEST FIX: `test_Spline.jl` drew its evaluation points with an unseeded `rand()` and compared them with a purely relative tolerance, which is meaningless where the derivative crosses zero: `linear range - nu=2` failed for about 6% of the seeds. The draws are now seeded and the six testsets that compare against `Dierckx` use `atol = RTOL * maximum(abs, ...)`.
+
+- `test/runtests.jl` gained the `TEST_BASICS`, `TEST_PP_PNG`, `TEST_LD`, `TEST_GNC`, `TEST_GNCxLD_LDxGNC` and `TEST_TWOSPECIES` switches, to run a subset of the suite while developing. They must all be `true` on the shared branches;
+
+- a third matrix entry runs the whole suite on `ubuntu-latest/x64` with `JULIA_NUM_THREADS: 4`, against the same reference files: the parallel path has to give the single-threaded numbers. 4 is a literal and not `auto` on purpose, `auto` degrading silently to one thread on a smaller runner;
+
+- `test/runtests.jl` prints at the start the thread-related environment variables, `Threads.nthreads()`, `Sys.CPU_THREADS`, the BLAS thread count and `Sys.cpu_summary()`, so a log says on how many threads it ran;
+
+- NOTEBOOK FIX: the notebooks in `ipynbs/` ran `include(PATH_TO_GAPSE * "src/GaPSE.jl")`, which evaluates the sources in `Main`: GaPSE's own `Project.toml` is never read, so its dependencies are looked for in the kernel's active project and the include fails with `Package TwoFAST [...] is required but does not seem to be installed`. They now just `using GaPSE`, out of the new `ipynbs/Project.toml`, which declares GaPSE through a `[sources]` entry - the only place where the path of an unregistered package is written down *and* tracked by git, since `Pkg.develop` records it in the gitignored `Manifest.toml`. The new `ipynbs/README.md` documents how that environment was built and why. The same `[sources]` entry was added to `theory/Project.toml`;
+
+- NOTEBOOK FIX: the `using` lines of the `ipynbs/` notebooks listed six packages that no cell ever calls (`ProgressMeter`, `QuadGK`, `Trapz`, `LegendrePolynomials`, `SpecialFunctions`, `TwoFAST`), left over from the `include` days and all of them dependencies of GaPSE anyway; they are out of both the notebooks and `ipynbs/Project.toml`;
+
+- BACKEND: every notebook selects `gr()`, and `PyPlot` leaves both `Project.toml` without a replacement. Under Julia 1.12 `pythonplot()` warns that it accesses `Plots._py_drawfig` "in a world prior to its definition world" and "will error in future versions of Julia" - `Plots` `include`s its backend file lazily, so its bindings land in a later world age than the code calling them - while `pyplot()` is implemented in `Plots/src/backends/deprecated/`. GR needs no Python at all and draws everything these notebooks use, `st = :surface` and `heatmap` included;
+
+
+### The theory in the manual
+
+- THEORY DOCS: A lot of documentation about the theory (physical and numerical) of GaPSE has been written on the docs:
+  * the Theory pages are all named with a `theory_` prefix inside the `docs/src` dir
+  * added the `MySpline` documentation and the derivation of its algorithm (`Spline.md` and `theory_SplineTheory.md`), plus `test/test_Spline.jl`;
+  * added derivation of all `Δχ → 0` limits
+  * added theory about Power Spectrum
+
+- DOCS FIX: several pages wrote their formulas with `$...$` and `$$...$$`, or with LaTeX that Documenter cannot render (`longtable`, `parbox`, `multirow`); they now use ```` ```math ```` blocks and plain `\begin{align*}`. Also, the hand-written tables of contents and section links, which used GitHub-style anchors that Documenter does not generate and were therefore dead on the published manual, are `@contents` blocks and `@ref` links, which Documenter validates at build time;
+
+- DOCSTRING FIX: the docstrings of `integrand_ξ_GNC_Newtonian_Lensing` and `integrand_ξ_GNCxLD_Newtonian_Lensing` had the wrong sign in the `b_1` part of `J^{δκ}_{02}`.
+
+
+- added the `theory/` directory, which collects the notebooks that reproduce the figures and the numbers of the Theory pages, together with the plots and data they produce
+  * they share `theory/Project.toml`, which declares GaPSE through a `[sources]` entry, so a fresh clone only needs `Pkg.instantiate()`, and the default IJulia kernel activates it by itself (it runs Julia with `--project=@.`);
+  * `sigma_i.ipynb` studies the moments every `Δχ → 0` limit reduces to, plotting the five integrands and the fraction of each collected below a given `q`
+  * `spherical_bessels.ipynb` reproduces the figures of the "Spherical Bessel Functions" page
+  * `Iln_terms.ipynb` studies the Iln integrals
+  * `spline_comparison.ipynb` compares `MySpline` with `Dierckx`
+  * `deltachi_limits.ipynb` looks at the `Δχ_min` switch between the `J ⋅ I_l^n` sum and the analytic limit, on two GNC auto-correlations
+
+
+
+## branch oneapi -> should have lead to version 0.9.0
+
+- added `MySpline`
+
+- trying to parallelize the code with `KernelAbstractions`; seems that the GPU offloading is overkill, due to small size of matrixes in the single (Lensing-... and IntegratedGP-...) and double integral terms (Lensing-Lensing, IntegratedGP-IntegratedGP)
+
+
+
+
+## VERSION 0.8.0
 
 - added `readchoosen` and `readxchoosey` functions in `src/OtherUtils.jl`;
 

@@ -20,7 +20,7 @@
 
 
 function integrand_ξ_GNCxLD_Newtonian_IntegratedGP(
-    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
@@ -32,7 +32,7 @@ function integrand_ξ_GNCxLD_Newtonian_IntegratedGP(
     b_s1 = isnothing(b1) ? cosmo.params.b1 : b1
 
     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
+    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : zero(Δχ2_square)  # throw(AssertionError("Δχ2_square=$Δχ2_square : y=$y , s1=$s1 , χ2=$χ2"))
 
     common = - D_s1 * ℋ0^2 * Ω_M0 * D2 / (a2 * s2) * (s2 * ℋ2 * ℜ_s2 * (f2 - 1) - 1)
     factor = f_s1 * ((3 * y^2 - 1) * χ2^2 - 4 * y * s1 * χ2 + 2 * s1^2)
@@ -40,21 +40,24 @@ function integrand_ξ_GNCxLD_Newtonian_IntegratedGP(
     J20 = -Δχ2^2 * (3 * b_s1 + f_s1)
 
 
-    I00 = cosmo.tools.I00(Δχ2)
-    I20 = cosmo.tools.I20(Δχ2)
-    I40 = cosmo.tools.I40(Δχ2)
-    I02 = cosmo.tools.I02(Δχ2)
+    JI_sum = if Δχ2 ≥ min(Δχ_min, Δχ_min * max(s1, χ2))
+        I00 = cosmo.tools.I00(Δχ2)
+        I20 = cosmo.tools.I20(Δχ2)
+        I40 = cosmo.tools.I40(Δχ2)
+        I02 = cosmo.tools.I02(Δχ2)
+        factor * (1 / 15 * I00 + 2 / 21 * I20 + 1 / 35 * I40) + J20 * I02
+    else
+        # for Δχ2 → 0 `factor` vanishes, so only the J20 * I02 term survives;
+        # see "The Δχ → 0 limits" page of the documentation
+        - (3 * b_s1 + f_s1) * cosmo.tools.σ_2
+    end
 
-    return common * (
-        factor * (1 / 15 * I00 + 2 / 21 * I20 + 1 / 35 * I40)
-        +
-        J20 * I02
-    )
+    return common * JI_sum
 end
 
 
 function integrand_ξ_GNCxLD_Newtonian_IntegratedGP(
-    χ2::Float64, s1::Float64, s2::Float64,
+    χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
     y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
@@ -69,7 +72,7 @@ end
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
     integrand_ξ_GNCxLD_Newtonian_IntegratedGP(
-        χ2::Float64, s1::Float64, s2::Float64,
+        χ2::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
         y, cosmo::Cosmology; kwargs... ) ::Float64
 
 Return the integrand of the Two-Point Correlation Function (TPCF) given by the cross correlation 
@@ -245,7 +248,7 @@ integrand_ξ_GNCxLD_Newtonian_IntegratedGP
         s1, s2, y, cosmo::Cosmology;
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
-        en::Float64 = 1e6, N_χs::Int = 100 ) ::Float64
+        en::AbstractFloat = 1e6, N_χs::Int = 100 ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation 
 between the Newtonian effect arising from the Galaxy Number Counts (GNC) and the Integrated 
@@ -400,7 +403,7 @@ the integrand function `integrand_ξ_GNCxLD_Newtonian_IntegratedGP`.
   ```
   If `nothing`, the fault value stored in `cosmo` will be considered.
 
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
+- `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
 - `N_χs::Int = 100`: number of points to be used for sampling the integral
@@ -411,7 +414,7 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNCxLD_multipole`](@ref),
 [`map_ξ_GNCxLD_multipole`](@ref), [`print_map_ξ_GNCxLD_multipole`](@ref)
 """
 function ξ_GNCxLD_Newtonian_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-    en::Float64 = 1e6, N_χs::Int = 100, kwargs...)
+    en::AbstractFloat = 1e6, N_χs::Int = 100, kwargs...)
 
     χ2s = s2 .* range(1e-6, 1.0, length = N_χs)
 

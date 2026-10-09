@@ -1,0 +1,25 @@
+# Asymptotic behaviour of WideA_ZA_pk.dat and its consequences
+
+### the two power laws of InputPS
+
+  left : P(q) = 0.00000e+00 + 3.01231e+06 * q^+0.96000
+  right: P(q) = 0.00000e+00 + 9.16011e+01 * q^-2.64113
+
+### slope measured on the tabulated data
+
+  first decade [2.056e-07, 3.112e-07] : +0.9600
+  last decade  [1.276e+01, 2.023e+01] : -2.6580
+
+### does sigma_i converge?   (integrand q^(2-i) P(q))
+
+sigma_i      IR exponent    IR verdict   UV exponent    UV verdict
+sigma_0            2.960     converges        -0.641      DIVERGES
+sigma_1            1.960     converges        -1.641     converges
+sigma_2            0.960     converges        -2.641     converges
+sigma_3           -0.040     converges        -3.641     converges
+sigma_4           -1.040      DIVERGES        -4.641     converges
+
+With the true CDM tail P ~ k^(n_s-4) ln^2(k) ~ k^-3 the UV exponent of
+sigma_0 would be exactly -1, i.e. sigma_0 would be LOGARITHMICALLY divergent.
+The fitted right slope here is -2.6411, shallower than -3, so in
+GaPSE sigma_0 diverges as a power: sigma_0(<K) ~ K^0.359.

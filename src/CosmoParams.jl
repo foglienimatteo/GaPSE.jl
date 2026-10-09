@@ -20,10 +20,10 @@
 
 """
     const DEFAULT_IPS_OPTS = Dict(
-        :fit_left_min => 1e-6::Float64, 
-        :fit_left_max => 3e-6::Float64,
-        :fit_right_min => 1e1::Float64, 
-        :fit_right_max => 2e1::Float64,
+        :fit_left_min => 1e-6,
+        :fit_left_max => 3e-6,
+        :fit_right_min => 1e1,
+        :fit_right_max => 2e1,
         )
 
 The default values to be stored in `CosmoParams` concerning the 
@@ -33,21 +33,21 @@ they will be used in its `InputPS`.
 See also: [`CosmoParams`](@ref), [`Cosmology`](@ref), [`InputPS`](@ref)
 """
 const DEFAULT_IPS_OPTS = Dict(
-    :fit_left_min => 1e-6::Float64,
-    :fit_left_max => 3e-6::Float64,
-    :fit_right_min => 1e1::Float64,
-    :fit_right_max => 2e1::Float64,
+    :fit_left_min => 1e-6,
+    :fit_left_max => 3e-6,
+    :fit_right_min => 1e1,
+    :fit_right_max => 2e1,
 )
 
 
 """
     const DEFAULT_IPSTOOLS_OPTS = Dict(
-        :N => 1024::Int,
-        :fit_min => 0.05::Float64,
-        :fit_max => 0.5::Float64,
-        :con => true::Bool,
-        :k_min => 1e-6::Float64,
-        :k_max => 10.0::Float64,
+        :N => 1024,
+        :fit_min => 0.05,
+        :fit_max => 0.5,
+        :con => true,
+        :k_min => 1e-6,
+        :k_max => 10.0,
     )
 
 The default values to be stored in `CosmoParams` concerning the 
@@ -57,23 +57,23 @@ they will be used in its `IPSTools`.
 See also: [`CosmoParams`](@ref), [`Cosmology`](@ref), [`IPSTools`](@ref)
 """
 const DEFAULT_IPSTOOLS_OPTS = Dict(
-    :fit_min => 0.05::Float64,
-    :fit_max => 0.5::Float64,
-    :N => 1024::Int,
-    :con => true::Bool,
-    :k_min => 1e-6::Float64,
-    :k_max => 10.0::Float64,
+    :fit_min => 0.05,
+    :fit_max => 0.5,
+    :N => 1024,
+    :con => true,
+    :k_min => 1e-6,
+    :k_max => 10.0,
 )
 
 #=
 """
     const DEFAULT_WFI_OPTS = Dict(
-        :llim=> nothing::Union{Nothing,Float64},
-        :rlim=> nothing::Union{Nothing,Float64},
-        :N => 200::Int64,
-        :trap => true::Bool,
-        :rtol => 1e-2::Float64,
-        :atol => 0.0::Float64,
+        :llim=> nothing,
+        :rlim=> nothing,
+        :N => 200,
+        :trap => true,
+        :rtol => 1e-2,
+        :atol => 0.0,
         )
 
 The default values to be stored in `CosmoParams` concerning the 
@@ -83,13 +83,13 @@ they will be used in its `WindowFIntegrated`.
 See also: [`CosmoParams`](@ref), [`Cosmology`](@ref), [`WindowFIntegrated`](@ref),
 """
 const DEFAULT_WFI_OPTS = Dict(
-    :llim=> nothing::Union{Nothing,Float64},
-    :rlim=> nothing::Union{Nothing,Float64},
-    :N => 200::Int64,
-    :trap => true::Bool,
-    :rtol => 1e-2::Float64,
-    :atol => 0.0::Float64,
-    :pr => true::Bool, 
+    :llim=> nothing,
+    :rlim=> nothing,
+    :N => 200,
+    :trap => true,
+    :rtol => 1e-2,
+    :atol => 0.0,
+    :pr => true, 
 )
 =#
 
@@ -268,27 +268,27 @@ struct CosmoParams
         IPSTools = merge(DEFAULT_IPSTOOLS_OPTS, IPSTools_opts)
         #WFI = merge(DEFAULT_WFI_OPTS, WFI_opts)
 
-        @assert 0.0 < z_min < z_max " 0.0 < z_min < z_max must hold!"
-        @assert 0.0 ≤ θ_max ≤ π / 2.0 " 0.0 ≤ θ_max ≤ π/2.0 must hold!"
-        @assert 0.0 ≤ Ω_b ≤ 1.0 " 0.0 ≤ Ω_b ≤ 1.0 must hold!"
-        @assert 0.0 ≤ Ω_cdm ≤ 1.0 " 0.0 ≤ Ω_cdm ≤ 1.0 must hold!"
-        @assert 0.0 < h_0 ≤ 1.0 " 0.0 < h_0 ≤ 1.0 must hold!"
-        @assert 0.0 < s_lim < 10.0 "0.0 < s_lim < 10.0 must hold!"
-        @assert z_max < z_spline_lim < 1e6 "z_max < z_spline_lim < 1e6 must hold!"
+        @assert 0.0 < z_min < z_max " 0.0 < z_min < z_max must hold! 0.0 ≤ $z_min ≤ $z_max is false!"
+        @assert 0.0 ≤ θ_max ≤ π " 0.0 ≤ θ_max ≤ π must hold! 0.0 ≤ $θ_max ≤ $(π) is false!"
+        @assert 0.0 ≤ Ω_b ≤ 1.0 " 0.0 ≤ Ω_b ≤ 1.0 must hold! Ω_b=$Ω_b is not valid!"
+        @assert 0.0 ≤ Ω_cdm ≤ 1.0 " 0.0 ≤ Ω_cdm ≤ 1.0 must hold! Ω_cdm=$Ω_cdm is not valid!"
+        @assert 0.0 < h_0 ≤ 1.0 " 0.0 < h_0 ≤ 1.0 must hold! h_0=$h_0 is not valid!"
+        @assert 0.0 < s_lim < 10.0 "0.0 < s_lim < 10.0 must hold! s_lim=$s_lim is not valid!"
+        @assert z_max < z_spline_lim < 1e6 "z_max < z_spline_lim < 1e6 must hold! $z_max < $z_spline_lim < 1e6 is not true!"
 
-        @assert 0.0 < IPS[:fit_left_min] < IPS[:fit_left_max] < 1e-1
-        " 0 < fit_left_min < fit_left_max < 0.1 must hold!"
-        @assert 0.5 < IPS[:fit_right_min] < IPS[:fit_right_max] < 1e6
-        " 0.5 < fit_right_min < fit_right_max < 1e6 must hold!"
+        fit_left_min, fit_left_max = IPS[:fit_left_min], IPS[:fit_left_max]
+        fit_right_min, fit_right_max = IPS[:fit_right_min], IPS[:fit_right_max]
+        @assert 0.0 < fit_left_min < fit_left_max < 1e-1 " 0 < fit_left_min < fit_left_max < 0.1 must hold! 0 < $fit_left_min < $fit_left_max < 0.1 is not true!"
+        @assert 0.5 < fit_right_min < fit_right_max < 1e6 " 0.5 < fit_right_min < fit_right_max < 1e6 must hold! 0.5 < $fit_right_min < $fit_right_max < 1e6 is not true!"
 
-        @assert 0.0 ≤ IPSTools[:k_min] < IPSTools[:k_max] " 0.0 ≤ k_min < k_max must hold!"
-        @assert IPSTools[:N] > 7 " N > 7 must hold!"
-        @assert 1e-2 ≤ IPSTools[:fit_min] < IPSTools[:fit_max] < 10.0 " 1e-2 " *
-                                                                    "≤ fit_min < fit_max < 10.0 must hold!"
+        k_min, k_max, N, fit_min, fit_max = IPSTools[:k_min], IPSTools[:k_max], IPSTools[:N], IPSTools[:fit_min], IPSTools[:fit_max]
+        @assert 0.0 ≤ k_min < k_max " 0.0 ≤ k_min < k_max must hold! 0.0 ≤ $k_min < $k_max is not true!"
+        @assert N > 7 " N > 7 must hold! N=$N is not valid!"
+        @assert 1e-2 ≤ fit_min < fit_max < 10.0 "1e-2 ≤ fit_min < fit_max < 10.0 must hold! 1e-2 ≤ $fit_min < $fit_max < 10.0 is not valid!"
 
-        @assert b1 > 0.0 " b1 > 0 must hold!"
+        @assert b1 > 0.0 " b1 > 0 must hold! b1=$b1 is not valid!"
         b2 = isnothing(b2) ? b1 : b2
-        @assert b2 > 0.0 " b2 > 0 must hold!"
+        @assert b2 > 0.0 " b2 > 0 must hold! b2=$b2 is not valid!"
 
         s_b2 = isnothing(s_b2) ? s_b1 : s_b2
         𝑓_evo2 = isnothing(𝑓_evo2) ? 𝑓_evo1 : 𝑓_evo2

@@ -89,7 +89,7 @@ function _logextrap(x::Vector, n_extrap_low::Int, n_extrap_high::Int)
 end
 
 #=
-function _logextrap(x::Vector, n_extrap_low::Int, n_extrap_high::Int; LIM::Float64=5e-4)
+function _logextrap(x::Vector, n_extrap_low::Int, n_extrap_high::Int; LIM::AbstractFloat=5e-4)
     d_ln_x_low = log(x[2] / x[1])
     d_ln_x_high = log(reverse(x)[1] / reverse(x)[2])
     X = x

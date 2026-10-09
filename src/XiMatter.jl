@@ -20,7 +20,7 @@
 #=
 """
     ξ_from_PS(f_in;
-        int_k_min::Float64 = 1e-3, int_k_max::Float64 = 1e1,
+        int_k_min::AbstractFloat = 1e-3, int_k_max::AbstractFloat = 1e1,
         L::Int = 0, N::Int = 1024, pr::Bool = true,
         s0::Union{Nothing,Float64} = nothing,
         right::Union{Float64,Nothing} = nothing)
@@ -28,7 +28,7 @@
 TBW
 """
 function ξ_from_PS(f_in;
-    int_k_min::Float64 = 1e-3, int_k_max::Float64 = 1e1,
+    int_k_min::AbstractFloat = 1e-3, int_k_max::AbstractFloat = 1e1,
     L::Int = 0, N::Int = 1024, pr::Bool = true,
     s0::Union{Nothing,Float64} = nothing,
     right::Union{Float64,Nothing} = nothing)
@@ -50,7 +50,7 @@ end
 
 
 function ξ_from_PS(ks, pks;
-    int_k_min::Float64 = 1e-3, int_k_max::Float64 = 1e1,
+    int_k_min::AbstractFloat = 1e-3, int_k_max::AbstractFloat = 1e1,
     epl::Bool = true,
     N_left::Int = 12, N_right::Int = 12,
     p0_left = [1.0, 1.0], p0_right = [-2.0, 1.0],
@@ -63,7 +63,7 @@ function ξ_from_PS(ks, pks;
     f_in, INT_k_min, INT_k_max =
         if epl == true
             if all(pks[begin:begin+5] .≈ 0.0) && all(pks[end-5:end] .≈ 0.0)
-                spl = Spline1D(ks, pks; bc="error")
+                spl = GaPSE.MySpline(ks, pks; bc="error")
                 f(k) = ((k ≤ ks[1]) || (k ≥ ks[end])) ? 0.0 : spl(k)
                 f, int_k_min, int_k_max
             else
@@ -71,7 +71,7 @@ function ξ_from_PS(ks, pks;
                         N_left = N_left, N_right = N_right), int_k_min, int_k_max
             end
         else
-            Spline1D(ks, pks; bc = "error"), min(ks...), max(ks...)
+            GaPSE.MySpline(ks, pks; bc = "error"), min(ks...), max(ks...)
         end
 
     return ξ_from_PS(f_in; int_k_min = INT_k_min, int_k_max = INT_k_max,
@@ -119,7 +119,8 @@ function print_ξ_from_PS(input::String, out::String;
         println(io, "\n# \t\tL = $L")
         if !isempty(kwargs)
             for key in keys(kwargs)
-                println(io, "# \t\t$(key) = $(kwargs[key])")
+                val = string(kwargs[key])
+                println(io, "# \t\t$(key) = $(length(val) > 20 ? first(val, 20)*"..." : val)")
             end
         end
         println(io, "# ")
@@ -157,7 +158,8 @@ function print_ξ_from_PS(ks, pks, out::String;
         println(io, "\n# \t\tL = $L")
         if !isempty(kwargs)
             for key in keys(kwargs)
-                println(io, "# \t\t$(key) = $(kwargs[key])")
+                val = string(kwargs[key])
+                println(io, "# \t\t$(key) = $(length(val) > 20 ? first(val, 20)*"..." : val)")
             end
         end
         println(io, "# ")
