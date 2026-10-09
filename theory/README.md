@@ -70,6 +70,16 @@ $ jupyter lab Iln_terms.ipynb
   `IPSTools` hard-codes for the `xicalc` call that builds the ``I_\ell^n``. Figures go to
   `docs/src/assets/sigma_i/`.
 
+- **`kmin_kmax`** : what the ``[k_\mathrm{min}, k_\mathrm{max}]`` pair of `IPSTools`
+  does to the five ``\sigma_i`` and to the nine ``I_\ell^n``, which it now bounds
+  together (it used to bound only the ``\sigma_i``, the `xicalc` behind the
+  ``I_\ell^n`` being hard-coded to `1e-5, 1e3`). It scans each extreme in turn, shows
+  that the ``I_\ell^n`` only move below ``s \simeq 2 \; h^{-1}``Mpc, and measures the
+  one fragile piece: the left power-law fit collapses when the fit window straddles the
+  saturation scale, i.e. unless `fit_min` ``\gg 1/k_\mathrm{max}``. It closes on three
+  cosmologies that differ only by ``k_\mathrm{max}``, and the GNC Lensing-Lensing
+  multipole they give.
+
 - **`spherical_bessels`** : the spherical Bessel functions ``j_\ell(x)``, the region where
   their small-``x`` expansion ``x^\ell/(2\ell+1)!!`` is legitimate, and the first zero of
   ``j_\ell`` as a function of ``\ell``. It produces the figures used by the

@@ -23,6 +23,10 @@ Minor bump and not a patch: this release changes results that callers can observ
 
 - the `print_map_*` functions truncate to 20 characters the keyword values they write into the output headers, so a large object no longer makes the header unreadable.
 
+- **IMPORTANT CHANGE**: the `k_min`/`k_max` of `IPSTools` now bound the `xicalc` that builds the nine `I_l^n` and the `quadgk` of `Ĩ^4_0` too, not only the five `σ_i` (those two were hard-coded to `1e-5, 1e3`), and `s0`, the first point of the `s` grid `xicalc` returns, became a keyword. They are the same integral - `I_0^0(s) → σ_0` for `s → 0` is what every `Δχ → 0` limit asserts - so they cannot live on two different supports. It is not a cosmetic change: with `k_max = 10` the `I_l^n` lose power below `s ≃ 0.2` (`I_0^0(0.06)` drops to 57%), which is the region the `Δχ → 0` switch feeds on, so the GNC Lensing-Lensing `L = 0` multipole of the test cosmology moves up to 38% at `s = 1000` while the GNC sum moves 0.5%. The reference files store the old mixed convention and have to be regenerated;
+
+- the same work found, but did NOT fix, a defect in `power_law_from_data`: in the `con == true` branch the relative errors are compared *signed* against 0.05, so an arbitrarily bad negative one passes, and the two fall-back `curve_fit` calls are given a 3-element `p0` against 2-parameter models, so `si, b, a = vcat(vals_2, vals_1[3])` silently takes `a = p0[3] = 0.0`. With `fit_min = 0.05` and `k_max = 10` the left fit of `I_0^0` collapses onto a degenerate solution and the extrapolation below `fit_min` jumps by a factor 3e3. Nothing GaPSE currently computes reaches below `fit_min`, so no result moves today, but it is a landmine for a smaller `Δχ_min` or `s_min`. Fixing it moves results of its own (the signed test already fires on the current defaults), so it wants its own branch. Measurements in the new `theory/kmin_kmax.ipynb`;
+
 - THREADS: the four `map_ξ_*_multipole` functions spread their `s` values over the available threads, through the new `map_over_ss` (`src/OtherUtils.jl`). The `s` points are independent and the `Cosmology` is read-only on that path, so the results are bit-for-bit the serial ones; the scheduling is `:dynamic`, the cost of one `s` growing with `s`. Measured 3.56x on 4 threads. With one thread it is an ordinary loop, so Julia must be started with `-t auto` (or `JULIA_NUM_THREADS`) to get anything out of it;
 
 - new `print_log_generic`/`print_log` (`src/OtherUtils.jl`): log on `stdout`, on an open stream or on a file, with an optional `[yyyy-mm-dd HH:MM:SS]` stamp, and with a method that redirects `stdout` around a function that prints on its own. `Dates` is a new (stdlib) dependency.
@@ -73,6 +77,7 @@ Minor bump and not a patch: this release changes results that callers can observ
   * `Iln_terms.ipynb` studies the Iln integrals
   * `spline_comparison.ipynb` compares `MySpline` with `Dierckx`
   * `deltachi_limits.ipynb` looks at the `Δχ_min` switch between the `J ⋅ I_l^n` sum and the analytic limit, on two GNC auto-correlations
+  * `kmin_kmax.ipynb` scans `k_min` and `k_max` over the `σ_i`, the `I_l^n` and their power-law fits, and shows that it is the fit, not the range, that moves a TPCF
 
 
 

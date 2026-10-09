@@ -529,9 +529,9 @@ Input Power Spectrum.
   ```
   where, for a generic `Iab` name, ``\\ell`` is the FIRST number (`a`) and 
   ``n`` the second (`b`).
-  These integrals are performed through `xicalc`, with `kmin, kmax, s0 = 1e-5, 1e3, 1e-3`;
-  at the edges they are fitted with power laws (for `s < fit_min` and 
-  `s > max_s_returned_from_xi_calc`).
+  These integrals are performed through `xicalc`, between `k_min` and `k_max` and
+  starting the returned ``s`` grid at `s0`; at the edges they are fitted with power laws
+  (for `s < fit_min` and `s > max_s_returned_from_xi_calc`).
 
 - `I04_tilde::IntegralIPS`: it returns the value of the integral:
 
@@ -539,8 +539,8 @@ Input Power Spectrum.
   \\tilde{I}^4_0 (s) = \\int \\frac{\\mathrm{d}q}{2\\pi^2} \\, q^2 \\, 
      P(q) \\,  \\frac{j_0(qs) - 1}{(qs)^4} \\;.
   ```
-  This integral is calculated brute-force with `quadgk`, and fitted with power-laws
-  at the edges (for `s < 0.1` and `s > 1e4`).
+  This integral is calculated brute-force with `quadgk`, again between `k_min` and
+  `k_max`, and fitted with power-laws at the edges (for `s < 0.1` and `s > 1e4`).
 
 - `σ_0, σ_1, σ_2, σ_3, σ_4 :: Float64`: these are the results of the following integral:
   ```math
@@ -555,23 +555,38 @@ Input Power Spectrum.
 
 - `k_min k_max::Float64` : because some of the ``\\sigma_i`` integrals from ``q = 0`` to
   ``q = +\\infty`` diverge, it is common practice to cut the integrals at the edges, so they
-  are calculated from ``q = k_\\mathrm{min}`` to ``q = k_\\mathrm{max}``
+  are calculated from ``q = k_\\mathrm{min}`` to ``q = k_\\mathrm{max}``.
+  The same two extremes bound the ``I_\\ell^n`` and the ``\\tilde{I}^4_0``: they are the
+  support of ``P(q)`` for this `IPSTools` as a whole. They must be, since the same
+  integral appears in both families - ``I_0^0(s) \\rightarrow \\sigma_0`` for
+  ``s \\rightarrow 0`` - and the ``\\Delta\\chi \\rightarrow 0`` limits of the TPCFs
+  replace a ``J \\cdot I_\\ell^n`` sum with a combination of ``\\sigma_i``.
+  Note that ``\\sigma_0`` and ``\\sigma_4`` do not converge, so their value *is* the cut.
+  Note also that ``I_\\ell^n(s)`` is flat for ``s \\lesssim 1/k_\\mathrm{max}``, and that a
+  flat dataset makes the left power-law fit degenerate: `fit_min` has to stay well above
+  ``1/k_\\mathrm{max}``. See the "The input Power Spectrum" page of the manual and the
+  `theory/kmin_kmax.ipynb` notebook
 
 
 ## Constructors
 
     IPSTools(ips::InputPS; N::Int = 1024,
         fit_min::AbstractFloat = 0.05, fit_max::AbstractFloat = 0.5,
-        k_min::AbstractFloat = 1e-6, k_max::AbstractFloat = 10.0
-        con::Bool = false
+        k_min::AbstractFloat = 1e-6, k_max::AbstractFloat = 10.0,
+        con::Bool = false, s0::AbstractFloat = 1e-3
     )
 
 - `ips::InputPS` : the Input Power Spectrum to be used in all the calculations.
 
 - `N::Int = 1024` : number of points to be used in the `xicalc` function
 
-- `k_min::AbstractFloat = 1e-6, k_max::AbstractFloat = 10.0` : integrations extremes of 
-  the ``\\sigma_i``s
+- `k_min::AbstractFloat = 1e-6, k_max::AbstractFloat = 10.0` : integration extremes of
+  the ``\\sigma_i``s, of the ``I_\\ell^n`` and of the ``\\tilde{I}^4_0``
+
+- `s0::AbstractFloat = 1e-3` : the first point of the ``s`` grid `xicalc` returns. The
+  grid is logarithmic and spans `log10(k_max/k_min)` decades from there, so `s0` and the
+  two `k` extremes together fix where the ``I_\\ell^n`` spline ends and its right power
+  law begins
 
 - `con::Bool = false` : do you want that the fit of all the ``I_\\ell^n`` for the LEFT edge
   is not a simple power-law ``y = f(x) = b \\, x^s``, but also consider a constant ``a``,
@@ -626,13 +641,19 @@ struct IPSTools
         fit_max::AbstractFloat=0.5,
         con::Bool=false,
         k_min::AbstractFloat=1e-6,
-        k_max::AbstractFloat=10.0
+        k_max::AbstractFloat=10.0,
+        s0::AbstractFloat=1e-3
     )
         #PK = GaPSE.MySpline(ips.ks, ips.pks; bc = "error")
         PK = ips
 
-        #kmin, kmax = min(ips.ks...), max(ips.ks...)
-        kmin, kmax, s0 = 1e-5, 1e3, 1e-3
+        # `k_min` and `k_max` are the support of the Input Power Spectrum for the whole
+        # of this `IPSTools`: the same extremes bound the `xicalc` that builds the
+        # I_l^n, the quadrature of I~_0^4 and the five σ_i. They used to be hard-coded
+        # to `1e-5, 1e3` for the first two and taken from the input only for the σ_i,
+        # which made quantities that appear together in the same expression - σ_0 and
+        # I_0^0(s → 0) are the same integral - integrals of two different functions.
+        kmin, kmax = k_min, k_max
 
         p0 = con ? [-1.0, 1.0, 0.0] : [-1.0, 1.0]
 
