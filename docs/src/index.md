@@ -134,7 +134,9 @@ julia> using GaPSE
 
 There are three ways to use this code:
 
-- **RECOMMENDED**: you can run `include("<path-to-GaPSE.jl-directory>/src/GaPSE.jl")` command in a Jupyter Notebook (with a Julia 1.12 kernel, see [IJulia](https://github.com/JuliaLang/IJulia.jl) pkg), and use the code functions inside it
+- **RECOMMENDED**: from a Jupyter Notebook, with a Julia 1.12 kernel (see the [IJulia](https://github.com/JuliaLang/IJulia.jl) pkg). GaPSE is **unregistered**, so a notebook reaches it through its path: the notebook's directory needs a `Project.toml` declaring GaPSE in a `[sources]` entry, and then the notebook simply does `using GaPSE`. The `ipynbs` directory is already set up this way, and `ipynbs/README.md` explains how that environment was built and how to recreate it elsewhere.
+
+  Do **not** use `include("<path-to-GaPSE.jl-directory>/src/GaPSE.jl")` for this: `include` only evaluates the sources in `Main`, so GaPSE's own `Project.toml` is never read and its dependencies are looked for in the notebook's environment, which fails with `Package TwoFAST [...] is required but does not seem to be installed`.
 
 - in a REPL session
   ```bash
@@ -151,6 +153,36 @@ There are three ways to use this code:
   ```bash
     $ julia GaPSE-exe.jl
   ```
+
+
+### Running GaPSE on more than one thread
+
+The `s` grid of `map_ξ_*_multipole` and of the `map_sum_ξ_*` functions is computed in parallel over the threads Julia was started with. Julia starts with **one** thread unless you ask for more:
+
+```bash
+  $ julia -t auto             # as many threads as the machine has cores
+  $ julia -t 8                # or a fixed number
+```
+
+or export `JULIA_NUM_THREADS=auto` once, in your shell profile. From inside Julia, `Threads.nthreads()` says what you got. Nothing else changes: the results are bit-for-bit the same whatever the thread count, and the progress bar still counts the `s` points, only completing them out of order. Measured on 4 cores, for the GNC `auto_lensing` multipole with `L = 0`: 3.6 times faster.
+
+#### A Jupyter kernel with more than one thread
+
+A notebook does not see the `-t` of your shell: its kernel is started by Jupyter, with the options stored in the **kernelspec**, and the kernel IJulia installs by default has none - so a notebook runs on a single thread. Install a second kernel next to it:
+
+```julia
+  julia> using IJulia
+
+  julia> installkernel("Julia (4 threads)", "--project=@.", env=Dict("JULIA_NUM_THREADS" => "4"))
+```
+
+and choose "Julia (4 threads) 1.12" from the kernel menu of Jupyter Lab. Passing `"--threads=auto"` as an option instead of the `env` entry works just as well:
+
+```julia
+  julia> installkernel("Julia (auto threads)", "--project=@.", "--threads=auto")
+```
+
+Keep the `--project=@.` in either case: it is the option the default IJulia kernel carries, and it is what makes the notebook pick up the `Project.toml` of its own directory (see `ipynbs/README.md`).
 
 
 Some `.ipynb`s are already provided in the directory `ipynbs` :
@@ -239,7 +271,7 @@ Furthermore, the notebooks we provide in `ipynbs` use:
 
 - [Plots](https://github.com/JuliaPlots/Plots.jl) for the pure julian plots;
 - [LaTeXStrings](https://github.com/JuliaStrings/LaTeXStrings.jl) for the labels in LaTeX;
-- [PyPlot](https://github.com/JuliaPy/PyPlot.jl) for the julian plots in the python style; this package is based on the [Matplotlib](https://matplotlib.org) Python package, and it requires it in order to run properly.
+- [GR](https://github.com/jheinen/GR.jl), the default backend of `Plots`, to draw them: it ships its own binary and needs no Python at all. The matplotlib backends of `Plots` are not used: under Julia 1.12 `pythonplot()` warns that it reaches `Plots._py_drawfig` "in a world prior to its definition world", and the older `pyplot()` one is implemented under `Plots/src/backends/deprecated/`.
 
 
 
