@@ -166,7 +166,7 @@ The `s` grid of `map_ξ_*_multipole` and of the `map_sum_ξ_*` functions is comp
 
 or export `JULIA_NUM_THREADS=auto` once, in your shell profile. From inside Julia, `Threads.nthreads()` says what you got. Nothing else changes: the results are bit-for-bit the same whatever the thread count, and the progress bar still counts the `s` points, only completing them out of order. Measured on 4 cores, for the GNC `auto_lensing` multipole with `L = 0`: 3.6 times faster.
 
-#### A Jupyter kernel with more than one thread
+### A Jupyter kernel with more than one thread
 
 A notebook does not see the `-t` of your shell: its kernel is started by Jupyter, with the options stored in the **kernelspec**, and the kernel IJulia installs by default has none - so a notebook runs on a single thread. Install a second kernel next to it:
 

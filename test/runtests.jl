@@ -631,3 +631,22 @@ end
 
 
 ##############################
+
+
+##########################################################################################92
+# Info on the environment variables and on the threads: `map_over_ss` spreads the `s`
+# values of every multipole over the default thread pool, so a run of these tests says
+# nothing about the parallel path unless Julia was started with more than one thread.
+
+GaPSE.print_log("Info regarding env vars and threads: \n")
+GaPSE.print_log("    JULIA_NUM_THREADS = $(get(ENV, "JULIA_NUM_THREADS", "/"))   \t# Read by Julia itself")
+GaPSE.print_log("    OMP_NUM_THREADS   = $(get(ENV, "OMP_NUM_THREADS", "/"))   \t# Used by LinearAlgebra")
+GaPSE.print_log("    Threads.nthreads() = $(Threads.nthreads())   \t# the :default pool, the one `map_over_ss` uses")
+GaPSE.print_log("    Threads.nthreads(:interactive) = $(Threads.nthreads(:interactive))")
+GaPSE.print_log("    Sys.CPU_THREADS = $(Sys.CPU_THREADS)   \t# what `-t auto` would have given")
+GaPSE.print_log("    BLAS.get_num_threads() = $(GaPSE.LinearAlgebra.BLAS.get_num_threads())")
+GaPSE.print_log("Info from Sys.cpu_summary(): \n")
+GaPSE.print_log(Sys.cpu_summary)
+GaPSE.print_log("Info ended.\n")
+
+##############################
