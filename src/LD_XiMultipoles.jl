@@ -467,25 +467,16 @@ function map_ξ_LD_multipole(cosmo::Cosmology,
     if alg == :lobatto
         μs, ws = gausslobatto(N_lob)
 
-        xis = pr ? begin
-            @showprogress "$effect, L=$L: " [
-                dot(ws, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
-            ]
-        end : [
-            dot(ws, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
-        ]
+        xis = map_over_ss(v_ss, "$effect, L=$L: "; pr=pr) do s
+            dot(ws, [orig_f(μ, s) for μ in μs]) / enhancer
+        end
 
     elseif alg == :quad
 
-        xis = pr ? begin
-            @showprogress "$effect, L=$L: " [
-                quadgk(μ -> orig_f(μ, s), -1.0, 1.0;
-                        atol=atol_quad, rtol=rtol_quad)[1] / enhancer for s in v_ss
-            ]
-        end : [
+        xis = map_over_ss(v_ss, "$effect, L=$L: "; pr=pr) do s
             quadgk(μ -> orig_f(μ, s), -1.0, 1.0;
-                atol=atol_quad, rtol=rtol_quad)[1] / enhancer for s in v_ss
-        ]
+                atol=atol_quad, rtol=rtol_quad)[1] / enhancer
+        end
 
     elseif alg == :trap
 
@@ -496,13 +487,9 @@ function map_ξ_LD_multipole(cosmo::Cosmology,
         )
         #μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_trap)
 
-        xis = pr ? begin
-            @showprogress "$effect, L=$L: " [
-                trapz(μs, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
-            ]
-        end : [
-            trapz(μs, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
-        ]
+        xis = map_over_ss(v_ss, "$effect, L=$L: "; pr=pr) do s
+            trapz(μs, [orig_f(μ, s) for μ in μs]) / enhancer
+        end
 
     else
         throw(AssertionError("how the hell did you arrive here?"))

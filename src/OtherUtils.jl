@@ -690,3 +690,41 @@ function sample_subdivision_middle(x_min, x_start, x_stop, x_max;
 end
 
 
+
+
+"""
+    map_over_ss(f, v_ss::AbstractVector, desc::AbstractString;
+        pr::Bool=true) :: Vector{Float64}
+
+Evaluate `f(s)` for every `s` in `v_ss`, spreading the points over the available
+threads, and return the results in the order of `v_ss`.
+
+This is the parallel loop of the four `map_ξ_*_multipole` functions. The `s` values
+are independent - each one is its own quadrature over `μ` - and the only state the
+tasks share is the `Cosmology` that `f` closes over, which is read-only on this path:
+`MySpline` is an immutable struct evaluated with `searchsortedlast`, and
+`GridInterpolations.interpolate` keeps its scratch in per-call `MVector`s. Julia must
+be started with more than one thread (`julia -t auto`, or `JULIA_NUM_THREADS`) for
+this to do anything; with a single thread it is an ordinary loop.
+
+The scheduling is `:dynamic`, not `:static`: the cost of one `s` grows with `s`, so a
+static split would leave whichever thread got the largest distances running alone.
+
+With `pr = true` a `ProgressMeter.Progress` counts the points as they complete. It
+advances out of `s` order, being a counter, and `next!` is thread-safe: it notices a
+call from a thread other than the one that built the meter and locks from then on.
+
+See also: [`map_ξ_GNC_multipole`](@ref), [`map_ξ_LD_multipole`](@ref)
+"""
+function map_over_ss(f, v_ss::AbstractVector, desc::AbstractString; pr::Bool=true)
+    xis = Vector{Float64}(undef, length(v_ss))
+    p = pr ? Progress(length(v_ss); desc=desc) : nothing
+
+    Threads.@threads :dynamic for i in eachindex(v_ss)
+        xis[i] = f(v_ss[i])
+        isnothing(p) || next!(p)
+    end
+
+    isnothing(p) || finish!(p)
+    return xis
+end

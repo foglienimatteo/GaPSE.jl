@@ -26,4 +26,5 @@ GaPSE.readchoosen
 GaPSE.readxchoosey
 GaPSE.sample_subdivision_begin
 GaPSE.sample_subdivision_middle
+GaPSE.map_over_ss
 ```
