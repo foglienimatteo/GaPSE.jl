@@ -338,6 +338,7 @@ This software is under the [GNU 3.0 General Public Licence](https://www.gnu.org/
 
 
 ## References
+
 <a id="1">[1]</a> 
 Dalal, Doré et al., _Imprints of primordial non-Gaussianities on large-scale structure_ (2008), American Physical Society, DOI: 10.1103/PhysRevD.77.123514, 
 url: https://journals.aps.org/prd/abstract/10.1103/PhysRevD.77.123514
