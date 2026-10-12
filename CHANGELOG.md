@@ -30,7 +30,7 @@ Minor bump and not a patch: this release changes results that callers can observ
 
 ### Release and infrastructure
 
-- `Project.toml` has now a `[compat]` section with a lower bound per dependency and `julia = "1.12"`, plus the `[workspace]` table declaring `test` and `docs`. The docs environment is a workspace member like `test`: it shares the top-level `Manifest.toml` and resolves GaPSE from the workspace root, so it needs neither a `[sources]` entry nor a `Pkg.develop`. `julia-actions/julia-docdeploy@v1` still calls `Pkg.develop(PackageSpec(path=pwd()))`, which inside a workspace is a no-op, so the workflow is unchanged;
+- `Project.toml` has now a `[compat]` section with a lower bound per dependency and `julia = "1.12"`, plus the `[workspace]` table declaring `test` and `docs`; these two are environments that share the top-level `Manifest.toml` and resolves GaPSE from the workspace root, so they need neither a `[sources]` entry nor a `Pkg.develop`;
 
 - the unit tests run on **Julia 1.12 only**: the 1.9 job and the advisory `continue-on-error` 1.12 probe are replaced by one blocking matrix entry per platform, `ubuntu-latest/x64` (where coverage is taken) and `macos-latest/aarch64`. The previous workflow declared `aarch64` in the matrix but hard-coded `arch: x64` in the setup step, so macOS was in fact running x86_64 under Rosetta;
 

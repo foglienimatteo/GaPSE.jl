@@ -71,10 +71,7 @@ $ jupyter lab Iln_terms.ipynb
   `docs/src/assets/sigma_i/`.
 
 - **`threads_scaling`** : how much faster `map_over_ss` gets with more threads, measured
-  rather than asserted. A notebook cannot change its own thread count, so it writes a
-  worker script and runs one Julia process per `-t` value; it then plots wall time,
-  speedup and parallel efficiency against the number of threads for four sizes of the
-  ``s`` grid, and checks that the thread count changes nothing but the time.
+  rather than asserted
 
 - **`spherical_bessels`** : the spherical Bessel functions ``j_\ell(x)``, the region where
   their small-``x`` expansion ``x^\ell/(2\ell+1)!!`` is legitimate, and the first zero of
