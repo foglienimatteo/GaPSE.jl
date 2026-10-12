@@ -75,7 +75,7 @@ Minor bump and not a patch: this release changes results that callers can observ
   * `Iln_terms.ipynb` studies the Iln integrals
   * `spline_comparison.ipynb` compares `MySpline` with `Dierckx`
   * `deltachi_limits.ipynb` looks at the `Δχ_min` switch between the `J ⋅ I_l^n` sum and the analytic limit, on two GNC auto-correlations
-  * `threads_scaling.ipynb` measures the speedup of `map_over_ss` against the thread count, one Julia process per `-t`, and checks the results are bit-for-bit independent of it
+  * `threads_scaling.ipynb` measures the speedup of `map_over_ss` against the thread count, one Julia process per `-t`: one effect over four sizes of the `s` grid, then all the 25 GNC effects at a fixed one. It checks the results are bit-for-bit independent of the thread count, and writes the machine it ran on into the header of each results file
 
 
 

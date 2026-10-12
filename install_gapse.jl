@@ -26,7 +26,7 @@ Pkg.activate(normpath(@__DIR__))
 # ./docs/Project.toml, so they must NOT be added to this environment.
 let
      pkgs = [
-          "LinearAlgebra", "DelimitedFiles",
+          "LinearAlgebra", "DelimitedFiles", "Dates",
           "Printf", "ProgressMeter",
 
           "FFTW", "TwoFAST", 
