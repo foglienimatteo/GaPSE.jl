@@ -33,6 +33,12 @@ julia> Pkg.instantiate()          # downloads and installs everything, GaPSE inc
 `../ipynbs/README.md` explains how that `Project.toml` was built, and why a notebook needs
 nothing more than `using GaPSE` to find it.
 
+If, after a GaPSE update, `using GaPSE` here fails with
+`ArgumentError: Package GaPSE does not have <X> in its dependencies`, a dependency was added
+to GaPSE after this environment was last resolved: run `Pkg.resolve()` **in this directory**
+(not in GaPSE's own environment, which is a different one with a different manifest). See
+section 4 of `../ipynbs/README.md`.
+
 Then a notebook is opened simply with
 
 ```bash

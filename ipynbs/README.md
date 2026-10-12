@@ -268,3 +268,48 @@ implemented under `Plots/src/backends/deprecated/`. GR needs no Python at all - 
 ships its own binary - and draws everything these notebooks use, `st = :surface` and
 `heatmap` included. To get matplotlib back: add `PythonPlot` here and call `pythonplot()`;
 the warning is noise, not a failure.
+
+
+<br>
+
+
+
+## 4. When `using GaPSE` stops working after a GaPSE update
+
+```text
+ArgumentError: Package GaPSE does not have Dates in its dependencies:
+- You may have a partially installed environment. Try `Pkg.instantiate()` [...]
+- Or, if you have GaPSE checked out for development and have added Dates as a dependency
+  but haven't updated your primary environment's manifest file, try `Pkg.resolve()`.
+```
+
+This is the one maintenance cost of a notebook directory with an environment of its own, and
+it will happen again: it means that a **new dependency was added to GaPSE** after the last time
+this environment was resolved.
+
+`Manifest.toml` does not only pin the packages of *this* directory, it also records the
+dependency list of every package in it, GaPSE included:
+
+```toml
+[[deps.GaPSE]]
+deps = ["AssociatedLegendrePolynomials", "DelimitedFiles", "FFTW", ...]   # <- no "Dates"
+path = ".."
+```
+
+and the loader believes the manifest, not `../Project.toml`. So the moment GaPSE gains a
+dependency, every environment that was resolved before that moment is stale, and `using GaPSE`
+fails on the new dependency.
+
+The fix is a `Pkg.resolve()` **in this directory**:
+
+```bash
+$ cd ipynbs          # or theory, or your own notebook directory
+$ julia --project=. -e 'using Pkg; Pkg.resolve(); Pkg.instantiate()'
+```
+
+Mind the directory: resolving (or instantiating, or precompiling) GaPSE's *own* environment is
+the natural thing to try and it does **not** help, because that is a different environment with
+a different `Manifest.toml`. The one that has to be rewritten is the one next to the
+`Project.toml` that the kernel activates - check it with `Base.active_project()` inside the
+notebook, and remember that the GaPSE kernel is installed with `--project=@.`, so the active
+project is the nearest `Project.toml` at or above the notebook.
