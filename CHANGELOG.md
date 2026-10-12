@@ -30,7 +30,7 @@ Minor bump and not a patch: this release changes results that callers can observ
 
 ### Release and infrastructure
 
-- `Project.toml` has now a `[compat]` section with a lower bound per dependency and `julia = "1.12"`, plus the `[workspace]` table declaring `test`;
+- `Project.toml` has now a `[compat]` section with a lower bound per dependency and `julia = "1.12"`, plus the `[workspace]` table declaring `test` and `docs`. The docs environment is a workspace member like `test`: it shares the top-level `Manifest.toml` and resolves GaPSE from the workspace root, so it needs neither a `[sources]` entry nor a `Pkg.develop`. `julia-actions/julia-docdeploy@v1` still calls `Pkg.develop(PackageSpec(path=pwd()))`, which inside a workspace is a no-op, so the workflow is unchanged;
 
 - the unit tests run on **Julia 1.12 only**: the 1.9 job and the advisory `continue-on-error` 1.12 probe are replaced by one blocking matrix entry per platform, `ubuntu-latest/x64` (where coverage is taken) and `macos-latest/aarch64`. The previous workflow declared `aarch64` in the matrix but hard-coded `arch: x64` in the setup step, so macOS was in fact running x86_64 under Rosetta;
 
@@ -73,6 +73,7 @@ Minor bump and not a patch: this release changes results that callers can observ
   * `Iln_terms.ipynb` studies the Iln integrals
   * `spline_comparison.ipynb` compares `MySpline` with `Dierckx`
   * `deltachi_limits.ipynb` looks at the `Δχ_min` switch between the `J ⋅ I_l^n` sum and the analytic limit, on two GNC auto-correlations
+  * `threads_scaling.ipynb` measures the speedup of `map_over_ss` against the thread count, one Julia process per `-t`, and checks the results are bit-for-bit independent of it
 
 
 

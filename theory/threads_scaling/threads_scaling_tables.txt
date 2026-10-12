@@ -1,0 +1,36 @@
+machine: Sys.CPU_THREADS = 4
+effect: auto_lensing, L = 0, alg = :trap, N_REP = 5
+
+3 points on the s grid
+   threads     time [s]    speedup   efficiency
+         1       0.0160       1.00x         100%
+         2       0.0079       2.03x         101%
+         3       0.0046       3.46x         115%
+         4       0.0046       3.49x          87%
+
+16 points on the s grid
+   threads     time [s]    speedup   efficiency
+         1       0.0615       1.00x         100%
+         2       0.0365       1.69x          84%
+         3       0.0320       1.92x          64%
+         4       0.0210       2.93x          73%
+
+64 points on the s grid
+   threads     time [s]    speedup   efficiency
+         1       0.2647       1.00x         100%
+         2       0.1389       1.91x          95%
+         3       0.1033       2.56x          85%
+         4       0.0759       3.49x          87%
+
+256 points on the s grid
+   threads     time [s]    speedup   efficiency
+         1       1.0663       1.00x         100%
+         2       0.5826       1.83x          92%
+         3       0.4250       2.51x          84%
+         4       0.3189       3.34x          84%
+
+file                            n    max |x - x_ref| / |x_ref|
+xis_1threads.txt              256             0  (bit for bit)
+xis_2threads.txt              256             0  (bit for bit)
+xis_3threads.txt              256             0  (bit for bit)
+xis_4threads.txt              256             0  (bit for bit)

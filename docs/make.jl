@@ -111,3 +111,16 @@ deploydocs(
      devbranch = "main",
      push_preview = true,
 )
+
+#
+# "repo" (MANDATORY) : remote repository where generated HTML content should be pushed to
+#     - do not specify any protocol, "https://" or "git@" should not be present. 
+#
+# "devbranch"    : branch that "tracks" the in-development version of the generated documentation
+#     - by default Documenter tries to figure this out using git
+#     - can be set explicitly as a string (typically "master" or "main")
+# "push_preview" : boolean that specifies if preview documentation should be deployed from pull requests or not
+#     - if your published docs is hosted at "https://USER.github.io/PACKAGE.jl/stable", by default 
+#       the preview will be hosted at "https://USER.github.io/PACKAGE.jl/previews/PR##"
+#     - this feature works for pull requests with head branch in the same repository, i.e. not from forks
+#
