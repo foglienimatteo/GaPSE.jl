@@ -17,11 +17,9 @@ Each analysis is made of
 
 ## Setup
 
-This directory has its own `Project.toml`, so that the plotting packages are not added to
-the dependencies of GaPSE itself, and it is declared as a **workspace member** in the
-`[workspace]` table of the top-level `Project.toml`. That is what makes `using GaPSE` work
-here with nothing else: a workspace member shares the manifest of the workspace root, and
-the root of this workspace *is* GaPSE. So the first time, from the `theory/` directory:
+This directory has its own environment, so that the plotting packages are not added to
+the dependencies of GaPSE itself. `Project.toml` is tracked by git and declares the GaPSE of
+this repository through a `[sources]` entry, so the first time, from the `theory/` directory:
 
 ```julia
 julia> using Pkg
@@ -31,14 +29,15 @@ julia> Pkg.activate(".")
 julia> Pkg.instantiate()          # downloads and installs everything, GaPSE included
 ```
 
-The single `Manifest.toml` lives at the top level, is gitignored, and is rebuilt by
-`instantiate` on each machine. Being shared, it cannot go stale with respect to GaPSE's own
-dependencies: before the workspace, this directory had a `Manifest.toml` of its own, which
-recorded GaPSE's dependency list at the time it was resolved, and adding a dependency to
-GaPSE broke `using GaPSE` here with
-`ArgumentError: Package GaPSE does not have <X> in its dependencies` until a
-`Pkg.resolve()` was run in *this* directory. `../ipynbs/README.md` explains the mechanism
-at length.
+`Manifest.toml` is gitignored and is rebuilt by `instantiate` on each machine.
+`../ipynbs/README.md` explains how that `Project.toml` was built, and why a notebook needs
+nothing more than `using GaPSE` to find it.
+
+If, after a GaPSE update, `using GaPSE` here fails with
+`ArgumentError: Package GaPSE does not have <X> in its dependencies`, a dependency was added
+to GaPSE after this environment was last resolved: run `Pkg.resolve()` **in this directory**
+(not in GaPSE's own environment, which is a different one with a different manifest). See
+section 4 of `../ipynbs/README.md`.
 
 Then a notebook is opened simply with
 
