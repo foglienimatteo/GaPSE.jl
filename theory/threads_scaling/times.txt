@@ -1,17 +1,17 @@
 # GaPSE - theory/threads_scaling.ipynb
-# date             : 2026-10-12 14:22:10 UTC
+# date             : 2026-10-12 17:09:01 CEST
 #
 # --- hardware and runtime, from Sys.cpu_info() and friends ---
-# cpu model        : Intel(R) Xeon(R) Processor @ 2.10GHz
-# cpu speed        : 0 MHz (as reported for core #1)
-# length(cpu_info) : 4
-# Sys.CPU_NAME     : sapphirerapids
-# Sys.CPU_THREADS  : 4
-# Sys.MACHINE      : x86_64-linux-gnu
-# Sys.KERNEL       : Linux
-# total memory     : 13.4 GiB
-# julia            : 1.12.0
-# BLAS             : 2 threads
+# cpu model        : Apple M1 Pro
+# cpu speed        : 2400 MHz (as reported for core #1)
+# length(cpu_info) : 10
+# Sys.CPU_NAME     : apple-m1
+# Sys.CPU_THREADS  : 8
+# Sys.MACHINE      : arm64-apple-darwin25.5.0
+# Sys.KERNEL       : Darwin
+# total memory     : 16.0 GiB
+# julia            : 1.12.7
+# BLAS             : 8 threads
 # JULIA_NUM_THREADS: /   (of this kernel; the workers get -t explicitly)
 # OMP_NUM_THREADS  : /
 #
@@ -22,19 +22,19 @@
 # effects          : auto_lensing
 #
 # threads                  effect   n_ss        time[s]
-  1             auto_lensing      3       0.011863
-  1             auto_lensing     16       0.058682
-  1             auto_lensing     64       0.236760
-  1             auto_lensing    256       1.019760
-  2             auto_lensing      3       0.006335
-  2             auto_lensing     16       0.040634
-  2             auto_lensing     64       0.121178
-  2             auto_lensing    256       0.469794
-  3             auto_lensing      3       0.005595
-  3             auto_lensing     16       0.030463
-  3             auto_lensing     64       0.131607
-  3             auto_lensing    256       0.393649
-  4             auto_lensing      3       0.005546
-  4             auto_lensing     16       0.021387
-  4             auto_lensing     64       0.078460
-  4             auto_lensing    256       0.298748
+  1             auto_lensing      3       0.007901
+  1             auto_lensing     16       0.042048
+  1             auto_lensing     64       0.170742
+  1             auto_lensing    256       0.686659
+  2             auto_lensing      3       0.005485
+  2             auto_lensing     16       0.022007
+  2             auto_lensing     64       0.088374
+  2             auto_lensing    256       0.351201
+  3             auto_lensing      3       0.002842
+  3             auto_lensing     16       0.016669
+  3             auto_lensing     64       0.061835
+  3             auto_lensing    256       0.242741
+  4             auto_lensing      3       0.002865
+  4             auto_lensing     16       0.011347
+  4             auto_lensing     64       0.045518
+  4             auto_lensing    256       0.184618
