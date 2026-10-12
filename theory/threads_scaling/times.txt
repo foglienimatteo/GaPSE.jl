@@ -1,5 +1,5 @@
 # GaPSE - theory/threads_scaling.ipynb
-# date             : 2026-10-12 13:51:10 UTC
+# date             : 2026-10-12 14:22:10 UTC
 #
 # --- hardware and runtime, from Sys.cpu_info() and friends ---
 # cpu model        : Intel(R) Xeon(R) Processor @ 2.10GHz
@@ -22,19 +22,19 @@
 # effects          : auto_lensing
 #
 # threads                  effect   n_ss        time[s]
-  1             auto_lensing      3       0.010990
-  1             auto_lensing     16       0.057814
-  1             auto_lensing     64       0.257656
-  1             auto_lensing    256       1.080428
-  2             auto_lensing      3       0.009115
-  2             auto_lensing     16       0.042430
-  2             auto_lensing     64       0.149433
-  2             auto_lensing    256       0.634710
-  3             auto_lensing      3       0.005204
-  3             auto_lensing     16       0.026968
-  3             auto_lensing     64       0.110406
-  3             auto_lensing    256       0.384871
-  4             auto_lensing      3       0.004973
-  4             auto_lensing     16       0.016824
-  4             auto_lensing     64       0.094005
-  4             auto_lensing    256       0.303247
+  1             auto_lensing      3       0.011863
+  1             auto_lensing     16       0.058682
+  1             auto_lensing     64       0.236760
+  1             auto_lensing    256       1.019760
+  2             auto_lensing      3       0.006335
+  2             auto_lensing     16       0.040634
+  2             auto_lensing     64       0.121178
+  2             auto_lensing    256       0.469794
+  3             auto_lensing      3       0.005595
+  3             auto_lensing     16       0.030463
+  3             auto_lensing     64       0.131607
+  3             auto_lensing    256       0.393649
+  4             auto_lensing      3       0.005546
+  4             auto_lensing     16       0.021387
+  4             auto_lensing     64       0.078460
+  4             auto_lensing    256       0.298748

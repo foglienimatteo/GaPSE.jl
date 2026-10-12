@@ -1,5 +1,5 @@
 # GaPSE - theory/threads_scaling.ipynb
-# date             : 2026-10-12 14:01:06 UTC
+# date             : 2026-10-12 14:31:58 UTC
 #
 # --- hardware and runtime, from Sys.cpu_info() and friends ---
 # cpu model        : Intel(R) Xeon(R) Processor @ 2.10GHz
@@ -25,61 +25,61 @@
 
 auto_lensing, 3 points on the s grid
    threads     time [s]    speedup   efficiency
-         1       0.0110       1.00x         100%
-         2       0.0091       1.21x          60%
-         3       0.0052       2.11x          70%
-         4       0.0050       2.21x          55%
+         1       0.0119       1.00x         100%
+         2       0.0063       1.87x          94%
+         3       0.0056       2.12x          71%
+         4       0.0055       2.14x          53%
 
 auto_lensing, 16 points on the s grid
    threads     time [s]    speedup   efficiency
-         1       0.0578       1.00x         100%
-         2       0.0424       1.36x          68%
-         3       0.0270       2.14x          71%
-         4       0.0168       3.44x          86%
+         1       0.0587       1.00x         100%
+         2       0.0406       1.44x          72%
+         3       0.0305       1.93x          64%
+         4       0.0214       2.74x          69%
 
 auto_lensing, 64 points on the s grid
    threads     time [s]    speedup   efficiency
-         1       0.2577       1.00x         100%
-         2       0.1494       1.72x          86%
-         3       0.1104       2.33x          78%
-         4       0.0940       2.74x          69%
+         1       0.2368       1.00x         100%
+         2       0.1212       1.95x          98%
+         3       0.1316       1.80x          60%
+         4       0.0785       3.02x          75%
 
 auto_lensing, 256 points on the s grid
    threads     time [s]    speedup   efficiency
-         1       1.0804       1.00x         100%
-         2       0.6347       1.70x          85%
-         3       0.3849       2.81x          94%
-         4       0.3032       3.56x          89%
+         1       1.0198       1.00x         100%
+         2       0.4698       2.17x         109%
+         3       0.3936       2.59x          86%
+         4       0.2987       3.41x          85%
 
 
 25 GNC effects, 256 points on the s grid
   effect                    t(1) [s]    t(2) [s]    t(3) [s]    t(4) [s]    speedup   efficiency
-  auto_lensing                0.9411      0.5609      0.4064      0.3070      3.07x          77%
-  integratedgp_lensing        0.8067      0.3869      0.2746      0.2085      3.87x          97%
-  lensing_integratedgp        0.7201      0.3958      0.3019      0.2522      2.85x          71%
-  auto_integratedgp           0.6165      0.3489      0.2457      0.2058      2.99x          75%
-  newton_integratedgp         0.2673      0.1467      0.1164      0.0882      3.03x          76%
-  lensing_doppler             0.2503      0.1275      0.1080      0.0762      3.29x          82%
-  doppler_lensing             0.2481      0.1605      0.1129      0.0820      3.03x          76%
-  localgp_lensing             0.2258      0.1824      0.0941      0.0765      2.95x          74%
-  doppler_integratedgp        0.2247      0.1315      0.1040      0.0773      2.91x          73%
-  newton_lensing              0.2197      0.1570      0.1080      0.0824      2.67x          67%
-  lensing_localgp             0.2173      0.1520      0.0807      0.0812      2.68x          67%
-  integratedgp_newton         0.2055      0.1584      0.0859      0.0757      2.71x          68%
-  localgp_integratedgp        0.2018      0.1297      0.0841      0.0815      2.48x          62%
-  integratedgp_doppler        0.2007      0.1217      0.1049      0.0858      2.34x          59%
-  lensing_newton              0.1934      0.2319      0.0964      0.0706      2.74x          69%
-  integratedgp_localgp        0.1754      0.2045      0.0842      0.0577      3.04x          76%
-  auto_doppler                0.0594      0.0315      0.0215      0.0195      3.05x          76%
-  auto_newton                 0.0542      0.0184      0.0311      0.0314      1.73x          43%
-  localgp_newton              0.0440      0.0286      0.0281      0.0217      2.03x          51%
-  newton_localgp              0.0396      0.0272      0.0307      0.0197      2.01x          50%
-  auto_localgp                0.0389      0.0293      0.0264      0.0229      1.70x          42%
-  newton_doppler              0.0370      0.0218      0.0178      0.0213      1.73x          43%
-  doppler_localgp             0.0365      0.0200      0.0237      0.0152      2.41x          60%
-  doppler_newton              0.0357      0.0171      0.0267      0.0206      1.73x          43%
-  localgp_doppler             0.0341      0.0251      0.0360      0.0294      1.16x          29%
-  ALL OF THEM                 6.0939      3.8153      2.6505      2.1102      2.89x          72%
+  auto_lensing                0.9177      0.5720      0.3524      0.3147      2.92x          73%
+  integratedgp_lensing        0.7307      0.3797      0.2746      0.1795      4.07x         102%
+  lensing_integratedgp        0.6281      0.3586      0.2796      0.1975      3.18x          80%
+  auto_integratedgp           0.4924      0.3009      0.2181      0.1682      2.93x          73%
+  lensing_localgp             0.2264      0.1339      0.0753      0.0667      3.39x          85%
+  newton_integratedgp         0.2029      0.1578      0.0962      0.0660      3.08x          77%
+  localgp_lensing             0.2010      0.1563      0.0974      0.0785      2.56x          64%
+  doppler_lensing             0.1970      0.1328      0.1107      0.0732      2.69x          67%
+  doppler_integratedgp        0.1924      0.1231      0.1048      0.0848      2.27x          57%
+  newton_lensing              0.1916      0.1435      0.1026      0.0612      3.13x          78%
+  localgp_integratedgp        0.1897      0.2081      0.0897      0.0769      2.47x          62%
+  lensing_doppler             0.1712      0.2452      0.0735      0.0552      3.10x          77%
+  lensing_newton              0.1708      0.1494      0.0785      0.0622      2.75x          69%
+  integratedgp_newton         0.1707      0.1025      0.0650      0.0595      2.87x          72%
+  integratedgp_localgp        0.1699      0.1054      0.0748      0.0638      2.66x          67%
+  integratedgp_doppler        0.1693      0.1305      0.0821      0.0784      2.16x          54%
+  auto_localgp                0.0539      0.0274      0.0188      0.0246      2.19x          55%
+  auto_newton                 0.0384      0.0186      0.0316      0.0247      1.55x          39%
+  auto_doppler                0.0370      0.0173      0.0209      0.0207      1.79x          45%
+  localgp_newton              0.0362      0.0267      0.0185      0.0270      1.34x          34%
+  doppler_localgp             0.0348      0.0226      0.0223      0.0204      1.71x          43%
+  newton_doppler              0.0345      0.0277      0.0206      0.0239      1.44x          36%
+  newton_localgp              0.0342      0.0286      0.0125      0.0221      1.55x          39%
+  localgp_doppler             0.0341      0.0367      0.0225      0.0223      1.53x          38%
+  doppler_newton              0.0326      0.0316      0.0255      0.0221      1.47x          37%
+  ALL OF THEM                 5.3578      3.6371      2.3687      1.8941      2.83x          71%
 
 file                            n    max |x - x_ref| / |x_ref|
 xis_1threads.txt              256             0  (bit for bit)
