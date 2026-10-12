@@ -77,7 +77,8 @@ $ jupyter lab Iln_terms.ipynb
   `docs/src/assets/sigma_i/`.
 
 - **`threads_scaling`** : how much faster `map_over_ss` gets with more threads, measured
-  rather than asserted
+  rather than asserted. One effect over four sizes of the ``s`` grid, then all the 25 GNC
+  effects at a fixed one; the machine it ran on is written into each results file
 
 - **`spherical_bessels`** : the spherical Bessel functions ``j_\ell(x)``, the region where
   their small-``x`` expansion ``x^\ell/(2\ell+1)!!`` is legitimate, and the first zero of

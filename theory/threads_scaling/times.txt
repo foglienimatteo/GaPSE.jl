@@ -1,32 +1,40 @@
-  1     3       0.007957
-  1    16       0.042420
-  1    64       0.171315
-  1   256       0.688770
-  2     3       0.005431
-  2    16       0.021791
-  2    64       0.087131
-  2   256       0.352128
-  3     3       0.002854
-  3    16       0.016629
-  3    64       0.061317
-  3   256       0.243584
-  4     3       0.002847
-  4    16       0.011277
-  4    64       0.044767
-  4   256       0.183473
-  5     3       0.002851
-  5    16       0.011077
-  5    64       0.037395
-  5   256       0.147135
-  6     3       0.002801
-  6    16       0.008381
-  6    64       0.031707
-  6   256       0.124355
-  7     3       0.002828
-  7    16       0.008556
-  7    64       0.028882
-  7   256       0.108458
-  8     3       0.002795
-  8    16       0.005715
-  8    64       0.023636
-  8   256       0.093817
+# GaPSE - theory/threads_scaling.ipynb
+# date             : 2026-10-12 13:51:10 UTC
+#
+# --- hardware and runtime, from Sys.cpu_info() and friends ---
+# cpu model        : Intel(R) Xeon(R) Processor @ 2.10GHz
+# cpu speed        : 0 MHz (as reported for core #1)
+# length(cpu_info) : 4
+# Sys.CPU_NAME     : sapphirerapids
+# Sys.CPU_THREADS  : 4
+# Sys.MACHINE      : x86_64-linux-gnu
+# Sys.KERNEL       : Linux
+# total memory     : 13.4 GiB
+# julia            : 1.12.0
+# BLAS             : 2 threads
+# JULIA_NUM_THREADS: /   (of this kernel; the workers get -t explicitly)
+# OMP_NUM_THREADS  : /
+#
+# --- what was measured ---
+# thread counts    : [1, 2, 3, 4]
+# s grid sizes     : [3, 16, 64, 256]
+# repetitions      : 3   (the minimum is kept)
+# effects          : auto_lensing
+#
+# threads                  effect   n_ss        time[s]
+  1             auto_lensing      3       0.010990
+  1             auto_lensing     16       0.057814
+  1             auto_lensing     64       0.257656
+  1             auto_lensing    256       1.080428
+  2             auto_lensing      3       0.009115
+  2             auto_lensing     16       0.042430
+  2             auto_lensing     64       0.149433
+  2             auto_lensing    256       0.634710
+  3             auto_lensing      3       0.005204
+  3             auto_lensing     16       0.026968
+  3             auto_lensing     64       0.110406
+  3             auto_lensing    256       0.384871
+  4             auto_lensing      3       0.004973
+  4             auto_lensing     16       0.016824
+  4             auto_lensing     64       0.094005
+  4             auto_lensing    256       0.303247

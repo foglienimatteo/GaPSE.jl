@@ -164,7 +164,7 @@ The `s` grid of `map_ξ_*_multipole` and of the `map_sum_ξ_*` functions is comp
   $ julia -t 8                # or a fixed number
 ```
 
-or export `JULIA_NUM_THREADS=auto` once, in your shell profile. From inside Julia, `Threads.nthreads()` says what you got. Nothing else changes: the results are bit-for-bit the same whatever the thread count, and the progress bar still counts the `s` points, only completing them out of order. Measured on 4 cores, for the GNC `auto_lensing` multipole with `L = 0`: 3.6 times faster.
+or export `JULIA_NUM_THREADS=auto` once, in your shell profile. From inside Julia, `Threads.nthreads()` says what you got. Nothing else changes: the results are bit-for-bit the same whatever the thread count, and the progress bar still counts the `s` points, only completing them out of order. How much it is worth on your machine, and for which effect, is measured in the `theory/threads_scaling.ipynb` notebook, which runs the benchmark itself rather than quoting a number: on 4 cores it reaches about 3.3 times faster on a long `s` grid, and nothing at all on a grid of 3 points, which is all a parallel loop can do with three tasks.
 
 ### A Jupyter kernel with more than one thread
 
@@ -264,7 +264,7 @@ GaPSE.jl makes extensive use of the following packages:
 - [LsqFit](https://github.com/JuliaNLSolvers/LsqFit.jl) for basic least-squares fitting
 - [QuadGK](https://github.com/JuliaMath/QuadGK.jl), [Trapz](https://github.com/francescoalemanno/Trapz.jl) and [FastGaussQuadrature](https://github.com/JuliaApproximation/FastGaussQuadrature.jl) for performing 1D integrations, and [HCubature](https://github.com/JuliaMath/HCubature.jl) for the 2D ones
 - [AssociatedLegendrePolynomials](https://github.com/jmert/AssociatedLegendrePolynomials.jl), [LegendrePolynomials](https://github.com/jishnub/LegendrePolynomials.jl), [SpecialFunctions](https://github.com/JuliaMath/SpecialFunctions.jl) and [WignerSymbols](https://github.com/Jutho/WignerSymbols.jl) for mathematical function evaluations, especially for the Legendre Polynomials $\mathcal{L}_{\ell}(x)$, the Gamma function $\Gamma(x)$ and the Wigner 3j symbols
-- other native Julia packages: [DelimitedFiles](https://github.com/JuliaData/DelimitedFiles.jl), [LinearAlgebra](https://github.com/JuliaLang/julia/tree/master/stdlib/LinearAlgebra), [Printf](https://github.com/JuliaLang/julia/tree/master/stdlib/Printf), [ProgressMeter](https://github.com/timholy/ProgressMeter.jl)
+- other native Julia packages: [Dates](https://github.com/JuliaLang/julia/tree/master/stdlib/Dates), [DelimitedFiles](https://github.com/JuliaData/DelimitedFiles.jl), [LinearAlgebra](https://github.com/JuliaLang/julia/tree/master/stdlib/LinearAlgebra), [Printf](https://github.com/JuliaLang/julia/tree/master/stdlib/Printf), [ProgressMeter](https://github.com/timholy/ProgressMeter.jl)
 - none of the following is a dependency of the library itself: [Documenter](https://github.com/JuliaDocs/Documenter.jl) builds this documentation and lives in `docs/Project.toml`, while [Dierckx](https://github.com/kbarbary/Dierckx.jl), [NPZ](https://github.com/fhs/NPZ.jl), [QuadGK](https://github.com/JuliaMath/QuadGK.jl), [Suppressor](https://github.com/JuliaIO/Suppressor.jl) and [Test](https://github.com/JuliaLang/julia/tree/master/stdlib/Test) are only needed by the test suite and live in `test/Project.toml`
 
 Furthermore, the notebooks we provide in `ipynbs` use:
