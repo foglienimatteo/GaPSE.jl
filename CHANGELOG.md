@@ -30,7 +30,9 @@ Minor bump and not a patch: this release changes results that callers can observ
 
 ### Release and infrastructure
 
-- `Project.toml` has now a `[compat]` section with a lower bound per dependency and `julia = "1.12"`, plus the `[workspace]` table declaring `test` and `docs`. The docs environment is a workspace member like `test`: it shares the top-level `Manifest.toml` and resolves GaPSE from the workspace root, so it needs neither a `[sources]` entry nor a `Pkg.develop`. `julia-actions/julia-docdeploy@v1` still calls `Pkg.develop(PackageSpec(path=pwd()))`, which inside a workspace is a no-op, so the workflow is unchanged;
+- `Project.toml` has now a `[compat]` section with a lower bound per dependency and `julia = "1.12"`, plus the `[workspace]` table declaring `test`, `docs`, `ipynbs` and `theory`. All four are workspace members: they share the single top-level `Manifest.toml` and resolve GaPSE from the workspace root, so none of them needs a `[sources]` entry or a `Pkg.develop` (the `[sources]` tables of `ipynbs` and `theory` are removed - Pkg asserts if one points at the workspace root). `julia-actions/julia-docdeploy@v1` still calls `Pkg.develop(PackageSpec(path=pwd()))`, which inside a workspace is a no-op, so the workflow is unchanged, and `Pkg.instantiate()` installs only the active member's closure, so the CI jobs do not pull the plotting stack;
+
+- BUG FIX, which is what motivated the above: with a `Manifest.toml` of its own, each of `ipynbs/` and `theory/` recorded GaPSE's dependency list as it was when that manifest was last resolved. Adding `Dates` to GaPSE therefore broke `using GaPSE` inside the notebooks with `ArgumentError: Package GaPSE does not have Dates in its dependencies`, and `Pkg.resolve()` in GaPSE's own environment does not fix it, that being a different environment with a different manifest - it had to be run inside `ipynbs/` and `theory/`. A workspace member has no manifest of its own, so it cannot drift; a leftover `ipynbs/Manifest.toml` from before is simply ignored;
 
 - the unit tests run on **Julia 1.12 only**: the 1.9 job and the advisory `continue-on-error` 1.12 probe are replaced by one blocking matrix entry per platform, `ubuntu-latest/x64` (where coverage is taken) and `macos-latest/aarch64`. The previous workflow declared `aarch64` in the matrix but hard-coded `arch: x64` in the setup step, so macOS was in fact running x86_64 under Rosetta;
 
@@ -46,7 +48,7 @@ Minor bump and not a patch: this release changes results that callers can observ
 
 - `test/runtests.jl` prints at the start the thread-related environment variables, `Threads.nthreads()`, `Sys.CPU_THREADS`, the BLAS thread count and `Sys.cpu_summary()`, so a log says on how many threads it ran;
 
-- NOTEBOOK FIX: the notebooks in `ipynbs/` ran `include(PATH_TO_GAPSE * "src/GaPSE.jl")`, which evaluates the sources in `Main`: GaPSE's own `Project.toml` is never read, so its dependencies are looked for in the kernel's active project and the include fails with `Package TwoFAST [...] is required but does not seem to be installed`. They now just `using GaPSE`, out of the new `ipynbs/Project.toml`, which declares GaPSE through a `[sources]` entry - the only place where the path of an unregistered package is written down *and* tracked by git, since `Pkg.develop` records it in the gitignored `Manifest.toml`. The new `ipynbs/README.md` documents how that environment was built and why. The same `[sources]` entry was added to `theory/Project.toml`;
+- NOTEBOOK FIX: the notebooks in `ipynbs/` ran `include(PATH_TO_GAPSE * "src/GaPSE.jl")`, which evaluates the sources in `Main`: GaPSE's own `Project.toml` is never read, so its dependencies are looked for in the kernel's active project and the include fails with `Package TwoFAST [...] is required but does not seem to be installed`. They now just `using GaPSE`, out of the new `ipynbs/Project.toml`, which declares GaPSE as an ordinary dependency and is a member of the GaPSE workspace, which is what tells Pkg where that UUID lives. The new `ipynbs/README.md` documents how that environment was built and why. `theory/Project.toml` is set up the same way;
 
 - NOTEBOOK FIX: the `using` lines of the `ipynbs/` notebooks listed six packages that no cell ever calls (`ProgressMeter`, `QuadGK`, `Trapz`, `LegendrePolynomials`, `SpecialFunctions`, `TwoFAST`), left over from the `include` days and all of them dependencies of GaPSE anyway; they are out of both the notebooks and `ipynbs/Project.toml`;
 
@@ -67,7 +69,7 @@ Minor bump and not a patch: this release changes results that callers can observ
 
 
 - added the `theory/` directory, which collects the notebooks that reproduce the figures and the numbers of the Theory pages, together with the plots and data they produce
-  * they share `theory/Project.toml`, which declares GaPSE through a `[sources]` entry, so a fresh clone only needs `Pkg.instantiate()`, and the default IJulia kernel activates it by itself (it runs Julia with `--project=@.`);
+  * they share `theory/Project.toml`, a member of the GaPSE workspace, so a fresh clone only needs `Pkg.instantiate()`, and the default IJulia kernel activates it by itself (it runs Julia with `--project=@.`);
   * `sigma_i.ipynb` studies the moments every `Δχ → 0` limit reduces to, plotting the five integrands and the fraction of each collected below a given `q`
   * `spherical_bessels.ipynb` reproduces the figures of the "Spherical Bessel Functions" page
   * `Iln_terms.ipynb` studies the Iln integrals
