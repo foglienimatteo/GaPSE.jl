@@ -1,7 +1,5 @@
 ## VERSION 0.10.0
 
-Minor bump and not a patch: this release changes results that callers can observe.
-
 ### The code
 
 - **IMPORTANT CHANGE**: replaced [Dierckx](https://github.com/kbarbary/Dierckx.jl) with our own cubic spline `MySpline` (new `src/Spline.jl`) for every 1D interpolation; `Dierckx` is now only a *test* dependency, where the suite uses it as an independent cross-check. Note that `MySpline` only supports `bc="error"`, so `spline_com_H` throws outside its range instead of clamping, and that it is not bit-identical to `Spline1D`: 33 reference files in `test/datatest` were regenerated and a few tolerances relaxed;

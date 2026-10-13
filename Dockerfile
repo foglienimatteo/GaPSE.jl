@@ -41,25 +41,54 @@ WORKDIR /home/${NB_USER}/GaPSE
 
 USER ${NB_UID}
 
-# PyPlot draws through matplotlib, and PyCall has to bind to the interpreter of the
-# stack's conda environment instead of building a private one.
-ENV PYTHON=/opt/conda/bin/python3
+# "auto" is the size of the CPU affinity mask, not the host core count: 
+# it follows "docker run --cpuset-cpus" but NOT "docker run --cpus", which is a CFS quota and leaves the mask untouched
+# => with "--cpus" (if you really cannot use "--cpuset-cpus") pass "-e JULIA_NUM_THREADS=<N>" as well, 
+#    or the threads oversubscribe the cores the container was actually given
 ENV JULIA_NUM_THREADS=auto
 
-RUN pip install --no-cache-dir matplotlib
 
-# Precompilation of the package itself. "Pkg.instantiate()" resolves "test/" as well, since the
-# "[workspace]" table of "Project.toml" declares it as a member.
+# GaPSE precompilation. 
+# "Pkg.instantiate()" resolves "test/" too, since the "[workspace]" table of
+# "Project.toml" declares it as a member, so the test suite can be run inside the container.
 RUN julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
 
-# The extra packages that the notebooks need but GaPSE doesn't. 
-# They are deliberately absent from the "[deps]" of "Project.toml": 
-# "Plots", "LaTeXStrings" and "PyPlot" are needed to redraw the figures, never by the library itself.
-RUN julia --project=. -e 'using Pkg; Pkg.add(["Plots", "LaTeXStrings", "PyPlot"]); Pkg.build("PyCall"); Pkg.build("PyPlot"); Pkg.precompile()'
+# NOTE: The notebooks do NOT run in the environment above!
+# The kernel of the base image carries "--project=@."
+# => a notebook in "theory/" activates "theory/Project.toml" and one in "ipynbs/" activates "ipynbs/Project.toml"
+# => those are the environments to install, and they are already complete: "Plots", "LaTeXStrings", "Dierckx" etc 
+#    are declared there, and deliberately absent from the "[deps]" of GaPSE, which never plots anything.
+# "Pkg.resolve()" is the safety net for a "Manifest.toml" that
+# entered the build context anyway: see the ".dockerignore".
+RUN julia --project=ipynbs -e 'using Pkg; Pkg.resolve(); Pkg.instantiate(); Pkg.precompile()'
+RUN julia --project=theory -e 'using Pkg; Pkg.resolve(); Pkg.instantiate(); Pkg.precompile()'
+
+# The shared environment of this Julia (no "--project", i.e. "~/.julia/environments/v1.12"),
+# for the notebooks the user writes OUTSIDE the two directories above. 
+# With "--project=@.", a notebook in a directory with no "Project.toml" above it lands here, 
+# and "@v#.#" IS the fallback for a package the active project does not declare
+# => "using GaPSE, Plots" works out of the box in, say, "/home/jovyan/work/", with no environment to set up first
+RUN julia -e 'using Pkg; Pkg.develop(path=pwd()); Pkg.add(["Plots", "LaTeXStrings"]); Pkg.precompile()'
+
+# No Python here on purpose: every notebook selects "gr()", the GR backend needs no Python at
+# all, and "PyPlot"/"pythonplot()" were dropped under Julia 1.12 (see the CHANGELOG). Should a
+# notebook ever need matplotlib again uncomment the following lines:
+#     # PyPlot and PythonPlot draws through matplotlib, and they have to bind to the interpreter of the
+#     # stack's conda environment instead of building a private one.
+#     ENV PYTHON=/opt/conda/bin/python3
+#     RUN pip install --no-cache-dir matplotlib
+#     RUN julia -e 'Pkg.add("PythonPlot"); Pkg.build("PythonPlot"); Pkg.instantiate(); Pkg.precompile()'
 
 # The base image already defines the entrypoint and the command that start JupyterLab
-# on port 8888, so neither has to be overridden here. 
-# To run the test suite instead:
+# on port 8888, so neither has to be overridden here.
+# To run this container:
 #
-#   $ docker run --rm matteofoglieni/gapse:0.10.0a julia --project=/home/jovyan/GaPSE -e 'using Pkg; Pkg.test("GaPSE")'
+#   $ docker run --detach --env JUPYTER_TOKEN=test --name gapse --publish 10000:8888 matteofoglieni/gapse:latest
+#
+# To run the test suite instead (with a limited number of cores):
+#
+#   $ docker run --rm --cpuset-cpus="0-1" matteofoglieni/gapse:latest julia --project=/home/jovyan/GaPSE -e 'using Pkg; Pkg.test("GaPSE")'
+#
+# "JULIA_NUM_THREADS=auto" is in the environment of the image and "Pkg.test" forwards it to the
+# test worker, so it will run the suite on 2 threads.
 
