@@ -1,0 +1,88 @@
+# GaPSE - theory/threads_scaling.ipynb
+# date             : 2026-10-12 17:12:59 CEST
+#
+# --- hardware and runtime, from Sys.cpu_info() and friends ---
+# cpu model        : Apple M1 Pro
+# cpu speed        : 2400 MHz (as reported for core #1)
+# length(cpu_info) : 10
+# Sys.CPU_NAME     : apple-m1
+# Sys.CPU_THREADS  : 8
+# Sys.MACHINE      : arm64-apple-darwin25.5.0
+# Sys.KERNEL       : Darwin
+# total memory     : 16.0 GiB
+# julia            : 1.12.7
+# BLAS             : 8 threads
+# JULIA_NUM_THREADS: /   (of this kernel; the workers get -t explicitly)
+# OMP_NUM_THREADS  : /
+#
+# --- what was measured ---
+# thread counts    : [1, 2, 3, 4]
+# s grid sizes     : [3, 16, 64, 256]
+# repetitions      : 3   (the minimum is kept)
+# effects          : 25 of them, GaPSE.GR_EFFECTS_GNC
+#
+# threads                  effect   n_ss        time[s]
+
+auto_lensing, 3 points on the s grid
+   threads     time [s]    speedup   efficiency
+         1       0.0079       1.00x         100%
+         2       0.0055       1.44x          72%
+         3       0.0028       2.78x          93%
+         4       0.0029       2.76x          69%
+
+auto_lensing, 16 points on the s grid
+   threads     time [s]    speedup   efficiency
+         1       0.0420       1.00x         100%
+         2       0.0220       1.91x          96%
+         3       0.0167       2.52x          84%
+         4       0.0113       3.71x          93%
+
+auto_lensing, 64 points on the s grid
+   threads     time [s]    speedup   efficiency
+         1       0.1707       1.00x         100%
+         2       0.0884       1.93x          97%
+         3       0.0618       2.76x          92%
+         4       0.0455       3.75x          94%
+
+auto_lensing, 256 points on the s grid
+   threads     time [s]    speedup   efficiency
+         1       0.6867       1.00x         100%
+         2       0.3512       1.96x          98%
+         3       0.2427       2.83x          94%
+         4       0.1846       3.72x          93%
+
+
+25 GNC effects, 256 points on the s grid
+  effect                    t(1) [s]    t(2) [s]    t(3) [s]    t(4) [s]    speedup   efficiency
+  auto_lensing                0.6835      0.3497      0.2426      0.1826      3.74x          94%
+  integratedgp_lensing        0.4960      0.2525      0.1712      0.1295      3.83x          96%
+  lensing_integratedgp        0.4919      0.2497      0.1739      0.1320      3.73x          93%
+  auto_integratedgp           0.3796      0.1969      0.1374      0.1039      3.65x          91%
+  doppler_integratedgp        0.1931      0.0865      0.0623      0.0460      4.20x         105%
+  newton_integratedgp         0.1707      0.0886      0.0616      0.0457      3.73x          93%
+  doppler_lensing             0.1698      0.0867      0.0613      0.0456      3.72x          93%
+  lensing_doppler             0.1692      0.0879      0.0614      0.0470      3.60x          90%
+  localgp_lensing             0.1676      0.0894      0.0579      0.0439      3.82x          96%
+  lensing_localgp             0.1673      0.0858      0.0596      0.0459      3.65x          91%
+  integratedgp_newton         0.1672      0.0882      0.0622      0.0436      3.83x          96%
+  integratedgp_doppler        0.1665      0.0877      0.0615      0.0463      3.59x          90%
+  newton_lensing              0.1601      0.0833      0.0591      0.0436      3.67x          92%
+  lensing_newton              0.1598      0.0835      0.0602      0.0452      3.53x          88%
+  integratedgp_localgp        0.1515      0.0775      0.0536      0.0409      3.70x          93%
+  localgp_integratedgp        0.1467      0.0765      0.0547      0.0409      3.59x          90%
+  localgp_newton              0.0287      0.0157      0.0097      0.0074      3.90x          97%
+  auto_newton                 0.0285      0.0139      0.0097      0.0070      4.11x         103%
+  newton_localgp              0.0276      0.0148      0.0098      0.0073      3.77x          94%
+  doppler_localgp             0.0272      0.0142      0.0095      0.0076      3.60x          90%
+  localgp_doppler             0.0272      0.0149      0.0099      0.0075      3.60x          90%
+  doppler_newton              0.0264      0.0135      0.0095      0.0072      3.66x          91%
+  auto_localgp                0.0264      0.0147      0.0111      0.0082      3.21x          80%
+  auto_doppler                0.0262      0.0146      0.0111      0.0077      3.39x          85%
+  newton_doppler              0.0261      0.0147      0.0096      0.0071      3.67x          92%
+  ALL OF THEM                 4.2849      2.2014      1.5304      1.1497      3.73x          93%
+
+file                            n    max |x - x_ref| / |x_ref|
+xis_1threads.txt              256             0  (bit for bit)
+xis_2threads.txt              256             0  (bit for bit)
+xis_3threads.txt              256             0  (bit for bit)
+xis_4threads.txt              256             0  (bit for bit)

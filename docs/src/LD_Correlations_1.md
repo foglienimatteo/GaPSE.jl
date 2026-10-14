@@ -4,9 +4,8 @@ DocTestSetup = quote
 end
 ```
 
-# LD TPCFs
 
-## Two-Point Auto-Correlation Functions
+## LD Two-Point Auto-Correlation Functions
 
 ```@docs
 GaPSE.ξ_LD_Doppler
@@ -15,7 +14,7 @@ GaPSE.ξ_LD_LocalGP
 GaPSE.ξ_LD_IntegratedGP
 ```
 
-## Two-Point Cross-Correlation Functions
+## LD Two-Point Cross-Correlation Functions
 
 ```@docs
 GaPSE.ξ_LD_Doppler_Lensing

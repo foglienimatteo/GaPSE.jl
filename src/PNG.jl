@@ -24,7 +24,7 @@
         left_value::Float64
         left::Float64
 
-        spline::Dierckx.Spline1D
+        spline::GaPSE.MySpline
 
         r_si::Float64
         r_b::Float64
@@ -46,7 +46,7 @@ Contains all the information useful in order to return the Transfer Function val
 - `left::Float64` : the break between the left power-law (for `x <left`) and the 
   spline (for `x ≥ left`); its value is the `xs[begin]` one.
 
-- `spline::Dierckx.Spline1D` : spline that interpolates between the real values of the 
+- `spline::GaPSE.MySpline` : spline that interpolates between the real values of the 
   integral calculated inside the range `left ≤ x ≤ right`
 
 - `right::Float64` : the break between the right power-law (for `x ≥ left`) and the 
@@ -71,7 +71,7 @@ struct TF
     left_value::Float64
     left::Float64
 
-    spline::Dierckx.Spline1D
+    spline::GaPSE.MySpline
 
     r_si::Float64
     r_b::Float64
@@ -83,7 +83,7 @@ struct TF
         left_val = sum(Tks[1:10]) / 10
         r_si, r_b, r_a = power_law_from_data(
             ks, Tks, [-2.0, 1.0], ks[end-15], ks[end]; con=false)
-        spline = Spline1D(ks, Tks; bc="error")
+        spline = GaPSE.MySpline(ks, Tks; bc="error")
 
         new(left_val, ks[2], spline, r_si, r_b, r_a, ks[end])
     end
@@ -160,7 +160,7 @@ end
         l_a::Float64
         left::Float64
 
-        spline::Dierckx.Spline1D
+        spline::GaPSE.MySpline
 
         r_si::Float64
         r_b::Float64
@@ -196,7 +196,7 @@ where ``P(q)`` is the Input Power Spectrum and
 - `left::Float64` : the break between the left power-law (for `x < left`) and the 
   spline (for `x ≥ left`); its value is the `fit_min` of the used constructor.
 
-- `spline::Dierckx.Spline1D` : spline that interpolates between the real values of the 
+- `spline::GaPSE.MySpline` : spline that interpolates between the real values of the 
   integral calculated inside the range `left ≤ x ≤ right`
 
 - `right::Float64` : the break between the right power-law (for `x > right`) and the 
@@ -274,7 +274,7 @@ struct IntegralIPSalpha
     l_a::Float64
     left::Float64
 
-    spline::Dierckx.Spline1D
+    spline::GaPSE.MySpline
 
     r_si::Float64
     r_b::Float64
@@ -313,7 +313,7 @@ struct IntegralIPSalpha
         ind_right = findfirst(x -> x >= fit_right_MAX, rs)
         new_rs = vcat(rs[ind_left:ind_right])
         new_Js = vcat(xis[ind_left:ind_right])
-        spline = Spline1D(new_rs, new_Js; bc="error")
+        spline = GaPSE.MySpline(new_rs, new_Js; bc="error")
 
         #println("\nleft = $l_si , $l_b , $l_a, $fit_left_min")
         #println("right = $r_si , $r_b , $r_a, $fit_right_MAX\n")
@@ -853,9 +853,9 @@ end
     ξ_S_multipole(
         s, cosmo::Cosmology, cosmopng::CosmoPNG;;
         L::Int = 0, use_windows::Bool = true,
-        atol_quad::Float64 = 0.0,
-        rtol_quad::Float64 = 1e-2
-        enhancer::Float64 = 1e6,
+        atol_quad::AbstractFloat = 0.0,
+        rtol_quad::AbstractFloat = 1e-2
+        enhancer::AbstractFloat = 1e6,
         b=nothing, sp::Int64=1 ) ::Float64
 
 
@@ -899,11 +899,11 @@ Gauss-Kronrod quadrature.
 - `use_windows::Bool = false`: tells if the integrand must consider ``\\mathcal{F}``
   or not.
 
-- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+- `atol_quad::AbstractFloat = 0.0` and `rtol_quad::AbstractFloat = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
   because the time for evaluation increase quickly.
 
-- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+- `enhancer::AbstractFloat = 1e6`: just a float number used in order to deal better with small numbers; 
   the returned value is NOT modified by this value, because after a multiplication
   the internal result is divided by `enhancer`.
 
@@ -920,9 +920,9 @@ See also: [`ξ_S`](@ref), [`integrand_ξ_S_multipole`](@ref),
 """
 function ξ_S_multipole(
     s, cosmo::Cosmology, cosmopng::CosmoPNG;
-    atol_quad::Float64=0.0,
-    rtol_quad::Float64=1e-2,
-    enhancer::Float64=1e6, kwargs...)
+    atol_quad::AbstractFloat=0.0,
+    rtol_quad::AbstractFloat=1e-2,
+    enhancer::AbstractFloat=1e6, kwargs...)
 
     orig_f(μ) = enhancer * integrand_ξ_S_multipole(s, μ, cosmo, cosmopng; kwargs...)
 
@@ -941,9 +941,9 @@ end
         cosmo::Cosmology, cosmopng::CosmoPNG,
         ss = nothing;
         L::Int = 0, use_windows::Bool = true,
-        atol_quad::Float64 = 0.0,
-        rtol_quad::Float64 = 1e-2,
-        enhancer::Float64 = 1e6,
+        atol_quad::AbstractFloat = 0.0,
+        rtol_quad::AbstractFloat = 1e-2,
+        enhancer::AbstractFloat = 1e6,
         pr::Bool = true,
         N_log::Int = 1000,
         kwargs...) ::Tuple{Vector{Float64}, Vector{Float64}}
@@ -998,11 +998,11 @@ we report them for comfortness:
 - `use_windows::Bool = false`: tells if the integrand must consider ``\\mathcal{F}``
   or not.
 
-- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+- `atol_quad::AbstractFloat = 0.0` and `rtol_quad::AbstractFloat = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
   because the time for evaluation increase quickly.
 
-- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+- `enhancer::AbstractFloat = 1e6`: just a float number used in order to deal better with small numbers; 
   the returned value is NOT modified by this value, because after a multiplication
   the internal result is divided by `enhancer`.
 
@@ -1062,9 +1062,9 @@ end
         cosmo::Cosmology, cosmopng::CosmoPNG, 
         out::String, ss = nothing;
         L::Int = 0, use_windows::Bool = true,
-        atol_quad::Float64 = 0.0,
-        rtol_quad::Float64 = 1e-2,
-        enhancer::Float64 = 1e6,
+        atol_quad::AbstractFloat = 0.0,
+        rtol_quad::AbstractFloat = 1e-2,
+        enhancer::AbstractFloat = 1e6,
         pr::Bool = true,
         N_log::Int = 1000,
         kwargs...)
@@ -1122,11 +1122,11 @@ we report them for comfortness:
 - `use_windows::Bool = false`: tells if the integrand must consider ``\\mathcal{F}``
   or not.
 
-- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+- `atol_quad::AbstractFloat = 0.0` and `rtol_quad::AbstractFloat = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
   because the time for evaluation increase quickly.
 
-- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+- `enhancer::AbstractFloat = 1e6`: just a float number used in order to deal better with small numbers; 
   the returned value is NOT modified by this value, because after a multiplication
   the internal result is divided by `enhancer`.
 
@@ -1184,7 +1184,8 @@ function print_map_ξ_S_multipole(
         println(io, "\n# \t\tL = $L")
         if !isempty(kwargs)
             for key in keys(kwargs)
-                println(io, "# \t\t$(key) = $(kwargs[key])")
+                val = string(kwargs[key])
+                println(io, "# \t\t$(key) = $(length(val) > 20 ? first(val, 20)*"..." : val)")
             end
         end
 

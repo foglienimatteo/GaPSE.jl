@@ -20,7 +20,7 @@
 
 
 function integrand_ξ_GNCxLD_Lensing_IntegratedGP(
-    IP1::Point, IP2::Point, P1::Point, P2::Point, y, cosmo::Cosmology;
+    IP1::Point, IP2::Point, P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1,
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
     𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing)
 
@@ -33,7 +33,7 @@ function integrand_ξ_GNCxLD_Lensing_IntegratedGP(
     s_b_s1 = isnothing(s_b1) ? cosmo.params.s_b1 : s_b1
 
     Δχ_square = χ1^2 + χ2^2 - 2 * χ1 * χ2 * y
-    Δχ = √(Δχ_square) > 1e-8 ? √(Δχ_square) : 1e-8
+    Δχ = Δχ_square > 0 ? √(Δχ_square) : zero(Δχ_square)  # throw(AssertionError("Δχ_square=$Δχ_square : y=$y , χ1=$χ1 , χ2=$χ2"))
 
     prefactor = 9 / 2 * ℋ0^4 * Ω_M0^2
     factor = D1 * D2 * χ2 * (s1 - χ1) * (5 * s_b_s1 - 2)/ (s1 * s2 * a1 * a2)
@@ -42,20 +42,26 @@ function integrand_ξ_GNCxLD_Lensing_IntegratedGP(
     new_J31 = 2 * y * Δχ^2
     new_J22 = χ1 * χ2 * (y^2 - 1)
 
-    I13 = cosmo.tools.I13(Δχ)
-    I22 = cosmo.tools.I22(Δχ)
+    JI_sum = if Δχ ≥ min(Δχ_min, Δχ_min * max(χ1, χ2))
+        I13 = cosmo.tools.I13(Δχ)
+        I22 = cosmo.tools.I22(Δχ)
+        new_J22 * I22 + new_J31 * I13
+    else
+        # for Δχ → 0 the J22 * I22 term vanishes and J31 * I13 stays finite;
+        # see "The Δχ → 0 limits" page of the documentation
+        2 * cosmo.tools.σ_2 / 3
+    end
 
-    res = prefactor * factor * parenth * (new_J22 * I22 + new_J31 * I13)
+    res = prefactor * factor * parenth * JI_sum
 
     return res
 end
 
 
 function integrand_ξ_GNCxLD_Lensing_IntegratedGP(
-    χ1::Float64, χ2::Float64,
-    s1::Float64, s2::Float64,
-    y, cosmo::Cosmology;
-    kwargs...)
+    χ1::AbstractFloat, χ2::AbstractFloat,
+    s1::AbstractFloat, s2::AbstractFloat,
+    y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
     IP1, IP2 = Point(χ1, cosmo), Point(χ2, cosmo)
@@ -69,8 +75,8 @@ end
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing ) ::Float64
 
     integrand_ξ_GNCxLD_Lensing_IntegratedGP(
-        χ1::Float64, χ2::Float64,
-        s1::Float64, s2::Float64,
+        χ1::AbstractFloat, χ2::AbstractFloat,
+        s1::AbstractFloat, s2::AbstractFloat,
         y, cosmo::Cosmology;
         kwargs... ) ::Float64
 
@@ -236,7 +242,7 @@ integrand_ξ_GNCxLD_Lensing_IntegratedGP
 
 function ξ_GNCxLD_Lensing_IntegratedGP(
     P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::Float64 = 1e6, N_χs_2::Int = 100, kwargs...)
+    en::AbstractFloat = 1e6, N_χs_2::Int = 100, kwargs...)
 
     χ1s = P1.comdist .* range(1e-6, 1.0, length = N_χs_2)
     χ2s = P2.comdist .* range(1e-6, 1.0, length = N_χs_2 + 7)
@@ -266,8 +272,8 @@ end
     ξ_GNCxLD_Lensing_IntegratedGP(
         P1::Point, P2::Point, y, cosmo::Cosmology;
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing,
-    	  𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
-        en::Float64 = 1e6, N_χs_2::Int = 100 ) ::Float64
+        𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing,
+        en::AbstractFloat = 1e6, N_χs_2::Int = 100 ) ::Float64
 
     ξ_GNCxLD_Lensing_IntegratedGP(s1, s2, y, cosmo::Cosmology; kwargs... ) ::Float64
 
@@ -421,7 +427,7 @@ the integrand function `integrand_ξ_GNCxLD_Lensing_IntegratedGP`.
   ```
   If `nothing`, the fault value stored in `cosmo` will be considered.
 
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
+- `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
 - `N_χs_2::Int = 100`: number of points to be used for sampling the integral

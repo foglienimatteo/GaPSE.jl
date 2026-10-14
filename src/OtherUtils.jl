@@ -104,7 +104,7 @@ end
 """
     my_println_vec(io::IO, vec::Vector{T}, name::String; N::Int=5) where {T}
     my_println_vec(vec::Vector{T}, name::String; N::Int=5) where {T}
-        my_println_vec(stdout, vec, name; N=N)
+    my_println_vec(stdout, vec, name; N=N)
 
 Print the input `vec::Vector{T}` as follows:
 ```julia
@@ -131,7 +131,7 @@ vector = [
 3.7 , 3.8 , 3.9 , 
 4.0 , 
 ];
-	
+
 ```
 
 See also: [`my_println_dict`](@ref)
@@ -602,7 +602,7 @@ readxchoosey
 
 """
     sample_subdivision_begin(x_min, x_stop, x_end; 
-        frac_begin::Float64 = 0.5, N::Int = 100, ass::Bool = true)
+        frac_begin::AbstractFloat = 0.5, N::Int = 100, ass::Bool = true)
 
 Return a vector of `N+2` points inside the interval `x_min ≤ x ≤ x_max` linearly distributed
 with two different sampling:
@@ -612,7 +612,7 @@ with two different sampling:
 `frac_begin` is then the fraction of the `N` points that is inside the LEFT INTERVAL.
 If `ass::Bool` is set to `false` the assert checks on the input data will not be performed. 
 """
-function sample_subdivision_begin(x_min, x_stop, x_max; frac_begin::Float64=0.5, N::Int=100, ass::Bool=true)
+function sample_subdivision_begin(x_min, x_stop, x_max; frac_begin::AbstractFloat=0.5, N::Int=100, ass::Bool=true)
     if ass == true
         @assert 0.0 < frac_begin < 1.0 "frac_begin must be in 0.0 < frac_begin < 1.0, frac_begin = $frac_begin is not valid!"
         @assert x_min < x_stop "x_min < x_stop must hold, x_min = $x_min and x_stop = $x_stop do not!"
@@ -631,7 +631,7 @@ end
 
 """
     sample_subdivision_middle(x_min, x_start, x_stop, x_max; 
-        frac_middle::Float64 = 0.5, rel_frac_begin::Union{Float64, Nothing} = nothing, 
+        frac_middle::AbstractFloat = 0.5, rel_frac_begin::Union{Float64, Nothing} = nothing, 
         N::Int = 100, ass::Bool = true)
 
 Return a vector of `N+3` points inside the interval `x_min ≤ x ≤ x_max` linearly distributed
@@ -654,7 +654,7 @@ If `rel_frac_begin` is instead a float inside the interval `0.0 < rel_frac_begin
 If `ass::Bool` is set to `false` the assert checks on the input data will not be performed. 
 """
 function sample_subdivision_middle(x_min, x_start, x_stop, x_max;
-    frac_middle::Float64=0.5, rel_frac_begin::Union{Float64,Nothing}=nothing,
+    frac_middle::AbstractFloat=0.5, rel_frac_begin::Union{Float64,Nothing}=nothing,
     N::Int=100, ass::Bool=true)
 
     if ass == true
@@ -690,3 +690,125 @@ function sample_subdivision_middle(x_min, x_start, x_stop, x_max;
 end
 
 
+
+
+"""
+    map_over_ss(f, v_ss::AbstractVector, desc::AbstractString;
+        pr::Bool=true) :: Vector{Float64}
+
+Evaluate `f(s)` for every `s` in `v_ss`, spreading the points over the available
+threads, and return the results in the order of `v_ss`.
+
+This is the parallel loop of the four `map_ξ_*_multipole` functions. The `s` values
+are independent - each one is its own quadrature over `μ` - and the only state the
+tasks share is the `Cosmology` that `f` closes over, which is read-only on this path:
+`MySpline` is an immutable struct evaluated with `searchsortedlast`, and
+`GridInterpolations.interpolate` keeps its scratch in per-call `MVector`s. Julia must
+be started with more than one thread (`julia -t auto`, or `JULIA_NUM_THREADS`) for
+this to do anything; with a single thread it is an ordinary loop.
+
+The scheduling is `:dynamic`, not `:static`: the cost of one `s` grows with `s`, so a
+static split would leave whichever thread got the largest distances running alone.
+
+With `pr = true` a `ProgressMeter.Progress` counts the points as they complete. It
+advances out of `s` order, being a counter, and `next!` is thread-safe: it notices a
+call from a thread other than the one that built the meter and locks from then on.
+
+See also: [`map_ξ_GNC_multipole`](@ref), [`map_ξ_LD_multipole`](@ref)
+"""
+function map_over_ss(f, v_ss::AbstractVector, desc::AbstractString; pr::Bool=true)
+    xis = Vector{Float64}(undef, length(v_ss))
+    p = pr ? Progress(length(v_ss); desc=desc) : nothing
+
+    Threads.@threads :dynamic for i in eachindex(v_ss)
+        xis[i] = f(v_ss[i])
+        isnothing(p) || next!(p)
+    end
+
+    isnothing(p) || finish!(p)
+    return xis
+end
+
+
+##########################################################################################92
+
+
+
+"""
+    print_log_generic(x...; writemode::String="a",
+        iostream::Union{IO,String}=stdout, printdate::Bool=true)
+
+    print_log_generic(f::T; writemode::String="a",
+        iostream::Union{IO,String}=stdout, kwargs...) where {T<:Function}
+
+Print all the inputs `x...` (former method) or the input function `f` output (latter one) to
+the input file/iostream (all the `kwargs` are passed to `f`).
+
+`iostream` is either an already-open stream or the name of a file. The type is `IO` and not
+a union of the concrete stream types because `stdout` is not always a `Base.TTY`: it is a
+`Base.PipeEndpoint` whenever the output is a pipe (which is the case under CI, under
+`Pkg.test` and under any `julia ... | tee`) and an `IOStream` when the shell redirects it to
+a file. A signature listing the concrete types would therefore throw a `MethodError` exactly
+where a log is most useful.
+
+The `writemode::String="a"` option is used in the `open` function to specify the write mode
+on the file. It is used only if `iostream` is a `String` (i.e. the name of the file where to
+write to).
+
+The bool `printdate` allows you to choose between prepend or not the current date, in the
+format `[yyyy-mm-dd HH:MM:SS] :`
+```julia
+julia> print_log_generic("Defining matrixes A, B and C")
+[2024-05-17 15:49:04] : Defining matrixes A, B and C
+
+julia> print_log_generic("Defining matrixes A, B and C"; printdate=false)
+Defining matrixes A, B and C
+```
+
+The method taking a function is for printing something that writes on its own: `f` is called
+as `f(iostream; kwargs...)` and, on top of that, `stdout` is redirected to `iostream` for the
+duration of the call, so that what `f` prints without being told where ends up in the same
+place. A function of the `f(io::IO, ...)` family is hence logged as it is:
+```julia
+julia> print_log_generic(Sys.cpu_summary)
+```
+
+See also: [`print_log`](@ref)
+"""
+function print_log_generic(f::T; writemode::String="a",
+    iostream::Union{IO,String}=stdout, kwargs...) where {T<:Function}
+
+    if iostream isa String
+        open(iostream, writemode) do io
+            redirect_stdout(io) do
+                f(io; kwargs...)
+            end
+        end
+    else
+        redirect_stdout(iostream) do
+            f(iostream; kwargs...)
+        end
+    end
+end
+
+function print_log_generic(x...; writemode::String="a",
+    iostream::Union{IO,String}=stdout, printdate::Bool=true)
+
+    stamp = printdate ? Dates.format(Dates.now(), "[yyyy-mm-dd HH:MM:SS] : ") : ""
+
+    if iostream isa String
+        open(iostream, writemode) do io
+            println(io, stamp, x...)
+        end
+    else
+        println(iostream, stamp, x...)
+    end
+end
+
+
+"""
+    print_log(x...; kwargs...)
+
+Shorthand for [`print_log_generic`](@ref) on `stdout`; all the `kwargs` are passed to it.
+"""
+print_log(x...; kwargs...) = print_log_generic(x...; iostream=stdout, kwargs...)

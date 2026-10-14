@@ -133,6 +133,8 @@ println("It will take a while, but do not worry: I'm working.")
             @test isapprox(res_sum_spec_ss_lob, calc_res_sum_spec_ss_lob; rtol=RTOL)
             @test all([isapprox(a, r; rtol=RTOL) for (a, r) in zip(calc_res_xis_spec_ss_lob, res_xis_spec_ss_lob)])
 
+            #println("calc_res_xis_spec_ss_lob = $calc_res_xis_spec_ss_lob ;")
+            #println("res_xis_spec_ss_lob = $res_xis_spec_ss_lob ;")
         end
 
         @testset "s = 1000, L = 0, no_window" begin
@@ -248,6 +250,8 @@ println("It will take a while, but do not worry: I'm working.")
             @test isapprox(res_sum_spec_ss_lob, calc_res_sum_spec_ss_lob; rtol=RTOL)
             @test all([isapprox(a, r; rtol=RTOL) for (a, r) in zip(calc_res_xis_spec_ss_lob, res_xis_spec_ss_lob)])
 
+            #println("calc_res_xis_spec_ss_lob = $calc_res_xis_spec_ss_lob ;")
+            #println("res_xis_spec_ss_lob = $res_xis_spec_ss_lob ;")
         end
 
         @testset "s = 1000, L = 1, no_window" begin
@@ -374,6 +378,8 @@ println("It will take a while, but do not worry: I'm working.")
             @test isapprox(res_sum_spec_ss_lob, calc_res_sum_spec_ss_lob; rtol=RTOL)
             @test all([isapprox(a, r; rtol=RTOL) for (a, r) in zip(calc_res_xis_spec_ss_lob, res_xis_spec_ss_lob)])
 
+            #println("calc_res_xis_spec_ss_lob = $calc_res_xis_spec_ss_lob ;")
+            #println("res_xis_spec_ss_lob = $res_xis_spec_ss_lob ;")
         end
 
         @testset "s = 1000, L = 2, no_window" begin
@@ -488,7 +494,8 @@ println("It will take a while, but do not worry: I'm working.")
 
             @test isapprox(res_sum_spec_ss_lob, calc_res_sum_spec_ss_lob; rtol=RTOL)
             @test all([isapprox(a, r; rtol=RTOL) for (a, r) in zip(calc_res_xis_spec_ss_lob, res_xis_spec_ss_lob)])
-
+            #println("calc_res_xis_spec_ss_lob = $calc_res_xis_spec_ss_lob ;")
+            #println("res_xis_spec_ss_lob = $res_xis_spec_ss_lob ;")
         end
 
         @testset "s = 1000, L = 1, no_window" begin
@@ -758,6 +765,8 @@ println("\nDon't worry, I am on it...")
 
             @test isapprox(res_sum_spec_ss_quad, calc_res_sum_spec_ss_quad; rtol=RTOL)
             @test all([isapprox(a, r; rtol=RTOL) for (a, r) in zip(calc_res_xis_spec_ss_quad, res_xis_spec_ss_quad)])
+            #println("calc_res_xis_spec_ss_quad = $calc_res_xis_spec_ss_quad ;")
+            #println("res_xis_spec_ss_quad = $res_xis_spec_ss_quad ;")
 
             ### trap ###
             ind_trap = findfirst(x -> x ≈ s, ss_trap)
@@ -784,7 +793,8 @@ println("\nDon't worry, I am on it...")
 
             @test isapprox(res_sum_spec_ss_lob, calc_res_sum_spec_ss_lob; rtol=RTOL)
             @test all([isapprox(a, r; rtol=RTOL) for (a, r) in zip(calc_res_xis_spec_ss_lob, res_xis_spec_ss_lob)])
-
+            #println("calc_res_xis_spec_ss_lob = $calc_res_xis_spec_ss_lob ;")
+            #println("res_xis_spec_ss_lob = $res_xis_spec_ss_lob ;")
         end
     end
 
@@ -1231,6 +1241,8 @@ println("\nDon't worry, I am on it...")
             @test isapprox(res_sum_spec_ss_lob, calc_res_sum_spec_ss_lob; rtol=RTOL)
             @test all([isapprox(a, r; rtol=RTOL) for (a, r) in zip(calc_res_xis_spec_ss_lob, res_xis_spec_ss_lob)])
 
+            #println("calc_res_sum_spec_ss_lob = $calc_res_sum_spec_ss_lob ;")
+            #println("res_sum_spec_ss_lob = $res_sum_spec_ss_lob ;")
         end
     end
 end

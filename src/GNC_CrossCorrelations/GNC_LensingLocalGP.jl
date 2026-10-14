@@ -20,7 +20,7 @@
 
 
 function integrand_ξ_GNC_Lensing_LocalGP(
-    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; 
+    IP::Point, P1::Point, P2::Point, y, cosmo::Cosmology; Δχ_min::AbstractFloat=1e-1, 
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
@@ -37,7 +37,7 @@ function integrand_ξ_GNC_Lensing_LocalGP(
     ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
     Δχ1_square = χ1^2 + s2^2 - 2 * χ1 * s2 * y
-    Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : 0
+    Δχ1 = Δχ1_square > 0 ? √(Δχ1_square) : zero(Δχ1_square)  # throw(AssertionError("Δχ1_square=$Δχ1_square : y=$y , s2=$s2 , χ1=$χ1"))
 
     common = D_s2 * ℋ0^2 * Ω_M0 * s2 * D1 * (χ1 - s1) * (5 * s_b_s1 - 2) * (
                 2 * f_s2 * a_s2 * ℋ_s2^2 * (𝑓_evo_s2 - 3)
@@ -48,21 +48,24 @@ function integrand_ξ_GNC_Lensing_LocalGP(
 
     J20 = 1 / 2 * y * Δχ1^2
 
-    I00 = cosmo.tools.I00(Δχ1)
-    I20 = cosmo.tools.I20(Δχ1)
-    I40 = cosmo.tools.I40(Δχ1)
-    I02 = cosmo.tools.I02(Δχ1)
+    JI_sum = if Δχ1 ≥ min(Δχ_min, Δχ_min * max(χ1, s2))
+        I00 = cosmo.tools.I00(Δχ1)
+        I20 = cosmo.tools.I20(Δχ1)
+        I40 = cosmo.tools.I40(Δχ1)
+        I02 = cosmo.tools.I02(Δχ1)
+        factor * (1 / 60 * I00 + 1 / 42 * I20 + 1 / 140 * I40) + J20 * I02
+    else
+        # for Δχ1 → 0 `factor` vanishes, so only the J20 * I02 term survives;
+        # see "The Δχ → 0 limits" page of the documentation
+        cosmo.tools.σ_2 / 2
+    end
 
-    return common * (
-        factor * (1 / 60 * I00 + 1 / 42 * I20 + 1 / 140 * I40)
-        +
-        J20 * I02
-    )
+    return common * JI_sum
 end
 
 
 function integrand_ξ_GNC_Lensing_LocalGP(
-    χ1::Float64, s1::Float64, s2::Float64,
+    χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
     y, cosmo::Cosmology; kwargs...)
 
     P1, P2 = Point(s1, cosmo), Point(s2, cosmo)
@@ -81,7 +84,7 @@ end
         ) ::Float64
 
     integrand_ξ_GNC_Lensing_LocalGP(
-        χ1::Float64, s1::Float64, s2::Float64,
+        χ1::AbstractFloat, s1::AbstractFloat, s2::AbstractFloat,
         y, cosmo::Cosmology;
         kwargs... )::Float64
 
@@ -260,7 +263,7 @@ integrand_ξ_GNC_Lensing_LocalGP
 """
     ξ_GNC_Lensing_LocalGP(
         s1, s2, y, cosmo::Cosmology;
-        en::Float64=1e6, N_χs::Int=100,
+        en::AbstractFloat=1e6, N_χs::Int=100,
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
         obs::Union{Bool,Symbol}=:noobsvel,
@@ -424,7 +427,7 @@ This function is computed from `integrand_ξ_GNC_Lensing_LocalGP` with trapz() f
   - `:noobsvel` -> the observer terms related to the observer velocity (that you can find in the CF concerning Doppler)
     will be neglected, the other ones will be taken into account
 
-- `en::Float64 = 1e6`: just a float number used in order to deal better 
+- `en::AbstractFloat = 1e6`: just a float number used in order to deal better 
   with small numbers;
 
 - `N_χs::Int = 100`: number of points to be used for sampling the integral
@@ -441,10 +444,9 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`integrand_ξ_GNC_Lensing_LocalGP`](@ref)
 """
 function ξ_GNC_Lensing_LocalGP(s1, s2, y, cosmo::Cosmology;
-     en::Float64=1e6, N_χs::Int=100, suit_sampling::Bool=true, kwargs...)
+    en::AbstractFloat=1e6, N_χs::Int=100, suit_sampling::Bool=true, kwargs...)
 
      χ1s = s1 .* range(1e-6, 1, length=N_χs)
-
      P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
      IPs = [GaPSE.Point(x, cosmo) for x in χ1s]
 
@@ -470,7 +472,7 @@ end
 
 """
     ξ_GNC_LocalGP_Lensing(s1, s2, y, cosmo::Cosmology; 
-        en::Float64=1e6, N_χs::Int=100,
+        en::AbstractFloat=1e6, N_χs::Int=100,
         b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 
         𝑓_evo1=nothing, 𝑓_evo2=nothing, s_lim=nothing, 
         obs::Union{Bool,Symbol}=:noobsvel,

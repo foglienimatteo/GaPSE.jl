@@ -150,8 +150,8 @@ function ξ_GNC_multipole(
     use_windows::Bool=true,
     obs::Union{Bool,Symbol}=:noobsvel,
     N_lob::Int=100, N_trap::Int=200,
-    atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
-    enhancer::Float64=1e6,
+    atol_quad::AbstractFloat=0.0, rtol_quad::AbstractFloat=1e-2,
+    enhancer::AbstractFloat=1e6,
     kwargs...)
 
     error = "$(string(effect)) is not a valid GR effect function for galaxy number counts.\n" *
@@ -217,8 +217,8 @@ end
         use_windows::Bool = true, 
         obs::Union{Bool,Symbol} = :noobsvel,
         N_lob::Int = 100, N_trap::Int = 200, 
-        atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
-        enhancer::Float64 = 1e6, 
+        atol_quad::AbstractFloat = 0.0, rtol_quad::AbstractFloat = 1e-2,
+        enhancer::AbstractFloat = 1e6, 
         kwargs...) ::Float64
 
     ξ_GNC_multipole(s1, s, effect::String, cosmo::Cosmology; 
@@ -307,12 +307,12 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`. The inve
 - `N_trap::Int = 200` : number of points to be used in the sampling made by the function `trapz`.
   Note that these options will have an effect only if you se `alg = :quad`.
 
-- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+- `atol_quad::AbstractFloat = 0.0` and `rtol_quad::AbstractFloat = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
   because the time for evaluation increase quickly.
   Note that these options will have an effect only if you se `alg = :quad`.
 
-- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+- `enhancer::AbstractFloat = 1e6`: just a float number used in order to deal better with small numbers; 
   the returned value is NOT modified by this value, because after a multiplication
   the internal result is divided by `enhancer`.
 
@@ -336,8 +336,8 @@ See also: [`integrand_ξ_GNC_multipole`](@ref),
         s1 = nothing, L::Int = 0, alg::Symbol = :lobatto,
         obs::Union{Bool,Symbol} = :noobsvel,
         N_lob::Int = 100, N_trap::Int = 50,
-        atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
-        enhancer::Float64=1e6, N_log::Int = 1000, 
+        atol_quad::AbstractFloat = 0.0, rtol_quad::AbstractFloat = 1e-2,
+        enhancer::AbstractFloat=1e6, N_log::Int = 1000, 
         pr::Bool = true,
         kwargs...) ::Tuple{Vector{Float64}, Vector{Float64}}
 
@@ -426,12 +426,12 @@ from `(s1, s, μ)` to `(s1, s2, y)` thorugh the functions `y` and `s2`. The inve
 - `N_trap::Int = 200` : number of points to be used in the sampling made by the function `trapz`.
   Note that these options will have an effect only if you se `alg = :quad`.
 
-- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+- `atol_quad::AbstractFloat = 0.0` and `rtol_quad::AbstractFloat = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
   because the time for evaluation increase quickly.
   Note that these options will have an effect only if you se `alg = :quad`.
 
-- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+- `enhancer::AbstractFloat = 1e6`: just a float number used in order to deal better with small numbers; 
   the returned value is NOT modified by this value, because after a multiplication
   the internal result is divided by `enhancer`.
 
@@ -459,8 +459,8 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
     s1=nothing, L::Int=0, alg::Symbol=:lobatto,
     obs::Union{Bool,Symbol}=:noobsvel,
     N_lob::Int=100, N_trap::Int=50,
-    atol_quad::Float64=0.0, rtol_quad::Float64=1e-2,
-    enhancer::Float64=1e6, N_log::Int=1000,
+    atol_quad::AbstractFloat=0.0, rtol_quad::AbstractFloat=1e-2,
+    enhancer::AbstractFloat=1e6, N_log::Int=1000,
     pr::Bool=true, sum_xi::Bool=false,
     kwargs...)
 
@@ -488,25 +488,16 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
     if alg == :lobatto
         μs, ws = gausslobatto(N_lob)
 
-        global xis = pr ? begin
-            @showprogress "$effect, L=$L: " [
-                dot(ws, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
-            ]
-        end : [
-            dot(ws, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
-        ]
+        xis = map_over_ss(v_ss, "$effect, L=$L: "; pr=pr) do s
+            dot(ws, [orig_f(μ, s) for μ in μs]) / enhancer
+        end
 
     elseif alg == :quad
 
-        global xis = pr ? begin
-            @showprogress "$effect, L=$L: " [
-                quadgk(μ -> orig_f(μ, s), -1.0, 1.0;
-                        atol=atol_quad, rtol=rtol_quad)[1] / enhancer for s in v_ss
-            ]
-        end : [
+        xis = map_over_ss(v_ss, "$effect, L=$L: "; pr=pr) do s
             quadgk(μ -> orig_f(μ, s), -1.0, 1.0;
-                atol=atol_quad, rtol=rtol_quad)[1] / enhancer for s in v_ss
-        ]
+                atol=atol_quad, rtol=rtol_quad)[1] / enhancer
+        end
 
     elseif alg == :trap
 
@@ -517,13 +508,9 @@ function map_ξ_GNC_multipole(cosmo::Cosmology,
         )
         #μs = range(-1.0 + 1e-6, 1.0 - 1e-6, length=N_trap)
 
-        global xis = pr ? begin
-            @showprogress "$effect, L=$L: " [
-                trapz(μs, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
-            ]
-        end : [
-            trapz(μs, [orig_f(μ, s) for μ in μs]) / enhancer for s in v_ss
-        ]
+        xis = map_over_ss(v_ss, "$effect, L=$L: "; pr=pr) do s
+            trapz(μs, [orig_f(μ, s) for μ in μs]) / enhancer
+        end
 
     else
         throw(AssertionError("how the hell did you arrive here?"))
@@ -557,8 +544,8 @@ end
         s1 = nothing, L::Int = 0, alg::Symbol = :lobatto,
         obs::Union{Bool,Symbol} = :noobsvel,
         N_lob::Int = 100, N_trap::Int = 50,
-        atol_quad::Float64 = 0.0, rtol_quad::Float64 = 1e-2,
-        enhancer::Float64=1e6, N_log::Int = 1000, 
+        atol_quad::AbstractFloat = 0.0, rtol_quad::AbstractFloat = 1e-2,
+        enhancer::AbstractFloat=1e6, N_log::Int = 1000, 
         pr::Bool = true,
         kwargs...)
 
@@ -651,12 +638,12 @@ for comfortness:
 - `N_trap::Int = 200` : number of points to be used in the sampling made by the function `trapz`.
   Note that these options will have an effect only if you se `alg = :quad`.
 
-- `atol_quad::Float64 = 0.0` and `rtol_quad::Float64 = 1e-2`: absolute and relative tolerance
+- `atol_quad::AbstractFloat = 0.0` and `rtol_quad::AbstractFloat = 1e-2`: absolute and relative tolerance
   to be passed to the function `quadgk`; it's recommended not to set `rtol_quad < 1e-2` 
   because the time for evaluation increase quickly.
   Note that these options will have an effect only if you se `alg = :quad`.
 
-- `enhancer::Float64 = 1e6`: just a float number used in order to deal better with small numbers; 
+- `enhancer::AbstractFloat = 1e6`: just a float number used in order to deal better with small numbers; 
   the returned value is NOT modified by this value, because after a multiplication
   the internal result is divided by `enhancer`.
 
@@ -700,7 +687,8 @@ function print_map_ξ_GNC_multipole(
         println(io, "\n# \t\tL = $L")
         if !isempty(kwargs)
             for key in keys(kwargs)
-                println(io, "# \t\t$(key) = $(kwargs[key])")
+                val = string(kwargs[key])
+                println(io, "# \t\t$(key) = $(length(val) > 20 ? first(val, 20)*"..." : val)")
             end
         end
 

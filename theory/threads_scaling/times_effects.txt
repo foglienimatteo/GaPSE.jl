@@ -1,0 +1,124 @@
+# GaPSE - theory/threads_scaling.ipynb
+# date             : 2026-10-12 17:10:36 CEST
+#
+# --- hardware and runtime, from Sys.cpu_info() and friends ---
+# cpu model        : Apple M1 Pro
+# cpu speed        : 2400 MHz (as reported for core #1)
+# length(cpu_info) : 10
+# Sys.CPU_NAME     : apple-m1
+# Sys.CPU_THREADS  : 8
+# Sys.MACHINE      : arm64-apple-darwin25.5.0
+# Sys.KERNEL       : Darwin
+# total memory     : 16.0 GiB
+# julia            : 1.12.7
+# BLAS             : 8 threads
+# JULIA_NUM_THREADS: /   (of this kernel; the workers get -t explicitly)
+# OMP_NUM_THREADS  : /
+#
+# --- what was measured ---
+# thread counts    : [1, 2, 3, 4]
+# s grid sizes     : [256]
+# repetitions      : 3   (the minimum is kept)
+# effects          : 25 of them, GaPSE.GR_EFFECTS_GNC
+#
+# threads                  effect   n_ss        time[s]
+  1              auto_newton    256       0.028541
+  1             auto_doppler    256       0.026222
+  1             auto_lensing    256       0.683477
+  1             auto_localgp    256       0.026354
+  1        auto_integratedgp    256       0.379581
+  1           newton_doppler    256       0.026068
+  1           doppler_newton    256       0.026397
+  1           newton_lensing    256       0.160136
+  1           lensing_newton    256       0.159755
+  1           newton_localgp    256       0.027617
+  1           localgp_newton    256       0.028687
+  1      newton_integratedgp    256       0.170690
+  1      integratedgp_newton    256       0.167198
+  1          lensing_doppler    256       0.169238
+  1          doppler_lensing    256       0.169824
+  1          doppler_localgp    256       0.027186
+  1          localgp_doppler    256       0.027184
+  1     doppler_integratedgp    256       0.193140
+  1     integratedgp_doppler    256       0.166458
+  1          lensing_localgp    256       0.167296
+  1          localgp_lensing    256       0.167596
+  1     lensing_integratedgp    256       0.491937
+  1     integratedgp_lensing    256       0.496034
+  1     localgp_integratedgp    256       0.146743
+  1     integratedgp_localgp    256       0.151543
+  2              auto_newton    256       0.013940
+  2             auto_doppler    256       0.014596
+  2             auto_lensing    256       0.349687
+  2             auto_localgp    256       0.014721
+  2        auto_integratedgp    256       0.196928
+  2           newton_doppler    256       0.014722
+  2           doppler_newton    256       0.013533
+  2           newton_lensing    256       0.083340
+  2           lensing_newton    256       0.083468
+  2           newton_localgp    256       0.014767
+  2           localgp_newton    256       0.015736
+  2      newton_integratedgp    256       0.088573
+  2      integratedgp_newton    256       0.088248
+  2          lensing_doppler    256       0.087887
+  2          doppler_lensing    256       0.086686
+  2          doppler_localgp    256       0.014166
+  2          localgp_doppler    256       0.014854
+  2     doppler_integratedgp    256       0.086520
+  2     integratedgp_doppler    256       0.087708
+  2          lensing_localgp    256       0.085779
+  2          localgp_lensing    256       0.089421
+  2     lensing_integratedgp    256       0.249661
+  2     integratedgp_lensing    256       0.252477
+  2     localgp_integratedgp    256       0.076529
+  2     integratedgp_localgp    256       0.077450
+  3              auto_newton    256       0.009736
+  3             auto_doppler    256       0.011110
+  3             auto_lensing    256       0.242553
+  3             auto_localgp    256       0.011092
+  3        auto_integratedgp    256       0.137391
+  3           newton_doppler    256       0.009581
+  3           doppler_newton    256       0.009512
+  3           newton_lensing    256       0.059078
+  3           lensing_newton    256       0.060239
+  3           newton_localgp    256       0.009837
+  3           localgp_newton    256       0.009651
+  3      newton_integratedgp    256       0.061561
+  3      integratedgp_newton    256       0.062243
+  3          lensing_doppler    256       0.061443
+  3          doppler_lensing    256       0.061323
+  3          doppler_localgp    256       0.009550
+  3          localgp_doppler    256       0.009857
+  3     doppler_integratedgp    256       0.062290
+  3     integratedgp_doppler    256       0.061451
+  3          lensing_localgp    256       0.059594
+  3          localgp_lensing    256       0.057935
+  3     lensing_integratedgp    256       0.173876
+  3     integratedgp_lensing    256       0.171211
+  3     localgp_integratedgp    256       0.054661
+  3     integratedgp_localgp    256       0.053636
+  4              auto_newton    256       0.006951
+  4             auto_doppler    256       0.007734
+  4             auto_lensing    256       0.182621
+  4             auto_localgp    256       0.008214
+  4        auto_integratedgp    256       0.103857
+  4           newton_doppler    256       0.007094
+  4           doppler_newton    256       0.007215
+  4           newton_lensing    256       0.043612
+  4           lensing_newton    256       0.045241
+  4           newton_localgp    256       0.007328
+  4           localgp_newton    256       0.007359
+  4      newton_integratedgp    256       0.045720
+  4      integratedgp_newton    256       0.043616
+  4          lensing_doppler    256       0.047021
+  4          doppler_lensing    256       0.045632
+  4          doppler_localgp    256       0.007559
+  4          localgp_doppler    256       0.007546
+  4     doppler_integratedgp    256       0.045958
+  4     integratedgp_doppler    256       0.046310
+  4          lensing_localgp    256       0.045855
+  4          localgp_lensing    256       0.043858
+  4     lensing_integratedgp    256       0.132043
+  4     integratedgp_lensing    256       0.129471
+  4     localgp_integratedgp    256       0.040931
+  4     integratedgp_localgp    256       0.040911

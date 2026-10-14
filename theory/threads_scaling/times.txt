@@ -1,0 +1,40 @@
+# GaPSE - theory/threads_scaling.ipynb
+# date             : 2026-10-12 17:09:01 CEST
+#
+# --- hardware and runtime, from Sys.cpu_info() and friends ---
+# cpu model        : Apple M1 Pro
+# cpu speed        : 2400 MHz (as reported for core #1)
+# length(cpu_info) : 10
+# Sys.CPU_NAME     : apple-m1
+# Sys.CPU_THREADS  : 8
+# Sys.MACHINE      : arm64-apple-darwin25.5.0
+# Sys.KERNEL       : Darwin
+# total memory     : 16.0 GiB
+# julia            : 1.12.7
+# BLAS             : 8 threads
+# JULIA_NUM_THREADS: /   (of this kernel; the workers get -t explicitly)
+# OMP_NUM_THREADS  : /
+#
+# --- what was measured ---
+# thread counts    : [1, 2, 3, 4]
+# s grid sizes     : [3, 16, 64, 256]
+# repetitions      : 3   (the minimum is kept)
+# effects          : auto_lensing
+#
+# threads                  effect   n_ss        time[s]
+  1             auto_lensing      3       0.007901
+  1             auto_lensing     16       0.042048
+  1             auto_lensing     64       0.170742
+  1             auto_lensing    256       0.686659
+  2             auto_lensing      3       0.005485
+  2             auto_lensing     16       0.022007
+  2             auto_lensing     64       0.088374
+  2             auto_lensing    256       0.351201
+  3             auto_lensing      3       0.002842
+  3             auto_lensing     16       0.016669
+  3             auto_lensing     64       0.061835
+  3             auto_lensing    256       0.242741
+  4             auto_lensing      3       0.002865
+  4             auto_lensing     16       0.011347
+  4             auto_lensing     64       0.045518
+  4             auto_lensing    256       0.184618
