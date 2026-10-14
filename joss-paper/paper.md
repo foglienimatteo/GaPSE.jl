@@ -44,7 +44,7 @@ spectrum of initial fluctuations. Consequently, studying constraining variables 
 these models is of utmost importance. Local Primordial Non-Gaussianities (PNG) are one of the most promising 
 variable of this kind [@Achucarro:2022].
 
-The standard parameterization of the local PNG is the so-called scale-independent $f_NL$ parameterization,
+The standard parameterization of the local PNG is the so-called scale-independent $f_{NL}$ parameterization,
 which would imprint a scale-dependent bias at low wavenumbers on the observable Power Spectrum [@Dalal:2008; @Slosar:2008].
 However, on those scale, the pure Newtonian and plane-parallel approximations that underpin most clustering analyses cease to be adequate,
 because the separation between a pair of galaxies becomes comparable to the distance from us to them.
@@ -68,7 +68,7 @@ and investigate how survey geometry affects the resulting observables.
 Publicly available Boltzmann codes, such as CAMB [@CAMB:2026], compute the observed number counts as angular power
 spectra $C_\ell(z_i, z_j)$, a representation that is exact but expensive to connect to the
 Fourier-space quantities that clustering analyses actually fit.
-`GaPSE.jl` implements instead the Fourier-space formalism of [@CastorinaDiDio:2022], 
+`GaPSE.jl` implements instead the Fourier-space formalism of [@CCastorina:2022], 
 in which the observed Power Spectrum multipoles are obtained from a configuration-space calculation that keeps the two
 lines of sight exact. 
 The code was written for, and used to produce the results of, [@Foglieni:2023] and [@Pantiri:2024], 
@@ -117,7 +117,7 @@ Furthermore, a Docker container with all the aforementioned features and files c
 # AI usage disclosure
 
 No AI tools were used in the development of `GaPSE.jl` before and up to version `v0.8.0`.
-Beginning with version `v0.8.0`, we took advantage of AI models developed by Anthropic
+Beginning with version `v0.10.0`, we took advantage of AI models developed by Anthropic
 to investigate numerical issues and inconsistencies arising in specific corner cases and to improve the software documentation.
 We take full responsibility for reviewing and validating the AI-assisted work and for the resulting code and documentation.
 
