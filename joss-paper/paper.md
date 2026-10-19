@@ -111,7 +111,7 @@ The code repo ships a test suite that compares every correlation against stored 
 run in continuous integration on Linux and macOS, single and multi-threaded.
 The extensive documentation covers both the API and the theory behind each expression, and a set of
 Jupyter notebooks reproduces all the figures and the numerical claims.
-Furthermore, a Docker container with all the aforementioned features and files can be pulled from `matteofoglieni:gapse`.
+Furthermore, a Docker container with all the aforementioned features and files can be pulled from `foglienimatteo/gapse`.
 
 
 # AI usage disclosure
