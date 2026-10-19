@@ -27,6 +27,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Control how many workflow runs or jobs can run simultaneously
+# By default, only one run can be active and one can be pending in a group
+# the following allows only one run per workflow and branch; a newer run cancels the currently running run in the same group
+# see <https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency#example-concurrency-groups>
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -73,7 +77,7 @@ jobs:
 
     # Run for relevant changes, manual runs, and release tags.
     if: >-
-      always() &&
+      ( !cancelled() ) &&
       (
         startsWith(github.ref, 'refs/tags/') ||
         needs.changes.outputs.docs == 'true' ||

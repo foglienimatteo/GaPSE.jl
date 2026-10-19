@@ -1,7 +1,6 @@
 # GaPSE.jl - a model for the Galaxy Power Spectrum Estimator
 
 ![julia-version](https://img.shields.io/badge/julia_version-v1.12-9558B2?style=flat&logo=julia) 
-![package-version](https://img.shields.io/github/v/release/foglienimatteo/GaPSE.jl?include_prereleases)
 ![CI-build](https://img.shields.io/github/actions/workflow/status/foglienimatteo/GaPSE.jl/UnitTests.yml)
 ![size](https://img.shields.io/github/repo-size/foglienimatteo/GaPSE.jl) 
 ![license](https://img.shields.io/github/license/foglienimatteo/GaPSE.jl)
@@ -13,7 +12,7 @@ GaPSE (Galaxy Power Spectrum Estimator) is a software for cosmological computati
 <br>
 
 > [!TIP]
-> FIRST TIME HERE? Have a look at the `ipynbs/TUTORIAL.ipynb`
+> FIRST TIME HERE? Have a look at the `ipynbs/TUTORIAL.ipynb` to learn how to use GaPSE.jl!
 
 > [!NOTE]
 > * In the [GaPSE GitHub Pages documentation](https://foglienimatteo.github.io/GaPSE.jl/stable) you can find also the physics and numeric theory behind this code

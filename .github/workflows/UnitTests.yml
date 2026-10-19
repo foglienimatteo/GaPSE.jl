@@ -47,9 +47,14 @@ jobs:
       tests: ${{ steps.filter.outputs.tests }}
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v7
+        if: github.event_name != 'pull_request'
+        # dorny/paths-filter@v4 uses GitHub's API to discover changed files for pull_request events,
+        # => it does not need a repository checkout for that job
+        #with:
+        #  fetch-depth: 0
+
+      # see <https://github.com/dorny/paths-filter#usage>
       - uses: dorny/paths-filter@v4
         id: filter
         with:
@@ -78,7 +83,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Reference run; coverage coverage is taken from this
+          # Reference run; coverage is taken from this
           - {os: ubuntu-latest, arch: x64,     julia-version: '1.12', threads: 1, coverage: true}
           # Apple-silicon runner: note the aarch64 arch, since an x86_64 Julia
           # running under Rosetta 2 produces spurious DomainErrors from "cos"
@@ -108,6 +113,40 @@ jobs:
         with:
           files: lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  test-status:
+    name: Unit tests status
+    needs: [changes, test]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Verify test outcome
+        shell: bash
+        env:
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          TESTS_NEEDED: ${{ needs.changes.outputs.tests }}
+          TEST_RESULT: ${{ needs.test.result }}
+        run: |
+          if [[ "$CHANGES_RESULT" != "success" ]]; then
+            echo "::error::Change detection did not succeed."
+            exit 1
+          fi
+
+          if [[ "$TESTS_NEEDED" == "true" ]]; then
+            if [[ "$TEST_RESULT" != "success" ]]; then
+              echo "::error::Tests were required but result was $TEST_RESULT."
+              exit 1
+            fi
+          else
+            if [[ "$TEST_RESULT" != "skipped" &&
+                  "$TEST_RESULT" != "success" ]]; then
+              echo "::error::Unexpected test result: $TEST_RESULT."
+              exit 1
+            fi
+          fi
+
+          echo "Tests passed or were correctly skipped."
 
 #  # OLD WAY: test on Julia 1.9 and then if green test on 1.12
 #  # Reference run. Blocking.
