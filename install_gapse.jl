@@ -25,32 +25,28 @@ Pkg.activate(normpath(@__DIR__))
 # dependencies live in ./test/Project.toml and the documentation-only ones in
 # ./docs/Project.toml, so they must NOT be added to this environment.
 let
-     pkgs = [
-          "LinearAlgebra", "DelimitedFiles", "Dates",
-          "Printf", "ProgressMeter",
+    pkgs = [
+        "DelimitedFiles", "Dates", "Printf", "ProgressMeter",
+        
+        "LinearAlgebra", 
+        "LegendrePolynomials", "AssociatedLegendrePolynomials",
+        "SpecialFunctions", "WignerSymbols",
 
-          "FFTW", "TwoFAST", 
-          
-          "AssociatedLegendrePolynomials",
-          "LegendrePolynomials", "SpecialFunctions",
-          "WignerSymbols",
+        "LsqFit", "GridInterpolations", "HCubature",
 
-          "GridInterpolations",
+        "QuadGK", "Trapz", "FastGaussQuadrature", 
 
-          "LsqFit",
+        "FFTW", "TwoFAST",
+    ]
+    missing_pkgs = [pkg for pkg in pkgs if Base.find_package(pkg) === nothing]
 
-          "QuadGK", "Trapz", "FastGaussQuadrature", "HCubature",
-     ]
-     for pkg in pkgs
-          if Base.find_package(pkg) === nothing
-               Pkg.add(pkg)
-          end
-     end
+    if !isempty(missing_pkgs)
+        Pkg.add(missing_pkgs)
+    end
 end
 
-Pkg.resolve()
+Pkg.instantiate()
 Pkg.precompile()
-include("src/GaPSE.jl")
 
 
 

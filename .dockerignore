@@ -1,8 +1,10 @@
 .github/*
 .ipynb_checkpoints/*
 **/.ipynb_checkpoints/*
-*.log
+**.log
 
 .DS_Store
 Manifest.toml
+.CondaPkg
+
 

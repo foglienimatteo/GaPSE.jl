@@ -21,7 +21,7 @@ GaPSE (Galaxy Power Spectrum Estimator) is a software for cosmological computati
 > FIRST TIME HERE? Have a look at the `ipynbs/TUTORIAL.ipynb`
 
 !!! note
-    * In the [GaPSE GitHub Pages documentation](https://foglienimatteo.github.io/GaPSE.jl/stable) you can find also the physical and numerical theory behind this package
+    * In the [GaPSE GitHub Pages documentation](https://foglienimatteo.github.io/GaPSE.jl/stable) you can find also the physics and numeric theory behind this package
     * The code functions are all well documented; again, check the [GaPSE GitHub Pages documentation](https://foglienimatteo.github.io/GaPSE.jl/stable) if you can't see correctly the analytical expressions written in the docstrings inside the REPL
 
 
@@ -76,20 +76,18 @@ This project, and the analytical expressions used for the TPCFs, are based on th
 
 
 
+
 ## Installation and Usage
 
-Currently, this package is not in the Julia package registries. 
+Currently, this code is not in the Julia package registries. 
 There are two main ways to install and use GaPSE on your local machine:
 
--  the traditional way: you clone this gitrepo locally and you install the libraries that GaPSE needs in a suitable Julia environment; it requires Julia 1.12 or newer;
+- "traditional" way: you clone this gitrepo locally and you install the libraries that GaPSE needs in a suitable Julia environment; it requires Julia 1.12 or newer;
 -  using a Docker container: you pull and run the GaPSE container; it requires a [Docker](https://www.docker.com) installation.
 
 
 
-
-
-
-### traditional way: Installation
+### "traditional" way: Installation
 
 Assuming that you have already installed a compatible Julia version (see here <https://julialang.org/downloads/>), the simplest way to install this software is then the following:
 
@@ -100,7 +98,7 @@ $ git clone https://github.com/foglienimatteo/GaPSE.jl
 # or download GaPSE manually from https://github.com/foglienimatteo/GaPSE.jl under "Code > Download Zip"
 $ cd GaPSE.jl
 
-# "install_gapse.jl" is a Julia script conceived for downloading and installing all the dependencies of GaPSE
+# "install_gapse.jl" will download,install and precompile all GaPSE dependencies
 $ julia install_gapse.jl
 ```
 
@@ -126,17 +124,13 @@ julia> using GaPSE
 
 
 
-
-
-
-
-### traditional way: Usage
+### "traditional" way: Usage
 
 There are three ways to use this code:
 
-- **RECOMMENDED**: from a Jupyter Notebook, with a Julia 1.12 kernel (see the [IJulia](https://github.com/JuliaLang/IJulia.jl) pkg). GaPSE is **unregistered**, so a notebook reaches it through its path: the notebook's directory needs a `Project.toml` declaring GaPSE in a `[sources]` entry, and then the notebook simply does `using GaPSE`. The `ipynbs` directory is already set up this way, and `ipynbs/README.md` explains how that environment was built and how to recreate it elsewhere.
+- **RECOMMENDED**: from a Jupyter Notebook, with a Julia 1.12 kernel (see the [IJulia](https://github.com/JuliaLang/IJulia.jl) pkg); because GaPSE is unregistered, a notebook must reach it through its path: the notebook's directory needs a `Project.toml` declaring GaPSE in a `[sources]` entry, and then the notebook simply does `using GaPSE`. The `ipynbs` directory is already set up this way, and `ipynbs/README.md` explains how that environment was built and how to recreate it elsewhere.
 
-  Do **not** use `include("<path-to-GaPSE.jl-directory>/src/GaPSE.jl")` for this: `include` only evaluates the sources in `Main`, so GaPSE's own `Project.toml` is never read and its dependencies are looked for in the notebook's environment, which fails with `Package TwoFAST [...] is required but does not seem to be installed`.
+  Do **not** use `include("<path-to-GaPSE.jl-directory>/src/GaPSE.jl")` for this: `include` only evaluates the sources in `Main`, so GaPSE's own `Project.toml` is never read and its dependencies are looked for in the notebook's environment, which fails with e.g. `Package TwoFAST [...] is required but does not seem to be installed`.
 
 - in a REPL session
   ```bash
@@ -154,8 +148,22 @@ There are three ways to use this code:
     $ julia GaPSE-exe.jl
   ```
 
+Some `.ipynb`s are already provided in the directory `ipynbs` :
 
-### Running GaPSE on more than one thread
+- we encourage you to follow the `ipynbs/TUTORIAL.ipynb` file first. The basic structure of the code and the most important functions are there presented;
+- `ipynbs/Computations_b1p5-sb0-fevo0.ipynb` explains the analytical Primordial Non-Gaussianities model we use here, compute its contribution in the redshift bin $1.0 \leq z \leq 1.5$ and compare it with the GNC effects, all using our toy-model window function with angular opening $\theta_{\rm max} = \pi/2$;
+- `ipynbs/Generic_Window.ipynb` explains how to use GaPSE with a generic Window Function of your choice;
+- `ipynbs/eBOSS_Window.ipynb` apply GaPSE on a real case scenario: the eBOSS window function;
+- the `ipynbs/Computations_b1p5-sb0-fevo0.jl` Julia file is the translation into script of `ipynbs/Computations_b1p5-sb0-fevo0.ipynb`; you can easily run it from the command line with:
+  ```bash
+    $ julia Computations_b1p5-sb0-fevo0.jl
+  ```
+
+The code is well tested and documented: almost each struct/function has a docstring that you can easily access in Julia with `?<name-of-the-struct/function>`, and there is an active GitHub Pages website with the [latest stable documentation](https://foglienimatteo.github.io/GaPSE.jl/stable).
+
+
+
+### "traditional" way: multithreading in Julia session
 
 The `s` grid of `map_ξ_*_multipole` and of the `map_sum_ξ_*` functions is computed in parallel over the threads Julia was started with. Julia starts with **one** thread unless you ask for more:
 
@@ -166,7 +174,8 @@ The `s` grid of `map_ξ_*_multipole` and of the `map_sum_ξ_*` functions is comp
 
 or export `JULIA_NUM_THREADS=auto` once, in your shell profile. From inside Julia, `Threads.nthreads()` says what you got. Nothing else changes: the results are bit-for-bit the same whatever the thread count, and the progress bar still counts the `s` points, only completing them out of order. How much it is worth on your machine, and for which effect, is measured in the `theory/threads_scaling.ipynb` notebook, which runs the benchmark itself rather than quoting a number: on 4 cores it reaches about 3.3 times faster on a long `s` grid, and nothing at all on a grid of 3 points, which is all a parallel loop can do with three tasks.
 
-### A Jupyter kernel with more than one thread
+
+### "traditional" way: multithreading in Jupyter Lab
 
 A notebook does not see the `-t` of your shell: its kernel is started by Jupyter, with the options stored in the **kernelspec**, and the kernel IJulia installs by default has none - so a notebook runs on a single thread. Install a second kernel next to it:
 
@@ -185,22 +194,6 @@ and choose "Julia (4 threads) 1.12" from the kernel menu of Jupyter Lab. Passing
 Keep the `--project=@.` in either case: it is the option the default IJulia kernel carries, and it is what makes the notebook pick up the `Project.toml` of its own directory (see `ipynbs/README.md`).
 
 
-Some `.ipynb`s are already provided in the directory `ipynbs` :
-
-- we encourage you to follow the `ipynbs/TUTORIAL.ipynb` file first. The basic structure of the code and the most important functions are there presented;
-- `ipynbs/Computations_b1p5-sb0-fevo0.ipynb` explains the analytical Primordial Non-Gaussianities model we use here, compute its contribution in the redshift bin $1.0 \leq z \leq 1.5$ and compare it with the GNC effects, all using our toy-model window function with angular opening $\theta_{\rm max} = \pi/2$;
-- `ipynbs/Generic_Window.ipynb` explains how to use GaPSE with a generic Window Function of your choice;
-- `ipynbs/eBOSS_Window.ipynb` apply GaPSE on a real case scenario: the eBOSS window function;
-- the `ipynbs/Computations_b1p5-sb0-fevo0.jl` Julia file is the translation into script of `ipynbs/Computations_b1p5-sb0-fevo0.ipynb`; you can easily run it from the command line with:
-  ```bash
-    $ julia Computations_b1p5-sb0-fevo0.jl
-  ```
-
-The code is well tested and documented: almost each struct/function has a docstring that you can easily access in Julia with `?<name-of-the-struct/function>`, and there is an active GitHub Pages website with the [latest stable documentation](https://foglienimatteo.github.io/GaPSE.jl/stable).
-
-
-
-
 
 
 ### Docker container: Installation and Usage
@@ -214,23 +207,19 @@ The images are saved in <https://hub.docker.com/repository/docker/matteofoglieni
 
 These containers have already installed all the Julia packages that GaPSE needs (i.e. the ones listed in `Project.toml`) + some others for the ipynbs (check the Dockerfile itself).
 
-
-The second command runs the whole unit-test suite inside the container; it takes about
-half an hour.
-
 Supposing that you have already installed Docker (see the [Docker official website](https://docs.docker.com/get-started/get-docker/)), to use GaPSE in a container:
 
 
 ```bash
 # visit the website https://hub.docker.com/repository/docker/matteofoglieni/gapse/general
 # to choose which image to download
-$ docker pull matteofoglieni/gapse:0.10.0a       # download the specific GaPSE image you want
+$ sudo docker pull matteofoglieni/gapse:latest       # you can also download a specific version by editing ":latest"
 
 # choose a free port on your machine where to access the JupyterLab of the container; 
 # we will use "10000"
 
 # run the GaPSE container and expose that port 
-$ docker run --env JUPYTER_TOKEN=test --detach --publish 10000:8888 matteofoglieni/gapse:0.10.0a 
+$ sudo docker run --env JUPYTER_TOKEN=test --detach --publish 10000:8888 matteofoglieni/gapse:latest
 
 # open a browser of your choice on your local machine and go to
 #   http://127.0.0.1:10000
@@ -242,15 +231,26 @@ Now you can use GaPSE inside the Jupyter interface as normally!
 Quick summary of Docker commands, in case you don't know them:
 
 ```bash
-$ docker ps [-a]                        # list running containers ("-a" to list also stopped ones)
-$ docker logs <container-name/id>       # get logs of a container
-$ docker start/stop <container-name/id> # start a stopped container/stop a running container
-$ docker rm <container-id/name>         # delete a container
-$ docker pull <image>                   # download a container image
-$ docker run <image>                    # create a running container from an image
-$ docker image list                     # list all the local images
-$ docker image rm <image>               # delete an image
+$ sudo docker ps [-a]                        # list running containers ("-a" to list also stopped ones)
+$ sudo docker logs <container-name/id>       # get logs of a container
+$ sudo docker start/stop <container-name/id> # start a stopped container/stop a running container
+$ sudo docker rm <container-id/name>         # delete a container
+$ sudo docker pull <image>                   # download a container image
+$ sudo docker run <image>                    # create a running container from an image
+$ sudo docker image list                     # list all the local images
+$ sudo docker image rm <image>               # delete an image
 ```
+
+Regarding multithreading: by default, a Docker container can access and use all CPU cores available on the host machine, and the base image Dockerfile
+set the env var `JULIA_NUM_THREADS=auto`. JupyterLab server inherits that env, and jupyter_client spawns kernels with a copy of the server environment
+=> the base image default IJulia kernelspec (which carries no `--threads`) still comes up multi-threaded
+=> **TL;DR: the Docker container is already multi-threaded!**
+
+If you instead want to limit CPUs on `docker run`:
+
+* `--cpuset-cpus="0-3"` changes the affinity mask, i.e. pins the container to specific CPU cores, and Julia's `auto` is affinity-aware. This is useful for deterministic performance but is less portable in orchestrators like Kubernetes
+* `--cpus=2` is a CFS quota only: it limits the total amount of CPU time a container can consume, but the affinity mask is untouched, so `auto` still counts every host core and you oversubscribe => N threads timesharing 2 CPUs, which might make `map_over_ss` slower instead of faster. With `--cpus`, add `-e JULIA_NUM_THREADS=2`, or just prefer `--cpuset-cpus`.
+
 
 
 
