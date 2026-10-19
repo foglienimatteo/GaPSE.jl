@@ -1,5 +1,5 @@
 ---
-title: 'GaPSE.jl: Full Relativistic two-point statistics of Galaxy Number Counts and Luminosity-Distance fluctuations'
+title: 'GaPSE.jl: full-relativistic two-point statistics of galaxy clustering'
 tags:
   - Julia
   - cosmology
@@ -37,24 +37,24 @@ The code supports multithreaded calculations, and an extensive documentation and
 # Statement of need
 
 
-The current standard paradigm for the origin of the structure formation in the Universe
-is the inflation, i.e. an exponentially rapidly growth of the Universe scale factor $a$ of about
+The current standard paradigm for the origin of structure formation in the Universe
+is the inflation, i.e. an exponentially rapid growth of the Universe scale factor $a$ of about
 28 orders of magnitude. Almost all the inflationary models predict a flat universe and a nearly scale-invariant 
-spectrum of initial fluctuations. Consequently, studying constraining variables that might distinguish between
+spectrum of initial fluctuations. Consequently, identifying observables that can discriminate between
 these models is of utmost importance. Local Primordial Non-Gaussianities (PNG) are one of the most promising 
-variable of this kind [@Achucarro:2022].
+variables of this kind [@Achucarro:2022].
 
 The standard parameterization of the local PNG is the so-called scale-independent $f_{NL}$ parameterization,
 which would imprint a scale-dependent bias at low wavenumbers on the observable Power Spectrum [@Dalal:2008; @Slosar:2008].
-However, on those scale, the pure Newtonian and plane-parallel approximations that underpin most clustering analyses cease to be adequate,
+However, on those scales, the pure Newtonian and plane-parallel approximations that underpin most clustering analyses cease to be adequate,
 because the separation between a pair of galaxies becomes comparable to the distance from us to them.
-Consequenly, a full General Relativistic (GR) approach must be employed.
+Consequently, a full General Relativistic (GR) approach must be employed.
 
-In such analysis, the GR effects manifest themself into two observable groups, that can be derived analytically [@Castorina:2022]: 
+In such analysis, the GR effects manifest themselves in two groups of observables, that can be derived analytically [@Castorina:2022]: 
 the Luminosity Distance (LD) fluctuations and the Galaxy Number Counts (GNC).
 Due to the presence of the gravitational potential in many GR effects, some of these terms might _mimic_ the PNG detection and measurements,
 leading to wrong results. For this reason, we need a deeper understanding of these GR effects,
-especially for future survey that aim to map the Universe on the largest scales, like Euclid.
+especially for future surveys that aim to map the Universe on the largest scales, like Euclid.
 This is why we developed `GaPSE.jl`.
 
 `GaPSE.jl` (Galaxy Power Spectrum Estimator) is an open-source code, written in the Julia programming language, that computes the
@@ -68,7 +68,7 @@ and investigate how survey geometry affects the resulting observables.
 Publicly available Boltzmann codes, such as CAMB [@CAMB:2026], compute the observed number counts as angular power
 spectra $C_\ell(z_i, z_j)$, a representation that is exact but expensive to connect to the
 Fourier-space quantities that clustering analyses actually fit.
-`GaPSE.jl` implements instead the Fourier-space formalism of [@CCastorina:2022], 
+`GaPSE.jl` implements instead the Fourier-space formalism of [@Castorina:2022], 
 in which the observed Power Spectrum multipoles are obtained from a configuration-space calculation that keeps the two
 lines of sight exact. 
 The code was written for, and used to produce the results of, [@Foglieni:2023] and [@Pantiri:2024], 
@@ -76,7 +76,7 @@ which respectively derived the large-scale limit of the observed galaxy Power Sp
 fluctuations.
 
 The practical need it fills is the ability to isolate individual contributions. 
-Every relativistic term is computed and returned separately, a user can ask which effect
+Every relativistic term is computed and returned separately, so a user can ask which effect
 dominates at a given redshift, at which multipole order, and under which survey geometry.
 This term-by-term decomposition facilitates physical interpretation and systematic assessments of potential degeneracies with PNG. 
 Such analyses would be considerably less straightforward with software that provides only the total observable.
@@ -84,8 +84,8 @@ Such analyses would be considerably less straightforward with software that prov
 
 # Software design
 
-Giving in input the linear matter Power Spectrum at $z = 0$ and the background quantities of the 
-chosen cosmology - both read directly from the output of `CLASS` [@CLASS:2011] - `GaPSE.jl` computes:
+Given the linear matter Power Spectrum at $z = 0$ and the background quantities of the 
+chosen cosmology as input - both read directly from the output of `CLASS` [@CLASS:2011] - `GaPSE.jl` computes:
 
 - the 25 Two-Point Correlation Functions (TPCFs) of the relativistic Galaxy Number Counts (GNC), at arbitrary multipole
   order, covering the auto- and cross-correlations of the density and redshift-space
@@ -106,7 +106,7 @@ interchangeable quadrature schemes: trapezoidal, Gauss–Lobatto and adaptive Ga
 
 The loop over input separation points is parallelized using Julia's multithreading capabilities. 
 In the tested configuration, the multithreaded implementation achieves a speedup of 
-approximately 3.3× using  threads. The numerical results are independent of the number of threads used.
+approximately 3.3× using 4 threads. The numerical results are independent of the number of threads used.
 The code repo ships a test suite that compares every correlation against stored reference values, 
 run in continuous integration on Linux and macOS, single and multi-threaded.
 The extensive documentation covers both the API and the theory behind each expression, and a set of
