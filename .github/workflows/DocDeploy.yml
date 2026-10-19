@@ -37,9 +37,51 @@ concurrency:
 #    types: [published, edited, prereleased, released]
 
 jobs:
+  changes:
+    # Skip change detection for tags; release builds must always run.
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+    runs-on: ubuntu-latest
+
+    # Modify the default permissions granted to the GITHUB_TOKEN
+    # see <https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#permissions>
+    permissions:
+      contents: read
+      pull-requests: read
+
+    outputs:
+      docs: ${{ steps.filter.outputs.docs }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            docs:
+              - 'docs/**'
+              - 'src/**'
+              - 'Project.toml'
+              - 'Manifest.toml'
+              - 'Artifacts.toml'
+              - '.github/workflows/DocDeploy.yml'
+
   build:
     name: Build and deploy docs
+    needs: changes
+
+    # Run for relevant changes, manual runs, and release tags.
+    if: >-
+      always() &&
+      (
+        startsWith(github.ref, 'refs/tags/') ||
+        needs.changes.outputs.docs == 'true' ||
+        github.event_name == 'workflow_dispatch'
+      )
     runs-on: ubuntu-latest
+    # Modify the default permissions granted to the GITHUB_TOKEN
+    # see <https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#permissions>
     permissions:
       contents: write        # push to gh-pages
       pull-requests: read    # preview builds on PRs
