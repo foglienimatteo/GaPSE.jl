@@ -200,7 +200,7 @@ Keep the `--project=@.` in either case: it is the option the default IJulia kern
 
 The `Dockerfile` we provide in this directory is the one we used to create the container image corresponding to this GaPSE version.
 
-The images are saved in <https://hub.docker.com/repository/docker/matteofoglieni/gapse/general>; their tag is a combination of:
+The images are saved in <https://hub.docker.com/repository/docker/foglienimatteo/gapse/general>; their tag is a combination of:
 
 - the same as the GaPSE version the container refers to;
 - a latin letter (alphabetically ordered), to take into account different Dockerfile versions which refer to the same GaPSE one.
@@ -211,15 +211,15 @@ Supposing that you have already installed Docker (see the [Docker official websi
 
 
 ```bash
-# visit the website https://hub.docker.com/repository/docker/matteofoglieni/gapse/general
+# visit the website https://hub.docker.com/repository/docker/foglienimatteo/gapse/general
 # to choose which image to download
-$ sudo docker pull matteofoglieni/gapse:latest       # you can also download a specific version by editing ":latest"
+$ sudo docker pull foglienimatteo/gapse:latest       # you can also download a specific version by editing ":latest"
 
 # choose a free port on your machine where to access the JupyterLab of the container; 
 # we will use "10000"
 
 # run the GaPSE container and expose that port 
-$ sudo docker run --env JUPYTER_TOKEN=test --detach --publish 10000:8888 matteofoglieni/gapse:latest
+$ sudo docker run --env JUPYTER_TOKEN=test --detach --publish 10000:8888 foglienimatteo/gapse:latest
 
 # open a browser of your choice on your local machine and go to
 #   http://127.0.0.1:10000
