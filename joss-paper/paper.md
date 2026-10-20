@@ -25,13 +25,14 @@ bibliography: paper.bib
 
 # Summary
 
-`GaPSE.jl` (Galaxy Power Spectrum Estimator) is an open-source Julia code written for computing 
+`GaPSE.jl` (Galaxy Power Spectrum Estimator) is an open-source Julia package for computing 
 the two-point statistics of relativistic effects in galaxy clustering at first order in perturbation theory. 
-The software computes two-point correlation functions (TPCFs) of relativistic galaxy number counts (GNC) 
-and luminosity-distance (LD) perturbations, including their cross-correlations, as well as their corresponding power spectra multipoles, 
-with or without a survey window function. Its modular design provides individual contributions from the different physical effects, 
-allowing users to investigate their relative importance across redshifts, multipoles, and survey geometries. 
-The code supports multithreaded calculations, and an extensive documentation and many Jupyter notebooks are provided.
+It computes Two-Point Correlation Functions of relativistic Galaxy Number Counts and Luminosity Distance perturbations, 
+their cross-correlations, and the corresponding power spectra multipoles, with or without a survey window function.
+The package allows to compute individual contributions from the physical effects entering these observables, including
+Doppler effect, lensing, and gravitational potentials. This decomposition allows the users to study the relative 
+importance of each relativistic correction individually and their potential degeneracies with signals from local 
+Primordial Non-Gaussianity, across different redshift bins, multipoles, and survey geometries.
 
 
 # Statement of need
@@ -63,17 +64,16 @@ This enables users to assess the importance of relativistic corrections, compare
 and investigate how survey geometry affects the resulting observables.
 
 
+
 # State of the field and research impact statement
 
-Publicly available Boltzmann codes, such as CAMB [@CAMB:2026], compute the observed number counts as angular power
-spectra $C_\ell(z_i, z_j)$, a representation that is exact but expensive to connect to the
-Fourier-space quantities that clustering analyses actually fit.
+Existing publicly available codes address related but distinct observables.
+Boltzmann codes such as `CAMB` [@CAMB:2026] and `CLASS` [@CLASS:2011] calculate angular power spectra of observed number counts, $C_\ell(z_i,z_j)$. 
+This representation is exact, but expensive to connect to the Fourier-space quantities that clustering analyses actually fit.
 `GaPSE.jl` implements instead the Fourier-space formalism of [@Castorina:2022], 
-in which the observed Power Spectrum multipoles are obtained from a configuration-space calculation that keeps the two
-lines of sight exact. 
-The code was written for, and used to produce the results of, [@Foglieni:2023] and [@Pantiri:2024], 
-which respectively derived the large-scale limit of the observed galaxy Power Spectrum and extended the formalism to luminosity-distance
-fluctuations.
+in which the observed Power Spectrum multipoles are obtained from the Yamamoto estimator, using the endpoint line-of-sight convention.
+
+`COFFE` (COrrelation Function Full-sky Estimator) provides a complementary approach, calculating full-sky and flat-sky galaxy two-point correlation functions and their multipoles, including relativistic and wide-angle effects [@COFFE:2018]. It also supports covariance calculations for relevant correlation-function estimators. These capabilities make `COFFE` an important existing alternative for analyses centered on galaxy number counts in configuration space.
 
 The practical need it fills is the ability to isolate individual contributions. 
 Every relativistic term is computed and returned separately, so a user can ask which effect
@@ -84,42 +84,93 @@ Such analyses would be considerably less straightforward with software that prov
 
 # Software design
 
-Given the linear matter Power Spectrum at $z = 0$ and the background quantities of the 
-chosen cosmology as input - both read directly from the output of `CLASS` [@CLASS:2011] - `GaPSE.jl` computes:
 
-- the 25 Two-Point Correlation Functions (TPCFs) of the relativistic Galaxy Number Counts (GNC), at arbitrary multipole
-  order, covering the auto- and cross-correlations of the density and redshift-space
-  distortion ("Newtonian"), Doppler, lensing, local gravitational potential and integrated
-  gravitational potential terms; observer terms can be optionally included;
-- the 16 TPCFs of the Luminosity-Distance (LD) perturbations;
-- the 20 GNC $\times$ LD cross-correlations and their 20 LD $\times$ GNC counterparts;
-- the Power Spectrum multipoles of all of the above, based on the Yamamoto estimator;
-- the Doppler and matter TPCFs in the plane-parallel approximation, for comparison;
-- the Local PNG contribution, modelled via the scale-dependent bias
+The design of GaPSE.jl separates cosmological inputs from the calculation of the observables. 
+Users provide two input files: the linear matter power spectrum at redshift $z=0$ and the background 
+quantities of the chosen cosmology. Example files for a standard cosmology are provided in the `data` 
+directory; users can generate equivalent files for their own cosmological models using CLASS [@CLASS:2011]. 
+These inputs are loaded into a `Cosmology` Julia `struct`, which stores the cosmological parameters 
+and the interpolating splines required by subsequent calculations. This allows multiple correlation 
+functions and power-spectrum multipoles to be evaluated using the same cosmological setup.
 
-All of these can be evaluated with or without a survey window function; a toy survey with
-azimuthal symmetry is provided, and an arbitrary window can be supplied as a tabulated map.
+Once a `Cosmology` object has been initialized, users can calculate the supported Two-Point Correlation 
+Function (TPCF) multipoles for Galaxy Number Counts (GNC), Luminosity Distance (LD) perturbations, 
+their cross-correlations, and the local Primordial Non-Gaussianity (PNG) contribution. Doppler and 
+matter correlation functions in plane-parallel approximation are also available for comparison. 
+Individual physical contributions are computed separately, rather than only as a total observable, 
+allowing users to investigate their relative importance in the given Cosmology.
 
-The numerical core of the code rests on an FFTLog evaluation of the $I_\ell^n$ integrals of the input
-Power Spectrum, through `TwoFAST.jl` [@Gebhardt:2018] and `FFTLog.jl` [@Bonici:2021], and on three 
-interchangeable quadrature schemes: trapezoidal, Gauss–Lobatto and adaptive Gauss–Kronrod.
+Survey geometry is incorporated through the `use_windows` boolean option. The package provides a toy-model 
+window function with azimuthal symmetry for controlled tests and comparisons. For real applications, 
+users can supply an arbitrary window function as a tabulated map.
 
-The loop over input separation points is parallelized using Julia's multithreading capabilities. 
-In the tested configuration, the multithreaded implementation achieves a speedup of 
-approximately 3.3× using 4 threads. The numerical results are independent of the number of threads used.
-The code repo ships a test suite that compares every correlation against stored reference values, 
-run in continuous integration on Linux and macOS, single and multi-threaded.
-The extensive documentation covers both the API and the theory behind each expression, and a set of
-Jupyter notebooks reproduces all the figures and the numerical claims.
-Furthermore, a Docker container with all the aforementioned features and files can be pulled from `foglienimatteo/gapse`.
+The computational core of the package is the evaluation of the integrals for the TPFCs, which can involve,
+depending on the term considered, 1, 2 or 3 nested integrals. the four contributions involving three nested integrals
+(Lensing auto-correlation, Integrated Gravitational Potential auto-correlation, 
+and their 2 cross-correlations) are the ones more time consuming by far. The following profiling flame 
+graph obtained with Intel VTune illustrates the computational workload involved in evaluating all 
+25 GNC TPCFs, and the predominance of the aforementioned 4 terms:
+
+![GaPSE.jl profiled with VTune](./GaPSE-profiled-VTune.png)
+
+However, the evaluation in each input point can be done independently from the others. This provides a 
+straightforward strategy for parallelization over the requested input vector of distances, 
+without introducing dependencies between evaluations. For example, the following pseudo-code computes 
+all the 25 GNC TPCFs multipoles (and their sum, hence the name) over a logarithmically spaced set 
+of separations (and save them to a file):
+
+```julia
+cosmo = Cosmology(...)
+vec_ss = 10 .^ range(0, log10(2 * cosmo.s_max), length=100)
+GaPSE.print_map_sum_ξ_GNC_multipole(cosmo, "output_file.txt", vec_ss)
+```
+
+The evaluations over `vec_ss` are distributed across Julia threads. In the tested configuration, 
+four threads provide a speedup of approximately 3.3× relative to single-threaded execution.
+
+The Power Spectrum multipoles can be performed using FFTLog-based algorithms provided by TwoFAST.jl [@Gebhardt:2018] 
+and FFTLog.jl [@Bonici:2021]. These methods evaluate the required transforms efficiently, making the 
+Power Spectra calculation comparatively inexpensive relative to the nested integrations required for the TPCFs.
+
+Numerous Jupyter notebooks are provided in the directories `ipynbs` and `theory` to demonstrate how
+to use the code and clarify important theoretical and computational aspects: among them, `ipynbs/TUTORIAL.ipynb`
+show the basic workflow step-by-step, `ipynbs/Generic_Window.ipynb` and `ipynbs/eBOSS_Window.ipynb` 
+how to use a user-supplied window function and an application to a real survey window, respectively,
+and `theory/threads_scaling.ipynb` the parallelization scaling. 
+Finally, a Docker container with all the aforementioned features and files can be pulled from `foglienimatteo/gapse`.
+
+
+
+# Research impact statement
+
+`GaPSE.jl` has already supported published research. 
+It was used to derive and analyze the large-scale limit of the observed galaxy power spectrum, 
+including the potential degeneracy between relativistic contributions and local Primordial Non-Gaussianity [@Foglieni:2023]. 
+It was subsequently used to investigate the power spectrum of Luminosity Distance fluctuations in General Relativity 
+and their relevance to peculiar-velocity surveys [@Pantiri:2024]. 
+
+Furthermore, a collaboration leading to [@Batia:2025] motivated an extension of `GaPSE.jl` to handle 
+multiple galaxy populations within the same `Cosmology` instance. This extension enables the computation 
+of cross-correlations between two galaxy populations with different values of the parameters $b_1$, 
+$s_\mathrm{b}$, $\mathit{f}_{\mathrm{evo}}$ (galaxy bias, magnification bias  and evolution bias, respectively).
+
 
 
 # AI usage disclosure
 
 No AI tools were used in the development of `GaPSE.jl` before and up to version `v0.8.0`.
-Beginning with version `v0.10.0`, we took advantage of AI models developed by Anthropic
-to investigate numerical issues and inconsistencies arising in specific corner cases and to improve the software documentation.
-We take full responsibility for reviewing and validating the AI-assisted work and for the resulting code and documentation.
+Beginning with version `v0.10.0`, we took advantage of AI models developed by Anthropic and OpenAI
+to investigate numerical issues and inconsistencies arising in specific corner cases, to improve the 
+software documentation and assist in drafting and revising this manuscript. The authors reviewed and 
+validated the AI-assisted contributions and take responsibility for the final software, documentation, and manuscript.
 
+
+# Acknowledgements
+
+We thank the Leibniz Supercomputing Centre (LRZ) and the University of Milan for their support in
+the development of the code.
 
 # References
+
+
+
