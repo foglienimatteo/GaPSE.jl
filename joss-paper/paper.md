@@ -111,19 +111,17 @@ and their 2 cross-correlations) are the ones more time consuming by far. The fol
 graph obtained with Intel VTune illustrates the computational workload involved in evaluating all 
 25 GNC TPCFs, and the predominance of the aforementioned 4 terms:
 
-![GaPSE.jl profiled with VTune](./GaPSE-profiled-VTune.png)
+![GaPSE.jl profiled with VTune](./images/GaPSE-profiled-VTune.png)
 
 However, the evaluation in each input point can be done independently from the others. This provides a 
 straightforward strategy for parallelization over the requested input vector of distances, 
-without introducing dependencies between evaluations. For example, the following pseudo-code computes 
+without introducing dependencies between evaluations. For example, the following code computes 
 all the 25 GNC TPCFs multipoles (and their sum, hence the name) over a logarithmically spaced set 
 of separations (and save them to a file):
 
-```julia
-cosmo = Cosmology(...)
-vec_ss = 10 .^ range(0, log10(2 * cosmo.s_max), length=100)
-GaPSE.print_map_sum_ξ_GNC_multipole(cosmo, "output_file.txt", vec_ss)
-```
+
+![GaPSE.jl 25 GNC TPCFs computation, 4 threads](./images/GaPSE-4-threads.png)
+
 
 The evaluations over `vec_ss` are distributed across Julia threads. In the tested configuration, 
 four threads provide a speedup of approximately 3.3× relative to single-threaded execution.
