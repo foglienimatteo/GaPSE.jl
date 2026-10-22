@@ -55,7 +55,7 @@ In such analysis, the GR effects manifest themselves in two groups of observable
 the Luminosity Distance (LD) fluctuations and the Galaxy Number Counts (GNC).
 Due to the presence of the gravitational potential in many GR effects, some of these terms might _mimic_ the PNG detection and measurements,
 leading to wrong results. For this reason, we need a deeper understanding of these GR effects,
-especially for future surveys that aim to map the Universe on the largest scales, like Euclid.
+especially for future surveys that aim to map the Universe on the largest scales, like Euclid ([@Euclid:2011]).
 This is why we developed `GaPSE.jl`.
 
 `GaPSE.jl` (Galaxy Power Spectrum Estimator) is an open-source code, written in the Julia programming language, that computes the
@@ -69,21 +69,24 @@ and investigate how survey geometry affects the resulting observables.
 
 Existing publicly available codes address related but distinct observables.
 Boltzmann codes such as `CAMB` [@CAMB:2026] and `CLASS` [@CLASS:2011] calculate angular power spectra of observed number counts, $C_\ell(z_i,z_j)$. 
-This representation is exact, but expensive to connect to the Fourier-space quantities that clustering analyses actually fit.
-`GaPSE.jl` implements instead the Fourier-space formalism of [@Castorina:2022], 
-in which the observed Power Spectrum multipoles are obtained from the Yamamoto estimator, using the endpoint line-of-sight convention.
+This representation is exact, but these angular spectra are not directly the Fourier-space Power Spectrum multipoles 
+commonly used in galaxy-clustering analyses, and the translation from one to the other is non-trivial.
+`GaPSE.jl` implements instead the Fourier-space formalism of [@Castorina:2022], in which the observed Power Spectrum multipoles 
+are obtained from the Yamamoto estimator, using the endpoint line-of-sight convention.
 
-`COFFE` (COrrelation Function Full-sky Estimator) provides a complementary approach, calculating full-sky and flat-sky galaxy two-point correlation functions and their multipoles, including relativistic and wide-angle effects [@COFFE:2018]. It also supports covariance calculations for relevant correlation-function estimators. These capabilities make `COFFE` an important existing alternative for analyses centered on galaxy number counts in configuration space.
-
-The practical need it fills is the ability to isolate individual contributions. 
-Every relativistic term is computed and returned separately, so a user can ask which effect
-dominates at a given redshift, at which multipole order, and under which survey geometry.
-This term-by-term decomposition facilitates physical interpretation and systematic assessments of potential degeneracies with PNG. 
-Such analyses would be considerably less straightforward with software that provides only the total observable.
+`COFFE` (COrrelation Function Full-sky Estimator) provides a complementary approach, calculating full-sky and flat-sky 
+galaxy two-point correlation functions and their multipoles, including relativistic and wide-angle effects [@COFFE:2018]. 
+It also supports covariance calculations for relevant correlation-function estimators. These capabilities make `COFFE` 
+an important existing alternative for analyses centered on galaxy number counts in configuration space.
+`GaPSE.jl` differs in two main respects. First, it computes and returns individual relativistic contributions separately, 
+allowing users to identify which physical effects dominate at different redshifts, multipole orders, and survey geometries. 
+This decomposition facilitates the physical interpretation of the observables and the assessment of potential degeneracies 
+with Primordial Non-Gaussianity. Second, `GaPSE.jl` extends the analysis to Luminosity Distance perturbations and their 
+cross-correlations with Galaxy Number Counts, providing observables beyond the ones addressed by COFFE. 
+These capabilities make `GaPSE.jl` complementary to the currently existing tools and motivate its development as a separate package.
 
 
 # Software design
-
 
 The design of GaPSE.jl separates cosmological inputs from the calculation of the observables. 
 Users provide two input files: the linear matter power spectrum at redshift $z=0$ and the background 
@@ -98,16 +101,16 @@ Function (TPCF) multipoles for Galaxy Number Counts (GNC), Luminosity Distance (
 their cross-correlations, and the local Primordial Non-Gaussianity (PNG) contribution. Doppler and 
 matter correlation functions in plane-parallel approximation are also available for comparison. 
 Individual physical contributions are computed separately, rather than only as a total observable, 
-allowing users to investigate their relative importance in the given Cosmology.
+allowing users to investigate their relative importance in the given `Cosmology`.
 
 Survey geometry is incorporated through the `use_windows` boolean option. The package provides a toy-model 
 window function with azimuthal symmetry for controlled tests and comparisons. For real applications, 
 users can supply an arbitrary window function as a tabulated map.
 
-The computational core of the package is the evaluation of the integrals for the TPFCs, which can involve,
-depending on the term considered, 1, 2 or 3 nested integrals. the four contributions involving three nested integrals
+The computational core of the package is the evaluation of the integrals for the TPCFs, which can involve,
+depending on the term considered, 1, 2 or 3 nested integrals. The four contributions involving three nested integrals
 (Lensing auto-correlation, Integrated Gravitational Potential auto-correlation, 
-and their 2 cross-correlations) are the ones more time consuming by far. The following profiling flame 
+and their 2 cross-correlations) are by far the most computationally expensive contributions. The following profiling flame 
 graph obtained with Intel VTune illustrates the computational workload involved in evaluating all 
 25 GNC TPCFs, and the predominance of the aforementioned 4 terms:
 
@@ -115,18 +118,18 @@ graph obtained with Intel VTune illustrates the computational workload involved 
 
 However, the evaluation in each input point can be done independently from the others. This provides a 
 straightforward strategy for parallelization over the requested input vector of distances, 
-without introducing dependencies between evaluations. For example, the following code computes 
-all the 25 GNC TPCFs multipoles (and their sum, hence the name) over a logarithmically spaced set 
-of separations (and save them to a file):
+without introducing dependencies between evaluations. For example, the following code snippet computes 
+all the 25 GNC TPCF multipoles and their sum (hence the name) over a logarithmically spaced set 
+of separations (and saves them to a file):
 
 
 ![GaPSE.jl 25 GNC TPCFs computation, 4 threads](./images/GaPSE-4-threads.png)
 
 
-The evaluations over `vec_ss` are distributed across Julia threads. In the tested configuration, 
-four threads provide a speedup of approximately 3.3× relative to single-threaded execution.
+The evaluations over `vec_ss` are distributed across the available Julia threads. In the tested configuration, 
+four threads provide a speedup of approximately $3.3\times$ relative to single-threaded execution.
 
-The Power Spectrum multipoles can be performed using FFTLog-based algorithms provided by TwoFAST.jl [@Gebhardt:2018] 
+The Power Spectrum multipoles are computed using FFTLog-based algorithms provided by TwoFAST.jl [@Gebhardt:2018] 
 and FFTLog.jl [@Bonici:2021]. These methods evaluate the required transforms efficiently, making the 
 Power Spectra calculation comparatively inexpensive relative to the nested integrations required for the TPCFs.
 
@@ -134,7 +137,7 @@ Numerous Jupyter notebooks are provided in the directories `ipynbs` and `theory`
 to use the code and clarify important theoretical and computational aspects: among them, `ipynbs/TUTORIAL.ipynb`
 show the basic workflow step-by-step, `ipynbs/Generic_Window.ipynb` and `ipynbs/eBOSS_Window.ipynb` 
 how to use a user-supplied window function and an application to a real survey window, respectively,
-and `theory/threads_scaling.ipynb` the parallelization scaling. 
+and `theory/threads_scaling.ipynb` the scaling of the parallel implementation. 
 Finally, a Docker container with all the aforementioned features and files can be pulled from `foglienimatteo/gapse`.
 
 
@@ -147,26 +150,26 @@ including the potential degeneracy between relativistic contributions and local 
 It was subsequently used to investigate the power spectrum of Luminosity Distance fluctuations in General Relativity 
 and their relevance to peculiar-velocity surveys [@Pantiri:2024]. 
 
-Furthermore, a collaboration leading to [@Batia:2025] motivated an extension of `GaPSE.jl` to handle 
-multiple galaxy populations within the same `Cosmology` instance. This extension enables the computation 
+The study reported in [@Batia:2025] motivated an extension of GaPSE.jl to handle multiple galaxy populations 
+within the same Cosmology instance. This extension enables the computation 
 of cross-correlations between two galaxy populations with different values of the parameters $b_1$, 
-$s_\mathrm{b}$, $\mathit{f}_{\mathrm{evo}}$ (galaxy bias, magnification bias  and evolution bias, respectively).
+$s_\mathrm{b}$, $\mathit{f}_{\mathrm{evo}}$ (galaxy bias, magnification bias and evolution bias, respectively).
 
 
 
 # AI usage disclosure
 
 No AI tools were used in the development of `GaPSE.jl` before and up to version `v0.8.0`.
-Beginning with version `v0.10.0`, we took advantage of AI models developed by Anthropic and OpenAI
+Beginning with version `v0.10.0`, we took advantage of Claude Opus 5.4 and ChatGPT Astra
 to investigate numerical issues and inconsistencies arising in specific corner cases, to improve the 
 software documentation and assist in drafting and revising this manuscript. The authors reviewed and 
-validated the AI-assisted contributions and take responsibility for the final software, documentation, and manuscript.
+validated the AI-assisted contributions and take responsibility for the final software, documentation, and paper.
 
 
 # Acknowledgements
 
-We thank the Leibniz Supercomputing Centre (LRZ) and the University of Milan for their support in
-the development of the code.
+We thank the Leibniz Supercomputing Centre (LRZ) and the University of Milan for their support.
+We also thank Emanuele Castorina, Enea Di Dio, and Salvatore Cielo for their valuable contributions.
 
 # References
 
