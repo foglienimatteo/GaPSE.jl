@@ -53,8 +53,8 @@ Consequently, a full General Relativistic (GR) approach must be employed.
 
 In such analysis, the GR effects manifest themselves in two groups of observables, that can be derived analytically [@Castorina:2022]: 
 the Luminosity Distance (LD) fluctuations and the Galaxy Number Counts (GNC).
-Due to the presence of the gravitational potential in many GR effects, some of these terms can mimic a PNG signal and bias its measurement,
-leading to wrong results. For this reason, we need a deeper understanding of these GR effects,
+Due to the presence of the gravitational potential in many GR effects, some of these terms can mimic a PNG signal and bias its measurement.
+For this reason, we need a deeper understanding of these GR effects,
 especially for future surveys that aim to map the Universe on the largest scales, like Euclid [@Euclid:2011].
 This is why we developed `GaPSE.jl`.
 
@@ -70,16 +70,17 @@ and investigate how survey geometry affects the resulting observables.
 Existing publicly available codes address related but distinct observables.
 Boltzmann codes such as `CAMB` [@CAMB:2026] and `CLASS` [@CLASS:2011] calculate angular power spectra of observed number counts, $C_\ell(z_i,z_j)$. 
 This representation is exact, but these angular spectra are not directly the Fourier-space Power Spectrum multipoles 
-commonly used in galaxy-clustering analyses, and the translation from one to the other is non-trivial.
+commonly used in galaxy clustering analyses, and the translation from one to the other is non-trivial.
 `GaPSE.jl` implements instead the Fourier-space formalism of @Castorina:2022, in which the observed Power Spectrum multipoles 
-are obtained from the Yamamoto estimator, using the endpoint line-of-sight convention. This approach is more
+are obtained from the Yamamoto estimator, using the endpoint line-of-sight convention. Consequently, its outputs 
+can be compared with the measured multipoles obtained from spectroscopic surveys directly, without an intermediate conversion from angular spectra.
 
 
 `COFFE` (COrrelation Function Full-sky Estimator) provides a complementary approach, calculating full-sky and flat-sky 
 galaxy two-point correlation functions and their multipoles, including relativistic and wide-angle effects [@COFFE:2018]. 
 It also supports covariance calculations for relevant correlation-function estimators. These capabilities make `COFFE` 
 an important existing alternative for analyses centered on galaxy number counts in configuration space.
-GaPSE.jl `differs` in three respects: it computes also the Power Spectra multipoles (including an arbitrary survey window), 
+`GaPSE.jl` differs in three respects: it computes also the Power Spectra multipoles (including an arbitrary survey window), 
 rather than configuration-space correlation functions only; it extends the analysis to Luminosity Distance perturbations 
 and their cross correlations with Galaxy Number Counts; and it includes a model for the local PNG contribution. 
 In addition, a single function call in `GaPSE.jl` returns every auto- and cross-term separately together with their sum.
