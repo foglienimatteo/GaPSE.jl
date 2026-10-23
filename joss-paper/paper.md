@@ -30,7 +30,7 @@ the two-point statistics of relativistic effects in galaxy clustering at first o
 It computes Two-Point Correlation Functions of relativistic Galaxy Number Counts and Luminosity Distance perturbations, 
 their cross-correlations, and the corresponding power spectra multipoles, with or without a survey window function.
 The package allows users to compute individual contributions from the physical effects entering these observables, including
-Doppler effect, lensing, and gravitational potentials. This decomposition consents to study the relative 
+Doppler effect, lensing, and gravitational potentials. This decomposition makes it possible to study the relative 
 importance of each relativistic correction individually and their potential degeneracies with signals from local 
 Primordial Non-Gaussianity, across different redshift bins, multipoles, and survey geometries.
 
@@ -68,7 +68,8 @@ and investigate how survey geometry affects the resulting observables.
 # State of the field
 
 Existing publicly available codes address related but distinct observables.
-Boltzmann codes such as `CAMB` [@CAMB:2026] and `CLASS` [@CLASS:2011] calculate angular power spectra of observed number counts, $C_\ell(z_i,z_j)$. 
+Boltzmann codes such as `CAMB` [@CAMB:2026; @Challinor:2011] and `CLASS` [@CLASS:2011; @DiDio:2013] calculate 
+angular power spectra of observed number counts, $C_\ell(z_i,z_j)$. 
 This representation is exact, but these angular spectra are not directly the Fourier-space Power Spectrum multipoles 
 commonly used in galaxy clustering analyses, and the translation from one to the other is non-trivial.
 `GaPSE.jl` implements instead the Fourier-space formalism of @Castorina:2022, in which the observed Power Spectrum multipoles 
