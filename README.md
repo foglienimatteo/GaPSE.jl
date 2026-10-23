@@ -1,7 +1,6 @@
 # GaPSE.jl - a model for the Galaxy Power Spectrum Estimator
 
 ![julia-version](https://img.shields.io/badge/julia_version-v1.12-9558B2?style=flat&logo=julia) 
-![package-version](https://img.shields.io/github/v/release/foglienimatteo/GaPSE.jl?include_prereleases)
 ![CI-build](https://img.shields.io/github/actions/workflow/status/foglienimatteo/GaPSE.jl/UnitTests.yml)
 ![size](https://img.shields.io/github/repo-size/foglienimatteo/GaPSE.jl) 
 ![license](https://img.shields.io/github/license/foglienimatteo/GaPSE.jl)
@@ -13,7 +12,7 @@ GaPSE (Galaxy Power Spectrum Estimator) is a software for cosmological computati
 <br>
 
 > [!TIP]
-> FIRST TIME HERE? Have a look at the `ipynbs/TUTORIAL.ipynb`
+> FIRST TIME HERE? Have a look at the `ipynbs/TUTORIAL.ipynb` to learn how to use GaPSE.jl!
 
 > [!NOTE]
 > * In the [GaPSE GitHub Pages documentation](https://foglienimatteo.github.io/GaPSE.jl/stable) you can find also the physics and numeric theory behind this code
@@ -212,7 +211,7 @@ Keep the `--project=@.` in either case: it is the option the default IJulia kern
 
 The `Dockerfile` we provide in this directory is the one we used to create the container image corresponding to this GaPSE version.
 
-The images are saved in <https://hub.docker.com/repository/docker/matteofoglieni/gapse/general>; their tag is a combination of:
+The images are saved in <https://hub.docker.com/repository/docker/foglienimatteo/gapse/general>; their tag is a combination of:
 
 - the same as the GaPSE version the container refers to;
 - a latin letter (alphabetically ordered), to take into account different Dockerfile versions which refer to the same GaPSE one.
@@ -223,15 +222,15 @@ Supposing that you have already installed Docker (see the [Docker official websi
 
 
 ```bash
-# visit the website https://hub.docker.com/repository/docker/matteofoglieni/gapse/general
+# visit the website https://hub.docker.com/repository/docker/foglienimatteo/gapse/general
 # to choose which image to download
-$ sudo docker pull matteofoglieni/gapse:latest       # you can also download a specific version by editing ":latest"
+$ sudo docker pull foglienimatteo/gapse:latest       # you can also download a specific version by editing ":latest"
 
 # choose a free port on your machine where to access the JupyterLab of the container; 
 # we will use "10000"
 
 # run the GaPSE container and expose that port 
-$ sudo docker run --env JUPYTER_TOKEN=test --detach --publish 10000:8888 matteofoglieni/gapse:latest
+$ sudo docker run --env JUPYTER_TOKEN=test --detach --publish 10000:8888 foglienimatteo/gapse:latest
 
 # open a browser of your choice on your local machine and go to
 #   http://127.0.0.1:10000

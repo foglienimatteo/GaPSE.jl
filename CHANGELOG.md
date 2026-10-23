@@ -1,3 +1,12 @@
+## UNRELEASED
+
+### The code
+
+- BUG FIX: `Δχ_min` can now be given to the `sum_ξ_*_multipole`, `map_sum_ξ_*_multipole` and `print_map_sum_ξ_*_multipole` functions of all four families.
+
+- BUG FIX: `ξ_LD_LocalGP_IntegratedGP` did not forward its keyword arguments to its integrand, so `Δχ_min` could not reach the `Δχ → 0` branch even when the function was called on its own (and `ξ_LD_IntegratedGP_LocalGP` neither, which calls it).
+
+
 ## VERSION 0.10.0
 
 ### The code
