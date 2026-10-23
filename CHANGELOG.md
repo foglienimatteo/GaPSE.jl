@@ -1,3 +1,12 @@
+## UNRELEASED
+
+### The code
+
+- BUG FIX: `Δχ_min` can now be given to the `sum_ξ_*_multipole`, `map_sum_ξ_*_multipole` and `print_map_sum_ξ_*_multipole` functions of all four families. The `specif_kwargs_*` dispatchers did not list it among the keywords of the `χ`-integrated terms, so they forwarded it to every term, and the first non-integrated one (`ξ_GNC_Newtonian`, `ξ_LD_Doppler`, ...) threw a `MethodError`. It now reaches the `χ`-integrated terms (12 LD, 16 GNC, 14 GNCxLD, 14 LDxGNC) and no other; `test/test_Dicts.jl` checks this for all 81 terms. `specif_kwargs_LDxGNC` also filtered its non-integrated terms with the `GNCxLD` list instead of its own (same contents, so no change of behaviour);
+
+- BUG FIX: `ξ_LD_LocalGP_IntegratedGP` did not forward its keyword arguments to its integrand, so `Δχ_min` could not reach the `Δχ → 0` branch even when the function was called on its own (and `ξ_LD_IntegratedGP_LocalGP` neither, which calls it). Results with the default `Δχ_min` are unchanged.
+
+
 ## VERSION 0.10.0
 
 ### The code

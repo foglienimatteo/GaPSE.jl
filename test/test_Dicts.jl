@@ -93,3 +93,19 @@ end
     @test GaPSE.specif_kwargs_LDxGNC("integratedgp_newton", kwargs) == Dict(:N_χs => 150 , :en => 1e6)
 end
 
+
+@testset "test  specif_kwargs_* forward Δχ_min to the χ-integrated terms only" begin
+    # `Δχ_min` exists only in the TPCFs with at least one χ integral; the "sum" functions
+    # pass the same keywords to all the effects, so every other term must not receive it
+    kwargs = Dict(:N_lob => 20, :N_χs => 150, :N_χs_2 => 200, :Δχ_min => 0.5)
+    for (specif, names, integrated) in [
+        (GaPSE.specif_kwargs_LD, GaPSE.GR_EFFECTS_LD, GaPSE.GR_EFFECTS_chi_integrated_LD),
+        (GaPSE.specif_kwargs_GNC, GaPSE.GR_EFFECTS_GNC, GaPSE.GR_EFFECTS_chi_integrated_GNC),
+        (GaPSE.specif_kwargs_GNCxLD, GaPSE.GR_EFFECTS_GNCxLD, GaPSE.GR_EFFECTS_chi_integrated_GNCxLD),
+        (GaPSE.specif_kwargs_LDxGNC, GaPSE.GR_EFFECTS_LDxGNC, GaPSE.GR_EFFECTS_chi_integrated_LDxGNC),
+    ]
+        for name in names
+            @test haskey(specif(name, kwargs), :Δχ_min) == (name ∈ integrated)
+        end
+    end
+end
