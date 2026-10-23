@@ -26,7 +26,7 @@
 
     @test GaPSE.specif_kwargs_LD("auto_doppler", kwargs) == Dict()
     @test GaPSE.specif_kwargs_LD("auto_lensing", kwargs) == Dict(:N_χs_2 => 200, :en => 1e6, :Δχ_min => 0.5)
-    @test GaPSE.specif_kwargs_LD("localgp_lensing", kwargs) == Dict(:N_χs => 150, :en => 1e6, :Δχ_min => 0.4)
+    @test GaPSE.specif_kwargs_LD("localgp_lensing", kwargs) == Dict(:N_χs => 150, :en => 1e6, :Δχ_min => 0.5)
 end
 
 @testset "test  specif_kwargs_GNC" begin
@@ -83,7 +83,7 @@ end
 end
 
 @testset "test  specif_kwargs_LDxGNC" begin
-    kwargs = Dict(:N_χs_2 => 200 , :en => 1e6, :N_χs=> 150)
+    kwargs = Dict(:N_χs_2 => 200, :en => 1e6, :N_χs => 150, :Δχ_min => 0.5)
     @test_throws AssertionError GaPSE.specif_kwargs_LDxGNC("ciao", kwargs)
     @test_throws AssertionError GaPSE.specif_kwargs_LDxGNC("auto_newton", kwargs)
     @test_throws AssertionError GaPSE.specif_kwargs_LDxGNC("newtonian_localgp", kwargs)
