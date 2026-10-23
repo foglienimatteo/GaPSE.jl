@@ -170,7 +170,7 @@ validated the AI-assisted contributions and take responsibility for the final so
 # Acknowledgements
 
 We thank the Leibniz Supercomputing Centre (LRZ) and the University of Milan for their support.
-We also thank Emanuele Castorina, Enea Di Dio, and Salvatore Cielo for their valuable contributions.
+We also thank Emanuele Castorina, Enea Di Dio, Salvatore Cielo and Ivan Pribec for their valuable contributions.
 
 # References
 
