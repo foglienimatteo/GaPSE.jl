@@ -176,7 +176,7 @@ integrand_ξ_LD_LocalGP_IntegratedGP
 """
     ξ_LD_LocalGP_IntegratedGP(
         s1, s2, y, cosmo::Cosmology;
-        en::AbstractFloat = 1e6, N_χs::Int = 100 ) ::Float64
+        en::AbstractFloat = 1e6, N_χs::Int = 100, Δχ_min::AbstractFloat = 1e-1 ) ::Float64
 
 Return the Two-Point Correlation Function (TPCF) given by the cross correlation between the 
 Local Gravitational Potential (GP) and the Integrated GP effects arising from the 
@@ -283,15 +283,21 @@ This function is computed integrating `integrand_ξ_LD_LocalGP_IntegratedGP` wit
   with small numbers;
 
 - `N_χs::Int = 100`: number of points to be used for sampling the integral
-  along the ranges `(0, s1)` (for `χ1`); it has been checked that
+  along the range `(0, s2)` (for `χ2`); it has been checked that
   with `N_χs ≥ 50` the result is stable.
+
+- `Δχ_min::AbstractFloat = 1e-1` : when ``\\Delta\\chi_2 = \\sqrt{s_1^2 + \\chi_2^2 - 2 \\, s_1 \\chi_2 y} \\to 0^{+}``,
+  ``\\tilde{I}_0^4(\\Delta\\chi_2)`` diverges, but the whole term vanishes, since
+  ``\\Delta\\chi_2^4 \\, \\tilde{I}_0^4(\\Delta\\chi_2) \\to 0``; so, when
+  ``\\Delta \\chi_2 < \\Delta\\chi_\\mathrm{min}``, the function takes the limit instead of
+  evaluating the integrand.
 
 
 See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_LD_multipole`](@ref), 
 [`map_ξ_LD_multipole`](@ref), [`print_map_ξ_LD_multipole`](@ref)
 """
 function ξ_LD_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-    en::AbstractFloat = 1e6, N_χs::Int = 100)
+    en::AbstractFloat = 1e6, N_χs::Int = 100, kwargs...)
 
     #=
     f(χ2) = en * integrand_ξ_LD_LocalGP_IntegratedGP(χ2, s1, s2, y, cosmo)
@@ -306,7 +312,7 @@ function ξ_LD_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
     IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
     int_ξs = [
-        en * GaPSE.integrand_ξ_LD_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo)
+        en * GaPSE.integrand_ξ_LD_LocalGP_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
         for IP in IPs
     ]
 

@@ -83,11 +83,11 @@ RUN julia -e 'using Pkg; Pkg.develop(path=pwd()); Pkg.add(["Plots", "LaTeXString
 # on port 8888, so neither has to be overridden here.
 # To run this container:
 #
-#   $ docker run --detach --env JUPYTER_TOKEN=test --name gapse --publish 10000:8888 matteofoglieni/gapse:latest
+#   $ docker run --detach --env JUPYTER_TOKEN=test --name gapse --publish 10000:8888 foglienimatteo/gapse:latest
 #
 # To run the test suite instead (with a limited number of cores):
 #
-#   $ docker run --rm --cpuset-cpus="0-1" matteofoglieni/gapse:latest julia --project=/home/jovyan/GaPSE -e 'using Pkg; Pkg.test("GaPSE")'
+#   $ docker run --rm --cpuset-cpus="0-1" foglienimatteo/gapse:latest julia --project=/home/jovyan/GaPSE -e 'using Pkg; Pkg.test("GaPSE")'
 #
 # "JULIA_NUM_THREADS=auto" is in the environment of the image and "Pkg.test" forwards it to the
 # test worker, so it will run the suite on 2 threads.
